@@ -1,0 +1,830 @@
+
+package jungle.lib;
+
+import java.util.*;
+import java.text.*;
+import java.util.regex.*;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.charset.*;
+import java.net.*;
+
+/** JSON objects.
+  */
+public class JSON {
+
+    //----------------------------------
+
+    /** Make from a JSON file. */
+    public JSON(File file) throws Exception{
+        chars = getStringFromFile(file).array();
+        chp=0;
+    }
+
+    /** Make from a JSON string. */
+    public JSON(String str){
+        chars = str.toCharArray();
+        chp=0;
+    }
+
+    /** Make from a JSON CharBuffer. */
+    public JSON(CharBuffer charbuffer){
+        chars = charbuffer.array();
+        chp=0;
+    }
+
+    /** Shallow clone of given JSON. */
+    @SuppressWarnings("unchecked")
+    public JSON(JSON json){
+        json.ensureContent();
+        tophash = new LinkedHashMap(json.tophash);
+        chars=null;
+        chp=0;
+    }
+
+    //----------------------------------
+
+    /** Get content LinkedHashMap. */
+    public LinkedHashMap content(){
+        ensureContent();
+        return (LinkedHashMap)tophash;
+    }
+
+    /** Check this JSON is empty. */
+    public boolean noContent(){
+        LinkedHashMap hm=content();
+        return hm==null || hm.size()==0;
+    }
+
+    /** Set content text */
+    public void content(String json) throws Exception{
+        chars=json.toCharArray();
+        chp=0;
+        tophash = readHashMap();
+        chars=null;
+        chp=0;
+    }
+
+    /** Set content LinkedHashMap. */
+    public void content(LinkedHashMap content){
+        tophash = content;
+        chars=null;
+        chp=0;
+    }
+
+    /** Get String value (or String form of
+      * value) at the given path.
+      */
+    public String stringPath(String path) throws PathOvershot{
+        ensureContent();
+        return getStringPath(tophash, path);
+    }
+
+    /** Get String value (or String form of
+      * value) at the given path. No PathOvershot.
+      */
+    public String stringPathN(String path){
+        try{ return stringPath(path); }catch(PathOvershot po){ return null; }
+    }
+
+    /** Check String value (or String form of
+      * value) at the given path is equal to given value.
+      */
+    public boolean isStringPath(String path, String value) throws PathOvershot{
+        ensureContent();
+        String pathval=getStringPath(tophash, path);
+        return (value==null && pathval==null) || (value!=null && value.equals(pathval));
+    }
+
+    /** Set String value. Returns true if it really was different. */
+    public boolean stringPath(String path, String value) {
+        ensureContent();
+        return setStringPath(tophash, path, value);
+    }
+
+    /** Get integer (or int form of string or 
+      * 0 if not integer) at the given path.
+      */
+    public int intPath(String path) throws PathOvershot{
+        ensureContent();
+        return getIntPath(tophash, path);
+    }
+
+    /** Get integer (or int form of string or 
+      * 0 if not integer) at the given path. No PathOvershot.
+      */
+    public int intPathN(String path){
+        try{ return intPath(path); }catch(PathOvershot po){ return 0; }
+    }
+
+    /** Set int value. Returns true if it really was different. */
+    public boolean intPath(String path, int value) {
+        ensureContent();
+        return setIntPath(tophash, path, value);
+    }
+
+    /** Get boolean at the given path.
+      * Returns false if not boolean!
+      */
+    public boolean boolPath(String path) throws PathOvershot{
+        ensureContent();
+        return getBoolPath(tophash, path);
+    }
+
+    /** Get boolean at the given path.
+      * Returns false if not boolean! No PathOvershot.
+      */
+    public boolean boolPathN(String path){
+        try{ return boolPath(path); }catch(PathOvershot po){ return false; }
+    }
+
+    /** Get double (or 0 if not) at given path. */
+    public double doublePath(String path) throws PathOvershot{
+        ensureContent();
+        return getDoublePath(tophash, path);
+    }
+
+    /** Get double (or 0 if not) at given path. No PathOvershot. */
+    public double doublePathN(String path){
+        try{ return doublePath(path); }catch(PathOvershot po){ return 0.0; }
+    }
+
+    /** Set double at given path. */
+    public boolean doublePath(String path, double value){
+        ensureContent();
+        return setDoublePath(tophash, path, value);
+    }
+
+    /** Get String hash (or String form of
+      * values found) at the given path.
+      */
+    public LinkedHashMap stringHashPath(String path) throws PathOvershot{
+        ensureContent();
+        return getHashPath(tophash, path);
+    }
+
+    /** Get List at the given path. */
+    public LinkedList listPath(String path) throws PathOvershot{
+        ensureContent();
+        return getListPath(tophash, path);
+    }
+
+    /** Get List at the given path. No PathOvershot. */
+    public LinkedList listPathN(String path){
+        try{ return listPath(path); }catch(PathOvershot po){ return null; }
+    }
+
+    /** Set list at the given path. */
+    public boolean listPath(String path, LinkedList value){
+        ensureContent();
+        return setListPath(tophash, path, value);
+    }
+
+    /** Add to list at the given path. */
+    public boolean listPathAdd(String path, Object value){
+        ensureContent();
+        return addListPath(tophash, path, value);
+    }
+
+    /** Remove this entry in its hash */
+    public void removePath(String path){
+        ensureContent();
+        doRemovePath(path);
+    }
+
+    /** Format this JSON.  */
+    public String toString(){
+        ensureContent();
+        ensureChars();
+        return new String(chars);
+    }
+
+    /** Format this JSON: prepend given string to top hash content. */
+    public String toString(String prepend){
+        ensureContent();
+        ensureChars();
+        return "{   "+prepend.trim()+"\n"+new String(chars).substring(2);
+    }
+
+    //----------------------------------
+    //----------------------------------
+
+    private char[]        chars;
+    private int           chp;
+    private LinkedHashMap tophash = null;
+
+    //----------------------------------
+
+    static public final Charset UTF8 = Charset.forName("UTF-8");
+
+    private CharBuffer getStringFromFile(File file) throws Exception{
+
+        String path = file.getPath();
+
+        if(!path.endsWith(".json"))            throw new Exception("JSON file name should end in '.json': "+path);
+        if(!(file.exists() && file.canRead())) throw new Exception("File not readable: "+path);
+
+        FileChannel channel    = new FileInputStream(file).getChannel();
+        ByteBuffer  bytebuffer = ByteBuffer.allocate((int)file.length());
+
+        int n=channel.read(bytebuffer);
+
+        bytebuffer.position(0);
+        CharBuffer charbuffer = UTF8.decode(bytebuffer);
+        return charbuffer;
+    }
+
+    //----------------------------------
+
+    private void ensureContent(){
+        try{ ensureContentX(); } catch(Exception e){ e.printStackTrace(); }
+    }
+    
+    private void ensureContentX() throws Exception{
+        if(tophash!=null) return;
+        if(chars==null) return;
+        tophash = readHashMap();
+        chars=null;
+        chp=0;
+    }
+
+    //----------------------------------
+
+    private Object readObject() throws Exception{
+        if(chars[chp]=='"'){
+            return readString();
+        }
+        if(chars[chp]=='{'){
+            return readHashMap();
+        }
+        if(chars[chp]=='['){
+            return readList();
+        }
+        if(Character.isDigit(chars[chp]) || chars[chp]=='-'){
+            return readNumber();
+        }
+        if(chars[chp]=='t' || chars[chp]=='f'){
+            return readBoolean();
+        }
+        if(chars[chp]=='n'){
+            return readNull();
+        }
+        parseError(' ');
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedHashMap readHashMap() throws Exception{
+        chp++;
+        LinkedHashMap hm = new LinkedHashMap();
+        boolean dotag=false;
+        boolean docol=false;
+        boolean doval=false;
+        boolean docom=false;
+        StringBuilder buf=new StringBuilder();
+        String tag="";
+        for(; chp<chars.length; chp++){
+
+            if(!dotag){
+                if(chars[chp]=='}'){
+                    break;
+                }
+                if(chars[chp]=='"'){
+                    dotag=true;
+                    continue;
+                }
+                if(chars[chp]>' ') parseError('"');
+                continue;
+            }
+
+            if(!docol){
+                if(chars[chp]=='"'){
+                    tag = new String(buf); buf = new StringBuilder();
+                    docol=true;
+                    continue;
+                }
+                if(chars[chp]>=' '){
+                    if(chars[chp]=='\\'){
+                        appendEscapedChar(buf);
+                    }
+                    else buf.append(chars[chp]);
+                    continue;
+                }
+                parseError(' ');
+            }
+
+            if(!doval){
+                if(chars[chp]==':'){
+                    doval=true;
+                    continue;
+                }
+                if(chars[chp]>' ') parseError(':');
+                continue;
+            }
+
+            if(!docom){
+                if(chars[chp]>' '){
+                    hm.put(tag, readObject());
+                    docom=true;
+                    continue;
+                }
+                continue;
+            }
+
+            if(chars[chp]==','){
+                dotag=false;
+                docol=false;
+                doval=false;
+                docom=false;
+                continue;
+            }
+
+            if(chars[chp]=='}'){
+                break;
+            }
+
+            if(chars[chp]>' ') parseError(',');
+        }
+        return hm;
+    }
+
+    private String readString() throws Exception{
+        chp++;
+        StringBuilder buf = new StringBuilder();
+        for(; chp<chars.length; chp++){
+            if(chars[chp]=='"'){
+                return new String(buf);
+            }
+            if(chars[chp]>=' '){
+                if(chars[chp]=='\\'){
+                    appendEscapedChar(buf);
+                }
+                else buf.append(chars[chp]);
+                continue;
+            }
+            parseError(' ');
+        }
+        parseError('"');
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedList readList() throws Exception{
+        chp++;
+        LinkedList ll = new LinkedList();
+        boolean docom=false;
+        for(; chp<chars.length; chp++){
+            if(!docom){
+                if(chars[chp]==']'){
+                    break;
+                }
+                if(chars[chp]>' '){
+                    ll.add(readObject());
+                    docom=true;
+                    continue;
+                }
+                continue;
+            }
+
+            if(chars[chp]==','){
+                docom=false;
+                continue;
+            }
+
+            if(chars[chp]==']'){
+                break;
+            }
+
+            if(chars[chp]>' ') parseError(',');
+        }
+        return ll;
+    }
+
+    private Number readNumber() throws Exception{
+        StringBuilder buf = new StringBuilder();
+        for(; chp<chars.length; chp++){
+            if(chars[chp]<=' ' || chars[chp]==',' || chars[chp]=='}'){
+                if(chars[chp]==',' || chars[chp]=='}') chp--;
+                return new Double(new String(buf));
+            }
+            buf.append(chars[chp]);
+        }
+        parseError('0');
+        return null;
+    }
+
+    private Boolean readBoolean() throws Exception{
+        if(chp+3<chars.length && 
+           chars[chp+0]=='t' && 
+           chars[chp+1]=='r' &&
+           chars[chp+2]=='u' &&
+           chars[chp+3]=='e'){
+            chp+=3;
+            return new Boolean(true);
+        }
+        if(chp+4<chars.length && 
+           chars[chp+0]=='f' && 
+           chars[chp+1]=='a' &&
+           chars[chp+2]=='l' &&
+           chars[chp+3]=='s' &&
+           chars[chp+4]=='e'){
+            chp+=4;
+            return new Boolean(false);
+        }
+        parseError('0');
+        return null;
+    }
+
+    private Object readNull() throws Exception{
+        if(chp+3<chars.length && 
+           chars[chp+0]=='n' && 
+           chars[chp+1]=='u' &&
+           chars[chp+2]=='l' &&
+           chars[chp+3]=='l'){
+            chp+=3;
+            return null;
+        }
+        parseError('0');
+        return null;
+    }
+
+    private void appendEscapedChar(StringBuilder buf){
+        chp++;
+        if(chars[chp]=='"')  buf.append(chars[chp]);
+        if(chars[chp]=='\\') buf.append(chars[chp]);
+        if(chars[chp]=='/')  buf.append(chars[chp]);
+        if(chars[chp]=='b')  buf.append('\b');
+        if(chars[chp]=='f')  buf.append('\f');
+        if(chars[chp]=='n')  buf.append('\n');
+        if(chars[chp]=='r')  buf.append('\r');
+        if(chars[chp]=='t')  buf.append('\t');
+    }
+
+    private void parseError(char ch) throws Exception{
+        throw new Exception("Syntax error in JSON: odd char before '"+ch+"': "+
+                            "["+showContext(chp, chars)+"] at "+chp+ " in\n"+new String(chars));
+    }
+
+    static public String showContext(int chp, char[] chars){
+        String r="";
+        int c=chp-10;
+        if(c<0) c=0;
+        for(; c<chp+10 && c<chars.length; c++){
+            if(c==chp) r+=">>"+chars[c]+"<<";
+            else       r+=chars[c];
+        }
+        return r;
+    }
+
+    //----------------------------------
+
+    private String getStringPath(LinkedHashMap content, String path) throws PathOvershot{
+        Object o=getObject(content, path);
+        if(o instanceof String){
+            return (String)o;
+        }
+        return o!=null? o.toString(): null;
+    }
+
+    private int getIntPath(LinkedHashMap content, String path) throws PathOvershot{
+        Object o=getObject(content, path);
+        if(o instanceof Number){
+            Number n=(Number)o;
+            return n.intValue();
+        }
+        return 0;
+    }
+
+    private boolean getBoolPath(LinkedHashMap content, String path) throws PathOvershot{
+        Object o=getObject(content, path);
+        if(o instanceof Boolean){
+            Boolean b=(Boolean)o;
+            return b.booleanValue();
+        }
+        return false;
+    }
+
+    private double getDoublePath(LinkedHashMap content, String path) throws PathOvershot{
+        Object o=getObject(content, path);
+        if(o instanceof Number){
+            Number n=(Number)o;
+            return n.doubleValue();
+        }
+        return 0;
+    }
+
+    private LinkedHashMap getHashPath(LinkedHashMap content, String path) throws PathOvershot{
+        Object o=getObject(content, path);
+        if(o instanceof LinkedHashMap){
+            return (LinkedHashMap)o;
+        }
+        return null;
+    }
+
+    private LinkedList getListPath(LinkedHashMap content, String path) throws PathOvershot{
+        Object o=getObject(content, path);
+        if(o instanceof LinkedList){
+            return (LinkedList)o;
+        }
+        return null;
+    }
+
+    private Object getObject(LinkedHashMap hashmap, String path) throws PathOvershot{
+        if(path.length()==0) return null;
+        if(path.charAt(0)==':') path=path.substring(1);
+        String[] parts=path.split(":");
+        LinkedHashMap hm=hashmap;
+        for(int i=0; i<parts.length; i++){
+            Object o=null;
+            String part=parts[i];
+            if(!part.equals("*")) o=hm.get(part);
+            else                  o=getSingleEntry(hm);
+            if(o==null) return null;
+            if(o instanceof LinkedHashMap){
+                if(i==parts.length-1) return o;
+                hm=(LinkedHashMap)o;
+                continue;
+            }
+            if(o instanceof LinkedList){
+                if(i==parts.length-1) return o;
+                String sx=parts[i+1];
+                int x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){}
+                if(sx.equals("0") || x>0){
+                   LinkedList ll = (LinkedList)o;
+                   if(x<ll.size()){
+                       o = ll.get(x);
+                       if(i+1==parts.length-1) return o;
+                       if(o instanceof LinkedHashMap){
+                           hm=(LinkedHashMap)o;
+                           i++;
+                       }
+                   }
+                }
+                continue;
+            }
+            if(o instanceof String){
+                if(i==parts.length-1) return o;
+                throwPathOvershot(o, parts, i);
+            }
+            if(o instanceof Number){
+                if(i==parts.length-1) return o;
+                throwPathOvershot(o, parts, i);
+            }
+            if(o instanceof Boolean){
+                if(i==parts.length-1) return o;
+                throwPathOvershot(o, parts, i);
+            }
+        }
+        return null;
+    }
+
+    private void throwPathOvershot(Object o, String[] parts, int i) throws PathOvershot{
+        String path = parts[++i];
+        for(i++ ; i<parts.length; i++) path+=":"+parts[i];
+        throw new PathOvershot(o, path);
+    }
+
+    private Object getSingleEntry(LinkedHashMap hm){
+        if(hm.size()!=1) return null;
+        Iterator it=hm.keySet().iterator();
+        it.hasNext();
+        String key=(String)it.next();
+        return hm.get(key);
+    }
+
+    private void doRemovePath(String path){
+        setObject(tophash, path, null);
+    }
+
+    private boolean setStringPath(LinkedHashMap hashmap, String path, String value){
+        return setObject(hashmap, path, value);
+    }
+
+    private boolean setIntPath(LinkedHashMap hashmap, String path, int value){
+        return setObject(hashmap, path, new Integer(value));
+    }
+
+    private boolean setDoublePath(LinkedHashMap hashmap, String path, double value){
+        return setObject(hashmap, path, new Double(value));
+    }
+
+    private boolean setListPath(LinkedHashMap hashmap, String path, LinkedList value){
+        return setObject(hashmap, path, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean addListPath(LinkedHashMap hashmap, String path, Object value){
+        LinkedList list=null;
+        try{ list = getListPath(hashmap, path);
+        }catch(PathOvershot po){ return false; }
+        if(list==null) return false;
+        list.add(value);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean setObject(LinkedHashMap hashmap, String path, Object value){
+        boolean changed = false;
+        if(path.length()==0) return changed;
+        if(path.charAt(0)==':') path=path.substring(1);
+        String[] parts=path.split(":");
+        LinkedHashMap hm=hashmap;
+        for(int i=0; i<parts.length; i++){
+            Object o=null;
+            String part=parts[i];
+            if(!part.equals("*")) o=hm.get(part);
+            else                  o=getSingleEntry(hm);
+            if(o==null){
+                if(i==parts.length-1){
+                    if(value!=null){ hm.put(part, value); changed=true; }
+                    else           { hm.remove(part);     changed=true; }
+                }
+                return changed;
+            }
+            if(o instanceof LinkedHashMap){
+                if(i==parts.length-1){
+                    if(value!=null){ hm.put(part, value); changed=true; }
+                    else           { hm.remove(part);     changed=true; }
+                    return changed;
+                }
+                hm=(LinkedHashMap)o;
+                continue;
+            }
+            if(o instanceof LinkedList){
+                if(i==parts.length-1){
+                    if(value!=null){ hm.put(part, value); changed=true; }
+                    else           { hm.remove(part);     changed=true; }
+                    return changed;
+                }
+                String sx=parts[i+1];
+                int x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){}
+                if(sx.equals("0") || x>0){
+                   LinkedList ll = (LinkedList)o;
+                   if(x<ll.size()){
+                       o = ll.get(x);
+                       if(i+1==parts.length-1){
+                           if(value!=null){
+                               if(!o.equals(value)){
+                                   changed=true;
+                                   ll.set(x, value);
+                               }
+                           }
+                           else{ ll.remove(x); changed=true; }
+                           return changed;
+                       }
+                       if(o instanceof LinkedHashMap){
+                           hm=(LinkedHashMap)o;
+                           i++;
+                       }
+                   }
+                }
+                continue;
+            }
+            if(o instanceof String){
+                if(i==parts.length-1){
+                    if(value!=null){
+                        String p = (String)o;
+                        String n = value.toString();
+                        if(!n.equals(p)){
+                            changed = true;
+                            hm.put(part, value);
+                        }
+                    }
+                    else { hm.remove(part); changed = true; }
+                }
+                return changed;
+            }
+            if(o instanceof Number){
+                if(i==parts.length-1){
+                    if(value!=null){
+                        Number p = (Number)o;
+                        Number n = (Number)value;
+                        if(!n.equals(p)){
+                            changed = true;
+                            hm.put(part, value);
+                        }
+                    }
+                    else { hm.remove(part); changed = true; }
+                }
+                return changed;
+            }
+            if(o instanceof Boolean){
+                if(i==parts.length-1){
+                    if(value!=null){
+                        Boolean p = (Boolean)o;
+                        Boolean n = (Boolean)value;
+                        if(!n.equals(p)){
+                            changed = true;
+                            hm.put(part, value);
+                        }
+                    }
+                    else { hm.remove(part); changed = true; }
+                }
+                return changed;
+            }
+        }
+        return changed;
+    }
+
+    //----------------------------------
+
+    private void ensureChars(){
+        StringBuilder buf = new StringBuilder();
+        if(tophash!=null){
+            buf.append(hashToString((LinkedHashMap)tophash,4));
+        }
+        chars = new String(buf).toCharArray();
+        chp=0;
+    }
+
+    private String objectToString(Object o, int indent){
+        if(o==null) return "null";
+        if(o instanceof String)        return "\""+replaceEscapableChars((String)o)+"\"";
+        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o,    indent+4);
+        if(o instanceof LinkedList)    return listToString((LinkedList)o, indent+4);
+        return o.toString();
+    }
+
+    private String hashToString(LinkedHashMap hm, int indent){
+        if(hm==null) return "null";
+        if(hm.size()==0) return "{ }";
+        StringBuilder buf=new StringBuilder();
+        buf.append("{\n");
+        int i=0;
+        for(Iterator it=hm.keySet().iterator(); it.hasNext(); i++){
+            String tag = (String)it.next();
+            Object val = hm.get(tag);
+            if(i==0) buf.append(      indentation(indent));
+            else     buf.append(",\n"+indentation(indent));
+            buf.append("\""+tag+"\": "+objectToString(val, indent));
+        }
+        buf.append("\n"+indentation(indent-4)+"}");
+        return buf.toString();
+    }
+
+    private String listToString(LinkedList ll, int indent){
+        if(ll==null)  return "null";
+        if(ll.size()==0) return "[ ]";
+        boolean structured=false;
+        int i=0;
+        for(Object val: ll){
+            if(i>5 || val instanceof HashMap || val instanceof LinkedList){
+                structured=true; break;
+            }
+            i++;
+        }
+        StringBuilder buf=new StringBuilder();
+        buf.append(structured? "[\n": "[");
+        i=0;
+        for(Object val: ll){
+            if(structured){
+                if(i==0) buf.append(      indentation(indent));
+                else     buf.append(",\n"+indentation(indent));
+            } else buf.append(i==0? " ": ", ");
+            buf.append(objectToString(val, indent));
+            i++;
+        }
+        if(structured) buf.append("\n"+indentation(indent-4)+" ]");
+        else           buf.append(" ]");
+        return buf.toString();
+    }
+
+    static public final String INDENTSPACES = "                                                                                                                                                                                                                                                        ";
+    private String indentation(int indent){
+        if(indent>=INDENTSPACES.length()) return INDENTSPACES;
+        return INDENTSPACES.substring(0,indent);
+    }
+
+    private String replaceEscapableChars(String s){
+        return s.replace("\\", "\\\\")
+                .replace("\b", "\\b")
+                .replace("\f", "\\f")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t")
+                .replace("\"", "\\\"");
+    }
+
+    /* ---------------------------------------------------- */
+
+    static public final boolean enableLogging=true;
+
+    public void log(Object o){
+        log(enableLogging, o);
+    }
+        
+    public void log(boolean doit, Object o){
+        if(!doit) return;
+        String thread=Thread.currentThread().toString();
+        System.out.println("["+thread+"]: "+o);
+    }
+
+    static public void whereAmI(){
+        try{ throw new Exception(); } catch(Exception e){ e.printStackTrace(); }
+    }
+
+    /* ---------------------------------------------------- */
+}
+
+

@@ -1,0 +1,19 @@
+{   "%uid": "uid-80d7-ff34-61f1-0db7",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "CountTo200",
+    "pair": "http://localhost:8081/o/uid-c47f-5e67-9fc8-b842.json",
+    "count": 1
+}
+
+{   "%uid": "uid-0145-54f4-36db-302e",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "FXOrderPayment",
+    "is": [ "fx", "order" ],
+    "params": [ "usd/jpy", "buylim", 81.7, 500.00 ],
+    "dealer": "http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json"
+}
+

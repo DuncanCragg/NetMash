@@ -1,0 +1,11 @@
+{ "name": "vm1",
+  "kernel": { "threadpool": 33 },
+  "persist": { "directory": ".",
+               "db": "forest.db",
+               "syncrate": 100,
+               "preload": [ "uid-ba2b-8619-fdea-8c2c" ] },
+  "network": { "host": "localhost",
+               "port": 8081,
+               "pathprefix": "/o/",
+               "log": true }
+}

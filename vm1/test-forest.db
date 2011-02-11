@@ -1,0 +1,18 @@
+{   "%uid": "uid-c47f-5e67-9fc8-b842",
+    "%etag": 11,
+    "%notify": [],
+    "%observe": [],
+    "%class": "CountTo200",
+    "pair": "",
+    "count": 1
+}
+
+{   "%uid": "uid-ba2b-8619-fdea-8c2c",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "FXDealerTicket",
+    "is": [ "fx", "dealer" ],
+    "tickets": [ ]
+}
+
