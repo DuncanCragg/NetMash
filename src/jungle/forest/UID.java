@@ -11,11 +11,6 @@ import jungle.platform.*;
 
 public class UID {
 
-    static public final String  UIDRE = Kernel.config.stringPathN("network:pathprefix")+"(uid-[-0-9a-f]+).json";
-    static public final Pattern UIDPA = Pattern.compile(UIDRE);
-    static public final String  URLRE = "http://(.+):([0-9]+)(/.*/uid-[-0-9a-f]+.json)";
-    static public final Pattern URLPA = Pattern.compile(URLRE);
-
     // ----------------------------------------
 
     private String uid;

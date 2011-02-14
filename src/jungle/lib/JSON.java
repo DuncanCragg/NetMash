@@ -156,21 +156,30 @@ public class JSON {
         return setDoublePath(tophash, path, value);
     }
 
-    /** Get String hash (or String form of
-      * values found) at the given path.
-      */
-    public LinkedHashMap stringHashPath(String path) throws PathOvershot{
+    /** Get hash at the given path.  */
+    public LinkedHashMap hashPath(String path) throws PathOvershot{
         ensureContent();
         return getHashPath(tophash, path);
     }
 
-    /** Get List at the given path. */
+    /** Get hash at the given path. No PathOvershot. */
+    public LinkedHashMap hashPathN(String path){
+        try{ return hashPath(path); }catch(PathOvershot po){ return null; }
+    }
+
+    /** Set hash at the given path. */
+    public boolean hashPath(String path, LinkedHashMap value){
+        ensureContent();
+        return setHashPath(tophash, path, value);
+    }   
+
+    /** Get list at the given path. */
     public LinkedList listPath(String path) throws PathOvershot{
         ensureContent();
         return getListPath(tophash, path);
     }
 
-    /** Get List at the given path. No PathOvershot. */
+    /** Get list at the given path. No PathOvershot. */
     public LinkedList listPathN(String path){
         try{ return listPath(path); }catch(PathOvershot po){ return null; }
     }
@@ -185,6 +194,18 @@ public class JSON {
     public boolean listPathAdd(String path, Object value){
         ensureContent();
         return addListPath(tophash, path, value);
+    }
+
+    /** Add to list at the given path. */
+    public boolean listPathAddAll(String path, List value){
+        ensureContent();
+        return addAllListPath(tophash, path, value);
+    }
+
+    /** Remove from list at the given path. */
+    public boolean listPathRemoveAll(String path, List value){
+        ensureContent();
+        return removeAllListPath(tophash, path, value);
     }
 
     /** Remove this entry in its hash */
@@ -609,6 +630,10 @@ public class JSON {
         return setObject(hashmap, path, new Double(value));
     }
 
+    private boolean setHashPath(LinkedHashMap hashmap, String path, LinkedHashMap value){
+        return setObject(hashmap, path, value);
+    }
+
     private boolean setListPath(LinkedHashMap hashmap, String path, LinkedList value){
         return setObject(hashmap, path, value);
     }
@@ -620,6 +645,26 @@ public class JSON {
         }catch(PathOvershot po){ return false; }
         if(list==null) return false;
         list.add(value);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean addAllListPath(LinkedHashMap hashmap, String path, List value){
+        LinkedList list=null;
+        try{ list = getListPath(hashmap, path);
+        }catch(PathOvershot po){ return false; }
+        if(list==null) return false;
+        list.addAll(value);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean removeAllListPath(LinkedHashMap hashmap, String path, List value){
+        LinkedList list=null;
+        try{ list = getListPath(hashmap, path);
+        }catch(PathOvershot po){ return false; }
+        if(list==null) return false;
+        list.removeAll(value);
         return true;
     }
 

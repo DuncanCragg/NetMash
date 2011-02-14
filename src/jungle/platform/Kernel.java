@@ -151,7 +151,8 @@ public class Kernel {
 
     static private void eventLoop(){
 
-        System.out.println("Kernel: running");
+
+        System.out.println("Kernel: running "+config.stringPathN("name"));
 
         while(true){
             try {

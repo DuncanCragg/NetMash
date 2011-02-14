@@ -17,3 +17,13 @@
     "dealer": "http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json"
 }
 
+{   "%uid": "uid-d7ec-6c0f-68a9-81df",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "TwitterMash",
+    "is": [ "twittermash", "top" ],
+    "topuser": "duncancragg",
+    "twitter": "http://localhost:8081/o/uid-2161-baf3-858b-858c.json"
+}
+

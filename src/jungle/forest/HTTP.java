@@ -15,6 +15,9 @@ import jungle.platform.*;
   */
 public class HTTP implements ChannelUser {
 
+    static public final String  URLRE = "http://(.+):([0-9]+)(/.*/uid-[-0-9a-f]+.json)";
+    static public final Pattern URLPA = Pattern.compile(URLRE);
+
     // ----------------------------------------
 
     public HTTP(){
@@ -49,7 +52,7 @@ public class HTTP implements ChannelUser {
     // ----------------------------------------
 
     void pull(WebObject s){
-        Matcher m = UID.URLPA.matcher(s.uid);
+        Matcher m = URLPA.matcher(s.uid);
         if(!m.matches()){ FunctionalObserver.log("Remote pull UID isn't a good URL: "+s.uid); return; }
         String host = m.group(1);
         int    port = Integer.parseInt(m.group(2));
@@ -59,7 +62,7 @@ public class HTTP implements ChannelUser {
     }
 
     void push(WebObject w){
-        Matcher m = UID.URLPA.matcher(w.uid);
+        Matcher m = URLPA.matcher(w.uid);
         if(!m.matches()){ FunctionalObserver.log("Remote push UID isn't a good URL: "+w.uid); return; }
         String host = m.group(1);
         int    port = Integer.parseInt(m.group(2));
@@ -83,6 +86,9 @@ abstract class HTTPCommon {
 
     static public final Charset UTF8  = Charset.forName("UTF-8");
     static public final Charset ASCII = Charset.forName("US-ASCII");
+
+    static public final String  UIDRE = Kernel.config.stringPathN("network:pathprefix")+"(uid-[-0-9a-f]+).json";
+    static public final Pattern UIDPA = Pattern.compile(UIDRE);
 
     protected FunctionalObserver funcobs;
     protected SocketChannel channel;
@@ -294,7 +300,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) return;
-        Matcher m = UID.UIDPA.matcher(httpPath);
+        Matcher m = UIDPA.matcher(httpPath);
         if(m.matches()){
             String uid = m.group(1);
             if(httpMethod.equals("GET")){ if(!readGET(uid)) return; }

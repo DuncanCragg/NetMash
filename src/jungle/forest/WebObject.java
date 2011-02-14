@@ -39,6 +39,7 @@ public class WebObject {
     public  boolean obsalmod = false;
 
     public  HashSet<String>                   newalert   = new HashSet<String>();
+    public  HashSet<String>                   remalert   = new HashSet<String>();
     public  ConcurrentSkipListSet<String>     notify     = new ConcurrentSkipListSet<String>();
     public  ConcurrentLinkedQueue<Notifiable> httpnotify = new ConcurrentLinkedQueue<Notifiable>();
     public  HashSet<String>                   newobserve = new HashSet<String>();
@@ -179,6 +180,11 @@ public class WebObject {
         statemod = updatingState.doublePath(path, val) || statemod;
     }
 
+    /** Construct a list utility. */
+    public List list(Object...args){
+        return Arrays.asList(args);
+    }
+
     /** Get list at path. */
     public LinkedList contentList(String path){
         LinkedList l=null;
@@ -208,6 +214,14 @@ public class WebObject {
         return list.contains(val);
     }
 
+    /** Returns true if list at path contains the value. */
+    @SuppressWarnings("unchecked")
+    public boolean contentListContainsAll(String path, List val){
+        LinkedList list=contentList(path);
+        if(list==null) return false;
+        return list.containsAll(val);
+    }
+
     /** Set list at path. */
     public void contentList(String path, LinkedList val){
         doCopyOnWrite(path);
@@ -220,6 +234,39 @@ public class WebObject {
         statemod = updatingState.listPathAdd(path, val) || statemod;
     }
 
+    /** Add all the values onto the list at the path. */
+    public void contentListAddAll(String path, List val){
+        doCopyOnWrite(path);
+        statemod = updatingState.listPathAddAll(path, val) || statemod;
+    }
+
+    /** Remove all the values in the list at the path. */
+    public void contentListRemoveAll(String path, List val){
+        doCopyOnWrite(path);
+        statemod = updatingState.listPathRemoveAll(path, val) || statemod;
+    }
+
+    /** Return hash at path. */
+    public LinkedHashMap contentHash(String path){
+        LinkedHashMap h=null;
+        try{ h = updatingState.hashPath(path);
+        }catch(PathOvershot po){
+            while(true){
+                WebObject w = observeIfUID(po.leaf);
+                if(w==null)break;
+                try{ h = w.publicState.hashPath(po.path); break;
+                }catch(PathOvershot po2){ po=po2; }
+            }
+        }
+        return h;
+    }
+
+    /** Set hash at path. */
+    public void contentHash(String path, LinkedHashMap val){
+        doCopyOnWrite(path);
+        statemod = updatingState.hashPath(path, val) || statemod;
+    }
+
     /** Given a UID, drill into its content as String if 
       * available, else return null.
       */
@@ -229,13 +276,39 @@ public class WebObject {
         return w.content(path);
     }
 
+    /** Given a UID, drill into its content as List if
+      * available, else return null.
+      */
+    public LinkedList contentListOf(String linkuid, String path){
+        WebObject w = observing(linkuid);
+        if(w==null) return null;
+        return w.contentList(path);
+    }
+
+    /** Given a UID, drill into its content as List to see if
+      * it contains all members of supplied list.
+      */
+    @SuppressWarnings("unchecked")
+    public boolean contentListOfContainsAll(String linkuid, String path, List val){
+        LinkedList list=contentListOf(linkuid, path);
+        if(list==null) return false;
+        return list.containsAll(val);
+    }
+
     /** Set this object up to notify the object at this uid.
       * That object may or may not be observing us already.
-      * Won't notify this time unless state also changed.
       */
     public void notifying(String alertuid){
         obsalmod = true;
         newalert.add(alertuid);
+    }
+
+    /** Remove any across-the-wire notification. Local notify
+      * entries are set by local observing.
+      */
+    public void unnotifying(String alertuid){
+        obsalmod = true;
+        remalert.add(alertuid);
     }
 
     /** List of objects whose state was pushed here without
@@ -273,6 +346,7 @@ public class WebObject {
         updatingState = publicState;
         obsalmod = false;
         newalert.clear();
+        remalert.clear();
         newobserve.clear();
     }
 
@@ -323,6 +397,7 @@ public class WebObject {
         statemod = false;
         newobserve.clear();
         newalert.clear();
+        remalert.clear();
         alerted = alertedin;
         alertedin = new ConcurrentSkipListSet<String>();
         spawned.clear();
@@ -336,6 +411,7 @@ public class WebObject {
         observe.addAll(alerted);
         if(obsalmod){
             notify.addAll(newalert);
+            funcobs.dropNotifies(this, remalert);
             funcobs.dropNotifiesNotNeeded(this);
             observe = newobserve;
             funcobs.cacheSaveAndEvalSpawned(this);

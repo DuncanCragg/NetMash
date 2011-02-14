@@ -16,3 +16,12 @@
     "tickets": [ ]
 }
 
+{   "%uid": "uid-2161-baf3-858b-858c",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "Twitter",
+    "is": [ "twitter", "top" ],
+    "users": { "duncancragg": { "followers": [ "foo", "bar" ] } }
+}
+

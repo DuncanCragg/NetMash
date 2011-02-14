@@ -69,6 +69,13 @@ public class FunctionalObserver implements Module {
 
     // -------------------------------
 
+    void dropNotifies(WebObject w, HashSet<String> remalert){
+        if(remalert.isEmpty()) return;
+        for(String remuid: w.remalert){
+            if(!cacheGet(remuid).isLocal()) w.notify.remove(remuid);
+        }
+    }
+
     void dropNotifiesNotNeeded(WebObject w){
         for(String olduid: w.observe){
             if(!w.newobserve.contains(olduid)){

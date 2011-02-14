@@ -33,16 +33,21 @@ runon1: jar kill
 runon2: jar kill
 	( cd vm2 ; java -classpath .:../build/jungle.jar Jungle & )
 
+whappen:
+	vim -o -N vm1/forest.db vm1/jungle.log vm2/forest.db vm2/jungle.log
+
 kill:
 	-pkill java
 
 check: clean runtests
 
+runtests: runjson runuid
+
+runjson: jar
+	java -ea -classpath ./build/jungle.jar jungle.lib.TestJSON
+
 runuid: jar
 	java -ea -classpath ./build/jungle.jar jungle.forest.UID
-
-runtests: jar
-	java -ea -classpath ./build/jungle.jar jungle.lib.TestJSON
 
 jar: classes
 	( cd ./build/classes; jar cfm ../jungle.jar ../META-INF/MANIFEST.MF . )
