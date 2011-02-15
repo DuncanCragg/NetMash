@@ -1,5 +1,7 @@
 package jungle.forest;
 
+import static java.util.Arrays.*;
+
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
@@ -53,35 +55,50 @@ public class HTTP implements ChannelUser {
 
     // ----------------------------------------
 
-    private HTTPClient getClient(WebObject w){
+    private HashMap<String,HTTPClient> connectionPool = new HashMap<String,HTTPClient>();
+
+    private HTTPClient poolClient(String host, int port){
+        String key = host+":"+port;
+        HTTPClient client = connectionPool.get(key);
+        if(client!=null) return client;
+        client=new HTTPClient(host, port);
+        connectionPool.put(key, client);
+        return client;
+    }
+
+    private List getClient(WebObject w){
         Matcher m = WURLPA.matcher(w.uid);
         if(!m.matches()){ FunctionalObserver.log("Remote pull UID isn't a good URL: "+w.uid); return null; }
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);
-        return new HTTPClient(host, port, path); 
+        return asList(poolClient(host, port), path); 
     }
 
-    private HTTPClient getClient(String url){
+    private List getClient(String url){
         Matcher m = URLPA.matcher(url);
         if(!m.matches()){ FunctionalObserver.log("Remote GET URL syntax: "+url); return null; }
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);
-        return new HTTPClient(host, port, path);
+        return asList(poolClient(host, port), path); 
     }
 
     void pull(WebObject s){
-        HTTPClient httpclient = getClient(s);
-        if(httpclient==null) return;
-        httpclient.get();
+        List clientpath = getClient(s);
+        if(clientpath==null) return;
+        HTTPClient client = (HTTPClient)clientpath.get(0);
+        String     path   = (String)    clientpath.get(1);
+        client.get(path);
     }
 
     void push(WebObject w){
-        HTTPClient httpclient = getClient(w);
-        if(httpclient==null) return;
+        List clientpath = getClient(w);
+        if(clientpath==null) return;
+        HTTPClient client = (HTTPClient)clientpath.get(0);
+        String     path   = (String)    clientpath.get(1);
         for(String notifieruid: w.alertedin){
-            httpclient.post(notifieruid);
+            client.post(path, notifieruid);
         }
     }
 
@@ -90,9 +107,11 @@ FunctionalObserver.log("poll\n"+w);
     }
 
     void getJSON(String url, WebObject w){
-        HTTPClient httpclient = getClient(url);
-        if(httpclient==null) return;
-        httpclient.get(w);
+        List clientpath = getClient(url);
+        if(clientpath==null) return;
+        HTTPClient client = (HTTPClient)clientpath.get(0);
+        String     path   = (String)    clientpath.get(1);
+        client.get(path, w);
     }
 }
 
@@ -409,24 +428,26 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
     private String    notifieruid=null;
     private boolean   connected=false;
 
-    public HTTPClient(String host, int port, String path){
+    public HTTPClient(String host, int port){
         funcobs = FunctionalObserver.funcobs;
         this.host = host;
         this.port = port;
+    }
+
+    public void get(String path){
+        if(!connected) channel = Kernel.channelConnect(host, port, this);
         this.path = path;
     }
 
-    public void get(){
+    public void get(String path, WebObject w){
         if(!connected) channel = Kernel.channelConnect(host, port, this);
-    }
-
-    public void get(WebObject w){
-        if(!connected) channel = Kernel.channelConnect(host, port, this);
+        this.path = path;
         this.webobject = w;
     }
 
-    public void post(String notifieruid){
+    public void post(String path, String notifieruid){
         if(!connected) channel = Kernel.channelConnect(host, port, this);
+        this.path = path;
         this.notifieruid = notifieruid;
     }
 
