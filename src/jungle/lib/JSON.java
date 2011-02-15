@@ -22,14 +22,33 @@ public class JSON {
         chp=0;
     }
 
+    final String listprepend = "{ \"list\": ";
+
     /** Make from a JSON string. */
     public JSON(String str){
+        int hi=str.indexOf('{');
+        int li=str.indexOf('[');
+        if(li >=0 && !(hi >=0 && hi < li)){
+            StringBuilder sb=new StringBuilder(str);
+            sb.insert(0, listprepend);
+            sb.append(" }");
+            str = sb.toString();
+        }
         chars = str.toCharArray();
         chp=0;
     }
 
     /** Make from a JSON CharBuffer. */
     public JSON(CharBuffer charbuffer){
+        int hi=indexOf(charbuffer, '{');
+        int li=indexOf(charbuffer, '[');
+        if(li >=0 && !(hi >=0 && hi < li)){
+            CharBuffer cb = CharBuffer.allocate(listprepend.length()+charbuffer.length()+2);
+            cb.append(listprepend);
+            cb.append(charbuffer);
+            cb.append(" }");
+            charbuffer = cb;
+        }
         chars = charbuffer.array();
         chp=0;
     }
@@ -425,8 +444,8 @@ public class JSON {
     private Number readNumber() throws Exception{
         StringBuilder buf = new StringBuilder();
         for(; chp<chars.length; chp++){
-            if(chars[chp]<=' ' || chars[chp]==',' || chars[chp]=='}'){
-                if(chars[chp]==',' || chars[chp]=='}') chp--;
+            if(chars[chp]<=' ' || chars[chp]==',' || chars[chp]=='}' || chars[chp]==']'){
+                chp--;
                 return new Double(new String(buf));
             }
             buf.append(chars[chp]);
@@ -867,6 +886,11 @@ public class JSON {
 
     static public void whereAmI(){
         try{ throw new Exception(); } catch(Exception e){ e.printStackTrace(); }
+    }
+
+    static public int indexOf(CharBuffer cb, char ch){
+        for(int i=0; i<cb.length(); i++) if(cb.get(i)==ch) return i;
+        return -1;
     }
 
     /* ---------------------------------------------------- */

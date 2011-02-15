@@ -13,8 +13,8 @@ public class FunctionalObserver implements Module {
 
     static public FunctionalObserver funcobs;
 
-    private Persistence persistence;
-    private HTTP http;
+    public Persistence persistence;
+    public HTTP http;
 
     private ConcurrentHashMap<String,WebObject> cache = new ConcurrentHashMap<String,WebObject>();
 

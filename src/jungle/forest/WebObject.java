@@ -340,6 +340,14 @@ public class WebObject {
         public void evaluate(){}
     }
 
+    /** Initiate an HTTP fetch of JSON data and callback on httpNotifyJSON(). */
+    public void httpGETJSON(String url){
+        funcobs.http.getJSON(url, this);
+    }
+
+    /** Callback for httpGETJSON. */
+    public void httpNotifyJSON(final JSON json){}
+
     /** Call to reset all changes. */
     public void rollback(){
         statemod = false;

@@ -15,8 +15,10 @@ import jungle.platform.*;
   */
 public class HTTP implements ChannelUser {
 
-    static public final String  URLRE = "http://(.+):([0-9]+)(/.*/uid-[-0-9a-f]+.json)";
-    static public final Pattern URLPA = Pattern.compile(URLRE);
+    static public final String  WURLRE = "http://([^:]+)(:([0-9]+))?(/.*/uid-[-0-9a-f]+.json)";
+    static public final Pattern WURLPA = Pattern.compile(WURLRE);
+    static public final String   URLRE = "http://([^:/]+)(:([0-9]+))?(/.*)";
+    static public final Pattern  URLPA = Pattern.compile(URLRE);
 
     // ----------------------------------------
 
@@ -51,25 +53,35 @@ public class HTTP implements ChannelUser {
 
     // ----------------------------------------
 
-    void pull(WebObject s){
-        Matcher m = URLPA.matcher(s.uid);
-        if(!m.matches()){ FunctionalObserver.log("Remote pull UID isn't a good URL: "+s.uid); return; }
+    private HTTPClient getClient(WebObject w){
+        Matcher m = WURLPA.matcher(w.uid);
+        if(!m.matches()){ FunctionalObserver.log("Remote pull UID isn't a good URL: "+w.uid); return null; }
         String host = m.group(1);
-        int    port = Integer.parseInt(m.group(2));
-        String path = m.group(3);
-        HTTPClient httpclient = new HTTPClient(host, port); 
-        httpclient.get(path);
+        int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
+        String path = m.group(4);
+        return new HTTPClient(host, port, path); 
+    }
+
+    private HTTPClient getClient(String url){
+        Matcher m = URLPA.matcher(url);
+        if(!m.matches()){ FunctionalObserver.log("Remote GET URL syntax: "+url); return null; }
+        String host = m.group(1);
+        int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
+        String path = m.group(4);
+        return new HTTPClient(host, port, path);
+    }
+
+    void pull(WebObject s){
+        HTTPClient httpclient = getClient(s);
+        if(httpclient==null) return;
+        httpclient.get();
     }
 
     void push(WebObject w){
-        Matcher m = URLPA.matcher(w.uid);
-        if(!m.matches()){ FunctionalObserver.log("Remote push UID isn't a good URL: "+w.uid); return; }
-        String host = m.group(1);
-        int    port = Integer.parseInt(m.group(2));
-        String path = m.group(3);
+        HTTPClient httpclient = getClient(w);
+        if(httpclient==null) return;
         for(String notifieruid: w.alertedin){
-            HTTPClient httpclient = new HTTPClient(host, port); 
-            httpclient.post(path, notifieruid);
+            httpclient.post(notifieruid);
         }
     }
 
@@ -77,8 +89,11 @@ public class HTTP implements ChannelUser {
 FunctionalObserver.log("poll\n"+w);
     }
 
-    // ----------------------------------------
-
+    void getJSON(String url, WebObject w){
+        HTTPClient httpclient = getClient(url);
+        if(httpclient==null) return;
+        httpclient.get(w);
+    }
 }
 
 
@@ -237,17 +252,24 @@ abstract class HTTPCommon {
         sb.append(content);
     }
 
-    protected boolean readWebObject(ByteBuffer bytebuffer, String uid, int contentLength){
+    protected boolean readWebObject(ByteBuffer bytebuffer, String uid, int contentLength, WebObject webobject){
+
         ByteBuffer body = Kernel.chopAtLength(bytebuffer, contentLength);
         CharBuffer jsonchars = UTF8.decode(body);
         if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("<---------------\n"+jsonchars);
         JSON json = new JSON(jsonchars);
-        WebObject w=null;
-        try{ w=new WebObject(json, httpContentLocation, httpEtag, null); }
-        catch(Exception e){ return false; }
-        if(w==null) return false;
-        if(uid!=null) w.notify.add(uid);
-        funcobs.httpNotify(w);
+
+        if(webobject==null){
+            WebObject w=null;
+            try{ w=new WebObject(json, httpContentLocation, httpEtag, null); }
+            catch(Exception e){ return false; }
+            if(w==null) return false;
+            if(uid!=null) w.notify.add(uid);
+            funcobs.httpNotify(w);
+        }
+        else{
+            webobject.httpNotifyJSON(json);
+        }
         return true;
     }
 
@@ -324,8 +346,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         else throw new Exception("POST without Content-Length");
         if(contentLength > bytebuffer.position()) return false;
         if(contentLength >0){
-            if(readWebObject(bytebuffer, uid, contentLength)) send200(null);
-            else                                              send404(); // not 404!
+            if(readWebObject(bytebuffer, uid, contentLength, null)) send200(null);
+            else                                                    send404(); // not 404!
         }
         return true;
     }
@@ -380,26 +402,31 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
 class HTTPClient extends HTTPCommon implements ChannelUser  {
 
-    private String  host;
-    private int     port;
-    private String  path;
-    private String  notifieruid=null;
-    private boolean connected=false;
+    private String    host;
+    private int       port;
+    private String    path;
+    private WebObject webobject;
+    private String    notifieruid=null;
+    private boolean   connected=false;
 
-    public HTTPClient(String host, int port){
+    public HTTPClient(String host, int port, String path){
         funcobs = FunctionalObserver.funcobs;
         this.host = host;
         this.port = port;
-    }
-
-    public void get(String path){
-        if(!connected) channel = Kernel.channelConnect(host, port, this);
         this.path = path;
     }
 
-    public void post(String path, String notifieruid){
+    public void get(){
         if(!connected) channel = Kernel.channelConnect(host, port, this);
-        this.path = path;
+    }
+
+    public void get(WebObject w){
+        if(!connected) channel = Kernel.channelConnect(host, port, this);
+        this.webobject = w;
+    }
+
+    public void post(String notifieruid){
+        if(!connected) channel = Kernel.channelConnect(host, port, this);
         this.notifieruid = notifieruid;
     }
 
@@ -437,6 +464,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
             path=null;
             doingHeaders=true;
             Kernel.close(channel);
+            connected=false;
         }
     }
 
@@ -445,9 +473,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         if(eof) contentLength = bytebuffer.position();
         if(contentLength == -1 || contentLength > bytebuffer.position()) return;
-        if(contentLength > 0){
-            readWebObject(bytebuffer, null, contentLength);
-        }
+        if(contentLength > 0) readWebObject(bytebuffer, null, contentLength, webobject);
         path=null;
         doingHeaders=true;
     }
