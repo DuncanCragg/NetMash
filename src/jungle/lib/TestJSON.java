@@ -41,7 +41,7 @@ public class TestJSON {
         assert funky.equals("\"/\b\f\n\r\t\\\""): "funky should be [\\\"/\\b\\f\\n\\r\\t\\\\\\\"], but it's ["+funky+"]";
 
         String portstr = m.stringPath("modules:http:port");
-        assert portstr.equals("8080.0"): "port should be 8080.0, but it's "+portstr;
+        assert portstr.equals("8080"): "port should be 8080, but it's "+portstr;
 
         int port = m.intPath("modules:http:port");
         assert port==8080: "port should be 8080, but it's "+port;

@@ -5,6 +5,7 @@ import static java.util.Arrays.*;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
+import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
@@ -72,7 +73,7 @@ public class HTTP implements ChannelUser {
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);
-        return asList(poolClient(host, port), path); 
+        return asList(poolClient(host, port), encodeSpacesAndUTF8IntoPercents(path));
     }
 
     private List getClient(String url){
@@ -81,7 +82,7 @@ public class HTTP implements ChannelUser {
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);
-        return asList(poolClient(host, port), path); 
+        return asList(poolClient(host, port), encodeSpacesAndUTF8IntoPercents(path));
     }
 
     void pull(WebObject s){
@@ -112,6 +113,18 @@ FunctionalObserver.log("poll\n"+w);
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
         client.get(path, w);
+    }
+
+    // ----------------------------------------------
+
+    static public String encodeSpacesAndUTF8IntoPercents(String path){
+        return path;
+    }
+
+    static public String queryAndFormEncode(String path){
+        String epath=null;
+        try{ epath=URLEncoder.encode(path,"UTF-8"); }catch(Exception e){}
+        return epath;
     }
 }
 
@@ -435,20 +448,23 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
     }
 
     public void get(String path){
-        if(!connected) channel = Kernel.channelConnect(host, port, this);
         this.path = path;
+        if(!connected) channel = Kernel.channelConnect(host, port, this);
+        else writable(channel, null, 0);
     }
 
     public void get(String path, WebObject w){
-        if(!connected) channel = Kernel.channelConnect(host, port, this);
         this.path = path;
         this.webobject = w;
+        if(!connected) channel = Kernel.channelConnect(host, port, this);
+        else writable(channel, null, 0);
     }
 
     public void post(String path, String notifieruid){
-        if(!connected) channel = Kernel.channelConnect(host, port, this);
         this.path = path;
         this.notifieruid = notifieruid;
+        if(!connected) channel = Kernel.channelConnect(host, port, this);
+        else writable(channel, null, 0);
     }
 
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
@@ -457,17 +473,18 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
             connected = true;
             StringBuilder sb=new StringBuilder();
             if(notifieruid==null){
-                sb.append("GET "); sb.append(path); sb.append(" HTTP/1.0\r\n");
+                sb.append("GET "); sb.append(path); sb.append(" HTTP/1.1\r\n");
                 sb.append("Host: "); sb.append(host); sb.append(":"+port); sb.append("\r\n");
                 sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
                 sb.append("\r\n");
             }
             else{
                 WebObject w = funcobs.cacheGet(notifieruid);
-                sb.append("POST "); sb.append(path); sb.append(" HTTP/1.0\r\n");
+                sb.append("POST "); sb.append(path); sb.append(" HTTP/1.1\r\n");
                 sb.append("Host: "); sb.append(host); sb.append(":"+port); sb.append("\r\n");
                 sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
                 contentHeadersAndBody(sb, w, getPercents());
+                notifieruid=null;
             }
             if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("--------------->\n"+sb);
             Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));

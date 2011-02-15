@@ -36,6 +36,9 @@ runon2: jar kill
 whappen:
 	vim -o -N vm1/forest.db vm1/jungle.log vm2/forest.db vm2/jungle.log
 
+setup:
+	vim -o -N vm1/jungle-config.json vm1/test-forest.db vm2/jungle-config.json vm2/test-forest.db
+
 kill:
 	-pkill java
 

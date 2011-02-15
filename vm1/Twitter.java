@@ -53,7 +53,7 @@ public class Twitter extends WebObject {
                 else{
                     String user = m.group(1);
                     content("results", "fetching "+user);
-                    httpGETJSON("http://twitter.com/statuses/followers/"+user+".json");
+                    httpGETJSON("http://api.twitter.com/1/followers/ids/"+user+".json");
                 }
             }
         }
@@ -63,7 +63,8 @@ public class Twitter extends WebObject {
     public void httpNotifyJSON(final JSON json){
         new Evaluator(this){
             public void evaluate(){
-log("Twitter callback: "+json.stringPathN("list:0:name"));
+                contentList("results", json.listPathN("list"));
+                notifying(content("query"));
             }
         };
     }

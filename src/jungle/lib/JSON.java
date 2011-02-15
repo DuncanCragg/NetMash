@@ -446,7 +446,10 @@ public class JSON {
         for(; chp<chars.length; chp++){
             if(chars[chp]<=' ' || chars[chp]==',' || chars[chp]=='}' || chars[chp]==']'){
                 chp--;
-                return new Double(new String(buf));
+                String bufs=new String(buf);
+                Number n;
+                if(bufs.indexOf('.')== -1) n=new Integer(bufs); else n=new Double(bufs);
+                return n;
             }
             buf.append(chars[chp]);
         }
