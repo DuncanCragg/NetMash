@@ -24,49 +24,50 @@ public class Twitter extends WebObject {
         }
         else
         if(contentListContains("is", "results")){
-            replyOrFetch();
-        }
-    }
-
-    private void answerQuery(){
-        for(String queryuid: alerted()){
-            if(contentListOfContainsAll(queryuid, "is", list("twitter", "query"))){
-                spawn(new Twitter(uid, queryuid));
-            }
+            notifyResults();
         }
     }
 
     static public final String  FOLLQRE = "users:(.*):followers";
     static public final Pattern FOLLQPA = Pattern.compile(FOLLQRE);
 
-    private void replyOrFetch(){
-        if(content("results")!=null) return;
-        String query=content("query:query");  // or content("query:query:/users:.*:followers/)!=null
-        if(query!=null){
-            Matcher m = FOLLQPA.matcher(query);
-            if(m.matches()){
-                LinkedList followers=contentList("top:"+query);
-                if(followers!=null){
-                    contentList("results", followers);
-                    notifying(content("query"));
-                }
-                else{
-                    String user = m.group(1);
-                    content("results", "fetching "+user);
-                    httpGETJSON("http://api.twitter.com/1/followers/ids/"+user+".json");
+    private void answerQuery(){
+        for(String queryuid: alerted()){
+            if(contentListOfContainsAll(queryuid, "is", list("twitter", "query"))){
+                String query=contentOf(queryuid, "query");  // or content("query:/users:.*:followers/)!=null
+                if(query!=null){
+                    Matcher m = FOLLQPA.matcher(query);
+                    if(m.matches()){
+                        if(contentList(query)==null){
+                            String user = m.group(1);
+                            httpGETJSON("http://api.twitter.com/1/followers/ids/"+user+".json", queryuid);
+                            contentHash("users:"+user, hash("followers", "loading.."));
+                        }
+                        else{
+                            spawn(new Twitter(uid, queryuid));
+                        }
+                    }
                 }
             }
         }
     }
 
     @Override
-    public void httpNotifyJSON(final JSON json){
+    public void httpNotifyJSON(final JSON json, final String queryuid){
         new Evaluator(this){
             public void evaluate(){
-                contentList("results", json.listPathN("list"));
-                notifying(content("query"));
+                String query=contentOf(queryuid, "query");
+                contentList(query, json.listPathN("list"));
+                spawn(new Twitter(uid, queryuid));
             }
         };
+    }
+
+    private void notifyResults(){
+        String query=content("query:query");
+        LinkedList results=contentList("top:"+query);
+        contentList("results", results);
+        notifying(content("query"));
     }
 }
 

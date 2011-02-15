@@ -1,5 +1,7 @@
 package jungle.forest;
 
+import static java.util.Arrays.*;
+
 import java.util.*;
 import java.util.concurrent.*;
 import java.text.*;
@@ -185,6 +187,17 @@ public class WebObject {
         return Arrays.asList(args);
     }
 
+    /** Construct a hash utility. */
+    @SuppressWarnings("unchecked")
+    public LinkedHashMap hash(Object...args){
+        LinkedHashMap hm = new LinkedHashMap();
+        if(args.length==0){                           return hm; }
+        if(args.length==1){ hm.put(args[0], ""     ); return hm; }
+        if(args.length==2){ hm.put(args[0], args[1]); return hm; }
+        else                hm.put(args[0], hash(copyOfRange(args,1,args.length)));
+        return hm;
+    }
+
     /** Get list at path. */
     public LinkedList contentList(String path){
         LinkedList l=null;
@@ -341,12 +354,12 @@ public class WebObject {
     }
 
     /** Initiate an HTTP fetch of JSON data and callback on httpNotifyJSON(). */
-    public void httpGETJSON(String url){
-        funcobs.http.getJSON(url, this);
+    public void httpGETJSON(String url, String param){
+        funcobs.http.getJSON(url, this, param);
     }
 
     /** Callback for httpGETJSON. */
-    public void httpNotifyJSON(final JSON json){}
+    public void httpNotifyJSON(final JSON json, String param){}
 
     /** Call to reset all changes. */
     public void rollback(){

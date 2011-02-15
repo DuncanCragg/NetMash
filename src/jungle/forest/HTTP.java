@@ -107,12 +107,12 @@ public class HTTP implements ChannelUser {
 FunctionalObserver.log("poll\n"+w);
     }
 
-    void getJSON(String url, WebObject w){
+    void getJSON(String url, WebObject w, String param){
         List clientpath = getClient(url);
         if(clientpath==null) return;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.get(path, w);
+        client.get(path, w, param);
     }
 
     // ----------------------------------------------
@@ -284,7 +284,7 @@ abstract class HTTPCommon {
         sb.append(content);
     }
 
-    protected boolean readWebObject(ByteBuffer bytebuffer, String uid, int contentLength, WebObject webobject){
+    protected boolean readWebObject(ByteBuffer bytebuffer, int contentLength, String uid, WebObject webobject, String param){
 
         ByteBuffer body = Kernel.chopAtLength(bytebuffer, contentLength);
         CharBuffer jsonchars = UTF8.decode(body);
@@ -300,7 +300,7 @@ abstract class HTTPCommon {
             funcobs.httpNotify(w);
         }
         else{
-            webobject.httpNotifyJSON(json);
+            webobject.httpNotifyJSON(json, param);
         }
         return true;
     }
@@ -378,8 +378,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         else throw new Exception("POST without Content-Length");
         if(contentLength > bytebuffer.position()) return false;
         if(contentLength >0){
-            if(readWebObject(bytebuffer, uid, contentLength, null)) send200(null);
-            else                                                    send404(); // not 404!
+            if(readWebObject(bytebuffer, contentLength, uid, null, null)) send200(null);
+            else                                                          send404(); // not 404!
         }
         return true;
     }
@@ -438,6 +438,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
     private int       port;
     private String    path;
     private WebObject webobject;
+    private String    param;
     private String    notifieruid=null;
     private boolean   connected=false;
 
@@ -453,9 +454,10 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
         else writable(channel, null, 0);
     }
 
-    public void get(String path, WebObject w){
+    public void get(String path, WebObject w, String param){
         this.path = path;
         this.webobject = w;
+        this.param = param;
         if(!connected) channel = Kernel.channelConnect(host, port, this);
         else writable(channel, null, 0);
     }
@@ -511,7 +513,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         if(eof) contentLength = bytebuffer.position();
         if(contentLength == -1 || contentLength > bytebuffer.position()) return;
-        if(contentLength > 0) readWebObject(bytebuffer, null, contentLength, webobject);
+        if(contentLength > 0) readWebObject(bytebuffer, contentLength, null, webobject, param);
         path=null;
         doingHeaders=true;
     }

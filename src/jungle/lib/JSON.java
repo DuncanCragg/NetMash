@@ -836,10 +836,11 @@ public class JSON {
         boolean structured=false;
         int i=0;
         for(Object val: ll){
-            if(i>5 || val instanceof HashMap || val instanceof LinkedList){
-                structured=true; break;
+            if(val instanceof HashMap || val instanceof LinkedList){
+                structured=true;
+                break;
             }
-            i++;
+            i++; if(i>10) break;
         }
         StringBuilder buf=new StringBuilder();
         buf.append(structured? "[\n": "[");

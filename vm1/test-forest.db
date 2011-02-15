@@ -22,6 +22,6 @@
     "%observe": [],
     "%class": "Twitter",
     "is": [ "twitter", "top" ],
-    "users": { "doncancragg": { "followers": [ "foo", "bar" ] } }
+    "users": { "Duncancragg": { "followers": [ 11878542, 9466742 ] } }
 }
 
