@@ -253,6 +253,12 @@ public class WebObject {
         statemod = updatingState.listPathAddAll(path, val) || statemod;
     }
 
+    /** Remove item at path. */
+    public void contentRemove(String path){
+        doCopyOnWrite(path);
+        statemod = updatingState.removePath(path) || statemod;
+    }
+
     /** Remove all the values in the list at the path. */
     public void contentListRemoveAll(String path, List val){
         doCopyOnWrite(path);

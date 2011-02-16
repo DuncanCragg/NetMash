@@ -497,6 +497,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
         boolean eof=(len== -1);
         try{
             if(eof && doingHeaders && path!=null) throw new Exception("Connection was closed");
+            if(eof) connected=false;
             receiveNextEvent(bytebuffer, eof);
         } catch(Exception e){
             if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();

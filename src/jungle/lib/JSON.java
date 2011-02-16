@@ -2,6 +2,7 @@
 package jungle.lib;
 
 import java.util.*;
+import java.math.*;
 import java.text.*;
 import java.util.regex.*;
 import java.io.*;
@@ -221,16 +222,16 @@ public class JSON {
         return addAllListPath(tophash, path, value);
     }
 
+    /** Remove this entry in its hash or list */
+    public boolean removePath(String path){
+        ensureContent();
+        return doRemovePath(tophash, path);
+    }
+
     /** Remove from list at the given path. */
     public boolean listPathRemoveAll(String path, List value){
         ensureContent();
         return removeAllListPath(tophash, path, value);
-    }
-
-    /** Remove this entry in its hash */
-    public void removePath(String path){
-        ensureContent();
-        doRemovePath(path);
     }
 
     /** Format this JSON.  */
@@ -448,7 +449,15 @@ public class JSON {
                 chp--;
                 String bufs=new String(buf);
                 Number n;
-                if(bufs.indexOf('.')== -1) n=new Integer(bufs); else n=new Double(bufs);
+                if(bufs.indexOf('.')== -1){
+                    boolean neg = bufs.startsWith("-");
+                    int     len = bufs.length();
+                    if((!neg && len >=10 ) || 
+                       ( neg && len >=11 )   ){
+                         n=new BigInteger(bufs);
+                    }
+                    else n=new Integer(bufs); 
+                }else    n=new Double(bufs);
                 return n;
             }
             buf.append(chars[chp]);
@@ -502,6 +511,16 @@ public class JSON {
         if(chars[chp]=='n')  buf.append('\n');
         if(chars[chp]=='r')  buf.append('\r');
         if(chars[chp]=='t')  buf.append('\t');
+        if(chars[chp]=='u')  buf.append(getUTF8());
+    }
+
+    private char getUTF8(){
+        StringBuilder hex = new StringBuilder();
+        hex.append(chars[++chp]);
+        hex.append(chars[++chp]);
+        hex.append(chars[++chp]);
+        hex.append(chars[++chp]);
+        return (char)Integer.parseInt(hex.toString(),16);
     }
 
     private void parseError(char ch) throws Exception{
@@ -636,8 +655,8 @@ public class JSON {
         return hm.get(key);
     }
 
-    private void doRemovePath(String path){
-        setObject(tophash, path, null);
+    private boolean doRemovePath(LinkedHashMap hashmap, String path){
+        return setObject(hashmap, path, null);
     }
 
     private boolean setStringPath(LinkedHashMap hashmap, String path, String value){
@@ -665,7 +684,10 @@ public class JSON {
         LinkedList list=null;
         try{ list = getListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
-        if(list==null) return false;
+        if(list==null){
+           list = new LinkedList();
+           if(!setListPath(hashmap, path, list)) return false;
+        }
         list.add(value);
         return true;
     }
@@ -675,7 +697,10 @@ public class JSON {
         LinkedList list=null;
         try{ list = getListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
-        if(list==null) return false;
+        if(list==null){
+           list = new LinkedList();
+           if(!setListPath(hashmap, path, list)) return false;
+        }
         list.addAll(value);
         return true;
     }
@@ -864,7 +889,7 @@ public class JSON {
         return INDENTSPACES.substring(0,indent);
     }
 
-    private String replaceEscapableChars(String s){
+    static public String replaceEscapableChars(String s){
         return s.replace("\\", "\\\\")
                 .replace("\b", "\\b")
                 .replace("\f", "\\f")

@@ -30,6 +30,8 @@ public class Twitter extends WebObject {
 
     static public final String  FOLLQRE = "users:(.*):followers";
     static public final Pattern FOLLQPA = Pattern.compile(FOLLQRE);
+    static public final String  TIMEQRE = "users:(.*):timeline";
+    static public final Pattern TIMEQPA = Pattern.compile(TIMEQRE);
 
     private void answerQuery(){
         for(String queryuid: alerted()){
@@ -41,11 +43,24 @@ public class Twitter extends WebObject {
                         if(contentList(query)==null){
                             String user = m.group(1);
                             httpGETJSON("http://api.twitter.com/1/followers/ids/"+user+".json", queryuid);
-                            contentHash("users:"+user, hash("followers", "loading.."));
+                            contentHash("users:"+user, hash("followers", "loading..."));
                         }
                         else{
                             spawn(new Twitter(uid, queryuid));
                         }
+                    }
+                    else{
+                    m = TIMEQPA.matcher(query);
+                    if(m.matches()){
+                        if(contentList(query)==null){
+                            String user = m.group(1);
+                            httpGETJSON("http://api.twitter.com/1/statuses/user_timeline/"+user+".json?trim_user=true", queryuid);
+                            contentHash("users:"+user, hash("timeline", "loading..."));
+                        }
+                        else{
+                            spawn(new Twitter(uid, queryuid));
+                        }
+                    }
                     }
                 }
             }

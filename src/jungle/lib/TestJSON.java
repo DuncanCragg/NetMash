@@ -26,10 +26,10 @@ public class TestJSON {
             "{ \"kernel\": { \"modules\": {              \"cache\": \"jungle.cache.JSONCache\",\n"+
             "                                            \"http\": \"jungle.drivers.HTTP\",\n"+
             "                                            \"logic\": \"jungle.drivers.TestDriver\" } },\n"+
-            "                   \"modules\":  { \"cache\": { \"funky\": \"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\"},\n"+
+            "                   \"modules\":  { \"cache\": { \"funky\": \"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\"},\n"+
             "                                 \"http\": { \"port\": 8080 },\n"+
             "                                 \"logic\": [ true, false, null, true, false, null ],\n"+
-            "                                 \"more\": [ true, false, null, true, false, null ] \n"+
+            "                                 \"more\": [ true, 35392743408672770, -2147483649, 2147483648, -2147483648, 2147483647, null, true, false, null ] \n"+
             "                   }\n"+
             "      }\n");
 
@@ -38,7 +38,7 @@ public class TestJSON {
         System.out.println(m);
 
         String funky = m.stringPath("modules:cache:funky");
-        assert funky.equals("\"/\b\f\n\r\t\\\""): "funky should be [\\\"/\\b\\f\\n\\r\\t\\\\\\\"], but it's ["+funky+"]";
+        assert funky.equals("\"/\b\f\n\r\t\\\"£"): "funky should be [\\\"/\\b\\f\\n\\r\\t\\\\\\\"£], but it's ["+JSON.replaceEscapableChars(funky)+"]";
 
         String portstr = m.stringPath("modules:http:port");
         assert portstr.equals("8080"): "port should be 8080, but it's "+portstr;
