@@ -381,6 +381,14 @@ public class WebObject {
     /** Simple logger for ya. */
     public void log(Object o){ FunctionalObserver.log(o); }
 
+    /** Log which rule you're in. */
+    public void logrule(){
+        try{ throw new Exception(); } catch(Exception e){
+            StackTraceElement[] stack=e.getStackTrace();
+            log("================"+stack[1]+"================");
+        }
+    }
+
     /* ---------------------------------------------------- */
 
     private WebObject observing(String observeduid){

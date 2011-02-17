@@ -37,7 +37,7 @@ public class Twitter extends WebObject {
         for(String queryuid: alerted()){
             if(contentListOfContainsAll(queryuid, "is", list("twitter", "query"))){
                 String query=contentOf(queryuid, "query");  // or content("query:/users:.*:followers/)!=null
-                if(query!=null){
+                if(query!=null){ logrule();
                     Matcher m = FOLLQPA.matcher(query);
                     if(m.matches()){
                         if(contentList(query)==null){
@@ -70,7 +70,7 @@ public class Twitter extends WebObject {
     @Override
     public void httpNotifyJSON(final JSON json, final String queryuid){
         new Evaluator(this){
-            public void evaluate(){
+            public void evaluate(){ logrule();
                 String query=contentOf(queryuid, "query");
                 contentList(query, json.listPathN("list"));
                 spawn(new Twitter(uid, queryuid));
@@ -78,11 +78,15 @@ public class Twitter extends WebObject {
         };
     }
 
-    private void notifyResults(){
+    private void notifyResults(){ logrule();
         String query=content("query:query");
-        LinkedList results=contentList("top:"+query);
-        contentList("results", results);
-        notifying(content("query"));
+        if(query!=null){
+            LinkedList results=contentList("top:"+query);
+            if(results!=null){
+                contentList("results", results);
+                notifying(content("query"));
+           }
+       }
     }
 }
 
