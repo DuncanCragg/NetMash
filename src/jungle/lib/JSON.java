@@ -205,7 +205,7 @@ public class JSON {
     }
 
     /** Set list at the given path. */
-    public boolean listPath(String path, LinkedList value){
+    public boolean listPath(String path, List value){
         ensureContent();
         return setListPath(tophash, path, value);
     }
@@ -675,7 +675,7 @@ public class JSON {
         return setObject(hashmap, path, value);
     }
 
-    private boolean setListPath(LinkedHashMap hashmap, String path, LinkedList value){
+    private boolean setListPath(LinkedHashMap hashmap, String path, List value){
         return setObject(hashmap, path, value);
     }
 

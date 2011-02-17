@@ -24,7 +24,7 @@ public class TwitterMash extends WebObject {
         if(contentListContains("is", "top")){
             getFollowers();
             addFollowers();
-            distributeWork();
+     //     distributeWork();
         }
         else
         if(contentListContains("is", "masher")){
@@ -34,7 +34,7 @@ public class TwitterMash extends WebObject {
     }
 
     private void getFollowers(){
-        if(content("followers")==null && !contentListContainsAll("is", list("twitter", "query"))){
+        if(contentList("followers")==null && !contentListContainsAll("is", list("twitter", "query"))){
             contentListAddAll("is", list("twitter", "query")); // Quick change of type
             content("query", "users:"+content("topuser")+":followers" );
             notifying(content("twitter"));

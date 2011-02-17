@@ -183,8 +183,9 @@ public class WebObject {
     }
 
     /** Construct a list utility. */
+    @SuppressWarnings("unchecked")
     public List list(Object...args){
-        return Arrays.asList(args);
+        return new LinkedList(Arrays.asList(args));
     }
 
     /** Construct a hash utility. */
@@ -236,7 +237,7 @@ public class WebObject {
     }
 
     /** Set list at path. */
-    public void contentList(String path, LinkedList val){
+    public void contentList(String path, List val){
         doCopyOnWrite(path);
         statemod = updatingState.listPath(path, val) || statemod;
     }
@@ -436,21 +437,19 @@ public class WebObject {
 
     void evalPost(){
         observe.addAll(alerted);
-        if(obsalmod){
-            notify.addAll(newalert);
-            funcobs.dropNotifies(this, remalert);
-            funcobs.dropNotifiesNotNeeded(this);
-            observe = newobserve;
-            funcobs.cacheSaveAndEvalSpawned(this);
-        }
+        notify.addAll(newalert);
+        funcobs.dropNotifies(this, remalert);
+        funcobs.dropNotifiesNotNeeded(this);
+        observe = newobserve;
         if(statemod){
             publicState = updatingState;
             etag++;  // should be atomic with state!
             funcobs.saveAndNotifyUpdated(this);
         }
-        if(obsalmod && !statemod){
+        else{
             funcobs.saveAndAlertFirstTime(this);
         }
+        funcobs.cacheSaveAndEvalSpawned(this);
     }
 
     /* ---------------------------------------------------- */

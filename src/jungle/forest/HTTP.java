@@ -5,6 +5,7 @@ import static java.util.Arrays.*;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
+import java.util.concurrent.*;
 import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
@@ -432,65 +433,85 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 }
 
 
-class HTTPClient extends HTTPCommon implements ChannelUser  {
+class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
     private String    host;
     private int       port;
+
     private String    path;
     private WebObject webobject;
     private String    param;
     private String    notifieruid=null;
-    private boolean   connected=false;
+
+    private boolean                   connected=false;
+    private LinkedBlockingQueue<List> requests = new LinkedBlockingQueue<List>();
 
     public HTTPClient(String host, int port){
         funcobs = FunctionalObserver.funcobs;
         this.host = host;
         this.port = port;
+        new Thread(this).start();
     }
 
     public void get(String path){
-        this.path = path;
-        if(!connected) channel = Kernel.channelConnect(host, port, this);
-        else writable(channel, null, 0);
+        try{ this.requests.put(asList(path, null, null, null)); }catch(Exception e){}
     }
 
-    public void get(String path, WebObject w, String param){
-        this.path = path;
-        this.webobject = w;
-        this.param = param;
-        if(!connected) channel = Kernel.channelConnect(host, port, this);
-        else writable(channel, null, 0);
+    public void get(String path, WebObject webobject, String param){
+        try{ this.requests.put(asList(path, webobject, param, null)); }catch(Exception e){}
     }
 
     public void post(String path, String notifieruid){
-        this.path = path;
-        this.notifieruid = notifieruid;
-        if(!connected) channel = Kernel.channelConnect(host, port, this);
-        else writable(channel, null, 0);
+        try{ this.requests.put(asList(path, null, null, notifieruid)); }catch(Exception e){}
+    }
+
+    public void run(){
+        while(true){
+            getNextRequest();
+            if(!connected) channel = Kernel.channelConnect(host, port, this);
+            else makeRequest();
+            synchronized(this){ try{ wait(); }catch(Exception e){} }
+        }
+    }
+
+    private void getNextRequest(){
+        List req=null; try{ req = this.requests.take(); }catch(Exception e){}
+        path        = (String)   req.get(0);
+        webobject   = (WebObject)req.get(1);
+        param       = (String)   req.get(2);
+        notifieruid = (String)   req.get(3);
+    }
+
+    private void removeRequest(){
+        path=null;
+        webobject=null;
+        param=null;
+        notifieruid=null;
     }
 
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
         boolean sof = (len==0);
-        if(sof){
-            connected = true;
-            StringBuilder sb=new StringBuilder();
-            if(notifieruid==null){
-                sb.append("GET "); sb.append(path); sb.append(" HTTP/1.1\r\n");
-                sb.append("Host: "); sb.append(host); sb.append(":"+port); sb.append("\r\n");
-                sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
-                sb.append("\r\n");
-            }
-            else{
-                WebObject w = funcobs.cacheGet(notifieruid);
-                sb.append("POST "); sb.append(path); sb.append(" HTTP/1.1\r\n");
-                sb.append("Host: "); sb.append(host); sb.append(":"+port); sb.append("\r\n");
-                sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
-                contentHeadersAndBody(sb, w, getPercents());
-                notifieruid=null;
-            }
-            if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("--------------->\n"+sb);
-            Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
+        if(sof) makeRequest();
+    }
+
+    private void makeRequest(){
+        StringBuilder sb=new StringBuilder();
+        if(notifieruid==null){
+            sb.append("GET "); sb.append(path); sb.append(" HTTP/1.1\r\n");
+            sb.append("Host: "); sb.append(host); sb.append(":"+port); sb.append("\r\n");
+            sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
+            sb.append("\r\n");
         }
+        else{
+            WebObject w = funcobs.cacheGet(notifieruid);
+            sb.append("POST "); sb.append(path); sb.append(" HTTP/1.1\r\n");
+            sb.append("Host: "); sb.append(host); sb.append(":"+port); sb.append("\r\n");
+            sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
+            contentHeadersAndBody(sb, w, getPercents());
+            notifieruid=null;
+        }
+        if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("--------------->\n"+sb);
+        Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
     public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
@@ -515,8 +536,9 @@ class HTTPClient extends HTTPCommon implements ChannelUser  {
         if(eof) contentLength = bytebuffer.position();
         if(contentLength == -1 || contentLength > bytebuffer.position()) return;
         if(contentLength > 0) readWebObject(bytebuffer, contentLength, null, webobject, param);
-        path=null;
         doingHeaders=true;
+        removeRequest();
+        synchronized(this){ notify(); }
     }
 }
 
