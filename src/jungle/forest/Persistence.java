@@ -44,7 +44,7 @@ public class Persistence implements FileUser {
         Iterator i = preloadlist.iterator();
         while(i.hasNext()) cache((String)i.next());
 
-        System.out.println("Persistence: initialised. Using "+file.getPath());
+        FunctionalObserver.log("Persistence: initialised. Using "+file.getPath());
     }
 
     public void readable(ByteBuffer bytebuffer, int len){

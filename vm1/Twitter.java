@@ -82,7 +82,7 @@ public class Twitter extends WebObject {
         String query=content("query:query");
         if(query!=null){
             LinkedList results=contentList("top:"+query);
-            if(results!=null){
+            if(results!=null && contentList("results")==null){
                 contentList("results", results);
                 notifying(content("query"));
            }

@@ -51,14 +51,14 @@ public class TwitterMash extends WebObject {
     }
 
     private void distributeWork(){
-        if(contentList("mashers")==null ||
-           contentList("mashers").size()< 1 ){
+        while(contentList("mashers")==null ||
+              contentList("mashers").size()< 2 ){
 
             String follower = content("followers:0");
             if(follower!=null){ logrule();
                 contentListAdd("mashers", spawn(new TwitterMash(follower, uid, content("twitter"))));
                 contentRemove("followers:0");
-            }
+            } else break;
         }
     }
 

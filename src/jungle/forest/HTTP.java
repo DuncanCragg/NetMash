@@ -29,7 +29,7 @@ public class HTTP implements ChannelUser {
     public HTTP(){
         int port = Kernel.config.intPathN("network:port");
         Kernel.listen(port, this);
-        System.out.println("HTTP: initialised. Listening on port "+port);
+        FunctionalObserver.log("HTTP: initialised. Listening on port "+port);
     }
 
     // ----------------------------------------
@@ -102,6 +102,7 @@ public class HTTP implements ChannelUser {
         for(String notifieruid: w.alertedin){
             client.post(path, notifieruid);
         }
+        w.alertedin = new ConcurrentSkipListSet<String>();
     }
 
     void poll(WebObject w){
@@ -334,7 +335,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             receiveNextEvent(bytebuffer, eof);
         } catch(Exception e){
             if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
-            System.err.println("Failed reading event ("+e.getMessage()+") - closing connection");
+            FunctionalObserver.log("Failed reading event ("+e.getMessage()+") - closing connection");
             doingHeaders=true;
             Kernel.close(channel);
         }
@@ -348,7 +349,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
                 else   Kernel.close(channel);
             }
         } catch(Exception e){
-            System.err.println("Failed reading event ("+e.getMessage()+") - closing connection");
+            FunctionalObserver.log("Failed reading event ("+e.getMessage()+") - closing connection");
             Kernel.close(channel);
         }
     }
@@ -490,6 +491,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     }
 
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
+        if(path==null) return;
         boolean sof = (len==0);
         if(sof) makeRequest();
     }
@@ -517,13 +519,12 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
         boolean eof=(len== -1);
         try{
-            if(eof && doingHeaders && path!=null) throw new Exception("Connection was closed");
             if(eof) connected=false;
+            if(eof && doingHeaders && path!=null) throw new Exception("Connection was closed");
             receiveNextEvent(bytebuffer, eof);
         } catch(Exception e){
             if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
-            System.err.println("Failed reading event ("+e.getMessage()+") - closing connection");
-            path=null;
+            FunctionalObserver.log("Failed reading event ("+e.getMessage()+") - closing connection");
             doingHeaders=true;
             Kernel.close(channel);
             connected=false;

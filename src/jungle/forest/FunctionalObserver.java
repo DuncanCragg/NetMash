@@ -27,7 +27,7 @@ public class FunctionalObserver implements Module {
         persistence = new Persistence();
         http        = new HTTP();
         evaluateCache();
-        System.out.println("FunctionalObserver: Module initialised");
+        log("FunctionalObserver: Module initialised");
     }
 
     // -------------------------------
@@ -207,8 +207,8 @@ public class FunctionalObserver implements Module {
         System.out.println("---"+Kernel.config.stringPathN("name")+"---"+thread+"-----------\n"+o);
     }
 
-    static public void whereAmI(){
-        try{ throw new Exception(); } catch(Exception e){ e.printStackTrace(); }
+    static public void whereAmI(String message){
+        try{ throw new Exception(); } catch(Exception e){ log(message+"\n"+Arrays.asList(e.getStackTrace())); }
     }
 
     // -------------------------------
