@@ -469,7 +469,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     public void run(){
         while(true){
             getNextRequest();
-            if(!connected) channel = Kernel.channelConnect(host, port, this);
+            if(!connected){ channel = Kernel.channelConnect(host, port, this); connected=true; }
             else makeRequest();
             synchronized(this){ try{ wait(); }catch(Exception e){} }
         }
@@ -518,9 +518,8 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
     public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
         boolean eof=(len== -1);
+        if(eof) connected=false;
         try{
-            if(eof) connected=false;
-            if(eof && doingHeaders && path!=null) throw new Exception("Connection was closed");
             receiveNextEvent(bytebuffer, eof);
         } catch(Exception e){
             if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
@@ -529,6 +528,8 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             Kernel.close(channel);
             connected=false;
         }
+        if(doingHeaders && httpConnection.equals("close")) connected=false;
+        if(doingHeaders) synchronized(this){ notify(); }
     }
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
@@ -539,7 +540,6 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         if(contentLength > 0) readWebObject(bytebuffer, contentLength, null, webobject, param);
         doingHeaders=true;
         removeRequest();
-        synchronized(this){ notify(); }
     }
 }
 
