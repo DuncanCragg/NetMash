@@ -120,7 +120,7 @@ FunctionalObserver.log("poll\n"+w);
     // ----------------------------------------------
 
     static public String encodeSpacesAndUTF8IntoPercents(String path){
-        return path;
+        try{ return new URI(null, path, null).toASCIIString(); }catch(Exception e){ return path; }
     }
 
     static public String queryAndFormEncode(String path){

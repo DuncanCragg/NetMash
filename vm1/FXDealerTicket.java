@@ -71,9 +71,7 @@ public class FXDealerTicket extends WebObject {
                 contentDouble("params:2") !=     contentDouble("order:params:2")  ||
                 contentDouble("params:3") !=     contentDouble("order:params:3")    ){
 
-                LinkedList<Object> ll = new LinkedList<Object>();
-                ll.add("filled"); ll.add("not-as-ordered");
-                contentList("status", ll);
+                contentList("status", list("filled", "not-as-ordered"));
             }
             else{
                 content("status", "filled");
