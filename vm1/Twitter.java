@@ -20,7 +20,8 @@ public class Twitter extends WebObject {
 
     public void evaluate(){
         if(contentListContains("is", "top")){
-            answerQuery();
+            answerFollowersQuery();
+            answerTimelineQuery();
         }
         else
         if(contentListContains("is", "results")){
@@ -33,7 +34,7 @@ public class Twitter extends WebObject {
     static public final String  TIMEQRE = "users:(.*):timeline";
     static public final Pattern TIMEQPA = Pattern.compile(TIMEQRE);
 
-    private void answerQuery(){
+    private void answerFollowersQuery(){
         for(String queryuid: alerted()){
             if(contentListOfContainsAll(queryuid, "is", list("twitter", "query"))){
                 String query=contentOf(queryuid, "query");  // or content("query:/users:.*:followers/)!=null
@@ -49,8 +50,17 @@ public class Twitter extends WebObject {
                             spawn(new Twitter(uid, queryuid));
                         }
                     }
-                    else{
-                    m = TIMEQPA.matcher(query);
+                }
+            }
+        }
+    }
+
+    private void answerTimelineQuery(){
+        for(String queryuid: alerted()){
+            if(contentListOfContainsAll(queryuid, "is", list("twitter", "query"))){
+                String query=contentOf(queryuid, "query");  // or content("query:/users:.*:followers/)!=null
+                if(query!=null){ logrule();
+                    Matcher m = TIMEQPA.matcher(query);
                     if(m.matches()){
                         if(contentList(query)==null){
                             String user = m.group(1);
@@ -61,18 +71,22 @@ public class Twitter extends WebObject {
                             spawn(new Twitter(uid, queryuid));
                         }
                     }
-                    }
                 }
             }
         }
     }
 
+    static public final JSON Twitter2MicroBlogMap=new JSON("{ \"id\":      \"id\","+
+                                                             "\"text\":    \"text\","+
+                                                             "\"created\": \"created_at\","+
+                                                             "\"geo\":     \"geo\""+
+                                                           "}");
     @Override
     public void httpNotifyJSON(final JSON json, final String queryuid){
         new Evaluator(this){
             public void evaluate(){ logrule();
                 String query=contentOf(queryuid, "query");
-                contentList(query, json.listPathN("list"));
+                contentList(query, json.mapList("list", Twitter2MicroBlogMap));
                 spawn(new Twitter(uid, queryuid));
             }
         };

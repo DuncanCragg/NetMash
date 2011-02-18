@@ -234,6 +234,28 @@ public class JSON {
         return removeAllListPath(tophash, path, value);
     }
 
+    /** Apply map to the list of hashes at path and return it. */
+    @SuppressWarnings("unchecked")
+    public LinkedList<LinkedHashMap> mapList(String path, JSON map){
+        LinkedList in = listPathN(path);
+        LinkedList out = new LinkedList<LinkedHashMap>();
+        for(Object o: in){
+            if(!(o instanceof LinkedHashMap)) out.add(o);
+            else out.add(mapHash((LinkedHashMap)o, map.content()));
+        }
+        return out;
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedHashMap mapHash(LinkedHashMap in, LinkedHashMap<String,String> map){
+        LinkedHashMap out=new LinkedHashMap();
+        for(Object key: map.keySet()){
+            Object o = getObjectN(in, map.get(key));
+            if(o!=null) out.put(key, o);
+        }
+        return out;
+    }
+
     /** Format this JSON.  */
     public String toString(){
         ensureContent();
@@ -592,11 +614,16 @@ public class JSON {
         return null;
     }
 
-    private Object getObject(LinkedHashMap hashmap, String path) throws PathOvershot{
+    static private Object getObjectN(LinkedHashMap hashmap, String path){
+        try{ return getObject(hashmap, path); }catch(PathOvershot po){ return null; }
+    }
+
+    @SuppressWarnings("unchecked")
+    static private Object getObject(LinkedHashMap hashmap, String path) throws PathOvershot{
         if(path.length()==0) return null;
         if(path.charAt(0)==':') path=path.substring(1);
         String[] parts=path.split(":");
-        LinkedHashMap hm=hashmap;
+        LinkedHashMap<String,Object> hm=hashmap;
         for(int i=0; i<parts.length; i++){
             Object o=null;
             String part=parts[i];
@@ -641,18 +668,16 @@ public class JSON {
         return null;
     }
 
-    private void throwPathOvershot(Object o, String[] parts, int i) throws PathOvershot{
+    static private void throwPathOvershot(Object o, String[] parts, int i) throws PathOvershot{
         String path = parts[++i];
         for(i++ ; i<parts.length; i++) path+=":"+parts[i];
         throw new PathOvershot(o, path);
     }
 
-    private Object getSingleEntry(LinkedHashMap hm){
+    static private Object getSingleEntry(LinkedHashMap<String,Object> hm){
         if(hm.size()!=1) return null;
-        Iterator it=hm.keySet().iterator();
-        it.hasNext();
-        String key=(String)it.next();
-        return hm.get(key);
+        for(String key: hm.keySet()) return hm.get(key);
+        return null;
     }
 
     private boolean doRemovePath(LinkedHashMap hashmap, String path){
@@ -721,7 +746,7 @@ public class JSON {
         if(path.length()==0) return changed;
         if(path.charAt(0)==':') path=path.substring(1);
         String[] parts=path.split(":");
-        LinkedHashMap hm=hashmap;
+        LinkedHashMap<String,Object> hm=hashmap;
         for(int i=0; i<parts.length; i++){
             Object o=null;
             String part=parts[i];
