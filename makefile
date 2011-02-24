@@ -1,4 +1,8 @@
 
+# Where you want the Android apk to be copied
+DEBUG_TARGET=~/HostDesktop
+RELEASE_TARGET=../net/duncan-cragg.org/AppsNet.apk
+
 classes: \
 ./build/classes/jungle/platform/Server.class \
 ./build/classes/jungle/platform/Kernel.class \
@@ -57,11 +61,16 @@ jar: classes
 
 appsnet:
 	ant debug
-	cp bin/Appsnet-debug.apk ~/HostDesktop
+	cp bin/AppsNet-debug.apk $(DEBUG_TARGET)
+
+appsnetrel:
+	ant release
+	cp bin/AppsNet-release.apk $(RELEASE_TARGET)
 
 clean:
 	rm -rf ./build/classes/*.class ./build/classes/jungle
 	rm -rf ./vm*/*.class
 	rm -rf ./vm*/forest.db
-
+	rm -rf bin/classes bin/classes.dex
+	rm -rf bin/AppsNet.ap_ bin/AppsNet*un*ed.apk
 

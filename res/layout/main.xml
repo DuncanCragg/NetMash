@@ -7,7 +7,7 @@
 <TextView  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="Appsnet. Apps on the Net."
+    android:text="AppsNet. Apps on the Net."
     />
 </LinearLayout>
 
