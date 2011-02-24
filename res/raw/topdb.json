@@ -1,0 +1,9 @@
+{   "%uid": "uid-05e7-a5ff-6a42-0027",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "jungle.appsnet.User",
+    "is": [ "user" ],
+    "viewing": "http://cilux.net:8081/o/uid-2161-baf3-858b-858c.json"
+}
+

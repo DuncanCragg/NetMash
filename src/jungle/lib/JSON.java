@@ -17,6 +17,12 @@ public class JSON {
 
     //----------------------------------
 
+    /** Make from a JSON InputStream. */
+    public JSON(InputStream is) throws Exception{
+        chars = getStringFromIS(is).toCharArray();
+        chp=0;
+    }
+
     /** Make from a JSON file. */
     public JSON(File file) throws Exception{
         chars = getStringFromFile(file).array();
@@ -263,11 +269,27 @@ public class JSON {
         return new String(chars);
     }
 
+    /** Format this JSON: single line of given max length. */
+    public String toString(int maxlength){
+        if(maxlength==0) return toString();
+        ensureContent();
+        ensureChars(maxlength);
+        return new String(chars);
+    }
+
     /** Format this JSON: prepend given string to top hash content. */
     public String toString(String prepend){
         ensureContent();
         ensureChars();
         return "{   "+prepend.trim()+"\n"+new String(chars).substring(2);
+    }
+
+    /** Format this JSON: prepend given string to top hash content; single line of given max length. */
+    public String toString(String prepend, int maxlength){
+        if(maxlength==0) return toString(prepend);
+        ensureContent();
+        ensureChars(maxlength);
+        return "{ "+prepend.trim()+" "+new String(chars).substring(2);
     }
 
     //----------------------------------
@@ -280,6 +302,14 @@ public class JSON {
     //----------------------------------
 
     static public final Charset UTF8 = Charset.forName("UTF-8");
+
+    private String getStringFromIS(InputStream is) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        char[] buffer = new char[1024];
+        while(br.read(buffer, 0, buffer.length)!= -1) sb.append(buffer);
+        return sb.toString();
+    }
 
     private CharBuffer getStringFromFile(File file) throws Exception{
 
@@ -847,60 +877,70 @@ public class JSON {
     //----------------------------------
 
     private void ensureChars(){
+        ensureChars(0);
+    }
+
+    private void ensureChars(int maxlength){
         StringBuilder buf = new StringBuilder();
         if(tophash!=null){
-            buf.append(hashToString((LinkedHashMap)tophash,4));
+            buf.append(hashToString((LinkedHashMap)tophash,4,maxlength));
         }
         chars = new String(buf).toCharArray();
         chp=0;
     }
 
-    private String objectToString(Object o, int indent){
+    private String objectToString(Object o, int indent, int maxlength){
         if(o==null) return "null";
         if(o instanceof String)        return "\""+replaceEscapableChars((String)o)+"\"";
-        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o,    indent+4);
-        if(o instanceof LinkedList)    return listToString((LinkedList)o, indent+4);
+        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+4, maxlength);
+        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+4, maxlength);
         return o.toString();
     }
 
-    private String hashToString(LinkedHashMap hm, int indent){
+    private String hashToString(LinkedHashMap hm, int indent, int maxlength){
         if(hm==null) return "null";
         if(hm.size()==0) return "{ }";
+        boolean structured=(maxlength==0);
         StringBuilder buf=new StringBuilder();
-        buf.append("{\n");
+        buf.append(structured? "{\n": "{ ");
         int i=0;
         for(Iterator it=hm.keySet().iterator(); it.hasNext(); i++){
             String tag = (String)it.next();
             Object val = hm.get(tag);
-            if(i==0) buf.append(      indentation(indent));
-            else     buf.append(",\n"+indentation(indent));
-            buf.append("\""+tag+"\": "+objectToString(val, indent));
+            if(structured){
+                if(i==0) buf.append(      indentation(indent));
+                else     buf.append(",\n"+indentation(indent));
+            } else buf.append(i==0? " ": ", ");
+            buf.append("\""+tag+"\": "+objectToString(val, indent, maxlength));
         }
-        buf.append("\n"+indentation(indent-4)+"}");
+        if(structured) buf.append("\n"+indentation(indent-4)+"}");
+        else           buf.append("}");
         return buf.toString();
     }
 
-    private String listToString(LinkedList ll, int indent){
+    private String listToString(LinkedList ll, int indent, int maxlength){
         if(ll==null)  return "null";
         if(ll.size()==0) return "[ ]";
         boolean structured=false;
-        int i=0;
-        for(Object val: ll){
-            if(val instanceof HashMap || val instanceof LinkedList){
-                structured=true;
-                break;
+        if(maxlength==0){
+            int i=0;
+            for(Object val: ll){
+                if(val instanceof HashMap || val instanceof LinkedList){
+                    structured=true;
+                    break;
+                }
+                i++; if(i>10) break;
             }
-            i++; if(i>10) break;
         }
         StringBuilder buf=new StringBuilder();
         buf.append(structured? "[\n": "[");
-        i=0;
+        int i=0;
         for(Object val: ll){
             if(structured){
                 if(i==0) buf.append(      indentation(indent));
                 else     buf.append(",\n"+indentation(indent));
             } else buf.append(i==0? " ": ", ");
-            buf.append(objectToString(val, indent));
+            buf.append(objectToString(val, indent, maxlength));
             i++;
         }
         if(structured) buf.append("\n"+indentation(indent-4)+" ]");

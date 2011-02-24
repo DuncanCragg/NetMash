@@ -2,6 +2,7 @@ package jungle.forest;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.io.*;
 
 import jungle.platform.*;
 import jungle.lib.*;
@@ -16,18 +17,26 @@ public class FunctionalObserver implements Module {
     public Persistence persistence;
     public HTTP http;
 
+    private InputStream      topdbis=null;
+    private FileOutputStream topdbos=null;
+
     private ConcurrentHashMap<String,WebObject> cache = new ConcurrentHashMap<String,WebObject>();
 
-    /** Constructor called by Kernel. */
     public FunctionalObserver(){
         funcobs = this;
     }
 
+    public FunctionalObserver(InputStream topdbis, FileOutputStream topdbos){
+        funcobs = this;
+        this.topdbis=topdbis;
+        this.topdbos=topdbos;
+    }
+
     public void run(){
-        persistence = new Persistence();
+        persistence = new Persistence(topdbis, topdbos);
         http        = new HTTP();
         evaluateCache();
-        log("FunctionalObserver: Module initialised");
+        log("FunctionalObserver: initialised");
     }
 
     // -------------------------------
@@ -208,7 +217,7 @@ public class FunctionalObserver implements Module {
     }
 
     static public void whereAmI(String message){
-        try{ throw new Exception(); } catch(Exception e){ log(message+"\n"+Arrays.asList(e.getStackTrace())); }
+        try{ throw new Exception(); } catch(Exception e){ log(message+": "+Arrays.asList(e.getStackTrace())); }
     }
 
     // -------------------------------

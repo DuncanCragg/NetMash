@@ -36,6 +36,9 @@ public class TestJSON {
         System.out.println(m);
         m=new JSON(m.toString());
         System.out.println(m);
+        m=new JSON(m.toString("\"extra\": 33, "));
+        System.out.println(m);
+        System.out.println(m.toString(33));
 
         String funky = m.stringPath("modules:cache:funky");
         assert funky.equals("\"/\b\f\n\r\t\\\"£"): "funky should be [\\\"/\\b\\f\\n\\r\\t\\\\\\\"£], but it's ["+JSON.replaceEscapableChars(funky)+"]";

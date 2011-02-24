@@ -33,7 +33,11 @@ public class Kernel {
     //-----------------------------------------------------
 
     static public void init(Module runmod){
-        initConfig();
+        init(null, runmod);
+    }
+
+    static public void init(JSON conf, Module runmod){
+        initConfig(conf);
         initNetwork();
         threadPool=Executors.newFixedThreadPool(config.intPathN("kernel:threadpool"));
         runmodule=runmod;
@@ -41,7 +45,7 @@ public class Kernel {
 
     static public void run(){
         runmodule.run();
-        eventLoop();
+        new Thread(){ public void run(){ eventLoop(); } }.start();
     }
 
     //-----------------------------------------------------
@@ -93,22 +97,37 @@ public class Kernel {
 
     static public void readFile(File file, FileUser fileuser) throws Exception{
         if(!(file.exists() && file.canRead())) throw new Exception("Can't read file "+file.getPath());
-
         FileChannel channel    = new FileInputStream(file).getChannel();
         ByteBuffer  bytebuffer = ByteBuffer.allocate(FILEREADBUFFERSIZE);
+        int len=0;
+        while(len!= -1){
+            len=channel.read(bytebuffer);
+            fileuser.readable(bytebuffer, len);
+            bytebuffer=ensureBufferBigEnough(bytebuffer);
+        }
+    }
 
-        int n=0;
-        while(n!= -1){
-            n=channel.read(bytebuffer);
-            fileuser.readable(bytebuffer, n);
+    static public void readFile(InputStream is, FileUser fileuser) throws Exception{
+        byte[] buffer = new byte[FILEREADBUFFERSIZE];
+        ByteBuffer bytebuffer = ByteBuffer.allocate(FILEREADBUFFERSIZE);
+        int len=0;
+        while(len!= -1){
+            len=is.read(buffer, 0, bytebuffer.remaining());
+            if(len!= -1) bytebuffer.put(buffer, 0, len);
+            fileuser.readable(bytebuffer, len);
+            bytebuffer=ensureBufferBigEnough(bytebuffer);
         }
     }
 
     static public void writeFile(File file, boolean append, ByteBuffer bytebuffer, FileUser fileuser) throws Exception{
         if(!(file.exists() && file.canWrite()))  throw new Exception("Can't write file "+file.getPath());
-
         FileChannel channel = new FileOutputStream(file, append).getChannel();
+        int n=channel.write(bytebuffer);
+        fileuser.writable(bytebuffer, n);
+    }
 
+    static public void writeFile(FileOutputStream os, ByteBuffer bytebuffer, FileUser fileuser) throws Exception{
+        FileChannel channel = os.getChannel();
         int n=channel.write(bytebuffer);
         fileuser.writable(bytebuffer, n);
     }
@@ -135,9 +154,10 @@ public class Kernel {
 
     //-----------------------------------------------------
 
-    static private void initConfig(){
+    static private void initConfig(JSON conf){
         try{
-            config = new JSON(new File("./jungle-config.json"));
+            if(conf==null) config = new JSON(new File("./jungle-config.json"));
+            else           config = conf;
         } catch(Exception e){ bailOut("Error in config file", e, null); }
     }
 
@@ -150,7 +170,6 @@ public class Kernel {
     //-----------------------------------------------------
 
     static private void eventLoop(){
-
 
         System.out.println("Kernel: running "+config.stringPathN("name"));
 
@@ -323,6 +342,17 @@ public class Kernel {
         bytebuffers.add(bytebuffer);
     }
 
+    static private ByteBuffer ensureBufferBigEnough(ByteBuffer bytebuffer){
+        if(bytebuffer.position() != bytebuffer.capacity()) return bytebuffer;
+        ByteBuffer biggerbuffer = ByteBuffer.allocate(bytebuffer.capacity()*2);
+        bytebuffer.flip();
+        biggerbuffer.put(bytebuffer);
+        if(biggerbuffer.capacity() >= 64 * 1024){
+            System.out.println("Kernel: New file read buffer size="+biggerbuffer.capacity());
+        }
+        return biggerbuffer;
+    }
+
     static private void ensureBufferBigEnough(SocketChannel channel, ByteBuffer bytebuffer){
         if(bytebuffer.position() == bytebuffer.capacity()){
             ByteBuffer biggerbuffer = ByteBuffer.allocate(bytebuffer.capacity()*2);
@@ -331,7 +361,7 @@ public class Kernel {
             bytebuffer = biggerbuffer;
             rdbuffers.put(channel, bytebuffer);
             if(bytebuffer.capacity() >= 64 * 1024){
-                System.out.println("Kernel: New read buffer size="+bytebuffer.capacity());
+                System.out.println("Kernel: New socket read buffer size="+bytebuffer.capacity());
             }
         }
     }

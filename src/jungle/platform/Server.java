@@ -1,6 +1,4 @@
 
-//---------------------------------------------------------
-
 package jungle.platform;
 
 import jungle.Version;

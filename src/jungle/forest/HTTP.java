@@ -28,8 +28,13 @@ public class HTTP implements ChannelUser {
 
     public HTTP(){
         int port = Kernel.config.intPathN("network:port");
-        Kernel.listen(port, this);
-        FunctionalObserver.log("HTTP: initialised. Listening on port "+port);
+        if(port>0){
+            Kernel.listen(port, this);
+            FunctionalObserver.log("HTTP: initialised. Listening on port "+port);
+        }
+        else{
+            FunctionalObserver.log("HTTP: initialised. No port; not listening");
+        }
     }
 
     // ----------------------------------------

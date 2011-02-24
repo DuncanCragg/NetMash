@@ -21,21 +21,34 @@ public class Persistence implements FileUser {
 
     public  FunctionalObserver funcobs;
 
-    private File file;
+    private File dbfile=null;
+    private InputStream      topdbis=null;
+    private FileOutputStream topdbos=null;
 
     private ConcurrentHashMap<String,CharBuffer> jsoncache = new ConcurrentHashMap<String,CharBuffer>();
     private ConcurrentSkipListSet<String>        syncable  = new ConcurrentSkipListSet<String>();
 
     // ----------------------------------------
 
-    public Persistence(){
+    public Persistence(InputStream topdbis, FileOutputStream topdbos){
 
         funcobs = FunctionalObserver.funcobs;
+        this.topdbis = topdbis;
+        this.topdbos = topdbos;
+
         String directory = Kernel.config.stringPathN("persist:directory");
         String db        = Kernel.config.stringPathN("persist:db");
-        file = new File(directory+"/"+db);
-        try{ Kernel.readFile(file, this); }
-        catch(Exception e){ FunctionalObserver.log("Persistence: Failure reading DB: "+e.getMessage()); }
+        if(topdbis==null){
+           dbfile = new File(directory+"/"+db);
+           try{ Kernel.readFile(dbfile, this); }
+           catch(Exception e){ FunctionalObserver.log("Persistence: Failure reading DB: "+e.getMessage()); }
+           FunctionalObserver.log("Persistence: Local database at "+directory+"/"+db);
+        }
+        else{
+           try{ Kernel.readFile(topdbis, this); }
+           catch(Exception e){ FunctionalObserver.log("Persistence: Failure reading DB: "+e.getMessage()); }
+           FunctionalObserver.log("Persistence: Local database at "+db);
+        }
 
         final int syncrate = Kernel.config.intPathN("persist:syncrate");
         new Thread(){ public void run(){ runSync(syncrate); } }.start();
@@ -44,7 +57,7 @@ public class Persistence implements FileUser {
         Iterator i = preloadlist.iterator();
         while(i.hasNext()) cache((String)i.next());
 
-        FunctionalObserver.log("Persistence: initialised. Using "+file.getPath());
+        FunctionalObserver.log("Persistence: initialised.");
     }
 
     public void readable(ByteBuffer bytebuffer, int len){
@@ -101,8 +114,14 @@ public class Persistence implements FileUser {
                 if(syncuid==null) break;
                 CharBuffer jsonchars = jsoncache.get(syncuid);
                 ByteBuffer bytebuffer = UTF8.encode(jsonchars);
-                try{ Kernel.writeFile(file, true, bytebuffer, this); }
-                catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
+                if(topdbos==null){
+                    try{ Kernel.writeFile(dbfile, true, bytebuffer, this); }
+                    catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
+                }
+                else{
+                    try{ Kernel.writeFile(topdbos,       bytebuffer, this); }
+                    catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
+                }
             }
             try{ Thread.sleep(syncrate!=0? syncrate: 100); }catch(Exception e){}
         }

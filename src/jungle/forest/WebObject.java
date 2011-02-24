@@ -462,6 +462,22 @@ public class WebObject {
 
     /* ---------------------------------------------------- */
 
+    public String toString(int maxlength){
+        if(maxlength==0) return toString();
+        if(isShell()) return "{ \"%uid\": \""+uid+
+                           "\", \"%notify\": "+setToListString(notify)+
+                             ", \"%alertedin\": "+setToListString(alertedin)+
+                             ", \"%state\": \""+shellstate+"\"}";
+        String r = publicState.toString(
+                                "\"%uid\": \""+uid+
+                            "\", \"%etag\": "+etag+
+                              ", \"%notify\": "+setToListString(notify)+
+                              ", \"%observe\": "+setToListString(observe)+
+                              ", \"%class\": \""+this.getClass().toString().substring(6)+
+                            "\",", maxlength);
+        return r;
+    }
+
     public String toString(){
         if(isShell()) return "{ \"%uid\": \""+uid+
                          "\",\n \"%notify\": "+setToListString(notify)+
