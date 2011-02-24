@@ -1,6 +1,6 @@
 
 classes: \
-./build/classes/Jungle.class \
+./build/classes/jungle/platform/Server.class \
 ./build/classes/jungle/platform/Kernel.class \
 ./build/classes/jungle/platform/Module.class \
 ./build/classes/jungle/platform/ChannelUser.class \
@@ -28,10 +28,10 @@ run2: jar kill
 runall: run1 run2
 
 runon1: jar kill
-	( cd vm1 ; java -classpath .:../build/jungle.jar Jungle & )
+	( cd vm1 ; java -classpath .:../build/jungle.jar jungle.platform.Server & )
 
 runon2: jar kill
-	( cd vm2 ; java -classpath .:../build/jungle.jar Jungle & )
+	( cd vm2 ; java -classpath .:../build/jungle.jar jungle.platform.Server & )
 
 whappen:
 	vim -o -N vm1/forest.db vm1/jungle.log vm2/forest.db vm2/jungle.log
@@ -54,6 +54,10 @@ runuid: jar
 
 jar: classes
 	( cd ./build/classes; jar cfm ../jungle.jar ../META-INF/MANIFEST.MF . )
+
+appsnet:
+	ant debug
+	cp bin/Appsnet-debug.apk ~/HostDesktop
 
 clean:
 	rm -rf ./build/classes/*.class ./build/classes/jungle
