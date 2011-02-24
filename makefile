@@ -73,4 +73,5 @@ clean:
 	rm -rf ./vm*/forest.db
 	rm -rf bin/classes bin/classes.dex
 	rm -rf bin/AppsNet.ap_ bin/AppsNet*un*ed.apk
+	rm -rf gen/jungle/platform/R.java
 
