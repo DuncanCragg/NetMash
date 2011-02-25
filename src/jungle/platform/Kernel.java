@@ -182,8 +182,8 @@ public class Kernel {
         while(true){
             try {
                 checkSelector();
-                selock.lock(); selock.unlock();
                 selector.select();
+                selock.lock(); selock.unlock();
             }catch(Throwable t) {
                 System.err.println("Kernel: Failure in event loop:");
                 t.printStackTrace();

@@ -474,7 +474,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     public void run(){
         while(true){
             getNextRequest();
-            if(!connected){ channel = Kernel.channelConnect(host, port, this); connected=true; }
+            if(!connected){ Kernel.channelConnect(host, port, this); connected=true; }
             else makeRequest();
             synchronized(this){ try{ wait(); }catch(Exception e){} }
         }
@@ -496,6 +496,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     }
 
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
+        this.channel=channel;
         if(path==null) return;
         boolean sof = (len==0);
         if(sof) makeRequest();
