@@ -59,11 +59,11 @@ runuid: jar
 jar: classes
 	( cd ./build/classes; jar cfm ../jungle.jar ../META-INF/MANIFEST.MF . )
 
-appsnet:
+appsnet: clean
 	ant debug
 	cp bin/AppsNet-debug.apk $(DEBUG_TARGET)
 
-appsnetrel:
+appsnetrel: clean
 	ant release
 	cp bin/AppsNet-release.apk $(RELEASE_TARGET)
 

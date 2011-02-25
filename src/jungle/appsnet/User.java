@@ -15,7 +15,12 @@ public class User extends WebObject {
 
     public void evaluate(){
         if(contentListContains("is", "user")){
+            testThatICanSeeTwitterTop();
         }
+    }
+
+    private void testThatICanSeeTwitterTop(){
+        log("viewing:is = "+contentList("viewing:is"));
     }
 
 }
