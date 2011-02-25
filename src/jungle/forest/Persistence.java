@@ -26,7 +26,7 @@ public class Persistence implements FileUser {
     private FileOutputStream topdbos=null;
 
     private ConcurrentHashMap<String,CharBuffer> jsoncache = new ConcurrentHashMap<String,CharBuffer>();
-    private ConcurrentSkipListSet<String>        syncable  = new ConcurrentSkipListSet<String>();
+    private CopyOnWriteArraySet<String>          syncable  = new CopyOnWriteArraySet<String>();
 
     // ----------------------------------------
 
@@ -109,9 +109,8 @@ public class Persistence implements FileUser {
 
     private void runSync(int syncrate){
         while(true){
-            while(true){
-                String syncuid = syncable.pollFirst();
-                if(syncuid==null) break;
+            for(String syncuid: syncable){
+                syncable.remove(syncuid);
                 CharBuffer jsonchars = jsoncache.get(syncuid);
                 ByteBuffer bytebuffer = UTF8.encode(jsonchars);
                 if(topdbos==null){

@@ -3,6 +3,7 @@ package jungle.platform;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
 import java.io.*;
 import java.net.*;
 import java.nio.*;
@@ -68,8 +69,10 @@ public class Kernel {
             listener.configureBlocking(false);
             listener.socket().setReuseAddress(true);
             listener.socket().bind(new InetSocketAddress(port), 1024);
+            selock.lock(); try{ selector.wakeup();
             listener.register(selector, SelectionKey.OP_ACCEPT);
             listeners.put(listener, channeluser);
+            }finally{ selock.unlock(); }
 
         } catch(BindException e){ bailOut("Could not bind to port "+port, e, listener);
         } catch(IOException   e){ bailOut("Could not bind to port "+port, e, listener); }
@@ -82,8 +85,10 @@ public class Kernel {
             channel.configureBlocking(false);
             channel.socket().setTcpNoDelay(true);
             channel.connect(new InetSocketAddress(host, port));
+            selock.lock(); try{ selector.wakeup();
             channel.register(selector, SelectionKey.OP_CONNECT);
             channels.put(channel, channeluser);
+            }finally{ selock.unlock(); }
 
         } catch(IOException e){ bailOut("Could not connect to "+host+":"+port, e, channel); }
 
@@ -147,6 +152,7 @@ public class Kernel {
     //-----------------------------------------------------
 
     static private Selector selector;
+    static private ReentrantLock selock = new ReentrantLock();
     static private HashMap<ServerSocketChannel,ChannelUser> listeners = new HashMap<ServerSocketChannel,ChannelUser>();
     static private HashMap<SocketChannel,ChannelUser>       channels  = new HashMap<SocketChannel,ChannelUser>();
     static public  HashMap<SocketChannel,ByteBuffer>        rdbuffers = new HashMap<SocketChannel,ByteBuffer>();
@@ -176,7 +182,8 @@ public class Kernel {
         while(true){
             try {
                 checkSelector();
-                selector.select(1);
+                selock.lock(); selock.unlock();
+                selector.select();
             }catch(Throwable t) {
                 System.err.println("Kernel: Failure in event loop:");
                 t.printStackTrace();
@@ -229,12 +236,14 @@ public class Kernel {
 
         channel.configureBlocking(false);
         channel.socket().setTcpNoDelay(true);
+        selock.lock(); try{ selector.wakeup();
         channel.register(selector, SelectionKey.OP_READ);
 
         ChannelUser channeluser = listeners.get(listener);
         channeluser.readable(channel, null, 0);
 
         channels.put(channel, channeluser);
+        }finally{ selock.unlock(); }
     }
 
     static private void connectKey(SelectionKey key) throws Exception{
@@ -374,7 +383,9 @@ public class Kernel {
 
     static private void setWriting(SocketChannel channel){
         try{
+            selock.lock(); try{ selector.wakeup();
             channel.register(selector, SelectionKey.OP_WRITE);
+            }finally{ selock.unlock(); }
         }catch(ClosedChannelException cce){
             System.err.println("Kernel: Attempt to write to closed channel");
             cce.printStackTrace();
@@ -383,7 +394,9 @@ public class Kernel {
 
     static private void unSetWriting(SocketChannel channel){
         try{
+            selock.lock(); try{ selector.wakeup();
             channel.register(selector, SelectionKey.OP_READ);
+            }finally{ selock.unlock(); }
         }catch(ClosedChannelException cce){ }
     }
 

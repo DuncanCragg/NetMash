@@ -107,7 +107,7 @@ public class HTTP implements ChannelUser {
         for(String notifieruid: w.alertedin){
             client.post(path, notifieruid);
         }
-        w.alertedin = new ConcurrentSkipListSet<String>();
+        w.alertedin = new CopyOnWriteArraySet<String>();
     }
 
     void poll(WebObject w){

@@ -302,11 +302,12 @@ public class JSON {
     //----------------------------------
 
     static public final Charset UTF8 = Charset.forName("UTF-8");
+    static public final int FILEREADBUFFERSIZE = 4096;
 
     private String getStringFromIS(InputStream is) throws Exception{
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"), FILEREADBUFFERSIZE);
         StringBuilder sb = new StringBuilder();
-        char[] buffer = new char[1024];
+        char[] buffer = new char[FILEREADBUFFERSIZE];
         while(br.read(buffer, 0, buffer.length)!= -1) sb.append(buffer);
         return sb.toString();
     }

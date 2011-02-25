@@ -1,7 +1,5 @@
 package jungle.forest;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.concurrent.*;
 import java.text.*;
@@ -42,12 +40,12 @@ public class WebObject {
 
     public  HashSet<String>                   newalert   = new HashSet<String>();
     public  HashSet<String>                   remalert   = new HashSet<String>();
-    public  ConcurrentSkipListSet<String>     notify     = new ConcurrentSkipListSet<String>();
+    public  CopyOnWriteArraySet<String>       notify     = new CopyOnWriteArraySet<String>();
     public  ConcurrentLinkedQueue<Notifiable> httpnotify = new ConcurrentLinkedQueue<Notifiable>();
     public  HashSet<String>                   newobserve = new HashSet<String>();
     public  HashSet<String>                   observe    = new HashSet<String>();
-    public  ConcurrentSkipListSet<String>     alertedin  = new ConcurrentSkipListSet<String>();
-    public  ConcurrentSkipListSet<String>     alerted    = null;
+    public  CopyOnWriteArraySet<String>       alertedin  = new CopyOnWriteArraySet<String>();
+    public  CopyOnWriteArraySet<String>       alerted    = null;
     public  HashSet<WebObject>                spawned    = new HashSet<WebObject>();
 
     //----------------------------------
@@ -435,7 +433,7 @@ public class WebObject {
         newalert.clear();
         remalert.clear();
         alerted = alertedin;
-        alertedin = new ConcurrentSkipListSet<String>();
+        alertedin = new CopyOnWriteArraySet<String>();
         spawned.clear();
     }
 
@@ -515,6 +513,13 @@ public class WebObject {
     private void listToSet(AbstractSet<String> set, LinkedList list){
         Iterator i = list.iterator();
         while(i.hasNext()) set.add((String)i.next());
+    }
+
+    /** Not available in older Androids. */
+    static public Object[] copyOfRange(Object[] a, int start, int end){
+        Object[] r = new Object[end-start];
+        System.arraycopy(a, start, r, 0, end-start);
+        return r;
     }
 }
 
