@@ -26,6 +26,7 @@ public class Kernel {
 
     //-----------------------------------------------------
 
+    static public boolean running=false;
     static public JSON   config;
     static public Module runmodule;
 
@@ -177,6 +178,7 @@ public class Kernel {
 
     static private void eventLoop(){
 
+        running=true;
         System.out.println("Kernel: running "+config.stringPathN("name"));
 
         while(true){
