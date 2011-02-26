@@ -1,13 +1,13 @@
 
-package jungle.platform;
+package jungle;
 
 import jungle.Version;
 import jungle.platform.Kernel;
 import jungle.forest.FunctionalObserver;
 
-/**  Jungle: FOREST Reference Implementation; Server main.
+/**  Jungle: FOREST Reference Implementation; server main.
   */
-public class Server {
+public class Jungle {
 
     //-----------------------------------------------------
 

@@ -1,5 +1,5 @@
 
-package jungle.appsnet;
+package appsnet;
 
 import java.util.*;
 import java.util.regex.*;

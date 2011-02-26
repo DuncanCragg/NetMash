@@ -2,7 +2,7 @@
     "%etag": 1,
     "%notify": [],
     "%observe": [],
-    "%class": "jungle.appsnet.User",
+    "%class": "appsnet.User",
     "is": [ "user" ],
     "viewing": "http://cilux.net:8081/o/uid-2161-baf3-858b-858c.json"
 }

@@ -1,5 +1,5 @@
 
-package jungle.platform;
+package appsnet.gui;
 
 import java.io.*;
 
@@ -11,9 +11,9 @@ import jungle.platform.Kernel;
 import jungle.lib.*;
 import jungle.forest.FunctionalObserver;
 
-/**  Jungle: FOREST Reference Implementation; Android main.
+/**  AppsNet main.
   */
-public class Android extends Activity
+public class AppsNet extends Activity
 {
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -30,6 +30,10 @@ public class Android extends Activity
         String db = config.stringPathN("persist:db");
         FileOutputStream topdbos=null;
         try{ topdbos = openFileOutput(db, Context.MODE_APPEND); }catch(Exception e){ throw new RuntimeException("Local DB: "+e); }
+
+/* http://code.google.com/p/android/issues/detail?id=9431 */
+java.lang.System.setProperty("java.net.preferIPv4Stack",     "true");
+java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
 
         Kernel.init(config, new FunctionalObserver(topdbis, topdbos));
         Kernel.run();

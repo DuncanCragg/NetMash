@@ -515,7 +515,6 @@ public class WebObject {
         while(i.hasNext()) set.add((String)i.next());
     }
 
-    /** Not available in older Androids. */
     static public Object[] copyOfRange(Object[] a, int start, int end){
         Object[] r = new Object[end-start];
         System.arraycopy(a, start, r, 0, end-start);

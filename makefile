@@ -4,7 +4,7 @@ DEBUG_TARGET=~/HostDesktop
 RELEASE_TARGET=../net/duncan-cragg.org/AppsNet.apk
 
 classes: \
-./build/classes/jungle/platform/Server.class \
+./build/classes/jungle/Jungle.class \
 ./build/classes/jungle/platform/Kernel.class \
 ./build/classes/jungle/platform/Module.class \
 ./build/classes/jungle/platform/ChannelUser.class \
@@ -32,10 +32,10 @@ run2: jar kill
 runall: run1 run2
 
 runon1: jar kill
-	( cd vm1 ; java -classpath .:../build/jungle.jar jungle.platform.Server & )
+	( cd vm1 ; java -classpath .:../build/jungle.jar jungle.Jungle & )
 
 runon2: jar kill
-	( cd vm2 ; java -classpath .:../build/jungle.jar jungle.platform.Server & )
+	( cd vm2 ; java -classpath .:../build/jungle.jar jungle.Jungle & )
 
 whappen:
 	vim -o -N vm1/forest.db vm1/jungle.log vm2/forest.db vm2/jungle.log
