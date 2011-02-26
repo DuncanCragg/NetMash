@@ -658,8 +658,10 @@ public class JSON {
         for(int i=0; i<parts.length; i++){
             Object o=null;
             String part=parts[i];
-            if(!part.equals("*")) o=hm.get(part);
-            else                  o=getSingleEntry(hm);
+            if(part.equals("*")) o=getSingleEntry(hm);
+            else
+            if(part.equals("#")) o=hm;
+            else                 o=hm.get(part);
             if(o==null) return null;
             if(o instanceof LinkedHashMap){
                 if(i==parts.length-1) return o;

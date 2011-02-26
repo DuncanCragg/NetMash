@@ -9,209 +9,15 @@
         android:layout_height="wrap_content" >
 
         <LinearLayout
+            android:id="@+id/Content"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
-
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-            <TextView 
-                android:text="Hi" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content">
-            </TextView>
-            <TextView 
-                android:text="Lo" 
-                android:textSize="15pt"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" >
-            </TextView>
-
         </LinearLayout>
 
     </ScrollView>
 
     <LinearLayout 
-        android:id="@+id/ButtonLayout"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -221,15 +27,15 @@
             android:id="@+id/AddLinkButton"
             android:text="@string/AddLinkButton"
             android:layout_height="wrap_content"
-            android:layout_width="0dip"
-            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_weight="5"
         />
         <Button
             android:id="@+id/HomeButton"
             android:text="@string/HomeButton"
             android:layout_height="wrap_content"
-            android:layout_width="0dip"
-            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_weight="3"
         />
 
     </LinearLayout>
