@@ -13,13 +13,28 @@ import appsnet.gui.*;
   */
 public class User extends WebObject {
 
-    private AppsNet top=null;
+    // ---------------------------------------------------------
 
-    public User(){
-        top=AppsNet.top;
-        top.onUserReady(this);
-        onTopCreate();
+    public User(){ AppsNet.top.onUserReady(this); }
+
+    public void onTopCreate(){
     }
+
+    public void onTopResume(){
+        new Evaluator(this){
+            public void evaluate(){
+                showWhatIAmViewing();
+            }
+        };
+    }
+
+    public void onTopPause(){
+    }
+
+    public void onTopDestroy(){
+    }
+
+    // ---------------------------------------------------------
 
     public void evaluate(){
         if(contentListContains("is", "user")){
@@ -33,7 +48,7 @@ public class User extends WebObject {
             LinkedHashMap<String,Object> json=contentHash("viewing:#");
             JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
             uiJSON.listPath("view", flattenHash(json));
-            top.drawJSON(uiJSON);
+            AppsNet.top.drawJSON(uiJSON);
         }
     }
 
@@ -51,12 +66,6 @@ public class User extends WebObject {
        return list;
     }
 
-    public void onTopCreate(){
-    }
-
-    public void onTopDestroy(){
-    }
-
-    // ------------------------------------------------
+    // ---------------------------------------------------------
 }
 

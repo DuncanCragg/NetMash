@@ -22,68 +22,53 @@ import appsnet.User;
 public class AppsNet extends Activity implements OnClickListener, OnKeyListener {
 
     static public AppsNet top=null;
+    static public User    user=null;
 
-    public User user=null;
+    public void onUserReady(User u){ user = u; }
+
+    //---------------------------------------------------------
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState); System.out.println("onCreate");
         top=this;
         if(!Kernel.running) runKernel();
-        else{
-            drawInitialView();
-            if(user!=null) user.onTopCreate();
-        }
-    }
-
-    public void onUserReady(User u){
-        this.user = u;
         drawInitialView();
+        user.onTopCreate();
     }
 
     @Override
-    public void onStart()
-    {
-        super.onStart();
-System.out.println("onStart");
+    public void onRestart(){
+        super.onRestart(); System.out.println("onRestart");
     }
 
     @Override
-    public void onRestart()
-    {
-        super.onRestart();
-System.out.println("onRestart");
+    public void onStart(){
+        super.onStart(); System.out.println("onStart");
     }
 
     @Override
-    public void onPause()
-    {
-        super.onPause();
-System.out.println("onPause");
+    public void onResume(){
+        super.onResume(); System.out.println("onResume");
+        user.onTopResume();
     }
 
     @Override
-    public void onResume()
-    {
-        super.onResume();
-System.out.println("onResume");
+    public void onPause(){
+        super.onPause(); System.out.println("onPause");
+        user.onTopPause();
     }
 
     @Override
-    public void onStop()
-    {
-        super.onStop();
-System.out.println("onStop");
+    public void onStop(){
+        super.onStop(); System.out.println("onStop");
     }
 
     @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-System.out.println("onDestroy");
+    public void onDestroy(){
+        super.onDestroy(); System.out.println("onDestroy");
+        user.onTopDestroy();
         top=null;
-        if(user!=null) user.onTopDestroy();
     }
 
     //---------------------------------------------------------
@@ -132,8 +117,8 @@ System.out.println("onDestroy");
 
     //---------------------------------------------------------
 
-    public void onClick(View v) {
-        switch (v.getId()) {
+    public void onClick(View v){
+        switch (v.getId()){
         case R.id.AddLinkButton:
             Toast.makeText(this, "Adding links is not implemented yet! :-)", Toast.LENGTH_SHORT).show();
             break;
@@ -143,7 +128,7 @@ System.out.println("onDestroy");
         }
     }
 
-    public boolean onKey(View v, int keyCode, KeyEvent event) {
+    public boolean onKey(View v, int keyCode, KeyEvent event){
         return true;
     }
 
