@@ -1,6 +1,7 @@
 
 package appsnet.gui;
 
+import java.util.*;
 import java.io.*;
 
 import android.app.Activity;
@@ -10,6 +11,8 @@ import android.content.Context;
 import android.view.*;
 import android.view.View.*;
 import android.widget.*;
+
+import static android.view.ViewGroup.LayoutParams.*;
 
 import jungle.platform.Kernel;
 import jungle.lib.JSON;
@@ -73,18 +76,16 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
 
     //---------------------------------------------------------
 
-    private LinearLayout content;
-    private LinearLayout.LayoutParams layoutParams;
-    private Button addLinkButton, homeButton;
+    private RelativeLayout layout;
+    private LinearLayout   buttons;
+    private Button         addLinkButton, homeButton;
 
     public void drawInitialView(){
 
         setContentView(R.layout.main);
-        content = (LinearLayout)findViewById(R.id.Content);
+        layout = (RelativeLayout)findViewById(R.id.Layout);
 
-        layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
-                                                     LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(5, 10, 5, 0);
+        buttons = (LinearLayout)findViewById(R.id.Buttons);
 
         addLinkButton = (Button)findViewById(R.id.AddLinkButton);
         addLinkButton.setOnClickListener(this);
@@ -100,18 +101,58 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     private Runnable uiDrawJSONRunnable=new Runnable(){public void run(){uiDrawJSON();}};
 
     /** Non-UI Thread comes in here. */
-    public void drawJSON(JSON uiJSON){
+    public void drawJSON(JSON uiJSON){ System.out.println("drawJSON");
         this.uiJSON=uiJSON;
         guiHandler.post(uiDrawJSONRunnable);
     }
 
     /** UI Thread runs here. */
     private void uiDrawJSON(){
-        for(Object o: uiJSON.listPathN("view")){
-            Button b=new Button(top);
-            b.setTextSize(15);
-            b.setText("[ "+o+" ]");
-            content.addView(b, layoutParams);
+        LinkedList ll=uiJSON.listPathN("view");
+        boolean vertical=false;
+        View strip;
+        if(vertical){
+            strip=createVerticalStrip(ll);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
+            int bottomMargin = buttons.getHeight()*2; if(bottomMargin==0) bottomMargin=50;
+            lp.setMargins(0, 0, 0, bottomMargin);
+            strip.setLayoutParams(lp);
+        }
+        else{
+            strip=createHorizontalStrip(ll);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            lp.setMargins(0, 0, 0, 0);
+            strip.setLayoutParams(lp);
+        }
+        View v=layout.getChildAt(0);
+        if(v!=null) layout.removeView(v);
+        layout.addView(strip, 0);
+    }
+
+    private View createVerticalStrip(LinkedList ll){
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        fillStrip(layout, ll);
+        ScrollView strip = new ScrollView(this);
+        strip.addView(layout);
+        return strip;
+    }
+
+    private View createHorizontalStrip(LinkedList ll){
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        fillStrip(layout, ll);
+        HorizontalScrollView strip = new HorizontalScrollView(this);
+        strip.addView(layout);
+        return strip;
+    }
+
+    private void fillStrip(LinearLayout layout, LinkedList ll){
+        for(Object o: ll){
+            TextView tv=new TextView(this);
+            tv.setText("--"+o+"--");
+            tv.setPadding(40, 40, 40, 40);
+            layout.addView(tv);
         }
     }
 

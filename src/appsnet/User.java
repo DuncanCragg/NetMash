@@ -20,7 +20,7 @@ public class User extends WebObject {
     public void onTopCreate(){
     }
 
-    public void onTopResume(){
+    public void onTopResume(){ logrule();
         new Evaluator(this){
             public void evaluate(){
                 showWhatIAmViewing();
@@ -43,8 +43,8 @@ public class User extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    private void showWhatIAmViewing(){
-        if(contentHash("viewing:#")!=null){
+    private void showWhatIAmViewing(){ logrule();
+        if(contentHash("viewing:#")!=null){ logrule();
             LinkedHashMap<String,Object> json=contentHash("viewing:#");
             JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
             uiJSON.listPath("view", flattenHash(json));
