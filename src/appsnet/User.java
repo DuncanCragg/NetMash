@@ -47,23 +47,35 @@ public class User extends WebObject {
         if(contentHash("viewing:#")!=null){ logrule();
             LinkedHashMap<String,Object> json=contentHash("viewing:#");
             JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
-            uiJSON.listPath("view", flattenHash(json));
+            uiJSON.hashPath("view", guifyHash(json));
             AppsNet.top.drawJSON(uiJSON);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedList flattenHash(LinkedHashMap<String,Object> hm){
-       LinkedList list = new LinkedList();
-       for(String tag: hm.keySet()){
-           list.add(tag);
-           Object o=hm.get(tag);
-           if(o instanceof LinkedHashMap) list.addAll(flattenHash((LinkedHashMap<String,Object>)o));
+    private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm){
+        LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
+        hm2.put("direction", "vertical");
+        for(String tag: hm.keySet()){
+            Object o=hm.get(tag);
+            if(o instanceof LinkedHashMap) hm2.put(tag, guifyHash((LinkedHashMap<String,Object>)o));
+            else
+            if(o instanceof LinkedList)    hm2.put(tag, guifyList((LinkedList)o));
+            else                           hm2.put(tag, o);
+        }
+        return hm2;
+    }
+
+    private LinkedList guifyList(LinkedList ll){
+        LinkedList ll2 = new LinkedList();
+        ll2.add("direction:horizontal");
+        for(Object o: ll){
+           if(o instanceof LinkedHashMap) ll2.add(guifyHash((LinkedHashMap<String,Object>)o));
            else
-           if(o instanceof LinkedList)    list.addAll((LinkedList)o);
-           else                           list.add(o);
-       }
-       return list;
+           if(o instanceof LinkedList)    ll2.add(guifyList((LinkedList)o));
+           else                           ll2.add(o);
+        }
+        return ll2;
     }
 
     // ---------------------------------------------------------

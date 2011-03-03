@@ -100,26 +100,24 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     private Handler guiHandler = new Handler();
     private Runnable uiDrawJSONRunnable=new Runnable(){public void run(){uiDrawJSON();}};
 
-    /** Non-UI Thread comes in here. */
     public void drawJSON(JSON uiJSON){ System.out.println("drawJSON");
         this.uiJSON=uiJSON;
         guiHandler.post(uiDrawJSONRunnable);
     }
 
-    /** UI Thread runs here. */
     private void uiDrawJSON(){
-        LinkedList ll=uiJSON.listPathN("view");
-        boolean vertical=false;
+        HashMap<String,Object> hm=uiJSON.hashPathN("view");
+        boolean vertical=hm.get("direction").equals("vertical");
         View strip;
         if(vertical){
-            strip=createVerticalStrip(ll);
+            strip=createVerticalStrip(hm);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
             int bottomMargin = buttons.getHeight()*2; if(bottomMargin==0) bottomMargin=50;
             lp.setMargins(0, 0, 0, bottomMargin);
             strip.setLayoutParams(lp);
         }
         else{
-            strip=createHorizontalStrip(ll);
+            strip=createHorizontalStrip(hm);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
             lp.setMargins(0, 0, 0, 0);
             strip.setLayoutParams(lp);
@@ -129,11 +127,20 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
         layout.addView(strip, 0);
     }
 
-    private View createVerticalStrip(LinkedList ll){
+    private View createVerticalStrip(HashMap<String,Object> hm){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-        fillStrip(layout, ll);
+        fillStrip(layout, hm);
         ScrollView strip = new ScrollView(this);
+        strip.addView(layout);
+        return strip;
+    }
+
+    private View createHorizontalStrip(HashMap<String,Object> hm){
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        fillStrip(layout, hm);
+        HorizontalScrollView strip = new HorizontalScrollView(this);
         strip.addView(layout);
         return strip;
     }
@@ -147,13 +154,61 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
         return strip;
     }
 
+    private void fillStrip(LinearLayout layout, HashMap<String,Object> hm){
+        for(String tag: hm.keySet()){
+            if(tag.equals("direction")) continue;
+            layout.addView(createTextView(tag));
+            Object o=hm.get(tag);
+            if(o instanceof LinkedHashMap){
+                View strip=createVerticalStrip((LinkedHashMap<String,Object>)o);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
+                lp.setMargins(50, 0, 0, 0);
+                strip.setLayoutParams(lp);
+                layout.addView(strip);
+            }
+            else
+            if(o instanceof LinkedList){
+                View strip=createHorizontalStrip((LinkedList)o);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+                lp.setMargins(50, 0, 0, 0);
+                strip.setLayoutParams(lp);
+                layout.addView(strip);
+            }
+            else layout.addView(createTextView(o.toString()));
+        }
+    }
+
     private void fillStrip(LinearLayout layout, LinkedList ll){
         for(Object o: ll){
-            TextView tv=new TextView(this);
-            tv.setText("--"+o+"--");
-            tv.setPadding(40, 40, 40, 40);
-            layout.addView(tv);
+            if(o instanceof LinkedHashMap){
+                View strip=createVerticalStrip((LinkedHashMap<String,Object>)o);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
+                lp.setMargins(50, 0, 0, 0);
+                strip.setLayoutParams(lp);
+                layout.addView(strip);
+            }
+            else
+            if(o instanceof LinkedList){
+                View strip=createHorizontalStrip((LinkedList)o);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+                lp.setMargins(50, 0, 0, 0);
+                strip.setLayoutParams(lp);
+                layout.addView(strip);
+            }
+            else
+            if(o instanceof String){
+                if(o.toString().startsWith("direction:")) continue;
+                layout.addView(createTextView(o.toString()));
+            }
+            else layout.addView(createTextView(o.toString()));
         }
+    }
+
+    private TextView createTextView(String s){
+        TextView tv=new TextView(this);
+        tv.setText("--"+s+"--");
+        tv.setPadding(40, 60, 60, 40);
+        return tv;
     }
 
     //---------------------------------------------------------
