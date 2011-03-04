@@ -2,6 +2,7 @@
 package appsnet.gui;
 
 import java.util.*;
+import java.util.regex.*;
 import java.io.*;
 
 import android.app.Activity;
@@ -79,12 +80,17 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     private RelativeLayout layout;
     private LinearLayout   buttons;
     private Button         addLinkButton, homeButton;
+    private float          screenDensity;
+    private int            screenWidth;
 
     public void drawInitialView(){
 
+        screenDensity = getResources().getDisplayMetrics().density;
+        screenWidth   = getResources().getDisplayMetrics().widthPixels;
+
         setContentView(R.layout.main);
         layout = (RelativeLayout)findViewById(R.id.Layout);
-        layout.setBackgroundColor(0xffffffff);
+        layout.setBackgroundColor(0xff000000);
 
         buttons = (LinearLayout)findViewById(R.id.Buttons);
 
@@ -114,13 +120,13 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
             view=createVerticalStrip(hm);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
             int bottomMargin = buttons.getHeight()*2; if(bottomMargin==0) bottomMargin=80;
-            lp.setMargins(0, 0, 0, bottomMargin);
+            lp.setMargins(0,5,5,bottomMargin);
             view.setLayoutParams(lp);
         }
         else{
             view=createHorizontalStrip(hm);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-            lp.setMargins(0, 0, 0, 0);
+            lp.setMargins(0,5,5,0);
             view.setLayoutParams(lp);
         }
         View v=layout.getChildAt(0);
@@ -130,8 +136,8 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
 
     private View createVerticalStrip(HashMap<String,Object> hm){
         LinearLayout layout = new LinearLayout(this);
-        layout.setBackgroundColor(0xff000000);
         layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(0,0,0,0);
         fillStrip(layout, hm);
         ScrollView view = new ScrollView(this);
         view.addView(layout);
@@ -141,6 +147,7 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     private View createHorizontalStrip(HashMap<String,Object> hm){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setPadding(0,0,0,0);
         fillStrip(layout, hm);
         HorizontalScrollView view = new HorizontalScrollView(this);
         view.addView(layout);
@@ -150,6 +157,7 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     private View createVerticalStrip(LinkedList ll){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(0,0,0,0);
         fillStrip(layout, ll);
         ScrollView view = new ScrollView(this);
         view.addView(layout);
@@ -159,6 +167,7 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     private View createHorizontalStrip(LinkedList ll){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setPadding(0,0,0,0);
         fillStrip(layout, ll);
         HorizontalScrollView view = new HorizontalScrollView(this);
         view.addView(layout);
@@ -166,51 +175,95 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     }
 
     private void fillStrip(LinearLayout layout, HashMap<String,Object> hm){
+        float dim0=0;
+        float dimn=0;
+        int i=0;
         for(String tag: hm.keySet()){
             if(tag.equals("direction")) continue;
-            addView(layout, hm.get(tag));
+            if(tag.equals("proportions")){
+                dim0=parseFirstInt(hm.get(tag).toString());
+                continue;
+            }
+            i++;
+        }
+        if(dim0 >0 && i>1) dimn=(98-dim0)/(i-1);
+        i=0;
+        for(String tag: hm.keySet()){
+            if(tag.equals("direction")) continue;
+            if(tag.equals("proportions")) continue;
+            addToLayout(layout, hm.get(tag), i==0? dim0: dimn);
+            i++;
         }
     }
 
     private void fillStrip(LinearLayout layout, LinkedList ll){
+        float dim0=0;
+        float dimn=0;
+        int i=0;
         for(Object o: ll){
-            if(o instanceof String && o.toString().startsWith("direction:")) continue;
-            addView(layout, o);
+            if(o instanceof String){
+                if(o.toString().startsWith("direction:")) continue;
+                if(o.toString().startsWith("proportions:")){
+                    dim0=parseFirstInt(o.toString());
+                    continue;
+                }
+            }
+            i++;
+        }
+        if(dim0 >0 && i>1) dimn=(98-dim0)/(i-1);
+        i=0;
+        for(Object o: ll){
+            if(o instanceof String){
+                if(o.toString().startsWith("direction:")) continue;
+                if(o.toString().startsWith("proportions:")) continue;
+            }
+            addToLayout(layout, o, i==0? dim0: dimn);
+            i++;
         }
     }
 
-    private void addView(LinearLayout layout, Object o){
+    static public final String  INTRE = ".*?([0-9]+).*";
+    static public final Pattern INTPA = Pattern.compile(INTRE);
+    private int parseFirstInt(String s){
+        Matcher m = INTPA.matcher(s);
+        if(!m.matches()) return 0;
+        int r = Integer.parseInt(m.group(1));
+        return r;
+    }
+
+    private void addToLayout(LinearLayout layout, Object o, float prop){
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
-            if("horizontal".equals(hm.get("direction"))) addHorizontalStrip(layout, createHorizontalStrip(hm));
-            else                                         addVerticalStrip(  layout, createVerticalStrip(hm));
+            if("horizontal".equals(hm.get("direction"))) addHorizontalStrip(layout, createHorizontalStrip(hm), prop);
+            else                                         addVerticalStrip(  layout, createVerticalStrip(hm), prop);
         }
         else
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
-            if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll));
-            else                                                    addVerticalStrip(  layout, createVerticalStrip(ll));
+            if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll), prop);
+            else                                                    addVerticalStrip(  layout, createVerticalStrip(ll), prop);
         }
-        else addTextView(layout, createTextView(o.toString()));
+        else addTextView(layout, createTextView(o.toString()), prop);
     }
 
-    private void addHorizontalStrip(LinearLayout layout, View view){
+    private void addHorizontalStrip(LinearLayout layout, View view, float prop){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-        lp.setMargins(2, 1, 2, 0);
+        lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
-    private void addVerticalStrip(LinearLayout layout, View view){
+    private void addVerticalStrip(LinearLayout layout, View view, float prop){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-        lp.setMargins(2, 1, 2, 0);
+        lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
-    private void addTextView(LinearLayout layout, View view){
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-        lp.setMargins(2, 1, 2, 0);
+    private void addTextView(LinearLayout layout, View view, float prop){
+        int width=(prop==0? FILL_PARENT: (int)((prop/100.0)*screenWidth+0.5));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, FILL_PARENT);
+        lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
@@ -219,12 +272,12 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
         TextView view=new TextView(this);
         view.setText(s);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        view.setPadding(40, 60, 40, 60);
         view.setTextSize(20);
-        view.setBackgroundColor(0xffffffff);
+        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.web2box));
         view.setTextColor(0xff000000);
         return view;
     }
+
 
     //---------------------------------------------------------
 

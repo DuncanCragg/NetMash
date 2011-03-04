@@ -48,6 +48,10 @@ public class User extends WebObject {
             if(contentListContains("viewing:is", "vcardlist")){
                 view=vCardList2GUI();
             }
+            else
+            if(contentListContains("viewing:is", "vcard")){
+                view=vCard2GUI();
+            }
             else{
                 view=guifyHash(contentHash("viewing:#"));
             }
@@ -77,16 +81,46 @@ public class User extends WebObject {
         return guitop;
     }
 
+    private LinkedHashMap vCard2GUI(){
+
+        LinkedList vcarddetail = new LinkedList();
+        vcarddetail.add("direction:vertical");
+
+        String fullname=content("viewing:fullName");
+
+        String homephone=content("viewing:tel:home:0");
+        if(homephone==null) homephone=content("viewing:tel:home");
+        if(homephone!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Home phone:", homephone));
+
+        String workphone=content("viewing:tel:work:0");
+        if(workphone==null) workphone=content("viewing:tel:work");
+        if(workphone!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Work phone:", workphone));
+
+        String email=content("viewing:email:0");
+        if(email==null) email=content("viewing:email");
+        if(email!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Email address:", email));
+
+        String url=content("viewing:url:0");
+        if(url==null) url=content("viewing:url");
+        if(url!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Website:", url));
+
+        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
+        guitop.put("direction", "vertical");
+        guitop.put("#title", list("direction:horizontal", "proportions:25%", "[photo]", fullname));
+        guitop.put("#vcard", vcarddetail);
+        return guitop;
+    }
+
     private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm){
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
         hm2.put("direction", "vertical");
         for(String tag: hm.keySet()){
             Object o=hm.get(tag);
             hm2.put("#"+tag, tag);
-            if(o instanceof LinkedHashMap) hm2.put(tag, guifyHash((LinkedHashMap<String,Object>)o));
+            if(o instanceof LinkedHashMap) hm2.put("."+tag, guifyHash((LinkedHashMap<String,Object>)o));
             else
-            if(o instanceof LinkedList)    hm2.put(tag, guifyList((LinkedList)o));
-            else                           hm2.put(tag, o);
+            if(o instanceof LinkedList)    hm2.put("."+tag, guifyList((LinkedList)o));
+            else                           hm2.put("."+tag, o);
         }
         return hm2;
     }
