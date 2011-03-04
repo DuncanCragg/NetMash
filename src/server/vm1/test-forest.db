@@ -22,6 +22,131 @@
     "%observe": [],
     "%class": "Twitter",
     "is": [ "twitter", "top" ],
-    "users": { "Duncancragg": { "followers": [ 11878542, 9466742 ] } }
+    "users": { "Duncancragg": { "followers": [ 11878542, 9466742, 222737495, 142507295, 239815011, 110469008, 12793162, 155762008 ] },
+               "JoeBloggs":   { "followers": [ 11878542, 9466742, 222737495, 142507295, 239815011, 110469008, 12793162, 155762008 ] }
+    }
+}
+
+{   "%uid": "uid-76b8-8502-45d3-0543",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "MeetUsUp",
+    "is": [ "meetusup", "vcardlist" ],
+    "venue": "uid-fc61-ba84-a7d8-9874",
+    "organiser": "uid-1b84-142d-4f34-3734",
+    "vcards": [
+        "uid-35ad-af7a-93fb-896d",
+        "uid-a0b2-0521-d5f1-b994",
+        "uid-b4b3-586c-88e5-05ae",
+        "uid-1b84-142d-4f34-3734",
+        "uid-6eab-8bc0-10a8-db4e",
+        "uid-bb90-d577-703b-e7a9",
+        "uid-f95d-8864-a3ef-7604"
+    ]
+}
+
+{   "%uid": "uid-35ad-af7a-93fb-896d",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Mr Brian Rock",
+    "role": "Business Analyst"
+    "title": "Business Analyst",
+    "name": {
+      "given":  "Brian",
+      "middle": [ "Andy", "Charles" ],
+      "family": "Rock"
+    },
+    "nickname": "The Masher",
+    "address": {
+      "street": [ "My Mews", "My Street" ],
+      "locality": "My City",
+      "region": "My County",
+      "postalCode": "MY90 CDE",
+      "countryName": "UK"
+    },
+    "email": [ "brian.rock@site.com", "bri2001@hotmail.com" ],
+    "organisation": {
+      "name": "Super Site",
+      "unit": "site.com"
+    },
+    "birthday": "1995-02-12",
+    "tel": { "work": [ "020 7231 1234", "020 7231 3212" ], "home": "020 8323 2343" },
+    "url": [
+      "http://brian.org/",
+      "http://facebook.com/brio"
+    ],
+    "description": "I love rock"
+}
+
+{   "%uid": "uid-1b84-142d-4f34-3734",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Duncan Cragg",
+    "email": "dcragg@thoughtworks.com",
+    "address": {
+        "street": [ "110", "Gloucester Road" ],
+        "locality": "Kingston-upon-Thames",
+        "region": "Surrey",
+        "postalCode": "KT1 3QN"
+    },
+    "tel": { "home": "020 8547 0249", "mobile": "0776 92 92 900" },
+}
+
+{   "%uid": "uid-a0b2-0521-d5f1-b994",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Joe Test",
+    "email": "joe.test@testing.com",
+    "tel": { "mobile": "0777 88 77 555" },
+}
+
+{   "%uid": "uid-b4b3-586c-88e5-05ae",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Sam Bloggs",
+    "email": "sam.bloggs@aol.com",
+}
+
+{   "%uid": "uid-6eab-8bc0-10a8-db4e",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Jack Bloggs",
+    "email": "jack.bloggs@aol.com",
+}
+
+{   "%uid": "uid-bb90-d577-703b-e7a9",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Bobby Bloggs",
+    "email": "bob.bloggs@aol.com",
+}
+
+{   "%uid": "uid-f95d-8864-a3ef-7604",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Janice Bloggs",
+    "email": "jan.bloggs@aol.com",
 }
 

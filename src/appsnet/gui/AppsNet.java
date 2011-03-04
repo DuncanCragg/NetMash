@@ -168,9 +168,7 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     private void fillStrip(LinearLayout layout, HashMap<String,Object> hm){
         for(String tag: hm.keySet()){
             if(tag.equals("direction")) continue;
-            addView(layout, tag);
-            Object o=hm.get(tag);
-            addView(layout, o);
+            addView(layout, hm.get(tag));
         }
     }
 
@@ -182,28 +180,37 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     }
 
     private void addView(LinearLayout layout, Object o){
-        if(o instanceof LinkedHashMap) addVerticalStrip(  layout, createVerticalStrip((LinkedHashMap<String,Object>)o));
+        if(o instanceof LinkedHashMap){
+            LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
+            if("horizontal".equals(hm.get("direction"))) addHorizontalStrip(layout, createHorizontalStrip(hm));
+            else                                         addVerticalStrip(  layout, createVerticalStrip(hm));
+        }
         else
-        if(o instanceof LinkedList)    addHorizontalStrip(layout, createHorizontalStrip((LinkedList)o));
-        else                           addTextView(       layout, createTextView(o.toString()));
+        if(o instanceof LinkedList){
+            LinkedList ll=(LinkedList)o;
+            if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll));
+            else                                                    addVerticalStrip(  layout, createVerticalStrip(ll));
+        }
+        else addTextView(layout, createTextView(o.toString()));
     }
 
     private void addHorizontalStrip(LinearLayout layout, View view){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-        lp.setMargins(2, 1, 2, 1);
+        lp.setMargins(2, 1, 2, 0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
     private void addVerticalStrip(LinearLayout layout, View view){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-        lp.setMargins(2, 1, 2, 1);
+        lp.setMargins(2, 1, 2, 0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
     private void addTextView(LinearLayout layout, View view){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
+        lp.setMargins(2, 1, 2, 0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }

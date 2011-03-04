@@ -4,6 +4,9 @@
     "%observe": [],
     "%class": "appsnet.User",
     "is": [ "user" ],
-    "viewing": "http://cilux.net:8081/o/uid-2161-baf3-858b-858c.json"
+    "viewing": "http://cilux.net:8081/o/uid-76b8-8502-45d3-0543.json",
+    "history": [ "http://cilux.net:8081/o/uid-76b8-8502-45d3-0543.json",
+                 "http://cilux.net:8081/o/uid-2161-baf3-858b-858c.json" 
+    ]
 }
 
