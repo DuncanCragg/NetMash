@@ -60,7 +60,7 @@ public class TestJSON {
 
         {
 
-        JSON m = new JSON(new File("./vm1/jungle-config.json"));
+        JSON m = new JSON(new File("./src/server/vm1/jungle-config.json"));
         System.out.println(m);
 
         int port = m.intPath("network:port");

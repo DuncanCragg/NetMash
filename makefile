@@ -24,24 +24,24 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 	javac $(LIBOPTIONS) $<
 
 run1: jar kill
-	(cd vm1; ./run.sh)
+	(cd src/server/vm1; ./run.sh)
 
 run2: jar kill
-	(cd vm2; ./run.sh)
+	(cd src/server/vm2; ./run.sh)
 
 runall: run1 run2
 
 runon1: jar kill
-	( cd vm1 ; java -classpath .:../build/jungle.jar jungle.Jungle & )
+	( cd src/server/vm1 ; java -classpath .:../build/jungle.jar jungle.Jungle & )
 
 runon2: jar kill
-	( cd vm2 ; java -classpath .:../build/jungle.jar jungle.Jungle & )
+	( cd src/server/vm2 ; java -classpath .:../build/jungle.jar jungle.Jungle & )
 
 whappen:
-	vim -o -N vm1/forest.db vm1/jungle.log vm2/forest.db vm2/jungle.log
+	vim -o -N src/server/vm1/forest.db src/server/vm1/jungle.log src/server/vm2/forest.db src/server/vm2/jungle.log
 
 setup:
-	vim -o -N vm1/jungle-config.json vm1/test-forest.db vm2/jungle-config.json vm2/test-forest.db
+	vim -o -N src/server/vm1/jungle-config.json src/server/vm1/test-forest.db src/server/vm2/jungle-config.json src/server/vm2/test-forest.db
 
 kill:
 	-pkill java
@@ -69,8 +69,8 @@ appsnetrel: clean
 
 clean:
 	rm -rf ./build/classes/*.class ./build/classes/jungle
-	rm -rf ./vm*/*.class
-	rm -rf ./vm*/forest.db
+	rm -rf ./src/server/vm*/*.class
+	rm -rf ./src/server/vm*/forest.db
 	rm -rf bin/classes bin/classes.dex
 	rm -rf bin/AppsNet.ap_ bin/AppsNet*un*ed.apk
 	rm -rf gen/jungle/platform/R.java

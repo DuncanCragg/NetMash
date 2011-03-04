@@ -244,6 +244,7 @@ public class JSON {
     @SuppressWarnings("unchecked")
     public LinkedList<LinkedHashMap> mapList(String path, JSON map){
         LinkedList in = listPathN(path);
+        if(in==null) return null;
         LinkedList out = new LinkedList<LinkedHashMap>();
         for(Object o: in){
             if(!(o instanceof LinkedHashMap)) out.add(o);
