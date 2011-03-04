@@ -106,7 +106,7 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
         guiHandler.post(uiDrawJSONRunnable);
     }
 
-    private void uiDrawJSON(){
+    private void uiDrawJSON(){ System.out.println(uiJSON);
         HashMap<String,Object> hm=uiJSON.hashPathN("view");
         boolean vertical=hm.get("direction").equals("vertical");
         View view;
@@ -168,7 +168,7 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     private void fillStrip(LinearLayout layout, HashMap<String,Object> hm){
         for(String tag: hm.keySet()){
             if(tag.equals("direction")) continue;
-            layout.addView(createTextView(tag)); //addView(layout, tag);
+            addView(layout, tag);
             Object o=hm.get(tag);
             addView(layout, o);
         }
@@ -189,21 +189,21 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
     }
 
     private void addHorizontalStrip(LinearLayout layout, View view){
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        lp.setMargins(1, 1, 1, 1);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
+        lp.setMargins(2, 1, 2, 1);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
     private void addVerticalStrip(LinearLayout layout, View view){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-        lp.setMargins(1, 1, 1, 1);
+        lp.setMargins(2, 1, 2, 1);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
     private void addTextView(LinearLayout layout, View view){
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
@@ -213,6 +213,7 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
         view.setText(s);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         view.setPadding(40, 60, 40, 60);
+        view.setTextSize(20);
         view.setBackgroundColor(0xffffffff);
         view.setTextColor(0xff000000);
         return view;
