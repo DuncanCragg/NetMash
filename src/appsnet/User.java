@@ -76,7 +76,7 @@ public class User extends WebObject {
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");
-        guitop.put("#title", "vCard List");
+        guitop.put("#title", "Contact List");
         guitop.put("#vcardlist", vcardsgui);
         return guitop;
     }
@@ -86,7 +86,6 @@ public class User extends WebObject {
         LinkedList vcarddetail = new LinkedList();
         vcarddetail.add("direction:vertical");
 
-        String fullname=content("viewing:fullName");
 
         String homephone=content("viewing:tel:home:0");
         if(homephone==null) homephone=content("viewing:tel:home");
@@ -104,9 +103,12 @@ public class User extends WebObject {
         if(url==null) url=content("viewing:url");
         if(url!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Website:", url));
 
+        String fullname=content("viewing:fullName");
+        String photourl=content("viewing:photo");
+
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");
-        guitop.put("#title", list("direction:horizontal", "proportions:25%", "[photo]", fullname));
+        guitop.put("#title", list("direction:horizontal", "proportions:25%", photourl, fullname));
         guitop.put("#vcard", vcarddetail);
         return guitop;
     }

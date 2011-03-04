@@ -4,10 +4,13 @@ package appsnet.gui;
 import java.util.*;
 import java.util.regex.*;
 import java.io.*;
+import java.net.*;
 
 import android.app.Activity;
 import android.os.*;
+import android.net.*;
 import android.content.Context;
+import android.graphics.*;
 
 import android.view.*;
 import android.view.View.*;
@@ -243,7 +246,10 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
             if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll), prop);
             else                                                    addVerticalStrip(  layout, createVerticalStrip(ll), prop);
         }
-        else addTextView(layout, createTextView(o.toString()), prop);
+        else{
+            String s=o.toString();
+            addTextView(layout, (s.startsWith("http://") && s.endsWith(".jpg"))? createImageView(s): createTextView(s), prop);
+        }
     }
 
     private void addHorizontalStrip(LinearLayout layout, View view, float prop){
@@ -278,6 +284,29 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
         return view;
     }
 
+    private ImageView createImageView(String url){
+        ImageView view = new ImageView(this);
+        view.setAdjustViewBounds(true);
+        view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        view.setPadding(8, 8, 8, 8);
+        view.setImageBitmap(getImageBitmap(url));
+        return view;
+    }
+
+    private Bitmap getImageBitmap(String url) {
+        Bitmap bm=null;
+        try{
+            URLConnection conn = new URL(url).openConnection();
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is, 8092);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close(); is.close();
+        } catch (IOException e) {
+            System.err.println("Couldn't load image at "+url+"\n"+e);
+        }
+        return bm;
+    } 
 
     //---------------------------------------------------------
 
