@@ -225,15 +225,6 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
         }
     }
 
-    static public final String  INTRE = ".*?([0-9]+).*";
-    static public final Pattern INTPA = Pattern.compile(INTRE);
-    private int parseFirstInt(String s){
-        Matcher m = INTPA.matcher(s);
-        if(!m.matches()) return 0;
-        int r = Integer.parseInt(m.group(1));
-        return r;
-    }
-
     private void addToLayout(LinearLayout layout, Object o, float prop){
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
@@ -307,6 +298,15 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
         }
         return bm;
     } 
+
+    static public final String  INTRE = ".*?([0-9]+).*";
+    static public final Pattern INTPA = Pattern.compile(INTRE);
+    private int parseFirstInt(String s){
+        Matcher m = INTPA.matcher(s);
+        if(!m.matches()) return 0;
+        int r = Integer.parseInt(m.group(1));
+        return r;
+    }
 
     //---------------------------------------------------------
 

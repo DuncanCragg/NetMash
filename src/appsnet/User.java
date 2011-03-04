@@ -86,7 +86,6 @@ public class User extends WebObject {
         LinkedList vcarddetail = new LinkedList();
         vcarddetail.add("direction:vertical");
 
-
         String homephone=content("viewing:tel:home:0");
         if(homephone==null) homephone=content("viewing:tel:home");
         if(homephone!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Home phone:", homephone));
