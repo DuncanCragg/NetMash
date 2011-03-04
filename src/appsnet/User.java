@@ -43,10 +43,10 @@ public class User extends WebObject {
     }
 
     private void showWhatIAmViewing(){ logrule();
-        if(contentHash("viewing:#")!=null){ logrule();
+        if(content("viewing:is")!=null){ logrule();
             LinkedHashMap view=null;
             if(contentListContains("viewing:is", "vcardlist")){
-                view=vCardList2GUI(contentHash("viewing:#"));
+                view=vCardList2GUI();
             }
             else{
                 view=guifyHash(contentHash("viewing:#"));
@@ -57,14 +57,18 @@ public class User extends WebObject {
         }
     }
 
-    private LinkedHashMap vCardList2GUI(LinkedHashMap<String,Object> hm){
-        Object o = hm.get("vcards");
-        if(!(o instanceof LinkedList)) return null;
-        LinkedList<String> vcards = (LinkedList<String>)o;
+    private LinkedHashMap vCardList2GUI(){
+        LinkedList<String> vcards = contentList("viewing:vcards");
+        if(vcards==null) return null;
 
         LinkedList vcardsgui = new LinkedList();
         vcardsgui.add("direction:vertical");
-        for(String uid: vcards) vcardsgui.add(uid);
+        int i=0;
+        for(String uid: vcards){
+            String fullname=content("viewing:vcards:"+(i++)+":fullName");
+            if(fullname==null) vcardsgui.add("@"+uid);
+            else               vcardsgui.add(fullname+" @"+uid);
+        }
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");

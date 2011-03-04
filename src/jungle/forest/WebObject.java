@@ -115,11 +115,13 @@ public class WebObject {
         String s=null;
         try{ s=updatingState.stringPath(path);
         }catch(PathOvershot po){
+            String parentuid=uid;
             while(true){
-                WebObject w = observeIfUID(po.leaf);
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ s = w.publicState.stringPath(po.path); break;
-                }catch(PathOvershot po2){ po=po2; }
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
         return s;
@@ -143,11 +145,13 @@ public class WebObject {
         int i=0;
         try{ i=updatingState.intPath(path);
         }catch(PathOvershot po){
+            String parentuid=uid;
             while(true){
-                WebObject w = observeIfUID(po.leaf);
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ i = w.publicState.intPath(po.path); break;
-                }catch(PathOvershot po2){ po=po2; }
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
         return i;
@@ -164,11 +168,13 @@ public class WebObject {
         double d=0;
         try{ d=updatingState.doublePath(path);
         }catch(PathOvershot po){
+            String parentuid=uid;
             while(true){
-                WebObject w = observeIfUID(po.leaf);
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ d = w.publicState.doublePath(po.path); break;
-                }catch(PathOvershot po2){ po=po2; }
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
         return d;
@@ -202,11 +208,13 @@ public class WebObject {
         LinkedList l=null;
         try{ l = updatingState.listPath(path);
         }catch(PathOvershot po){
+            String parentuid=uid;
             while(true){
-                WebObject w = observeIfUID(po.leaf);
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ l = w.publicState.listPath(po.path); break;
-                }catch(PathOvershot po2){ po=po2; }
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
         return l;
@@ -269,11 +277,13 @@ public class WebObject {
         LinkedHashMap h=null;
         try{ h = updatingState.hashPath(path);
         }catch(PathOvershot po){
+            String parentuid=uid;
             while(true){
-                WebObject w = observeIfUID(po.leaf);
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ h = w.publicState.hashPath(po.path); break;
-                }catch(PathOvershot po2){ po=po2; }
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
         return h;
@@ -393,12 +403,6 @@ public class WebObject {
         if(!UID.isUID(observeduid)) return null;
         obsalmod = true;
         return funcobs.observing(this, observeduid);
-    }
-
-    private WebObject observeIfUID(Object leaf){
-        if(!(leaf instanceof String)) return null;
-        if(!UID.isUID((String)leaf)) return null;
-        return observing((String)leaf);
     }
 
     private void doCopyOnWrite(String path){

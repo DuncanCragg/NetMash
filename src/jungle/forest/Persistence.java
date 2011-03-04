@@ -90,7 +90,9 @@ public class Persistence implements FileUser {
         String classname = json.stringPathN("%class"); json.removePath("%class");
         WebObject w=null;
         try{
-            w = (WebObject)Class.forName(classname).newInstance();
+            if(classname!=null && classname.length() >0){
+                   w = (WebObject)Class.forName(classname).newInstance();
+            } else w=new WebObject();
             w.construct(json);
             funcobs.cachePut(w);
             return w;

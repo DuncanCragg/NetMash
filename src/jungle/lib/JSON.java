@@ -673,18 +673,18 @@ public class JSON {
                 if(i==parts.length-1) return o;
                 String sx=parts[i+1];
                 int x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){}
-                if(sx.equals("0") || x>0){
-                   LinkedList ll = (LinkedList)o;
-                   if(x<ll.size()){
-                       o = ll.get(x);
-                       if(i+1==parts.length-1) return o;
-                       if(o instanceof LinkedHashMap){
-                           hm=(LinkedHashMap)o;
-                           i++;
-                       }
-                   }
+                if(!(sx.equals("0") || x>0)) return null;
+                LinkedList ll = (LinkedList)o;
+                if(x>=ll.size()) return null;
+                i++;
+                o = ll.get(x);
+                if(o==null) return null;
+                if(i==parts.length-1) return o;
+                if(o instanceof LinkedHashMap){
+                    hm=(LinkedHashMap)o;
+                    continue;
                 }
-                continue;
+                throwPathOvershot(o, parts, i);
             }
             if(o instanceof String){
                 if(i==parts.length-1) return o;

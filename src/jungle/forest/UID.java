@@ -51,6 +51,13 @@ public class UID {
                          Kernel.config.stringPathN("network:pathprefix")+uid+".json";
     }
 
+    static public String toAbsURLfromBaseURL(String baseurl, String uid2url){
+        if(!baseurl.startsWith("http://")) return uid2url;
+        if( uid2url.startsWith("http://")) return uid2url;
+        int s=baseurl.indexOf("uid-");
+        return baseurl.substring(0,s)+uid2url+".json";
+    }
+
     // ----------------------------------------
 
     static public void main(String[] args){

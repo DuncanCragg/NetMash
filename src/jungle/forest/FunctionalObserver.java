@@ -90,7 +90,7 @@ public class FunctionalObserver implements Module {
             if(!w.newobserve.contains(olduid)){
                 WebObject wo = cacheGet(olduid);
                 wo.notify.remove(w.uid);
-                persistence.save(wo);
+                if(!wo.isShell()) persistence.save(wo);
             }
         }
     }
