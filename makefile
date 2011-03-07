@@ -32,10 +32,10 @@ run2: jar kill
 runall: run1 run2
 
 runon1: jar kill
-	( cd src/server/vm1 ; java -classpath .:../build/netmash.jar netmash.NetMash & )
+	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash & )
 
 runon2: jar kill
-	( cd src/server/vm2 ; java -classpath .:../build/netmash.jar netmash.NetMash & )
+	( cd src/server/vm2 ; java -classpath .:../../../build/netmash.jar netmash.NetMash & )
 
 whappen:
 	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
