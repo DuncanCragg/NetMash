@@ -1,11 +1,11 @@
-package jungle.forest;
+package netmash.forest;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.io.*;
 
-import jungle.platform.*;
-import jungle.lib.*;
+import netmash.platform.*;
+import netmash.lib.*;
 
 /** Holds object cache; manages notify and observe; runs evaluate; sorts out
   * persistence and networking and cacheing-in objects; drives retry and timeout.

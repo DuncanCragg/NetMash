@@ -1,4 +1,4 @@
-package jungle.forest;
+package netmash.forest;
 
 import static java.util.Arrays.*;
 
@@ -11,9 +11,9 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
 
-import jungle.Version;
-import jungle.lib.JSON;
-import jungle.platform.*;
+import netmash.Version;
+import netmash.lib.JSON;
+import netmash.platform.*;
 
 /** HTTP and REST: the Object Web.
   */

@@ -1,5 +1,5 @@
 
-package jungle.lib;
+package netmash.lib;
 
 public class PathOvershot extends Exception{
 

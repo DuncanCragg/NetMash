@@ -1,5 +1,5 @@
 
-package jungle.platform;
+package netmash.platform;
 
 /** Module has a callback from Kernel.
   */

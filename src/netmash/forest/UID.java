@@ -1,4 +1,4 @@
-package jungle.forest;
+package netmash.forest;
 
 import java.util.*;
 import java.io.*;
@@ -7,7 +7,7 @@ import java.nio.charset.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
-import jungle.platform.*;
+import netmash.platform.*;
 
 public class UID {
 

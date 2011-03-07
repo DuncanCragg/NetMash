@@ -1,5 +1,5 @@
 
-package jungle.lib;
+package netmash.lib;
 
 import java.util.*;
 import java.math.*;

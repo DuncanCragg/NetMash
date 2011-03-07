@@ -1,5 +1,5 @@
 
-package appsnet.gui;
+package android.gui;
 
 import java.util.*;
 import java.util.regex.*;
@@ -18,17 +18,17 @@ import android.widget.*;
 
 import static android.view.ViewGroup.LayoutParams.*;
 
-import jungle.platform.Kernel;
-import jungle.lib.JSON;
-import jungle.forest.FunctionalObserver;
+import netmash.platform.Kernel;
+import netmash.lib.JSON;
+import netmash.forest.FunctionalObserver;
 
-import appsnet.User;
+import android.User;
 
-/**  AppsNet main.
+/**  NetMash main.
   */
-public class AppsNet extends Activity implements OnClickListener, OnKeyListener {
+public class NetMash extends Activity implements OnClickListener, OnKeyListener {
 
-    static public AppsNet top=null;
+    static public NetMash top=null;
     static public User    user=null;
 
     public void onUserReady(User u){ user = u; }
@@ -329,7 +329,7 @@ public class AppsNet extends Activity implements OnClickListener, OnKeyListener 
 
     private void runKernel(){
 
-        InputStream configis = getResources().openRawResource(R.raw.jungleconfig);
+        InputStream configis = getResources().openRawResource(R.raw.netmashconfig);
         JSON config=null;
         try{ config = new JSON(configis); }catch(Exception e){ throw new RuntimeException("Error in config file: "+e); }
 

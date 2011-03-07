@@ -1,4 +1,4 @@
-package jungle.forest;
+package netmash.forest;
 
 /** Notifiable - callback from FunctionalObserver to HTTP.*/
 public interface Notifiable {

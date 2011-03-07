@@ -1,21 +1,21 @@
 
 # Where you want the Android apk to be copied
 DEBUG_TARGET=~/HostDesktop
-RELEASE_TARGET=../net/duncan-cragg.org/AppsNet.apk
+RELEASE_TARGET=../net/duncan-cragg.org/NetMash.apk
 
 classes: \
-./build/classes/jungle/Jungle.class \
-./build/classes/jungle/platform/Kernel.class \
-./build/classes/jungle/platform/Module.class \
-./build/classes/jungle/platform/ChannelUser.class \
-./build/classes/jungle/platform/FileUser.class \
-./build/classes/jungle/lib/JSON.class \
-./build/classes/jungle/lib/TestJSON.class \
-./build/classes/jungle/forest/UID.class \
-./build/classes/jungle/forest/FunctionalObserver.class \
-./build/classes/jungle/forest/WebObject.class \
-./build/classes/jungle/forest/Persistence.class \
-./build/classes/jungle/forest/HTTP.class \
+./build/classes/netmash/NetMash.class \
+./build/classes/netmash/platform/Kernel.class \
+./build/classes/netmash/platform/Module.class \
+./build/classes/netmash/platform/ChannelUser.class \
+./build/classes/netmash/platform/FileUser.class \
+./build/classes/netmash/lib/JSON.class \
+./build/classes/netmash/lib/TestJSON.class \
+./build/classes/netmash/forest/UID.class \
+./build/classes/netmash/forest/FunctionalObserver.class \
+./build/classes/netmash/forest/WebObject.class \
+./build/classes/netmash/forest/Persistence.class \
+./build/classes/netmash/forest/HTTP.class \
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
@@ -32,16 +32,16 @@ run2: jar kill
 runall: run1 run2
 
 runon1: jar kill
-	( cd src/server/vm1 ; java -classpath .:../build/jungle.jar jungle.Jungle & )
+	( cd src/server/vm1 ; java -classpath .:../build/netmash.jar netmash.NetMash & )
 
 runon2: jar kill
-	( cd src/server/vm2 ; java -classpath .:../build/jungle.jar jungle.Jungle & )
+	( cd src/server/vm2 ; java -classpath .:../build/netmash.jar netmash.NetMash & )
 
 whappen:
-	vim -o -N src/server/vm1/forest.db src/server/vm1/jungle.log src/server/vm2/forest.db src/server/vm2/jungle.log
+	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
 
 setup:
-	vim -o -N src/server/vm1/jungle-config.json src/server/vm1/test-forest.db src/server/vm2/jungle-config.json src/server/vm2/test-forest.db
+	vim -o -N src/server/vm1/netmash-config.json src/server/vm1/test-forest.db src/server/vm2/netmash-config.json src/server/vm2/test-forest.db
 
 kill:
 	-pkill java
@@ -51,27 +51,27 @@ check: clean runtests
 runtests: runjson runuid
 
 runjson: jar
-	java -ea -classpath ./build/jungle.jar jungle.lib.TestJSON
+	java -ea -classpath ./build/netmash.jar netmash.lib.TestJSON
 
 runuid: jar
-	java -ea -classpath ./build/jungle.jar jungle.forest.UID
+	java -ea -classpath ./build/netmash.jar netmash.forest.UID
 
 jar: classes
-	( cd ./build/classes; jar cfm ../jungle.jar ../META-INF/MANIFEST.MF . )
+	( cd ./build/classes; jar cfm ../netmash.jar ../META-INF/MANIFEST.MF . )
 
-appsnet: clean
+netmash: clean
 	ant debug
-	cp bin/AppsNet-debug.apk $(DEBUG_TARGET)
+	cp bin/NetMash-debug.apk $(DEBUG_TARGET)
 
-appsnetrel: clean
+netmashrel: clean
 	ant release
-	cp bin/AppsNet-release.apk $(RELEASE_TARGET)
+	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 clean:
-	rm -rf ./build/classes/*.class ./build/classes/jungle
+	rm -rf ./build/classes/*.class ./build/classes/netmash
 	rm -rf ./src/server/vm*/*.class
 	rm -rf ./src/server/vm*/forest.db
 	rm -rf bin/classes bin/classes.dex
-	rm -rf bin/AppsNet.ap_ bin/AppsNet*un*ed.apk
-	rm -rf gen/jungle/platform/R.java
+	rm -rf bin/NetMash.ap_ bin/NetMash*un*ed.apk
+	rm -rf gen/netmash/platform/R.java
 

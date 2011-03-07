@@ -1,5 +1,5 @@
 
-package jungle.platform;
+package netmash.platform;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -10,10 +10,10 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.channels.spi.*;
 
-import jungle.lib.JSON;
+import netmash.lib.JSON;
 
 /**  This is the runnable container or kernel class. 
-  *  Requires jungle-config.json giving Threadpool size.
+  *  Requires netmash-config.json giving Threadpool size.
   *  Runs event loop, handles NIO, handles Threadpool
   *  and gives events/callbacks to runmodule.
   */
@@ -163,7 +163,7 @@ public class Kernel {
 
     static private void initConfig(JSON conf){
         try{
-            if(conf==null) config = new JSON(new File("./jungle-config.json"));
+            if(conf==null) config = new JSON(new File("./netmash-config.json"));
             else           config = conf;
         } catch(Exception e){ bailOut("Error in config file", e, null); }
     }

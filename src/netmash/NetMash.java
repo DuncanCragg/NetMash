@@ -1,13 +1,13 @@
 
-package jungle;
+package netmash;
 
-import jungle.Version;
-import jungle.platform.Kernel;
-import jungle.forest.FunctionalObserver;
+import netmash.Version;
+import netmash.platform.Kernel;
+import netmash.forest.FunctionalObserver;
 
-/**  Jungle: FOREST Reference Implementation; server main.
+/**  NetMash: FOREST Reference Implementation; server main.
   */
-public class Jungle {
+public class NetMash {
 
     //-----------------------------------------------------
 

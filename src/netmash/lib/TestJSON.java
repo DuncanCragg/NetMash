@@ -1,12 +1,12 @@
 
-package jungle.lib;
+package netmash.lib;
 
 import java.util.*;
 import java.util.regex.*;
 import java.io.*;
 import java.nio.*;
 
-import jungle.lib.JSON;
+import netmash.lib.JSON;
 
 /** TestJSON: test the JSON class. */
 @SuppressWarnings("unchecked")
@@ -23,9 +23,9 @@ public class TestJSON {
         {
 
         JSON m=new JSON(
-            "{ \"kernel\": { \"modules\": {              \"cache\": \"jungle.cache.JSONCache\",\n"+
-            "                                            \"http\": \"jungle.drivers.HTTP\",\n"+
-            "                                            \"logic\": \"jungle.drivers.TestDriver\" } },\n"+
+            "{ \"kernel\": { \"modules\": {              \"cache\": \"netmash.cache.JSONCache\",\n"+
+            "                                            \"http\": \"netmash.drivers.HTTP\",\n"+
+            "                                            \"logic\": \"netmash.drivers.TestDriver\" } },\n"+
             "                   \"modules\":  { \"cache\": { \"funky\": \"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3\"},\n"+
             "                                 \"http\": { \"port\": 8080 },\n"+
             "                                 \"logic\": [ true, false, null, true, false, null ],\n"+
@@ -50,7 +50,7 @@ public class TestJSON {
         assert port==8080: "port should be 8080, but it's "+port;
 
         HashMap<String,String> modulenames = m.hashPath("kernel:modules");
-        assert "jungle.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be jungle.cache.JSONCache, but it's "+
+        assert "netmash.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be netmash.cache.JSONCache, but it's "+
                                                                                                 modulenames.get("cache");
         assert modulenames instanceof LinkedHashMap: "kernel:modules should be ordered hash";
 
@@ -60,7 +60,7 @@ public class TestJSON {
 
         {
 
-        JSON m = new JSON(new File("./src/server/vm1/jungle-config.json"));
+        JSON m = new JSON(new File("./src/server/vm1/netmash-config.json"));
         System.out.println(m);
 
         int port = m.intPath("network:port");

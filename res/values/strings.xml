@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AppsNet</string>
+    <string name="app_name">NetMash</string>
     <string name="AddLinkButton">Add Link</string>
     <string name="HomeButton">Home</string>
 </resources>

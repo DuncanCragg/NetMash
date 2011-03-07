@@ -1,4 +1,4 @@
-package jungle.forest;
+package netmash.forest;
 
 import java.util.*;
 import java.io.*;
@@ -7,8 +7,8 @@ import java.nio.charset.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
-import jungle.platform.*;
-import jungle.lib.JSON;
+import netmash.platform.*;
+import netmash.lib.JSON;
 
 /** Persistence of WebObjects.
   * A NoSQL JSON in-memory Database!

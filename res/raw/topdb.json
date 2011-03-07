@@ -2,7 +2,7 @@
     "%etag": 1,
     "%notify": [],
     "%observe": [],
-    "%class": "appsnet.User",
+    "%class": "android.User",
     "is": [ "user" ],
     "viewing":   "http://cilux.net:8081/o/uid-35ad-af7a-93fb-896d.json",
     "history": [ "http://cilux.net:8081/o/uid-35ad-af7a-93fb-896d.json",

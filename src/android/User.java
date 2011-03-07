@@ -1,13 +1,13 @@
 
-package appsnet;
+package android;
 
 import java.util.*;
 import java.util.regex.*;
 
-import jungle.lib.JSON;
-import jungle.forest.WebObject;
+import netmash.lib.JSON;
+import netmash.forest.WebObject;
 
-import appsnet.gui.*;
+import android.gui.*;
 
 /** User viewing the Object Web.
   */
@@ -15,7 +15,7 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    public User(){ AppsNet.top.onUserReady(this); }
+    public User(){ NetMash.top.onUserReady(this); }
 
     public void onTopCreate(){
     }
@@ -57,7 +57,7 @@ public class User extends WebObject {
             }
             JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
             uiJSON.hashPath("view", view);
-            AppsNet.top.drawJSON(uiJSON);
+            NetMash.top.drawJSON(uiJSON);
         }
     }
 

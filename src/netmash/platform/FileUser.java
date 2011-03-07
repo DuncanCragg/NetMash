@@ -1,4 +1,4 @@
-package jungle.platform;
+package netmash.platform;
 
 import java.util.*;
 import java.nio.*;

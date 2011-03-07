@@ -2,8 +2,8 @@
 import java.util.*;
 import java.util.regex.*;
 
-import jungle.lib.JSON;
-import jungle.forest.WebObject;
+import netmash.lib.JSON;
+import netmash.forest.WebObject;
 
 /** Twitter API driver.
   */

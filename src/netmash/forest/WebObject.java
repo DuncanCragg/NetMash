@@ -1,4 +1,4 @@
-package jungle.forest;
+package netmash.forest;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -10,9 +10,9 @@ import java.nio.channels.*;
 import java.nio.charset.*;
 import java.net.*;
 
-import jungle.platform.Kernel;
-import jungle.lib.*;
-import jungle.forest.FunctionalObserver;
+import netmash.platform.Kernel;
+import netmash.lib.*;
+import netmash.forest.FunctionalObserver;
 
 enum ShellStates { NEW, TRYDB, TRYREMOTE, READY }
 
