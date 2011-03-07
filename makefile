@@ -1,7 +1,7 @@
 
 # Where you want the Android apk to be copied
 DEBUG_TARGET=~/HostDesktop
-RELEASE_TARGET=../net/duncan-cragg.org/NetMash.apk
+RELEASE_TARGET=../net/netmash.net/NetMash.apk
 
 classes: \
 ./build/classes/netmash/NetMash.class \
