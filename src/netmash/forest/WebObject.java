@@ -118,7 +118,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
+                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ s = w.publicState.stringPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -148,7 +148,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
+                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ i = w.publicState.intPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -171,7 +171,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
+                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ d = w.publicState.doublePath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -211,7 +211,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
+                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ l = w.publicState.listPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -286,7 +286,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.toAbsURLfromBaseURL(parentuid, (String)po.leaf));
+                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ h = w.publicState.hashPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -305,51 +305,6 @@ public class WebObject {
     public void contentHash(String path, JSON val){
         doCopyOnWrite(path);
         statemod = updatingState.hashPath(path, val.content()) || statemod;
-    }
-
-    /** Get hash at path in given UID. */
-    public LinkedHashMap contentHashOf(String linkuid, String path){
-        WebObject w = observing(linkuid);
-        if(w==null) return null;
-        return w.contentHash(path);
-    }
-
-    /** Given a UID, drill into its content as String if 
-      * available, else return null.
-      */
-    public String contentOf(String linkuid, String path){
-        WebObject w = observing(linkuid);
-        if(w==null) return null;
-        return w.content(path);
-    }
-
-    /** Given a UID, drill into its content as List if
-      * available, else return null.
-      */
-    public LinkedList contentListOf(String linkuid, String path){
-        WebObject w = observing(linkuid);
-        if(w==null) return null;
-        return w.contentList(path);
-    }
-
-    /** Given a UID, drill into its content as List to see if
-      * it contains this value.
-      */
-    @SuppressWarnings("unchecked")
-    public boolean contentListOfContains(String linkuid, String path, String val){
-        LinkedList list=contentListOf(linkuid, path);
-        if(list==null) return false;
-        return list.contains(val);
-    }
-
-    /** Given a UID, drill into its content as List to see if
-      * it contains all members of supplied list.
-      */
-    @SuppressWarnings("unchecked")
-    public boolean contentListOfContainsAll(String linkuid, String path, List val){
-        LinkedList list=contentListOf(linkuid, path);
-        if(list==null) return false;
-        return list.containsAll(val);
     }
 
     /** Set this object up to notify the object at this uid.

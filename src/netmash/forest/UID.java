@@ -45,13 +45,29 @@ public class UID {
         return false;
     }
 
-    static public String toURL(String uid){
+    static public String toURL(String uid2url){
+        if(uid2url.startsWith("http://")) return uid2url;
         return "http://"+Kernel.config.stringPathN("network:host")+":"+
-                         Kernel.config.intPathN("network:port")+
-                         Kernel.config.stringPathN("network:pathprefix")+uid+".json";
+                         Kernel.config.intPathN(   "network:port")+
+                         Kernel.config.stringPathN("network:pathprefix")+uid2url+".json";
     }
 
-    static public String toAbsURLfromBaseURL(String baseurl, String uid2url){
+    static public String toUID(String url2uid){
+        if(!url2uid.startsWith("http://"))         return url2uid;
+        int s=url2uid.indexOf("uid-");  if(s== -1) return url2uid;
+        int e=url2uid.indexOf(".json"); if(e== -1) return url2uid.substring(s);
+        ;                                          return url2uid.substring(s,e);
+    }
+
+    static public String normaliseUID(String baseurl, String uid2url){
+        String localpre="http://"+Kernel.config.stringPathN("network:host")+":"+
+                                  Kernel.config.intPathN(   "network:port");
+        if(!baseurl.startsWith(localpre)) uid2url=toURLfromBaseURL(baseurl, uid2url);
+        if(!uid2url.startsWith(localpre)) return uid2url;
+        return toUID(uid2url);
+    }
+
+    static public String toURLfromBaseURL(String baseurl, String uid2url){
         if(!baseurl.startsWith("http://")) return uid2url;
         if( uid2url.startsWith("http://")) return uid2url;
         int s=baseurl.indexOf("uid-");

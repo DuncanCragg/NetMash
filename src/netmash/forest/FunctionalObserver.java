@@ -106,6 +106,7 @@ public class FunctionalObserver implements Module {
     void saveAndNotifyUpdated(WebObject notifier){
         persistence.save(notifier);
         notifyUpdated(notifier);
+        notifyHTTPUpdated(notifier);
     }
 
     void saveAndAlertFirstTime(WebObject notifier){
@@ -122,6 +123,9 @@ public class FunctionalObserver implements Module {
             if(notified.isLocal()) evaluatable(notified);
             else http.push(notified);
         }
+    }
+
+    private void notifyHTTPUpdated(WebObject notifier){
         for(Notifiable notified: notifier.httpnotify){
             notified.notify(notifier);
         }
@@ -186,6 +190,7 @@ public class FunctionalObserver implements Module {
             }
             else{
                 s.shellstate = ShellStates.TRYREMOTE;
+                if(!s.httpnotify.isEmpty()){ log("I'm not a proxy yet!"); notifyHTTPUpdated(s); }
                 if(!s.notify.isEmpty())    http.pull(s);
                 if(!s.alertedin.isEmpty()) http.push(s); // need to snapshot alertedin
             }

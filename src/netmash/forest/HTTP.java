@@ -393,7 +393,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     /** Notifiable callback from FunctionalObserver when object is found. */
     public void notify(WebObject w){
-        send200(w);
+        if(w.isShell()) send404();
+        else            send200(w);
         doingHeaders=true;
     }
 

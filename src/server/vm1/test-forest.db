@@ -52,6 +52,9 @@
     "indexes": {
         "followers": {
             "user-id": {}
+        },
+        "posts": {
+            "user-num": {}
         }
     }
 }

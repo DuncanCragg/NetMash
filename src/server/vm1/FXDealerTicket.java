@@ -34,7 +34,8 @@ public class FXDealerTicket extends WebObject {
 
     private void makeTicket(){
         for(String orderuid: alerted()){
-            String orderticket = contentOf(orderuid, "ticket");
+            content("order", orderuid);
+            String orderticket = content("order:ticket");
             if(orderticket==null){
                 contentListAdd("tickets", spawn(new FXDealerTicket(orderuid)));
             }

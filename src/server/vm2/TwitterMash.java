@@ -3,6 +3,7 @@ import java.util.*;
 import java.util.regex.*;
 
 import netmash.lib.JSON;
+import netmash.forest.UID;
 import netmash.forest.WebObject;
 
 /** Declarative, Concurrent Twitter Mashup in the Object Web Cloud with a NoSQL database
@@ -12,14 +13,6 @@ public class TwitterMash extends WebObject {
 
     public TwitterMash(){}
 
-    public TwitterMash(String userid, String topuid, String twitter){
-        super("{ \"is\": [ \"twittermash\", \"masher\" ], \n"+
-              "  \"userid\":  \""+userid+"\",\n"+
-              "  \"topuid\":  \""+topuid +"\",\n"+
-              "  \"twitter\": \""+twitter+"\"\n"+
-              "}");
-    }
-
     public void evaluate(){
         if(contentListContains("is", "top")){
             getFollowers();
@@ -28,54 +21,64 @@ public class TwitterMash extends WebObject {
         }
         else
         if(contentListContains("is", "masher")){
-            getTimeline();
-            addTimeline();
+            getPosts();
+            addPosts();
         }
     }
 
     private void getFollowers(){
-        if(contentList("followers")==null && !contentListContainsAll("is", list("twitter", "query"))){ logrule();
+        if(contentList("followers")==null && !contentListContains("is", "query")){ logrule();
             contentListAdd("is", "query"); // Quick type extension
-            contentHash("query", new JSON("{ \"is\": [ \"twitter\", \"followers\" ], \"user\": { \"id\": \""+content("topuser")+"\", }}" ));
+            contentHash("query", new JSON("{ \"is\": [ \"twitter\", \"followers\" ], \"user\": { \"id\": \""+content("topuser")+"\" }}" ));
             notifying(content("twitter"));
         }
     }
 
     private void addFollowers(){
         for(String resultsuid: alerted()){ logrule();
-            contentList("followers", contentListOf(resultsuid, "results"));
-            contentListRemove("is", "query");
-            content("query", null);
+            content("results", resultsuid);
+            contentList("followers", contentList("results:results:list"));
             unnotifying(content("twitter"));
+            contentRemove("query");
+            contentListRemove("is", "query");
         }
     }
 
     private void distributeWork(){
         while(contentList("mashers")==null ||
-              contentList("mashers").size()< 2 ){
+              contentList("mashers").size()< 1 ){
 
             String follower = content("followers:0");
             if(follower!=null){ logrule();
-                contentListAdd("mashers", spawn(new TwitterMash(follower, uid, content("twitter"))));
+                contentListAdd("mashers", spawn(new TwitterMash(UID.toURLfromBaseURL(content("twitter"), follower), uid, content("twitter"))));
                 contentRemove("followers:0");
             } else break;
         }
     }
 
-    private void getTimeline(){
-        if(content("timeline")==null && !contentListContainsAll("is", list("twitter", "query"))){ logrule();
-            contentListAddAll("is", list("twitter", "query"));
-            content("query", "users:"+content("userid")+":timeline" );
+    public TwitterMash(String user, String topuid, String twitter){
+        super("{ \"is\": [ \"twittermash\", \"masher\" ], \n"+
+              "  \"user\": \""+user+"\",\n"+
+              "  \"topuid\":  \""+topuid +"\",\n"+
+              "  \"twitter\": \""+twitter+"\"\n"+
+              "}");
+    }
+
+    private void getPosts(){
+        if(contentList("posts")==null && !contentListContains("is", "query")){ logrule();
+            contentListAdd("is", "query");
+            contentHash("query", new JSON("{ \"is\": [ \"twitter\", \"post\" ], \"user\": \""+content("user")+"\" }" ));
             notifying(content("twitter"));
         }
     }
 
-    private void addTimeline(){
+    private void addPosts(){
         for(String resultsuid: alerted()){ logrule();
-            contentList("timeline", contentListOf(resultsuid, "results"));
-            contentListRemoveAll("is", list("twitter", "query"));
-            content("query", null);
+            content("results", resultsuid);
+            contentList("posts", contentList("results:results"));
             unnotifying(content("twitter"));
+            contentRemove("query");
+            contentListRemove("is", "query");
         }
     }
 }
