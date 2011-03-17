@@ -534,7 +534,9 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             Kernel.close(channel);
             connected=false;
         }
-        if(doingHeaders && httpConnection.equals("close")) connected=false;
+        if(eof) return;
+        // bug: relies on all headers coming in in one go
+        if(doingHeaders && "close".equals(httpConnection)) connected=false;
         if(doingHeaders) synchronized(this){ notify(); }
     }
 

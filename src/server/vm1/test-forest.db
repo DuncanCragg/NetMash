@@ -20,10 +20,39 @@
     "%etag": 1,
     "%notify": [],
     "%observe": [],
-    "%class": "Twitter",
-    "is": [ "twitter", "top" ],
-    "users": { "Duncancragg": { "followers": [ 11878542, 9466742, 222737495, 142507295, 239815011, 110469008, 12793162, 155762008 ] },
-               "JoeBloggs":   { "followers": [ 11878542, 9466742, 222737495, 142507295, 239815011, 110469008, 12793162, 155762008 ] }
+    "%class": "server.types.Twitter",
+    "is": [ "twitter" ],
+    "types": {
+        "TwitterUser":      { "is": [ "twitter", "user" ],
+                              "id": "/string/",
+                              "id2": "/int/",
+                              "location": "/geo/",
+                              "contacts": { "following": "/uid/", "followers": "/uid/" },
+                              "posts": "/uid/"
+        },
+        "TwitterFollowing": { "is": [ "twitter", "following" ],
+                              "user": "/uid/",
+                              "list": "/uid-list/"
+        },
+        "TwitterFollowers": { "is": [ "twitter", "followers" ],
+                              "user": "/uid/",
+                              "list": "/uid-list/"
+        },
+        "TwitterPostList": { "is": [ "twitter", "postlist" ],
+                             "user": "/uid/",
+                             "list": "/uid-list/"
+        },
+        "TwitterPost": {      "is": [ "twitter", "post" ],
+                              "user": "/uid/",
+                              "location": "/geo/",
+                              "text": "/string/",
+                              "created": "/timestamp/"
+        }
+    },
+    "indexes": {
+        "followers": {
+            "user-id": {}
+        }
     }
 }
 

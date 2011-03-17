@@ -16,6 +16,7 @@ classes: \
 ./build/classes/netmash/forest/WebObject.class \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/netmash/forest/HTTP.class \
+./build/classes/server/types/Twitter.class\
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
@@ -26,7 +27,7 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 run1: jar kill
 	(cd src/server/vm1; ./run.sh)
 
-run2: jar kill
+run2: jar
 	(cd src/server/vm2; ./run.sh)
 
 runall: run1 run2
@@ -68,9 +69,11 @@ netmashrel: clean
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 clean:
-	rm -rf ./build/classes/*.class ./build/classes/netmash
-	rm -rf ./src/server/vm*/*.class
-	rm -rf ./src/server/vm*/forest.db
+	rm -rf ./build/classes/netmash
+	rm -rf ./build/classes/server
+	rm -rf ./src/server/vm?/*.class
+	rm -rf ./src/server/vm?/forest.db
+	rm -rf ./src/server/vm?/forest.log
 	rm -rf bin/classes bin/classes.dex
 	rm -rf bin/NetMash.ap_ bin/NetMash*un*ed.apk
 	rm -rf gen/netmash/platform/R.java

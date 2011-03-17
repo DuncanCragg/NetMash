@@ -266,6 +266,12 @@ public class WebObject {
         statemod = updatingState.removePath(path) || statemod;
     }
 
+    /** Remove the given value in the list at the path. */
+    public void contentListRemove(String path, String val){
+        doCopyOnWrite(path);
+        statemod = updatingState.listPathRemove(path, val) || statemod;
+    }
+
     /** Remove all the values in the list at the path. */
     public void contentListRemoveAll(String path, List val){
         doCopyOnWrite(path);
@@ -295,6 +301,19 @@ public class WebObject {
         statemod = updatingState.hashPath(path, val) || statemod;
     }
 
+    /** Set JSON at path. */
+    public void contentHash(String path, JSON val){
+        doCopyOnWrite(path);
+        statemod = updatingState.hashPath(path, val.content()) || statemod;
+    }
+
+    /** Get hash at path in given UID. */
+    public LinkedHashMap contentHashOf(String linkuid, String path){
+        WebObject w = observing(linkuid);
+        if(w==null) return null;
+        return w.contentHash(path);
+    }
+
     /** Given a UID, drill into its content as String if 
       * available, else return null.
       */
@@ -311,6 +330,16 @@ public class WebObject {
         WebObject w = observing(linkuid);
         if(w==null) return null;
         return w.contentList(path);
+    }
+
+    /** Given a UID, drill into its content as List to see if
+      * it contains this value.
+      */
+    @SuppressWarnings("unchecked")
+    public boolean contentListOfContains(String linkuid, String path, String val){
+        LinkedList list=contentListOf(linkuid, path);
+        if(list==null) return false;
+        return list.contains(val);
     }
 
     /** Given a UID, drill into its content as List to see if
@@ -353,7 +382,7 @@ public class WebObject {
     public String spawn(WebObject w){
         obsalmod = true;
         spawned.add(w);
-        return UID.toURL(w.uid);
+        return w.uid; // UID.toURL(w.uid);
     }
 
     /** Use this when running from an interface or I/O callback. */

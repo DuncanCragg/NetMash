@@ -235,6 +235,12 @@ public class JSON {
     }
 
     /** Remove from list at the given path. */
+    public boolean listPathRemove(String path, String value){
+        ensureContent();
+        return removeListPath(tophash, path, value);
+    }
+
+    /** Remove from list at the given path. */
     public boolean listPathRemoveAll(String path, List value){
         ensureContent();
         return removeAllListPath(tophash, path, value);
@@ -761,6 +767,16 @@ public class JSON {
            if(!setListPath(hashmap, path, list)) return false;
         }
         list.addAll(value);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean removeListPath(LinkedHashMap hashmap, String path, String value){
+        LinkedList list=null;
+        try{ list = getListPath(hashmap, path);
+        }catch(PathOvershot po){ return false; }
+        if(list==null) return false;
+        list.remove(value);
         return true;
     }
 

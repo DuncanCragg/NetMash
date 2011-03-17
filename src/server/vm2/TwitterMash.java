@@ -35,8 +35,8 @@ public class TwitterMash extends WebObject {
 
     private void getFollowers(){
         if(contentList("followers")==null && !contentListContainsAll("is", list("twitter", "query"))){ logrule();
-            contentListAddAll("is", list("twitter", "query")); // Quick change of type
-            content("query", "users:"+content("topuser")+":followers" );
+            contentListAdd("is", "query"); // Quick type extension
+            contentHash("query", new JSON("{ \"is\": [ \"twitter\", \"followers\" ], \"user\": { \"id\": \""+content("topuser")+"\", }}" ));
             notifying(content("twitter"));
         }
     }
@@ -44,7 +44,7 @@ public class TwitterMash extends WebObject {
     private void addFollowers(){
         for(String resultsuid: alerted()){ logrule();
             contentList("followers", contentListOf(resultsuid, "results"));
-            contentListRemoveAll("is", list("twitter", "query"));
+            contentListRemove("is", "query");
             content("query", null);
             unnotifying(content("twitter"));
         }
