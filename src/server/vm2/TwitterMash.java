@@ -46,7 +46,7 @@ public class TwitterMash extends WebObject {
 
     private void distributeWork(){
         while(contentList("mashers")==null ||
-              contentList("mashers").size()< 1 ){
+              contentList("mashers").size()< 3 ){
 
             String follower = content("followers:0");
             if(follower!=null){ logrule();

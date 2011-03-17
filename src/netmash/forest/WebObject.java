@@ -113,7 +113,7 @@ public class WebObject {
     /** Get String at this path in the JSON content. */
     public String content(String path){
         String s=null;
-        try{ s=updatingState.stringPath(path);
+        try{ s = updatingState.stringPath(path);
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
@@ -121,6 +121,23 @@ public class WebObject {
                 WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
                 if(w==null)break;
                 try{ s = w.publicState.stringPath(po.path); break;
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
+            }
+        }
+        return s;
+    }
+
+    /** Test if anything set at path. */
+    public boolean contentSet(String path){
+        boolean s=false;
+        try{ s = updatingState.isAtPath(path);
+        }catch(PathOvershot po){
+            String parentuid=uid;
+            while(true){
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                if(w==null)break;
+                try{ s = w.publicState.isAtPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
@@ -143,7 +160,7 @@ public class WebObject {
     /** Get int at this path in the JSON content. */
     public int contentInt(String path){
         int i=0;
-        try{ i=updatingState.intPath(path);
+        try{ i = updatingState.intPath(path);
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
@@ -166,7 +183,7 @@ public class WebObject {
     /** Double value found at path. */
     public double contentDouble(String path){
         double d=0;
-        try{ d=updatingState.doublePath(path);
+        try{ d = updatingState.doublePath(path);
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){

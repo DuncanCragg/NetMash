@@ -64,11 +64,6 @@ public class Twitter extends WebObject {
         }
     }
 
-    static public final JSON Twitter2NetMashMap = new JSON("{ \"id2\":      \"id\","+
-                                                             "\"text\":     \"text\","+
-                                                             "\"created\":  \"created_at\","+
-                                                             "\"location\": \"geo\""+
-                                                           "}");
     @Override
     @SuppressWarnings("unchecked")
     public void httpNotifyJSON(final JSON json, final String queryuid){
@@ -91,7 +86,7 @@ public class Twitter extends WebObject {
                 else{
                     String usernum = content("query:query:user:id2");
                     String indpath = "indexes:posts:user-num:"+usernum;
-                    contentList(indpath, json.mapList("list", Twitter2NetMashMap));
+                    contentList(indpath, spawnPosts((LinkedList<LinkedHashMap>)list, content("query:query:user")));
                     spawn(new Twitter(queryuid, uid, indpath));
                 }
             }
@@ -113,15 +108,34 @@ public class Twitter extends WebObject {
               "}");
     }
 
+    @SuppressWarnings("unchecked")
+    private LinkedList spawnPosts(LinkedList<LinkedHashMap> postinfolist, String user){
+        LinkedList l=new LinkedList();
+        for(LinkedHashMap postinfo: postinfolist){
+            l.add(spawn(new Twitter(postinfo, user)));
+        }
+        return l;
+    }
+
+    public Twitter(LinkedHashMap postinfo, String user){
+        super("{ \"is\": [ \"twitter\", \"post\" ],\n"+
+              "  \"user\": \""+user+"\",\n"+
+              "  \"id2\": \""+postinfo.get("id")+"\",\n"+
+              "  \"text\": \""+postinfo.get("text")+"\",\n"+
+              "  \"created\": \""+postinfo.get("created_at")+"\",\n"+
+              "  \"location\": \""+postinfo.get("geo")+"\"\n"+
+              "}");
+    }
+
     public Twitter(String queryuid, String topuid, String indpath){
         super("{ \"is\": [ \"query\", \"results\" ],"+
-               " \"query\": \""+queryuid+"\","+
-               " \"twitter\": \""+topuid+"\","+
-               " \"indexpath\": \""+indpath+"\" }");
+                             " \"query\": \""+queryuid+"\","+
+         (topuid==null?  " \"twitter\": null,":  " \"twitter\": \""+topuid+"\",")+
+         (indpath==null? " \"indexpath\": null": " \"indexpath\": \""+indpath+"\"")+" }");
     }
 
     private void notifyResults(){ logrule();
-        if(contentHash("results")==null){ logrule();
+        if(!contentSet("results")){ logrule();
             String indpath=content("indexpath");
             if(indpath==null){
                 content("results", "none");

@@ -114,6 +114,17 @@ public class JSON {
         try{ return stringPath(path); }catch(PathOvershot po){ return null; }
     }
 
+    /** Check whether there's anything at the path. */
+    public boolean isAtPath(String path) throws PathOvershot{
+        ensureContent();
+        return isSet(tophash, path);
+    }
+
+    /** Check whether there's anything at the path. No PathOvershot. */
+    public boolean isAtPathN(String path){
+        try{ return isAtPath(path); }catch(PathOvershot po){ return false; }
+    }
+
     /** Check String value (or String form of
       * value) at the given path is equal to given value.
       */
@@ -600,6 +611,10 @@ public class JSON {
     }
 
     //----------------------------------
+
+    private boolean isSet(LinkedHashMap content, String path) throws PathOvershot {
+        return getObject(content, path)!=null;
+    }
 
     private String getStringPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
