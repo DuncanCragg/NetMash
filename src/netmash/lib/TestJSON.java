@@ -22,11 +22,13 @@ public class TestJSON {
 
         {
 
+        String funkychars = JSON.replaceEscapableChars("\"quote\" 'quote' ")+"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3";
+
         JSON m=new JSON(
             "{ \"kernel\": { \"modules\": {              \"cache\": \"netmash.cache.JSONCache\",\n"+
             "                                            \"http\": \"netmash.drivers.HTTP\",\n"+
             "                                            \"logic\": \"netmash.drivers.TestDriver\" } },\n"+
-            "                   \"modules\":  { \"cache\": { \"funky\": \"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3\"},\n"+
+            "                   \"modules\":  { \"cache\": { \"funky\": \""+funkychars+"\"},\n"+
             "                                 \"http\": { \"port\": 8080 },\n"+
             "                                 \"logic\": [ true, false, null, true, false, null ],\n"+
             "                                 \"more\": [ true, 35392743408672770, -2147483649, 2147483648, -2147483648, 2147483647, null, true, false, null ] \n"+
@@ -41,7 +43,7 @@ public class TestJSON {
         System.out.println(m.toString(33));
 
         String funky = m.stringPath("modules:cache:funky");
-        assert funky.equals("\"/\b\f\n\r\t\\\"\u00a3\u00a3"): "funky should be [\\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
+        assert funky.equals("\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3"): "funky should be [\"quote\" 'quote' \\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
 
         String portstr = m.stringPath("modules:http:port");
         assert portstr.equals("8080"): "port should be 8080, but it's "+portstr;

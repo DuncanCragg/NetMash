@@ -159,6 +159,7 @@ abstract class HTTPCommon {
     protected String httpIfNoneMatch=null;
     protected String httpContentLocation=null;
     protected String httpEtag=null;
+    protected String httpContentType=null;
     protected String httpContentLength=null;
 
     public void receiveNextEvent(ByteBuffer bytebuffer, boolean eof) throws Exception{
@@ -258,6 +259,7 @@ abstract class HTTPCommon {
         if(tag.equals("If-None-Match")){    httpIfNoneMatch=val; return; }
         if(tag.equals("Content-Location")){ httpContentLocation=val; return; }
         if(tag.equals("Etag")){             httpEtag=val.substring(1,val.length()-1); return; }
+        if(tag.equals("Content-Type")){     httpContentType=val; return; }
         if(tag.equals("Content-Length")){   httpContentLength=val; return; }
     }
 
@@ -296,9 +298,9 @@ abstract class HTTPCommon {
         ByteBuffer body = Kernel.chopAtLength(bytebuffer, contentLength);
         CharBuffer jsonchars = UTF8.decode(body);
         if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("<---------------\n"+jsonchars);
-        JSON json = new JSON(jsonchars);
 
         if(webobject==null){
+            JSON json = new JSON(jsonchars);
             WebObject w=null;
             try{ w=new WebObject(json, httpContentLocation, httpEtag, null); }
             catch(Exception e){ return false; }
@@ -307,6 +309,11 @@ abstract class HTTPCommon {
             funcobs.httpNotify(w);
         }
         else{
+            if(!httpContentType.startsWith("application/json")){
+                webobject.httpNotifyJSON(null, param);
+                return false;
+            }
+            JSON json = new JSON(jsonchars);
             webobject.httpNotifyJSON(json, param);
         }
         return true;
@@ -507,14 +514,14 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         StringBuilder sb=new StringBuilder();
         if(notifieruid==null){
             sb.append("GET "); sb.append(path); sb.append(" HTTP/1.1\r\n");
-            sb.append("Host: "); sb.append(host); sb.append(":"+port); sb.append("\r\n");
+            sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
             sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
             sb.append("\r\n");
         }
         else{
             WebObject w = funcobs.cacheGet(notifieruid);
             sb.append("POST "); sb.append(path); sb.append(" HTTP/1.1\r\n");
-            sb.append("Host: "); sb.append(host); sb.append(":"+port); sb.append("\r\n");
+            sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
             sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
             contentHeadersAndBody(sb, w, getPercents());
             notifieruid=null;

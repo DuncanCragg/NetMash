@@ -23,30 +23,30 @@
     "%class": "server.types.Twitter",
     "is": [ "twitter" ],
     "types": {
-        "TwitterUser":      { "is": [ "twitter", "user" ],
-                              "id": "/string/",
-                              "id2": "/int/",
-                              "location": "/geo/",
-                              "contacts": { "following": "/uid/", "followers": "/uid/" },
-                              "posts": "/uid/"
+        "twitter-user":      { "is": [ "twitter", "user" ],
+                               "id": "/string/",
+                               "id2": "/int/",
+                               "location": "/geo/",
+                               "contacts": { "following": "/uid;twitter-following/", "followers": "/uid;twitter-followers/" },
+                               "posts": "/uid;twitter-postlist/"
         },
-        "TwitterFollowing": { "is": [ "twitter", "following" ],
-                              "user": "/uid/",
-                              "list": "/uid-list/"
+        "twitter-following": { "is": [ "twitter", "following" ],
+                               "user": "/uid;twitter-user/",
+                               "list": "/uid-list;twitter-user/"
         },
-        "TwitterFollowers": { "is": [ "twitter", "followers" ],
-                              "user": "/uid/",
-                              "list": "/uid-list/"
+        "twitter-followers": { "is": [ "twitter", "followers" ],
+                               "user": "/uid;twitter-user/",
+                               "list": "/uid-list;twitter-user/"
         },
-        "TwitterPostList": { "is": [ "twitter", "postlist" ],
-                             "user": "/uid/",
-                             "list": "/uid-list/"
+        "twitter-postlist": { "is": [ "twitter", "postlist" ],
+                              "user": "/uid;twitter-user/",
+                              "list": "/uid-list;twitter-post/"
         },
-        "TwitterPost": {      "is": [ "twitter", "post" ],
-                              "user": "/uid/",
-                              "location": "/geo/",
-                              "text": "/string/",
-                              "created": "/timestamp/"
+        "twitter-post": {      "is": [ "twitter", "post" ],
+                               "text": "/string/",
+                               "location": "/geo/",
+                               "user": "/uid;twitter-user/",
+                               "created": "/timestamp/"
         }
     },
     "indexes": {
@@ -54,7 +54,8 @@
             "user-id": {}
         },
         "posts": {
-            "user-num": {}
+            "user-num": {},
+            "search": {}
         }
     }
 }

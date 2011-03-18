@@ -15,6 +15,8 @@ public class TwitterMash extends WebObject {
 
     public void evaluate(){
         if(contentListContains("is", "top")){
+            searchByGeoAndKeyword();
+            addGeoPosts();
             getFollowers();
             addFollowers();
             distributeWork();
@@ -26,11 +28,34 @@ public class TwitterMash extends WebObject {
         }
     }
 
+    private void searchByGeoAndKeyword(){
+        if(!contentSet("geokey") && !contentListContains("is", "query")){ logrule();
+            contentListAdd("is", "query");
+            contentHash("query", new JSON("{ \"is\": [ \"twitter\", \"post\" ],"+
+                                            "\"text\": \"tsunami\","+
+                                            "\"location\": { \"lat\": 36.8, \"lon\": -122.75, \"range\": \"50mi\" }}" ));
+            notifying(content("twitter"));
+        }
+    }
+
+    private void addGeoPosts(){
+        for(String resultsuid: alerted()){ logrule();
+            content("results", resultsuid);
+            LinkedList ll=contentList("results:results");
+            if(ll==null) return;
+            contentList("geokey", ll);
+            unnotifying(content("twitter"));
+            contentRemove("query");
+            contentListRemove("is", "query");
+        }
+        alerted().clear();
+    }
+
     private void getFollowers(){
         if(contentList("followers")==null && !contentListContains("is", "query")){ logrule();
-            contentListAdd("is", "query"); // Quick type extension
+            contentListAdd("is", "query");
             contentHash("query", new JSON("{ \"is\": [ \"twitter\", \"followers\" ], \"user\": { \"id\": \""+content("topuser")+"\" }}" ));
-            notifying(content("twitter"));
+            notifying(content("results"));
         }
     }
 

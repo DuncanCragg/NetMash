@@ -15,12 +15,32 @@ public class Twitter extends WebObject {
 
     public void evaluate(){
         if(contentListContains("is", "twitter")){
+            answerPostQuery();
             answerFollowersQuery();
             answerPostsQuery();
         }
         else
         if(contentListContains("is", "results")){
             notifyResults();
+        }
+    }
+
+    private void answerPostQuery(){
+        for(String queryuid: alerted()){
+            content("query", queryuid);
+            if(contentListContains("query:is", "query")){
+                if(contentListContainsAll("query:query:is", list("twitter", "post"))){ logrule();
+                    String search = searchFromQuery();
+                    if(search==null) return;
+                    String indpath = "indexes:posts:search:"+search;
+                    if(contentHash(indpath)==null){
+                        httpGETJSON("http://search.twitter.com/search.json?"+search, queryuid);
+                    }
+                    else{
+                        spawn(new Twitter(queryuid, uid, indpath));
+                    }
+                }
+            }
         }
     }
 
@@ -69,28 +89,47 @@ public class Twitter extends WebObject {
     public void httpNotifyJSON(final JSON json, final String queryuid){
         new Evaluator(this){
             public void evaluate(){ logrule();
-                content("query", queryuid);
-                LinkedList list = json.listPathN("list");
-                if(list.size()==0){
+                if(json==null){
                     spawn(new Twitter(queryuid, null, null));
+                    return;
                 }
-                else
+                LinkedList list = json.listPathN("list");
+                if(list==null || list.size()==0){
+                list = json.listPathN("results");
+                if(list==null || list.size()==0){
+                    spawn(new Twitter(queryuid, null, null));
+                    return;
+                }}
+                content("query", queryuid);
+                String indpath=null;
                 if(list.get(0) instanceof Integer){
                     String userid = content("query:query:user:id");
-                    String indpath = "indexes:followers:user-id:"+userid;
-                    JSON results = new JSON("{ \"is\": [ \"twitter\", \"followers\" ] }");
-                    results.listPath("list", spawnUsers((LinkedList<Integer>)list));
-                    contentHash(indpath, results);
-                    spawn(new Twitter(queryuid, uid, indpath));
+                    indpath = "indexes:followers:user-id:"+userid;
+                    contentList(indpath, spawnUsers((LinkedList<Integer>)list));
                 }
                 else{
                     String usernum = content("query:query:user:id2");
-                    String indpath = "indexes:posts:user-num:"+usernum;
-                    contentList(indpath, spawnPosts((LinkedList<LinkedHashMap>)list, content("query:query:user")));
-                    spawn(new Twitter(queryuid, uid, indpath));
+                    if(usernum!=null){
+                        indpath = "indexes:posts:user-num:"+usernum;
+                        contentList(indpath, spawnPosts((LinkedList<LinkedHashMap>)list, content("query:query:user")));
+                    }
+                    else{
+                        indpath = "indexes:posts:search:"+searchFromQuery();
+                        contentList(indpath, spawnPosts((LinkedList<LinkedHashMap>)list, null));
+                    }
                 }
+                if(indpath!=null) spawn(new Twitter(queryuid, uid, indpath));
             }
         };
+    }
+
+    private String searchFromQuery(){
+        String keywords = content(      "query:query:text");
+        double lat      = contentDouble("query:query:location:lat");
+        double lon      = contentDouble("query:query:location:lon");
+        String range    = content(      "query:query:location:range");
+        if(keywords==null || range==null) return null;
+        return "q="+keywords+"&geocode="+lat+","+lon+","+range;
     }
 
     @SuppressWarnings("unchecked")
@@ -121,7 +160,7 @@ public class Twitter extends WebObject {
         super("{ \"is\": [ \"twitter\", \"post\" ],\n"+
               "  \"user\": \""+user+"\",\n"+
               "  \"id2\": \""+postinfo.get("id")+"\",\n"+
-              "  \"text\": \""+postinfo.get("text")+"\",\n"+
+              "  \"text\": \""+JSON.replaceEscapableChars(postinfo.get("text").toString())+"\",\n"+
               "  \"created\": \""+postinfo.get("created_at")+"\",\n"+
               "  \"location\": \""+postinfo.get("geo")+"\"\n"+
               "}");
@@ -129,7 +168,7 @@ public class Twitter extends WebObject {
 
     public Twitter(String queryuid, String topuid, String indpath){
         super("{ \"is\": [ \"query\", \"results\" ],"+
-                             " \"query\": \""+queryuid+"\","+
+                                                 " \"query\": \""+queryuid+"\","+
          (topuid==null?  " \"twitter\": null,":  " \"twitter\": \""+topuid+"\",")+
          (indpath==null? " \"indexpath\": null": " \"indexpath\": \""+indpath+"\"")+" }");
     }
@@ -140,22 +179,29 @@ public class Twitter extends WebObject {
             if(indpath==null){
                 content("results", "none");
             }
-            else
-            if(indpath.startsWith("indexes:followers:user-id:")){
-                LinkedHashMap results=contentHash("twitter:"+indpath);
-                if(results!=null){
-                   contentHash("results", results);
-                   contentRemove("indexpath");
-                }
-            }
-            else
-            if(indpath.startsWith("indexes:posts:user-num:")){
+            else{
                 LinkedList results=contentList("twitter:"+indpath);
                 if(results!=null){
-                   contentList("results", results);
-                   contentRemove("indexpath");
+                    if(indpath.startsWith("indexes:followers:user-id:")){
+                        contentHash("type", contentHash("twitter:types:twitter-followers"));
+                        JSON tf = new JSON("{ \"is\": [ \"twitter\", \"followers\" ] }");
+                        tf.listPath("list", results);
+                        contentHash("results", tf);
+                    }
+                    else
+                    if(indpath.startsWith("indexes:posts:user-num:")){
+                        contentHash("type", contentHash("twitter:types:twitter-post"));
+                        contentList("results", results);
+                    }
+                    else
+                    if(indpath.startsWith("indexes:posts:search:")){
+                        contentHash("type", contentHash("twitter:types:twitter-post"));
+                        contentList("results", results);
+                    }
                 }
             }
+            contentRemove("twitter");
+            contentRemove("indexpath");
             notifying(content("query"));
         }
     }
