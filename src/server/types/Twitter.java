@@ -33,8 +33,9 @@ public class Twitter extends WebObject {
                     String search = searchFromQuery();
                     if(search==null) return;
                     String indpath = "indexes:posts:search:"+search;
-                    if(contentHash(indpath)==null){
+                    if(!contentSet(indpath)){
                         httpGETJSON("http://search.twitter.com/search.json?"+search, queryuid);
+                        contentList(indpath, list("status", "loading..."));
                     }
                     else{
                         spawn(new Twitter(queryuid, uid, indpath));
@@ -52,9 +53,9 @@ public class Twitter extends WebObject {
                     String userid = content("query:query:user:id");
                     if(userid==null) return;
                     String indpath = "indexes:followers:user-id:"+userid;
-                    if(contentHash(indpath)==null){
+                    if(!contentSet(indpath)){
                         httpGETJSON("http://api.twitter.com/1/followers/ids/"+userid+".json", queryuid);
-                        contentHash(indpath, hash("status", "loading..."));
+                        contentList(indpath, list("status", "loading..."));
                     }
                     else{
                         spawn(new Twitter(queryuid, uid, indpath));
@@ -72,7 +73,7 @@ public class Twitter extends WebObject {
                     String usernum = content("query:query:user:id2");
                     if(usernum==null) return; logrule();
                     String indpath = "indexes:posts:user-num:"+usernum;
-                    if(contentHash(indpath)==null){
+                    if(!contentSet(indpath)){
                         httpGETJSON("http://api.twitter.com/1/statuses/user_timeline/"+usernum+".json?trim_user=true", queryuid);
                         contentList(indpath, list("status", "loading..."));
                     }
@@ -167,10 +168,10 @@ public class Twitter extends WebObject {
     }
 
     public Twitter(String queryuid, String topuid, String indpath){
-        super("{ \"is\": [ \"query\", \"results\" ],"+
-                                                 " \"query\": \""+queryuid+"\","+
-         (topuid==null?  " \"twitter\": null,":  " \"twitter\": \""+topuid+"\",")+
-         (indpath==null? " \"indexpath\": null": " \"indexpath\": \""+indpath+"\"")+" }");
+        super(                "{ \"is\": [ \"query\", \"results\" ],"+
+                               " \"query\": \""+queryuid+"\","+
+           (topuid==null?  "": " \"twitter\": \""+topuid+"\",")+
+           (indpath==null? "": " \"indexpath\": \""+indpath+"\"")+" }");
     }
 
     private void notifyResults(){ logrule();

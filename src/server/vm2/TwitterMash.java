@@ -15,8 +15,8 @@ public class TwitterMash extends WebObject {
 
     public void evaluate(){
         if(contentListContains("is", "top")){
-            searchByGeoAndKeyword();
-            addGeoPosts();
+            //searchByGeoAndKeyword();
+            //addGeoPosts();
             getFollowers();
             addFollowers();
             distributeWork();
@@ -52,10 +52,10 @@ public class TwitterMash extends WebObject {
     }
 
     private void getFollowers(){
-        if(contentList("followers")==null && !contentListContains("is", "query")){ logrule();
+        if(!contentSet("followers") && !contentListContains("is", "query")){ logrule();
             contentListAdd("is", "query");
             contentHash("query", new JSON("{ \"is\": [ \"twitter\", \"followers\" ], \"user\": { \"id\": \""+content("topuser")+"\" }}" ));
-            notifying(content("results"));
+            notifying(content("twitter")); // notifying(content("results"));
         }
     }
 
@@ -70,8 +70,7 @@ public class TwitterMash extends WebObject {
     }
 
     private void distributeWork(){
-        while(contentList("mashers")==null ||
-              contentList("mashers").size()< 3 ){
+        while(!contentSet("mashers") || contentList("mashers").size()< 3 ){
 
             String follower = content("followers:0");
             if(follower!=null){ logrule();
@@ -90,7 +89,7 @@ public class TwitterMash extends WebObject {
     }
 
     private void getPosts(){
-        if(contentList("posts")==null && !contentListContains("is", "query")){ logrule();
+        if(!contentSet("posts") && !contentListContains("is", "query")){ logrule();
             contentListAdd("is", "query");
             contentHash("query", new JSON("{ \"is\": [ \"twitter\", \"post\" ], \"user\": \""+content("user")+"\" }" ));
             notifying(content("twitter"));

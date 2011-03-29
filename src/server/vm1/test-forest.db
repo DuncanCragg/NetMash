@@ -38,9 +38,9 @@
                                "user": "/uid;twitter-user/",
                                "list": "/uid-list;twitter-user/"
         },
-        "twitter-postlist": { "is": [ "twitter", "postlist" ],
-                              "user": "/uid;twitter-user/",
-                              "list": "/uid-list;twitter-post/"
+        "twitter-postlist": {  "is": [ "twitter", "postlist" ],
+                               "user": "/uid;twitter-user/",
+                               "list": "/uid-list;twitter-post/"
         },
         "twitter-post": {      "is": [ "twitter", "post" ],
                                "text": "/string/",
