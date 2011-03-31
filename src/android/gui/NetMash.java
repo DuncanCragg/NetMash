@@ -230,6 +230,7 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
     }
 
     private void addToLayout(LinearLayout layout, Object o, float prop){
+        if(o==null) return;
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
             if("horizontal".equals(hm.get("direction"))) addHorizontalStrip(layout, createHorizontalStrip(hm), prop);

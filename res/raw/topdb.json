@@ -101,7 +101,7 @@
     "%observe": [],
     "%class": "android.User",
     "is": [ "private", "contacts" ],
-    "list": [ ]
+    "list": null
 }
 
 {   "%uid": "uid-239a-3110-0a92-a3f5",

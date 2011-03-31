@@ -9,6 +9,13 @@ import netmash.forest.WebObject;
 
 import android.gui.*;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.location.*;
+import android.provider.Contacts;
+import android.provider.Contacts.People;
+
+
 /** User viewing the Object Web.
   */
 public class User extends WebObject {
@@ -54,19 +61,16 @@ public class User extends WebObject {
             showWhatIAmViewing();
         }
         else
-        if(contentIsOrListContains("is", "user")){
-log("other user: "+this);
+        if(contentIsOrListContains("is", "user")){ log("other user: "+this);
         }
         else
         if(contentListContainsAll("is", list("private", "contacts"))){
-contentList("list", list("a","b"));
+            populateContacts();
         }
         else
-        if(contentIsOrListContains("is", "vcard")){
-content("address:postalCode", "KT1 3QN");
+        if(contentIsOrListContains("is", "vcard")){ content("address:postalCode", "KT1 3QN");
         }
-        else{
-log("!!something else: "+this);
+        else{ log("!!something else: "+this);
         }
     }
 
@@ -197,6 +201,31 @@ log("!!something else: "+this);
            else                           ll2.add(o);
         }
         return ll2;
+    }
+
+    // ---------------------------------------------------------
+
+    private void populateContacts(){ logrule();
+       if(contentSet("list")) return;
+       LinkedList contactslist = new LinkedList();
+       Context context = NetMash.top.getApplicationContext();
+       Cursor contactscursor = context.getContentResolver().query(People.CONTENT_URI, null, null, null, null);
+       int nameind   = contactscursor.getColumnIndexOrThrow(People.NAME);
+       int personind = contactscursor.getColumnIndexOrThrow(People._ID);
+       if(contactscursor.moveToFirst()) do{
+           String name = contactscursor.getString(nameind);
+           String id   = contactscursor.getString(personind);
+           String where = Contacts.ContactMethods.PERSON_ID + " == " + id + " AND " +
+                          Contacts.ContactMethods.KIND + " == " + Contacts.KIND_POSTAL;
+           Cursor addresscursor = context.getContentResolver().query(Contacts.ContactMethods.CONTENT_URI, null, where, null, null);
+           int addressind = addresscursor.getColumnIndexOrThrow(Contacts.ContactMethodsColumns.DATA);
+           String address = "";
+           if(addresscursor.moveToFirst()) address = addresscursor.getString(addressind);
+           addresscursor.close();
+           contactslist.add(name+id+address);
+       } while(contactscursor.moveToNext());
+       contactscursor.close();
+       contentList("list", contactslist);
     }
 
     // ---------------------------------------------------------
