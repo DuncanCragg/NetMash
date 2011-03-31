@@ -1,0 +1,11 @@
+
+root@tpubuntu/4:~ -> adb kill-server 
+root@tpubuntu/4:~ -> adb start-server
+root@tpubuntu/4:~ -> adb devices
+
+List of devices attached 
+SH0B7RT00392    device
+
+root@tpubuntu/4:~ -> adb logcat
+
+

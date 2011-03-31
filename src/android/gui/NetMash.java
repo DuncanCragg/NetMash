@@ -115,9 +115,9 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         guiHandler.post(uiDrawJSONRunnable);
     }
 
-    private void uiDrawJSON(){ System.out.println(uiJSON);
+    private void uiDrawJSON(){ System.out.println("uiDrawJSON:\n"+uiJSON);
         HashMap<String,Object> hm=uiJSON.hashPathN("view");
-        boolean vertical=hm.get("direction").equals("vertical");
+        boolean vertical="vertical".equals(hm.get("direction"));
         View view;
         if(vertical){
             view=createVerticalStrip(hm);
@@ -183,6 +183,7 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         int i=0;
         for(String tag: hm.keySet()){
             if(tag.equals("direction")) continue;
+            if(tag.equals("options")) continue;
             if(tag.equals("proportions")){
                 dim0=parseFirstInt(hm.get(tag).toString());
                 continue;
@@ -193,6 +194,7 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         i=0;
         for(String tag: hm.keySet()){
             if(tag.equals("direction")) continue;
+            if(tag.equals("options")) continue;
             if(tag.equals("proportions")) continue;
             addToLayout(layout, hm.get(tag), i==0? dim0: dimn);
             i++;
@@ -206,6 +208,7 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         for(Object o: ll){
             if(o instanceof String){
                 if(o.toString().startsWith("direction:")) continue;
+                if(o.toString().startsWith("options:")) continue;
                 if(o.toString().startsWith("proportions:")){
                     dim0=parseFirstInt(o.toString());
                     continue;
@@ -218,6 +221,7 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         for(Object o: ll){
             if(o instanceof String){
                 if(o.toString().startsWith("direction:")) continue;
+                if(o.toString().startsWith("options:")) continue;
                 if(o.toString().startsWith("proportions:")) continue;
             }
             addToLayout(layout, o, i==0? dim0: dimn);
@@ -234,12 +238,16 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         else
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
+            if(ll.size()==0) return;
             if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll), prop);
             else                                                    addVerticalStrip(  layout, createVerticalStrip(ll), prop);
         }
         else{
             String s=o.toString();
-            addTextView(layout, (s.startsWith("http://") && s.endsWith(".jpg"))? createImageView(s): createTextView(s), prop);
+            boolean isUID   =  s.startsWith("uid-");
+            boolean isImage = (s.startsWith("http://") && s.endsWith(".jpg"));
+            View v = isUID? createUIDView(s): (isImage? createImageView(s): createTextView(s));
+            addAView(layout, v, prop);
         }
     }
 
@@ -257,12 +265,25 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         layout.addView(view);
     }
 
-    private void addTextView(LinearLayout layout, View view, float prop){
+    private void addAView(LinearLayout layout, View view, float prop){
         int width=(prop==0? FILL_PARENT: (int)((prop/100.0)*screenWidth+0.5));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, FILL_PARENT);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
+    }
+
+    private TextView createUIDView(final String s){
+        TextView view=new TextView(this);
+        view.setText(">>");
+        view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
+            user.jumpToUID(s);
+        }});
+        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        view.setTextSize(30);
+        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.web2box));
+        view.setTextColor(0xff000000);
+        return view;
     }
 
     private TextView createTextView(String s){

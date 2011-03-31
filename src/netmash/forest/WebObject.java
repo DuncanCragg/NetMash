@@ -205,7 +205,7 @@ public class WebObject {
 
     /** Construct a list utility. */
     @SuppressWarnings("unchecked")
-    public List list(Object...args){
+    public LinkedList list(Object...args){
         return new LinkedList(Arrays.asList(args));
     }
 
@@ -257,6 +257,15 @@ public class WebObject {
         LinkedList list=contentList(path);
         if(list==null) return false;
         return list.containsAll(val);
+    }
+
+    /** Returns true if String or list at path is or contains the value. */
+    public boolean contentIsOrListContains(String path, String val){
+        LinkedList list=contentList(path);
+        if(list!=null) return list.contains(val);
+        String s = content(path);
+        if(s==null) return val==null;
+        return s.equals(val);
     }
 
     /** Set list at path. */
