@@ -15,6 +15,9 @@ import android.location.*;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
 
+import static android.provider.Contacts.*;
+import static android.provider.Contacts.ContactMethods.*;
+import static android.provider.Contacts.ContactMethodsColumns.*;
 
 /** User viewing the Object Web.
   */
@@ -68,7 +71,7 @@ public class User extends WebObject {
             populateContacts();
         }
         else
-        if(contentIsOrListContains("is", "vcard")){ content("address:postalCode", "KT1 3QN");
+        if(contentIsOrListContains("is", "vcard")){ log("vcard: "+this);
         }
         else{ log("!!something else: "+this);
         }
@@ -108,6 +111,8 @@ public class User extends WebObject {
         if(standing!=null) standing.put("direction", "horizontal");
 
         String postcode = content("links:viewing:public:vcard:address:postalCode");
+        if(postcode==null) postcode = content("links:viewing:public:vcard:address");
+        String vcarduid = content("links:viewing:public:vcard");
 
         String contactsuid = content("links:viewing:private:contacts");
         LinkedList contacts=null;
@@ -117,7 +122,8 @@ public class User extends WebObject {
         ll.add("direction:vertical");
         ll.add(fullname);
         if(standing!=null) ll.add(standing);
-        ll.add(postcode);
+        if(postcode!=null) ll.add(postcode);
+        if(vcarduid!=null) ll.add(vcarduid);
         if(contacts!=null) ll.add(contacts);
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
@@ -167,6 +173,9 @@ public class User extends WebObject {
         if(url==null) url=content("links:viewing:url");
         if(url!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Website:", url));
 
+        String addressx=content("links:viewing:address");
+        if(addressx!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Address:", addressx));
+
         String fullname=content("links:viewing:fullName");
         String photourl=content("links:viewing:photo");
 
@@ -205,27 +214,47 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
+    static private final String ADDRESS_WHERE = PERSON_ID+" == %s AND "+KIND+" == "+KIND_POSTAL;
+
     private void populateContacts(){ logrule();
        if(contentSet("list")) return;
        LinkedList contactslist = new LinkedList();
        Context context = NetMash.top.getApplicationContext();
-       Cursor contactscursor = context.getContentResolver().query(People.CONTENT_URI, null, null, null, null);
-       int nameind   = contactscursor.getColumnIndexOrThrow(People.NAME);
-       int personind = contactscursor.getColumnIndexOrThrow(People._ID);
-       if(contactscursor.moveToFirst()) do{
-           String name = contactscursor.getString(nameind);
-           String id   = contactscursor.getString(personind);
-           String where = Contacts.ContactMethods.PERSON_ID + " == " + id + " AND " +
-                          Contacts.ContactMethods.KIND + " == " + Contacts.KIND_POSTAL;
-           Cursor addresscursor = context.getContentResolver().query(Contacts.ContactMethods.CONTENT_URI, null, where, null, null);
-           int addressind = addresscursor.getColumnIndexOrThrow(Contacts.ContactMethodsColumns.DATA);
+       Cursor concur = context.getContentResolver().query(People.CONTENT_URI, null, null, null, null);
+       int nameind   = concur.getColumnIndexOrThrow(People.NAME);
+       int personind = concur.getColumnIndexOrThrow(People._ID);
+       if(concur.moveToFirst()) do{
+           String id   = concur.getString(personind);
+           String name = concur.getString(nameind);
+           if(name==null) continue;
+           Cursor addcur = context.getContentResolver().query(ContactMethods.CONTENT_URI, null, String.format(ADDRESS_WHERE, id), null, null);
+           int addind = addcur.getColumnIndexOrThrow(DATA);
            String address = "";
-           if(addresscursor.moveToFirst()) address = addresscursor.getString(addressind);
-           addresscursor.close();
-           contactslist.add(name+id+address);
-       } while(contactscursor.moveToNext());
-       contactscursor.close();
+           if(addcur.moveToFirst()) address = addcur.getString(addind);
+           addcur.close();
+           if(!"".equals(address)) contactslist.add(createUserAndVCard(id, name, address));
+       } while(concur.moveToNext());
+       concur.close();
        contentList("list", contactslist);
+    }
+
+    public User(String name, String address){
+        super("{ \"is\": \"vcard\", \n"+
+              "  \"fullName\": \""+name+"\",\n"+
+              "  \"address\": \""+address+"\"\n"+
+              "}");
+    }
+
+    public User(String vcarduid){
+        super("{ \"is\": \"user\", \n"+
+              "  \"public\": { \"vcard\": \""+vcarduid+"\" }\n"+
+              "}");
+    }
+
+    private String createUserAndVCard(String id, String name, String address){
+        String[] addressbits = address.split("\n");
+        if(addressbits.length==0) return "?"+name+address;
+        return spawn(new User(spawn(new User(name, addressbits[0]))));
     }
 
     // ---------------------------------------------------------
