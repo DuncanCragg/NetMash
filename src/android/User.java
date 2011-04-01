@@ -4,9 +4,6 @@ package android;
 import java.util.*;
 import java.util.regex.*;
 
-import netmash.lib.JSON;
-import netmash.forest.WebObject;
-
 import android.gui.*;
 
 import android.content.Context;
@@ -18,6 +15,10 @@ import android.provider.Contacts.People;
 import static android.provider.Contacts.*;
 import static android.provider.Contacts.ContactMethods.*;
 import static android.provider.Contacts.ContactMethodsColumns.*;
+
+import netmash.lib.JSON;
+import netmash.forest.WebObject;
+import netmash.forest.UID;
 
 /** User viewing the Object Web.
   */
@@ -131,17 +132,19 @@ public class User extends WebObject {
         String postcode = content("links:viewing:public:vcard:address:postalCode");
         if(postcode==null) postcode = content("links:viewing:public:vcard:address");
         String vcarduid = content("links:viewing:public:vcard");
+        LinkedList vcard=null;
+        if(vcarduid!=null) vcard = list("direction:horizontal", "options:jump", "proportions:75%", "Contact Details:", vcarduid);
 
         String contactsuid = content("links:viewing:private:contacts");
         LinkedList contacts=null;
-        if(contactsuid!=null) contacts = list("direction:horizontal", "options:jump", "proportions:75%", "Contacts", contactsuid);
+        if(contactsuid!=null) contacts = list("direction:horizontal", "options:jump", "proportions:75%", "Contacts List:", contactsuid);
 
         LinkedList ll = new LinkedList();
         ll.add("direction:vertical");
         ll.add(fullname);
         if(standing!=null) ll.add(standing);
         if(postcode!=null) ll.add(postcode);
-        if(vcarduid!=null) ll.add(vcarduid);
+        if(vcard   !=null) ll.add(vcard);
         if(contacts!=null) ll.add(contacts);
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
@@ -151,6 +154,7 @@ public class User extends WebObject {
     }
 
     private LinkedHashMap contacts2GUI(){
+        String listuid = content("links:viewing");
         LinkedList<String> users = contentList("links:viewing:list");
         if(users==null) return null;
 
@@ -158,19 +162,21 @@ public class User extends WebObject {
         viewlist.add("direction:vertical");
         int i=0;
         for(String uid: users){
+            String nuid = UID.normaliseUID(listuid, uid);
             String fullname=content("links:viewing:list:"+(i++)+":public:vcard:fullName");
-            if(fullname==null) viewlist.add("@"+uid);
-            else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, uid));
+            if(fullname==null) viewlist.add("@"+nuid);
+            else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, nuid));
         }
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");
-        guitop.put("#title", "Contact List");
+        guitop.put("#title", "Contacts List");
         guitop.put("#contactlist", viewlist);
         return guitop;
     }
 
     private LinkedHashMap vCardList2GUI(){
+        String listuid = content("links:viewing");
         LinkedList<String> vcards = contentList("links:viewing:list");
         if(vcards==null) return null;
 
@@ -178,14 +184,15 @@ public class User extends WebObject {
         viewlist.add("direction:vertical");
         int i=0;
         for(String uid: vcards){
+            String nuid = UID.normaliseUID(listuid, uid);
             String fullname=content("links:viewing:list:"+(i++)+":fullName");
-            if(fullname==null) viewlist.add("@"+uid);
-            else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, uid));
+            if(fullname==null) viewlist.add("@"+nuid);
+            else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, nuid));
         }
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");
-        guitop.put("#title", "Contact List");
+        guitop.put("#title", "Contacts List");
         guitop.put("#contactlist", viewlist);
         return guitop;
     }

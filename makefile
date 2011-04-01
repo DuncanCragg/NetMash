@@ -24,7 +24,7 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 ./build/classes/%.class: ./src/%.java
 	javac $(LIBOPTIONS) $<
 
-run1: jar kill
+run1: kill jar
 	(cd src/server/vm1; ./run.sh)
 
 run2: jar

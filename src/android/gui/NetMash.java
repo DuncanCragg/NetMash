@@ -26,7 +26,7 @@ import android.User;
 
 /**  NetMash main.
   */
-public class NetMash extends Activity implements OnClickListener, OnKeyListener {
+public class NetMash extends Activity {
 
     static public NetMash top=null;
     static public User    user=null;
@@ -96,8 +96,6 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
     //---------------------------------------------------------
 
     private RelativeLayout layout;
-    private LinearLayout   buttons;
-    private Button         addLinkButton, homeButton;
     private float          screenDensity;
     private int            screenWidth;
 
@@ -109,14 +107,6 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         setContentView(R.layout.main);
         layout = (RelativeLayout)findViewById(R.id.Layout);
         layout.setBackgroundColor(0xff000000);
-
-        buttons = (LinearLayout)findViewById(R.id.Buttons);
-
-        addLinkButton = (Button)findViewById(R.id.AddLinkButton);
-        addLinkButton.setOnClickListener(this);
-
-        homeButton = (Button)findViewById(R.id.HomeButton);
-        homeButton.setOnClickListener(this);
     }
 
     //---------------------------------------------------------
@@ -137,8 +127,7 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         if(vertical){
             view=createVerticalStrip(hm);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-            int bottomMargin = buttons.getHeight()*2; if(bottomMargin==0) bottomMargin=80;
-            lp.setMargins(0,5,5,bottomMargin);
+            lp.setMargins(0,5,5,0);
             view.setLayoutParams(lp);
         }
         else{
@@ -260,8 +249,8 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         }
         else{
             String s=o.toString();
-            boolean isUID   =  s.startsWith("uid-");
-            boolean isImage = (s.startsWith("http://") && s.endsWith(".jpg"));
+            boolean isUID   = s.startsWith("uid-") || (s.startsWith("http://") && s.indexOf("uid-")!= -1 && s.endsWith(".json"));
+            boolean isImage = s.startsWith("http://") && s.endsWith(".jpg");
             View v = isUID? createUIDView(s): (isImage? createImageView(s): createTextView(s));
             addAView(layout, v, prop);
         }
@@ -290,9 +279,10 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
     }
 
     private TextView createUIDView(final String s){
-        TextView view=new TextView(this);
+        final TextView view=new TextView(this);
         view.setText(">>");
         view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
+            view.setTextColor(0xffffff00);
             user.jumpToUID(s);
         }});
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
@@ -343,23 +333,6 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         if(!m.matches()) return 0;
         int r = Integer.parseInt(m.group(1));
         return r;
-    }
-
-    //---------------------------------------------------------
-
-    public void onClick(View v){
-        switch (v.getId()){
-        case R.id.AddLinkButton:
-            Toast.makeText(this, "Adding links is not implemented yet! :-)", Toast.LENGTH_SHORT).show();
-            break;
-        case R.id.HomeButton:
-            Toast.makeText(this, "Home page is not implemented yet! :-)", Toast.LENGTH_SHORT).show();
-            break;
-        }
-    }
-
-    public boolean onKey(View v, int keyCode, KeyEvent event){
-        return true;
     }
 
     //---------------------------------------------------------
