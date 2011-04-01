@@ -78,6 +78,21 @@ public class NetMash extends Activity implements OnClickListener, OnKeyListener 
         top=null;
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.ECLAIR &&
+           keyCode==KeyEvent.KEYCODE_BACK && event.getRepeatCount()==0){
+            onBackPressed();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
+    @Override
+    public void onBackPressed() {
+        user.jumpBack();
+        return;
+    }
+
     //---------------------------------------------------------
 
     private RelativeLayout layout;

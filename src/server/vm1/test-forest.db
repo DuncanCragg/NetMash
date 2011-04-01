@@ -68,7 +68,7 @@
     "is": [ "meetusup", "vcardlist" ],
     "venue": "uid-fc61-ba84-a7d8-9874",
     "organiser": "uid-1b84-142d-4f34-3734",
-    "vcards": [
+    "list": [
         "uid-35ad-af7a-93fb-896d",
         "uid-a0b2-0521-d5f1-b994",
         "uid-b4b3-586c-88e5-05ae",

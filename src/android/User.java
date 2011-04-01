@@ -48,9 +48,23 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
+    private Stack history = new Stack<String>();
+
     public void jumpToUID(final String uid){
         new Evaluator(this){
             public void evaluate(){
+                history.push(content("links:viewing"));
+                content("links:viewing", uid);
+                showWhatIAmViewing();
+            }
+        };
+    }
+
+    public void jumpBack(){
+        new Evaluator(this){
+            public void evaluate(){
+                if(history.empty()) return;
+                String uid = (String)history.pop();
                 content("links:viewing", uid);
                 showWhatIAmViewing();
             }
@@ -67,7 +81,7 @@ public class User extends WebObject {
         if(contentIsOrListContains("is", "user")){ log("other user: "+this);
         }
         else
-        if(contentListContainsAll("is", list("private", "contacts"))){
+        if(contentListContainsAll("is", list("private", "contacts"))){ log("contacts: "+this);
             populateContacts();
         }
         else
@@ -82,6 +96,10 @@ public class User extends WebObject {
             LinkedHashMap view=null;
             if(contentIsOrListContains("links:viewing:is", "user")){
                 view=user2GUI();
+            }
+            else
+            if(contentIsOrListContains("links:viewing:is", "contacts")){
+                view=contacts2GUI();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcardlist")){
@@ -132,23 +150,43 @@ public class User extends WebObject {
         return guitop;
     }
 
-    private LinkedHashMap vCardList2GUI(){
-        LinkedList<String> vcards = contentList("links:viewing:vcards");
-        if(vcards==null) return null;
+    private LinkedHashMap contacts2GUI(){
+        LinkedList<String> users = contentList("links:viewing:list");
+        if(users==null) return null;
 
-        LinkedList vcardsgui = new LinkedList();
-        vcardsgui.add("direction:vertical");
+        LinkedList viewlist = new LinkedList();
+        viewlist.add("direction:vertical");
         int i=0;
-        for(String uid: vcards){
-            String fullname=content("links:viewing:vcards:"+(i++)+":fullName");
-            if(fullname==null) vcardsgui.add("@"+uid);
-            else               vcardsgui.add(fullname+" @"+uid);
+        for(String uid: users){
+            String fullname=content("links:viewing:list:"+(i++)+":public:vcard:fullName");
+            if(fullname==null) viewlist.add("@"+uid);
+            else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, uid));
         }
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");
         guitop.put("#title", "Contact List");
-        guitop.put("#vcardlist", vcardsgui);
+        guitop.put("#contactlist", viewlist);
+        return guitop;
+    }
+
+    private LinkedHashMap vCardList2GUI(){
+        LinkedList<String> vcards = contentList("links:viewing:list");
+        if(vcards==null) return null;
+
+        LinkedList viewlist = new LinkedList();
+        viewlist.add("direction:vertical");
+        int i=0;
+        for(String uid: vcards){
+            String fullname=content("links:viewing:list:"+(i++)+":fullName");
+            if(fullname==null) viewlist.add("@"+uid);
+            else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, uid));
+        }
+
+        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
+        guitop.put("direction", "vertical");
+        guitop.put("#title", "Contact List");
+        guitop.put("#contactlist", viewlist);
         return guitop;
     }
 
