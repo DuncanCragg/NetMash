@@ -51,7 +51,7 @@ public class TestJSON {
         int port = m.intPath("modules:http:port");
         assert port==8080: "port should be 8080, but it's "+port;
 
-        HashMap<String,String> modulenames = m.hashPath("kernel:modules");
+        LinkedHashMap<String,String> modulenames = m.hashPath("kernel:modules");
         assert "netmash.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be netmash.cache.JSONCache, but it's "+
                                                                                                 modulenames.get("cache");
         assert modulenames instanceof LinkedHashMap: "kernel:modules should be ordered hash";
@@ -74,7 +74,7 @@ public class TestJSON {
         int threadpool = m.intPath("kernel:threadpool");
         assert threadpool == 33: "kernel:threadpool should be 33, but it's "+ threadpool;
 
-        HashMap<String,String> kernel =  m.hashPath("kernel");
+        LinkedHashMap<String,String> kernel =  m.hashPath("kernel");
         assert kernel instanceof LinkedHashMap: "kernel should be ordered hash";
 
         }

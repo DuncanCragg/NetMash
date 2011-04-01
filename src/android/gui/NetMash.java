@@ -11,12 +11,15 @@ import android.os.*;
 import android.net.*;
 import android.content.Context;
 import android.graphics.*;
+import android.graphics.drawable.*;
 
 import android.view.*;
 import android.view.View.*;
 import android.widget.*;
 
 import static android.view.ViewGroup.LayoutParams.*;
+
+import com.google.android.maps.*;
 
 import netmash.platform.Kernel;
 import netmash.lib.JSON;
@@ -26,7 +29,7 @@ import android.User;
 
 /**  NetMash main.
   */
-public class NetMash extends Activity {
+public class NetMash extends MapActivity {
 
     static public NetMash top=null;
     static public User    user=null;
@@ -86,7 +89,7 @@ public class NetMash extends Activity {
         }
         return super.onKeyDown(keyCode, event);
     }
-    
+ 
     @Override
     public void onBackPressed() {
         user.jumpBack();
@@ -121,18 +124,27 @@ public class NetMash extends Activity {
     }
 
     private void uiDrawJSON(){ System.out.println("uiDrawJSON:\n"+uiJSON);
-        HashMap<String,Object> hm=uiJSON.hashPathN("view");
-        boolean vertical="vertical".equals(hm.get("direction"));
+        Object      o=uiJSON.hashPathN("view");
+        if(o==null) o=uiJSON.listPathN("view");
+        boolean horizontal=isHorizontal(o);
         View view;
-        if(vertical){
-            view=createVerticalStrip(hm);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
+        boolean ismaplist=isMapList(o);
+        if(ismaplist){
+            view = createMapView(o);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            lp.setMargins(0,5,5,0);
+            view.setLayoutParams(lp);
+        }
+        else
+        if(horizontal){
+            view=createHorizontalStrip(o);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
             lp.setMargins(0,5,5,0);
             view.setLayoutParams(lp);
         }
         else{
-            view=createHorizontalStrip(hm);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            view=createVerticalStrip(o);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
             lp.setMargins(0,5,5,0);
             view.setLayoutParams(lp);
         }
@@ -141,7 +153,32 @@ public class NetMash extends Activity {
         layout.addView(view, 0);
     }
 
-    private View createVerticalStrip(HashMap<String,Object> hm){
+    static final private int MENU_ITEM_MAP = Menu.FIRST;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        menu.add(0, MENU_ITEM_MAP, Menu.NONE, "Show on map");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        super.onOptionsItemSelected(item);
+        return user.menuItem(item.getItemId());
+    }
+
+    private View createVerticalStrip(Object o){
+        if(o instanceof LinkedHashMap) return createVerticalStrip((LinkedHashMap<String,Object>)o);
+        else                           return createVerticalStrip((LinkedList)o);
+    }
+
+    private View createHorizontalStrip(Object o){
+        if(o instanceof LinkedHashMap) return createHorizontalStrip((LinkedHashMap<String,Object>)o);
+        else                           return createHorizontalStrip((LinkedList)o);
+    }
+
+    private View createVerticalStrip(LinkedHashMap<String,Object> hm){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(0,0,0,0);
@@ -151,7 +188,7 @@ public class NetMash extends Activity {
         return view;
     }
 
-    private View createHorizontalStrip(HashMap<String,Object> hm){
+    private View createHorizontalStrip(LinkedHashMap<String,Object> hm){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setPadding(0,0,0,0);
@@ -181,11 +218,12 @@ public class NetMash extends Activity {
         return view;
     }
 
-    private void fillStrip(LinearLayout layout, HashMap<String,Object> hm){
+    private void fillStrip(LinearLayout layout, LinkedHashMap<String,Object> hm){
         float dim0=0;
         float dimn=0;
         int i=0;
         for(String tag: hm.keySet()){
+            if(tag.equals("is")) continue;
             if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
             if(tag.equals("proportions")){
@@ -197,6 +235,7 @@ public class NetMash extends Activity {
         if(dim0 >0 && i>1) dimn=(98-dim0)/(i-1);
         i=0;
         for(String tag: hm.keySet()){
+            if(tag.equals("is")) continue;
             if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
             if(tag.equals("proportions")) continue;
@@ -211,6 +250,7 @@ public class NetMash extends Activity {
         int i=0;
         for(Object o: ll){
             if(o instanceof String){
+                if(o.toString().startsWith("is:")) continue;
                 if(o.toString().startsWith("direction:")) continue;
                 if(o.toString().startsWith("options:")) continue;
                 if(o.toString().startsWith("proportions:")){
@@ -224,6 +264,7 @@ public class NetMash extends Activity {
         i=0;
         for(Object o: ll){
             if(o instanceof String){
+                if(o.toString().startsWith("is:")) continue;
                 if(o.toString().startsWith("direction:")) continue;
                 if(o.toString().startsWith("options:")) continue;
                 if(o.toString().startsWith("proportions:")) continue;
@@ -244,6 +285,11 @@ public class NetMash extends Activity {
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
             if(ll.size()==0) return;
+            if("is:maplist".equals(ll.get(0).toString())){
+                View v = createMapView(ll);
+                addAView(layout, v, prop);
+            }
+            else
             if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll), prop);
             else                                                    addVerticalStrip(  layout, createVerticalStrip(ll), prop);
         }
@@ -287,7 +333,7 @@ public class NetMash extends Activity {
         }});
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         view.setTextSize(30);
-        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.web2box));
+        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
         view.setTextColor(0xff000000);
         return view;
     }
@@ -297,7 +343,7 @@ public class NetMash extends Activity {
         view.setText(s);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         view.setTextSize(20);
-        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.web2box));
+        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
         view.setTextColor(0xff000000);
         return view;
     }
@@ -306,9 +352,72 @@ public class NetMash extends Activity {
         ImageView view = new ImageView(this);
         view.setAdjustViewBounds(true);
         view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        view.setPadding(8, 8, 8, 8);
+        view.setPadding(8,8,8,8);
         view.setImageBitmap(getImageBitmap(url));
         return view;
+    }
+
+    private MapView mapview=null;
+
+    private MapView createMapView(Object o){
+        if(o instanceof LinkedHashMap) return createMapView((LinkedHashMap<String,Object>)o);
+        else                           return createMapView((LinkedList)o);
+    }
+
+    private MapView createMapView(LinkedHashMap<String,Object> hm){
+        return null;
+    }
+
+    private MapView createMapView(LinkedList ll){
+        if(mapview==null){
+            mapview = new MapView(this, "03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA");
+            mapview.setEnabled(true);
+            mapview.setClickable(true);
+            mapview.setBuiltInZoomControls(true);
+            mapview.displayZoomControls(true);
+        }
+        Drawable drawable = this.getResources().getDrawable(R.drawable.icon);
+        NetMashMapOverlay itemizedoverlay = new NetMashMapOverlay(drawable, this);
+        for(Object o: ll){
+            if(!(o instanceof LinkedHashMap)) continue;
+            LinkedHashMap point = (LinkedHashMap)o;
+            String label=(String)point.get("label");
+            String sublabel=(String)point.get("sublabel");
+            LinkedHashMap<String,Double> location=(LinkedHashMap<String,Double>)point.get("location");
+            String jump=(String)point.get("jump");
+            GeoPoint geopoint = new GeoPoint((int)(location.get("lat")*1e6), (int)(location.get("lon")*1e6));
+            OverlayItem overlayitem = new OverlayItem(geopoint, label, sublabel);
+            itemizedoverlay.addItem(overlayitem);
+        }
+        mapview.getOverlays().add(itemizedoverlay);
+        return mapview;
+    }
+
+    private boolean isHorizontal(Object o){
+        if(o instanceof LinkedHashMap){
+            LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
+            return "horizontal".equals(hm.get("direction"));
+        }
+        else{
+            LinkedList ll=(LinkedList)o;
+            return "direction:horizontal".equals(ll.get(0));
+        }
+    }
+
+    private boolean isMapList(Object o){
+        if(o instanceof LinkedHashMap){
+            LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
+            return "maplist".equals(hm.get("is"));
+        }
+        else{
+            LinkedList ll=(LinkedList)o;
+            return "is:maplist".equals(ll.get(0));
+        }
+    }
+
+    @Override
+    protected boolean isRouteDisplayed() {
+        return false;
     }
 
     private Bitmap getImageBitmap(String url) {
@@ -324,7 +433,7 @@ public class NetMash extends Activity {
             System.err.println("Couldn't load image at "+url+"\n"+e);
         }
         return bm;
-    } 
+    }
 
     static public final String  INTRE = ".*?([0-9]+).*";
     static public final Pattern INTPA = Pattern.compile(INTRE);

@@ -60,11 +60,11 @@ public class UID {
     }
 
     static public String normaliseUID(String baseurl, String uid2url){
+        if(uid2url==null) return null;
         String localpre="http://"+Kernel.config.stringPathN("network:host")+":"+
                                   Kernel.config.intPathN(   "network:port");
-        if(!baseurl.startsWith(localpre)) uid2url=toURLfromBaseURL(baseurl, uid2url);
-        if(!uid2url.startsWith(localpre)) return uid2url;
-        return toUID(uid2url);
+        if(baseurl!=null && !baseurl.startsWith(localpre)) uid2url=toURLfromBaseURL(baseurl, uid2url);
+        return uid2url.startsWith(localpre)? toUID(uid2url): uid2url;
     }
 
     static public String toURLfromBaseURL(String baseurl, String uid2url){

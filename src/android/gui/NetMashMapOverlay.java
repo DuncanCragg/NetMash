@@ -16,33 +16,12 @@ import android.widget.*;
 
 import com.google.android.maps.*;
 
-public class NetMashMap extends MapActivity {
-
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.map);
-        MapView mapView = (MapView)findViewById(R.id.MapView);
-        mapView.setBuiltInZoomControls(true);
-
-        GeoPoint point = new GeoPoint(19240000,-99120000);
-        OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!", "I'm in Mexico City!");
-        GeoPoint point2 = new GeoPoint(35410000, 139460000);
-        OverlayItem overlayitem2 = new OverlayItem(point2, "Sekai, konichiwa!", "I'm in Japan!");
-
-        Drawable drawable = this.getResources().getDrawable(R.drawable.icon);
-        NetMashMap.Overlay itemizedoverlay = new NetMashMap.Overlay(drawable, this);
-        itemizedoverlay.addItem(overlayitem);
-        itemizedoverlay.addItem(overlayitem2);
-        mapView.getOverlays().add(itemizedoverlay);
-    }
-
-    public class Overlay extends ItemizedOverlay {
+public class NetMashMapOverlay extends ItemizedOverlay {
 
         private ArrayList<OverlayItem> overlays = new ArrayList<OverlayItem>();
         private MapActivity mapactivity;
 
-        public Overlay(Drawable defaultMarker, MapActivity mapactivity){
+        public NetMashMapOverlay(Drawable defaultMarker, MapActivity mapactivity){
             super(boundCenter(defaultMarker));
             this.mapactivity = mapactivity;
         }
@@ -67,11 +46,6 @@ public class NetMashMap extends MapActivity {
 
         @Override
         public int size(){ return overlays.size(); }
-    }
-
-    @Override
-    protected boolean isRouteDisplayed() {
-        return false;
-    }
 }
+
 

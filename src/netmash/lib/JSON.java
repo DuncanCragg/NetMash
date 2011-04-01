@@ -134,6 +134,13 @@ public class JSON {
         return (value==null && pathval==null) || (value!=null && value.equals(pathval));
     }
 
+    /** Check String value (or String form of value) at the
+      * given path is equal to given value. No PathOvershot.
+      */
+    public boolean isStringPathN(String path, String value){
+        try{ return isStringPath(path, value); }catch(PathOvershot po){ return false; }
+    }
+
     /** Set String value. Returns true if it really was different. */
     public boolean stringPath(String path, String value) {
         ensureContent();
@@ -960,7 +967,7 @@ public class JSON {
         if(maxlength==0){
             int i=0;
             for(Object val: ll){
-                if(val instanceof HashMap || val instanceof LinkedList){
+                if(val instanceof LinkedHashMap || val instanceof LinkedList){
                     structured=true;
                     break;
                 }
