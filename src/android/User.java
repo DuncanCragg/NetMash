@@ -138,7 +138,7 @@ public class User extends WebObject {
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcardlist")){
-                //view=vCardList2Map();
+                view=vCardList2Map();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcard")){
@@ -257,6 +257,40 @@ public class User extends WebObject {
         guitop.put("#title", "Contacts List");
         guitop.put("#contactlist", viewlist);
         return guitop;
+    }
+
+    private LinkedList vCardList2Map(){
+        String listuid = content("links:viewing");
+        LinkedList<String> vcards = contentList("links:viewing:list");
+        if(vcards==null) return null;
+
+        LinkedList maplist = new LinkedList();
+        maplist.add("is:maplist");
+        int i=0;
+        for(String uid: vcards){
+            String vcarduid = UID.normaliseUID(listuid, uid);
+            String fullname=content("links:viewing:list:"+(i  )+":fullName");
+            String address =getAddressString("links:viewing:list:"+(i++)+":address");
+            if(address==null) continue;
+            LinkedHashMap point = new LinkedHashMap();
+            point.put("label", fullname);
+            point.put("sublabel", address);
+            point.put("location", geoCode(address));
+            point.put("jump", vcarduid);
+            maplist.add(point);
+        }
+
+        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
+        guitop.put("direction", "vertical");
+        guitop.put("#title", "Contacts List");
+        guitop.put("#contactmap", maplist);
+        return maplist;
+    }
+
+    private String getAddressString(String path){
+        LinkedHashMap hm = contentHash(path);
+        if(hm==null) return content(path);
+        return ""+hm.get("street")+" "+hm.get("locality")+" "+hm.get("region")+" "+hm.get("postalCode");
     }
 
     private LinkedHashMap vCard2GUI(){

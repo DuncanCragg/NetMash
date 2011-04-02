@@ -384,6 +384,7 @@ public class NetMash extends MapActivity {
             String label=(String)point.get("label");
             String sublabel=(String)point.get("sublabel");
             LinkedHashMap<String,Double> location=(LinkedHashMap<String,Double>)point.get("location");
+            if(location==null) continue;
             String jump=(String)point.get("jump");
             GeoPoint geopoint = new GeoPoint((int)(location.get("lat")*1e6), (int)(location.get("lon")*1e6));
             OverlayItem overlayitem = new OverlayItem(geopoint, label, sublabel);
