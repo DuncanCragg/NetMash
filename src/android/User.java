@@ -103,36 +103,43 @@ public class User extends WebObject {
     }
 
     private void showWhatIAmViewing(){ logrule();
-        if(contentSet("links:viewing:is")){ logrule();
-            LinkedHashMap view=null;
+        if(contentSet("links:viewing:is")){
+            LinkedHashMap viewhash=null;
+            LinkedList    viewlist=null;
             if(contentIsOrListContains("links:viewing:is", "user")){
-                view=user2GUI();
+                viewlist=user2GUI();
+            }
+            else
+            if(contentIsOrListContains("links:viewing:is", "bookmarks")){
+                viewhash=bookmarks2GUI();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "contacts")){
-                view=contacts2GUI();
+                viewhash=contacts2GUI();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcardlist")){
-                view=vCardList2GUI();
+                viewhash=vCardList2GUI();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcard")){
-                view=vCard2GUI();
+                viewhash=vCard2GUI();
             }
             else{
-                view=guifyHash(contentHash("links:viewing:#"));
+                viewhash=guifyHash(contentHash("links:viewing:#"));
             }
-            if(view!=null){
+
+            if(viewhash!=null || viewlist!=null){
                 JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
-                uiJSON.hashPath("view", view);
+                if(viewhash!=null) uiJSON.hashPath("view", viewhash);
+                else               uiJSON.listPath("view", viewlist);
                 if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON);
             }
         }
     }
 
     private void showWhatIAmViewingOnMap(){ logrule();
-        if(contentSet("links:viewing:is")){ logrule();
+        if(contentSet("links:viewing:is")){
             LinkedList view=null;
             if(contentIsOrListContains("links:viewing:is", "user")){
                 //view=user2Map();
@@ -159,17 +166,18 @@ public class User extends WebObject {
         }
     }
 
-    private LinkedHashMap user2GUI(){
+    private LinkedList user2GUI(){ logrule();
         String useruid = content("links:viewing");
 
         String fullname = content("links:viewing:public:vcard:fullName");
-        if(fullname==null) return null;
+        if(fullname==null) fullname="Waiting for contact details "+content("links:viewing:public:vcard");
 
         LinkedHashMap standing = contentHash("links:viewing:public:standing");
         if(standing!=null) standing.put("direction", "horizontal");
 
-        String postcode = content("links:viewing:public:vcard:address:postalCode");
-        if(postcode==null) postcode = content("links:viewing:public:vcard:address");
+        String address = getAddressString("links:viewing:public:vcard:address");
+        if(address==null) address="Waiting for contact details";
+
         String vcarduid = UID.normaliseUID(useruid, content("links:viewing:public:vcard"));
         LinkedList vcard=null;
         if(vcarduid!=null) vcard = list("direction:horizontal", "options:jump", "proportions:75%", "Contact Details:", vcarduid);
@@ -178,21 +186,49 @@ public class User extends WebObject {
         LinkedList contacts=null;
         if(contactsuid!=null) contacts = list("direction:horizontal", "options:jump", "proportions:75%", "Contacts List:", contactsuid);
 
-        LinkedList ll = new LinkedList();
-        ll.add("direction:vertical");
-        ll.add(fullname);
-        if(standing!=null) ll.add(standing);
-        if(postcode!=null) ll.add(postcode);
-        if(vcard   !=null) ll.add(vcard);
-        if(contacts!=null) ll.add(contacts);
+        String bmuid=UID.normaliseUID(useruid, content("links:viewing:links:bookmarks"));
+        LinkedList bookmarks=null;
+        if(bmuid!=null) bookmarks = list("direction:horizontal", "options:jump", "proportions:75%", "Bookmarks:", bmuid);
+
+        LinkedList userlist = new LinkedList();
+        userlist.add("direction:vertical");
+        userlist.add(fullname);
+        if(standing !=null) userlist.add(standing);
+        if(address  !=null) userlist.add(address);
+        if(vcard    !=null) userlist.add(vcard);
+        if(contacts !=null) userlist.add(contacts);
+        if(bookmarks!=null) userlist.add(bookmarks);
+
+        return userlist;
+    }
+
+    private LinkedHashMap bookmarks2GUI(){ logrule();
+        String listuid = content("links:viewing");
+        LinkedList<String> bookmarks = contentList("links:viewing:list");
+        if(bookmarks==null) return null;
+
+        LinkedList viewlist = new LinkedList();
+        viewlist.add("direction:vertical");
+        int i= -1;
+        for(String uid: bookmarks){ i++;
+            String bmuid = UID.normaliseUID(listuid, uid);
+            String           bmtext=content("links:viewing:list:"+i+":title");
+            if(bmtext==null) bmtext=content("links:viewing:list:"+i+":fullName");
+            if(bmtext==null) bmtext=content("links:viewing:list:"+i+":public:vcard:fullName");
+            if(bmtext==null) bmtext=content("links:viewing:list:"+i+":is");
+            if(bmtext==null) bmtext=content("links:viewing:list:"+i+":tags");
+            if(bmtext==null) bmtext="@"+bmuid;
+            viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", bmtext, bmuid));
+        }
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");
-        guitop.put("#list", ll);
+        guitop.put("#title", "Bookmarks");
+        guitop.put("#bookmarks", viewlist);
         return guitop;
     }
 
-    private LinkedHashMap contacts2GUI(){
+    private LinkedHashMap contacts2GUI(){ logrule();
         String listuid = content("links:viewing");
         LinkedList<String> contacts = contentList("links:viewing:list");
         if(contacts==null) return null;
@@ -214,7 +250,7 @@ public class User extends WebObject {
         return guitop;
     }
 
-    private LinkedHashMap vCardList2GUI(){
+    private LinkedHashMap vCardList2GUI(){ logrule();
         String listuid = content("links:viewing");
         LinkedList<String> vcards = contentList("links:viewing:list");
         if(vcards==null) return null;
@@ -236,7 +272,7 @@ public class User extends WebObject {
         return guitop;
     }
 
-    private LinkedList vCardList2Map(String vcardprefix){
+    private LinkedList vCardList2Map(String vcardprefix){ logrule();
         String listuid = content("links:viewing");
         LinkedList<String> contacts = contentList("links:viewing:list");
         if(contacts==null) return null;
@@ -265,7 +301,7 @@ public class User extends WebObject {
         return maplist;
     }
 
-    private LinkedHashMap vCard2GUI(){
+    private LinkedHashMap vCard2GUI(){ logrule();
 
         LinkedList vcarddetail = new LinkedList();
         vcarddetail.add("direction:vertical");
@@ -339,7 +375,7 @@ public class User extends WebObject {
         return streetstr+"\n"+address.get("locality")+"\n"+address.get("region")+"\n"+address.get("postalCode");
     }
 
-    private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm){
+    private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm){ logrule();
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
         hm2.put("direction", "vertical");
         for(String tag: hm.keySet()){
@@ -395,7 +431,7 @@ public class User extends WebObject {
     public User(String name, String address, LinkedHashMap<String,Double> location){
         super("{ \"is\": \"vcard\", \n"+
               "  \"fullName\": \""+name+"\",\n"+
-              "  \"address\": \""+address+"\"\n"+
+              "  \"address\": \""+address+"\",\n"+
           (location==null? "":
               "  \"location\": { \"lat\": "+location.get("lat")+", \"lon\": "+location.get("lon")+" }\n")+
               "}");

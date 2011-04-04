@@ -306,6 +306,7 @@ public class JSON {
     public String toString(String prepend){
         ensureContent();
         ensureChars();
+        if(chars.length< 2){ log("Failed toString with prepend:\n"+prepend+"\n"+this); return toString(); }
         return "{   "+prepend.trim()+"\n"+new String(chars).substring(2);
     }
 
@@ -314,6 +315,7 @@ public class JSON {
         if(maxlength==0) return toString(prepend);
         ensureContent();
         ensureChars(maxlength);
+        if(chars.length< 2){ log("Failed toString with prepend:\n"+prepend+"\n"+this); return toString(); }
         return "{ "+prepend.trim()+" "+new String(chars).substring(2);
     }
 

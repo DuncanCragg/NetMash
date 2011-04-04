@@ -66,6 +66,7 @@
     "%observe": [],
     "%class": "",
     "is": [ "vcardlist" ],
+    "title": "Enterprise Locations NorthWest",
     "list": [
         "uid-4c3f-9b0f-3bf3-abe6",
         "uid-05cc-e687-907f-cf7b",
@@ -304,7 +305,6 @@
     "is": [ "vcard" ],
     "fullName": "Mr Brian Rock",
     "role": "Business Analyst",
-    "title": "Business Analyst",
     "photo": "http://farm5.static.flickr.com/4030/4334369685_ab7a06960f.jpg",
     "name": {
       "given":  "Brian",
