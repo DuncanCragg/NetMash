@@ -71,7 +71,7 @@ netmashrel: clean
 installandlog:
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
-	adb logcat
+	adb logcat | tee ,logcat
 
 clean:
 	rm -rf ./build/classes/netmash

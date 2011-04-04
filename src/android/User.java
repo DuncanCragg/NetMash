@@ -28,7 +28,7 @@ public class User extends WebObject {
 
     static public User me=null;
 
-    public User(){ if(me==null){ me=this; NetMash.top.onUserReady(this); } }
+    public User(){ if(me==null){ me=this; if(NetMash.top!=null) NetMash.top.onUserReady(this); } }
 
     public void onTopCreate(){
     }
@@ -126,7 +126,7 @@ public class User extends WebObject {
             if(view!=null){
                 JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
                 uiJSON.hashPath("view", view);
-                NetMash.top.drawJSON(uiJSON);
+                if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON);
             }
         }
     }
@@ -143,18 +143,18 @@ public class User extends WebObject {
             }
             else
             if(contentIsOrListContains("links:viewing:is", "contacts")){
-                view=contacts2Map();
+                view=vCardList2Map("public:vcard:");
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcardlist")){
-                view=vCardList2Map();
+                view=vCardList2Map("");
             }
             else{
             }
             if(view!=null){
                 JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
                 uiJSON.listPath("view", view);
-                NetMash.top.drawJSON(uiJSON);
+                if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON);
             }
         }
     }
@@ -199,10 +199,10 @@ public class User extends WebObject {
 
         LinkedList viewlist = new LinkedList();
         viewlist.add("direction:vertical");
-        int i=0;
-        for(String uid: contacts){
+        int i= -1;
+        for(String uid: contacts){ i++;
             String contactuid = UID.normaliseUID(listuid, uid);
-            String fullname=content("links:viewing:list:"+(i++)+":public:vcard:fullName");
+            String fullname=content("links:viewing:list:"+i+":public:vcard:fullName");
             if(fullname==null) viewlist.add("@"+contactuid);
             else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, contactuid));
         }
@@ -214,34 +214,6 @@ public class User extends WebObject {
         return guitop;
     }
 
-    private LinkedList contacts2Map(){
-        String listuid = content("links:viewing");
-        LinkedList<String> contacts = contentList("links:viewing:list");
-        if(contacts==null) return null;
-
-        LinkedList maplist = new LinkedList();
-        maplist.add("is:maplist");
-        int i=0;
-        for(String uid: contacts){
-            String contactuid = UID.normaliseUID(listuid, uid);
-            String fullname=content("links:viewing:list:"+(i  )+":public:vcard:fullName");
-            String address =content("links:viewing:list:"+(i++)+":public:vcard:address");
-            if(address==null) continue;
-            LinkedHashMap point = new LinkedHashMap();
-            point.put("label", fullname);
-            point.put("sublabel", address);
-            point.put("location", geoCode(address));
-            point.put("jump", contactuid);
-            maplist.add(point);
-        }
-
-        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
-        guitop.put("direction", "vertical");
-        guitop.put("#title", "Contacts List");
-        guitop.put("#contactmap", maplist);
-        return maplist;
-    }
-
     private LinkedHashMap vCardList2GUI(){
         String listuid = content("links:viewing");
         LinkedList<String> vcards = contentList("links:viewing:list");
@@ -249,10 +221,10 @@ public class User extends WebObject {
 
         LinkedList viewlist = new LinkedList();
         viewlist.add("direction:vertical");
-        int i=0;
-        for(String uid: vcards){
+        int i= -1;
+        for(String uid: vcards){ i++;
             String vcarduid = UID.normaliseUID(listuid, uid);
-            String fullname=content("links:viewing:list:"+(i++)+":fullName");
+            String fullname=content("links:viewing:list:"+i+":fullName");
             if(fullname==null) viewlist.add("@"+vcarduid);
             else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, vcarduid));
         }
@@ -264,26 +236,25 @@ public class User extends WebObject {
         return guitop;
     }
 
-    private LinkedList vCardList2Map(){
+    private LinkedList vCardList2Map(String vcardprefix){
         String listuid = content("links:viewing");
-        LinkedList<String> vcards = contentList("links:viewing:list");
-        if(vcards==null) return null;
+        LinkedList<String> contacts = contentList("links:viewing:list");
+        if(contacts==null) return null;
 
         LinkedList maplist = new LinkedList();
         maplist.add("is:maplist");
-        int i=0;
-        for(String uid: vcards){
-            String vcarduid = UID.normaliseUID(listuid, uid);
-            String fullname=content("links:viewing:list:"+(i  )+":fullName");
-            String address=getAddressString("links:viewing:list:"+(i++)+":address");
-            LinkedHashMap<String,Double> location=contentHash("links:viewing:list:"+(i++)+":location");
-            if(location==null) location=geoCode(address);
+        int i= -1;
+        for(String uid: contacts){ i++;
+            String contactuid = UID.normaliseUID(listuid, uid);
+            String fullname=content("links:viewing:list:"+i+":"+vcardprefix+"fullName");
+            LinkedHashMap<String,Double> location=contentHash("links:viewing:list:"+i+":"+vcardprefix+"location");
+            if(location==null) location=geoCode(getGeoAddressString("links:viewing:list:"+i+":"+vcardprefix+"address"));
             if(location==null) continue;
             LinkedHashMap point = new LinkedHashMap();
             point.put("label", fullname);
-            point.put("sublabel", address);
+            point.put("sublabel", getAddressString("links:viewing:list:"+i+":"+vcardprefix+"address"));
             point.put("location", location);
-            point.put("jump", vcarduid);
+            point.put("jump", contactuid);
             maplist.add(point);
         }
 
@@ -337,6 +308,22 @@ public class User extends WebObject {
         return guitop;
     }
 
+    private String getGeoAddressString(String path){
+        LinkedHashMap address = contentHash(path);
+        if(address==null) return content(path);
+        String streetstr;
+        Object street = address.get("street");
+        if(street instanceof List){
+            List<String> streetlist = (List<String>)street;
+            StringBuilder streetb=new StringBuilder();
+            int i=0;
+            for(String line: streetlist){ i++; streetb.append(line); if(i==1) break; }
+            streetstr=streetb.toString().trim();
+        }
+        else streetstr = street==null? "-": street.toString();
+        return streetstr+" \""+address.get("postalCode")+"\"";
+    }
+
     private String getAddressString(String path){
         LinkedHashMap address = contentHash(path);
         if(address==null) return content(path);
@@ -345,7 +332,7 @@ public class User extends WebObject {
         if(street instanceof List){
             List<String> streetlist = (List<String>)street;
             StringBuilder streetb=new StringBuilder();
-            for(String line: streetlist) streetb.append(line+"\n");
+            for(String line: streetlist){ streetb.append(line); streetb.append("\n"); }
             streetstr=streetb.toString().trim();
         }
         else streetstr = street==null? "-": street.toString();
@@ -385,6 +372,7 @@ public class User extends WebObject {
     private void populateContacts(){ logrule();
         if(contentSet("list")) return;
         LinkedList contactslist = new LinkedList();
+        if(NetMash.top==null) return;
         Context context = NetMash.top.getApplicationContext();
         Cursor concur = context.getContentResolver().query(People.CONTENT_URI, null, null, null, null);
         int nameind   = concur.getColumnIndexOrThrow(People.NAME);
@@ -425,18 +413,22 @@ public class User extends WebObject {
     }
 
     private LinkedHashMap<String,Double> geoCode(String address){
+        log("geoCode "+address);
+        if(NetMash.top==null){ log("No Activity to geoCode from"); return null; }
         Context context = NetMash.top.getApplicationContext();
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try{
             List<Address> geos = geocoder.getFromLocationName(address, 1);
             if(!geos.isEmpty()){
+                if(geos.size() >=2) log(geos.size()+" locations found for "+address);
                 Address geo1 = geos.get(0);
                 LinkedHashMap<String,Double> loc = new LinkedHashMap<String,Double>();
                 loc.put("lat", geo1.getLatitude());
                 loc.put("lon", geo1.getLongitude());
                 return loc;
             } 
-        }catch(Exception e){}
+            else log("No getFromLocationName for "+address);
+        }catch(Exception e){ log("No getFromLocationName for "+address); log(e); }
         return null; 
     }
 
