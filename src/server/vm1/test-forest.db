@@ -60,6 +60,223 @@
     }
 }
 
+{   "%uid": "uid-f3fd-b3a5-a88c-8dd7",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcardlist" ],
+    "list": [
+        "uid-4c3f-9b0f-3bf3-abe6",
+        "uid-05cc-e687-907f-cf7b",
+        "uid-691a-dd2e-2512-902e",
+        "uid-836b-7ca9-0e54-613a",
+        "uid-fe83-20d2-9fe7-47bd",
+        "uid-8531-41a0-5a6c-172f",
+        "uid-178e-2950-002f-1c03",
+        "uid-2622-e06c-bf3b-62b4",
+        "uid-543f-d8a4-bcbd-88d5",
+        "uid-b32e-52a8-130f-6ce7",
+        "uid-f857-3568-b57e-89b9"
+    ]
+}
+
+{   "%uid": "uid-4c3f-9b0f-3bf3-abe6",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise - Head Office",
+    "address": {
+      "street": [ "Gordon House",
+                  "Sceptre Way",
+                  "Bamber Bridge" ],
+      "locality": "Preston",
+      "region": "Lancashire",
+      "postalCode": "PR5 6AW",
+      "tel": { "work": "01772 819000" }
+    }
+}
+
+{   "%uid": "uid-05cc-e687-907f-cf7b",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise - Central",
+    "address": {
+      "street": [ "Lancaster House",
+                  "Centurion Way" ],
+      "locality": "Leyland",
+      "region": "Lancashire",
+      "postalCode": "PR26 6TX",
+      "tel": { "work": "01772 819000",
+               "fax":  "01772 819001" }
+    }
+}
+
+{   "%uid": "uid-691a-dd2e-2512-902e",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise - Energy (Power)",
+    "address": {
+      "street": [ "Unit B2 Redscar Industrial Estate", 
+                  "Longridge Road",
+                  "Ribbleton" ],
+      "locality": "Preston",
+      "region": "Lancashire",
+      "postalCode": "PR2 5NJ",
+      "tel": { "work": "01772 705253",
+               "fax":  "01772 655971" }
+    }
+}
+
+{   "%uid": "uid-836b-7ca9-0e54-613a",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise - Customer Contact Centre",
+    "address": {
+      "street": [ "The Matchworks",
+                  "Units 3-7",
+                  "Speke Road",
+                  "Garston" ],
+      "locality": "Liverpool",
+      "region": "Merseyside",
+      "postalCode": "L19 2PH",
+      "tel": { "work": "0800 521660" }
+    }
+}
+
+{   "%uid": "uid-fe83-20d2-9fe7-47bd",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise - Environmental",
+    "address": {
+      "street": [ "Moss Side Depot",
+                  "81 Bison Place",
+                  "Moss Side Industrial Estate" ],
+      "locality": "Leyland",
+      "region": "Lancashire",
+      "postalCode": "PR26 7QR",
+      "tel": { "work": "01772 624182" }
+    }
+}
+
+{   "%uid": "uid-8531-41a0-5a6c-172f",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise - Energy (Gas)",
+    "address": {
+      "street": [ "Building 005",
+                  "Common Lane",
+                  "Partington" ],
+      "locality": "Manchester",
+      "region": "Lancashire",
+      "postalCode": "M31 4BR",
+      "tel": { "work": "0161 7767800" }
+    }
+}
+
+{   "%uid": "uid-178e-2950-002f-1c03",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise Liverpool - Environmental",
+    "address": {
+      "street": [ "Moorgate Point",
+                  "Knowsley" ],
+      "locality": "Liverpool",
+      "region": "Merseyside",
+      "postalCode": "L33 7DR",
+      "tel": { "work": "0151 5477370" }
+    }
+}
+
+{   "%uid": "uid-2622-e06c-bf3b-62b4",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise - Environmental",
+    "address": {
+      "street": [ "20 Old London Road Depot" ],
+      "locality": "Penrith",
+      "region": "Cumbria",
+      "postalCode": "CA11 8GU",
+      "tel": { "work": "01768 212800" }
+    }
+}
+
+{   "%uid": "uid-543f-d8a4-bcbd-88d5",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise Liverpool - Environmental",
+    "address": {
+      "street": [ "Newton Road Depot",
+                  "Old Swan" ],
+      "locality": "Liverpool",
+      "region": "Merseyside",
+      "postalCode": "L13 3HS",
+      "tel": { "work": "0151 2336550" }
+    }
+}
+
+{   "%uid": "uid-b32e-52a8-130f-6ce7",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise - Highways",
+    "address": {
+      "street": [ "Holmesfield Road" ],
+      "locality": "Warrington",
+      "region": "Cheshire",
+      "postalCode": "WA1 2DS",
+      "tel": { "work": "01925 425780",
+               "fax":  "01925 425798" }
+    }
+}
+
+{   "%uid": "uid-f857-3568-b57e-89b9",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Enterprise Manchester - Environmental",
+    "address": {
+      "street": [ "c/o Manchester City Council",
+                  "Hammerstone Road",
+                  "Gorton" ],
+      "locality": "Manchester",
+      "region": "Lancashire",
+      "postalCode": "M18 8EQ",
+      "tel": { "work": "0161 9578304",
+               "fax":  "0161 9578304" }
+    }
+}
+
 {   "%uid": "uid-76b8-8502-45d3-0543",
     "%etag": 1,
     "%notify": [],
@@ -183,4 +400,3 @@
     "fullName": "Janice Bloggs",
     "email": "jan.bloggs@aol.com",
 }
-

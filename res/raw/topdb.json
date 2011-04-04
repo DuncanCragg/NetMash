@@ -5,7 +5,7 @@
     "%class": "android.User",
     "is": "user",
     "links": {
-        "viewing":   "http://netmash.net:8081/o/uid-76b8-8502-45d3-0543.json",
+        "viewing":   "http://netmash.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json",
         "applinks":  "uid-4f2c-44b9-8571-e7f4",
         "bookmarks": "uid-96ff-083c-d4ba-9a09",
         "history":   "uid-7fca-5fa6-151b-1584"

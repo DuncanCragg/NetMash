@@ -133,16 +133,16 @@ public class User extends WebObject {
                 //view=user2Map();
             }
             else
+            if(contentIsOrListContains("links:viewing:is", "vcard")){
+                //view=vCard2Map();
+            }
+            else
             if(contentIsOrListContains("links:viewing:is", "contacts")){
                 view=contacts2Map();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcardlist")){
                 view=vCardList2Map();
-            }
-            else
-            if(contentIsOrListContains("links:viewing:is", "vcard")){
-                //view=vCard2Map();
             }
             else{
             }
