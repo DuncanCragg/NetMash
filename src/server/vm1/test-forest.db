@@ -94,9 +94,9 @@
                   "Bamber Bridge" ],
       "locality": "Preston",
       "region": "Lancashire",
-      "postalCode": "PR5 6AW",
-      "tel": { "work": "01772 819000" }
-    }
+      "postalCode": "PR5 6AW"
+    },
+    "tel": { "work": "01772 819000" }
 }
 
 {   "%uid": "uid-05cc-e687-907f-cf7b",
@@ -111,10 +111,10 @@
                   "Centurion Way" ],
       "locality": "Leyland",
       "region": "Lancashire",
-      "postalCode": "PR26 6TX",
-      "tel": { "work": "01772 819000",
-               "fax":  "01772 819001" }
-    }
+      "postalCode": "PR26 6TX"
+    },
+    "tel": { "work": "01772 819000",
+             "fax":  "01772 819001" }
 }
 
 {   "%uid": "uid-691a-dd2e-2512-902e",
@@ -130,10 +130,10 @@
                   "Ribbleton" ],
       "locality": "Preston",
       "region": "Lancashire",
-      "postalCode": "PR2 5NJ",
-      "tel": { "work": "01772 705253",
-               "fax":  "01772 655971" }
-    }
+      "postalCode": "PR2 5NJ"
+    },
+    "tel": { "work": "01772 705253",
+             "fax":  "01772 655971" }
 }
 
 {   "%uid": "uid-836b-7ca9-0e54-613a",
@@ -150,9 +150,9 @@
                   "Garston" ],
       "locality": "Liverpool",
       "region": "Merseyside",
-      "postalCode": "L19 2PH",
-      "tel": { "work": "0800 521660" }
-    }
+      "postalCode": "L19 2PH"
+    },
+    "tel": { "work": "0800 521660" }
 }
 
 {   "%uid": "uid-fe83-20d2-9fe7-47bd",
@@ -168,9 +168,9 @@
                   "Moss Side Industrial Estate" ],
       "locality": "Leyland",
       "region": "Lancashire",
-      "postalCode": "PR26 7QR",
-      "tel": { "work": "01772 624182" }
-    }
+      "postalCode": "PR26 7QR"
+    },
+    "tel": { "work": "01772 624182" }
 }
 
 {   "%uid": "uid-8531-41a0-5a6c-172f",
@@ -186,9 +186,9 @@
                   "Partington" ],
       "locality": "Manchester",
       "region": "Lancashire",
-      "postalCode": "M31 4BR",
-      "tel": { "work": "0161 7767800" }
-    }
+      "postalCode": "M31 4BR"
+    },
+    "tel": { "work": "0161 7767800" }
 }
 
 {   "%uid": "uid-178e-2950-002f-1c03",
@@ -203,9 +203,9 @@
                   "Knowsley" ],
       "locality": "Liverpool",
       "region": "Merseyside",
-      "postalCode": "L33 7DR",
-      "tel": { "work": "0151 5477370" }
-    }
+      "postalCode": "L33 7DR"
+    },
+    "tel": { "work": "0151 5477370" }
 }
 
 {   "%uid": "uid-2622-e06c-bf3b-62b4",
@@ -219,9 +219,9 @@
       "street": [ "20 Old London Road Depot" ],
       "locality": "Penrith",
       "region": "Cumbria",
-      "postalCode": "CA11 8GU",
-      "tel": { "work": "01768 212800" }
-    }
+      "postalCode": "CA11 8GU"
+    },
+    "tel": { "work": "01768 212800" }
 }
 
 {   "%uid": "uid-543f-d8a4-bcbd-88d5",
@@ -236,9 +236,9 @@
                   "Old Swan" ],
       "locality": "Liverpool",
       "region": "Merseyside",
-      "postalCode": "L13 3HS",
-      "tel": { "work": "0151 2336550" }
-    }
+      "postalCode": "L13 3HS"
+    },
+    "tel": { "work": "0151 2336550" }
 }
 
 {   "%uid": "uid-b32e-52a8-130f-6ce7",
@@ -252,10 +252,10 @@
       "street": [ "Holmesfield Road" ],
       "locality": "Warrington",
       "region": "Cheshire",
-      "postalCode": "WA1 2DS",
-      "tel": { "work": "01925 425780",
-               "fax":  "01925 425798" }
-    }
+      "postalCode": "WA1 2DS"
+    },
+    "tel": { "work": "01925 425780",
+             "fax":  "01925 425798" }
 }
 
 {   "%uid": "uid-f857-3568-b57e-89b9",
@@ -271,10 +271,10 @@
                   "Gorton" ],
       "locality": "Manchester",
       "region": "Lancashire",
-      "postalCode": "M18 8EQ",
-      "tel": { "work": "0161 9578304",
-               "fax":  "0161 9578304" }
-    }
+      "postalCode": "M18 8EQ"
+    },
+    "tel": { "work": "0161 9578304",
+             "fax":  "0161 9578304" }
 }
 
 {   "%uid": "uid-76b8-8502-45d3-0543",

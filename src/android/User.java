@@ -73,7 +73,12 @@ public class User extends WebObject {
     }
 
     public boolean menuItem(int itemid){
-        showWhatIAmViewingOnMap();
+        new Evaluator(this){
+            public void evaluate(){
+                history.push(content("links:viewing"));
+                showWhatIAmViewingOnMap();
+            }
+        };
         return true;
     }
 
@@ -270,12 +275,14 @@ public class User extends WebObject {
         for(String uid: vcards){
             String vcarduid = UID.normaliseUID(listuid, uid);
             String fullname=content("links:viewing:list:"+(i  )+":fullName");
-            String address =getAddressString("links:viewing:list:"+(i++)+":address");
-            if(address==null) continue;
+            String address=getAddressString("links:viewing:list:"+(i++)+":address");
+            LinkedHashMap<String,Double> location=contentHash("links:viewing:list:"+(i++)+":location");
+            if(location==null) location=geoCode(address);
+            if(location==null) continue;
             LinkedHashMap point = new LinkedHashMap();
             point.put("label", fullname);
             point.put("sublabel", address);
-            point.put("location", geoCode(address));
+            point.put("location", location);
             point.put("jump", vcarduid);
             maplist.add(point);
         }
@@ -285,12 +292,6 @@ public class User extends WebObject {
         guitop.put("#title", "Contacts List");
         guitop.put("#contactmap", maplist);
         return maplist;
-    }
-
-    private String getAddressString(String path){
-        LinkedHashMap hm = contentHash(path);
-        if(hm==null) return content(path);
-        return ""+hm.get("street")+" "+hm.get("locality")+" "+hm.get("region")+" "+hm.get("postalCode");
     }
 
     private LinkedHashMap vCard2GUI(){
@@ -306,6 +307,14 @@ public class User extends WebObject {
         if(workphone==null) workphone=content("links:viewing:tel:work");
         if(workphone!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Work phone:", workphone));
 
+        String mobilephone=content("links:viewing:tel:mobile:0");
+        if(mobilephone==null) mobilephone=content("links:viewing:tel:mobile");
+        if(mobilephone!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Mobile:", mobilephone));
+
+        String faxnumber=content("links:viewing:tel:fax:0");
+        if(faxnumber==null) faxnumber=content("links:viewing:tel:fax");
+        if(faxnumber!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Fax:", faxnumber));
+
         String email=content("links:viewing:email:0");
         if(email==null) email=content("links:viewing:email");
         if(email!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Email address:", email));
@@ -314,8 +323,8 @@ public class User extends WebObject {
         if(url==null) url=content("links:viewing:url");
         if(url!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Website:", url));
 
-        String addressx=content("links:viewing:address");
-        if(addressx!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Address:", addressx));
+        String address=getAddressString("links:viewing:address");
+        if(address!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Address:", address));
 
         String fullname=content("links:viewing:fullName");
         String photourl=content("links:viewing:photo");
@@ -326,6 +335,21 @@ public class User extends WebObject {
         guitop.put("#title", list("direction:horizontal", "proportions:25%", photourl, fullname));
         guitop.put("#vcard", vcarddetail);
         return guitop;
+    }
+
+    private String getAddressString(String path){
+        LinkedHashMap address = contentHash(path);
+        if(address==null) return content(path);
+        String streetstr;
+        Object street = address.get("street");
+        if(street instanceof List){
+            List<String> streetlist = (List<String>)street;
+            StringBuilder streetb=new StringBuilder();
+            for(String line: streetlist) streetb.append(line+"\n");
+            streetstr=streetb.toString().trim();
+        }
+        else streetstr = street==null? "-": street.toString();
+        return streetstr+"\n"+address.get("locality")+"\n"+address.get("region")+"\n"+address.get("postalCode");
     }
 
     private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm){
@@ -380,10 +404,12 @@ public class User extends WebObject {
         contentList("list", contactslist);
     }
 
-    public User(String name, String address){
+    public User(String name, String address, LinkedHashMap<String,Double> location){
         super("{ \"is\": \"vcard\", \n"+
               "  \"fullName\": \""+name+"\",\n"+
               "  \"address\": \""+address+"\"\n"+
+          (location==null? "":
+              "  \"location\": { \"lat\": "+location.get("lat")+", \"lon\": "+location.get("lon")+" }\n")+
               "}");
     }
 
@@ -394,7 +420,8 @@ public class User extends WebObject {
     }
 
     private String createUserAndVCard(String id, String name, String address){
-        return spawn(new User(spawn(new User(name, address.replaceAll("\n", ", ")))));
+        String inlineaddress = address.replaceAll("\n", ", ");
+        return spawn(new User(spawn(new User(name, inlineaddress, geoCode(inlineaddress)))));
     }
 
     private LinkedHashMap<String,Double> geoCode(String address){
