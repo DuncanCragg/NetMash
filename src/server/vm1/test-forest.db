@@ -342,7 +342,7 @@
     "fullName": "Duncan Cragg",
     "email": "dcragg@thoughtworks.com",
     "address": {
-        "street": [ "110", "Gloucester Road" ],
+        "street": [ "110 Gloucester Road" ],
         "locality": "Kingston-upon-Thames",
         "region": "Surrey",
         "postalCode": "KT1 3QN"
@@ -400,3 +400,4 @@
     "fullName": "Janice Bloggs",
     "email": "jan.bloggs@aol.com",
 }
+

@@ -303,8 +303,8 @@ abstract class HTTPCommon {
             JSON json = new JSON(jsonchars);
             WebObject w=null;
             try{ w=new WebObject(json, httpContentLocation, httpEtag, null); }
-            catch(Exception e){ return false; }
-            if(w==null) return false;
+            catch(Exception e){ FunctionalObserver.log(e); }
+            if(w==null){ FunctionalObserver.log("Cannot convert to WebObject:\n"+json); return false; }
             if(uid!=null) w.notify.add(uid);
             funcobs.httpNotify(w);
         }
@@ -371,7 +371,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         Matcher m = UIDPA.matcher(httpPath);
         if(m.matches()){
             String uid = m.group(1);
-            if(httpMethod.equals("GET")){ if(!readGET(uid)) return; }
+            if(httpMethod.equals("GET"))  readGET(uid);
             else
             if(httpMethod.equals("POST")) if(!readPOST(bytebuffer, uid)) return;
         } else send404();

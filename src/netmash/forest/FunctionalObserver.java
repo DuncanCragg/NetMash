@@ -167,7 +167,7 @@ public class FunctionalObserver implements Module {
     // POST rq and GET rs
     void httpNotify(WebObject w){     // must check it's not one of ours!
         WebObject s=cacheGet(w.uid);  // must look in db
-        if(s.etag>=w.etag) return;
+        if(s.etag>=w.etag){ log("Old content:\n"+w+"\nIncoming for:\n"+s+"\n"); return; }
         cachePut(w);
         mergePrevIntoCurrent(s,w);
         saveAndNotifyUpdated(w);

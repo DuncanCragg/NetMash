@@ -68,10 +68,17 @@ netmashrel: clean
 	ant release
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
-installandlog:
+reinstall:
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
+
+logcat:
 	adb logcat | tee ,logcat
+
+testonphone: netmashrel reinstall logcat
+
+logout:
+	tail -9999f src/server/vm1/netmash.log
 
 clean:
 	rm -rf ./build/classes/netmash
