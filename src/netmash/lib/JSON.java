@@ -56,7 +56,8 @@ public class JSON {
             cb.append(" }");
             charbuffer = cb;
         }
-        chars = charbuffer.array();
+        if(charbuffer.hasArray()) chars = charbuffer.array();
+        else                      chars = charbuffer.toString().toCharArray();
         chp=0;
     }
 

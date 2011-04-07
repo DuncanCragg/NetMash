@@ -86,18 +86,20 @@ public class Persistence implements FileUser {
     public WebObject cache(String uid){
         CharBuffer jsonchars = jsoncache.get(uid);
         if(jsonchars==null) return null;
+        jsonchars.position(0);
         JSON json = new JSON(jsonchars);
         String classname = json.stringPathN("%class"); json.removePath("%class");
         WebObject w=null;
         try{
             if(classname!=null && classname.length() >0){
-                   w = (WebObject)Class.forName(classname).newInstance();
+                w=(WebObject)Class.forName(classname).newInstance();
             } else w=new WebObject();
             w.construct(json);
             funcobs.cachePut(w);
             return w;
         }catch(Exception e){
-            FunctionalObserver.log("Persistence: Could not build an instance of WebObject "+classname+":\n"+e);
+            FunctionalObserver.log("Persistence: Could not build an instance of WebObject ("+uid+" classname="+classname+"):\n"+json);
+            e.printStackTrace();
         }
         return null;
     }
@@ -120,7 +122,7 @@ public class Persistence implements FileUser {
                     catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
                 }
                 else{
-                    try{ Kernel.writeFile(topdbos,       bytebuffer, this); }
+                    try{ Kernel.writeFile(topdbos,      bytebuffer, this); }
                     catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
                 }
             }

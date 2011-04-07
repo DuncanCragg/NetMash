@@ -115,11 +115,11 @@ public class User extends WebObject {
             }
             else
             if(contentIsOrListContains("links:viewing:is", "contacts")){
-                viewhash=contacts2GUI();
+                viewhash=vCardList2GUI("public:vcard:");
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcardlist")){
-                viewhash=vCardList2GUI();
+                viewhash=vCardList2GUI("");
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcard")){
@@ -228,7 +228,7 @@ public class User extends WebObject {
         return guitop;
     }
 
-    private LinkedHashMap contacts2GUI(){ logrule();
+    private LinkedHashMap vCardList2GUI(String vcardprefix){ logrule();
         String listuid = content("links:viewing");
         LinkedList<String> contacts = contentList("links:viewing:list");
         if(contacts==null) return null;
@@ -238,31 +238,9 @@ public class User extends WebObject {
         int i= -1;
         for(String uid: contacts){ i++;
             String contactuid = UID.normaliseUID(listuid, uid);
-            String fullname=content("links:viewing:list:"+i+":public:vcard:fullName");
+            String fullname=content("links:viewing:list:"+i+":"+vcardprefix+"fullName");
             if(fullname==null) viewlist.add("@"+contactuid);
             else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, contactuid));
-        }
-
-        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
-        guitop.put("direction", "vertical");
-        guitop.put("#title", "Contacts List");
-        guitop.put("#contactlist", viewlist);
-        return guitop;
-    }
-
-    private LinkedHashMap vCardList2GUI(){ logrule();
-        String listuid = content("links:viewing");
-        LinkedList<String> vcards = contentList("links:viewing:list");
-        if(vcards==null) return null;
-
-        LinkedList viewlist = new LinkedList();
-        viewlist.add("direction:vertical");
-        int i= -1;
-        for(String uid: vcards){ i++;
-            String vcarduid = UID.normaliseUID(listuid, uid);
-            String fullname=content("links:viewing:list:"+i+":fullName");
-            if(fullname==null) viewlist.add("@"+vcarduid);
-            else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, vcarduid));
         }
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();

@@ -95,10 +95,16 @@ public class FunctionalObserver implements Module {
         }
     }
 
-    void cacheSaveAndEvalSpawned(WebObject w){
+    void cacheAndSaveSpawned(WebObject w){
         for(WebObject n: w.spawned){
+log("cacheAndSaveSpawned putting into cache:\n"+n);
             cachePut(n);
             persistence.save(n);
+        }
+    }
+
+    void evalSpawned(WebObject w){
+        for(WebObject n: w.spawned){
             evaluatable(n);
         }
     }
@@ -151,6 +157,7 @@ public class FunctionalObserver implements Module {
             persistence.save(observed);
             return observed;
         }
+log("observing shell\n"+observed);
         evaluatable(observed);
         return null;
     }
@@ -174,6 +181,8 @@ public class FunctionalObserver implements Module {
     }
 
     private void handleShell(WebObject s){
+Kernel.sleep(200);
+log("handleShell:\n"+s);
         if(s.shellstate==ShellStates.NEW){
             s.shellstate = ShellStates.TRYDB;
             WebObject w=persistence.cache(s.uid);

@@ -469,7 +469,9 @@ public class WebObject {
         else{
             funcobs.saveAndAlertFirstTime(this);
         }
-        funcobs.cacheSaveAndEvalSpawned(this);
+Kernel.sleep(100);
+        funcobs.cacheAndSaveSpawned(this);
+        funcobs.evalSpawned(this);
     }
 
     /* ---------------------------------------------------- */
