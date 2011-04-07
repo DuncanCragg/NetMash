@@ -57,8 +57,16 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    void onNewLocation(Location location){
+    void onNewLocation(final Location location){
         log("onNewLocation: "+location);
+        new Evaluator(this){
+            public void evaluate(){
+                contentDouble("public:standing:lat", location.getLatitude());
+                contentDouble("public:standing:lon", location.getLongitude());
+                contentDouble("public:standing:acc", location.getAccuracy());
+                content(      "public:standing:pro", location.getProvider());
+            }
+        };
     }
 
     // ---------------------------------------------------------
@@ -156,7 +164,7 @@ public class User extends WebObject {
         if(contentSet("links:viewing:is")){
             LinkedList viewlist=null;
             if(contentIsOrListContains("links:viewing:is", "user")){
-                //viewlist=user2Map();
+                viewlist=user2Map();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcard")){
@@ -214,6 +222,20 @@ public class User extends WebObject {
         if(bookmarks!=null) userlist.add(bookmarks);
 
         return userlist;
+    }
+
+    private LinkedList user2Map(){ logrule();
+        String useruid = content("links:viewing");
+        LinkedList maplist = new LinkedList();
+        maplist.add("is:maplist");
+        LinkedHashMap location = contentHash("links:viewing:public:standing");
+        LinkedHashMap point = new LinkedHashMap();
+        point.put("label", "label");
+        point.put("sublabel", "sublabel");
+        point.put("location", location);
+        point.put("jump", useruid);
+        maplist.add(point);
+        return maplist;
     }
 
     private LinkedHashMap bookmarks2GUI(){ logrule();
