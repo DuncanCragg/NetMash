@@ -140,27 +140,27 @@ public class User extends WebObject {
 
     private void showWhatIAmViewingOnMap(){ logrule();
         if(contentSet("links:viewing:is")){
-            LinkedList view=null;
+            LinkedList viewlist=null;
             if(contentIsOrListContains("links:viewing:is", "user")){
-                //view=user2Map();
+                //viewlist=user2Map();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcard")){
-                //view=vCard2Map();
+                //viewlist=vCard2Map();
             }
             else
             if(contentIsOrListContains("links:viewing:is", "contacts")){
-                view=vCardList2Map("public:vcard:");
+                viewlist=vCardList2Map("public:vcard:");
             }
             else
             if(contentIsOrListContains("links:viewing:is", "vcardlist")){
-                view=vCardList2Map("");
+                viewlist=vCardList2Map("");
             }
             else{
             }
-            if(view!=null){
+            if(viewlist!=null){
                 JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
-                uiJSON.listPath("view", view);
+                uiJSON.listPath("view", viewlist);
                 if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON);
             }
         }

@@ -461,17 +461,20 @@ public class WebObject {
         funcobs.dropNotifies(this, remalert);
         funcobs.dropNotifiesNotNeeded(this);
         observe = newobserve;
+        funcobs.cacheAndSaveSpawned(this);
         if(statemod){
-            publicState = updatingState;
-            etag++;  // should be atomic with state!
+            makeNewStatePublicRightNowShouldBeAllAtomicButIsnt();
             funcobs.saveAndNotifyUpdated(this);
         }
         else{
             funcobs.saveAndAlertFirstTime(this);
         }
-Kernel.sleep(100);
-        funcobs.cacheAndSaveSpawned(this);
         funcobs.evalSpawned(this);
+    }
+
+    void makeNewStatePublicRightNowShouldBeAllAtomicButIsnt(){
+        publicState = updatingState;
+        etag++;
     }
 
     /* ---------------------------------------------------- */

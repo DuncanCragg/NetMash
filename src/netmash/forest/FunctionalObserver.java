@@ -97,7 +97,6 @@ public class FunctionalObserver implements Module {
 
     void cacheAndSaveSpawned(WebObject w){
         for(WebObject n: w.spawned){
-log("cacheAndSaveSpawned putting into cache:\n"+n);
             cachePut(n);
             persistence.save(n);
         }
@@ -157,7 +156,6 @@ log("cacheAndSaveSpawned putting into cache:\n"+n);
             persistence.save(observed);
             return observed;
         }
-log("observing shell\n"+observed);
         evaluatable(observed);
         return null;
     }
@@ -176,18 +174,22 @@ log("observing shell\n"+observed);
         WebObject s=cacheGet(w.uid);  // must look in db
         if(s.etag>=w.etag){ log("Old content:\n"+w+"\nIncoming for:\n"+s+"\n"); return; }
         cachePut(w);
-        mergePrevIntoCurrent(s,w);
+        transferNotifyAndAlerted(s,w);
         saveAndNotifyUpdated(w);
     }
 
     private void handleShell(WebObject s){
-Kernel.sleep(200);
-log("handleShell:\n"+s);
         if(s.shellstate==ShellStates.NEW){
+            WebObject w=cacheGet(s.uid);
+            if(w!=s){
+                transferNotifyAndAlerted(s,w);
+                saveAndNotifyUpdated(w);
+                return;
+            }
             s.shellstate = ShellStates.TRYDB;
-            WebObject w=persistence.cache(s.uid);
+            w=persistence.cache(s.uid);
             if(w!=null){
-                mergePrevIntoCurrent(s,w);
+                transferNotifyAndAlerted(s,w);
                 saveAndNotifyUpdated(w);
                 if(w.isLocal()){
                     w.handleEval();
@@ -206,7 +208,7 @@ log("handleShell:\n"+s);
         }
     }
 
-    private void mergePrevIntoCurrent(WebObject s, WebObject w){
+    private void transferNotifyAndAlerted(WebObject s, WebObject w){
         w.notify.addAll(s.notify);
         w.httpnotify.addAll(s.httpnotify);
         for(String notifieruid: s.alertedin){
