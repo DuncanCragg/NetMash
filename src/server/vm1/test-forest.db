@@ -187,7 +187,8 @@
                   "Partington" ],
       "locality": "Manchester",
       "region": "Lancashire",
-      "postalCode": "M31 4BR"
+      "postalCode": "M31 4BR",
+      "countryName": "UK"
     },
     "tel": { "work": "0161 7767800" }
 }
@@ -237,7 +238,8 @@
                   "Old Swan" ],
       "locality": "Liverpool",
       "region": "Merseyside",
-      "postalCode": "L13 3HS"
+      "postalCode": "L13 3HS",
+      "countryName": "UK"
     },
     "tel": { "work": "0151 2336550" }
 }

@@ -24,6 +24,11 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 ./build/classes/%.class: ./src/%.java
 	javac $(LIBOPTIONS) $<
 
+runnet: sethost run1
+
+sethost:
+	sed -i "s:localhost:netmash.net:" src/server/vm1/netmash-config.json
+
 run1: kill jar
 	(cd src/server/vm1; ./run.sh)
 
@@ -73,7 +78,8 @@ reinstall:
 	adb install bin/NetMash-release.apk
 
 logcat:
-	adb logcat | tee ,logcat
+	adb logcat > ,logcat &
+	tail -9999f ,logcat | egrep -vi "locapi|\<rpc\>"
 
 testonphone: netmashrel reinstall logcat
 

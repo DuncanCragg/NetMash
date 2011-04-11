@@ -523,21 +523,24 @@ public class User extends WebObject {
         return spawn(new User(spawn(new User(name, inlineaddress, geoCode(inlineaddress)))));
     }
 
-    private LinkedHashMap<String,Double> geoCode(String address){
-        log("geoCode "+address);
+    private HashMap<String,LinkedHashMap<String,Double>> geoCodeCache=new HashMap<String,LinkedHashMap<String,Double>>();
+    private LinkedHashMap<String,Double> geoCode(String address){ log("geoCode "+address);
+        if(address==null || address.equals("")) return null;
+        LinkedHashMap<String,Double> loc=geoCodeCache.get(address);
+        if(loc!=null){ log("cached result="+loc); return loc; }
         if(NetMash.top==null){ log("No Activity to geoCode from"); return null; }
-        Context context = NetMash.top.getApplicationContext();
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        Geocoder geocoder = new Geocoder(NetMash.top.getApplicationContext(), Locale.getDefault());
         try{
             List<Address> geos = geocoder.getFromLocationName(address, 1);
             if(!geos.isEmpty()){
                 if(geos.size() >=2) log(geos.size()+" locations found for "+address);
                 Address geo1 = geos.get(0);
-                LinkedHashMap<String,Double> loc = new LinkedHashMap<String,Double>();
+                loc = new LinkedHashMap<String,Double>();
                 loc.put("lat", geo1.getLatitude());
                 loc.put("lon", geo1.getLongitude());
+                geoCodeCache.put(address,loc);
                 return loc;
-            } 
+            }
             else log("No getFromLocationName for "+address);
         }catch(Exception e){ log("No getFromLocationName for "+address); log(e); }
         return null; 
