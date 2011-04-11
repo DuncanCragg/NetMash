@@ -98,6 +98,7 @@ public class FXDealerTicket extends WebObject {
                 if(price < contentDouble("params:2")){
                     content("status", "filled");
                 }
+                refreshObserves();
             }
         };
     }
