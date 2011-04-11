@@ -88,5 +88,5 @@ clean:
 	rm -rf ./src/server/vm?/forest.log
 	rm -rf bin/classes bin/classes.dex
 	rm -rf bin/NetMash.ap_ bin/NetMash*un*ed.apk
-	rm -rf gen/netmash/platform/R.java
+	rm -rf gen/android/gui/R.java
 

@@ -39,9 +39,9 @@ public class User extends WebObject {
         currentlocation = new CurrentLocation(this);
     }
 
-    public void onTopResume(){ logrule();
+    public void onTopResume(){
         new Evaluator(this){
-            public void evaluate(){
+            public void evaluate(){ logrule();
                 showWhatIAmViewing();
             }
         };
@@ -58,13 +58,14 @@ public class User extends WebObject {
     // ---------------------------------------------------------
 
     void onNewLocation(final Location location){
-        log("onNewLocation: "+location);
         new Evaluator(this){
-            public void evaluate(){
+            public void evaluate(){ logrule();
+                log("location: "+location);
                 contentDouble("location:lat", location.getLatitude());
                 contentDouble("location:lon", location.getLongitude());
                 contentDouble("location:acc", location.getAccuracy());
                 content(      "location:prv", location.getProvider());
+                refreshObserves();
             }
         };
     }
@@ -93,7 +94,7 @@ public class User extends WebObject {
 
     public void jumpToUID(final String uid){
         new Evaluator(this){
-            public void evaluate(){
+            public void evaluate(){ logrule();
                 history.forward();
                 content("private:viewing", uid);
                 showWhatIAmViewing();
@@ -103,7 +104,7 @@ public class User extends WebObject {
 
     public void jumpBack(){
         new Evaluator(this){
-            public void evaluate(){
+            public void evaluate(){ logrule();
                 if(!history.back()) return;
                 showWhatIAmViewing();
             }
@@ -112,7 +113,7 @@ public class User extends WebObject {
 
     public boolean menuItem(int itemid){
         new Evaluator(this){
-            public void evaluate(){
+            public void evaluate(){ logrule();
                 history.forward();
                 content("private:viewas", "map");
                 showWhatIAmViewing();
@@ -137,7 +138,7 @@ public class User extends WebObject {
         else
         if(contentIsOrListContains("is", "vcard")){ log("vcard: "+this);
         }
-        else{ log("!!something else: "+this);
+        else{ log("something else: "+this);
         }
     }
 
@@ -155,7 +156,7 @@ public class User extends WebObject {
         }
     }
 
-    private void showWhatIAmViewingAsGUI(){ logrule(); log(this);
+    private void showWhatIAmViewingAsGUI(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
             LinkedList    viewlist=null;
@@ -211,6 +212,7 @@ public class User extends WebObject {
             }
             else{
             }
+
             if(viewlist!=null){
                 JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
                 uiJSON.listPath("view", viewlist);
@@ -411,34 +413,41 @@ public class User extends WebObject {
     }
 
     private String getGeoAddressString(String path){
+        int numberofstreetlines=1;
         LinkedHashMap address = contentHash(path);
         if(address==null) return content(path);
-        String streetstr;
         Object street = address.get("street");
         if(street instanceof List){
             List<String> streetlist = (List<String>)street;
             StringBuilder streetb=new StringBuilder();
             int i=0;
-            for(String line: streetlist){ i++; streetb.append(line); if(i==1) break; }
-            streetstr=streetb.toString().trim();
+            for(String line: streetlist){ i++; streetb.append(line); if(i==numberofstreetlines) break; }
+            street=streetb.toString().trim();
         }
-        else streetstr = street==null? "-": street.toString();
-        return streetstr+" \""+address.get("postalCode")+"\"";
+        StringBuilder as=new StringBuilder();
+        Object l=street;              if(l!=null){                   as.append(l); }
+        l=address.get("postalCode");  if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
+        l=address.get("countryName"); if(l!=null){ as.append(" ");   as.append(l); }
+        return as.toString();
     }
 
     private String getAddressString(String path){
         LinkedHashMap address = contentHash(path);
         if(address==null) return content(path);
-        String streetstr;
         Object street = address.get("street");
         if(street instanceof List){
             List<String> streetlist = (List<String>)street;
             StringBuilder streetb=new StringBuilder();
             for(String line: streetlist){ streetb.append(line); streetb.append("\n"); }
-            streetstr=streetb.toString().trim();
+            street=streetb.toString().trim();
         }
-        else streetstr = street==null? "-": street.toString();
-        return streetstr+"\n"+address.get("locality")+"\n"+address.get("region")+"\n"+address.get("postalCode");
+        StringBuilder as=new StringBuilder();
+        Object l=street;              if(l!=null){ as.append(l); as.append("\n"); }
+        l=address.get("locality");    if(l!=null){ as.append(l); as.append("\n"); }
+        l=address.get("region");      if(l!=null){ as.append(l); as.append("\n"); }
+        l=address.get("postalCode");  if(l!=null){ as.append(l); as.append("\n"); }
+        l=address.get("countryName"); if(l!=null){ as.append(l); as.append("\n"); }
+        return as.toString();
     }
 
     private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm){ logrule();

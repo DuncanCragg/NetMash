@@ -78,21 +78,24 @@ public class FunctionalObserver implements Module {
 
     // -------------------------------
 
-    void dropNotifies(WebObject w, HashSet<String> remalert){
-        if(remalert.isEmpty()) return;
+    void dropNotifies(WebObject w){
         for(String remuid: w.remalert){
             if(!cacheGet(remuid).isLocal()) w.notify.remove(remuid);
         }
     }
 
-    void dropNotifiesNotNeeded(WebObject w){
-        for(String olduid: w.observe){
-            if(!w.newobserve.contains(olduid)){
-                WebObject wo = cacheGet(olduid);
-                wo.notify.remove(w.uid);
-                if(!wo.isShell()) persistence.save(wo);
+    void setCurrentNotifyAndObserve(WebObject w){
+        if(!w.refreshobserves){
+            for(String olduid: w.observe){
+                if(!w.newobserve.contains(olduid)){
+                    WebObject wo = cacheGet(olduid);
+                    wo.notify.remove(w.uid);
+                    if(!wo.isShell()) persistence.save(wo);
+                }
             }
+            w.observe = w.newobserve;
         }
+        else w.observe.addAll(w.newobserve);
     }
 
     void cacheAndSaveSpawned(WebObject w){

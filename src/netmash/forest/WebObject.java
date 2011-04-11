@@ -37,6 +37,7 @@ public class WebObject {
     private boolean copyshallow = true;
     public  boolean statemod = false;
     public  boolean obsalmod = false;
+    public  boolean refreshobserves = false;
 
     public  HashSet<String>                   newalert   = new HashSet<String>();
     public  HashSet<String>                   remalert   = new HashSet<String>();
@@ -366,6 +367,12 @@ public class WebObject {
         return w.uid; // UID.toURL(w.uid);
     }
 
+    /** Keep all observations as they were. Thus don't need to
+      * access anything to keep being notified of its updates. */
+    public void refreshObserves(){
+        refreshobserves=true;
+    }
+
     /** Use this when running from an interface or I/O callback. */
     public class Evaluator{
         public Evaluator(WebObject w){
@@ -389,8 +396,9 @@ public class WebObject {
     /** Call to reset all changes. */
     public void rollback(){
         statemod = false;
-        updatingState = publicState;
         obsalmod = false;
+        refreshobserves = false;
+        updatingState = publicState;
         newalert.clear();
         remalert.clear();
         newobserve.clear();
@@ -441,9 +449,10 @@ public class WebObject {
     }
 
     void evalPre(){
-        obsalmod = false;
         statemod = false;
-        newobserve.clear();
+        obsalmod = false;
+        refreshobserves = false;
+        newobserve = new HashSet<String>();
         newalert.clear();
         remalert.clear();
         alerted = alertedin;
@@ -458,9 +467,8 @@ public class WebObject {
     void evalPost(){
         observe.addAll(alerted);
         notify.addAll(newalert);
-        funcobs.dropNotifies(this, remalert);
-        funcobs.dropNotifiesNotNeeded(this);
-        observe = newobserve;
+        funcobs.dropNotifies(this);
+        funcobs.setCurrentNotifyAndObserve(this);
         funcobs.cacheAndSaveSpawned(this);
         if(statemod){
             makeNewStatePublicRightNowShouldBeAllAtomicButIsnt();

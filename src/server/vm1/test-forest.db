@@ -313,10 +313,9 @@
     },
     "nickname": "The Masher",
     "address": {
-      "street": [ "My Mews", "My Street" ],
-      "locality": "My City",
-      "region": "My County",
-      "postalCode": "MY90 CDE",
+      "street": "150 Old Park Ln",
+      "locality": "London",
+      "postalCode": "W1K 1QZ",
       "countryName": "UK"
     },
     "email": [ "brian.rock@site.com", "bri2001@hotmail.com" ],
@@ -325,7 +324,7 @@
       "unit": "site.com"
     },
     "birthday": "1995-02-12",
-    "tel": { "work": [ "020 7231 1234", "020 7231 3212" ], "home": "020 8323 2343" },
+    "tel": { "work": [ "+44 20 7514 1700", "020 7231 3212" ], "home": "020 8323 2343" },
     "url": [
       "http://brian.org/",
       "http://facebook.com/brio"
