@@ -4,23 +4,20 @@
     "%observe": [],
     "%class": "android.User",
     "is": "user",
-    "links": {
+    "location": { "lat": 0, "lon": 0 },
+    "saying": "",
+    "seeing": "",
+    "vcard":    "uid-9e24-9828-2b7d-8f1a",
+    "contacts": "",
+    "calendar": "uid-239a-3110-0a92-a3f5",
+    "photos":   "uid-e93a-cf3c-38ae-0ca7",
+    "videos":   "uid-a910-ece6-e6cc-be8f",
+    "private": {
         "viewing":   "uid-05e7-a5ff-6a42-0027",
+        "viewas":    "gui",
         "applinks":  "uid-4f2c-44b9-8571-e7f4",
         "bookmarks": "uid-96ff-083c-d4ba-9a09",
-        "history":   "uid-7fca-5fa6-151b-1584"
-    },
-    "public": {
-        "standing": { "lat": 0, "lon": 0 },
-        "saying": "",
-        "seeing": "",
-        "vcard":    "uid-9e24-9828-2b7d-8f1a",
-        "contacts": "",
-        "calendar": "uid-239a-3110-0a92-a3f5",
-        "photos":   "uid-e93a-cf3c-38ae-0ca7",
-        "videos":   "uid-a910-ece6-e6cc-be8f"
-    },
-    "private": {
+        "history":   "uid-7fca-5fa6-151b-1584",
         "contacts": "uid-2d57-3bbb-5071-9f45",
         "calendar": "",
         "photos": "",

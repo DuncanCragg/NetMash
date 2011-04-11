@@ -61,23 +61,41 @@ public class User extends WebObject {
         log("onNewLocation: "+location);
         new Evaluator(this){
             public void evaluate(){
-                contentDouble("public:standing:lat", location.getLatitude());
-                contentDouble("public:standing:lon", location.getLongitude());
-                contentDouble("public:standing:acc", location.getAccuracy());
-                content(      "public:standing:pro", location.getProvider());
+                contentDouble("location:lat", location.getLatitude());
+                contentDouble("location:lon", location.getLongitude());
+                contentDouble("location:acc", location.getAccuracy());
+                content(      "location:prv", location.getProvider());
             }
         };
     }
 
     // ---------------------------------------------------------
 
-    private Stack history = new Stack<String>();
+    class View{String uid,as;View(String u,String a){uid=u; as=a;} public boolean equals(View a,View b){return a.uid.equals(b.uid)&&a.as.equals(b.as);}};
+
+    class History extends Stack<View>{
+        User user;
+        public History(User u){ this.user=u; }
+        public void forward(){
+            View n=new View(user.content("private:viewing"), user.content("private:viewas"));
+            int i=search(n);
+            if(empty() || i == -1 || i >1) push(n);
+        }
+        public boolean back(){
+            if(history.empty()) return false;
+            View view=history.pop();
+            user.content("private:viewing", view.uid);
+            user.content("private:viewas",  view.as);
+            return true;
+        }
+    };
+    private History history = new History(this);
 
     public void jumpToUID(final String uid){
         new Evaluator(this){
             public void evaluate(){
-                history.push(content("links:viewing"));
-                content("links:viewing", uid);
+                history.forward();
+                content("private:viewing", uid);
                 showWhatIAmViewing();
             }
         };
@@ -86,9 +104,7 @@ public class User extends WebObject {
     public void jumpBack(){
         new Evaluator(this){
             public void evaluate(){
-                if(history.empty()) return;
-                String uid = (String)history.pop();
-                content("links:viewing", uid);
+                if(!history.back()) return;
                 showWhatIAmViewing();
             }
         };
@@ -97,8 +113,9 @@ public class User extends WebObject {
     public boolean menuItem(int itemid){
         new Evaluator(this){
             public void evaluate(){
-                history.push(content("links:viewing"));
-                showWhatIAmViewingOnMap();
+                history.forward();
+                content("private:viewas", "map");
+                showWhatIAmViewing();
             }
         };
         return true;
@@ -124,31 +141,45 @@ public class User extends WebObject {
         }
     }
 
-    private void showWhatIAmViewing(){ logrule();
-        if(contentSet("links:viewing:is")){
+    private void showWhatIAmViewing(){
+        if(contentIs("private:viewas","gui")){
+            showWhatIAmViewingAsGUI();
+        }
+        else
+        if(contentIs("private:viewas","map")){
+            showWhatIAmViewingOnMap();
+        }
+        else
+        if(contentIs("private:viewas","cal")){
+            //showWhatIAmViewingOnCal()
+        }
+    }
+
+    private void showWhatIAmViewingAsGUI(){ logrule(); log(this);
+        if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
             LinkedList    viewlist=null;
-            if(contentIsOrListContains("links:viewing:is", "user")){
+            if(contentIsOrListContains("private:viewing:is", "user")){
                 viewlist=user2GUI();
             }
             else
-            if(contentIsOrListContains("links:viewing:is", "bookmarks")){
+            if(contentIsOrListContains("private:viewing:is", "bookmarks")){
                 viewhash=bookmarks2GUI();
             }
             else
-            if(contentIsOrListContains("links:viewing:is", "contacts")){
-                viewhash=vCardList2GUI("public:vcard:");
+            if(contentIsOrListContains("private:viewing:is", "contacts")){
+                viewhash=vCardList2GUI("vcard:");
             }
             else
-            if(contentIsOrListContains("links:viewing:is", "vcardlist")){
+            if(contentIsOrListContains("private:viewing:is", "vcardlist")){
                 viewhash=vCardList2GUI("");
             }
             else
-            if(contentIsOrListContains("links:viewing:is", "vcard")){
+            if(contentIsOrListContains("private:viewing:is", "vcard")){
                 viewhash=vCard2GUI();
             }
             else{
-                viewhash=guifyHash(contentHash("links:viewing:#"));
+                viewhash=guifyHash(contentHash("private:viewing:#"));
             }
 
             if(viewhash!=null || viewlist!=null){
@@ -161,21 +192,21 @@ public class User extends WebObject {
     }
 
     private void showWhatIAmViewingOnMap(){ logrule();
-        if(contentSet("links:viewing:is")){
+        if(contentSet("private:viewing:is")){
             LinkedList viewlist=null;
-            if(contentIsOrListContains("links:viewing:is", "user")){
+            if(contentIsOrListContains("private:viewing:is", "user")){
                 viewlist=user2Map();
             }
             else
-            if(contentIsOrListContains("links:viewing:is", "vcard")){
-                //viewlist=vCard2Map();
+            if(contentIsOrListContains("private:viewing:is", "vcard")){
+                viewlist=vCard2Map();
             }
             else
-            if(contentIsOrListContains("links:viewing:is", "contacts")){
-                viewlist=vCardList2Map("public:vcard:");
+            if(contentIsOrListContains("private:viewing:is", "contacts")){
+                viewlist=vCardList2Map("vcard:");
             }
             else
-            if(contentIsOrListContains("links:viewing:is", "vcardlist")){
+            if(contentIsOrListContains("private:viewing:is", "vcardlist")){
                 viewlist=vCardList2Map("");
             }
             else{
@@ -189,33 +220,33 @@ public class User extends WebObject {
     }
 
     private LinkedList user2GUI(){ logrule();
-        String useruid = content("links:viewing");
+        String useruid = content("private:viewing");
 
-        String fullname = content("links:viewing:public:vcard:fullName");
-        if(fullname==null) fullname="Waiting for contact details "+content("links:viewing:public:vcard");
+        String fullname = content("private:viewing:vcard:fullName");
+        if(fullname==null) fullname="Waiting for contact details "+content("private:viewing:vcard");
 
-        LinkedHashMap standing = contentHash("links:viewing:public:standing");
-        if(standing!=null) standing.put("direction", "horizontal");
+        LinkedHashMap location = contentHash("private:viewing:location");
+        if(location!=null) location.put("direction", "horizontal");
 
-        String address = getAddressString("links:viewing:public:vcard:address");
+        String address = getAddressString("private:viewing:vcard:address");
         if(address==null) address="Waiting for contact details";
 
-        String vcarduid = UID.normaliseUID(useruid, content("links:viewing:public:vcard"));
+        String vcarduid = UID.normaliseUID(useruid, content("private:viewing:vcard"));
         LinkedList vcard=null;
         if(vcarduid!=null) vcard = list("direction:horizontal", "options:jump", "proportions:75%", "Contact Details:", vcarduid);
 
-        String contactsuid = UID.normaliseUID(useruid, content("links:viewing:private:contacts"));
+        String contactsuid = UID.normaliseUID(useruid, content("private:viewing:private:contacts"));
         LinkedList contacts=null;
         if(contactsuid!=null) contacts = list("direction:horizontal", "options:jump", "proportions:75%", "Contacts List:", contactsuid);
 
-        String bmuid=UID.normaliseUID(useruid, content("links:viewing:links:bookmarks"));
+        String bmuid=UID.normaliseUID(useruid, content("private:viewing:private:bookmarks"));
         LinkedList bookmarks=null;
         if(bmuid!=null) bookmarks = list("direction:horizontal", "options:jump", "proportions:75%", "Bookmarks:", bmuid);
 
         LinkedList userlist = new LinkedList();
         userlist.add("direction:vertical");
         userlist.add(fullname);
-        if(standing !=null) userlist.add(standing);
+        if(location !=null) userlist.add(location);
         if(address  !=null) userlist.add(address);
         if(vcard    !=null) userlist.add(vcard);
         if(contacts !=null) userlist.add(contacts);
@@ -225,10 +256,12 @@ public class User extends WebObject {
     }
 
     private LinkedList user2Map(){ logrule();
-        String useruid = content("links:viewing");
+        String useruid = content("private:viewing");
         LinkedList maplist = new LinkedList();
         maplist.add("is:maplist");
-        LinkedHashMap location = contentHash("links:viewing:public:standing");
+        maplist.add("layerkey:"+useruid);
+        LinkedHashMap location = contentHash("private:viewing:location");
+        if(location==null) return maplist;
         LinkedHashMap point = new LinkedHashMap();
         point.put("label", "label");
         point.put("sublabel", "sublabel");
@@ -239,8 +272,8 @@ public class User extends WebObject {
     }
 
     private LinkedHashMap bookmarks2GUI(){ logrule();
-        String listuid = content("links:viewing");
-        LinkedList<String> bookmarks = contentList("links:viewing:list");
+        String listuid = content("private:viewing");
+        LinkedList<String> bookmarks = contentList("private:viewing:list");
         if(bookmarks==null) return null;
 
         LinkedList viewlist = new LinkedList();
@@ -248,11 +281,11 @@ public class User extends WebObject {
         int i= -1;
         for(String uid: bookmarks){ i++;
             String bmuid = UID.normaliseUID(listuid, uid);
-            String           bmtext=content("links:viewing:list:"+i+":title");
-            if(bmtext==null) bmtext=content("links:viewing:list:"+i+":fullName");
-            if(bmtext==null) bmtext=content("links:viewing:list:"+i+":public:vcard:fullName");
-            if(bmtext==null) bmtext=content("links:viewing:list:"+i+":is");
-            if(bmtext==null) bmtext=content("links:viewing:list:"+i+":tags");
+            String           bmtext=content("private:viewing:list:"+i+":title");
+            if(bmtext==null) bmtext=content("private:viewing:list:"+i+":fullName");
+            if(bmtext==null) bmtext=content("private:viewing:list:"+i+":vcard:fullName");
+            if(bmtext==null) bmtext=content("private:viewing:list:"+i+":is");
+            if(bmtext==null) bmtext=content("private:viewing:list:"+i+":tags");
             if(bmtext==null) bmtext="@"+bmuid;
             viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", bmtext, bmuid));
         }
@@ -265,8 +298,8 @@ public class User extends WebObject {
     }
 
     private LinkedHashMap vCardList2GUI(String vcardprefix){ logrule();
-        String listuid = content("links:viewing");
-        LinkedList<String> contacts = contentList("links:viewing:list");
+        String listuid = content("private:viewing");
+        LinkedList<String> contacts = contentList("private:viewing:list");
         if(contacts==null) return null;
 
         LinkedList viewlist = new LinkedList();
@@ -274,7 +307,7 @@ public class User extends WebObject {
         int i= -1;
         for(String uid: contacts){ i++;
             String contactuid = UID.normaliseUID(listuid, uid);
-            String fullname=content("links:viewing:list:"+i+":"+vcardprefix+"fullName");
+            String fullname=content("private:viewing:list:"+i+":"+vcardprefix+"fullName");
             if(fullname==null) viewlist.add("@"+contactuid);
             else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, contactuid));
         }
@@ -286,23 +319,42 @@ public class User extends WebObject {
         return guitop;
     }
 
+    private LinkedList vCard2Map(){ logrule();
+        String useruid = content("private:viewing");
+        LinkedList maplist = new LinkedList();
+        maplist.add("is:maplist");
+        maplist.add("layerkey:"+useruid);
+        String fullname=content("private:viewing:fullName");
+        LinkedHashMap location=contentHash("private:viewing:location");
+        if(location==null) location=geoCode(getGeoAddressString("private:viewing:address"));
+        if(location==null) return maplist;
+        LinkedHashMap point = new LinkedHashMap();
+        point.put("label", fullname);
+        point.put("sublabel", getAddressString("private:viewing:address"));
+        point.put("location", location);
+        point.put("jump", useruid);
+        maplist.add(point);
+        return maplist;
+    }
+
     private LinkedList vCardList2Map(String vcardprefix){ logrule();
-        String listuid = content("links:viewing");
-        LinkedList<String> contacts = contentList("links:viewing:list");
+        String listuid = content("private:viewing");
+        LinkedList<String> contacts = contentList("private:viewing:list");
         if(contacts==null) return null;
 
         LinkedList maplist = new LinkedList();
         maplist.add("is:maplist");
+        maplist.add("layerkey:"+listuid);
         int i= -1;
         for(String uid: contacts){ i++;
             String contactuid = UID.normaliseUID(listuid, uid);
-            String fullname=content("links:viewing:list:"+i+":"+vcardprefix+"fullName");
-            LinkedHashMap<String,Double> location=contentHash("links:viewing:list:"+i+":"+vcardprefix+"location");
-            if(location==null) location=geoCode(getGeoAddressString("links:viewing:list:"+i+":"+vcardprefix+"address"));
+            String fullname=content("private:viewing:list:"+i+":"+vcardprefix+"fullName");
+            LinkedHashMap<String,Double> location=contentHash("private:viewing:list:"+i+":"+vcardprefix+"location");
+            if(location==null) location=geoCode(getGeoAddressString("private:viewing:list:"+i+":"+vcardprefix+"address"));
             if(location==null) continue;
             LinkedHashMap point = new LinkedHashMap();
             point.put("label", fullname);
-            point.put("sublabel", getAddressString("links:viewing:list:"+i+":"+vcardprefix+"address"));
+            point.put("sublabel", getAddressString("private:viewing:list:"+i+":"+vcardprefix+"address"));
             point.put("location", location);
             point.put("jump", contactuid);
             maplist.add(point);
@@ -320,35 +372,35 @@ public class User extends WebObject {
         LinkedList vcarddetail = new LinkedList();
         vcarddetail.add("direction:vertical");
 
-        String homephone=content("links:viewing:tel:home:0");
-        if(homephone==null) homephone=content("links:viewing:tel:home");
+        String homephone=content("private:viewing:tel:home:0");
+        if(homephone==null) homephone=content("private:viewing:tel:home");
         if(homephone!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Home phone:", homephone));
 
-        String workphone=content("links:viewing:tel:work:0");
-        if(workphone==null) workphone=content("links:viewing:tel:work");
+        String workphone=content("private:viewing:tel:work:0");
+        if(workphone==null) workphone=content("private:viewing:tel:work");
         if(workphone!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Work phone:", workphone));
 
-        String mobilephone=content("links:viewing:tel:mobile:0");
-        if(mobilephone==null) mobilephone=content("links:viewing:tel:mobile");
+        String mobilephone=content("private:viewing:tel:mobile:0");
+        if(mobilephone==null) mobilephone=content("private:viewing:tel:mobile");
         if(mobilephone!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Mobile:", mobilephone));
 
-        String faxnumber=content("links:viewing:tel:fax:0");
-        if(faxnumber==null) faxnumber=content("links:viewing:tel:fax");
+        String faxnumber=content("private:viewing:tel:fax:0");
+        if(faxnumber==null) faxnumber=content("private:viewing:tel:fax");
         if(faxnumber!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Fax:", faxnumber));
 
-        String email=content("links:viewing:email:0");
-        if(email==null) email=content("links:viewing:email");
+        String email=content("private:viewing:email:0");
+        if(email==null) email=content("private:viewing:email");
         if(email!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Email address:", email));
 
-        String url=content("links:viewing:url:0");
-        if(url==null) url=content("links:viewing:url");
+        String url=content("private:viewing:url:0");
+        if(url==null) url=content("private:viewing:url");
         if(url!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Website:", url));
 
-        String address=getAddressString("links:viewing:address");
+        String address=getAddressString("private:viewing:address");
         if(address!=null) vcarddetail.add(list("direction:horizontal", "proportions:35%", "Address:", address));
 
-        String fullname=content("links:viewing:fullName");
-        String photourl=content("links:viewing:photo");
+        String fullname=content("private:viewing:fullName");
+        String photourl=content("private:viewing:photo");
         if(photourl==null) photourl="";
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
@@ -453,7 +505,7 @@ public class User extends WebObject {
 
     public User(String vcarduid){
         super("{ \"is\": \"user\", \n"+
-              "  \"public\": { \"vcard\": \""+vcarduid+"\" }\n"+
+              "  \"vcard\": \""+vcarduid+"\"\n"+
               "}");
     }
 

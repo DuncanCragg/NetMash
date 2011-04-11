@@ -128,8 +128,7 @@ public class NetMash extends MapActivity {
         if(o==null) o=uiJSON.listPathN("view");
         boolean horizontal=isHorizontal(o);
         View view;
-        boolean ismaplist=isMapList(o);
-        if(ismaplist){
+        if(isMapList(o)){
             view = createMapView(o);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
             lp.setMargins(0,5,5,0);
@@ -276,6 +275,10 @@ public class NetMash extends MapActivity {
 
     private void addToLayout(LinearLayout layout, Object o, float prop){
         if(o==null) return;
+        if(isMapList(o)){
+            addAView(layout, createMapView(o), prop);
+        }
+        else
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
             if("horizontal".equals(hm.get("direction"))) addHorizontalStrip(layout, createHorizontalStrip(hm), prop);
@@ -285,11 +288,6 @@ public class NetMash extends MapActivity {
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
             if(ll.size()==0) return;
-            if("is:maplist".equals(ll.get(0).toString())){
-                View v = createMapView(ll);
-                addAView(layout, v, prop);
-            }
-            else
             if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll), prop);
             else                                                    addVerticalStrip(  layout, createVerticalStrip(ll), prop);
         }
@@ -358,6 +356,7 @@ public class NetMash extends MapActivity {
     }
 
     private MapView mapview=null;
+    private HashMap<String,NetMashMapOverlay> layers = new HashMap<String,NetMashMapOverlay>();
 
     private MapView createMapView(Object o){
         if(o instanceof LinkedHashMap) return createMapView((LinkedHashMap<String,Object>)o);
@@ -377,7 +376,20 @@ public class NetMash extends MapActivity {
             mapview.displayZoomControls(true);
         }
         Drawable drawable = this.getResources().getDrawable(R.drawable.icon);
-        NetMashMapOverlay itemizedoverlay = new NetMashMapOverlay(drawable, this);
+        NetMashMapOverlay itemizedoverlay=null;
+        for(Object o: ll){
+            if((o instanceof String) && o.toString().startsWith("layerkey:")){
+                itemizedoverlay = layers.get(o.toString());
+                if(itemizedoverlay==null){
+                    itemizedoverlay = new NetMashMapOverlay(drawable, this);
+                    layers.put(o.toString(), itemizedoverlay);
+                }
+                break;
+            }
+            if((o instanceof LinkedHashMap)) break;
+        }
+        if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this);
+        itemizedoverlay.clear();
         for(Object o: ll){
             if(!(o instanceof LinkedHashMap)) continue;
             LinkedHashMap point = (LinkedHashMap)o;
@@ -410,10 +422,12 @@ public class NetMash extends MapActivity {
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
             return "maplist".equals(hm.get("is"));
         }
-        else{
+        else
+        if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
-            return "is:maplist".equals(ll.get(0));
+            return !ll.isEmpty() && "is:maplist".equals(ll.get(0).toString());
         }
+        return false;
     }
 
     @Override
