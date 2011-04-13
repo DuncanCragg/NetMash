@@ -494,27 +494,27 @@ public class WebObject {
                              ", \"%alertedin\": "+setToListString(alertedin)+
                              ", \"%state\": \""+shellstate+"\"}";
         String r = publicState.toString(
-                                "\"%uid\": \""+uid+
-                            "\", \"%etag\": "+etag+
-                              ", \"%notify\": "+setToListString(notify)+
-                              ", \"%observe\": "+setToListString(observe)+
-                              ", \"%class\": \""+this.getClass().toString().substring(6)+
-                            "\",", maxlength);
+                               "\"%uid\": \""+uid+
+                           "\", \"%etag\": "+etag+
+                             ", \"%notify\": "+setToListString(notify)+
+                             ", \"%observe\": "+setToListString(observe)+
+                             ", \"%class\": \""+this.getClass().toString().substring(6)+
+                           "\",", maxlength);
         return r;
     }
 
     public String toString(){
-        if(isShell()) return "{ \"%uid\": \""+uid+
-                         "\",\n \"%notify\": "+setToListString(notify)+
-                           ",\n \"%alertedin\": "+setToListString(alertedin)+
-                           ",\n \"%state\": \""+shellstate+"\"\n}\n";
+        if(isShell()) return "{   \"%uid\": \""+uid+
+                        "\",\n    \"%notify\": "+setToListString(notify)+
+                          ",\n    \"%alertedin\": "+setToListString(alertedin)+
+                          ",\n    \"%state\": \""+shellstate+"\"\n}\n";
         String r = publicState.toString(
-                                "\"%uid\": \""+uid+
-                       "\",\n    \"%etag\": "+etag+
-                         ",\n    \"%notify\": "+setToListString(notify)+
-                         ",\n    \"%observe\": "+setToListString(observe)+
-                         ",\n    \"%class\": \""+this.getClass().toString().substring(6)+
-                       "\",\n")+"\n";
+                                 "\"%uid\": \""+uid+
+                        "\",\n    \"%etag\": "+etag+
+                          ",\n    \"%notify\": "+setToListString(notify)+
+                          ",\n    \"%observe\": "+setToListString(observe)+
+                          ",\n    \"%class\": \""+this.getClass().toString().substring(6)+
+                        "\",\n")+"\n";
         return r;
     }
 

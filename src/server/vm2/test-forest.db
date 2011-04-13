@@ -33,6 +33,7 @@
     "%observe": [],
     "%class": "Asymmetry",
     "is": [ "asymm" ],
+    "self": "uid-cb6f-00fb-3be2-453c",
     "state": 1,
     "watch": ""
 }

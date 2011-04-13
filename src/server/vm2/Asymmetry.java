@@ -6,15 +6,18 @@ public class Asymmetry extends WebObject {
     public Asymmetry(){}
 
     public void evaluate(){
-        if(contentIs("state", "1")){
+        if(contentIs("self:state", "1")){
             contentInt("state", 2);
         }
         else
-        if(contentIs("state", "2")){
+        if(contentIs("self:state", "2")){
+            contentInt("state", 3);
         }
         else
-        if(contentIs("state", "3")){
+        if(contentIs("self:state", "3")){
+            contentInt("state", 4);
         }
+        netmash.platform.Kernel.sleep(100);
     }
 }
 

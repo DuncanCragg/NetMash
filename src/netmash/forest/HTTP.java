@@ -476,6 +476,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
     private boolean                   connected=false;
     private LinkedBlockingQueue<List> requests = new LinkedBlockingQueue<List>();
+    private boolean                   makingRequest;
 
     public HTTPClient(String host, int port){
         funcobs = FunctionalObserver.funcobs;
@@ -499,9 +500,10 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     public void run(){
         while(true){
             getNextRequest();
+            makingRequest=true;
             if(!connected){ Kernel.channelConnect(host, port, this); connected=true; }
             else makeRequest();
-            synchronized(this){ try{ wait(); }catch(Exception e){} }
+            synchronized(this){ if(makingRequest) try{ wait(); }catch(Exception e){} }
         }
     }
 
@@ -562,7 +564,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         if(eof) return;
         // bug: relies on all headers coming in in one go
         if(doingHeaders && "close".equals(httpConnection)) connected=false;
-        if(doingHeaders) synchronized(this){ notify(); }
+        if(doingHeaders) synchronized(this){ makingRequest=false; notify(); }
     }
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
