@@ -47,7 +47,7 @@ whappen:
 	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
 
 setup:
-	vim -o -N src/server/vm1/netmashconfig.json src/server/vm1/test-forest.db src/server/vm2/netmashconfig.json src/server/vm2/test-forest.db
+	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test-forest.db src/server/vm2/netmashconfig.json src/server/vm2/test-forest.db
 
 kill:
 	-pkill java

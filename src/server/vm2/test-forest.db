@@ -27,3 +27,13 @@
     "twitter": "http://localhost:8081/o/uid-2161-baf3-858b-858c.json"
 }
 
+{   "%uid": "uid-cb6f-00fb-3be2-453c",
+    "%etag": 1,
+    "%notify": [ "http://localhost:8081/o/c-n-14d5-99c5-da00-806a" ],
+    "%observe": [],
+    "%class": "Asymmetry",
+    "is": [ "asymm" ],
+    "state": 1,
+    "watch": ""
+}
+

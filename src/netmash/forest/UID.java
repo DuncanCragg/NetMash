@@ -47,6 +47,7 @@ public class UID {
 
     static public String toURL(String uid2url){
         if(uid2url.startsWith("http://")) return uid2url;
+        if(Kernel.config.stringPathN("network:host")==null) return uid2url;
         return "http://"+Kernel.config.stringPathN("network:host")+":"+
                          Kernel.config.intPathN(   "network:port")+
                          Kernel.config.stringPathN("network:pathprefix")+uid2url+".json";

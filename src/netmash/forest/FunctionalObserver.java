@@ -173,12 +173,15 @@ public class FunctionalObserver implements Module {
     }
 
     // POST rq and GET rs
-    void httpNotify(WebObject w){     // must check it's not one of ours!
+    String httpNotify(WebObject w){   // must check it's not one of ours!
+        String location=null;
         WebObject s=cacheGet(w.uid);  // must look in db
-        if(s.etag>=w.etag){ log("Old content:\n"+w+"\nIncoming for:\n"+s+"\n"); return; }
+        if(w.uid.startsWith("uid-") && s.isShell()) location=UID.toURL(w.uid);
+        if(s.etag>=w.etag){ log("Old content:\n"+w+"\nIncoming for:\n"+s+"\n"); return location; }
         cachePut(w);
         transferNotifyAndAlerted(s,w);
         saveAndNotifyUpdated(w);
+        return location;
     }
 
     private void handleShell(WebObject s){
@@ -204,7 +207,7 @@ public class FunctionalObserver implements Module {
             }
             else{
                 s.shellstate = ShellStates.TRYREMOTE;
-                if(!s.httpnotify.isEmpty()){ log("I'm not a proxy yet!"); notifyHTTPUpdated(s); }
+                if(!s.httpnotify.isEmpty()){ log("GET of object not local: "+s.uid); notifyHTTPUpdated(s); }
                 if(!s.notify.isEmpty())    http.pull(s);
                 if(!s.alertedin.isEmpty()) http.push(s); // need to snapshot alertedin
             }

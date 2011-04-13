@@ -19,7 +19,7 @@ import netmash.platform.*;
   */
 public class HTTP implements ChannelUser {
 
-    static public final String  WURLRE = "http://([^:]+)(:([0-9]+))?(/.*/uid-[-0-9a-f]+.json)";
+    static public final String  WURLRE = "http://([^:]+)(:([0-9]+))?(/.*/(uid-[-0-9a-f]+.json|c-n-[-0-9a-f]+))$";
     static public final Pattern WURLPA = Pattern.compile(WURLRE);
     static public final String   URLRE = "http://([^:/]+)(:([0-9]+))?(/.*)";
     static public final Pattern  URLPA = Pattern.compile(URLRE);
@@ -30,10 +30,10 @@ public class HTTP implements ChannelUser {
         int port = Kernel.config.intPathN("network:port");
         if(port>0){
             Kernel.listen(port, this);
-            FunctionalObserver.log("HTTP: initialised. Listening on port "+port);
+            log("HTTP: initialised. Listening on port "+port);
         }
         else{
-            FunctionalObserver.log("HTTP: initialised. No port; not listening");
+            log("HTTP: initialised. No port; not listening");
         }
     }
 
@@ -75,7 +75,7 @@ public class HTTP implements ChannelUser {
 
     private List getClient(WebObject w){
         Matcher m = WURLPA.matcher(w.uid);
-        if(!m.matches()){ FunctionalObserver.log("Remote UID isn't a good URL: "+w.uid); return null; }
+        if(!m.matches()){ log("Remote UID isn't a good URL: "+w.uid); return null; }
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);
@@ -84,7 +84,7 @@ public class HTTP implements ChannelUser {
 
     private List getClient(String url){
         Matcher m = URLPA.matcher(url);
-        if(!m.matches()){ FunctionalObserver.log("Remote GET URL syntax: "+url); return null; }
+        if(!m.matches()){ log("Remote GET URL syntax: "+url); return null; }
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);
@@ -111,7 +111,7 @@ public class HTTP implements ChannelUser {
     }
 
     void poll(WebObject w){
-FunctionalObserver.log("poll\n"+w);
+log("poll\n"+w);
     }
 
     void getJSON(String url, WebObject w, String param){
@@ -133,15 +133,19 @@ FunctionalObserver.log("poll\n"+w);
         try{ epath=URLEncoder.encode(path,"UTF-8"); }catch(Exception e){}
         return epath;
     }
+
+    static public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
 abstract class HTTPCommon {
 
+    class PostResponse{ int code; String location; PostResponse(int c, String l){this.code=c;this.location=l;}}
+
     static public final Charset UTF8  = Charset.forName("UTF-8");
     static public final Charset ASCII = Charset.forName("US-ASCII");
 
-    static public final String  UIDRE = Kernel.config.stringPathN("network:pathprefix")+"(uid-[-0-9a-f]+).json";
+    static public final String  UIDRE = Kernel.config.stringPathN("network:pathprefix")+"((uid-[-0-9a-f]+).json|(c-n-[-0-9a-f]+))$";
     static public final Pattern UIDPA = Pattern.compile(UIDRE);
 
     protected FunctionalObserver funcobs;
@@ -173,7 +177,7 @@ abstract class HTTPCommon {
         ByteBuffer headers = Kernel.chopAtDivider(bytebuffer, "\r\n\r\n".getBytes());
         if(headers==null) return;
         CharBuffer headchars = ASCII.decode(headers);
-        if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("<---------------\n"+headchars);
+        if(Kernel.config.boolPathN("network:log")) log("<---------------\n"+headchars);
         getFirstLine(headchars);
         getInterestingHeaders(headchars);
         fixKeepAlive();
@@ -282,42 +286,48 @@ abstract class HTTPCommon {
     protected abstract void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception;
 
     protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents){
+        if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
         sb.append("Content-Location: "); sb.append(UID.toURL(w.uid)); sb.append("\r\n");
         sb.append("Etag: \""); sb.append(w.etag); sb.append("\"\r\n");
         if(w.maxAge>=0){
         sb.append("Cache-Control: max-age="); sb.append(w.maxAge); sb.append("\r\n");}
         sb.append("Content-Type: application/json\r\n");
         String content=w.toString(percents);
-        sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n");
-        sb.append("\r\n");
+        sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n\r\n");
         sb.append(content);
     }
 
-    protected boolean readWebObject(ByteBuffer bytebuffer, int contentLength, String uid, WebObject webobject, String param){
+    protected PostResponse readWebObject(ByteBuffer bytebuffer, int contentLength, String uid, WebObject webobject, String param){
 
         ByteBuffer body = Kernel.chopAtLength(bytebuffer, contentLength);
         CharBuffer jsonchars = UTF8.decode(body);
-        if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("<---------------\n"+jsonchars);
+        if(Kernel.config.boolPathN("network:log")) log("<---------------\n"+jsonchars);
 
         if(webobject==null){
             JSON json = new JSON(jsonchars);
             WebObject w=null;
             try{ w=new WebObject(json, httpContentLocation, httpEtag, null); }
-            catch(Exception e){ FunctionalObserver.log(e); }
-            if(w==null){ FunctionalObserver.log("Cannot convert to WebObject:\n"+json); return false; }
-            if(uid!=null) w.notify.add(uid);
-            funcobs.httpNotify(w);
+            catch(Exception e){ log(e); }
+            if(w==null){ log("Cannot convert to WebObject:\n"+json); return new PostResponse(400,null); }
+            if(uid!=null){
+                if(!uid.startsWith("c-n-")) w.notify.add(uid);
+                else
+                if(!uid.equals(CacheNotify())){ log("Cache-Notify is "+CacheNotify()+" not "+uid); return new PostResponse(404,null); }
+            }
+            String location=funcobs.httpNotify(w);
+            return new PostResponse(location==null? 200:201, location);
         }
         else{
-            if(!httpContentType.startsWith("application/json")){
-                webobject.httpNotifyJSON(null, param);
-                return false;
+            JSON json = null;
+            if(httpContentType.startsWith("application/json")){
+                json = new JSON(jsonchars);
             }
-            JSON json = new JSON(jsonchars);
             webobject.httpNotifyJSON(json, param);
+            return null;
         }
-        return true;
     }
+
+    String CacheNotify(){ return Kernel.config.stringPathN("network:cache-notify"); }
 
     boolean tunnelHeaders=false;
     protected HashSet<String> getPercents(){
@@ -329,6 +339,8 @@ abstract class HTTPCommon {
         }
         return percents;
     }
+
+    static public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
@@ -347,7 +359,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             receiveNextEvent(bytebuffer, eof);
         } catch(Exception e){
             if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
-            FunctionalObserver.log("Failed reading event ("+e.getMessage()+") - closing connection");
+            log("Failed reading event ("+e.getMessage()+") - closing connection");
             doingHeaders=true;
             Kernel.close(channel);
         }
@@ -361,7 +373,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
                 else   Kernel.close(channel);
             }
         } catch(Exception e){
-            FunctionalObserver.log("Failed reading event ("+e.getMessage()+") - closing connection");
+            log("Failed reading event ("+e.getMessage()+") - closing connection");
             Kernel.close(channel);
         }
     }
@@ -370,7 +382,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(eof) return;
         Matcher m = UIDPA.matcher(httpPath);
         if(m.matches()){
-            String uid = m.group(1);
+            String uid = m.group(2);
             if(httpMethod.equals("GET"))  readGET(uid);
             else
             if(httpMethod.equals("POST")) if(!readPOST(bytebuffer, uid)) return;
@@ -392,8 +404,15 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         else throw new Exception("POST without Content-Length");
         if(contentLength > bytebuffer.position()) return false;
         if(contentLength >0){
-            if(readWebObject(bytebuffer, contentLength, uid, null, null)) send200(null);
-            else                                                          send404(); // not 404!
+            PostResponse pr=readWebObject(bytebuffer, contentLength, uid, null, null);
+            if(pr.code==200) send200(null);
+            else
+            if(pr.code==201) send201(pr.location);
+            else
+            if(pr.code==400) send400();
+            else
+            if(pr.code==404) send404();
+            else             send400();
         }
         return true;
     }
@@ -406,30 +425,26 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     public void send200(WebObject w){
-        StringBuilder sb=all200Headers(w, getPercents());
-        if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("--------------->\n"+sb);
-        Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
-    }
-
-    public void send304(){
-        StringBuilder sb=topHeaders("304 Not Modified");
-        sb.append("Content-Length: 0\r\n\r\n");
-        if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("--------------->\n"+sb);
-        Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
-    }
-
-    public void send404(){
-        StringBuilder sb=topHeaders("404 Not Found");
-        sb.append("Content-Length: 0\r\n\r\n");
-        if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("--------------->\n"+sb);
-        Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
-    }
-
-    private StringBuilder all200Headers(WebObject w, HashSet<String> percents){
         StringBuilder sb=topHeaders("200 OK");
-        if(w==null) sb.append("Content-Length: 0\r\n\r\n");
-        else contentHeadersAndBody(sb, w, percents);
-        return sb;
+        contentHeadersAndBody(sb, w, getPercents());
+        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
+        Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
+    }
+
+    public void send201(String location){ sendNoBody("201 Created", "Location: "+location+"\r\n"); }
+
+    public void send304(){ sendNoBody("304 Not Modified",null); }
+
+    public void send400(){ sendNoBody("400 Bad Request",null); }
+
+    public void send404(){ sendNoBody("404 Not Found",null); }
+
+    void sendNoBody(String responseCode, String extraHeaders){
+        StringBuilder sb=topHeaders(responseCode);
+        if(extraHeaders!=null) sb.append(extraHeaders);
+        sb.append("Content-Length: 0\r\n\r\n");
+        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
+        Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
     
     static public final DateFormat RFC1123 = new java.text.SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
@@ -444,6 +459,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         sb.append("Server: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
         return sb;
     }
+
+    static public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
@@ -526,7 +543,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             contentHeadersAndBody(sb, w, getPercents());
             notifieruid=null;
         }
-        if(Kernel.config.boolPathN("network:log")) FunctionalObserver.log("--------------->\n"+sb);
+        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
@@ -537,7 +554,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             receiveNextEvent(bytebuffer, eof);
         } catch(Exception e){
             if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
-            FunctionalObserver.log("Failed reading event ("+e.getMessage()+") - closing connection");
+            log("Failed reading event ("+e.getMessage()+") - closing connection");
             doingHeaders=true;
             Kernel.close(channel);
             connected=false;
@@ -557,6 +574,8 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         doingHeaders=true;
         removeRequest();
     }
+
+    static public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
