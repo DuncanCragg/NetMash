@@ -162,6 +162,7 @@ abstract class HTTPCommon {
     protected String httpConnection=null;
     protected String httpIfNoneMatch=null;
     protected String httpContentLocation=null;
+    protected String httpLocation=null;
     protected String httpEtag=null;
     protected String httpContentType=null;
     protected String httpContentLength=null;
@@ -262,6 +263,7 @@ abstract class HTTPCommon {
         if(tag.equals("Connection")){       httpConnection=val; return; }
         if(tag.equals("If-None-Match")){    httpIfNoneMatch=val; return; }
         if(tag.equals("Content-Location")){ httpContentLocation=val; return; }
+        if(tag.equals("Location")){         httpLocation=val; return; }
         if(tag.equals("Etag")){             httpEtag=val.substring(1,val.length()-1); return; }
         if(tag.equals("Content-Type")){     httpContentType=val; return; }
         if(tag.equals("Content-Length")){   httpContentLength=val; return; }
@@ -334,6 +336,7 @@ abstract class HTTPCommon {
         HashSet<String> percents = new HashSet<String>();
         if(tunnelHeaders){
             percents.add("%uid");
+            percents.add("%url");
             percents.add("%etag");
             percents.add("%max-age");
         }
@@ -472,7 +475,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     private String    path;
     private WebObject webobject;
     private String    param;
-    private String    notifieruid=null;
+    private String    notifieruid;
 
     private boolean                   connected=false;
     private LinkedBlockingQueue<List> requests = new LinkedBlockingQueue<List>();
@@ -543,7 +546,6 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
             sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
             contentHeadersAndBody(sb, w, getPercents());
-            notifieruid=null;
         }
         if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
@@ -572,6 +574,10 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         if(eof) contentLength = bytebuffer.position();
         if(contentLength == -1 || contentLength > bytebuffer.position()) return;
+        if(httpStatus.equals("201") && httpLocation!=null && notifieruid!=null){
+            WebObject w = funcobs.cacheGet(notifieruid);
+            w.url=httpLocation;
+        }
         if(contentLength > 0) readWebObject(bytebuffer, contentLength, null, webobject, param);
         doingHeaders=true;
         removeRequest();

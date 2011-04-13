@@ -28,6 +28,7 @@ public class WebObject {
     public  FunctionalObserver funcobs;
 
     public  String uid;
+    public  String url=null;
     public  int    etag=0;
     public  int    maxAge= -1;
 
@@ -57,6 +58,7 @@ public class WebObject {
     public void construct(JSON json){
         funcobs = FunctionalObserver.funcobs;
         uid     =          json.stringPathN("%uid");      json.removePath("%uid");
+        url     =          json.stringPathN("%url");      json.removePath("%url");
         etag    =          json.intPathN(   "%etag");     json.removePath("%etag");
         listToSet(notify,  json.listPathN(  "%notify"));  json.removePath("%notify");
         listToSet(observe, json.listPathN(  "%observe")); json.removePath("%observe");
@@ -66,10 +68,12 @@ public class WebObject {
 
     /** Create WebObject from HTTP. */
     public WebObject(JSON json, String httpUID, String httpEtag, String httpMaxAge){
+        String httpURL=null;
         funcobs = FunctionalObserver.funcobs;
         int httpetag   = (httpEtag  !=null)? Integer.parseInt(httpEtag): 0;
         int httpmaxage = (httpMaxAge!=null)? Integer.parseInt(httpMaxAge): 0;
         uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%uid");     json.removePath("%uid");
+        url     = (httpURL   !=null)? httpURL:    json.stringPathN("%url");     json.removePath("%url");
         etag    = (httpEtag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "%max-age"); json.removePath("%max-age");
         publicState = json;
@@ -364,7 +368,7 @@ public class WebObject {
     public String spawn(WebObject w){
         obsalmod = true;
         spawned.add(w);
-        return w.uid; // UID.toURL(w.uid);
+        return w.uid;
     }
 
     /** Keep all observations as they were. Thus don't need to
@@ -495,6 +499,7 @@ public class WebObject {
                              ", \"%state\": \""+shellstate+"\"}";
         String r = publicState.toString(
                                "\"%uid\": \""+uid+
+               (url!=null? "\", \"%url\": \""+url: "")+
                            "\", \"%etag\": "+etag+
                              ", \"%notify\": "+setToListString(notify)+
                              ", \"%observe\": "+setToListString(observe)+
@@ -510,6 +515,7 @@ public class WebObject {
                           ",\n    \"%state\": \""+shellstate+"\"\n}\n";
         String r = publicState.toString(
                                  "\"%uid\": \""+uid+
+            (url!=null? "\",\n    \"%url\": \""+url: "")+
                         "\",\n    \"%etag\": "+etag+
                           ",\n    \"%notify\": "+setToListString(notify)+
                           ",\n    \"%observe\": "+setToListString(observe)+
@@ -520,9 +526,10 @@ public class WebObject {
 
     public String toString(HashSet<String> percents){
         String r = publicState.toString(
-                       (percents.contains("%uid")?     "\"%uid\": \""  +uid+ "\",\n    ": "")+
-                       (percents.contains("%etag")?    "\"%etag\": "   +etag+  ",\n    ": "")+
-                       (percents.contains("%max-age")? "\"%max-age\": "+maxAge+",\n    ": "")
+                       ( percents.contains("%uid")?               "\"%uid\": \""  +uid+ "\",\n    ": "")+
+                       ((percents.contains("%url") && url!=null)? "\"%url\": \""  +url+ "\",\n    ": "")+
+                       ( percents.contains("%etag")?              "\"%etag\": "   +etag+  ",\n    ": "")+
+                       ( percents.contains("%max-age")?           "\"%max-age\": "+maxAge+",\n    ": "")
                    )+"\n";
         return r;
     }
