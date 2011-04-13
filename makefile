@@ -27,7 +27,7 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 runnet: sethost run1
 
 sethost:
-	sed -i "s:localhost:netmash.net:" src/server/vm1/netmash-config.json
+	sed -i "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
 
 run1: kill jar
 	(cd src/server/vm1; ./run.sh)
@@ -47,7 +47,7 @@ whappen:
 	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
 
 setup:
-	vim -o -N src/server/vm1/netmash-config.json src/server/vm1/test-forest.db src/server/vm2/netmash-config.json src/server/vm2/test-forest.db
+	vim -o -N src/server/vm1/netmashconfig.json src/server/vm1/test-forest.db src/server/vm2/netmashconfig.json src/server/vm2/test-forest.db
 
 kill:
 	-pkill java
