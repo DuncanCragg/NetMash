@@ -106,6 +106,16 @@ public class WebObject {
         return !uid.startsWith("http://");
     }
 
+    public void setURL(final String url){
+        final WebObject self=this;
+        new Evaluator(this){
+            public void evaluate(){
+                self.url=url;
+                self.evaluate();
+            }
+        };
+    }
+
     /* --- Evaluate API ----------------------------------- */
 
     /** If path crosses over a link, fetch WebObject with

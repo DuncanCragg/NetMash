@@ -576,7 +576,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         if(contentLength == -1 || contentLength > bytebuffer.position()) return;
         if(httpStatus.equals("201") && httpLocation!=null && notifieruid!=null){
             WebObject w = funcobs.cacheGet(notifieruid);
-            w.url=httpLocation;
+            w.setURL(httpLocation);
         }
         if(contentLength > 0) readWebObject(bytebuffer, contentLength, null, webobject, param);
         doingHeaders=true;

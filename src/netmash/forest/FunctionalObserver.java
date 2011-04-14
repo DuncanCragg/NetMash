@@ -35,8 +35,8 @@ public class FunctionalObserver implements Module {
     public void run(){
         persistence = new Persistence(topdbis, topdbos);
         http        = new HTTP();
+        log("FunctionalObserver: initialised; evaluating cached objects");
         evaluateCache();
-        log("FunctionalObserver: initialised");
     }
 
     // -------------------------------
