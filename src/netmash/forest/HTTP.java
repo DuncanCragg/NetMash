@@ -63,6 +63,7 @@ public class HTTP implements ChannelUser {
     // ----------------------------------------
 
     private HashMap<String,HTTPClient> connectionPool = new HashMap<String,HTTPClient>();
+    private HashMap<String,HTTPClient> longPollerPool = new HashMap<String,HTTPClient>();
 
     private HTTPClient poolClient(String host, int port){
         String key = host+":"+port;
@@ -70,6 +71,15 @@ public class HTTP implements ChannelUser {
         if(client!=null) return client;
         client=new HTTPClient(host, port);
         connectionPool.put(key, client);
+        return client;
+    }
+
+    private HTTPClient pollClient(String host, int port){
+        String key = host+":"+port;
+        HTTPClient client = longPollerPool.get(key);
+        if(client!=null) return client;
+        client=new HTTPClient(host, port);
+        longPollerPool.put(key, client);
         return client;
     }
 
@@ -82,13 +92,13 @@ public class HTTP implements ChannelUser {
         return asList(poolClient(host, port), encodeSpacesAndUTF8IntoPercents(path));
     }
 
-    private List getClient(String url){
+    private List getClient(String url, boolean poll){
         Matcher m = URLPA.matcher(url);
         if(!m.matches()){ log("Remote GET URL syntax: "+url); return null; }
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);
-        return asList(poolClient(host, port), encodeSpacesAndUTF8IntoPercents(path));
+        return asList(poll? pollClient(host,port): poolClient(host,port), encodeSpacesAndUTF8IntoPercents(path));
     }
 
     void pull(WebObject s){
@@ -119,12 +129,34 @@ public class HTTP implements ChannelUser {
     }
 
     void longpoll(HashSet<String> cachenotifies){
-        if(cachenotifies.isEmpty()) return;
-log("longpoll\n"+cachenotifies);
+        for(String key: longPollerPool.keySet()) longPollerPool.get(key).inactive=true;
+        openNewConnections(cachenotifies);
+        closeOldConnections();
+    }
+
+    void openNewConnections(HashSet<String> cachenotifies){
+        for(String cachenotify: cachenotifies){
+            List clientpath = getClient(cachenotify, true);
+            if(clientpath==null) continue;
+            HTTPClient client = (HTTPClient)clientpath.get(0);
+            String     path   = (String)    clientpath.get(1);
+            client.inactive=false;
+            client.get(path);
+        }
+    }
+
+    void closeOldConnections(){
+        for(String key: longPollerPool.keySet()){
+            if(longPollerPool.get(key).inactive){
+log("close longpoll\n"+key);
+                longPollerPool.get(key).stop();
+                longPollerPool.remove(key);
+            }
+        }
     }
 
     void getJSON(String url, WebObject w, String param){
-        List clientpath = getClient(url);
+        List clientpath = getClient(url, false);
         if(clientpath==null) return;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
@@ -227,7 +259,7 @@ abstract class HTTPCommon {
         StringBuilder valbuf=new StringBuilder();
         char[] chars = headchars.array();
         int chp=0;
-        while(chars[chp++]!='\n');
+        while(chars[chp++]!='\n' && chp<chars.length);
         for(; chp<chars.length; chp++){
             if(!docol){
                 if(chars[chp]==':'){
@@ -401,12 +433,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(sof) return;
         try{
             receiveNextEvent(bytebuffer, eof);
-        } catch(Exception e){
-            if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
-            log("Failed reading ("+e.getMessage()+") - closing connection");
-            doingHeaders=true;
-            Kernel.close(channel);
-        }
+
+        } catch(Exception e){ close("Failed reading - closing connection", e); }
     }
 
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
@@ -416,17 +444,16 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
                 if(ka) receiveNextEvent(Kernel.rdbuffers.get(channel), false);
                 else   Kernel.close(channel);
             }
-        } catch(Exception e){
-            log("Failed reading ("+e.getMessage()+") - closing connection");
-            Kernel.close(channel);
-        }
+        } catch(Exception e){ close("Failed reading - closing connection", e); }
     }
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) return;
         Matcher m = UIDPA.matcher(httpPath);
         if(m.matches()){
-            String uid = m.group(2);
+            String uid=m.group(2); if(uid==null) uid=m.group(3);
+            if(uid==null) send404();
+            else
             if(httpMethod.equals("GET"))  readGET(uid);
             else
             if(httpMethod.equals("POST")) if(!readPOST(bytebuffer, uid)) return;
@@ -493,25 +520,35 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
+    protected void close(String message, Exception e){
+        if(message!=null) log(message);
+        if(e!=null) e.printStackTrace();
+        doingHeaders=true;
+        Kernel.close(channel);
+    }
+
     static public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
     class Request { 
-        String path; int etag; WebObject webobject; String param; String notifieruid;
-        Request(String p, int e, WebObject o, String m, String n){
-            path=p; etag=e; webobject=o; param=m; notifieruid=n;
+        String type, path; int etag; WebObject webobject; String param, notifieruid;
+        Request(String t, String p, int e, WebObject o, String m, String n){
+            type=t; path=p; etag=e; webobject=o; param=m; notifieruid=n;
         }
+        public String toString(){ return "Request: "+type+" "+path+" "+etag; }
     }
 
     private String host;
     private int    port;
 
-    private boolean  connected=false;
-    private LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
-    private boolean  makingRequest;
-    private Request  request;
+    boolean  needsConnect=true;
+    LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
+    boolean  makingRequest;
+    Request  request;
+    boolean  inactive=false;
+    boolean  running=true;
 
     public HTTPClient(String host, int port){
         funcobs = FunctionalObserver.funcobs;
@@ -520,25 +557,39 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         new Thread(this).start();
     }
 
+    public void get(String path){
+        if(!requests.isEmpty()) return;
+        try{ requests.put(new Request("LONG", path, 0, null, null, null)); }catch(Exception e){}
+    }
+
     public void get(String path, int etag){
-        try{ this.requests.put(new Request(path, etag, null, null, null)); }catch(Exception e){}
+        try{ requests.put(new Request("POLL", path, etag, null, null, null)); }catch(Exception e){}
     }
 
     public void get(String path, WebObject webobject, String param){
-        try{ this.requests.put(new Request(path, 0, webobject, param, null)); }catch(Exception e){}
+        try{ requests.put(new Request("GETJ", path, 0, webobject, param, null)); }catch(Exception e){}
     }
 
     public void post(String path, String notifieruid){
-        try{ this.requests.put(new Request(path, 0, null, null, notifieruid)); }catch(Exception e){}
+        try{ requests.put(new Request("POST", path, 0, null, null, notifieruid)); }catch(Exception e){}
     }
 
     public void run(){
-        while(true){
-            try{ request = this.requests.take(); }catch(Exception e){}
-            makingRequest=true;
-            if(!connected){ Kernel.channelConnect(host, port, this); connected=true; }
-            else makeRequest();
+        while(running){
+            try{ request = requests.take(); }catch(Exception e){}
+            String longpath=request.type.equals("LONG")? request.path: null;
+            makingRequest=true; 
+            if(needsConnect){ needsConnect=false; Kernel.channelConnect(host, port, this); }
+            else makeRequest(); 
             synchronized(this){ if(makingRequest) try{ wait(); }catch(Exception e){} }
+            if(longpath!=null){
+                if(needsConnect){
+                    log("Long poll connection broken to "+longpath);
+                    Kernel.sleep(30000);
+                    log("Reconnecting long poll to "+longpath);
+                }
+                get(longpath);
+            }
         }
     }
 
@@ -565,19 +616,13 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
     public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
         boolean eof=(len== -1);
-        if(eof) connected=false;
+        if(eof){ needsConnect=true; doingHeaders=true; }
         try{
             receiveNextEvent(bytebuffer, eof);
-        } catch(Exception e){
-            if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
-            log("Failed reading ("+e.getMessage()+") - closing connection");
-            doingHeaders=true;
-            Kernel.close(channel);
-            connected=false;
-        }
-        if(eof) return;
+
+        } catch(Exception e){ close("Failed reading - closing connection", e); }
         // bug: relies on all headers coming in in one go
-        if(doingHeaders && "close".equals(httpConnection)) connected=false;
+        if(doingHeaders && "close".equals(httpConnection)) needsConnect=true;
         if(doingHeaders) synchronized(this){ makingRequest=false; notify(); }
     }
 
@@ -594,6 +639,16 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         doingHeaders=true;
         request=null;
     }
+
+    protected void close(String message, Exception e){
+        if(message!=null) log(message);
+        if(e!=null) e.printStackTrace();
+        doingHeaders=true;
+        Kernel.close(channel);
+        needsConnect=true;
+    }
+
+    protected void stop(){ running=false; close(null,null); }
 
     static public void log(Object s){ FunctionalObserver.log(s); }
 }

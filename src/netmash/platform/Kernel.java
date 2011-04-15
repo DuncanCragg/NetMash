@@ -390,7 +390,6 @@ public class Kernel {
             }finally{ selock.unlock(); }
         }catch(ClosedChannelException cce){
             System.err.println("Kernel: Attempt to write to closed channel");
-            cce.printStackTrace();
         }
     }
 

@@ -513,8 +513,8 @@ public class WebObject {
                            "\", \"%etag\": "+etag+
                              ", \"%notify\": "+setToListString(notify)+
                              ", \"%observe\": "+setToListString(observe)+
-                             ", \"%cachenotify\": "+cachenotify+
-                             ", \"%class\": \""+this.getClass().toString().substring(6)+
+                             ", \"%cachenotify\": \""+cachenotify+
+                           "\", \"%class\": \""+this.getClass().toString().substring(6)+
                            "\",", maxlength);
         return r;
     }
@@ -530,8 +530,8 @@ public class WebObject {
                         "\",\n    \"%etag\": "+etag+
                           ",\n    \"%notify\": "+setToListString(notify)+
                           ",\n    \"%observe\": "+setToListString(observe)+
-                          ",\n    \"%cachenotify\": "+cachenotify+
-                          ",\n    \"%class\": \""+this.getClass().toString().substring(6)+
+                          ",\n    \"%cachenotify\": \""+cachenotify+
+                        "\",\n    \"%class\": \""+this.getClass().toString().substring(6)+
                         "\",\n")+"\n";
         return r;
     }
