@@ -31,6 +31,7 @@ public class WebObject {
     public  String url=null;
     public  int    etag=0;
     public  int    maxAge= -1;
+    public  String cachenotify;
 
     public  JSON publicState=null;
     public  JSON updatingState=null;
@@ -40,15 +41,15 @@ public class WebObject {
     public  boolean obsalmod = false;
     public  boolean refreshobserves = false;
 
-    public  HashSet<String>                   newalert   = new HashSet<String>();
-    public  HashSet<String>                   remalert   = new HashSet<String>();
-    public  CopyOnWriteArraySet<String>       notify     = new CopyOnWriteArraySet<String>();
-    public  ConcurrentLinkedQueue<Notifiable> httpnotify = new ConcurrentLinkedQueue<Notifiable>();
-    public  HashSet<String>                   newobserve = new HashSet<String>();
-    public  HashSet<String>                   observe    = new HashSet<String>();
-    public  CopyOnWriteArraySet<String>       alertedin  = new CopyOnWriteArraySet<String>();
-    public  CopyOnWriteArraySet<String>       alerted    = null;
-    public  HashSet<WebObject>                spawned    = new HashSet<WebObject>();
+    HashSet<String>                   newalert   = new HashSet<String>();
+    HashSet<String>                   remalert   = new HashSet<String>();
+    CopyOnWriteArraySet<String>       notify     = new CopyOnWriteArraySet<String>();
+    ConcurrentLinkedQueue<Notifiable> httpnotify = new ConcurrentLinkedQueue<Notifiable>();
+    HashSet<String>                   newobserve = new HashSet<String>();
+    HashSet<String>                   observe    = new HashSet<String>();
+    CopyOnWriteArraySet<String>       alertedin  = new CopyOnWriteArraySet<String>();
+    CopyOnWriteArraySet<String>       alerted    = null;
+    HashSet<WebObject>                spawned    = new HashSet<WebObject>();
 
     //----------------------------------
 
@@ -67,15 +68,14 @@ public class WebObject {
     }
 
     /** Create WebObject from HTTP. */
-    public WebObject(JSON json, String httpUID, String httpEtag, String httpMaxAge){
-        String httpURL=null;
+    public WebObject(JSON json, String httpUID, String httpEtag, String httpMaxAge, String httpCacheNotify){
         funcobs = FunctionalObserver.funcobs;
         int httpetag   = (httpEtag  !=null)? Integer.parseInt(httpEtag): 0;
         int httpmaxage = (httpMaxAge!=null)? Integer.parseInt(httpMaxAge): 0;
         uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%uid");     json.removePath("%uid");
-        url     = (httpURL   !=null)? httpURL:    json.stringPathN("%url");     json.removePath("%url");
         etag    = (httpEtag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "%max-age"); json.removePath("%max-age");
+        cachenotify = httpCacheNotify;
         publicState = json;
         updatingState = publicState;
         isLocal = false;
@@ -513,6 +513,7 @@ public class WebObject {
                            "\", \"%etag\": "+etag+
                              ", \"%notify\": "+setToListString(notify)+
                              ", \"%observe\": "+setToListString(observe)+
+                             ", \"%cachenotify\": "+cachenotify+
                              ", \"%class\": \""+this.getClass().toString().substring(6)+
                            "\",", maxlength);
         return r;
@@ -529,6 +530,7 @@ public class WebObject {
                         "\",\n    \"%etag\": "+etag+
                           ",\n    \"%notify\": "+setToListString(notify)+
                           ",\n    \"%observe\": "+setToListString(observe)+
+                          ",\n    \"%cachenotify\": "+cachenotify+
                           ",\n    \"%class\": \""+this.getClass().toString().substring(6)+
                         "\",\n")+"\n";
         return r;

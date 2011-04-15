@@ -111,7 +111,11 @@ public class HTTP implements ChannelUser {
     }
 
     void poll(WebObject w){
-log("poll\n"+w);
+    }
+
+    void longpoll(HashSet<String> cachenotifies){
+        if(cachenotifies.isEmpty()) return;
+log("longpoll\n"+cachenotifies);
     }
 
     void getJSON(String url, WebObject w, String param){
@@ -160,6 +164,7 @@ abstract class HTTPCommon {
 
     protected String httpHost=null;
     protected String httpConnection=null;
+    protected String httpCacheNotify=null;
     protected String httpIfNoneMatch=null;
     protected String httpContentLocation=null;
     protected String httpLocation=null;
@@ -261,6 +266,7 @@ abstract class HTTPCommon {
     private void fishOutInterestingHeaders(String tag, String val){
         if(tag.equals("Host")){             httpHost=val; return; }
         if(tag.equals("Connection")){       httpConnection=val; return; }
+        if(tag.equals("Cache-Notify")){     httpCacheNotify=val; return; }
         if(tag.equals("If-None-Match")){    httpIfNoneMatch=val; return; }
         if(tag.equals("Content-Location")){ httpContentLocation=val; return; }
         if(tag.equals("Location")){         httpLocation=val; return; }
@@ -286,6 +292,25 @@ abstract class HTTPCommon {
     }       
                 
     protected abstract void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception;
+    
+    static public final DateFormat RFC1123 = new java.text.SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
+    static { RFC1123.setTimeZone(TimeZone.getTimeZone("GMT")); }
+
+    protected void topRequestHeaders(StringBuilder sb, String method, String host, int port, String path){
+        sb.append(method); sb.append(path); sb.append(" HTTP/1.1\r\n");
+        sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
+        sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
+        sb.append("Cache-Notify: "); sb.append(UID.toURL(CacheNotify())); sb.append("\r\n");
+    }
+
+    protected void topResponseHeaders(StringBuilder sb, String responseCode){
+        sb.append(httpProtocol.equals("HTTP/1.1")? "HTTP/1.1 ": "HTTP/1.0 ");
+        sb.append(responseCode); sb.append("\r\n");
+        sb.append("Connection: "); sb.append(httpConnection); sb.append("\r\n");
+        sb.append("Date: "); sb.append(RFC1123.format(new Date())); sb.append("\r\n");
+        sb.append("Server: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
+        sb.append("Cache-Notify: "); sb.append(UID.toURL(CacheNotify())); sb.append("\r\n");
+    }
 
     protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents){
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
@@ -306,11 +331,13 @@ abstract class HTTPCommon {
         if(Kernel.config.boolPathN("network:log")) log("<---------------\n"+jsonchars);
 
         if(webobject==null){
+
             JSON json = new JSON(jsonchars);
             WebObject w=null;
-            try{ w=new WebObject(json, httpContentLocation, httpEtag, null); }
+            try{ w=new WebObject(json, httpContentLocation, httpEtag, null, httpCacheNotify); }
             catch(Exception e){ log(e); }
             if(w==null){ log("Cannot convert to WebObject:\n"+json); return new PostResponse(400,null); }
+
             if(uid!=null){
                 if(!uid.startsWith("c-n-")) w.notify.add(uid);
                 else
@@ -329,7 +356,14 @@ abstract class HTTPCommon {
         }
     }
 
-    String CacheNotify(){ return Kernel.config.stringPathN("network:cache-notify"); }
+    static String cacheNotify=null;
+    String CacheNotify(){
+        if(cacheNotify==null){
+            cacheNotify=Kernel.config.stringPathN("network:cache-notify");
+            if(cacheNotify==null) cacheNotify=UID.generateCN();
+        }
+        return cacheNotify;
+    }
 
     boolean tunnelHeaders=false;
     protected HashSet<String> getPercents(){
@@ -428,7 +462,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     public void send200(WebObject w){
-        StringBuilder sb=topHeaders("200 OK");
+        StringBuilder sb=new StringBuilder();
+        topResponseHeaders(sb, "200 OK");
         contentHeadersAndBody(sb, w, getPercents());
         if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
@@ -443,24 +478,12 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     public void send404(){ sendNoBody("404 Not Found",null); }
 
     void sendNoBody(String responseCode, String extraHeaders){
-        StringBuilder sb=topHeaders(responseCode);
+        StringBuilder sb=new StringBuilder();
+        topResponseHeaders(sb, responseCode);
         if(extraHeaders!=null) sb.append(extraHeaders);
         sb.append("Content-Length: 0\r\n\r\n");
         if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
-    }
-    
-    static public final DateFormat RFC1123 = new java.text.SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
-    static { RFC1123.setTimeZone(TimeZone.getTimeZone("GMT")); }
-
-    private StringBuilder topHeaders(String responseCode){
-        StringBuilder sb=new StringBuilder();
-        sb.append(httpProtocol.equals("HTTP/1.1")? "HTTP/1.1 ": "HTTP/1.0 ");
-        sb.append(responseCode); sb.append("\r\n");
-        sb.append("Connection: "); sb.append(httpConnection); sb.append("\r\n");
-        sb.append("Date: "); sb.append(RFC1123.format(new Date())); sb.append("\r\n");
-        sb.append("Server: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
-        return sb;
     }
 
     static public void log(Object s){ FunctionalObserver.log(s); }
@@ -535,17 +558,12 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     private void makeRequest(){
         StringBuilder sb=new StringBuilder();
         if(notifieruid==null){
-            sb.append("GET "); sb.append(path); sb.append(" HTTP/1.1\r\n");
-            sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
-            sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
+            topRequestHeaders(sb, "GET ", host, port, path);
             sb.append("\r\n");
         }
         else{
-            WebObject w = funcobs.cacheGet(notifieruid);
-            sb.append("POST "); sb.append(path); sb.append(" HTTP/1.1\r\n");
-            sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
-            sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
-            contentHeadersAndBody(sb, w, getPercents());
+            topRequestHeaders(sb, "POST ", host, port, path);
+            contentHeadersAndBody(sb, funcobs.cacheGet(notifieruid), getPercents());
         }
         if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));

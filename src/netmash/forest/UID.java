@@ -29,6 +29,10 @@ public class UID {
 
     // ----------------------------------------
 
+    static public String generateCN(){
+        return ("c-n-"+fourHex()+"-"+fourHex()+"-"+fourHex()+"-"+fourHex());
+    }
+
     static public String generateUID(){
         return ("uid-"+fourHex()+"-"+fourHex()+"-"+fourHex()+"-"+fourHex());
     }
@@ -47,10 +51,11 @@ public class UID {
 
     static public String toURL(String uid2url){
         if(uid2url.startsWith("http://")) return uid2url;
-        if(Kernel.config.stringPathN("network:host")==null) return uid2url;
+        if(!Kernel.config.isAtPathN("network:host")) return uid2url;
+        boolean dotJSON=uid2url.startsWith("uid-");
         return "http://"+Kernel.config.stringPathN("network:host")+":"+
                          Kernel.config.intPathN(   "network:port")+
-                         Kernel.config.stringPathN("network:pathprefix")+uid2url+".json";
+                         Kernel.config.stringPathN("network:pathprefix")+uid2url+(dotJSON? ".json": "");
     }
 
     static public String toUID(String url2uid){
@@ -62,6 +67,7 @@ public class UID {
 
     static public String normaliseUID(String baseurl, String uid2url){
         if(uid2url==null) return null;
+        if(!Kernel.config.isAtPathN("network:host")) return toURLfromBaseURL(baseurl, uid2url);
         String localpre="http://"+Kernel.config.stringPathN("network:host")+":"+
                                   Kernel.config.intPathN(   "network:port");
         if(baseurl!=null && !baseurl.startsWith(localpre)) uid2url=toURLfromBaseURL(baseurl, uid2url);
@@ -69,6 +75,7 @@ public class UID {
     }
 
     static public String toURLfromBaseURL(String baseurl, String uid2url){
+        if(baseurl==null)                  return uid2url;
         if(!baseurl.startsWith("http://")) return uid2url;
         if( uid2url.startsWith("http://")) return uid2url;
         int s=baseurl.indexOf("uid-");

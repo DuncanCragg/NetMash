@@ -26,6 +26,12 @@ public class Asymmetry extends WebObject {
         if(contentIs("self:state", "3")){
             log("state 3 - move to state 4");
             contentInt("state", 4);
+            content("watch:state");
+        }
+        else
+        if(contentIs("self:state", "4")){
+            log("state 4 - refresh watch observe");
+            content("watch:state");
         }
         netmash.platform.Kernel.sleep(600);
     }

@@ -21,6 +21,9 @@ public class FunctionalObserver implements Module {
     private FileOutputStream topdbos=null;
 
     private ConcurrentHashMap<String,WebObject> cache = new ConcurrentHashMap<String,WebObject>();
+    private CopyOnWriteArraySet<String>         polling = new CopyOnWriteArraySet<String>();
+
+    // -------------------------------
 
     public FunctionalObserver(){
         funcobs = this;
@@ -36,6 +39,7 @@ public class FunctionalObserver implements Module {
         persistence = new Persistence(topdbis, topdbos);
         http        = new HTTP();
         log("FunctionalObserver: initialised; evaluating cached objects");
+        startPollingThread();
         evaluateCache();
     }
 
@@ -47,6 +51,30 @@ public class FunctionalObserver implements Module {
            WebObject w=e.nextElement();
            if(w.isLocal()) evaluatable(w);
         }
+    }
+
+    private Thread pollingThread=null;
+    private void startPollingThread(){
+        pollingThread=new Thread(){ public void run(){
+            boolean visible=Kernel.config.isAtPathN("network:host");
+            while(true){
+                Kernel.sleep(1000);
+                HashSet<String> cachenotifies=new HashSet<String>();
+                for(String uid: polling){
+                    WebObject w=cacheGet(uid);
+                    if(w.isShell()){ polling.remove(uid); continue; }
+                    if(w.notify.isEmpty()) continue;
+                    if(visible || w.cachenotify==null) http.poll(w);
+                    else cachenotifies.add(w.cachenotify);
+                }
+                http.longpoll(cachenotifies);
+            }
+        }}; pollingThread.start();
+    }
+
+    private void addToPolling(String uid){
+        polling.add(uid);
+        pollingThread.interrupt();
     }
 
     WebObject cacheGet(String uid){
@@ -180,38 +208,46 @@ public class FunctionalObserver implements Module {
         if(s.etag>=w.etag){ log("Old content:\n"+w+"\nIncoming for:\n"+s+"\n"); return location; }
         cachePut(w);
         transferNotifyAndAlerted(s,w);
+        addToPolling(w.uid);
         saveAndNotifyUpdated(w);
         return location;
     }
 
     private void handleShell(WebObject s){
-        if(s.shellstate==ShellStates.NEW){
-            WebObject w=cacheGet(s.uid);
-            if(w!=s){
-                transferNotifyAndAlerted(s,w);
-                saveAndNotifyUpdated(w);
-                return;
-            }
-            s.shellstate = ShellStates.TRYDB;
-            w=persistence.cache(s.uid);
-            if(w!=null){
-                transferNotifyAndAlerted(s,w);
-                saveAndNotifyUpdated(w);
-                if(w.isLocal()){
-                    w.handleEval();
-                }
-                else{
-                    if(!w.notify.isEmpty())    http.poll(w);
-                    if(!w.alertedin.isEmpty()) http.push(w);
-                }
-            }
-            else{
-                s.shellstate = ShellStates.TRYREMOTE;
-                if(!s.httpnotify.isEmpty()){ log("GET of object not local: "+s.uid); notifyHTTPUpdated(s); }
-                if(!s.notify.isEmpty())    http.pull(s);
-                if(!s.alertedin.isEmpty()) http.push(s); // need to snapshot alertedin
-            }
+        if(s.shellstate!=ShellStates.NEW) return;
+        if(inCache(s) || inPersistence(s) || inRemote(s)) return;
+    }
+
+    private boolean inCache(WebObject s){
+        WebObject w=cacheGet(s.uid);
+        if(w==s) return false;
+        transferNotifyAndAlerted(s,w);
+        saveAndNotifyUpdated(w);
+        return true;
+    }
+
+    private boolean inPersistence(WebObject s){
+        s.shellstate = ShellStates.TRYDB;
+        WebObject w=persistence.cache(s.uid);
+        if(w==null) return false;
+        transferNotifyAndAlerted(s,w);
+        saveAndNotifyUpdated(w);
+        if(w.isLocal()){
+            w.handleEval();
         }
+        else{
+            if(!w.notify.isEmpty())    http.poll(w);
+            if(!w.alertedin.isEmpty()) http.push(w);
+        }
+        return true;
+    }
+
+    private boolean inRemote(WebObject s){
+        s.shellstate = ShellStates.TRYREMOTE;
+        if(!s.httpnotify.isEmpty()){ log("GET of object not local: "+s.uid); notifyHTTPUpdated(s); }
+        if(!s.notify.isEmpty())    http.pull(s);
+        if(!s.alertedin.isEmpty()) http.push(s); // need to snapshot alertedin
+        return true;
     }
 
     private void transferNotifyAndAlerted(WebObject s, WebObject w){
