@@ -75,7 +75,7 @@ public class HTTP implements ChannelUser {
 
     private List getClient(WebObject w){
         Matcher m = WURLPA.matcher(w.uid);
-        if(!m.matches()){ log("Remote UID isn't a good URL: "+w.uid); return null; }
+        if(!m.matches()){ FunctionalObserver.whereAmI("Remote UID isn't a good URL: "+w.uid); return null; }
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);
@@ -96,7 +96,7 @@ public class HTTP implements ChannelUser {
         if(clientpath==null) return;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.get(path);
+        client.get(path, 0);
     }
 
     void push(WebObject w){
@@ -111,6 +111,11 @@ public class HTTP implements ChannelUser {
     }
 
     void poll(WebObject w){
+        List clientpath = getClient(w);
+        if(clientpath==null) return;
+        HTTPClient client = (HTTPClient)clientpath.get(0);
+        String     path   = (String)    clientpath.get(1);
+        client.get(path, w.etag);
     }
 
     void longpoll(HashSet<String> cachenotifies){
@@ -296,11 +301,13 @@ abstract class HTTPCommon {
     static public final DateFormat RFC1123 = new java.text.SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
     static { RFC1123.setTimeZone(TimeZone.getTimeZone("GMT")); }
 
-    protected void topRequestHeaders(StringBuilder sb, String method, String host, int port, String path){
+    protected void topRequestHeaders(StringBuilder sb, String method, String host, int port, String path, int etag){
         sb.append(method); sb.append(path); sb.append(" HTTP/1.1\r\n");
         sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
         sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
         sb.append("Cache-Notify: "); sb.append(UID.toURL(CacheNotify())); sb.append("\r\n");
+        if(etag>0){
+        sb.append("If-None-Match: \""); sb.append(etag); sb.append("\"\r\n"); }
     }
 
     protected void topResponseHeaders(StringBuilder sb, String responseCode){
@@ -396,7 +403,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             receiveNextEvent(bytebuffer, eof);
         } catch(Exception e){
             if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
-            log("Failed reading event ("+e.getMessage()+") - closing connection");
+            log("Failed reading ("+e.getMessage()+") - closing connection");
             doingHeaders=true;
             Kernel.close(channel);
         }
@@ -410,7 +417,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
                 else   Kernel.close(channel);
             }
         } catch(Exception e){
-            log("Failed reading event ("+e.getMessage()+") - closing connection");
+            log("Failed reading ("+e.getMessage()+") - closing connection");
             Kernel.close(channel);
         }
     }
@@ -489,20 +496,22 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     static public void log(Object s){ FunctionalObserver.log(s); }
 }
 
-
 class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
-    private String    host;
-    private int       port;
+    class Request { 
+        String path; int etag; WebObject webobject; String param; String notifieruid;
+        Request(String p, int e, WebObject o, String m, String n){
+            path=p; etag=e; webobject=o; param=m; notifieruid=n;
+        }
+    }
 
-    private String    path;
-    private WebObject webobject;
-    private String    param;
-    private String    notifieruid;
+    private String host;
+    private int    port;
 
-    private boolean                   connected=false;
-    private LinkedBlockingQueue<List> requests = new LinkedBlockingQueue<List>();
-    private boolean                   makingRequest;
+    private boolean  connected=false;
+    private LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
+    private boolean  makingRequest;
+    private Request  request;
 
     public HTTPClient(String host, int port){
         funcobs = FunctionalObserver.funcobs;
@@ -511,21 +520,21 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         new Thread(this).start();
     }
 
-    public void get(String path){
-        try{ this.requests.put(asList(path, null, null, null)); }catch(Exception e){}
+    public void get(String path, int etag){
+        try{ this.requests.put(new Request(path, etag, null, null, null)); }catch(Exception e){}
     }
 
     public void get(String path, WebObject webobject, String param){
-        try{ this.requests.put(asList(path, webobject, param, null)); }catch(Exception e){}
+        try{ this.requests.put(new Request(path, 0, webobject, param, null)); }catch(Exception e){}
     }
 
     public void post(String path, String notifieruid){
-        try{ this.requests.put(asList(path, null, null, notifieruid)); }catch(Exception e){}
+        try{ this.requests.put(new Request(path, 0, null, null, notifieruid)); }catch(Exception e){}
     }
 
     public void run(){
         while(true){
-            getNextRequest();
+            try{ request = this.requests.take(); }catch(Exception e){}
             makingRequest=true;
             if(!connected){ Kernel.channelConnect(host, port, this); connected=true; }
             else makeRequest();
@@ -533,37 +542,22 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         }
     }
 
-    private void getNextRequest(){
-        List req=null; try{ req = this.requests.take(); }catch(Exception e){}
-        path        = (String)   req.get(0);
-        webobject   = (WebObject)req.get(1);
-        param       = (String)   req.get(2);
-        notifieruid = (String)   req.get(3);
-    }
-
-    private void removeRequest(){
-        path=null;
-        webobject=null;
-        param=null;
-        notifieruid=null;
-    }
-
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
         this.channel=channel;
-        if(path==null) return;
+        if(request==null) return;
         boolean sof = (len==0);
         if(sof) makeRequest();
     }
 
     private void makeRequest(){
         StringBuilder sb=new StringBuilder();
-        if(notifieruid==null){
-            topRequestHeaders(sb, "GET ", host, port, path);
+        if(request.notifieruid==null){
+            topRequestHeaders(sb, "GET ", host, port, request.path, request.etag);
             sb.append("\r\n");
         }
         else{
-            topRequestHeaders(sb, "POST ", host, port, path);
-            contentHeadersAndBody(sb, funcobs.cacheGet(notifieruid), getPercents());
+            topRequestHeaders(sb, "POST ", host, port, request.path, 0);
+            contentHeadersAndBody(sb, funcobs.cacheGet(request.notifieruid), getPercents());
         }
         if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
@@ -576,7 +570,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             receiveNextEvent(bytebuffer, eof);
         } catch(Exception e){
             if(e.getMessage()==null || e.getMessage().equals("null")) e.printStackTrace();
-            log("Failed reading event ("+e.getMessage()+") - closing connection");
+            log("Failed reading ("+e.getMessage()+") - closing connection");
             doingHeaders=true;
             Kernel.close(channel);
             connected=false;
@@ -592,13 +586,13 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         if(eof) contentLength = bytebuffer.position();
         if(contentLength == -1 || contentLength > bytebuffer.position()) return;
-        if(httpStatus.equals("201") && httpLocation!=null && notifieruid!=null){
-            WebObject w = funcobs.cacheGet(notifieruid);
+        if(httpStatus.equals("201") && httpLocation!=null && request.notifieruid!=null){
+            WebObject w = funcobs.cacheGet(request.notifieruid);
             w.setURL(httpLocation);
         }
-        if(contentLength > 0) readWebObject(bytebuffer, contentLength, null, webobject, param);
+        if(contentLength > 0) readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
         doingHeaders=true;
-        removeRequest();
+        request=null;
     }
 
     static public void log(Object s){ FunctionalObserver.log(s); }
