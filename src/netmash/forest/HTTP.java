@@ -454,9 +454,9 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             String uid=m.group(2); if(uid==null) uid=m.group(3);
             if(uid==null) send404();
             else
-            if(httpMethod.equals("GET"))  readGET(uid);
+            if(httpMethod.equals("GET" )){ if(!readGET(uid)) return; }
             else
-            if(httpMethod.equals("POST")) if(!readPOST(bytebuffer, uid)) return;
+            if(httpMethod.equals("POST")){ if(!readPOST(bytebuffer, uid)) return; }
         } else send404();
         doingHeaders=true;
     }
@@ -622,7 +622,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
         } catch(Exception e){ close("Failed reading - closing connection", e); }
         // bug: relies on all headers coming in in one go
-        if(doingHeaders && "close".equals(httpConnection)) needsConnect=true;
+        if(doingHeaders && "close".equals(httpConnection) && !eof){ close(null,null); return; }
         if(doingHeaders) synchronized(this){ makingRequest=false; notify(); }
     }
 

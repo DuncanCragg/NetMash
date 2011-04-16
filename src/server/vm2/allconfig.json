@@ -1,0 +1,11 @@
+{ "name": "vm2all",
+  "kernel": { "threadpool": 33 },
+  "persist": { "directory": ".",
+               "db": "forest.db",
+               "syncrate": 100,
+               "preload": [ "uid-80d7-ff34-61f1-0db7", "uid-0145-54f4-36db-302e", "uid-d7ec-6c0f-68a9-81df" ] },
+  "network": { "host": "localhost",
+               "port": 8082,
+               "pathprefix": "/o/",
+               "log": true }
+}

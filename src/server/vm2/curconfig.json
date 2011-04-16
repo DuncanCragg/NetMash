@@ -1,0 +1,9 @@
+{ "name": "vm2asy",
+  "kernel": { "threadpool": 33 },
+  "persist": { "directory": ".",
+               "db": "forest.db",
+               "syncrate": 100,
+               "preload": [ "uid-cb6f-00fb-3be2-453c" ] },
+  "network": { "pathprefix": "/o/",
+               "log": true }
+}

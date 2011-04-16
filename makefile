@@ -35,7 +35,17 @@ run1: kill jar
 run2: jar
 	(cd src/server/vm2; ./run.sh)
 
-runall: run1 run2
+curconfig:
+	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json
+
+allconfig:
+	cp src/server/vm2/allconfig.json src/server/vm2/netmashconfig.json
+
+runcur: curconfig run1n2
+
+runall: allconfig run1n2
+
+run1n2: run1 run2
 
 runon1: jar kill
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash & )
@@ -90,8 +100,6 @@ clean:
 	rm -rf ./build/classes/netmash
 	rm -rf ./build/classes/server
 	rm -rf ./src/server/vm?/*.class
-	rm -rf ./src/server/vm?/forest.db
-	rm -rf ./src/server/vm?/forest.log
 	rm -rf bin/classes bin/classes.dex
 	rm -rf bin/NetMash.ap_ bin/NetMash*un*ed.apk
 	rm -rf gen/android/gui/R.java
