@@ -39,19 +39,20 @@ public class HTTP implements ChannelUser {
 
     // ----------------------------------------
 
-    static HashMap<SocketChannel,HTTPServer> httpservers = new HashMap<SocketChannel,HTTPServer>();
+    HashMap<SocketChannel,HTTPServer> httpservers = new HashMap<SocketChannel,HTTPServer>();
 
     // -------------------------------
     // ChannelUser Interface
 
     public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
-
         HTTPServer httpserver = httpservers.get(channel);
         if(httpserver==null){
             httpserver = new HTTPServer(channel);
             httpservers.put(channel, httpserver);
         }
         httpserver.readable(channel, bytebuffer, len);
+        boolean eof = (len== -1);
+        if(eof) httpservers.remove(channel);
     }
 
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
@@ -191,7 +192,15 @@ abstract class HTTPCommon {
 
     protected FunctionalObserver funcobs;
     protected SocketChannel channel;
-    protected boolean doingHeaders=true;
+
+    enum RequestState { HEADERS, CONTENT, RESPONSE }
+    protected RequestState requeststate = RequestState.HEADERS;
+    protected boolean doingHeaders(){  return requeststate==RequestState.HEADERS; }
+    protected boolean doingContent(){  return requeststate==RequestState.CONTENT; }
+    protected boolean doingResponse(){ return requeststate==RequestState.RESPONSE; }
+    protected void    setDoingHeaders(){  requeststate = RequestState.HEADERS; }
+    protected void    setDoingContent(){  requeststate = RequestState.CONTENT; }
+    protected void    setDoingResponse(){ requeststate = RequestState.RESPONSE; }
 
     protected String httpMethod=null;
     protected String httpPath=null;
@@ -209,14 +218,23 @@ abstract class HTTPCommon {
     protected String httpContentType=null;
     protected String httpContentLength=null;
 
-    public void receiveNextEvent(ByteBuffer bytebuffer, boolean eof) throws Exception{
-        if(eof) HTTP.httpservers.remove(this.channel);
-        if( doingHeaders && eof) return;
-        if( doingHeaders) readHeaders(bytebuffer);
-        if(!doingHeaders) readContent(bytebuffer, eof);
+    public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
+        boolean sof = (len==  0);
+        boolean eof = (len== -1);
+        if(sof) return;
+        try{
+            receiveNextEvent(bytebuffer, eof);
+
+        } catch(Exception e){ close("Failed reading - closing connection", e); }
     }
 
-    private void readHeaders(ByteBuffer bytebuffer) throws Exception{
+    public void receiveNextEvent(ByteBuffer bytebuffer, boolean eof) throws Exception{
+        if(doingHeaders())  readHeaders(   bytebuffer, eof);
+        if(doingContent())  readContent(   bytebuffer, eof);
+    }
+
+    private void readHeaders(ByteBuffer bytebuffer, boolean eof) throws Exception{
+        if(eof){ setDoingContent(); return; }
         ByteBuffer headers = Kernel.chopAtDivider(bytebuffer, "\r\n\r\n".getBytes());
         if(headers==null) return;
         CharBuffer headchars = ASCII.decode(headers);
@@ -224,7 +242,7 @@ abstract class HTTPCommon {
         getFirstLine(headchars);
         getInterestingHeaders(headchars);
         fixKeepAlive();
-        doingHeaders=false;
+        setDoingContent();
     }
 
     static public final String  HTTPRE = "\\A([A-Z]+)\\s+([^\\s]+)\\s+(HTTP/1\\.[0-1])$.*";
@@ -416,6 +434,12 @@ abstract class HTTPCommon {
         return percents;
     }
 
+    protected void close(String message, Exception e){
+        if(message!=null) log(message);
+        if(e!=null) e.printStackTrace();
+        Kernel.close(channel);
+    }
+
     static public void log(Object s){ FunctionalObserver.log(s); }
 }
 
@@ -427,23 +451,13 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         this.channel = channel;
     }
 
-    public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
-        boolean sof = (len==  0);
-        boolean eof = (len== -1);
-        if(sof) return;
-        try{
-            receiveNextEvent(bytebuffer, eof);
-
-        } catch(Exception e){ close("Failed reading - closing connection", e); }
-    }
-
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
+        if(bytebuffers.size()!=0) return;
+        setDoingHeaders();
         try{
-            if(bytebuffers.size()==0){
-                boolean ka=httpConnection.equalsIgnoreCase("Keep-Alive");
-                if(ka) receiveNextEvent(Kernel.rdbuffers.get(channel), false);
-                else   Kernel.close(channel);
-            }
+            boolean ka="Keep-Alive".equalsIgnoreCase(httpConnection);
+            if(ka) receiveNextEvent(Kernel.rdbuffers.get(channel), false);
+            else   close(null,null);
         } catch(Exception e){ close("Failed reading - closing connection", e); }
     }
 
@@ -454,26 +468,30 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             String uid=m.group(2); if(uid==null) uid=m.group(3);
             if(uid==null) send404();
             else
-            if(httpMethod.equals("GET" )){ if(!readGET(uid)) return; }
+            if(httpMethod.equals("GET" )) readGET(uid);
             else
-            if(httpMethod.equals("POST")){ if(!readPOST(bytebuffer, uid)) return; }
+            if(httpMethod.equals("POST")) readPOST(bytebuffer, uid);
         } else send404();
-        doingHeaders=true;
     }
 
-    private boolean readGET(String uid){
+    private void readGET(String uid){
+        setDoingResponse();
         WebObject w=funcobs.httpObserve(this, uid);
-        if(w==null) return false;
+        if(w==null) return;
         if(("\""+w.etag+"\"").equals(httpIfNoneMatch)) send304();
         else send200(w);
-        return true;
     }
 
-    private boolean readPOST(ByteBuffer bytebuffer, String uid) throws Exception{
+    private void readPOST(ByteBuffer bytebuffer, String uid) throws Exception{
         int contentLength=0;
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         else throw new Exception("POST without Content-Length");
-        if(contentLength > bytebuffer.position()) return false;
+        if(contentLength > bytebuffer.position()) return;
+        processContent(bytebuffer, uid, contentLength);
+    }
+
+    void processContent(ByteBuffer bytebuffer, String uid, int contentLength){
+        setDoingResponse();
         if(contentLength >0){
             PostResponse pr=readWebObject(bytebuffer, contentLength, uid, null, null);
             if(pr.code==200) send200(null);
@@ -485,14 +503,13 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             if(pr.code==404) send404();
             else             send400();
         }
-        return true;
+        else send200(null);
     }
 
     /** Notifiable callback from FunctionalObserver when object is found. */
     public void notify(WebObject w){
         if(w.isShell()) send404();
         else            send200(w);
-        doingHeaders=true;
     }
 
     public void send200(WebObject w){
@@ -520,15 +537,9 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
-    protected void close(String message, Exception e){
-        if(message!=null) log(message);
-        if(e!=null) e.printStackTrace();
-        doingHeaders=true;
-        Kernel.close(channel);
-    }
-
     static public void log(Object s){ FunctionalObserver.log(s); }
 }
+
 
 class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
@@ -540,15 +551,15 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         public String toString(){ return "Request: "+type+" "+path+" "+etag; }
     }
 
-    private String host;
-    private int    port;
+    boolean  inactive=false;
+    boolean  running=true;
+
+    String host;
+    int    port;
 
     boolean  needsConnect=true;
     LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
-    boolean  makingRequest;
     Request  request;
-    boolean  inactive=false;
-    boolean  running=true;
 
     public HTTPClient(String host, int port){
         funcobs = FunctionalObserver.funcobs;
@@ -578,10 +589,10 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         while(running){
             try{ request = requests.take(); }catch(Exception e){}
             String longpath=request.type.equals("LONG")? request.path: null;
-            makingRequest=true; 
+            setDoingHeaders();
             if(needsConnect){ needsConnect=false; Kernel.channelConnect(host, port, this); }
             else makeRequest(); 
-            synchronized(this){ if(makingRequest) try{ wait(); }catch(Exception e){} }
+            synchronized(this){ if(!doingResponse()) try{ wait(); }catch(Exception e){} }
             if(longpath!=null){
                 if(needsConnect){
                     log("Long poll connection broken to "+longpath);
@@ -595,7 +606,6 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
         this.channel=channel;
-        if(request==null) return;
         boolean sof = (len==0);
         if(sof) makeRequest();
     }
@@ -614,38 +624,28 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
-    public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
-        boolean eof=(len== -1);
-        if(eof){ needsConnect=true; doingHeaders=true; }
-        try{
-            receiveNextEvent(bytebuffer, eof);
-
-        } catch(Exception e){ close("Failed reading - closing connection", e); }
-        // bug: relies on all headers coming in in one go
-        if(doingHeaders && "close".equals(httpConnection) && !eof){ close(null,null); return; }
-        if(doingHeaders) synchronized(this){ makingRequest=false; notify(); }
-    }
-
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
-        int contentLength=0;
+        if(eof) needsConnect=true;
+        int contentLength= -1;
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         if(eof) contentLength = bytebuffer.position();
         if(contentLength == -1 || contentLength > bytebuffer.position()) return;
+        processContent(bytebuffer, eof, contentLength);
+    }
+
+    void processContent(ByteBuffer bytebuffer, boolean eof, int contentLength){
         if(httpStatus.equals("201") && httpLocation!=null && request.notifieruid!=null){
             WebObject w = funcobs.cacheGet(request.notifieruid);
             w.setURL(httpLocation);
         }
-        if(contentLength > 0) readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
-        doingHeaders=true;
-        request=null;
-    }
-
-    protected void close(String message, Exception e){
-        if(message!=null) log(message);
-        if(e!=null) e.printStackTrace();
-        doingHeaders=true;
-        Kernel.close(channel);
-        needsConnect=true;
+        synchronized(this){
+            setDoingResponse();
+            if(contentLength > 0){
+                readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
+            }
+            if("close".equals(httpConnection)){ needsConnect=true; close(null,null); }
+            notify();
+        }
     }
 
     protected void stop(){ running=false; close(null,null); }

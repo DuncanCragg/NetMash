@@ -54,10 +54,11 @@ public class FunctionalObserver implements Module {
     }
 
     private Thread pollingThread=null;
+    boolean ispolling=true;
     private void startPollingThread(){
         pollingThread=new Thread(){ public void run(){
             boolean visible=Kernel.config.isAtPathN("network:host");
-            while(true){
+            while(ispolling){
                 Kernel.sleep(1000);
                 HashSet<String> cachenotifies=new HashSet<String>();
                 for(String uid: polling){
@@ -215,7 +216,7 @@ public class FunctionalObserver implements Module {
     }
 
     private void handleShell(WebObject s){
-        if(s.shellstate!=ShellStates.NEW) return;
+        if(s.shellstate!=ShellState.NEW) return;
         if(inCache(s) || inPersistence(s) || inRemote(s)) return;
     }
 
@@ -228,7 +229,7 @@ public class FunctionalObserver implements Module {
     }
 
     private boolean inPersistence(WebObject s){
-        s.shellstate = ShellStates.TRYDB;
+        s.shellstate = ShellState.TRYDB;
         WebObject w=persistence.cache(s.uid);
         if(w==null) return false;
         transferNotifyAndAlerted(s,w);
@@ -244,7 +245,7 @@ public class FunctionalObserver implements Module {
     }
 
     private boolean inRemote(WebObject s){
-        s.shellstate = ShellStates.TRYREMOTE;
+        s.shellstate = ShellState.TRYREMOTE;
         if(!s.httpnotify.isEmpty()){ log("GET of object not local: "+s.uid); notifyHTTPUpdated(s); }
         if(!s.notify.isEmpty())    http.pull(s);
         if(!s.alertedin.isEmpty()) http.push(s); // need to snapshot alertedin

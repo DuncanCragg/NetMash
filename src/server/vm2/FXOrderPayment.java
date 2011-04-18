@@ -29,13 +29,13 @@ public class FXOrderPayment extends WebObject {
         }
     }
 
-    private void alertDealer(){
+    private void alertDealer(){ logrule();
         if(content("ticket")==null && content("dealer:is:0")!=null){
             notifying(content("dealer"));
         }
     }
 
-    private void setTicket(){
+    private void setTicket(){ logrule();
         for(String ticketuid: alerted()){
             content("ticket", ticketuid);
             notifying(ticketuid);
@@ -43,19 +43,19 @@ public class FXOrderPayment extends WebObject {
         }
     }
 
-    private void investMore(){
+    private void investMore(){ logrule();
        if(content("ticket")!=null && contentDouble("params:3")==500.0){
            contentDouble("params:3", 1000.0);
        }
     }
 
-    private void cheaperPriceSimulatingRace(){
+    private void cheaperPriceSimulatingRace(){ logrule();
         if(contentIs("ticket:status", "filled") && content("payment")==null){
             contentDouble("params:2", 81.5);
         }
     }
 
-    private void acceptDealAndPay(){
+    private void acceptDealAndPay(){ logrule();
         if(contentListContains("ticket:status", "not-as-ordered") &&
            contentDouble("params:2")==81.5 &&
            content("payment")==null              ){
