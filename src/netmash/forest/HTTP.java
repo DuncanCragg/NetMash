@@ -235,6 +235,7 @@ abstract class HTTPCommon {
 
     private void readHeaders(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof){ setDoingContent(); return; }
+        if(bytebuffer==null) return;
         ByteBuffer headers = Kernel.chopAtDivider(bytebuffer, "\r\n\r\n".getBytes());
         if(headers==null) return;
         CharBuffer headchars = ASCII.decode(headers);
@@ -483,6 +484,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     private void readPOST(ByteBuffer bytebuffer, String uid) throws Exception{
+        if(bytebuffer==null) return;
         int contentLength=0;
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         else throw new Exception("POST without Content-Length");
@@ -626,6 +628,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) needsConnect=true;
+        if(bytebuffer==null) return;
         int contentLength= -1;
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         if(eof) contentLength = bytebuffer.position();

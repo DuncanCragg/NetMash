@@ -288,7 +288,7 @@ public class User extends WebObject {
             if(bmtext==null) bmtext=content("private:viewing:list:"+i+":vcard:fullName");
             if(bmtext==null) bmtext=content("private:viewing:list:"+i+":is");
             if(bmtext==null) bmtext=content("private:viewing:list:"+i+":tags");
-            if(bmtext==null) bmtext="@"+bmuid;
+            if(bmtext==null) bmtext="Loading..";
             viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", bmtext, bmuid));
         }
 
@@ -310,7 +310,7 @@ public class User extends WebObject {
         for(String uid: contacts){ i++;
             String contactuid = UID.normaliseUID(listuid, uid);
             String fullname=content("private:viewing:list:"+i+":"+vcardprefix+"fullName");
-            if(fullname==null) viewlist.add("@"+contactuid);
+            if(fullname==null) viewlist.add("Loading..");
             else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, contactuid));
         }
 

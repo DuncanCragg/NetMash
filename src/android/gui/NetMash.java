@@ -326,7 +326,7 @@ public class NetMash extends MapActivity {
         final TextView view=new TextView(this);
         view.setText(">>");
         view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
-            view.setTextColor(0xffffff00);
+            view.setTextColor(0xffff9900);
             user.jumpToUID(s);
         }});
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
@@ -375,7 +375,7 @@ public class NetMash extends MapActivity {
             mapview.setBuiltInZoomControls(true);
             mapview.displayZoomControls(true);
         }
-        Drawable drawable = this.getResources().getDrawable(R.drawable.icon);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.mappinlogo);
         NetMashMapOverlay itemizedoverlay=null;
         for(Object o: ll){
             if((o instanceof String) && o.toString().startsWith("layerkey:")){

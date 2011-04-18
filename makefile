@@ -79,6 +79,9 @@ netmash: clean
 	ant debug
 	cp bin/NetMash-debug.apk $(DEBUG_TARGET)
 
+netmashtestrel: clean
+	ant release
+
 netmashrel: clean
 	ant release
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
@@ -91,7 +94,7 @@ logcat:
 	adb logcat > ,logcat &
 	tail -9999f ,logcat | egrep -vi "locapi|\<rpc\>"
 
-testonphone: netmashrel reinstall logcat
+testonphone: netmashtestrel reinstall logcat
 
 logout:
 	tail -9999f src/server/vm1/netmash.log

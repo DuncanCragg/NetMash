@@ -22,7 +22,7 @@ public class NetMashMapOverlay extends ItemizedOverlay {
         private MapActivity mapactivity;
 
         public NetMashMapOverlay(Drawable defaultMarker, MapActivity mapactivity){
-            super(boundCenter(defaultMarker));
+            super(boundCenterBottom(defaultMarker));
             populate();
             this.mapactivity = mapactivity;
         }
