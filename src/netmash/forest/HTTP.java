@@ -102,31 +102,34 @@ public class HTTP implements ChannelUser {
         return asList(poll? pollClient(host,port): poolClient(host,port), encodeSpacesAndUTF8IntoPercents(path));
     }
 
-    void pull(WebObject s){
+    boolean pull(WebObject s){
         List clientpath = getClient(s);
-        if(clientpath==null) return;
+        if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
         client.get(path, 0);
+        return true;
     }
 
-    void push(WebObject w){
+    boolean push(WebObject w){
         List clientpath = getClient(w);
-        if(clientpath==null) return;
+        if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
         for(String notifieruid: w.alertedin){
             client.post(path, notifieruid);
         }
         w.alertedin = new CopyOnWriteArraySet<String>();
+        return true;
     }
 
-    void poll(WebObject w){
+    boolean poll(WebObject w){
         List clientpath = getClient(w);
-        if(clientpath==null) return;
+        if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
         client.get(path, w.etag);
+        return true;
     }
 
     void longpoll(HashSet<String> cachenotifies){
@@ -229,13 +232,12 @@ abstract class HTTPCommon {
     }
 
     public void receiveNextEvent(ByteBuffer bytebuffer, boolean eof) throws Exception{
-        if(doingHeaders())  readHeaders(   bytebuffer, eof);
-        if(doingContent())  readContent(   bytebuffer, eof);
+        if(doingHeaders()) readHeaders(bytebuffer, eof);
+        if(doingContent()) readContent(bytebuffer, eof);
     }
 
     private void readHeaders(ByteBuffer bytebuffer, boolean eof) throws Exception{
-        if(eof){ setDoingContent(); return; }
-        if(bytebuffer==null) return;
+        if(bytebuffer==null || eof){ earlyEOF(); return; }
         ByteBuffer headers = Kernel.chopAtDivider(bytebuffer, "\r\n\r\n".getBytes());
         if(headers==null) return;
         CharBuffer headchars = ASCII.decode(headers);
@@ -347,6 +349,7 @@ abstract class HTTPCommon {
                             "["+JSON.showContext(chp, chars)+"] at "+chp+ " in\n"+new String(chars));
     }       
                 
+    protected abstract void earlyEOF();
     protected abstract void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception;
     
     static public final DateFormat RFC1123 = new java.text.SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
@@ -410,7 +413,7 @@ abstract class HTTPCommon {
                 json = new JSON(jsonchars);
             }
             webobject.httpNotifyJSON(json, param);
-            return null;
+            return new PostResponse(200,null);
         }
     }
 
@@ -457,10 +460,12 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         setDoingHeaders();
         try{
             boolean ka="Keep-Alive".equalsIgnoreCase(httpConnection);
-            if(ka) receiveNextEvent(Kernel.rdbuffers.get(channel), false);
+            if(ka) receiveNextEvent(Kernel.readBufferForChannel(channel), false);
             else   close(null,null);
         } catch(Exception e){ close("Failed reading - closing connection", e); }
     }
+
+    protected void earlyEOF(){}
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) return;
@@ -484,7 +489,6 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     private void readPOST(ByteBuffer bytebuffer, String uid) throws Exception{
-        if(bytebuffer==null) return;
         int contentLength=0;
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         else throw new Exception("POST without Content-Length");
@@ -560,6 +564,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     int    port;
 
     boolean  needsConnect=true;
+    boolean  longObjectOK;
     LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
     Request  request;
 
@@ -596,10 +601,10 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             else makeRequest(); 
             synchronized(this){ if(!doingResponse()) try{ wait(); }catch(Exception e){} }
             if(longpath!=null){
-                if(needsConnect){
-                    log("Long poll connection broken to "+longpath);
-                    Kernel.sleep(30000);
-                    log("Reconnecting long poll to "+longpath);
+                if(!longObjectOK){
+                    log("Failed long poll or connection broken to "+longpath);
+                    Kernel.sleep(15000);
+                    log("Retrying long poll to "+longpath);
                 }
                 get(longpath);
             }
@@ -626,9 +631,17 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
+    protected void earlyEOF(){
+        synchronized(this){
+            needsConnect=true;
+            setDoingResponse();
+            longObjectOK=false;
+            notify();
+        }
+    }
+
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) needsConnect=true;
-        if(bytebuffer==null) return;
         int contentLength= -1;
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         if(eof) contentLength = bytebuffer.position();
@@ -644,8 +657,10 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         synchronized(this){
             setDoingResponse();
             if(contentLength > 0){
-                readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
+                PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
+                longObjectOK=(pr.code==200);
             }
+            else longObjectOK=httpStatus.equals("204");
             if("close".equals(httpConnection)){ needsConnect=true; close(null,null); }
             notify();
         }

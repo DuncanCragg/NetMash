@@ -91,7 +91,7 @@ public class Kernel {
             channels.put(channel, channeluser);
             }finally{ selock.unlock(); }
 
-        } catch(IOException e){ bailOut("Could not connect to "+host+":"+port, e, channel); }
+        } catch(IOException e){ logErr("Could not connect to "+host+":"+port, e, channel); return null; }
 
         return channel;
     }
@@ -150,6 +150,10 @@ public class Kernel {
         closeSelectableChannel(channel);
     }
 
+    static public ByteBuffer readBufferForChannel(SocketChannel channel){
+        return rdbuffers.get(channel);
+    }
+
     //-----------------------------------------------------
 
     static private Selector selector;
@@ -179,7 +183,7 @@ public class Kernel {
     static private void eventLoop(){
 
         running=true;
-        System.out.println("Kernel: running "+config.stringPathN("name"));
+        logOut("Kernel: running "+config.stringPathN("name"));
 
         while(true){
             try {
@@ -187,7 +191,7 @@ public class Kernel {
                 selector.select();
                 selock.lock(); selock.unlock();
             }catch(Throwable t) {
-                System.err.println("Kernel: Failure in event loop:");
+                logErr("Kernel: Failure in event loop:");
                 t.printStackTrace();
                 sleep(1000);
             }
@@ -211,7 +215,7 @@ public class Kernel {
             }catch(CancelledKeyException e){
                 continue;
             }catch(Exception e) {
-                if(e.getMessage()!=null) System.err.println("Kernel: checking selectors: "+e.getMessage()+" "+e.getClass());
+                if(e.getMessage()!=null) logErr("Kernel: checking selectors: "+e.getMessage()+" "+e.getClass());
                 else e.printStackTrace();
                 cancelKey(key);
                 continue;
@@ -359,7 +363,7 @@ public class Kernel {
         bytebuffer.flip();
         biggerbuffer.put(bytebuffer);
         if(biggerbuffer.capacity() >= 64 * 1024){
-            System.out.println("Kernel: New file read buffer size="+biggerbuffer.capacity());
+            logOut("Kernel: New file read buffer size="+biggerbuffer.capacity());
         }
         return biggerbuffer;
     }
@@ -372,7 +376,7 @@ public class Kernel {
             bytebuffer = biggerbuffer;
             rdbuffers.put(channel, bytebuffer);
             if(bytebuffer.capacity() >= 64 * 1024){
-                System.out.println("Kernel: New socket read buffer size="+bytebuffer.capacity());
+                logOut("Kernel: New socket read buffer size="+bytebuffer.capacity());
             }
         }
     }
@@ -389,7 +393,7 @@ public class Kernel {
             channel.register(selector, SelectionKey.OP_WRITE);
             }finally{ selock.unlock(); }
         }catch(ClosedChannelException cce){
-            System.err.println("Kernel: Attempt to write to closed channel");
+            logErr("Kernel: Attempt to write to closed channel");
         }
     }
 
@@ -421,8 +425,21 @@ public class Kernel {
         if(cmodule != null) cmodule.readable((SocketChannel)sc, bytebuffer, -1);
     }
 
+    static private void logOut(Object message){
+        System.out.println("Kernel: "+message);
+    }
+
+    static private void logErr(Object message){
+        System.err.println("Kernel: "+message);
+    }
+
+    static private void logErr(String message, Throwable t, AbstractInterruptibleChannel c){
+        System.err.println("Kernel: "+message+":\n"+t);
+        try{ if(c!=null) c.close(); } catch(Throwable tt){}
+    }
+
     static private void bailOut(String message, Throwable t, AbstractInterruptibleChannel c){
-        System.err.println("Kernel: bailing! "+message+":\n"+t);
+        System.err.println("Kernel: Bailing! "+message+":\n"+t);
         try{ if(c!=null) c.close(); } catch(Throwable tt){}
         System.exit(1);
     }

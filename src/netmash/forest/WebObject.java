@@ -14,7 +14,7 @@ import netmash.platform.Kernel;
 import netmash.lib.*;
 import netmash.forest.FunctionalObserver;
 
-enum ShellState { NEW, TRYDB, TRYREMOTE, READY }
+enum ShellState { FOUND, FINDING, TRYREMOTE, NOTFOUND }
 
 /** WebObject: holds a JSON object and an evaluate() call.
   */
@@ -22,7 +22,7 @@ public class WebObject {
 
     //----------------------------------
 
-    public  ShellState shellstate = ShellState.READY;
+    public  ShellState shellstate = ShellState.FOUND;
     private boolean isLocal = true;
 
     public  FunctionalObserver funcobs;
@@ -85,7 +85,7 @@ public class WebObject {
     public WebObject(UID shelluid){
         funcobs = FunctionalObserver.funcobs;
         uid = shelluid.toString();
-        shellstate = ShellState.NEW;
+        shellstate = ShellState.FINDING;
     }
 
     /** For creating new WebObjects inside evaluate(). */
@@ -98,12 +98,16 @@ public class WebObject {
     }
 
     public boolean isShell(){
-        return shellstate != ShellState.READY;
+        return shellstate != ShellState.FOUND;
     }
 
     public boolean isLocal(){
         if(!isLocal) return false;
-        return !uid.startsWith("http://");
+        return !isVisibleRemote();
+    }
+
+    public boolean isVisibleRemote(){
+        return uid.startsWith("http://");
     }
 
     public void setURL(final String url){
