@@ -91,8 +91,7 @@ reinstall:
 	adb install bin/NetMash-release.apk
 
 logcat:
-	adb logcat > ,logcat &
-	tail -9999f ,logcat | egrep -vi "locapi|\<rpc\>"
+	adb logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"
 
 testonphone: netmashtestrel reinstall logcat
 

@@ -76,7 +76,7 @@ public class Kernel {
             }finally{ selock.unlock(); }
 
         } catch(BindException e){ bailOut("Could not bind to port "+port, e, listener);
-        } catch(IOException   e){ bailOut("Could not bind to port "+port, e, listener); }
+        } catch(Exception     e){ bailOut("Could not bind to port "+port, e, listener); }
     }
 
     static public SocketChannel channelConnect(String host, int port, ChannelUser channeluser){
@@ -91,7 +91,12 @@ public class Kernel {
             channels.put(channel, channeluser);
             }finally{ selock.unlock(); }
 
-        } catch(IOException e){ logErr("Could not connect to "+host+":"+port, e, channel); return null; }
+        } catch(Exception e){
+            channels.remove(channel);
+            logErr("Could not connect to "+host+":"+port, e, channel);
+            channeluser.readable(channel, null, -1);
+            return null;
+        }
 
         return channel;
     }
@@ -175,7 +180,7 @@ public class Kernel {
     static private void initNetwork(){
         try{
             selector = Selector.open();
-        } catch(IOException e){ bailOut("Could not open selector", e, null); }
+        } catch(Exception e){ bailOut("Could not open selector", e, null); }
     }
 
     //-----------------------------------------------------
@@ -412,17 +417,17 @@ public class Kernel {
         closeSelectableChannel(key.channel());
     }
 
-    static private void closeSelectableChannel(SelectableChannel sc){
+    static private void closeSelectableChannel(SelectableChannel channel){
         try{
-            sc.close();
+            channel.close();
         }catch(Exception e){}
 
-        ChannelUser lmodule = listeners.remove(sc);
+        ChannelUser lmodule = listeners.remove(channel);
         if(lmodule != null) return;
 
-        ChannelUser cmodule    = channels.remove(sc);
-        ByteBuffer  bytebuffer = rdbuffers.remove(sc); wrbuffers.remove(sc);
-        if(cmodule != null) cmodule.readable((SocketChannel)sc, bytebuffer, -1);
+        ChannelUser channeluser = channels.remove(channel);
+        ByteBuffer  bytebuffer = rdbuffers.remove(channel); wrbuffers.remove(channel);
+        if(channeluser != null) channeluser.readable((SocketChannel)channel, bytebuffer, -1);
     }
 
     static private void logOut(Object message){

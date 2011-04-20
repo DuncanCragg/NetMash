@@ -56,7 +56,11 @@
     "%observe": [],
     "%class": "android.User",
     "is": [ "bookmarks" ],
-    "list": [ "http://netmash.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json" ]
+    "list": [ "http://netmash.net:8081/o/uid-35ad-af7a-93fb-896d.json",
+              "http://netmash.net:8081/o/uid-76b8-8502-45d3-0543.json",
+              "http://netmash.net:8081/o/uid-2161-baf3-858b-858c.json",
+              "http://netmash.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json"
+    ]
 }
 
 {   "%uid": "uid-7fca-5fa6-151b-1584",

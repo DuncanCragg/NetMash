@@ -577,7 +577,8 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     int    port;
 
     boolean  needsConnect=true;
-    boolean  longObjectOK;
+    boolean  reqFailed;
+    boolean  longReqFailed;
     LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
     Request  request;
 
@@ -608,18 +609,25 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     public void run(){
         while(running){
             try{ request = requests.take(); }catch(Exception e){}
-            String longpath=request.type.equals("LONG")? request.path: null;
             setDoingHeaders();
             if(needsConnect){ needsConnect=false; Kernel.channelConnect(host, port, this); }
             else makeRequest(); 
             synchronized(this){ if(!doingResponse()) try{ wait(); }catch(Exception e){} }
-            if(longpath!=null){
-                if(!longObjectOK){
-                    log("Failed long poll or connection broken to "+longpath);
-                    Kernel.sleep(15000);
-                    log("Retrying long poll to "+longpath);
+            if(!request.type.equals("LONG")){
+                if(reqFailed){
+                    log("Failed request for "+request.path);
+                    Kernel.sleep(10000);
+                    log("Will retry request for "+request.path);
+                    get(request.path, request.etag);
                 }
-                get(longpath);
+            }
+            else{
+                if(longReqFailed){
+                    log("Failed long poll or connection broken to "+request.path);
+                    Kernel.sleep(10000);
+                    log("Retrying long poll to "+request.path);
+                }
+                get(request.path);
             }
         }
     }
@@ -646,9 +654,10 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
 
     protected void earlyEOF(){ log("Client earlyEOF");
         synchronized(this){
-            needsConnect=true;
             setDoingResponse();
-            longObjectOK=false;
+            needsConnect=true;
+            reqFailed=true;
+            longReqFailed=true;
             notify();
         }
     }
@@ -671,9 +680,13 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             setDoingResponse();
             if(contentLength > 0){
                 PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
-                longObjectOK=(pr.code==200);
+                reqFailed=false;
+                longReqFailed=(pr.code!=200);
             }
-            else longObjectOK=httpStatus.equals("204");
+            else{
+                reqFailed    = httpStatus.startsWith("5");
+                longReqFailed=!httpStatus.equals("204");
+            }
             if("close".equals(httpConnection)){ needsConnect=true; close(null,null); }
             notify();
         }
