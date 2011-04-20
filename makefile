@@ -24,12 +24,12 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 ./build/classes/%.class: ./src/%.java
 	javac $(LIBOPTIONS) $<
 
-runnet: sethost run1
+runnet: kill sethost run1
 
 sethost:
 	sed -i "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
 
-run1: kill jar
+run1: jar
 	(cd src/server/vm1; ./run.sh)
 
 run2: jar
@@ -45,7 +45,7 @@ runcur: curconfig run1n2
 
 runall: allconfig run1n2
 
-run1n2: run1 run2
+run1n2: kill run1 run2
 
 runon1: jar kill
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash & )

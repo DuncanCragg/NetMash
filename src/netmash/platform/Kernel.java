@@ -183,7 +183,7 @@ public class Kernel {
     static private void eventLoop(){
 
         running=true;
-        logOut("Kernel: running "+config.stringPathN("name"));
+        logOut("Running "+config.stringPathN("name"));
 
         while(true){
             try {
@@ -191,7 +191,7 @@ public class Kernel {
                 selector.select();
                 selock.lock(); selock.unlock();
             }catch(Throwable t) {
-                logErr("Kernel: Failure in event loop:");
+                logErr("Failure in event loop:");
                 t.printStackTrace();
                 sleep(1000);
             }
@@ -215,7 +215,7 @@ public class Kernel {
             }catch(CancelledKeyException e){
                 continue;
             }catch(Exception e) {
-                if(e.getMessage()!=null) logErr("Kernel: checking selectors: "+e.getMessage()+" "+e.getClass());
+                if(e.getMessage()!=null) logErr("Checking selectors: "+e.getMessage()+" "+e.getClass());
                 else e.printStackTrace();
                 cancelKey(key);
                 continue;
@@ -363,7 +363,7 @@ public class Kernel {
         bytebuffer.flip();
         biggerbuffer.put(bytebuffer);
         if(biggerbuffer.capacity() >= 64 * 1024){
-            logOut("Kernel: New file read buffer size="+biggerbuffer.capacity());
+            logOut("New file read buffer size="+biggerbuffer.capacity());
         }
         return biggerbuffer;
     }
@@ -376,7 +376,7 @@ public class Kernel {
             bytebuffer = biggerbuffer;
             rdbuffers.put(channel, bytebuffer);
             if(bytebuffer.capacity() >= 64 * 1024){
-                logOut("Kernel: New socket read buffer size="+bytebuffer.capacity());
+                logOut("New socket read buffer size="+bytebuffer.capacity());
             }
         }
     }
@@ -393,7 +393,7 @@ public class Kernel {
             channel.register(selector, SelectionKey.OP_WRITE);
             }finally{ selock.unlock(); }
         }catch(ClosedChannelException cce){
-            logErr("Kernel: Attempt to write to closed channel");
+            logErr("Attempt to write to closed channel");
         }
     }
 

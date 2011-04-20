@@ -232,12 +232,12 @@ abstract class HTTPCommon {
     }
 
     public void receiveNextEvent(ByteBuffer bytebuffer, boolean eof) throws Exception{
-        if(doingHeaders()) readHeaders(bytebuffer, eof);
+        if(!doingContent() && eof){ earlyEOF(); return; }
+        if(doingHeaders()) readHeaders(bytebuffer);
         if(doingContent()) readContent(bytebuffer, eof);
     }
 
-    private void readHeaders(ByteBuffer bytebuffer, boolean eof) throws Exception{
-        if(bytebuffer==null || eof){ earlyEOF(); return; }
+    private void readHeaders(ByteBuffer bytebuffer) throws Exception{
         ByteBuffer headers = Kernel.chopAtDivider(bytebuffer, "\r\n\r\n".getBytes());
         if(headers==null) return;
         CharBuffer headchars = ASCII.decode(headers);
@@ -465,7 +465,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         } catch(Exception e){ close("Failed reading - closing connection", e); }
     }
 
-    protected void earlyEOF(){}
+    protected void earlyEOF(){ log("Server earlyEOF"); }
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) return;
@@ -631,7 +631,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
-    protected void earlyEOF(){
+    protected void earlyEOF(){ log("Client earlyEOF");
         synchronized(this){
             needsConnect=true;
             setDoingResponse();
