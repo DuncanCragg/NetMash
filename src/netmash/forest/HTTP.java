@@ -243,6 +243,7 @@ abstract class HTTPCommon {
         CharBuffer headchars = ASCII.decode(headers);
         if(Kernel.config.boolPathN("network:log")) log("<---------------\n"+headchars);
         getFirstLine(headchars);
+        clearInterestingHeaders();
         getInterestingHeaders(headchars);
         fixKeepAlive();
         setDoingContent();
@@ -319,6 +320,18 @@ abstract class HTTPCommon {
                 continue;
             }   
         }   
+    }
+
+    private void clearInterestingHeaders(){
+        httpHost=null;
+        httpConnection=null;
+        httpCacheNotify=null;
+        httpIfNoneMatch=null;
+        httpContentLocation=null;
+        httpLocation=null;
+        httpEtag=null;
+        httpContentType=null;
+        httpContentLength=null;
     }
 
     private void fishOutInterestingHeaders(String tag, String val){
@@ -513,7 +526,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     /** Notifiable callback from FunctionalObserver when object is found. */
-    public void notify(WebObject w){
+    public void notify(WebObject w){ // check if closed
         if(w.isShell()) send404();
         else            send200(w);
     }
