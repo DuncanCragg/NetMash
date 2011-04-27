@@ -418,9 +418,10 @@ public class Kernel {
     }
 
     static private void closeSelectableChannel(SelectableChannel channel){
+logOut("closeSelectableChannel");
         try{
             channel.close();
-        }catch(Exception e){}
+        }catch(Exception e){ logErr("channel.close",e,null); }
 
         ChannelUser lmodule = listeners.remove(channel);
         if(lmodule != null) return;

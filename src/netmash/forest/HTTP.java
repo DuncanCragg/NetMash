@@ -107,7 +107,7 @@ public class HTTP implements ChannelUser {
         if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.get(path, 0);
+        client.getPoll(path, 0);
         return true;
     }
 
@@ -128,7 +128,7 @@ public class HTTP implements ChannelUser {
         if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.get(path, w.etag);
+        client.getPoll(path, w.etag);
         return true;
     }
 
@@ -145,7 +145,7 @@ public class HTTP implements ChannelUser {
             HTTPClient client = (HTTPClient)clientpath.get(0);
             String     path   = (String)    clientpath.get(1);
             client.inactive=false;
-            client.get(path);
+            client.getLong(path);
         }
     }
 
@@ -164,7 +164,7 @@ log("close longpoll\n"+key);
         if(clientpath==null) return;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.get(path, w, param);
+        client.getJ(path, w, param);
     }
 
     // ----------------------------------------------
@@ -577,8 +577,8 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     int    port;
 
     boolean  needsConnect=true;
-    boolean  reqFailed;
-    boolean  longReqFailed;
+    boolean  retryRequest;
+    boolean  longFailedSoWait;
     LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
     Request  request;
 
@@ -589,46 +589,56 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         new Thread(this).start();
     }
 
-    public void get(String path){
+    void getLong(String path){
         if(!requests.isEmpty()) return;
         try{ requests.put(new Request("LONG", path, 0, null, null, null)); }catch(Exception e){}
     }
 
-    public void get(String path, int etag){
+    void getPoll(String path, int etag){
         try{ requests.put(new Request("POLL", path, etag, null, null, null)); }catch(Exception e){}
     }
 
-    public void get(String path, WebObject webobject, String param){
+    void getJ(String path, WebObject webobject, String param){
         try{ requests.put(new Request("GETJ", path, 0, webobject, param, null)); }catch(Exception e){}
     }
 
-    public void post(String path, String notifieruid){
+    void post(String path, String notifieruid){
         try{ requests.put(new Request("POST", path, 0, null, null, notifieruid)); }catch(Exception e){}
+    }
+
+    void retry(Request r){
+        try{ requests.put(r); }catch(Exception e){}
+    }
+
+    Request nextRequest(){
+        try{ return requests.take(); }catch(Exception e){} return null;
     }
 
     public void run(){
         while(running){
-            try{ request = requests.take(); }catch(Exception e){}
+            request=nextRequest();
             setDoingHeaders();
             if(needsConnect){ needsConnect=false; Kernel.channelConnect(host, port, this); }
             else makeRequest(); 
-            synchronized(this){ if(!doingResponse()) try{ wait(); }catch(Exception e){} }
-            if(!request.type.equals("LONG")){
-                if(reqFailed){
-                    log("Failed request for "+request.path);
-                    Kernel.sleep(10000);
-                    log("Will retry request for "+request.path);
-                    get(request.path, request.etag);
+            int sleep=0;
+            synchronized(this){
+                if(!doingResponse()) try{ wait(); }catch(Exception e){}
+                if(!request.type.equals("LONG")){
+                    if(retryRequest){
+                        log("Failed request for "+request.path+" - will wait then retry");
+                        sleep=10000;
+                        retry(request);
+                    }
+                }
+                else{
+                    if(longFailedSoWait){
+                        log("Failed long poll or connection broken to "+request.path);
+                        sleep=10000;
+                    }
+                    retry(request);
                 }
             }
-            else{
-                if(longReqFailed){
-                    log("Failed long poll or connection broken to "+request.path);
-                    Kernel.sleep(10000);
-                    log("Retrying long poll to "+request.path);
-                }
-                get(request.path);
-            }
+            Kernel.sleep(sleep);
         }
     }
 
@@ -653,11 +663,12 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     }
 
     protected void earlyEOF(){ log("Client earlyEOF");
-        synchronized(this){
+        needsConnect=true;
+        if(doingResponse()) return;
+        synchronized(this){ log("earlyEOF, retry="+retryRequest);
             setDoingResponse();
-            needsConnect=true;
-            reqFailed=true;
-            longReqFailed=true;
+            retryRequest=true;
+            longFailedSoWait=true;
             notify();
         }
     }
@@ -680,14 +691,14 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
             setDoingResponse();
             if(contentLength > 0){
                 PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
-                reqFailed=false;
-                longReqFailed=(pr.code!=200);
+                retryRequest=false;
+                longFailedSoWait=(pr.code!=200);
             }
             else{
-                reqFailed    = httpStatus.startsWith("5");
-                longReqFailed=!httpStatus.equals("204");
+                retryRequest    = httpStatus.startsWith("5");
+                longFailedSoWait=!httpStatus.equals("204");
             }
-            if("close".equals(httpConnection)){ needsConnect=true; close(null,null); }
+            if(!eof && "close".equals(httpConnection)) close(null,null);
             notify();
         }
     }
