@@ -107,7 +107,7 @@ public class HTTP implements ChannelUser {
         if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.getPoll(path, 0);
+        client.pollRequest(path, 0);
         return true;
     }
 
@@ -117,7 +117,7 @@ public class HTTP implements ChannelUser {
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
         for(String notifieruid: w.alertedin){
-            client.post(path, notifieruid);
+            client.postRequest(path, notifieruid);
         }
         w.alertedin = new CopyOnWriteArraySet<String>();
         return true;
@@ -128,7 +128,7 @@ public class HTTP implements ChannelUser {
         if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.getPoll(path, w.etag);
+        client.pollRequest(path, w.etag);
         return true;
     }
 
@@ -145,7 +145,7 @@ public class HTTP implements ChannelUser {
             HTTPClient client = (HTTPClient)clientpath.get(0);
             String     path   = (String)    clientpath.get(1);
             client.inactive=false;
-            client.getLong(path);
+            client.longPollRequest(path);
         }
     }
 
@@ -164,7 +164,7 @@ log("close longpoll\n"+key);
         if(clientpath==null) return;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.getJ(path, w, param);
+        client.jsonRequest(path, w, param);
     }
 
     // ----------------------------------------------
@@ -179,7 +179,7 @@ log("close longpoll\n"+key);
         return epath;
     }
 
-    static public void log(Object s){ FunctionalObserver.log(s); }
+    public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
@@ -457,7 +457,7 @@ abstract class HTTPCommon {
         Kernel.close(channel);
     }
 
-    static public void log(Object s){ FunctionalObserver.log(s); }
+    public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
@@ -478,7 +478,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         } catch(Exception e){ close("Failed reading - closing connection", e); }
     }
 
-    protected void earlyEOF(){ log("Server earlyEOF"); }
+    protected void earlyEOF(){ if(Kernel.config.boolPathN("network:log")) log("Server earlyEOF"); }
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) return;
@@ -556,19 +556,11 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
-    static public void log(Object s){ FunctionalObserver.log(s); }
+    public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
-class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
-
-    class Request { 
-        String type, path; int etag; WebObject webobject; String param, notifieruid;
-        Request(String t, String p, int e, WebObject o, String m, String n){
-            type=t; path=p; etag=e; webobject=o; param=m; notifieruid=n;
-        }
-        public String toString(){ return "Request: "+type+" "+path+" "+etag; }
-    }
+class HTTPClient extends HTTPCommon implements ChannelUser {
 
     boolean  inactive=false;
     boolean  running=true;
@@ -576,79 +568,73 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     String host;
     int    port;
 
-    boolean  needsConnect=true;
-    boolean  retryRequest;
-    boolean  longFailedSoWait;
+    boolean needsConnect=true;
+    boolean idle=true;
+    boolean retryRequest;
+    boolean longFailedSoWait;
     LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
-    Request  request;
+    Request request;
 
     public HTTPClient(String host, int port){
         funcobs = FunctionalObserver.funcobs;
         this.host = host;
         this.port = port;
-        new Thread(this).start();
     }
 
-    void getLong(String path){
+    //------------------------------------------
+
+    synchronized void pollRequest(String path, int etag){
+        try{ requests.put(new Request("POLL", path, etag, null, null, null)); }catch(Exception e){}
+        doNextRequestIfIdle();
+    }
+
+    synchronized void postRequest(String path, String notifieruid){
+        try{ requests.put(new Request("POST", path, 0, null, null, notifieruid)); }catch(Exception e){}
+        doNextRequestIfIdle();
+    }
+
+    synchronized void longPollRequest(String path){
         if(!requests.isEmpty()) return;
         try{ requests.put(new Request("LONG", path, 0, null, null, null)); }catch(Exception e){}
+        doNextRequestIfIdle();
     }
 
-    void getPoll(String path, int etag){
-        try{ requests.put(new Request("POLL", path, etag, null, null, null)); }catch(Exception e){}
+    synchronized void jsonRequest(String path, WebObject webobject, String param){
+        try{ requests.put(new Request("JSON", path, 0, webobject, param, null)); }catch(Exception e){}
+        doNextRequestIfIdle();
     }
 
-    void getJ(String path, WebObject webobject, String param){
-        try{ requests.put(new Request("GETJ", path, 0, webobject, param, null)); }catch(Exception e){}
-    }
-
-    void post(String path, String notifieruid){
-        try{ requests.put(new Request("POST", path, 0, null, null, notifieruid)); }catch(Exception e){}
-    }
-
-    void retry(Request r){
+    synchronized void retry(Request r){
         try{ requests.put(r); }catch(Exception e){}
     }
 
-    Request nextRequest(){
+    synchronized Request nextRequest(){
+        if(requests.isEmpty()){ idle=true; return null; }
         try{ return requests.take(); }catch(Exception e){} return null;
     }
 
-    public void run(){
-        while(running){
-            request=nextRequest();
-            setDoingHeaders();
-            if(needsConnect){ needsConnect=false; Kernel.channelConnect(host, port, this); }
-            else makeRequest(); 
-            int sleep=0;
-            synchronized(this){
-                if(!doingResponse()) try{ wait(); }catch(Exception e){}
-                if(!request.type.equals("LONG")){
-                    if(retryRequest){
-                        log("Failed request for "+request.path+" - will wait then retry");
-                        sleep=10000;
-                        retry(request);
-                    }
-                }
-                else{
-                    if(longFailedSoWait){
-                        log("Failed long poll or connection broken to "+request.path);
-                        sleep=10000;
-                    }
-                    retry(request);
-                }
-            }
-            Kernel.sleep(sleep);
-        }
+    //------------------------------------------
+
+    synchronized void doNextRequestIfIdle(){
+        if(!idle) return;
+        idle=false;
+        doNextRequest(0);
+    }
+
+    synchronized void doNextRequest(final int sleep){
+        if(sleep!=0){ new Thread(){ public void run(){ Kernel.sleep(sleep); doNextRequest(0); }}.start(); return; }
+        if(!running) return;
+        request=nextRequest();
+        if(request==null) return;
+        setDoingHeaders();
+        if(needsConnect){ needsConnect=false; Kernel.channelConnect(host, port, this); }
+        else{                                 Kernel.checkWritable(channel); }
     }
 
     public void writable(SocketChannel channel, Queue<ByteBuffer> bytebuffers, int len){
         this.channel=channel;
         boolean sof = (len==0);
-        if(sof) makeRequest();
-    }
-
-    private void makeRequest(){
+        if(!sof) return;
         StringBuilder sb=new StringBuilder();
         if(request.notifieruid==null){
             topRequestHeaders(sb, "GET ", host, port, request.path, request.etag);
@@ -662,17 +648,6 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
-    protected void earlyEOF(){ log("Client earlyEOF");
-        needsConnect=true;
-        if(doingResponse()) return;
-        synchronized(this){ log("earlyEOF, retry="+retryRequest);
-            setDoingResponse();
-            retryRequest=true;
-            longFailedSoWait=true;
-            notify();
-        }
-    }
-
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) needsConnect=true;
         int contentLength= -1;
@@ -683,29 +658,65 @@ class HTTPClient extends HTTPCommon implements ChannelUser, Runnable {
     }
 
     void processContent(ByteBuffer bytebuffer, boolean eof, int contentLength){
+        setDoingResponse();
         if(httpStatus.equals("201") && httpLocation!=null && request.notifieruid!=null){
             WebObject w = funcobs.cacheGet(request.notifieruid);
             w.setURL(httpLocation);
         }
-        synchronized(this){
-            setDoingResponse();
-            if(contentLength > 0){
-                PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
-                retryRequest=false;
-                longFailedSoWait=(pr.code!=200);
-            }
-            else{
-                retryRequest    = httpStatus.startsWith("5");
-                longFailedSoWait=!httpStatus.equals("204");
-            }
-            if(!eof && "close".equals(httpConnection)) close(null,null);
-            notify();
+        if(contentLength > 0){
+            PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
+            retryRequest=false;
+            longFailedSoWait=(pr.code!=200);
         }
+        else{
+            retryRequest    = httpStatus.startsWith("5");
+            longFailedSoWait=!httpStatus.equals("204");
+        }
+        if(!eof && "close".equals(httpConnection)) close(null,null);
+
+        doNextRequest(doRetryAndGetSleep());
+    }
+
+    protected void earlyEOF(){
+        if(Kernel.config.boolPathN("network:log")) log("Client earlyEOF");
+        needsConnect=true;
+        if(doingResponse()) return;
+        setDoingResponse();
+        retryRequest=true;
+        longFailedSoWait=true;
+        doNextRequest(doRetryAndGetSleep());
+    }
+
+    int doRetryAndGetSleep(){
+        int sleep=0;
+        if(!request.type.equals("LONG")){
+            if(retryRequest){
+                if(Kernel.config.boolPathN("network:log")) log("Failed request for "+request.path+" - will wait then retry");
+                sleep=10000;
+                retry(request);
+            }
+        }
+        else{
+            if(longFailedSoWait){
+                if(Kernel.config.boolPathN("network:log")) log("Failed long poll or connection broken to "+request.path);
+                sleep=10000;
+            }
+            retry(request);
+        }
+        return sleep;
     }
 
     protected void stop(){ running=false; close(null,null); }
 
-    static public void log(Object s){ FunctionalObserver.log(s); }
+    class Request { 
+        String type, path; int etag; WebObject webobject; String param, notifieruid;
+        Request(String t, String p, int e, WebObject o, String m, String n){
+            type=t; path=p; etag=e; webobject=o; param=m; notifieruid=n;
+        }
+        public String toString(){ return "Request: { type:"+type+" path:"+path+" etag:"+etag+" webobject:"+(webobject==null?"null":webobject.uid)+" param:"+param+" notifieruid:"+notifieruid+" }"; }
+    }
+
+    public void log(Object s){ FunctionalObserver.log(host+":"+port+" "+s); }
 }
 
 

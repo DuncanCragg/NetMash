@@ -106,6 +106,10 @@ public class Kernel {
         setWriting(channel);
     }
 
+    static public void checkWritable(SocketChannel channel){
+        doCheckWritable(channel);
+    }
+
     static public void readFile(File file, FileUser fileuser) throws Exception{
         if(!(file.exists() && file.canRead())) throw new Exception("Can't read file "+file.getPath());
         FileChannel channel    = new FileInputStream(file).getChannel();
@@ -304,6 +308,14 @@ public class Kernel {
 
         if(bytebuffers.size()==0){
             unSetWriting(channel);
+        }
+    }
+
+    static private void doCheckWritable(SocketChannel channel){
+        Queue<ByteBuffer> bytebuffers = wrbuffers.get(channel);
+        if(bytebuffers == null || bytebuffers.size()==0){
+            ChannelUser channeluser = channels.get(channel);
+            channeluser.writable(channel, null, 0);
         }
     }
 
