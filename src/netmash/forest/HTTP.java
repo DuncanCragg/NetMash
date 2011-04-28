@@ -136,7 +136,7 @@ public class HTTP implements ChannelUser {
     }
 
     boolean longpush(WebObject w){
-        HTTPServer server = getLongPusher(w.uid);
+        HTTPServer server = getLongPusher(w.isAsymmetricCN()? w.uid: w.cachenotify);
         if(server==null) return false;
         for(String notifieruid: w.alertedin){
             server.longRequest(notifieruid);
@@ -433,11 +433,11 @@ abstract class HTTPCommon {
 
             JSON json = new JSON(jsonchars);
             WebObject w=null;
-            try{ w=new WebObject(json, httpContentLocation, httpEtag, null, httpCacheNotify); }
+            try{
+                w=new WebObject(json, httpContentLocation, httpEtag, null, httpCacheNotify, uid);
+            }
             catch(Exception e){ log(e); }
             if(w==null){ log("Cannot convert to WebObject:\n"+json); return new PostResponse(400,null); }
-
-            if(uid!=null && !uid.startsWith("c-n-")) w.notify.add(uid);
 
             String location=funcobs.httpNotify(w);
             return new PostResponse(location==null? 200:201, location);
@@ -462,13 +462,16 @@ abstract class HTTPCommon {
     }
 
     boolean tunnelHeaders=false;
-    protected HashSet<String> getPercents(){
+    protected HashSet<String> getPercents(boolean includeNotify){
         HashSet<String> percents = new HashSet<String>();
         if(tunnelHeaders){
             percents.add("%uid");
             percents.add("%url");
             percents.add("%etag");
             percents.add("%max-age");
+        }
+        if(includeNotify){
+            percents.add("%notify");
         }
         return percents;
     }
@@ -487,7 +490,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     LinkedBlockingQueue<String> longQ=null;
     boolean longPending=false;
-    Thread  pendingThread=null;
+    Thread  timer=null;
 
     public HTTPServer(SocketChannel channel){
         funcobs = FunctionalObserver.funcobs;
@@ -544,15 +547,15 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         funcobs.http.putLongPusher(httpCacheNotify, this);
         longPending=longQ.isEmpty();
         if(longPending){
-            pendingThread=new Thread(){ public void run(){
+            timer=new Thread(){ public void run(){
                 Kernel.sleep(LONG_POLL_TIMEOUT);
                 sendNothing();
-            }}; pendingThread.start();
+            }}; timer.start();
         }
         else{
             String notifieruid=null;
             try{ notifieruid=longQ.take(); }catch(Exception e){}
-            send200(funcobs.cacheGet(notifieruid));
+            send200(funcobs.cacheGet(notifieruid), true);
         }
     }
 
@@ -561,7 +564,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     synchronized public void longRequest(String notifieruid){
-        if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid)); pendingThread.interrupt(); }
+        if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid), true); timer.interrupt(); }
         else try{ longQ.put(notifieruid); }catch(Exception e){}
     }
 
@@ -592,9 +595,13 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     public void send200(WebObject w){
+        send200(w, false);
+    }
+
+    public void send200(WebObject w, boolean includeNotify){
         StringBuilder sb=new StringBuilder();
         topResponseHeaders(sb, "200 OK");
-        contentHeadersAndBody(sb, w, getPercents());
+        contentHeadersAndBody(sb, w, getPercents(includeNotify));
         if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
@@ -710,7 +717,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         }
         else{
             topRequestHeaders(sb, "POST ", host, port, request.path, 0);
-            contentHeadersAndBody(sb, funcobs.cacheGet(request.notifieruid), getPercents());
+            contentHeadersAndBody(sb, funcobs.cacheGet(request.notifieruid), getPercents(false));
         }
         if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));

@@ -27,42 +27,52 @@ public class FXOrderPayment extends WebObject {
             cheaperPriceSimulatingRace();
             acceptDealAndPay();
         }
+        else
+        if(contentListContains("is", "payment")){
+            alertTicket();
+        }
     }
 
-    private void alertDealer(){ logrule();
-        if(content("ticket")==null && content("dealer:is:0")!=null){
+    private void alertDealer(){
+        if(content("ticket")==null && content("dealer:is:0")!=null){ logrule();
             notifying(content("dealer"));
         }
     }
 
-    private void setTicket(){ logrule();
-        for(String ticketuid: alerted()){
+    private void setTicket(){
+        for(String ticketuid: alerted()){ logrule();
             content("ticket", ticketuid);
             notifying(ticketuid);
             break;
         }
     }
 
-    private void investMore(){ logrule();
-       if(content("ticket")!=null && contentDouble("params:3")==500.0){
+    private void investMore(){
+       if(content("ticket")!=null && contentDouble("params:3")==500.0){ logrule();
            contentDouble("params:3", 1000.0);
        }
     }
 
-    private void cheaperPriceSimulatingRace(){ logrule();
-        if(contentIs("ticket:status", "filled") && content("payment")==null){
+    private void cheaperPriceSimulatingRace(){
+        if(contentIs("ticket:status", "filled") && content("payment")==null){ logrule();
             contentDouble("params:2", 81.5);
         }
     }
 
-    private void acceptDealAndPay(){ logrule();
+    private void acceptDealAndPay(){
         if(contentListContains("ticket:status", "not-as-ordered") &&
            contentDouble("params:2")==81.5 &&
-           content("payment")==null              ){
+           content("payment")==null              ){ logrule();
 
             contentDouble("params:2", 81.7);
             double amount = contentDouble("ticket:ask") * contentDouble("params:3");
             content("payment", spawn(new FXOrderPayment(uid, content("ticket"), amount)));
+        }
+    }
+
+    private void alertTicket(){
+        if(!contentSet("invoice:payment")){ logrule();
+            notifying(content("invoice"));
         }
     }
 }

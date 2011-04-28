@@ -33,7 +33,7 @@ public class FXDealerTicket extends WebObject {
     }
 
     private void makeTicket(){
-        for(String orderuid: alerted()){
+        for(String orderuid: alerted()){ logrule();
             content("order", orderuid);
             String orderticket = content("order:ticket");
             if(orderticket==null){
@@ -45,7 +45,7 @@ public class FXDealerTicket extends WebObject {
     private void configTicket(){
         if(contentList("params")==null){
             LinkedList ll = contentListClone("order:params");
-            if(ll!=null){
+            if(ll!=null){ logrule();
                 contentList("params", ll);
                 notifying(content("order"));
                 setUpPseudoMarketMoverInterfaceCallback();
@@ -56,7 +56,7 @@ public class FXDealerTicket extends WebObject {
     private void mirrorOrder(){
         if(contentIs("status", "waiting") && 
            contentList("params")!=null && 
-           content("order:params")!=null){
+           content("order:params")!=null){ logrule();
 
             content(      "params:0", content(      "order:params:0"));
             content(      "params:1", content(      "order:params:1"));
@@ -66,7 +66,7 @@ public class FXDealerTicket extends WebObject {
     }
 
     private void checkNotAsOrdered(){
-        if(contentIs("status", "filled") || contentListContains("status", "filled")){
+        if(contentIs("status", "filled") || contentListContains("status", "filled")){ logrule();
             if(!content(      "params:0").equals(content(      "order:params:0")) ||
                !content(      "params:1").equals(content(      "order:params:1")) ||
                 contentDouble("params:2") !=     contentDouble("order:params:2")  ||
@@ -81,7 +81,7 @@ public class FXDealerTicket extends WebObject {
     }
 
     private void acceptPayment(){
-        if(contentIs("status","filled") || contentListContains("status", "filled")){
+        if(contentIs("status","filled") || contentListContains("status", "filled")){ logrule();
             if(contentDouble("order:payment:amount") == contentDouble("ask") * contentDouble("params:3")){
                 content("status", "paid");
                 content("payment", content("order:payment"));
@@ -93,7 +93,7 @@ public class FXDealerTicket extends WebObject {
 
     private void marketMoved(final double price){
         new Evaluator(this){
-            public void evaluate(){
+            public void evaluate(){ logrule();
                 contentDouble("ask", price);
                 if(price < contentDouble("params:2")){
                     content("status", "filled");

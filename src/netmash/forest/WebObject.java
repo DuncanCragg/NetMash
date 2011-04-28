@@ -68,13 +68,15 @@ public class WebObject {
     }
 
     /** Create WebObject from HTTP. */
-    public WebObject(JSON json, String httpUID, String httpEtag, String httpMaxAge, String httpCacheNotify){
+    public WebObject(JSON json, String httpUID, String httpEtag, String httpMaxAge, String httpCacheNotify, String httpNotify){
         funcobs = FunctionalObserver.funcobs;
         int httpetag   = (httpEtag  !=null)? Integer.parseInt(httpEtag): 0;
         int httpmaxage = (httpMaxAge!=null)? Integer.parseInt(httpMaxAge): 0;
         uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%uid");     json.removePath("%uid");
         etag    = (httpEtag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "%max-age"); json.removePath("%max-age");
+        listToSet(notify,                         json.listPathN(  "%notify")); json.removePath("%notify");
+        if(httpNotify!=null && !httpNotify.startsWith("c-n-")) notify.add(httpNotify);
         cachenotify = httpCacheNotify;
         publicState = json;
         updatingState = publicState;
@@ -112,6 +114,10 @@ public class WebObject {
 
     public boolean isVisibleRemote(){
         return uid.startsWith("http://");
+    }
+
+    public boolean isAsymmetricRemote(){
+        return !isLocal && !isVisibleRemote();
     }
 
     public void setURL(final String url){
@@ -544,10 +550,11 @@ public class WebObject {
 
     public String toString(HashSet<String> percents){
         String r = publicState.toString(
-                       ( percents.contains("%uid")?               "\"%uid\": \""  +uid+ "\",\n    ": "")+
-                       ((percents.contains("%url") && url!=null)? "\"%url\": \""  +url+ "\",\n    ": "")+
-                       ( percents.contains("%etag")?              "\"%etag\": "   +etag+  ",\n    ": "")+
-                       ( percents.contains("%max-age")?           "\"%max-age\": "+maxAge+",\n    ": "")
+                       ( percents.contains("%uid")?               "\"%uid\": \""  +uid+                  "\",\n    ": "")+
+                       ((percents.contains("%url") && url!=null)? "\"%url\": \""  +url+                  "\",\n    ": "")+
+                       ( percents.contains("%etag")?              "\"%etag\": "   +etag+                   ",\n    ": "")+
+                       ( percents.contains("%max-age")?           "\"%max-age\": "+maxAge+                 ",\n    ": "")+
+                       ( percents.contains("%notify")?            "\"%notify\": " +setToListString(notify)+",\n    ": "")
                    )+"\n";
         return r;
     }
@@ -563,6 +570,7 @@ public class WebObject {
     }
 
     private void listToSet(AbstractSet<String> set, LinkedList list){
+        if(list==null) return;
         Iterator i = list.iterator();
         while(i.hasNext()) set.add((String)i.next());
     }

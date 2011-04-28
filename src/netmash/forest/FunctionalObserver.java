@@ -157,9 +157,10 @@ public class FunctionalObserver implements Module {
             if(!notified.observe.contains(notifier.uid)){
                 notified.alertedin.add(notifier.uid);
             }
-            if(notified.isAsymmetricCN()){ if(realupdate) http.longpush(notified); } else
-            if(notified.isLocal())       {                evaluatable(notified); }
-            else                         { if(realupdate) http.push(notified); }
+            if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); } else
+            if(notified.isLocal())           {                evaluatable(notified);   } else
+            if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); }
+            else                             { if(realupdate) http.push(notified);     }
         }
     }
 
