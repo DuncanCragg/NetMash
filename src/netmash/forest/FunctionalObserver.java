@@ -54,12 +54,12 @@ public class FunctionalObserver implements Module {
     }
 
     private Thread pollingThread=null;
-    boolean ispolling=false;
+    boolean ispolling=true;
     private void startPollingThread(){
         pollingThread=new Thread(){ public void run(){
             boolean visible=Kernel.config.isAtPathN("network:host");
             while(ispolling){
-                Kernel.sleep(1000);
+                Kernel.sleep(10000);
                 HashSet<String> cachenotifies=new HashSet<String>();
                 for(String uid: polling){
                     WebObject w=cacheGet(uid);
@@ -157,8 +157,9 @@ public class FunctionalObserver implements Module {
             if(!notified.observe.contains(notifier.uid)){
                 notified.alertedin.add(notifier.uid);
             }
-            if(notified.isLocal()) evaluatable(notified);
-            else http.push(notified);
+            if(notified.isAsymmetricCN()) http.longpush(notified); else
+            if(notified.isLocal())        evaluatable(notified);
+            else                          http.push(notified);
         }
     }
 
@@ -193,9 +194,13 @@ public class FunctionalObserver implements Module {
     }
 
     // GET rq and POST rs: send object out when it's ready
-    WebObject httpObserve(Notifiable observer, String observeduid){
+    WebObject httpObserve(Notifiable observer, String observeduid, String cachenotify){
         WebObject observed = cacheGet(observeduid);
-        if(!observed.isShell()) return observed;
+        if(cachenotify!=null) observed.notify.add(cachenotify);
+        if(!observed.isShell()){
+            if(cachenotify!=null) persistence.save(observed);
+            return observed;
+        }
         observed.httpnotify.add(observer);
         evaluatable(observed);
         return null;
@@ -217,7 +222,7 @@ public class FunctionalObserver implements Module {
     private void handleShell(WebObject s){
         if(s.shellstate==ShellState.FINDING){
             if(inCache(s) || inPersistence(s) || inRemote(s)) return;
-            log("Object not found locally and can't get remotely: "+s.uid);
+            log("Object not found locally and can't get remotely:\n"+s);
             s.shellstate = ShellState.NOTFOUND;
         }
         if(s.shellstate==ShellState.NOTFOUND){
@@ -250,6 +255,7 @@ public class FunctionalObserver implements Module {
 
     private boolean inRemote(WebObject s){
         s.shellstate = ShellState.TRYREMOTE;
+        if(!s.isVisibleRemote())    return false;
         if(!s.httpnotify.isEmpty()) return false;
         if(!s.alertedin.isEmpty())  if(!http.push(s)) return false;
         if(!s.notify.isEmpty())     if(!http.pull(s)) return false;

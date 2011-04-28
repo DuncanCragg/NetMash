@@ -65,6 +65,7 @@ public class HTTP implements ChannelUser {
 
     private HashMap<String,HTTPClient> connectionPool = new HashMap<String,HTTPClient>();
     private HashMap<String,HTTPClient> longPollerPool = new HashMap<String,HTTPClient>();
+    private HashMap<String,HTTPServer> longPusherPool = new HashMap<String,HTTPServer>();
 
     private HTTPClient poolClient(String host, int port){
         String key = host+":"+port;
@@ -82,6 +83,17 @@ public class HTTP implements ChannelUser {
         client=new HTTPClient(host, port);
         longPollerPool.put(key, client);
         return client;
+    }
+
+    public HTTPServer getLongPusher(String cn){
+        return longPusherPool.get(cn);
+    }
+
+    public void putLongPusher(String cn, HTTPServer server){
+        HTTPServer oldserver = longPusherPool.get(cn);
+        if(oldserver==server) return;
+        if(oldserver!=null) server.longQ.addAll(oldserver.longQ);
+        longPusherPool.put(cn, server);
     }
 
     private List getClient(WebObject w){
@@ -123,6 +135,16 @@ public class HTTP implements ChannelUser {
         return true;
     }
 
+    boolean longpush(WebObject w){
+        HTTPServer server = getLongPusher(w.uid);
+        if(server==null) return false;
+        for(String notifieruid: w.alertedin){
+            server.longRequest(notifieruid);
+        }
+        w.alertedin = new CopyOnWriteArraySet<String>();
+        return true;
+    }
+
     boolean poll(WebObject w){
         List clientpath = getClient(w);
         if(clientpath==null) return false;
@@ -152,7 +174,6 @@ public class HTTP implements ChannelUser {
     void closeOldConnections(){
         for(String key: longPollerPool.keySet()){
             if(longPollerPool.get(key).inactive){
-log("close longpoll\n"+key);
                 longPollerPool.get(key).stop();
                 longPollerPool.remove(key);
             }
@@ -201,6 +222,7 @@ abstract class HTTPCommon {
     protected boolean doingHeaders(){  return requeststate==RequestState.HEADERS; }
     protected boolean doingContent(){  return requeststate==RequestState.CONTENT; }
     protected boolean doingResponse(){ return requeststate==RequestState.RESPONSE; }
+    protected String  doing(){ return "Doing "+requeststate; }
     protected void    setDoingHeaders(){  requeststate = RequestState.HEADERS; }
     protected void    setDoingContent(){  requeststate = RequestState.CONTENT; }
     protected void    setDoingResponse(){ requeststate = RequestState.RESPONSE; }
@@ -412,11 +434,8 @@ abstract class HTTPCommon {
             catch(Exception e){ log(e); }
             if(w==null){ log("Cannot convert to WebObject:\n"+json); return new PostResponse(400,null); }
 
-            if(uid!=null){
-                if(!uid.startsWith("c-n-")) w.notify.add(uid);
-                else
-                if(!uid.equals(CacheNotify())){ log("Cache-Notify is "+CacheNotify()+" not "+uid); return new PostResponse(404,null); }
-            }
+            if(uid!=null && !uid.startsWith("c-n-")) w.notify.add(uid);
+
             String location=funcobs.httpNotify(w);
             return new PostResponse(location==null? 200:201, location);
         }
@@ -463,6 +482,9 @@ abstract class HTTPCommon {
 
 class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
+    LinkedBlockingQueue<String> longQ=null;
+    boolean longPending=false;
+
     public HTTPServer(SocketChannel channel){
         funcobs = FunctionalObserver.funcobs;
         this.channel = channel;
@@ -487,7 +509,11 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             String uid=m.group(2); if(uid==null) uid=m.group(3);
             if(uid==null) send404();
             else
-            if(httpMethod.equals("GET" )) readGET(uid);
+            if(httpMethod.equals("GET" ) && uid.startsWith("uid-")) readGET(uid);
+            else
+            if(httpMethod.equals("GET" ) && uid.startsWith("c-n-")) readLong(uid);
+            else
+            if(httpMethod.equals("GET" )) send404();
             else
             if(httpMethod.equals("POST")) readPOST(bytebuffer, uid);
         } else send404();
@@ -495,10 +521,33 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     private void readGET(String uid){
         setDoingResponse();
-        WebObject w=funcobs.httpObserve(this, uid);
+        WebObject w=funcobs.httpObserve(this, uid, httpCacheNotify);
         if(w==null) return;
         if(("\""+w.etag+"\"").equals(httpIfNoneMatch)) send304();
         else send200(w);
+    }
+
+    /** Notifiable callback from FunctionalObserver when object is found. */
+    public void notify(WebObject w){ // check if closed
+        if(w.isShell()) send404();
+        else            send200(w);
+    }
+
+    synchronized private void readLong(String uid){
+        setDoingResponse();
+        if(!uid.equals(CacheNotify())){ send404(); return; }
+        if(longQ==null) longQ=new LinkedBlockingQueue<String>();
+        funcobs.http.putLongPusher(httpCacheNotify, this);
+        longPending=longQ.isEmpty();
+        if(longPending) return;
+        String notifieruid=null;
+        try{ notifieruid=longQ.take(); }catch(Exception e){}
+        send200(funcobs.cacheGet(notifieruid));
+    }
+
+    synchronized public void longRequest(String notifieruid){
+        if(longPending) send200(funcobs.cacheGet(notifieruid));
+        else try{ longQ.put(notifieruid); }catch(Exception e){}
     }
 
     private void readPOST(ByteBuffer bytebuffer, String uid) throws Exception{
@@ -511,6 +560,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     void processContent(ByteBuffer bytebuffer, String uid, int contentLength){
         setDoingResponse();
+        if(uid.startsWith("c-n-") && !uid.equals(CacheNotify())) send404();
+        else
         if(contentLength >0){
             PostResponse pr=readWebObject(bytebuffer, contentLength, uid, null, null);
             if(pr.code==200) send200(null);
@@ -523,12 +574,6 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             else             send400();
         }
         else send200(null);
-    }
-
-    /** Notifiable callback from FunctionalObserver when object is found. */
-    public void notify(WebObject w){ // check if closed
-        if(w.isShell()) send404();
-        else            send200(w);
     }
 
     public void send200(WebObject w){
@@ -713,7 +758,10 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         Request(String t, String p, int e, WebObject o, String m, String n){
             type=t; path=p; etag=e; webobject=o; param=m; notifieruid=n;
         }
-        public String toString(){ return "Request: { type:"+type+" path:"+path+" etag:"+etag+" webobject:"+(webobject==null?"null":webobject.uid)+" param:"+param+" notifieruid:"+notifieruid+" }"; }
+        public String toString(){
+            return "Request: { type:"+type+" path:"+path+" etag:"+etag+" webobject:"+(webobject==null?"null":webobject.uid)+
+                             " param:"+param+" notifieruid:"+notifieruid+" }";
+        }
     }
 
     public void log(Object s){ FunctionalObserver.log(host+":"+port+" "+s); }

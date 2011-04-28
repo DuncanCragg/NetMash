@@ -34,6 +34,7 @@
     "%class": "Asymmetry",
     "is": [ "asymm" ],
     "self": "uid-cb6f-00fb-3be2-453c",
+    "bobby": "http://localhost:8081/o/uid-bb90-d577-703b-e7a9.json",
     "state": 1,
     "watch": ""
 }

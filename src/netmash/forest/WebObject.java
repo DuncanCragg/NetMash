@@ -106,6 +106,10 @@ public class WebObject {
         return !isVisibleRemote();
     }
 
+    public boolean isAsymmetricCN(){
+        return uid.startsWith("c-n-");
+    }
+
     public boolean isVisibleRemote(){
         return uid.startsWith("http://");
     }
@@ -478,9 +482,7 @@ public class WebObject {
         spawned.clear();
     }
 
-    public void evaluate(){
-        log("WebObject: Evaluate called on WebObject:\n"+this);
-    }
+    public void evaluate(){ }
 
     void evalPost(){
         observe.addAll(alerted);
