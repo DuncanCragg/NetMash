@@ -402,3 +402,22 @@
     "email": "jan.bloggs@aol.com",
 }
 
+{   "%uid": "uid-7235-60ba-d323-d5d6",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "DynamicPage",
+    "is": [ "gui" ],
+    "view": {
+        "direction": "vertical",
+        "#title": "Dynamic Page",
+        "#incre": 1,
+        "#stuff": [
+            "direction:vertical",
+            [ "direction:horizontal", "proportions:33%", "a", "b" ],
+            [ "direction:horizontal", "proportions:75%", "c", "d" ],
+            [ "direction:horizontal", "proportions:50%", "e", "f" ]
+         ]
+    }
+}
+

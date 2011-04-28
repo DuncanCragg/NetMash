@@ -179,6 +179,10 @@ public class User extends WebObject {
             if(contentIsOrListContains("private:viewing:is", "vcard")){
                 viewhash=vCard2GUI();
             }
+            else
+            if(contentIsOrListContains("private:viewing:is", "gui")){
+                viewhash=contentHash("private:viewing:view");
+            }
             else{
                 viewhash=guifyHash(contentHash("private:viewing:#"));
             }
