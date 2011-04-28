@@ -131,7 +131,6 @@ public class HTTP implements ChannelUser {
         for(String notifieruid: w.alertedin){
             client.postRequest(path, notifieruid);
         }
-        w.alertedin = new CopyOnWriteArraySet<String>();
         return true;
     }
 
@@ -141,7 +140,6 @@ public class HTTP implements ChannelUser {
         for(String notifieruid: w.alertedin){
             server.longRequest(notifieruid);
         }
-        w.alertedin = new CopyOnWriteArraySet<String>();
         return true;
     }
 
@@ -537,7 +535,9 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     /** Notifiable callback from FunctionalObserver when object is found. */
     public void notify(WebObject w){ // check if closed
         if(w.isShell()) send404();
-        else            send200(w);
+        else
+        if(("\""+w.etag+"\"").equals(httpIfNoneMatch)) send304();
+        else send200(w);
     }
 
     synchronized private void readLong(String uid){
