@@ -208,6 +208,9 @@ abstract class HTTPCommon {
 
     class PostResponse{ int code; String location; PostResponse(int c, String l){this.code=c;this.location=l;}}
 
+    static public final int CLIENT_RETRY_WAIT = 10000;
+    static public final int LONG_POLL_TIMEOUT = 30000;
+
     static public final Charset UTF8  = Charset.forName("UTF-8");
     static public final Charset ASCII = Charset.forName("US-ASCII");
 
@@ -484,6 +487,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     LinkedBlockingQueue<String> longQ=null;
     boolean longPending=false;
+    Thread  pendingThread=null;
 
     public HTTPServer(SocketChannel channel){
         funcobs = FunctionalObserver.funcobs;
@@ -539,14 +543,25 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(longQ==null) longQ=new LinkedBlockingQueue<String>();
         funcobs.http.putLongPusher(httpCacheNotify, this);
         longPending=longQ.isEmpty();
-        if(longPending) return;
-        String notifieruid=null;
-        try{ notifieruid=longQ.take(); }catch(Exception e){}
-        send200(funcobs.cacheGet(notifieruid));
+        if(longPending){
+            pendingThread=new Thread(){ public void run(){
+                Kernel.sleep(LONG_POLL_TIMEOUT);
+                sendNothing();
+            }}; pendingThread.start();
+        }
+        else{
+            String notifieruid=null;
+            try{ notifieruid=longQ.take(); }catch(Exception e){}
+            send200(funcobs.cacheGet(notifieruid));
+        }
+    }
+
+    synchronized public void sendNothing(){
+        if(longPending){ longPending=false; send204(); }
     }
 
     synchronized public void longRequest(String notifieruid){
-        if(longPending) send200(funcobs.cacheGet(notifieruid));
+        if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid)); pendingThread.interrupt(); }
         else try{ longQ.put(notifieruid); }catch(Exception e){}
     }
 
@@ -585,6 +600,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     public void send201(String location){ sendNoBody("201 Created", "Location: "+location+"\r\n"); }
+
+    public void send204(){ sendNoBody("204 No Content", null); }
 
     public void send304(){ sendNoBody("304 Not Modified",null); }
 
@@ -667,7 +684,13 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
     }
 
     synchronized void doNextRequest(final int sleep){
-        if(sleep!=0){ new Thread(){ public void run(){ Kernel.sleep(sleep); doNextRequest(0); }}.start(); return; }
+        if(sleep!=0){
+            new Thread(){ public void run(){
+                Kernel.sleep(sleep);
+                doNextRequest(0);
+            }}.start();
+            return;
+        }
         if(!running) return;
         request=nextRequest();
         if(request==null) return;
@@ -737,14 +760,14 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         if(!request.type.equals("LONG")){
             if(retryRequest){
                 if(Kernel.config.boolPathN("network:log")) log("Failed request for "+request.path+" - will wait then retry");
-                sleep=10000;
+                sleep=CLIENT_RETRY_WAIT;
                 retry(request);
             }
         }
         else{
             if(longFailedSoWait){
                 if(Kernel.config.boolPathN("network:log")) log("Failed long poll or connection broken to "+request.path);
-                sleep=10000;
+                sleep=CLIENT_RETRY_WAIT;
             }
             retry(request);
         }

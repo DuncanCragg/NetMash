@@ -140,9 +140,9 @@ public class FunctionalObserver implements Module {
         }
     }
 
-    void saveAndNotifyUpdated(WebObject notifier){
+    void saveAndNotifyUpdated(WebObject notifier, boolean realupdate){
         persistence.save(notifier);
-        notifyUpdated(notifier);
+        notifyUpdated(notifier, realupdate);
         notifyHTTPUpdated(notifier);
     }
 
@@ -151,15 +151,15 @@ public class FunctionalObserver implements Module {
         alertFirst(notifier);
     }
 
-    private void notifyUpdated(WebObject notifier){
+    private void notifyUpdated(WebObject notifier, boolean realupdate){
         for(String notifieduid: notifier.notify){
             WebObject notified = cacheGet(notifieduid);
             if(!notified.observe.contains(notifier.uid)){
                 notified.alertedin.add(notifier.uid);
             }
-            if(notified.isAsymmetricCN()) http.longpush(notified); else
-            if(notified.isLocal())        evaluatable(notified);
-            else                          http.push(notified);
+            if(notified.isAsymmetricCN()){ if(realupdate) http.longpush(notified); } else
+            if(notified.isLocal())       {                evaluatable(notified); }
+            else                         { if(realupdate) http.push(notified); }
         }
     }
 
@@ -211,11 +211,11 @@ public class FunctionalObserver implements Module {
         String location=null;
         WebObject s=cacheGet(w.uid);  // must look in db
         if(!w.isVisibleRemote() && s.isShell()) location=UID.toURL(w.uid);
-        if(s.etag>=w.etag){ log("Old content:\n"+w+"\nIncoming for:\n"+s+"\n"); return location; }
+        if(s.etag>=w.etag){ log("Incoming content not newer:\n"+w+"\nfor:\n"+s+"\n"); return location; }
         cachePut(w);
         transferNotifyAndAlerted(s,w);
         if(w.isVisibleRemote()) addToPolling(w);
-        saveAndNotifyUpdated(w);
+        saveAndNotifyUpdated(w, !s.isShell());
         return location;
     }
 
@@ -234,7 +234,7 @@ public class FunctionalObserver implements Module {
         WebObject w=cacheGet(s.uid);
         if(w==s) return false;
         transferNotifyAndAlerted(s,w);
-        saveAndNotifyUpdated(w);
+        saveAndNotifyUpdated(w, false);
         return true;
     }
 
@@ -242,7 +242,7 @@ public class FunctionalObserver implements Module {
         WebObject w=persistence.cache(s.uid);
         if(w==null) return false;
         transferNotifyAndAlerted(s,w);
-        saveAndNotifyUpdated(w);
+        saveAndNotifyUpdated(w, false);
         if(w.isLocal()){
             w.handleEval();
         }

@@ -492,7 +492,7 @@ public class WebObject {
         funcobs.cacheAndSaveSpawned(this);
         if(statemod){
             makeNewStatePublicRightNowShouldBeAllAtomicButIsnt();
-            funcobs.saveAndNotifyUpdated(this);
+            funcobs.saveAndNotifyUpdated(this, true);
         }
         else{
             funcobs.saveAndAlertFirstTime(this);
