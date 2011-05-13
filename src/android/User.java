@@ -142,7 +142,7 @@ public class User extends WebObject {
         }
     }
 
-    private void showWhatIAmViewing(){ whereAmI("");
+    private void showWhatIAmViewing(){
         if(contentIs("private:viewas","gui")){
             showWhatIAmViewingAsGUI();
         }

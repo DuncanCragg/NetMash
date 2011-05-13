@@ -93,7 +93,9 @@ public class FunctionalObserver implements Module {
 
     // -------------------------------
 
-    void evaluatable(WebObject w){ whereAmI("");
+    void evaluatable(WebObject w){
+        if(w.evaluatable) return;
+        w.evaluatable=true;
         Kernel.threadObject(w);
     }
 
@@ -101,6 +103,7 @@ public class FunctionalObserver implements Module {
       * Object o is locked. */
     public void threadedObject(Object o){
         WebObject w = (WebObject)o;
+        w.evaluatable=false;
         if(!w.isShell()) w.handleEval();
         else             handleShell(w);
     }
@@ -289,7 +292,7 @@ public class FunctionalObserver implements Module {
         System.out.println("---"+Kernel.config.stringPathN("name")+"---"+thread+"-----------\n"+o);
     }
 
-    static public void whereAmI(String message){
+    static public void whereAmI(Object message){
         try{ throw new Exception(); } catch(Exception e){ log(message+": "+Arrays.asList(e.getStackTrace())); }
     }
 

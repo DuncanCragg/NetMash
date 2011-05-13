@@ -25,7 +25,7 @@ public class WebObject {
     public  FunctionalObserver funcobs;
 
     public  ShellState shellstate = ShellState.FOUND;
-    private boolean isLocal = true;
+    public  boolean evaluatable = false;
 
     public  String uid;
     public  String url=null;
@@ -82,7 +82,6 @@ public class WebObject {
         cacheNotify = httpCacheNotify;
         publicState = json;
         updatingState = publicState;
-        isLocal = false;
     }
 
     /** Create a shell object. */
@@ -106,20 +105,19 @@ public class WebObject {
     }
 
     public boolean isLocal(){
-        if(!isLocal) return false;
         return !isVisibleRemote();
-    }
-
-    public boolean isAsymmetricCN(){
-        return uid.startsWith("c-n-");
     }
 
     public boolean isVisibleRemote(){
         return uid.startsWith("http://");
     }
 
+    public boolean isAsymmetricCN(){
+        return uid.startsWith("c-n-");
+    }
+
     public boolean isAsymmetricRemote(){
-        return !isLocal && !isVisibleRemote();
+        return !isVisibleRemote(); // ... and
     }
 
     public void setURL(final String url){
@@ -445,7 +443,7 @@ public class WebObject {
         }
     }
 
-    public void whereAmI(String message){
+    public void whereAmI(Object message){
         try{ throw new Exception(); } catch(Exception e){ log(message+": "+Arrays.asList(e.getStackTrace())); }
     }
 

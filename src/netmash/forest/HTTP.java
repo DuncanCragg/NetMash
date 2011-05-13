@@ -685,6 +685,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         if(sleep!=0){
             new Thread(){ public void run(){
                 Kernel.sleep(sleep);
+                if(Kernel.config.boolPathN("network:log")) log("Retrying.. needsConnect="+needsConnect);
                 doNextRequest(0);
             }}.start();
             return;
