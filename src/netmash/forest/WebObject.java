@@ -105,7 +105,7 @@ public class WebObject {
     }
 
     public boolean isLocal(){
-        return !isVisibleRemote();
+        return uid.startsWith("uid-") && cacheNotify==null;
     }
 
     public boolean isVisibleRemote(){
@@ -117,7 +117,7 @@ public class WebObject {
     }
 
     public boolean isAsymmetricRemote(){
-        return !isVisibleRemote(); // ... and
+        return uid.startsWith("uid-") && cacheNotify!=null;
     }
 
     public void setURL(final String url){
@@ -530,8 +530,8 @@ public class WebObject {
                                ", \"%max-age\": "+maxAge+
                                ", \"%notify\": "+setToListString(notify)+
                                ", \"%observe\": "+setToListString(observe)+
-                               ", \"%cache-notify\": \""+cacheNotify+
-                             "\", \"%class\": \""+this.getClass().toString().substring(6)+
+           (cacheNotify!=null? ", \"%cache-notify\": \""+cacheNotify+"\"": "")+
+                               ", \"%class\": \""+this.getClass().toString().substring(6)+
                              "\",", maxlength);
         return r;
     }
@@ -548,8 +548,8 @@ public class WebObject {
                           ",\n    \"%max-age\": "+maxAge+
                           ",\n    \"%notify\": "+setToListString(notify)+
                           ",\n    \"%observe\": "+setToListString(observe)+
-                          ",\n    \"%cache-notify\": \""+cacheNotify+
-                        "\",\n    \"%class\": \""+this.getClass().toString().substring(6)+
+      (cacheNotify!=null? ",\n    \"%cache-notify\": \""+cacheNotify+"\"": "")+
+                          ",\n    \"%class\": \""+this.getClass().toString().substring(6)+
                         "\",\n")+"\n";
         return r;
     }

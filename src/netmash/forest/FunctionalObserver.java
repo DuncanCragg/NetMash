@@ -161,8 +161,8 @@ public class FunctionalObserver implements Module {
                 notified.alertedin.add(notifier.uid);
             }
             boolean keep=false;
-            if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); } else
             if(notified.isLocal())           { keep=true;     evaluatable(notified);   } else
+            if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); } else
             if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); }
             else                             { if(realupdate) http.push(notified);     }
             if(!keep) notified.alertedin = new CopyOnWriteArraySet<String>();
