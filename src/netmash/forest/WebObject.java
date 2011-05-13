@@ -22,16 +22,16 @@ public class WebObject {
 
     //----------------------------------
 
+    public  FunctionalObserver funcobs;
+
     public  ShellState shellstate = ShellState.FOUND;
     private boolean isLocal = true;
-
-    public  FunctionalObserver funcobs;
 
     public  String uid;
     public  String url=null;
     public  int    etag=0;
     public  int    maxAge= -1;
-    public  String cachenotify;
+    public  String cacheNotify;
 
     public  JSON publicState=null;
     public  JSON updatingState=null;
@@ -58,11 +58,13 @@ public class WebObject {
     /** Construct WebObject after null ctor from Persistence. */
     public void construct(JSON json){
         funcobs = FunctionalObserver.funcobs;
-        uid     =          json.stringPathN("%uid");      json.removePath("%uid");
-        url     =          json.stringPathN("%url");      json.removePath("%url");
-        etag    =          json.intPathN(   "%etag");     json.removePath("%etag");
-        listToSet(notify,  json.listPathN(  "%notify"));  json.removePath("%notify");
-        listToSet(observe, json.listPathN(  "%observe")); json.removePath("%observe");
+        uid     =          json.stringPathN("%uid");          json.removePath("%uid");
+        url     =          json.stringPathN("%url");          json.removePath("%url");
+        etag    =          json.intPathN(   "%etag");         json.removePath("%etag");
+        maxAge  =          json.intPathN(   "%max-age");      json.removePath("%max-age");
+        listToSet(notify,  json.listPathN(  "%notify"));      json.removePath("%notify");
+        listToSet(observe, json.listPathN(  "%observe"));     json.removePath("%observe");
+        cacheNotify =      json.stringPathN("%cache-notify"); json.removePath("%cache-notify");
         publicState = json;
         updatingState = publicState;
     }
@@ -77,7 +79,7 @@ public class WebObject {
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "%max-age"); json.removePath("%max-age");
         listToSet(notify,                         json.listPathN(  "%notify")); json.removePath("%notify");
         if(httpNotify!=null && !httpNotify.startsWith("c-n-")) notify.add(httpNotify);
-        cachenotify = httpCacheNotify;
+        cacheNotify = httpCacheNotify;
         publicState = json;
         updatingState = publicState;
         isLocal = false;
@@ -443,6 +445,10 @@ public class WebObject {
         }
     }
 
+    public void whereAmI(String message){
+        try{ throw new Exception(); } catch(Exception e){ log(message+": "+Arrays.asList(e.getStackTrace())); }
+    }
+
     /* ---------------------------------------------------- */
 
     private WebObject observing(String observeduid){
@@ -515,19 +521,20 @@ public class WebObject {
 
     public String toString(int maxlength){
         if(maxlength==0) return toString();
-        if(isShell()) return "{ \"%uid\": \""+uid+
-                           "\", \"%notify\": "+setToListString(notify)+
-                             ", \"%alertedin\": "+setToListString(alertedin)+
-                             ", \"%state\": \""+shellstate+"\"}";
+        if(isShell()) return   "{ \"%uid\": \""+uid+
+                             "\", \"%notify\": "+setToListString(notify)+
+                               ", \"%alertedin\": "+setToListString(alertedin)+
+                               ", \"%state\": \""+shellstate+"\"}";
         String r = publicState.toString(
-                               "\"%uid\": \""+uid+
-               (url!=null? "\", \"%url\": \""+url: "")+
-                           "\", \"%etag\": "+etag+
-                             ", \"%notify\": "+setToListString(notify)+
-                             ", \"%observe\": "+setToListString(observe)+
-                             ", \"%cachenotify\": \""+cachenotify+
-                           "\", \"%class\": \""+this.getClass().toString().substring(6)+
-                           "\",", maxlength);
+                                 "\"%uid\": \""+uid+
+                 (url!=null? "\", \"%url\": \""+url: "")+
+                             "\", \"%etag\": "+etag+
+                               ", \"%max-age\": "+maxAge+
+                               ", \"%notify\": "+setToListString(notify)+
+                               ", \"%observe\": "+setToListString(observe)+
+                               ", \"%cache-notify\": \""+cacheNotify+
+                             "\", \"%class\": \""+this.getClass().toString().substring(6)+
+                             "\",", maxlength);
         return r;
     }
 
@@ -540,9 +547,10 @@ public class WebObject {
                                  "\"%uid\": \""+uid+
             (url!=null? "\",\n    \"%url\": \""+url: "")+
                         "\",\n    \"%etag\": "+etag+
+                          ",\n    \"%max-age\": "+maxAge+
                           ",\n    \"%notify\": "+setToListString(notify)+
                           ",\n    \"%observe\": "+setToListString(observe)+
-                          ",\n    \"%cachenotify\": \""+cachenotify+
+                          ",\n    \"%cache-notify\": \""+cacheNotify+
                         "\",\n    \"%class\": \""+this.getClass().toString().substring(6)+
                         "\",\n")+"\n";
         return r;

@@ -114,12 +114,12 @@ public class HTTP implements ChannelUser {
         return asList(poll? pollClient(host,port): poolClient(host,port), encodeSpacesAndUTF8IntoPercents(path));
     }
 
-    boolean pull(WebObject s){
-        List clientpath = getClient(s);
+    boolean poll(WebObject w){
+        List clientpath = getClient(w);
         if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.pollRequest(path, 0);
+        client.pollRequest(path, w.etag);
         return true;
     }
 
@@ -134,21 +134,12 @@ public class HTTP implements ChannelUser {
         return true;
     }
 
-    boolean longpush(WebObject w){
-        HTTPServer server = getLongPusher(w.isAsymmetricCN()? w.uid: w.cachenotify);
+    boolean longpush(WebObject w){ log("longpush:\n"+w);
+        HTTPServer server = getLongPusher(w.isAsymmetricCN()? w.uid: w.cacheNotify);
         if(server==null) return false;
         for(String notifieruid: w.alertedin){
             server.longRequest(notifieruid);
         }
-        return true;
-    }
-
-    boolean poll(WebObject w){
-        List clientpath = getClient(w);
-        if(clientpath==null) return false;
-        HTTPClient client = (HTTPClient)clientpath.get(0);
-        String     path   = (String)    clientpath.get(1);
-        client.pollRequest(path, w.etag);
         return true;
     }
 
@@ -159,8 +150,8 @@ public class HTTP implements ChannelUser {
     }
 
     void openNewConnections(HashSet<String> cachenotifies){
-        for(String cachenotify: cachenotifies){
-            List clientpath = getClient(cachenotify, true);
+        for(String cn: cachenotifies){
+            List clientpath = getClient(cn, true);
             if(clientpath==null) continue;
             HTTPClient client = (HTTPClient)clientpath.get(0);
             String     path   = (String)    clientpath.get(1);
@@ -450,13 +441,13 @@ abstract class HTTPCommon {
         }
     }
 
-    static String cacheNotify=null;
+    static String OurCacheNotify=null;
     String CacheNotify(){
-        if(cacheNotify==null){
-            cacheNotify=Kernel.config.stringPathN("network:cache-notify");
-            if(cacheNotify==null) cacheNotify=UID.generateCN();
+        if(OurCacheNotify==null){
+            OurCacheNotify=Kernel.config.stringPathN("network:cache-notify");
+            if(OurCacheNotify==null) OurCacheNotify=UID.generateCN();
         }
-        return cacheNotify;
+        return OurCacheNotify;
     }
 
     boolean tunnelHeaders=false;

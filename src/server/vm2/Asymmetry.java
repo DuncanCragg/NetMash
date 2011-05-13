@@ -18,10 +18,12 @@ public class Asymmetry extends WebObject {
                 content("watch", url);
                 if(content("watch:state")!=null){
                     log("got self from home server - move to state 3");
-                    contentInt("state", 3);
+                    contentInt("state", 33);
                 }
             }
         }
+        else
+        if(contentIs("self:state", "33")) System.exit(1);
         else
         if(contentIs("self:state", "3")){
             log("state 3 - move to state 4");

@@ -41,17 +41,17 @@ curconfig:
 allconfig:
 	cp src/server/vm2/allconfig.json src/server/vm2/netmashconfig.json
 
-runcur: curconfig run1n2
+runcur: kill curconfig run1n2
 
-runall: allconfig run1n2
+runall: kill allconfig run1n2
 
-run1n2: kill run1 run2
+run1n2: run1 run2
 
-runon1: jar kill
-	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash & )
+runon1:
+	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
 
-runon2: jar kill
-	( cd src/server/vm2 ; java -classpath .:../../../build/netmash.jar netmash.NetMash & )
+runon2:
+	( cd src/server/vm2 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
 
 whappen:
 	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
@@ -109,3 +109,6 @@ clean:
 	rm -rf bin/NetMash.ap_ bin/NetMash*un*ed.apk
 	rm -rf gen/android/gui/R.java
 
+moreclean: clean
+	rm -rf src/server/vm[12]/netmash.log
+	rm -rf src/server/vm[12]/forest.db

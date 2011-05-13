@@ -65,8 +65,8 @@ public class FunctionalObserver implements Module {
                     WebObject w=cacheGet(uid);
                     if(w.isShell()){ polling.remove(uid); continue; }
                     if(w.notify.isEmpty()) continue;
-                    if(visible || w.cachenotify==null) http.poll(w);
-                    else cachenotifies.add(w.cachenotify);
+                    if(visible || w.cacheNotify==null) http.poll(w);
+                    else cachenotifies.add(w.cacheNotify);
                 }
                 http.longpoll(cachenotifies);
             }
@@ -75,7 +75,7 @@ public class FunctionalObserver implements Module {
 
     private void addToPolling(WebObject w){
         polling.add(w.uid);
-        pollingThread.interrupt();
+        pollingThread.interrupt(); // to kick off first long poll as soon as possible
     }
 
     WebObject cacheGet(String uid){
@@ -93,7 +93,7 @@ public class FunctionalObserver implements Module {
 
     // -------------------------------
 
-    void evaluatable(WebObject w){
+    void evaluatable(WebObject w){ whereAmI("");
         Kernel.threadObject(w);
     }
 
@@ -197,11 +197,11 @@ public class FunctionalObserver implements Module {
     }
 
     // GET rq and POST rs: send object out when it's ready
-    WebObject httpObserve(Notifiable observer, String observeduid, String cachenotify){
+    WebObject httpObserve(Notifiable observer, String observeduid, String cn){
         WebObject observed = cacheGet(observeduid);
-        if(cachenotify!=null) observed.notify.add(cachenotify);
+        if(cn!=null) observed.notify.add(cn);
         if(!observed.isShell()){
-            if(cachenotify!=null) persistence.save(observed);
+            if(cn!=null) persistence.save(observed);
             return observed;
         }
         observed.httpnotify.add(observer);
@@ -251,7 +251,7 @@ public class FunctionalObserver implements Module {
         }
         else{
             if(!w.alertedin.isEmpty()) http.push(w);
-            if(!w.notify.isEmpty())    http.poll(w);
+            if(!w.notify.isEmpty())  { http.poll(w); addToPolling(w); }
         }
         return true;
     }
@@ -261,7 +261,7 @@ public class FunctionalObserver implements Module {
         if(!s.isVisibleRemote())    return false;
         if(!s.httpnotify.isEmpty()) return false;
         if(!s.alertedin.isEmpty())  if(!http.push(s)) return false;
-        if(!s.notify.isEmpty())     if(!http.pull(s)) return false;
+        if(!s.notify.isEmpty())     if(!http.poll(s)) return false;
         return true; // need to snapshot alertedin
     }
 
