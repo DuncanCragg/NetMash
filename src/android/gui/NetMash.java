@@ -44,6 +44,7 @@ public class NetMash extends MapActivity {
         top=this;
         if(!Kernel.running) runKernel();
         drawInitialView();
+        if(user==null) User.createUserAndDevice();
         user.onTopCreate();
     }
 

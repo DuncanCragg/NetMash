@@ -92,11 +92,11 @@ public class WebObject {
     }
 
     /** For creating new WebObjects inside evaluate(). */
-    public WebObject(String json){
+    public WebObject(String jsonstring){
         funcobs = FunctionalObserver.funcobs;
         uid = UID.generateUID();
         etag = 1;
-        publicState = new JSON(json);
+        publicState = new JSON(jsonstring);
         updatingState = publicState;
     }
 

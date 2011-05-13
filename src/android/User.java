@@ -20,8 +20,7 @@ import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
 import netmash.lib.JSON;
-import netmash.forest.WebObject;
-import netmash.forest.UID;
+import netmash.forest.*;
 
 /** User viewing the Object Web.
   */
@@ -31,9 +30,74 @@ public class User extends WebObject {
 
     static public User me=null;
 
-    CurrentLocation currentlocation;
+    static public void createUserAndDevice(){
+        User vcard = new User(
+              "{   \"is\": \"vcard\", \n"+
+              "    \"fullName\": \"You\", \n"+
+              "    \"address\": { } \n"+
+              "}");
+        User bookmarks = new User(
+              "{   \"is\": [ \"bookmarks\" ], \n"+
+              "    \"list\": [ \"http://netmash.net:8081/o/uid-7235-60ba-d323-d5d6.json\", \n"+
+              "                \"http://netmash.net:8081/o/uid-35ad-af7a-93fb-896d.json\", \n"+
+              "                \"http://netmash.net:8081/o/uid-76b8-8502-45d3-0543.json\", \n"+
+              "                \"http://netmash.net:8081/o/uid-2161-baf3-858b-858c.json\", \n"+
+              "                \"http://netmash.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json\" \n"+
+              "    ] \n"+
+              "}");
+        User contacts = new User(
+              "{   \"is\": [ \"private\", \"contacts\" ], \n"+
+              "    \"title\": \"Phone Contacts\", \n"+
+              "    \"list\": null \n"+
+              "}");
+        me = new User(vcard.uid, bookmarks.uid, contacts.uid);
 
-    public User(){ if(me==null){ me=this; if(NetMash.top!=null) NetMash.top.onUserReady(this); } }
+        FunctionalObserver.funcobs.cacheSaveAndEvaluate(vcard);
+        FunctionalObserver.funcobs.cacheSaveAndEvaluate(bookmarks);
+        FunctionalObserver.funcobs.cacheSaveAndEvaluate(contacts);
+        FunctionalObserver.funcobs.cacheSaveAndEvaluate(me);
+
+        NetMash.top.onUserReady(me);
+    }
+
+    public User(String jsonstring){
+        super(jsonstring);
+    }
+
+    public User(String vcarduid, String bookmarksuid, String contactsuid){
+        super("{   \"is\": \"user\", \n"+
+              "    \"location\": { \"lat\": 0, \"lon\": 0 }, \n"+
+              "    \"vcard\": \""+vcarduid+"\", \n"+
+              "    \"private\": { \n"+
+              "        \"viewing\": null, \n"+
+              "        \"viewas\": \"gui\", \n"+
+              "        \"bookmarks\": \""+bookmarksuid+"\", \n"+
+              "        \"history\": null, \n"+
+              "        \"contacts\":  \""+contactsuid+"\" \n"+
+              "    }\n"+
+              "}");
+    }
+
+    public User(){ if(me==null){ me=this; if(NetMash.top!=null) NetMash.top.onUserReady(me); } }
+
+    static User newUserWithVcard(String vcarduid){
+        return new User("{ \"is\": \"user\", \n"+
+                        "  \"vcard\": \""+vcarduid+"\"\n"+
+                        "}");
+    }
+
+    static User newVcard(String name, String address, LinkedHashMap<String,Double> location){
+        return new User("{ \"is\": \"vcard\", \n"+
+                        "  \"fullName\": \""+name+"\",\n"+
+                        "  \"address\": \""+address+"\",\n"+
+          (location==null? "":
+                        "  \"location\": { \"lat\": "+location.get("lat")+", \"lon\": "+location.get("lon")+" }\n")+
+                        "}");
+    }
+
+    // ---------------------------------------------------------
+
+    CurrentLocation currentlocation;
 
     public void onTopCreate(){
         currentlocation = new CurrentLocation(this);
@@ -143,6 +207,7 @@ public class User extends WebObject {
     }
 
     private void showWhatIAmViewing(){
+        if(content("private:viewing")==null) content("private:viewing", uid);
         if(contentIs("private:viewas","gui")){
             showWhatIAmViewingAsGUI();
         }
@@ -507,24 +572,9 @@ public class User extends WebObject {
         contentList("list", contactslist);
     }
 
-    public User(String name, String address, LinkedHashMap<String,Double> location){
-        super("{ \"is\": \"vcard\", \n"+
-              "  \"fullName\": \""+name+"\",\n"+
-              "  \"address\": \""+address+"\",\n"+
-          (location==null? "":
-              "  \"location\": { \"lat\": "+location.get("lat")+", \"lon\": "+location.get("lon")+" }\n")+
-              "}");
-    }
-
-    public User(String vcarduid){
-        super("{ \"is\": \"user\", \n"+
-              "  \"vcard\": \""+vcarduid+"\"\n"+
-              "}");
-    }
-
     private String createUserAndVCard(String id, String name, String address){
         String inlineaddress = address.replaceAll("\n", ", ");
-        return spawn(new User(spawn(new User(name, inlineaddress, geoCode(inlineaddress)))));
+        return spawn(newUserWithVcard(spawn(newVcard(name, inlineaddress, geoCode(inlineaddress)))));
     }
 
     private HashMap<String,LinkedHashMap<String,Double>> geoCodeCache=new HashMap<String,LinkedHashMap<String,Double>>();

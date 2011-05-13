@@ -130,6 +130,12 @@ public class FunctionalObserver implements Module {
         else w.observe.addAll(w.newobserve);
     }
 
+    public void cacheSaveAndEvaluate(WebObject w){
+        cachePut(w);
+        persistence.save(w);
+        evaluatable(w);
+    }
+
     void cacheAndSaveSpawned(WebObject w){
         for(WebObject n: w.spawned){
             cachePut(n);

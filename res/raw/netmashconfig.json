@@ -2,7 +2,7 @@
   "kernel": { "threadpool": 3 },
   "persist": { "db": "netmash.db",
                "syncrate": 100,
-               "preload": [ "uid-05e7-a5ff-6a42-0027" ] },
+               "preload": [ ] },
   "network": { "pathprefix": "/o/",
                "log": true }
 }
