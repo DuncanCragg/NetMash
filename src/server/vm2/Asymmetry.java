@@ -18,7 +18,7 @@ public class Asymmetry extends WebObject {
                 content("watch", url);
                 if(content("watch:state")!=null){
                     log("got self from home server - move to state 3");
-                    contentInt("state", 33);
+                    contentInt("state", 3);
                 }
             }
         }
@@ -30,6 +30,7 @@ public class Asymmetry extends WebObject {
             contentInt("state", 4);
             content("watch:state");
             content("bobby:fullName");
+            contentHash("tick:#");
         }
         else
         if(contentIs("self:state", "4")){

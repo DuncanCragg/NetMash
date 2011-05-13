@@ -411,7 +411,7 @@
     "view": {
         "direction": "vertical",
         "#title": "Dynamic Page",
-        "#incre": 1,
+        "#incre": 1000,
         "#stuff": [
             "direction:vertical",
             [ "direction:horizontal", "proportions:33%", "a", "b" ],

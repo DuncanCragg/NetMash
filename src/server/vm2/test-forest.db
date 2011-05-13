@@ -36,6 +36,7 @@
     "self": "uid-cb6f-00fb-3be2-453c",
     "bobby": "http://localhost:8081/o/uid-bb90-d577-703b-e7a9.json",
     "state": 1,
-    "watch": ""
+    "watch": "",
+    "tick": "http://localhost:8081/o/uid-7235-60ba-d323-d5d6.json"
 }
 
