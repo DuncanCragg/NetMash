@@ -49,6 +49,9 @@ public class UID {
         return false;
     }
 
+    static public final String  URLPATHRE = Kernel.config.stringPathN("network:pathprefix")+"((uid-[-0-9a-f]+).json|(c-n-[-0-9a-f]+))$";
+    static public final Pattern URLPATHPA = Pattern.compile(URLPATHRE);
+
     static public String toURL(String uid2url){
         if(uid2url.startsWith("http://")) return uid2url;
         if(!Kernel.config.isAtPathN("network:host")) return uid2url;

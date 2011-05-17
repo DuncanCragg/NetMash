@@ -24,6 +24,7 @@ public class Persistence implements FileUser {
     private File dbfile=null;
     private InputStream      topdbis=null;
     private FileOutputStream topdbos=null;
+    private JSON netmashconfig=null;
 
     private ConcurrentHashMap<String,CharBuffer> jsoncache = new ConcurrentHashMap<String,CharBuffer>();
     private CopyOnWriteArraySet<String>          syncable  = new CopyOnWriteArraySet<String>();
@@ -53,9 +54,11 @@ public class Persistence implements FileUser {
         final int syncrate = Kernel.config.intPathN("persist:syncrate");
         new Thread(){ public void run(){ runSync(syncrate); } }.start();
 
-        LinkedList preloadlist = Kernel.config.listPathN("persist:preload");
-        Iterator i = preloadlist.iterator();
-        while(i.hasNext()) cache((String)i.next());
+        preload(Kernel.config.listPathN("persist:preload"));
+        if(netmashconfig!=null){
+            funcobs.hereIsTheConfigBack(netmashconfig);
+            preload(netmashconfig.listPathN("persist:preload"));
+        }
 
         FunctionalObserver.log("Persistence: initialised.");
     }
@@ -74,8 +77,15 @@ public class Persistence implements FileUser {
 
             CharBuffer jsonchars = UTF8.decode(jsonbytes);
             String uid = findUID(jsonchars);
-            jsoncache.put(uid, jsonchars);
+            if(uid.equals("netmashconfig")) netmashconfig = new JSON(jsonchars);
+            else jsoncache.put(uid, jsonchars);
         }
+    }
+
+    void preload(LinkedList preloadlist){
+        if(preloadlist==null) return;
+        Iterator i = preloadlist.iterator();
+        while(i.hasNext()) cache((String)i.next());
     }
 
     public void writable(ByteBuffer bytebuffer, int len){

@@ -52,10 +52,12 @@ public class User extends WebObject {
               "}");
         me = new User(vcard.uid, bookmarks.uid, contacts.uid);
 
-        FunctionalObserver.funcobs.cacheSaveAndEvaluate(vcard);
-        FunctionalObserver.funcobs.cacheSaveAndEvaluate(bookmarks);
-        FunctionalObserver.funcobs.cacheSaveAndEvaluate(contacts);
-        FunctionalObserver.funcobs.cacheSaveAndEvaluate(me);
+        me.funcobs.setCacheNotifyAndSaveConfig(me);
+
+        me.funcobs.cacheSaveAndEvaluate(vcard);
+        me.funcobs.cacheSaveAndEvaluate(bookmarks);
+        me.funcobs.cacheSaveAndEvaluate(contacts);
+        me.funcobs.cacheSaveAndEvaluate(me);
 
         NetMash.top.onUserReady(me);
     }
@@ -190,6 +192,7 @@ public class User extends WebObject {
 
     public void evaluate(){
         if(contentIs("is", "user") && this==me){
+            notifying("http://netmash.net:8081/o/c-n-14d5-99c5-da00-806a"); // modify notifying to ignore if already in
             showWhatIAmViewing();
         }
         else
@@ -297,7 +300,7 @@ public class User extends WebObject {
         if(fullname==null) fullname="Waiting for contact details "+content("private:viewing:vcard");
 
         LinkedHashMap location = contentHash("private:viewing:location");
-        if(location!=null) location.put("direction", "horizontal");
+        if(location!=null) location.put("direction", "horizontal"); // mmm - can't do that!
 
         String address = getAddressString("private:viewing:vcard:address");
         if(address==null) address="Waiting for contact details";

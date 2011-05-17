@@ -403,7 +403,9 @@ public class NetMash extends MapActivity {
             OverlayItem overlayitem = new OverlayItem(geopoint, label, sublabel);
             itemizedoverlay.addItem(overlayitem);
         }
-        mapview.getOverlays().add(itemizedoverlay);
+        List overlays = mapview.getOverlays();
+        if(!overlays.contains(itemizedoverlay)) overlays.add(itemizedoverlay);
+        mapview.postInvalidate();
         return mapview;
     }
 

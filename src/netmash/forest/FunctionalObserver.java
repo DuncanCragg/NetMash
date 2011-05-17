@@ -136,6 +136,21 @@ public class FunctionalObserver implements Module {
         evaluatable(w);
     }
 
+    public void setCacheNotifyAndSaveConfig(WebObject user){
+        String cn="c-n-"+user.uid.substring(4);
+        http.setCacheNotify(cn);
+        WebObject netmashconfig = new WebObject(
+              "{   \"persist\": { \"preload\": [ \""+user.uid+"\" ] }, \n"+
+              "    \"network\": { \"cache-notify\": \""+cn+"\"}\n"+
+              "}");
+        netmashconfig.uid="netmashconfig";
+        persistence.save(netmashconfig);
+    }
+
+    public void hereIsTheConfigBack(JSON netmashconfig){
+        http.setCacheNotify(netmashconfig.stringPathN("network:cache-notify"));
+    }
+
     void cacheAndSaveSpawned(WebObject w){
         for(WebObject n: w.spawned){
             cachePut(n);

@@ -179,6 +179,8 @@ public class HTTP implements ChannelUser {
 
     // ----------------------------------------------
 
+    static public void setCacheNotify(String cn){ HTTPCommon.setCacheNotify(cn); }
+
     static public String encodeSpacesAndUTF8IntoPercents(String path){
         try{ return new URI(null, path, null).toASCIIString(); }catch(Exception e){ return path; }
     }
@@ -202,9 +204,6 @@ abstract class HTTPCommon {
 
     static public final Charset UTF8  = Charset.forName("UTF-8");
     static public final Charset ASCII = Charset.forName("US-ASCII");
-
-    static public final String  UIDRE = Kernel.config.stringPathN("network:pathprefix")+"((uid-[-0-9a-f]+).json|(c-n-[-0-9a-f]+))$";
-    static public final Pattern UIDPA = Pattern.compile(UIDRE);
 
     protected FunctionalObserver funcobs;
     protected SocketChannel channel;
@@ -441,13 +440,16 @@ abstract class HTTPCommon {
         }
     }
 
-    static String OurCacheNotify=null;
-    String CacheNotify(){
+    static private String OurCacheNotify=null;
+    synchronized String CacheNotify(){
         if(OurCacheNotify==null){
             OurCacheNotify=Kernel.config.stringPathN("network:cache-notify");
             if(OurCacheNotify==null) OurCacheNotify=UID.generateCN();
         }
         return OurCacheNotify;
+    }
+    static void setCacheNotify(String cn){
+        OurCacheNotify=cn;
     }
 
     boolean tunnelHeaders=false;
@@ -500,7 +502,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) return;
-        Matcher m = UIDPA.matcher(httpPath);
+        Matcher m = UID.URLPATHPA.matcher(httpPath);
         if(m.matches()){
             String uid=m.group(2); if(uid==null) uid=m.group(3);
             if(uid==null) send404();
