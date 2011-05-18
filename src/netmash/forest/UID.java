@@ -87,7 +87,7 @@ public class UID {
     static public String toURLfromBaseURL(String baseurl, String uid2url){
         if(baseurl==null)                  return uid2url;
         if(!baseurl.startsWith("http://")) return uid2url;
-        if( uid2url.startsWith("http://")) return uid2url;
+        if(!uid2url.startsWith("uid-"))    return uid2url;
         int s=baseurl.indexOf("uid-");
         return baseurl.substring(0,s)+uid2url+".json";
     }

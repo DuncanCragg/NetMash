@@ -181,11 +181,21 @@ public class User extends WebObject {
         };
     }
 
-    public boolean menuItem(int itemid){
+    public boolean menuItem(final int itemid){
         new Evaluator(this){
             public void evaluate(){ logrule();
                 history.forward();
-                content("private:viewas", "map");
+                switch(itemid){
+                    case NetMash.MENU_ITEM_GUI:
+                        content("private:viewas", "gui");
+                    break;
+                    case NetMash.MENU_ITEM_MAP:
+                        content("private:viewas", "map");
+                    break;
+                    case NetMash.MENU_ITEM_RAW:
+                        content("private:viewas", "raw");
+                    break;
+                }
                 showWhatIAmViewing();
             }
         };
@@ -222,6 +232,10 @@ public class User extends WebObject {
             showWhatIAmViewingOnMap();
         }
         else
+        if(contentIs("private:viewas","raw")){
+            showWhatIAmViewingAsRawJSON();
+        }
+        else
         if(contentIs("private:viewas","cal")){
             //showWhatIAmViewingOnCal()
         }
@@ -255,7 +269,7 @@ public class User extends WebObject {
                 viewhash=contentHash("private:viewing:view");
             }
             else{
-                viewhash=guifyHash(contentHash("private:viewing:#"));
+                viewhash=guifyHash(contentHash("private:viewing:#"), content("private:viewing"));
             }
 
             if(viewhash!=null || viewlist!=null){
@@ -535,30 +549,44 @@ public class User extends WebObject {
         return as.toString();
     }
 
-    private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm){ logrule();
+    private void showWhatIAmViewingAsRawJSON(){ logrule();
+        if(contentSet("private:viewing:is")){
+            LinkedHashMap viewhash=guifyHash(contentHash("private:viewing:#"), content("private:viewing"));
+            JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
+            uiJSON.hashPath("view", viewhash);
+            if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON);
+        }
+    }
+
+    ;
+    private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, String objuid){ logrule();
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
         hm2.put("direction", "vertical");
         for(String tag: hm.keySet()){
+            LinkedList ll = new LinkedList();
+            ll.add("direction:horizontal");
+            ll.add(tag+":");
             Object o=hm.get(tag);
-            hm2.put("#"+tag, tag);
-            if(o instanceof LinkedHashMap) hm2.put("."+tag, guifyHash((LinkedHashMap<String,Object>)o));
-            else
-            if(o instanceof LinkedList)    hm2.put("."+tag, guifyList((LinkedList)o));
-            else                           hm2.put("."+tag, o);
+            addToList(ll,o,objuid);
+            hm2.put("#"+tag,ll);
         }
         return hm2;
     }
 
-    private LinkedList guifyList(LinkedList ll){
+    private LinkedList guifyList(LinkedList ll, String objuid){
         LinkedList ll2 = new LinkedList();
         ll2.add("direction:horizontal");
-        for(Object o: ll){
-           if(o instanceof LinkedHashMap) ll2.add(guifyHash((LinkedHashMap<String,Object>)o));
-           else
-           if(o instanceof LinkedList)    ll2.add(guifyList((LinkedList)o));
-           else                           ll2.add(o);
-        }
+        for(Object o: ll) addToList(ll2,o,objuid);
         return ll2;
+    }
+
+    private void addToList(LinkedList ll, Object o, String objuid){
+        if(o instanceof LinkedHashMap) ll.add(guifyHash((LinkedHashMap<String,Object>)o, objuid));
+        else
+        if(o instanceof LinkedList)    ll.add(guifyList((LinkedList)o, objuid));
+        else
+        if(o instanceof String)        ll.add(UID.normaliseUID(objuid, (String)o));
+        else                           ll.add(o);
     }
 
     // ---------------------------------------------------------

@@ -25,7 +25,7 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 ./build/classes/%.class: ./src/%.java
 	javac $(LIBOPTIONS) $<
 
-runnet: kill clean sethost run1
+runnet: kill clean sethost run1 logout1
 
 sethost:
 	sed -i "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
