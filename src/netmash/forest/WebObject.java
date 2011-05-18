@@ -234,7 +234,7 @@ public class WebObject {
 
     /** Construct a list utility. */
     @SuppressWarnings("unchecked")
-    public LinkedList list(Object...args){
+    static public LinkedList list(Object...args){
         return new LinkedList(Arrays.asList(args));
     }
 
@@ -309,6 +309,12 @@ public class WebObject {
         statemod = updatingState.listPathAdd(path, val) || statemod;
     }
 
+    /** Add this value as if the list were a set. */
+    public void contentSetAdd(String path, Object val){
+        LinkedList list=contentList(path);
+        if(list==null || !list.contains(val)) contentListAdd(path, val);
+    }
+
     /** Add all the values onto the list at the path. */
     public void contentListAddAll(String path, List val){
         doCopyOnWrite(path);
@@ -366,8 +372,14 @@ public class WebObject {
       * That object may or may not be observing us already.
       */
     public void notifying(String alertuid){
+        if(notify.contains(alertuid)) return;
         obsalmod = true;
         newalert.add(alertuid);
+    }
+
+    /** Add to notifying set for construction-time. */
+    public void notifying(LinkedList<String> notifyset){
+        listToSet(notify, notifyset);
     }
 
     /** Remove any across-the-wire notification. Local notify
@@ -505,6 +517,7 @@ public class WebObject {
             funcobs.saveAndNotifyUpdated(this, true);
         }
         else{
+            // if(obsalmod)
             funcobs.saveAndAlertFirstTime(this);
         }
         funcobs.evalSpawned(this);

@@ -4,5 +4,6 @@
                "syncrate": 100,
                "preload": [ ] },
   "network": { "pathprefix": "/o/",
-               "log": true }
+               "log": true },
+  "ots": { "homeusers": "http://netmash.net:8081/o/uid-6332-84e1-c1de-3364.json" }
 }

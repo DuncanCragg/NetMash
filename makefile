@@ -17,6 +17,7 @@ classes: \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/netmash/forest/HTTP.class \
 ./build/classes/server/types/Twitter.class\
+./build/classes/server/types/UserHome.class\
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes

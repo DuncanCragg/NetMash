@@ -502,7 +502,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) return;
-        Matcher m = UID.URLPATHPA.matcher(httpPath);
+        Matcher m = UID.URLPATHPA().matcher(httpPath);
         if(m.matches()){
             String uid=m.group(2); if(uid==null) uid=m.group(3);
             if(uid==null) send404();

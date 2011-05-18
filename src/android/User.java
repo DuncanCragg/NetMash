@@ -21,6 +21,7 @@ import static android.location.LocationManager.*;
 
 import netmash.lib.JSON;
 import netmash.forest.*;
+import netmash.platform.Kernel;
 
 /** User viewing the Object Web.
   */
@@ -50,10 +51,12 @@ public class User extends WebObject {
               "    \"title\": \"Phone Contacts\", \n"+
               "    \"list\": null \n"+
               "}");
-        me = new User(vcard.uid, bookmarks.uid, contacts.uid);
+
+        String homeusers=Kernel.config.stringPathN("ots:homeusers");
+        me = new User(homeusers, vcard.uid, bookmarks.uid, contacts.uid);
+        me.notifying(list(homeusers));
 
         me.funcobs.setCacheNotifyAndSaveConfig(me);
-
         me.funcobs.cacheSaveAndEvaluate(vcard);
         me.funcobs.cacheSaveAndEvaluate(bookmarks);
         me.funcobs.cacheSaveAndEvaluate(contacts);
@@ -66,8 +69,9 @@ public class User extends WebObject {
         super(jsonstring);
     }
 
-    public User(String vcarduid, String bookmarksuid, String contactsuid){
+    public User(String homeusers, String vcarduid, String bookmarksuid, String contactsuid){
         super("{   \"is\": \"user\", \n"+
+              "    \"homeusers\": \""+homeusers+"\", \n"+
               "    \"location\": { \"lat\": 0, \"lon\": 0 }, \n"+
               "    \"vcard\": \""+vcarduid+"\", \n"+
               "    \"private\": { \n"+
@@ -192,7 +196,6 @@ public class User extends WebObject {
 
     public void evaluate(){
         if(contentIs("is", "user") && this==me){
-            notifying("http://netmash.net:8081/o/c-n-14d5-99c5-da00-806a"); // modify notifying to ignore if already in
             showWhatIAmViewing();
         }
         else
@@ -317,6 +320,10 @@ public class User extends WebObject {
         LinkedList bookmarks=null;
         if(bmuid!=null) bookmarks = list("direction:horizontal", "options:jump", "proportions:75%", "Bookmarks:", bmuid);
 
+        String huuid=UID.normaliseUID(useruid, content("private:viewing:homeusers"));
+        LinkedList homeusers=null;
+        if(huuid!=null) homeusers = list("direction:horizontal", "options:jump", "proportions:75%", "Home Users:", huuid);
+
         LinkedList userlist = new LinkedList();
         userlist.add("direction:vertical");
         userlist.add(fullname);
@@ -325,6 +332,7 @@ public class User extends WebObject {
         if(vcard    !=null) userlist.add(vcard);
         if(contacts !=null) userlist.add(contacts);
         if(bookmarks!=null) userlist.add(bookmarks);
+        if(homeusers!=null) userlist.add(homeusers);
 
         return userlist;
     }
@@ -381,7 +389,8 @@ public class User extends WebObject {
         int i= -1;
         for(String uid: contacts){ i++;
             String contactuid = UID.normaliseUID(listuid, uid);
-            String fullname=content("private:viewing:list:"+i+":"+vcardprefix+"fullName");
+            String fullname=            content("private:viewing:list:"+i+":"+vcardprefix+"fullName");
+            if(fullname==null) fullname=content("private:viewing:list:"+i+":is");
             if(fullname==null) viewlist.add("Loading..");
             else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, contactuid));
         }
@@ -398,13 +407,14 @@ public class User extends WebObject {
         LinkedList maplist = new LinkedList();
         maplist.add("is:maplist");
         maplist.add("layerkey:"+useruid);
-        String fullname=content("private:viewing:fullName");
         LinkedHashMap location=contentHash("private:viewing:location");
         if(location==null) location=geoCode(getGeoAddressString("private:viewing:address"));
         if(location==null) return maplist;
         LinkedHashMap point = new LinkedHashMap();
-        point.put("label", fullname);
-        point.put("sublabel", getAddressString("private:viewing:address"));
+        String fullname=content(        "private:viewing:fullName");
+        String address=getAddressString("private:viewing:address");
+        point.put("label",    fullname!=null? fullname: "");
+        point.put("sublabel", address!=null? address: "");
         point.put("location", location);
         point.put("jump", useruid);
         maplist.add(point);
@@ -421,14 +431,17 @@ public class User extends WebObject {
         maplist.add("layerkey:"+listuid);
         int i= -1;
         for(String uid: contacts){ i++;
-            String contactuid = UID.normaliseUID(listuid, uid);
-            String fullname=content("private:viewing:list:"+i+":"+vcardprefix+"fullName");
-            LinkedHashMap<String,Double> location=contentHash("private:viewing:list:"+i+":"+vcardprefix+"location");
+            LinkedHashMap<String,Double> location=null;
+            if(!vcardprefix.equals(""))        location=contentHash("private:viewing:list:"+i+":location");
+            if(location==null)                 location=contentHash("private:viewing:list:"+i+":"+vcardprefix+"location");
             if(location==null) location=geoCode(getGeoAddressString("private:viewing:list:"+i+":"+vcardprefix+"address"));
             if(location==null) continue;
             LinkedHashMap point = new LinkedHashMap();
-            point.put("label", fullname);
-            point.put("sublabel", getAddressString("private:viewing:list:"+i+":"+vcardprefix+"address"));
+            String fullname=content(        "private:viewing:list:"+i+":"+vcardprefix+"fullName");
+            String address=getAddressString("private:viewing:list:"+i+":"+vcardprefix+"address");
+            String contactuid = UID.normaliseUID(listuid, uid);
+            point.put("label",    fullname!=null? fullname: "");
+            point.put("sublabel", address!=null? address: "");
             point.put("location", location);
             point.put("jump", contactuid);
             maplist.add(point);

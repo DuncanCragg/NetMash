@@ -421,3 +421,12 @@
     }
 }
 
+{   "%uid": "uid-6332-84e1-c1de-3364",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "server.types.UserHome",
+    "is": [ "userhome", "contacts" ],
+    "list": []
+}
+
