@@ -354,7 +354,7 @@ public class User extends WebObject {
     private LinkedList user2Map(){ logrule();
         String useruid = content("private:viewing");
         LinkedList maplist = new LinkedList();
-        maplist.add("is:maplist");
+        maplist.add("render:map");
         maplist.add("layerkey:"+useruid);
         LinkedHashMap location = contentHash("private:viewing:location");
         if(location==null) return maplist;
@@ -419,7 +419,7 @@ public class User extends WebObject {
     private LinkedList vCard2Map(){ logrule();
         String useruid = content("private:viewing");
         LinkedList maplist = new LinkedList();
-        maplist.add("is:maplist");
+        maplist.add("render:map");
         maplist.add("layerkey:"+useruid);
         LinkedHashMap location=contentHash("private:viewing:location");
         if(location==null) location=geoCode(getGeoAddressString("private:viewing:address"));
@@ -441,7 +441,7 @@ public class User extends WebObject {
         if(contacts==null) return null;
 
         LinkedList maplist = new LinkedList();
-        maplist.add("is:maplist");
+        maplist.add("render:map");
         maplist.add("layerkey:"+listuid);
         int i= -1;
         for(String uid: contacts){ i++;

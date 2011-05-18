@@ -227,7 +227,7 @@ public class NetMash extends MapActivity {
         float dimn=0;
         int i=0;
         for(String tag: hm.keySet()){
-            if(tag.equals("is")) continue;
+            if(tag.equals("render")) continue;
             if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
             if(tag.equals("proportions")){
@@ -239,7 +239,7 @@ public class NetMash extends MapActivity {
         if(dim0 >0 && i>1) dimn=(98-dim0)/(i-1);
         i=0;
         for(String tag: hm.keySet()){
-            if(tag.equals("is")) continue;
+            if(tag.equals("render")) continue;
             if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
             if(tag.equals("proportions")) continue;
@@ -254,11 +254,12 @@ public class NetMash extends MapActivity {
         int i=0;
         for(Object o: ll){
             if(o instanceof String){
-                if(o.toString().startsWith("is:")) continue;
-                if(o.toString().startsWith("direction:")) continue;
-                if(o.toString().startsWith("options:")) continue;
-                if(o.toString().startsWith("proportions:")){
-                    dim0=parseFirstInt(o.toString());
+                String s=(String)o;
+                if(s.startsWith("render:")) continue;
+                if(s.startsWith("direction:")) continue;
+                if(s.startsWith("options:")) continue;
+                if(s.startsWith("proportions:")){
+                    dim0=parseFirstInt(s);
                     continue;
                 }
             }
@@ -268,10 +269,11 @@ public class NetMash extends MapActivity {
         i=0;
         for(Object o: ll){
             if(o instanceof String){
-                if(o.toString().startsWith("is:")) continue;
-                if(o.toString().startsWith("direction:")) continue;
-                if(o.toString().startsWith("options:")) continue;
-                if(o.toString().startsWith("proportions:")) continue;
+                String s=(String)o;
+                if(s.startsWith("render:")) continue;
+                if(s.startsWith("direction:")) continue;
+                if(s.startsWith("options:")) continue;
+                if(s.startsWith("proportions:")) continue;
             }
             addToLayout(layout, o, i==0? dim0: dimn);
             i++;
@@ -427,12 +429,12 @@ public class NetMash extends MapActivity {
     private boolean isMapList(Object o){
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
-            return "maplist".equals(hm.get("is"));
+            return "map".equals(hm.get("render"));
         }
         else
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
-            return !ll.isEmpty() && "is:maplist".equals(ll.get(0).toString());
+            return !ll.isEmpty() && "render:map".equals(ll.get(0).toString());
         }
         return false;
     }
