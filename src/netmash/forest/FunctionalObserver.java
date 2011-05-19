@@ -131,7 +131,12 @@ public class FunctionalObserver implements Module {
     }
 
     public void cacheSaveAndEvaluate(WebObject w){
+        cacheSaveAndEvaluate(w, false);
+    }
+
+    public void cacheSaveAndEvaluate(WebObject w, boolean savehome){
         cachePut(w);
+        if(savehome){ http.setHomeCN(w); notifyUpdated(w, true); }
         persistence.save(w);
         evaluatable(w);
     }

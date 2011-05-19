@@ -57,10 +57,10 @@ public class User extends WebObject {
         me.notifying(list(homeusers));
 
         me.funcobs.setCacheNotifyAndSaveConfig(me);
-        me.funcobs.cacheSaveAndEvaluate(vcard);
+        me.funcobs.cacheSaveAndEvaluate(vcard, true);
         me.funcobs.cacheSaveAndEvaluate(bookmarks);
         me.funcobs.cacheSaveAndEvaluate(contacts);
-        me.funcobs.cacheSaveAndEvaluate(me);
+        me.funcobs.cacheSaveAndEvaluate(me, true);
 
         NetMash.top.onUserReady(me);
     }

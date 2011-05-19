@@ -177,6 +177,10 @@ public class HTTP implements ChannelUser {
         client.jsonRequest(path, w, param);
     }
 
+    void setHomeCN(WebObject w){
+        w.notifying(asList(Kernel.config.stringPathN("network:home-cache-notify")));
+    }
+
     // ----------------------------------------------
 
     static public void setCacheNotify(String cn){ HTTPCommon.setCacheNotify(cn); }

@@ -378,7 +378,7 @@ public class WebObject {
     }
 
     /** Add to notifying set for construction-time. */
-    public void notifying(LinkedList<String> notifyset){
+    public void notifying(List<String> notifyset){
         listToSet(notify, notifyset);
     }
 
@@ -588,7 +588,7 @@ public class WebObject {
         return r;
     }
 
-    private void listToSet(AbstractSet<String> set, LinkedList list){
+    private void listToSet(AbstractSet<String> set, List list){
         if(list==null) return;
         Iterator i = list.iterator();
         while(i.hasNext()) set.add((String)i.next());
