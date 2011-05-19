@@ -243,7 +243,7 @@ public class FunctionalObserver implements Module {
         String location=null;
         WebObject s=cacheGet(w.uid);  // must look in db
         if(!w.isVisibleRemote() && s.isShell()) location=UID.toURL(w.uid);
-        if(s.etag>=w.etag){ log("Incoming content not newer:\n"+w+"\nfor:\n"+s+"\n"); return location; }
+        if(w.etag<=s.etag && w.notify.isEmpty()){ log(":\n"+w+"\nnot newer than:\n"+s+"\n"); return location; }
         cachePut(w);
         transferNotifyAndAlerted(s,w);
         if(w.isVisibleRemote()) addToPolling(w);

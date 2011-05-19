@@ -39,13 +39,9 @@ public class User extends WebObject {
               "}");
         User bookmarks = new User(
               "{   \"is\": [ \"bookmarks\" ], \n"+
-              "    \"list\": [ \"http://netmash.net:8081/o/uid-7235-60ba-d323-d5d6.json\", \n"+
-              "                \"http://netmash.net:8081/o/uid-35ad-af7a-93fb-896d.json\", \n"+
-              "                \"http://netmash.net:8081/o/uid-76b8-8502-45d3-0543.json\", \n"+
-              "                \"http://netmash.net:8081/o/uid-2161-baf3-858b-858c.json\", \n"+
-              "                \"http://netmash.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json\" \n"+
-              "    ] \n"+
+              "    \"list\": null \n"+
               "}");
+        bookmarks.publicState.listPath("list", Kernel.config.listPathN("ots:bookmarks"));
         User contacts = new User(
               "{   \"is\": [ \"private\", \"contacts\" ], \n"+
               "    \"title\": \"Phone Contacts\", \n"+
@@ -54,7 +50,6 @@ public class User extends WebObject {
 
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, vcard.uid, bookmarks.uid, contacts.uid);
-        me.notifying(list(homeusers));
 
         me.funcobs.setCacheNotifyAndSaveConfig(me);
         me.funcobs.cacheSaveAndEvaluate(vcard, true);
@@ -62,6 +57,7 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(contacts);
         me.funcobs.cacheSaveAndEvaluate(me, true);
 
+        me.notifying(list(homeusers));
         NetMash.top.onUserReady(me);
     }
 
@@ -334,10 +330,6 @@ public class User extends WebObject {
         LinkedList bookmarks=null;
         if(bmuid!=null) bookmarks = list("direction:horizontal", "options:jump", "proportions:75%", "Bookmarks:", bmuid);
 
-        String huuid=UID.normaliseUID(useruid, content("private:viewing:homeusers"));
-        LinkedList homeusers=null;
-        if(huuid!=null) homeusers = list("direction:horizontal", "options:jump", "proportions:75%", "Home Users:", huuid);
-
         LinkedList userlist = new LinkedList();
         userlist.add("direction:vertical");
         userlist.add(fullname);
@@ -346,7 +338,6 @@ public class User extends WebObject {
         if(vcard    !=null) userlist.add(vcard);
         if(contacts !=null) userlist.add(contacts);
         if(bookmarks!=null) userlist.add(bookmarks);
-        if(homeusers!=null) userlist.add(homeusers);
 
         return userlist;
     }
@@ -552,13 +543,13 @@ public class User extends WebObject {
     private void showWhatIAmViewingAsRawJSON(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=guifyHash(contentHash("private:viewing:#"), content("private:viewing"));
+            viewhash.put("#uid", "uid: "+content("private:viewing"));
             JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
             uiJSON.hashPath("view", viewhash);
             if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON);
         }
     }
 
-    ;
     private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, String objuid){ logrule();
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
         hm2.put("direction", "vertical");
