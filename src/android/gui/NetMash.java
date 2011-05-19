@@ -153,16 +153,20 @@ public class NetMash extends MapActivity {
         layout.addView(view, 0);
     }
 
-    static final public int MENU_ITEM_GUI = Menu.FIRST;
-    static final public int MENU_ITEM_MAP = Menu.FIRST+1;
-    static final public int MENU_ITEM_RAW = Menu.FIRST+2;
+    static final public int MENU_ITEM_ADD = Menu.FIRST+0;
+    static final public int MENU_ITEM_LNX = Menu.FIRST+1;
+    static final public int MENU_ITEM_GUI = Menu.FIRST+2;
+    static final public int MENU_ITEM_MAP = Menu.FIRST+3;
+    static final public int MENU_ITEM_RAW = Menu.FIRST+4;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(0, MENU_ITEM_GUI, Menu.NONE, "Show Object");
-        menu.add(1, MENU_ITEM_MAP, Menu.NONE, "Show on Map");
-        menu.add(2, MENU_ITEM_RAW, Menu.NONE, "Show Raw JSON");
+        menu.add(0, MENU_ITEM_ADD, Menu.NONE, "+ Link");
+        menu.add(1, MENU_ITEM_LNX, Menu.NONE, "Links");
+        menu.add(2, MENU_ITEM_GUI, Menu.NONE, "Object");
+        menu.add(3, MENU_ITEM_MAP, Menu.NONE, "On Map");
+        menu.add(4, MENU_ITEM_RAW, Menu.NONE, "Raw JSON");
         return true;
     }
 

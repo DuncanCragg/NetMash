@@ -41,7 +41,9 @@ public class User extends WebObject {
               "{   \"is\": [ \"bookmarks\" ], \n"+
               "    \"list\": null \n"+
               "}");
-        bookmarks.publicState.listPath("list", Kernel.config.listPathN("ots:bookmarks"));
+        LinkedList links=Kernel.config.listPathN("ots:bookmarks");
+        bookmarks.publicState.listPath("list", links);
+
         User contacts = new User(
               "{   \"is\": [ \"private\", \"contacts\" ], \n"+
               "    \"title\": \"Phone Contacts\", \n"+
@@ -50,6 +52,7 @@ public class User extends WebObject {
 
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, vcard.uid, bookmarks.uid, contacts.uid);
+        links.addFirst(me.uid);
 
         me.funcobs.setCacheNotifyAndSaveConfig(me);
         me.funcobs.cacheSaveAndEvaluate(vcard, true);
@@ -180,19 +183,31 @@ public class User extends WebObject {
     public boolean menuItem(final int itemid){
         new Evaluator(this){
             public void evaluate(){ logrule();
-                history.forward();
                 switch(itemid){
-                    case NetMash.MENU_ITEM_GUI:
+                    case NetMash.MENU_ITEM_ADD:
+                    break;
+                    case NetMash.MENU_ITEM_LNX:
+                        history.forward();
+                        content("private:viewing", content("private:bookmarks"));
                         content("private:viewas", "gui");
+                        showWhatIAmViewing();
+                    break;
+                    case NetMash.MENU_ITEM_GUI:
+                        history.forward();
+                        content("private:viewas", "gui");
+                        showWhatIAmViewing();
                     break;
                     case NetMash.MENU_ITEM_MAP:
+                        history.forward();
                         content("private:viewas", "map");
+                        showWhatIAmViewing();
                     break;
                     case NetMash.MENU_ITEM_RAW:
+                        history.forward();
                         content("private:viewas", "raw");
+                        showWhatIAmViewing();
                     break;
                 }
-                showWhatIAmViewing();
             }
         };
         return true;
@@ -219,7 +234,7 @@ public class User extends WebObject {
     }
 
     private void showWhatIAmViewing(){
-        if(content("private:viewing")==null) content("private:viewing", uid);
+        if(content("private:viewing")==null) content("private:viewing", content("private:bookmarks"));
         if(contentIs("private:viewas","gui")){
             showWhatIAmViewingAsGUI();
         }
@@ -328,7 +343,7 @@ public class User extends WebObject {
 
         String bmuid=UID.normaliseUID(useruid, content("private:viewing:private:bookmarks"));
         LinkedList bookmarks=null;
-        if(bmuid!=null) bookmarks = list("direction:horizontal", "options:jump", "proportions:75%", "Bookmarks:", bmuid);
+        if(bmuid!=null) bookmarks = list("direction:horizontal", "options:jump", "proportions:75%", "Links:", bmuid);
 
         LinkedList userlist = new LinkedList();
         userlist.add("direction:vertical");
@@ -379,7 +394,7 @@ public class User extends WebObject {
 
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");
-        guitop.put("#title", "Bookmarks");
+        guitop.put("#title", "Links");
         guitop.put("#bookmarks", viewlist);
         return guitop;
     }

@@ -4,6 +4,7 @@ DEBUG_TARGET=~/HostDesktop
 RELEASE_TARGET=../net/netmash.net/NetMash.apk
 
 classes: \
+./build/classes/netmash/Version.class \
 ./build/classes/netmash/NetMash.class \
 ./build/classes/netmash/platform/Kernel.class \
 ./build/classes/netmash/platform/Module.class \
@@ -11,13 +12,15 @@ classes: \
 ./build/classes/netmash/platform/FileUser.class \
 ./build/classes/netmash/lib/JSON.class \
 ./build/classes/netmash/lib/TestJSON.class \
+./build/classes/netmash/lib/PathOvershot.class \
 ./build/classes/netmash/forest/UID.class \
 ./build/classes/netmash/forest/FunctionalObserver.class \
 ./build/classes/netmash/forest/WebObject.class \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/netmash/forest/HTTP.class \
-./build/classes/server/types/Twitter.class\
-./build/classes/server/types/UserHome.class\
+./build/classes/netmash/forest/Notifiable.class \
+./build/classes/server/types/Twitter.class \
+./build/classes/server/types/UserHome.class \
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
