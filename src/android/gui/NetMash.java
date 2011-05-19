@@ -401,6 +401,8 @@ public class NetMash extends MapActivity {
         }
         if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this);
         itemizedoverlay.clear();
+        int minlat=Integer.MAX_VALUE, maxlat=Integer.MIN_VALUE;
+        int minlon=Integer.MAX_VALUE, maxlon=Integer.MIN_VALUE;
         for(Object o: ll){
             if(!(o instanceof LinkedHashMap)) continue;
             LinkedHashMap point = (LinkedHashMap)o;
@@ -409,9 +411,17 @@ public class NetMash extends MapActivity {
             LinkedHashMap<String,Double> location=(LinkedHashMap<String,Double>)point.get("location");
             if(location==null) continue;
             String jump=(String)point.get("jump");
-            GeoPoint geopoint = new GeoPoint((int)(location.get("lat")*1e6), (int)(location.get("lon")*1e6));
-            OverlayItem overlayitem = new OverlayItem(geopoint, label, sublabel);
+            int lat=(int)(location.get("lat")*1e6);
+            int lon=(int)(location.get("lon")*1e6);
+            minlat=Math.min(lat,minlat); maxlat=Math.max(lat,maxlat);
+            minlon=Math.min(lon,minlon); maxlon=Math.max(lon,maxlon);
+            OverlayItem overlayitem = new OverlayItem(new GeoPoint(lat,lon), label, sublabel);
             itemizedoverlay.addItem(overlayitem);
+        }
+        if(minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
+            MapController mapcontrol = mapview.getController();
+            mapcontrol.animateTo(new GeoPoint((maxlat+minlat)/2, (maxlon+minlon)/2));
+            mapcontrol.zoomToSpan(             maxlat-minlat,     maxlon-minlon);
         }
         List overlays = mapview.getOverlays();
         if(!overlays.contains(itemizedoverlay)) overlays.add(itemizedoverlay);
