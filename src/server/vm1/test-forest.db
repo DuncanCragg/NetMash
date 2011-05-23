@@ -286,6 +286,7 @@
     "%observe": [],
     "%class": "MeetUsUp",
     "is": [ "meetusup", "vcardlist" ],
+    "title": "MeetUsUp List",
     "venue": "uid-fc61-ba84-a7d8-9874",
     "organiser": "uid-1b84-142d-4f34-3734",
     "list": [
@@ -426,7 +427,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "server.types.UserHome",
-    "is": [ "userhome", "contacts" ],
+    "is": [ "userhome", "userlist" ],
     "list": []
 }
 

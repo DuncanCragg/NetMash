@@ -7,16 +7,14 @@ import java.util.regex.*;
 import android.gui.*;
 import android.os.*;
 
-import android.content.Context;
+import android.content.*;
 import android.database.Cursor;
-import android.provider.Contacts;
-import android.provider.Contacts.People;
 import android.location.*;
 import android.accounts.*;
 
-import static android.provider.Contacts.*;
-import static android.provider.Contacts.ContactMethods.*;
-import static android.provider.Contacts.ContactMethodsColumns.*;
+import static android.provider.ContactsContract.*;
+import static android.provider.ContactsContract.CommonDataKinds.*;
+
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
@@ -47,7 +45,7 @@ public class User extends WebObject {
         bookmarks.publicState.listPath("list", links);
 
         User contacts = new User(
-              "{   \"is\": [ \"private\", \"contacts\" ], \n"+
+              "{   \"is\": [ \"private\", \"vcardlist\" ], \n"+
               "    \"title\": \"Phone Contacts\", \n"+
               "    \"list\": null \n"+
               "}");
@@ -87,19 +85,13 @@ public class User extends WebObject {
 
     public User(){ if(me==null){ me=this; if(NetMash.top!=null) NetMash.top.onUserReady(me); } }
 
-    static User newUserWithVcard(String vcarduid){
-        return new User("{ \"is\": \"user\", \n"+
-                        "  \"vcard\": \""+vcarduid+"\"\n"+
-                        "}");
-    }
-
-    static User newVcard(String name, String address, LinkedHashMap<String,Double> location){
-        return new User("{ \"is\": \"vcard\", \n"+
-                        "  \"fullName\": \""+name+"\",\n"+
-                        "  \"address\": \""+address+"\",\n"+
-          (location==null? "":
-                        "  \"location\": { \"lat\": "+location.get("lat")+", \"lon\": "+location.get("lon")+" }\n")+
-                        "}");
+    static User newVcard(String name, String phonenumber, String emailaddress, String address){
+        return new User(         "{ \"is\": \"vcard\", \n"+
+                                 "  \"fullName\": \""+name+"\""+
+            (phonenumber!=null?  ",\n  \"tel\": \""+phonenumber+"\"": "")+
+            (emailaddress!=null? ",\n  \"email\": \""+emailaddress+"\"": "")+
+            (address!=null?      ",\n  \"address\": \""+address+"\"": "")+
+                                 "\n}");
     }
 
     static String getUsersFullName(){
@@ -249,13 +241,10 @@ public class User extends WebObject {
         if(contentIsOrListContains("is", "user")){ log("other user: "+this);
         }
         else
-        if(contentListContainsAll("is", list("private", "contacts"))){ log("contacts: "+this);
+        if(contentListContainsAll("is", list("private", "vcardlist"))){ log("contacts: "+this);
             populateContacts();
         }
-        else
-        if(contentIsOrListContains("is", "vcard")){ log("vcard: "+this);
-        }
-        else{ log("something else: "+this);
+        else{ log("no evaluate: "+this);
         }
     }
 
@@ -286,11 +275,11 @@ public class User extends WebObject {
                 viewlist=user2GUI();
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "bookmarks")){
-                viewhash=bookmarks2GUI();
+            if(contentIsOrListContains("private:viewing:is", "vcard")){
+                viewhash=vCard2GUI();
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "contacts")){
+            if(contentIsOrListContains("private:viewing:is", "userlist")){
                 viewhash=vCardList2GUI("vcard:");
             }
             else
@@ -298,8 +287,8 @@ public class User extends WebObject {
                 viewhash=vCardList2GUI("");
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "vcard")){
-                viewhash=vCard2GUI();
+            if(contentIsOrListContains("private:viewing:is", "bookmarks")){
+                viewhash=bookmarks2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "gui")){
@@ -329,7 +318,7 @@ public class User extends WebObject {
                 viewlist=vCard2Map();
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "contacts")){
+            if(contentIsOrListContains("private:viewing:is", "userlist")){
                 viewlist=vCardList2Map("vcard:");
             }
             else
@@ -440,7 +429,6 @@ public class User extends WebObject {
             if(fullname==null) viewlist.add("Loading..");
             else               viewlist.add(list("direction:horizontal", "options:jump", "proportions:75%", fullname, contactuid));
         }
-
         LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
         guitop.put("direction", "vertical");
         guitop.put("#title", "Contacts List");
@@ -623,34 +611,73 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    static private final String ADDRESS_WHERE = PERSON_ID+" == %s AND "+KIND+" == "+KIND_POSTAL;
-
     private void populateContacts(){ logrule();
         if(contentSet("list")) return;
         LinkedList contactslist = new LinkedList();
         if(NetMash.top==null) return;
         Context context = NetMash.top.getApplicationContext();
-        Cursor concur = context.getContentResolver().query(People.CONTENT_URI, null, null, null, null);
-        int nameind   = concur.getColumnIndexOrThrow(People.NAME);
-        int personind = concur.getColumnIndexOrThrow(People._ID);
+        ContentResolver cr=context.getContentResolver();
+        Cursor concur = cr.query(Contacts.CONTENT_URI, null, null, null, null);
+        int idcol   = concur.getColumnIndex(Contacts._ID);
+        int namecol = concur.getColumnIndex(Contacts.DISPLAY_NAME);
+        int hasphone= concur.getColumnIndex(Contacts.HAS_PHONE_NUMBER);
+int i=0;
         if(concur.moveToFirst()) do{
-            String id   = concur.getString(personind);
-            String name = concur.getString(nameind);
+            String id   = concur.getString(idcol);
+            String name = concur.getString(namecol);
             if(name==null) continue;
-            Cursor addcur = context.getContentResolver().query(ContactMethods.CONTENT_URI, null, String.format(ADDRESS_WHERE, id), null, null);
-            int addind = addcur.getColumnIndexOrThrow(DATA);
-            String address = "";
-            if(addcur.moveToFirst()) address = addcur.getString(addind);
-            addcur.close();
-            if(!"".equals(address)) contactslist.add(createUserAndVCard(id, name, address));
+            String phonenumber=null;
+            if(Integer.parseInt(concur.getString(hasphone)) >0){
+                   phonenumber =getPhoneNumber(cr, id);
+            }
+            String emailaddress=getEmailAddress(cr, id);
+            String address     =getAddress(cr, id);
+            if(phonenumber==null && emailaddress==null && address==null) continue;
+            log("Contact: "+id+" "+name+" "+phonenumber+" "+emailaddress+" "+address);
+            contactslist.add(createVCard(id, name, phonenumber, emailaddress, address));
+if(++i>100) break;
         } while(concur.moveToNext());
         concur.close();
         contentList("list", contactslist);
     }
 
-    private String createUserAndVCard(String id, String name, String address){
-        String inlineaddress = address.replaceAll("\n", ", ");
-        return spawn(newUserWithVcard(spawn(newVcard(name, inlineaddress, geoCode(inlineaddress)))));
+    private String getPhoneNumber(ContentResolver cr, String id){
+        Cursor phonecur=cr.query(Phone.CONTENT_URI, null, Phone.CONTACT_ID+" = ?", new String[]{id}, null);
+        String phonenumber=null;
+        while(phonecur.moveToNext()) {
+            phonenumber = phonecur.getString(phonecur.getColumnIndex(Phone.NUMBER));
+            break;
+        }
+        phonecur.close();
+        return phonenumber;
+    }
+
+    private String getEmailAddress(ContentResolver cr, String id){
+        Cursor emailcur = cr.query(Email.CONTENT_URI, null, Email.CONTACT_ID+" = ?", new String[]{id}, null);
+        String emailaddress=null;
+        while(emailcur.moveToNext()) {
+            String emailType = emailcur.getString(emailcur.getColumnIndex(Email.TYPE));
+            emailaddress     = emailcur.getString(emailcur.getColumnIndex(Email.DATA));
+            break;
+        }
+        emailcur.close();
+        return emailaddress;
+    }
+
+    private String getAddress(ContentResolver cr, String id){
+        Cursor addcur = cr.query(StructuredPostal.CONTENT_URI, null, StructuredPostal.CONTACT_ID+" = ?", new String[]{id}, null);
+        String address=null;
+        while(addcur.moveToNext()){
+            address = addcur.getString(addcur.getColumnIndex(StructuredPostal.FORMATTED_ADDRESS));
+            break;
+        }
+        addcur.close();
+        return address;
+    }
+
+    private String createVCard(String id, String name, String phonenumber, String emailaddress, String address){
+        String inlineaddress = address!=null? address.replaceAll("\n", ", "): "";
+        return spawn(newVcard(name, phonenumber, emailaddress, inlineaddress));
     }
 
     private HashMap<String,LinkedHashMap<String,Double>> geoCodeCache=new HashMap<String,LinkedHashMap<String,Double>>();
@@ -673,7 +700,7 @@ public class User extends WebObject {
             }
             else log("No getFromLocationName for "+address);
         }catch(Exception e){ log("No getFromLocationName for "+address); log(e); }
-        return null; 
+        return null;
     }
 
     // ---------------------------------------------------------
@@ -718,7 +745,7 @@ public class User extends WebObject {
         protected boolean isBetterLocation(Location newLocation, Location prevLocation) {
 
             if(newLocation ==null) return false;
-            if(prevLocation==null) return true; 
+            if(prevLocation==null) return true;
 
             long timeDelta = newLocation.getTime() - prevLocation.getTime();
             boolean isSignificantlyNewer = timeDelta >  (2*MINUTES);
