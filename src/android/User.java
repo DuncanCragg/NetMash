@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
 import android.location.*;
+import android.accounts.*;
 
 import static android.provider.Contacts.*;
 import static android.provider.Contacts.ContactMethods.*;
@@ -32,9 +33,10 @@ public class User extends WebObject {
     static public User me=null;
 
     static public void createUserAndDevice(){
+        String fullName=getUsersFullName();
         User vcard = new User(
               "{   \"is\": \"vcard\", \n"+
-              "    \"fullName\": \"You\", \n"+
+              "    \"fullName\": \""+fullName+"\", \n"+
               "    \"address\": { } \n"+
               "}");
         User bookmarks = new User(
@@ -98,6 +100,30 @@ public class User extends WebObject {
           (location==null? "":
                         "  \"location\": { \"lat\": "+location.get("lat")+", \"lon\": "+location.get("lon")+" }\n")+
                         "}");
+    }
+
+    static String getUsersFullName(){
+        AccountManager acctmgr = AccountManager.get(NetMash.top);
+        Account[] accounts = acctmgr.getAccountsByType("com.google");
+        for(Account account: accounts){
+            String name=account.name;
+            String[] parts=name.split("@");
+            if(parts.length!=0) return toFullNameFromEmail(parts[0]);
+        }
+        return "You";
+    }
+
+    static public String toFullNameFromEmail(String emailname){
+        String[] parts=emailname.split("[ \\.\\-_]");
+        StringBuilder sb=new StringBuilder();
+        for(String part: parts){
+            if(part.length()==0) continue;
+            char[] partcha = part.toCharArray();
+            partcha[0]=Character.toUpperCase(partcha[0]);
+            sb.append(partcha);
+            sb.append(" ");
+        }
+        return sb.toString().trim();
     }
 
     // ---------------------------------------------------------
