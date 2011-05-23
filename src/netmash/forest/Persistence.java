@@ -27,7 +27,7 @@ public class Persistence implements FileUser {
     private JSON netmashconfig=null;
 
     private ConcurrentHashMap<String,CharBuffer> jsoncache = new ConcurrentHashMap<String,CharBuffer>();
-    private CopyOnWriteArraySet<String>          syncable  = new CopyOnWriteArraySet<String>();
+    private CopyOnWriteArraySet<WebObject>       syncable  = new CopyOnWriteArraySet<WebObject>();
 
     // ----------------------------------------
 
@@ -117,15 +117,15 @@ public class Persistence implements FileUser {
     // ----------------------------------------
 
     public void save(WebObject w){
-        jsoncache.put(w.uid, CharBuffer.wrap(w.toString()+"\n"));
-        syncable.add(w.uid);
+        syncable.add(w);
     }
 
     private void runSync(int syncrate){
         while(true){
-            for(String syncuid: syncable){
-                syncable.remove(syncuid);
-                CharBuffer jsonchars = jsoncache.get(syncuid);
+            for(WebObject w: syncable){
+                syncable.remove(w);
+                CharBuffer jsonchars=CharBuffer.wrap(w.toString()+"\n");
+                jsoncache.put(w.uid, jsonchars);
                 ByteBuffer bytebuffer = UTF8.encode(jsonchars);
                 if(topdbos==null){
                     try{ Kernel.writeFile(dbfile, true, bytebuffer, this); }
