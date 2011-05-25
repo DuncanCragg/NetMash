@@ -571,22 +571,26 @@ public class User extends WebObject {
 
     private LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, String objuid){ logrule();
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
-        hm2.put("direction", "vertical");
+        hm2.put("direction", hm.size()<=1? "horizontal": "vertical");
+        hm2.put(".open","{");
         for(String tag: hm.keySet()){
             LinkedList ll = new LinkedList();
             ll.add("direction:horizontal");
-            ll.add(tag+":");
+            ll.add(" "+tag+":");
             Object o=hm.get(tag);
             addToList(ll,o,objuid);
             hm2.put("#"+tag,ll);
         }
+        hm2.put(".close","}");
         return hm2;
     }
 
     private LinkedList guifyList(LinkedList ll, String objuid){
         LinkedList ll2 = new LinkedList();
-        ll2.add("direction:horizontal");
+        ll2.add(ll.size()<=1? "direction:horizontal": "direction:vertical");
+        ll2.add("[");
         for(Object o: ll) addToList(ll2,o,objuid);
+        ll2.add("]");
         return ll2;
     }
 
@@ -595,8 +599,8 @@ public class User extends WebObject {
         else
         if(o instanceof LinkedList)    ll.add(guifyList((LinkedList)o, objuid));
         else
-        if(o instanceof String)        ll.add(UID.normaliseUID(objuid, (String)o));
-        else                           ll.add(o);
+        if(UID.isUID(o))               ll.add(UID.normaliseUID(objuid, (String)o));
+        else                           ll.add(" "+o);
     }
 
     // ---------------------------------------------------------

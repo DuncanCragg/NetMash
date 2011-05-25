@@ -42,7 +42,9 @@ public class UID {
         return h.substring(h.length()-4);
     }
 
-    static public boolean isUID(String uid){
+    static public boolean isUID(Object o){
+        if(!(o instanceof String)) return false;
+        String uid=(String)o;
         if(uid==null || uid.equals("")) return false;
         if(uid.startsWith("http://") ||
            uid.startsWith("uid-")       ) return true;
