@@ -116,15 +116,21 @@ public class NetMash extends MapActivity {
     //---------------------------------------------------------
 
     private JSON uiJSON;
+    private String uiUID;
     private Handler guiHandler = new Handler();
     private Runnable uiDrawJSONRunnable=new Runnable(){public void run(){uiDrawJSON();}};
+    private boolean focused = false;
+    private String viewUID = null;
 
-    public void drawJSON(JSON uiJSON){ System.out.println("drawJSON");
+    public void drawJSON(JSON uiJSON, String uiUID){ System.out.println("drawJSON "+uiUID);
         this.uiJSON=uiJSON;
+        this.uiUID=uiUID;
         guiHandler.post(uiDrawJSONRunnable);
     }
 
-    private void uiDrawJSON(){ System.out.println("uiDrawJSON:\n"+uiJSON);
+    private void uiDrawJSON(){ System.out.println("uiDrawJSON "+uiUID+":\n"+uiJSON);
+        if(focused && viewUID.equals(uiUID)){ System.out.println("** locked"); return; }
+        focused=false; viewUID=uiUID;
         Object      o=uiJSON.hashPathN("view");
         if(o==null) o=uiJSON.listPathN("view");
         boolean horizontal=isHorizontal(o);
@@ -235,6 +241,7 @@ public class NetMash extends MapActivity {
     }
 
     private void fillStrip(LinearLayout layout, LinkedHashMap<String,Object> hm){
+        String[] colours=null;
         float dim0=0;
         float dimn=0;
         int i=0;
@@ -242,7 +249,10 @@ public class NetMash extends MapActivity {
             if(tag.equals("render")) continue;
             if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
-            if(tag.equals("colours")) continue;
+            if(tag.equals("colours")){
+                colours=hm.get(tag).toString().split(",");
+                continue;
+            }
             if(tag.equals("proportions")){
                 dim0=parseFirstInt(hm.get(tag).toString());
                 continue;
@@ -257,12 +267,13 @@ public class NetMash extends MapActivity {
             if(tag.equals("options")) continue;
             if(tag.equals("colours")) continue;
             if(tag.equals("proportions")) continue;
-            addToLayout(layout, hm.get(tag), i==0? dim0: dimn);
+            addToLayout(layout, hm.get(tag), selectColour(colours,i), i==0? dim0: dimn);
             i++;
         }
     }
 
     private void fillStrip(LinearLayout layout, LinkedList ll){
+        String[] colours=null;
         float dim0=0;
         float dimn=0;
         int i=0;
@@ -272,6 +283,10 @@ public class NetMash extends MapActivity {
                 if(s.startsWith("render:")) continue;
                 if(s.startsWith("direction:")) continue;
                 if(s.startsWith("options:")) continue;
+                if(s.startsWith("colours:")){
+                    colours=s.substring(8).split(",");
+                    continue;
+                }
                 if(s.startsWith("proportions:")){
                     dim0=parseFirstInt(s);
                     continue;
@@ -287,59 +302,65 @@ public class NetMash extends MapActivity {
                 if(s.startsWith("render:")) continue;
                 if(s.startsWith("direction:")) continue;
                 if(s.startsWith("options:")) continue;
+                if(s.startsWith("colours:")) continue;
                 if(s.startsWith("proportions:")) continue;
             }
-            addToLayout(layout, o, i==0? dim0: dimn);
+            addToLayout(layout, o, selectColour(colours,i), i==0? dim0: dimn);
             i++;
         }
     }
 
-    private void addToLayout(LinearLayout layout, Object o, float prop){
+    private void addToLayout(LinearLayout layout, Object o, int colour, float prop){
         if(o==null) return;
         if(isMapList(o)){
-            addAView(layout, createMapView(o), prop);
+            addAView(layout, createMapView(o), colour, prop);
         }
         else
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
-            if("horizontal".equals(hm.get("direction"))) addHorizontalStrip(layout, createHorizontalStrip(hm), prop);
-            else                                         addVerticalStrip(  layout, createVerticalStrip(hm), prop);
+            if("horizontal".equals(hm.get("direction"))) addHorizontalStrip(layout, createHorizontalStrip(hm), colour, prop);
+            else                                         addVerticalStrip(  layout, createVerticalStrip(hm), colour, prop);
         }
         else
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
             if(ll.size()==0) return;
-            if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll), prop);
-            else                                                    addVerticalStrip(  layout, createVerticalStrip(ll), prop);
+            if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll), colour, prop);
+            else                                                    addVerticalStrip(  layout, createVerticalStrip(ll), colour, prop);
         }
         else{
             String s=o.toString();
-            boolean isUID   = s.startsWith("uid-") || (s.startsWith("http://") && s.indexOf("uid-")!= -1 && s.endsWith(".json"));
-            boolean isImage = s.startsWith("http://") && s.endsWith(".jpg");
-            View v = isUID? createUIDView(s): (isImage? createImageView(s): createTextView(s));
-            addAView(layout, v, prop);
+            boolean isUID       = s.startsWith("uid-") || (s.startsWith("http://") && s.indexOf("uid-")!= -1 && s.endsWith(".json"));
+            boolean isImage     = s.startsWith("http://") && s.endsWith(".jpg");
+            boolean isFormField = s.startsWith("/") && s.endsWith("/");
+            View v = isUID?       createUIDView(s):
+                    (isImage?     createImageView(s):
+                    (isFormField? createFormView(s):
+                                  createTextView(s)));
+            addAView(layout, v, colour, prop);
         }
     }
 
-    private void addHorizontalStrip(LinearLayout layout, View view, float prop){
+    private void addHorizontalStrip(LinearLayout layout, View view, int colour, float prop){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
-    private void addVerticalStrip(LinearLayout layout, View view, float prop){
+    private void addVerticalStrip(LinearLayout layout, View view, int colour, float prop){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
-    private void addAView(LinearLayout layout, View view, float prop){
+    private void addAView(LinearLayout layout, View view, int colour, float prop){
         int width=(prop==0? FILL_PARENT: (int)((prop/100.0)*screenWidth+0.5));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, FILL_PARENT);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
+        if(colour!=0) view.setBackgroundColor(colour);
         layout.addView(view);
     }
 
@@ -357,22 +378,61 @@ public class NetMash extends MapActivity {
         return view;
     }
 
-    private TextView createTextView(String s){
-        TextView view=new TextView(this);
-        view.setText(s);
-        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        view.setTextSize(20);
-        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
-        view.setTextColor(0xff000000);
-        return view;
-    }
-
     private ImageView createImageView(String url){
         ImageView view = new ImageView(this);
         view.setAdjustViewBounds(true);
         view.setScaleType(ImageView.ScaleType.CENTER_CROP);
         view.setPadding(8,8,8,8);
         view.setImageBitmap(getImageBitmap(url));
+        return view;
+    }
+
+    private View createFormView(String s){
+        View view=null;
+        if(s.equals("/string/")) view=createFormTextView(s);
+        if(view==null) return createTextView(s);
+        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
+        return view;
+    }
+
+    private View createFormTextView(String s){
+        final EditText view=new EditText(this){
+            protected void onFocusChanged(boolean f, int d, Rect p){
+                super.onFocusChanged(f, d, p);
+                focused=f;
+            }
+        };
+        final Activity that=this;
+        view.setOnKeyListener(new OnKeyListener(){
+            public boolean onKey(View v, int keyCode, KeyEvent event){
+                if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
+                    System.out.println(view.getText());
+                    return true;
+                }
+                return false;
+            }
+        });
+        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        view.setTextSize(20);
+        view.setTextColor(0xff000000);
+        return view;
+    }
+
+    private TextView createTextView(String s){
+        TextView view=new TextView(this);
+        if(s.startsWith("![") && s.endsWith("]!")){
+            view.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+            s=s.substring(2,s.length()-2);
+        }
+        if(s.startsWith("/[") && s.endsWith("]/")){
+            view.setTypeface(Typeface.DEFAULT, Typeface.ITALIC);
+            s=s.substring(2,s.length()-2);
+        }
+        view.setText(s);
+        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        view.setTextSize(20);
+        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
+        view.setTextColor(0xff000000);
         return view;
     }
 
@@ -485,6 +545,32 @@ public class NetMash extends MapActivity {
             System.err.println("Couldn't load image at "+url+"\n"+e);
         }
         return bm;
+    }
+
+    private static final Map<String,Integer> COLOURMAP;
+    static{
+        Map<String,Integer> m=new HashMap<String,Integer>();
+        m.put("white",         0xffffffff); m.put("white*",         0xffffffff);
+        m.put("lightgrey",     0xeeeeeeee); m.put("lightgrey*",     0xeeeeeeee);
+        m.put("lightpink",     0xffffeeee); m.put("lightpink*",     0xffffeeee);
+        m.put("lightgreen",    0xffeeffee); m.put("lightgreen*",    0xffeeffee);
+        m.put("lightblue",     0xffeeeeff); m.put("lightblue*",     0xffeeeeff);
+        m.put("lightyellow",   0xffffffee); m.put("lightyellow*",   0xffffffee);
+        m.put("lightmauve",    0xffffeeff); m.put("lightmauve*",    0xffffeeff);
+        m.put("lightturquoise",0xffeeffff); m.put("lightturquoise*",0xffeeffff);
+        COLOURMAP=Collections.unmodifiableMap(m);
+    }
+    private int selectColour(String[] colours, int i){
+        if(colours==null) return 0;
+        if(colours.length==0) return 0;
+        if(i>=colours.length){
+            if(colours[colours.length-1].trim().endsWith("*")) i=colours.length-1;
+            else return 0;
+        }
+        String colour = colours[i].trim();
+        Integer c = COLOURMAP.get(colour);
+        if(c==null) return 0;
+        return c.intValue();
     }
 
     static public final String  INTRE = ".*?([0-9]+).*";
