@@ -180,6 +180,13 @@ public class WebObject {
         return s.equals(val);
     }
 
+    /** Test if integer at path is value. */
+    public boolean contentIs(String path, int val){
+        if(!contentSet(path)) return false;
+        int s = contentInt(path);
+        return s==val;
+    }
+
     /** Set String at this path in the JSON content. */
     public void content(String path, String val){
         doCopyOnWrite(path);

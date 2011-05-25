@@ -34,7 +34,7 @@ public class FXOrderPayment extends WebObject {
     }
 
     private void alertDealer(){
-        if(content("ticket")==null && content("dealer:is:0")!=null){ logrule();
+        if(content("ticket")==null && contentSet("dealer:is:0")){ logrule();
             notifying(content("dealer"));
         }
     }
@@ -48,7 +48,7 @@ public class FXOrderPayment extends WebObject {
     }
 
     private void investMore(){
-       if(content("ticket")!=null && contentDouble("params:3")==500.0){ logrule();
+       if(contentSet("ticket") && contentDouble("params:3")==500.0){ logrule();
            contentDouble("params:3", 1000.0);
        }
     }

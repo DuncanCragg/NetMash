@@ -55,8 +55,8 @@ public class FXDealerTicket extends WebObject {
 
     private void mirrorOrder(){
         if(contentIs("status", "waiting") && 
-           contentList("params")!=null && 
-           content("order:params")!=null){ logrule();
+           contentSet("params") && 
+           contentSet("order:params")){ logrule();
 
             content(      "params:0", content(      "order:params:0"));
             content(      "params:1", content(      "order:params:1"));

@@ -19,7 +19,7 @@ public class CountTo200 extends WebObject {
     }
 
     private void initialStateWithPair(){
-        if(contentInt("count")==1 && content("pair:count")!=null){
+        if(contentInt("count")==1 && contentSet("pair:count")){
             notifying(content("pair"));
             contentInt("count", 2);
         }

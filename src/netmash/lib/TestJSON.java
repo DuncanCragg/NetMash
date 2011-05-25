@@ -46,7 +46,7 @@ public class TestJSON {
         assert funky.equals("\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3"): "funky should be [\"quote\" 'quote' \\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
 
         String portstr = m.stringPath("modules:http:port");
-        assert portstr.equals("8080"): "port should be 8080, but it's "+portstr;
+        assert portstr==null: "port should be null, but it's "+portstr;
 
         int port = m.intPath("modules:http:port");
         assert port==8080: "port should be 8080, but it's "+port;

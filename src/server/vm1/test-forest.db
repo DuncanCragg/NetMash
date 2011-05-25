@@ -22,6 +22,7 @@
     "%observe": [],
     "%class": "server.types.Twitter",
     "is": [ "twitter" ],
+    "title": "Twitter Gateway",
     "types": {
         "twitter-user":      { "is": [ "twitter", "user" ],
                                "id": "/string/",
@@ -409,9 +410,10 @@
     "%observe": [],
     "%class": "DynamicPage",
     "is": [ "gui" ],
+    "title": "Demo of Dynamic GUI",
     "view": {
         "direction": "vertical",
-        "#title": "Dynamic Page",
+        "#title": "Demo of Dynamic GUI",
         "#incre": 1000,
         "#stuff": [
             "direction:vertical",
@@ -428,6 +430,22 @@
     "%observe": [],
     "%class": "server.types.UserHome",
     "is": [ "userhome", "userlist" ],
+    "title": "User Home",
     "list": []
+}
+
+{   "%uid": "uid-4b71-f8d4-c761-be2d",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "is": "links",
+    "title": "Random Collection of Links",
+    "list" : [ "http://netmash.net:8081/o/uid-6332-84e1-c1de-3364.json",
+               "http://netmash.net:8081/o/uid-7235-60ba-d323-d5d6.json",
+               "http://netmash.net:8081/o/uid-35ad-af7a-93fb-896d.json",
+               "http://netmash.net:8081/o/uid-76b8-8502-45d3-0543.json",
+               "http://netmash.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json",
+               "http://netmash.net:8081/o/uid-2161-baf3-858b-858c.json"
+    ]
 }
 

@@ -6,7 +6,7 @@ import java.util.*;
 import android.os.*;
 import android.net.*;
 import android.app.*;
-import android.content.Context;
+import android.content.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 
@@ -16,18 +16,28 @@ import android.widget.*;
 
 import com.google.android.maps.*;
 
-public class NetMashMapOverlay extends ItemizedOverlay {
+public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterface.OnClickListener {
 
-        private ArrayList<OverlayItem> overlayitems = new ArrayList<OverlayItem>();
-        private MapActivity mapactivity;
+        private String jumpUID;
 
-        public NetMashMapOverlay(Drawable defaultMarker, MapActivity mapactivity){
-            super(boundCenterBottom(defaultMarker));
-            populate();
-            this.mapactivity = mapactivity;
+        static public class Item extends OverlayItem{
+            String jumpUID;
+            public Item(GeoPoint point, String label, String sublabel, String jumpUID){
+                super(point, label, sublabel);
+                this.jumpUID=jumpUID;
+            }
         }
 
-        public void addItem(OverlayItem item){
+        private ArrayList<Item> overlayitems = new ArrayList<Item>();
+        private NetMash netmash;
+
+        public NetMashMapOverlay(Drawable defaultMarker, NetMash netmash){
+            super(boundCenterBottom(defaultMarker));
+            populate();
+            this.netmash = netmash;
+        }
+
+        public void addItem(Item item){
             overlayitems.add(item);
             populate();
         }
@@ -39,16 +49,27 @@ public class NetMashMapOverlay extends ItemizedOverlay {
 
         @Override
         protected boolean onTap(int index) {
-            OverlayItem item = overlayitems.get(index);
-            AlertDialog.Builder dialog = new AlertDialog.Builder(mapactivity);
+            Item item = overlayitems.get(index);
+            jumpUID=item.jumpUID;
+            AlertDialog.Builder dialog = new AlertDialog.Builder(netmash);
             dialog.setTitle(item.getTitle());
-            dialog.setMessage(item.getSnippet());
+            dialog.setIcon(netmash.getResources().getDrawable(R.drawable.mappinlogo));
+            String[] choices = new String[3];
+            choices[0]=item.getSnippet().replace("\n",", ");
+            choices[1]="See this Object";
+            choices[2]="Back to Map";
+            dialog.setItems(choices, this);
             dialog.show();
             return true;
         }
 
         @Override
-        protected OverlayItem createItem(int i){ return overlayitems.get(i); }
+        public void onClick(DialogInterface dialog, int choice){
+            if(choice==1) netmash.jumpToUID(jumpUID);
+        }
+
+        @Override
+        protected Item createItem(int i){ return overlayitems.get(i); }
 
         @Override
         public int size(){ return overlayitems.size(); }

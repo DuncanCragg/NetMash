@@ -631,7 +631,7 @@ public class JSON {
         if(o instanceof String){
             return (String)o;
         }
-        return o!=null? o.toString(): null;
+        return null;
     }
 
     private int getIntPath(LinkedHashMap content, String path) throws PathOvershot{

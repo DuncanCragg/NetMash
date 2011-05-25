@@ -113,6 +113,6 @@ clean:
 	rm -rf bin/NetMash.ap_ bin/NetMash*un*ed.apk
 	rm -rf gen/android/gui/R.java
 
-moreclean: clean
+veryclean: clean
 	rm -rf src/server/vm[12]/netmash.log
 	rm -rf src/server/vm[12]/forest.db

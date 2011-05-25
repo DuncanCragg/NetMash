@@ -110,7 +110,7 @@ public class NetMash extends MapActivity {
 
         setContentView(R.layout.main);
         layout = (RelativeLayout)findViewById(R.id.Layout);
-        layout.setBackgroundColor(0xff000000);
+        layout.setBackgroundColor(0xffffffdd);
     }
 
     //---------------------------------------------------------
@@ -192,6 +192,8 @@ public class NetMash extends MapActivity {
         layout.setPadding(0,0,0,0);
         fillStrip(layout, hm);
         ScrollView view = new ScrollView(this);
+        view.setScrollbarFadingEnabled(false);
+        view.setSmoothScrollingEnabled(true);
         view.addView(layout);
         return view;
     }
@@ -202,6 +204,8 @@ public class NetMash extends MapActivity {
         layout.setPadding(0,0,0,0);
         fillStrip(layout, hm);
         HorizontalScrollView view = new HorizontalScrollView(this);
+        view.setScrollbarFadingEnabled(false);
+        view.setSmoothScrollingEnabled(true);
         view.addView(layout);
         return view;
     }
@@ -212,6 +216,8 @@ public class NetMash extends MapActivity {
         layout.setPadding(0,0,0,0);
         fillStrip(layout, ll);
         ScrollView view = new ScrollView(this);
+        view.setScrollbarFadingEnabled(false);
+        view.setSmoothScrollingEnabled(true);
         view.addView(layout);
         return view;
     }
@@ -222,6 +228,8 @@ public class NetMash extends MapActivity {
         layout.setPadding(0,0,0,0);
         fillStrip(layout, ll);
         HorizontalScrollView view = new HorizontalScrollView(this);
+        view.setScrollbarFadingEnabled(false);
+        view.setSmoothScrollingEnabled(true);
         view.addView(layout);
         return view;
     }
@@ -234,18 +242,20 @@ public class NetMash extends MapActivity {
             if(tag.equals("render")) continue;
             if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
+            if(tag.equals("colours")) continue;
             if(tag.equals("proportions")){
                 dim0=parseFirstInt(hm.get(tag).toString());
                 continue;
             }
             i++;
         }
-        if(dim0 >0 && i>1) dimn=(98-dim0)/(i-1);
+        if(dim0 >0 && i>1) dimn=(99-dim0)/(i-1);
         i=0;
         for(String tag: hm.keySet()){
             if(tag.equals("render")) continue;
             if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
+            if(tag.equals("colours")) continue;
             if(tag.equals("proportions")) continue;
             addToLayout(layout, hm.get(tag), i==0? dim0: dimn);
             i++;
@@ -269,7 +279,7 @@ public class NetMash extends MapActivity {
             }
             i++;
         }
-        if(dim0 >0 && i>1) dimn=(98-dim0)/(i-1);
+        if(dim0 >0 && i>1) dimn=(99-dim0)/(i-1);
         i=0;
         for(Object o: ll){
             if(o instanceof String){
@@ -335,13 +345,13 @@ public class NetMash extends MapActivity {
 
     private TextView createUIDView(final String s){
         final TextView view=new TextView(this);
-        view.setText(">>");
+        view.setText(" >>");
         view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
             view.setTextColor(0xffff9900);
             user.jumpToUID(s);
         }});
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        view.setTextSize(30);
+        view.setTextSize(34);
         view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
         view.setTextColor(0xff000000);
         return view;
@@ -386,7 +396,7 @@ public class NetMash extends MapActivity {
             mapview.setBuiltInZoomControls(true);
             mapview.displayZoomControls(true);
         }
-        Drawable drawable = this.getResources().getDrawable(R.drawable.mappinlogo);
+        Drawable drawable = getResources().getDrawable(R.drawable.mappinlogo);
         NetMashMapOverlay itemizedoverlay=null;
         for(Object o: ll){
             if((o instanceof String) && o.toString().startsWith("layerkey:")){
@@ -410,12 +420,12 @@ public class NetMash extends MapActivity {
             String sublabel=(String)point.get("sublabel");
             LinkedHashMap<String,Double> location=(LinkedHashMap<String,Double>)point.get("location");
             if(location==null) continue;
-            String jump=(String)point.get("jump");
+            String jumpUID=(String)point.get("jump");
             int lat=(int)(location.get("lat")*1e6);
             int lon=(int)(location.get("lon")*1e6);
             minlat=Math.min(lat,minlat); maxlat=Math.max(lat,maxlat);
             minlon=Math.min(lon,minlon); maxlon=Math.max(lon,maxlon);
-            OverlayItem overlayitem = new OverlayItem(new GeoPoint(lat,lon), label, sublabel);
+            NetMashMapOverlay.Item overlayitem = new NetMashMapOverlay.Item(new GeoPoint(lat,lon), label, sublabel, jumpUID);
             itemizedoverlay.addItem(overlayitem);
         }
         if(minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
@@ -427,6 +437,10 @@ public class NetMash extends MapActivity {
         if(!overlays.contains(itemizedoverlay)) overlays.add(itemizedoverlay);
         mapview.postInvalidate();
         return mapview;
+    }
+
+    public void jumpToUID(String s){
+        user.jumpToUID(s);
     }
 
     private boolean isHorizontal(Object o){
