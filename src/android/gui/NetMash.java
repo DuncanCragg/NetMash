@@ -40,7 +40,7 @@ public class NetMash extends MapActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState); System.out.println("onCreate");
+        super.onCreate(savedInstanceState); log("onCreate");
         top=this;
         if(!Kernel.running) runKernel();
         drawInitialView();
@@ -50,34 +50,34 @@ public class NetMash extends MapActivity {
 
     @Override
     public void onRestart(){
-        super.onRestart(); System.out.println("onRestart");
+        super.onRestart(); log("onRestart");
     }
 
     @Override
     public void onStart(){
-        super.onStart(); System.out.println("onStart");
+        super.onStart(); log("onStart");
     }
 
     @Override
     public void onResume(){
-        super.onResume(); System.out.println("onResume");
+        super.onResume(); log("onResume");
         user.onTopResume();
     }
 
     @Override
     public void onPause(){
-        super.onPause(); System.out.println("onPause");
+        super.onPause(); log("onPause");
         user.onTopPause();
     }
 
     @Override
     public void onStop(){
-        super.onStop(); System.out.println("onStop");
+        super.onStop(); log("onStop");
     }
 
     @Override
     public void onDestroy(){
-        super.onDestroy(); System.out.println("onDestroy");
+        super.onDestroy(); log("onDestroy");
         user.onTopDestroy();
         top=null;
     }
@@ -122,14 +122,14 @@ public class NetMash extends MapActivity {
     private boolean focused = false;
     private String viewUID = null;
 
-    public void drawJSON(JSON uiJSON, String uiUID){ System.out.println("drawJSON "+uiUID);
+    public void drawJSON(JSON uiJSON, String uiUID){ log("drawJSON "+uiUID);
         this.uiJSON=uiJSON;
         this.uiUID=uiUID;
         guiHandler.post(uiDrawJSONRunnable);
     }
 
-    private void uiDrawJSON(){ System.out.println("uiDrawJSON "+uiUID+":\n"+uiJSON);
-        if(focused && viewUID.equals(uiUID)){ System.out.println("** locked"); return; }
+    private void uiDrawJSON(){ log("uiDrawJSON "+uiUID+":\n"+uiJSON);
+        if(focused && viewUID.equals(uiUID)){ log("** locked"); return; }
         focused=false; viewUID=uiUID;
         Object      o=uiJSON.hashPathN("view");
         if(o==null) o=uiJSON.listPathN("view");
@@ -332,7 +332,7 @@ public class NetMash extends MapActivity {
             String s=o.toString();
             boolean isUID       = s.startsWith("uid-") || (s.startsWith("http://") && s.indexOf("uid-")!= -1 && s.endsWith(".json"));
             boolean isImage     = s.startsWith("http://") && s.endsWith(".jpg");
-            boolean isFormField = s.startsWith("/") && s.endsWith("/");
+            boolean isFormField = s.startsWith("?[") && s.endsWith("]?");
             View v = isUID?       createUIDView(s):
                     (isImage?     createImageView(s):
                     (isFormField? createFormView(s):
@@ -366,15 +366,15 @@ public class NetMash extends MapActivity {
 
     private TextView createUIDView(final String s){
         final TextView view=new TextView(this);
-        view.setText(" >>");
         view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
             view.setTextColor(0xffff9900);
             user.jumpToUID(s);
         }});
-        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        view.setTextSize(34);
         view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
+        view.setText(" >>");
+        view.setTextSize(34);
         view.setTextColor(0xff000000);
+        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         return view;
     }
 
@@ -388,14 +388,34 @@ public class NetMash extends MapActivity {
     }
 
     private View createFormView(String s){
+        int b=s.indexOf("/");     
+        int e=s.lastIndexOf("/");
+        if(b== -1 || e== -1 || b==e) return createTextView(s);
+        String   label=s.substring(2,b).trim();
+        String[] types=s.substring(b+1,e).split(";");
+        if(types.length==0) return createTextView(s);
         View view=null;
-        if(s.equals("/string/")) view=createFormTextView(s);
+        if(types[0].equals("string")){
+            if(types.length==1) view=createFormTextView(label);
+            else
+            if(types[1].charAt(0)=='|') view=createFormRadioView(  label, types[1].split("\\|", -1));
+            else                        view=createFormSpinnerView(label, types[1].split("\\|", -1));
+        }
+        else
+        if(types[0].equals("boolean")){
+            if(types.length==1) view=createFormCheckView( label);
+            else                view=createFormToggleView(label, types[1].split("\\|", -1));
+        }
+        else
+        if(types[0].equals("integer")){
+            if(types.length==1) view=createFormRatingView(label, null);
+            else                view=createFormRatingView(label, types[1].split("\\|", -1));
+        }
         if(view==null) return createTextView(s);
-        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
         return view;
     }
 
-    private View createFormTextView(String s){
+    private View createFormTextView(String label){
         final EditText view=new EditText(this){
             protected void onFocusChanged(boolean f, int d, Rect p){
                 super.onFocusChanged(f, d, p);
@@ -406,15 +426,95 @@ public class NetMash extends MapActivity {
         view.setOnKeyListener(new OnKeyListener(){
             public boolean onKey(View v, int keyCode, KeyEvent event){
                 if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
-                    System.out.println(view.getText());
+                    log("Text: "+view.getText());
                     return true;
                 }
                 return false;
             }
         });
-        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
+        view.setText(label);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
+        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        return view;
+    }
+
+    private View createFormRadioView(String label, String[] choices){
+        RadioGroup view = new RadioGroup(this);
+        for(String choice: choices){
+            if(choice.length()==0) continue;
+            RadioButton v = new RadioButton(this);
+            v.setOnClickListener(new OnClickListener(){
+                public void onClick(View v) {
+                    log("Radio is: "+((RadioButton)v).getText());
+                }
+            });
+            v.setText(choice);
+            v.setTextSize(20);
+            v.setTextColor(0xff000000);
+            view.addView(v);
+        }
+        return view;
+    }
+
+    private View createFormSpinnerView(String label, String[] choices){
+        Spinner view = new Spinner(this);
+        view.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
+                log("spun to: "+parent.getItemAtPosition(pos).toString());
+            }
+            public void onNothingSelected(AdapterView parent){}
+        });
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, choices);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        view.setAdapter(adapter);
+        view.setPrompt(label);
+        return view;
+    }
+
+    private View createFormCheckView(String label){
+        CheckBox view = new CheckBox(this);
+        view.setOnClickListener(new OnClickListener(){
+            public void onClick(View v){
+                log("checkbox "+(((CheckBox)v).isChecked()? "": "not ")+"checked");
+            }
+        });
+        view.setText(label);
+        view.setTextSize(20);
+        view.setTextColor(0xff000000);
+        return view;
+    }
+
+    private View createFormToggleView(String label, String[] choices){
+        if(choices.length!=2) return null;
+        ToggleButton view = new ToggleButton(this);
+        view.setOnClickListener(new OnClickListener(){
+            public void onClick(View v){
+                log("toggle "+(((ToggleButton)v).isChecked()? "": "not ")+"checked");
+            }
+        });
+        view.setTextOff(choices[0]);
+        view.setTextOn(choices[1]);
+        view.setText(label);
+        view.setTextSize(20);
+        view.setTextColor(0xff000000);
+        return view;
+    }
+
+    private View createFormRatingView(String label, String[] choices){
+        RatingBar view = new RatingBar(this);
+        view.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser){
+                log("New Rating: " + rating);
+            }
+        });
+        int numchoices=5;
+        if(choices!=null && choices.length!=0){
+            try{ numchoices=Integer.parseInt(choices[choices.length-1]); }catch(Exception e){}
+        }
+        view.setNumStars(numchoices);
+        view.setStepSize(1.0f);
         return view;
     }
 
@@ -428,11 +528,11 @@ public class NetMash extends MapActivity {
             view.setTypeface(Typeface.DEFAULT, Typeface.ITALIC);
             s=s.substring(2,s.length()-2);
         }
-        view.setText(s);
-        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        view.setTextSize(20);
         view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
+        view.setText(s);
+        view.setTextSize(20);
         view.setTextColor(0xff000000);
+        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         return view;
     }
 
@@ -609,6 +709,11 @@ public class NetMash extends MapActivity {
         /* http://code.google.com/p/android/issues/detail?id=9431 */
         java.lang.System.setProperty("java.net.preferIPv4Stack",     "true");
         java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
+    }
+
+    public void log(Object o){
+        String thread=Thread.currentThread().toString();
+        System.out.println("---"+thread+"-----------\n"+o);
     }
 }
 
