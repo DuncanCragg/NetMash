@@ -184,6 +184,14 @@ public class JSON {
         try{ return boolPath(path); }catch(PathOvershot po){ return false; }
     }
 
+    /** Set boolean at the given path.
+      * Returns true if actually changed.
+      */
+    public boolean boolPath(String path, boolean value){
+        ensureContent();
+        return setBoolPath(tophash, path, value);
+    }
+
     /** Get double (or 0 if not) at given path. */
     public double doublePath(String path) throws PathOvershot{
         ensureContent();
@@ -759,6 +767,10 @@ public class JSON {
 
     private boolean setDoublePath(LinkedHashMap hashmap, String path, double value){
         return setObject(hashmap, path, new Double(value));
+    }
+
+    private boolean setBoolPath(LinkedHashMap hashmap, String path, boolean value){
+        return setObject(hashmap, path, new Boolean(value));
     }
 
     private boolean setHashPath(LinkedHashMap hashmap, String path, LinkedHashMap value){

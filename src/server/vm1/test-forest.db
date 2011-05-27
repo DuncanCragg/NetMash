@@ -423,10 +423,10 @@
             [ "direction:horizontal", "proportions:99%", "colours:lightpink",            "and forms backed by server functions:" ],
             { "direction":"horizontal", "proportions":"98%",                        "#something": "?[Type something: /string/]?" },
             { "direction":"horizontal", "proportions":"98%", "colours":"lightblue", "#checkit":   "?[Check me! /boolean/]?" },
-            { "direction":"horizontal", "proportions":"98%", "colours":"lightblue", "#radioin":   "?[Choose one: /string;|this|that|other/ ]?" },
-            { "direction":"horizontal",                                             "#spinme":    "?[Choose also: /string;this is the first choice|that is another|here is the final option/ ]?" },
-            { "direction":"horizontal",                                             "#toggler":   "?[Set me /boolean;I'm now off|I'm now on/ ]?" },
-            { "direction":"horizontal", "proportions":"98%", "colours":"lightblue", "#rateme":    "?[Rate me! /integer;0||4/ ]?" }
+            { "direction":"horizontal", "proportions":"98%", "colours":"lightblue", "#radioin":   "?[ /string;|this|that|other/ ]?" },
+            { "direction":"horizontal", "#spinme":    "?[Choose one: /string;this is the first choice|that is another|here is the final option/ ]?" },
+            { "direction":"horizontal",                                             "#toggler":   "?[ /boolean;I'm now off|I'm now on/ ]?" },
+            { "direction":"horizontal", "proportions":"95%", "colours":"lightblue", "#rateme":    "?[ /integer;0||4/ ]?" }
          ]
     }
 }

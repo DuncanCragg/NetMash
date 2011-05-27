@@ -29,6 +29,7 @@ public class User extends WebObject {
     // ---------------------------------------------------------
 
     static public User me=null;
+    static public User currentform=null;
 
     static public void createUserAndDevice(){
         String fullName=getUsersFullName();
@@ -78,7 +79,8 @@ public class User extends WebObject {
               "        \"viewas\": \"gui\", \n"+
               "        \"links\": \""+linksuid+"\", \n"+
               "        \"history\": null, \n"+
-              "        \"contacts\":  \""+contactsuid+"\" \n"+
+              "        \"contacts\":  \""+contactsuid+"\", \n"+
+              "        \"forms\": { } \n"+
               "    }\n"+
               "}");
     }
@@ -92,6 +94,14 @@ public class User extends WebObject {
             (emailaddress!=null? ",\n  \"email\": \""+emailaddress+"\"": "")+
             (address!=null?      ",\n  \"address\": \""+address+"\"": "")+
                                  "\n}");
+    }
+
+    static User newForm(String useruid, String guiuid){
+        return new User("{ \"is\": \"form\", \n"+
+                        "  \"user\": \""+useruid+"\", \n"+
+                        "  \"gui\": \""+guiuid+"\", \n"+
+                        "  \"form\": { }\n"+
+                        "}");
     }
 
     static String getUsersFullName(){
@@ -243,19 +253,107 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
+    private String returnstringhack; // so fix it
+    public String getFormStringVal(final String guiuid, final String tag){
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                if(!contentSet("private:forms:"+UID.toUID(guiuid))){
+                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
+                    currentform=null;
+                    returnstringhack=null;
+                }
+                else{
+                    returnstringhack=content("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                }
+            }
+        };
+        return returnstringhack;
+    }
+
+    private boolean returnboolhack; // so fix it
+    public boolean getFormBoolVal(final String guiuid, final String tag){
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                if(!contentSet("private:forms:"+UID.toUID(guiuid))){
+                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
+                    currentform=null;
+                    returnboolhack=false;
+                }
+                else{
+                    returnboolhack=contentBool("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                }
+            }
+        };
+        return returnboolhack;
+    }
+
+    private int returninthack; // so fix it
+    public int getFormIntVal(final String guiuid, final String tag){
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                if(!contentSet("private:forms:"+UID.toUID(guiuid))){
+                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
+                    currentform=null;
+                    returninthack=0;
+                }
+                else{
+                    returninthack=contentInt("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                }
+            }
+        };
+        return returninthack;
+    }
+
+    public void setFormVal(final String guiuid, final String tag, final String val){
+        if(this==me && currentform!=null) currentform.setFormVal(guiuid, tag, val);
+        if(this!=currentform) return;
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                content("form:"+dehash(tag), val);
+                notifying(content("gui"));
+            }
+        };
+    }
+
+    public void setFormVal(final String guiuid, final String tag, final boolean val){
+        if(this==me && currentform!=null) currentform.setFormVal(guiuid, tag, val);
+        if(this!=currentform) return;
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                contentBool("form:"+dehash(tag), val);
+                notifying(content("gui"));
+            }
+        };
+    }
+
+    public void setFormVal(final String guiuid, final String tag, final int val){
+        if(this==me && currentform!=null) currentform.setFormVal(guiuid, tag, val);
+        if(this!=currentform) return;
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                contentInt("form:"+dehash(tag), val);
+                notifying(content("gui"));
+            }
+        };
+    }
+
+    private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }
+
+    // ---------------------------------------------------------
+
     public void evaluate(){
         if(contentIs("is", "user") && this==me){
             showWhatIAmViewing();
         }
         else
-        if(contentIsOrListContains("is", "user")){ log("other user: "+this);
-        }
-        else
         if(contentListContainsAll("is", list("private", "vcardlist"))){ log("contacts: "+this);
             populateContacts();
         }
-        else{ log("no evaluate: "+this);
+        else
+        if(contentIs("is", "form")){ log("form: "+this);
+            currentform=this;
         }
+        else log("no evaluate: "+this);
     }
 
     private void showWhatIAmViewing(){

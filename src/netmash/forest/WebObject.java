@@ -239,6 +239,29 @@ public class WebObject {
         statemod = updatingState.doublePath(path, val) || statemod;
     }
 
+    /** Get boolean at this path in the JSON content. */
+    public boolean contentBool(String path){
+        boolean b=false;
+        try{ b = updatingState.boolPath(path);
+        }catch(PathOvershot po){
+            String parentuid=uid;
+            while(true){
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                if(w==null)break;
+                try{ b = w.publicState.boolPath(po.path); break;
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
+            }
+        }
+        return b;
+    }
+
+    /** Set boolean at this path in the JSON content. */
+    public void contentBool(String path, boolean val){
+        doCopyOnWrite(path);
+        statemod = updatingState.boolPath(path, val) || statemod;
+    }
+
     /** Construct a list utility. */
     @SuppressWarnings("unchecked")
     static public LinkedList list(Object...args){

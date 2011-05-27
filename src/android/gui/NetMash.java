@@ -29,7 +29,7 @@ import android.User;
 
 /**  NetMash main.
   */
-public class NetMash extends MapActivity {
+public class NetMash extends MapActivity{
 
     static public NetMash top=null;
     static public User    user=null;
@@ -92,7 +92,7 @@ public class NetMash extends MapActivity {
     }
  
     @Override
-    public void onBackPressed() {
+    public void onBackPressed(){
         user.jumpBack();
         return;
     }
@@ -166,7 +166,7 @@ public class NetMash extends MapActivity {
     static final public int MENU_ITEM_RAW = Menu.FIRST+4;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu){
         super.onCreateOptionsMenu(menu);
         menu.add(0, MENU_ITEM_ADD, Menu.NONE, "+ Link");
         menu.add(1, MENU_ITEM_LNX, Menu.NONE, "Links");
@@ -267,7 +267,7 @@ public class NetMash extends MapActivity {
             if(tag.equals("options")) continue;
             if(tag.equals("colours")) continue;
             if(tag.equals("proportions")) continue;
-            addToLayout(layout, hm.get(tag), selectColour(colours,i), i==0? dim0: dimn);
+            addToLayout(layout, tag, hm.get(tag), selectColour(colours,i), i==0? dim0: dimn);
             i++;
         }
     }
@@ -305,12 +305,12 @@ public class NetMash extends MapActivity {
                 if(s.startsWith("colours:")) continue;
                 if(s.startsWith("proportions:")) continue;
             }
-            addToLayout(layout, o, selectColour(colours,i), i==0? dim0: dimn);
+            addToLayout(layout, null, o, selectColour(colours,i), i==0? dim0: dimn);
             i++;
         }
     }
 
-    private void addToLayout(LinearLayout layout, Object o, int colour, float prop){
+    private void addToLayout(LinearLayout layout, String tag, Object o, int colour, float prop){
         if(o==null) return;
         if(isMapList(o)){
             addAView(layout, createMapView(o), colour, prop);
@@ -335,7 +335,7 @@ public class NetMash extends MapActivity {
             boolean isFormField = s.startsWith("?[") && s.endsWith("]?");
             View v = isUID?       createUIDView(s):
                     (isImage?     createImageView(s):
-                    (isFormField? createFormView(s):
+                    (isFormField? createFormView(tag, s):
                                   createTextView(s)));
             addAView(layout, v, colour, prop);
         }
@@ -387,7 +387,7 @@ public class NetMash extends MapActivity {
         return view;
     }
 
-    private View createFormView(String s){
+    private View createFormView(String tag, String s){
         int b=s.indexOf("/");     
         int e=s.lastIndexOf("/");
         if(b== -1 || e== -1 || b==e) return createTextView(s);
@@ -396,27 +396,27 @@ public class NetMash extends MapActivity {
         if(types.length==0) return createTextView(s);
         View view=null;
         if(types[0].equals("string")){
-            if(types.length==1) view=createFormTextView(label);
+            if(types.length==1) view=createFormTextView(tag, label);
             else
-            if(types[1].charAt(0)=='|') view=createFormRadioView(  label, types[1].split("\\|", -1));
-            else                        view=createFormSpinnerView(label, types[1].split("\\|", -1));
+            if(types[1].charAt(0)=='|') view=createFormRadioView(  tag, label, types[1].split("\\|", -1));
+            else                        view=createFormSpinnerView(tag, label, types[1].split("\\|", -1));
         }
         else
         if(types[0].equals("boolean")){
-            if(types.length==1) view=createFormCheckView( label);
-            else                view=createFormToggleView(label, types[1].split("\\|", -1));
+            if(types.length==1) view=createFormCheckView( tag, label);
+            else                view=createFormToggleView(tag, label, types[1].split("\\|", -1));
         }
         else
         if(types[0].equals("integer")){
-            if(types.length==1) view=createFormRatingView(label, null);
-            else                view=createFormRatingView(label, types[1].split("\\|", -1));
+            if(types.length==1) view=createFormRatingView(tag, label, null);
+            else                view=createFormRatingView(tag, label, types[1].split("\\|", -1));
         }
         if(view==null) return createTextView(s);
         return view;
     }
 
-    private View createFormTextView(String label){
-        final EditText view=new EditText(this){
+    private View createFormTextView(final String tag, String label){
+        EditText view=new EditText(this){
             protected void onFocusChanged(boolean f, int d, Rect p){
                 super.onFocusChanged(f, d, p);
                 focused=f;
@@ -426,95 +426,105 @@ public class NetMash extends MapActivity {
         view.setOnKeyListener(new OnKeyListener(){
             public boolean onKey(View v, int keyCode, KeyEvent event){
                 if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
-                    log("Text: "+view.getText());
+                    user.setFormVal(viewUID, tag, ((EditText)v).getText().toString());
                     return true;
                 }
                 return false;
             }
         });
         view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
-        view.setText(label);
+        String val=user.getFormStringVal(viewUID, tag);
+        if(val!=null) view.setText(val);
+        else          view.setText(label);
+        view.selectAll();
         view.setTextSize(20);
         view.setTextColor(0xff000000);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         return view;
     }
 
-    private View createFormRadioView(String label, String[] choices){
+    private View createFormRadioView(final String tag, String label, String[] choices){
+        String val=user.getFormStringVal(viewUID, tag);
         RadioGroup view = new RadioGroup(this);
         for(String choice: choices){
             if(choice.length()==0) continue;
             RadioButton v = new RadioButton(this);
             v.setOnClickListener(new OnClickListener(){
-                public void onClick(View v) {
-                    log("Radio is: "+((RadioButton)v).getText());
-                }
+                public void onClick(View v){ user.setFormVal(viewUID, tag, ((RadioButton)v).getText().toString()); }
             });
             v.setText(choice);
             v.setTextSize(20);
             v.setTextColor(0xff000000);
             view.addView(v);
+            if(choice.equals(val)) v.setChecked(true);
         }
         return view;
     }
 
-    private View createFormSpinnerView(String label, String[] choices){
+    private View createFormSpinnerView(final String tag, String label, String[] choices){
         Spinner view = new Spinner(this);
         view.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-                log("spun to: "+parent.getItemAtPosition(pos).toString());
+                user.setFormVal(viewUID, tag, parent.getItemAtPosition(pos).toString());
             }
             public void onNothingSelected(AdapterView parent){}
         });
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, choices);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         view.setAdapter(adapter);
+        String val=user.getFormStringVal(viewUID, tag);
+        if(val!=null) view.setSelection(indexOf(val, choices));
         view.setPrompt(label);
         return view;
     }
 
-    private View createFormCheckView(String label){
+    private int indexOf(String needle, String[] haystack){
+        for(int i=0; i<haystack.length; i++) if(haystack[i].equals(needle)) return i;
+        return 0;
+    }
+
+    private View createFormCheckView(final String tag, String label){
         CheckBox view = new CheckBox(this);
         view.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){
-                log("checkbox "+(((CheckBox)v).isChecked()? "": "not ")+"checked");
-            }
+            public void onClick(View v){ user.setFormVal(viewUID, tag, ((CheckBox)v).isChecked()); }
         });
+        boolean val=user.getFormBoolVal(viewUID, tag);
+        view.setChecked(val);
         view.setText(label);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
         return view;
     }
 
-    private View createFormToggleView(String label, String[] choices){
+    private View createFormToggleView(final String tag, String label, String[] choices){
         if(choices.length!=2) return null;
         ToggleButton view = new ToggleButton(this);
         view.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){
-                log("toggle "+(((ToggleButton)v).isChecked()? "": "not ")+"checked");
-            }
+            public void onClick(View v){ user.setFormVal(viewUID, tag, ((ToggleButton)v).isChecked()); }
         });
+        boolean val=user.getFormBoolVal(viewUID, tag);
+        view.setChecked(val);
+        view.setText(choices[val? 1:0]);
         view.setTextOff(choices[0]);
         view.setTextOn(choices[1]);
-        view.setText(label);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
         return view;
     }
 
-    private View createFormRatingView(String label, String[] choices){
+    private View createFormRatingView(final String tag, String label, String[] choices){
         RatingBar view = new RatingBar(this);
         view.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser){
-                log("New Rating: " + rating);
-            }
+            public void onRatingChanged(RatingBar b, float r, boolean f){ user.setFormVal(viewUID, tag, (int)r); }
         });
         int numchoices=5;
         if(choices!=null && choices.length!=0){
             try{ numchoices=Integer.parseInt(choices[choices.length-1]); }catch(Exception e){}
         }
-        view.setNumStars(numchoices);
+        int val=user.getFormIntVal(viewUID, tag);
         view.setStepSize(1.0f);
+        view.setNumStars(numchoices);
+        view.setRating((float)val);
         return view;
     }
 
@@ -628,11 +638,11 @@ public class NetMash extends MapActivity {
     }
 
     @Override
-    protected boolean isRouteDisplayed() {
+    protected boolean isRouteDisplayed(){
         return false;
     }
 
-    private Bitmap getImageBitmap(String url) {
+    private Bitmap getImageBitmap(String url){
         Bitmap bm=null;
         try{
             URLConnection conn = new URL(url).openConnection();
@@ -641,7 +651,7 @@ public class NetMash extends MapActivity {
             BufferedInputStream bis = new BufferedInputStream(is, 8092);
             bm = BitmapFactory.decodeStream(bis);
             bis.close(); is.close();
-        } catch (IOException e) {
+        } catch (IOException e){
             System.err.println("Couldn't load image at "+url+"\n"+e);
         }
         return bm;
