@@ -1,6 +1,6 @@
 NetMash is Apps Without Boundaries!
 
-See htt://netmash.net for an Android quick-start:
+See http://netmash.net for an Android quick-start:
 
 $ vi makefile && make init && make android && make editdb && make runlocalserver
 
