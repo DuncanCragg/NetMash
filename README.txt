@@ -1,5 +1,10 @@
-NetMash is the Java Reference Implementation of FOREST
+NetMash is Apps Without Boundaries!
+
+See htt://netmash.net for an Android quick-start:
+
+$ vi makefile && make init && make android && make editdb && make runlocalserver
 
 $ make runtests   -- just JSON tests at the moment
-$ make runall     -- run up two vms and run FX example
+$ make runall     -- run up two vms and run some examples
+
 
