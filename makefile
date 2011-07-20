@@ -2,7 +2,7 @@
 ################################################################################
 
 # IP number of host to run the NetMash server and visible to the emulator
-# .. probably what you see in "ifconfig"
+# try "make myip" .. it's probably what you see in "ifconfig"
 
 YOUR_IP=192.168.207.191
 
@@ -48,6 +48,9 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 
 init:
 	android update project -p .
+
+myip:
+	@ifconfig | egrep inet.addr: | head -1 | sed "s/[a-z :]*\([0-9\.]*\).*/\1/"
 
 run1: jar
 	(cd src/server/vm1; ./run.sh)
