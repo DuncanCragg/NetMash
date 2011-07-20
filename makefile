@@ -159,3 +159,6 @@ clean:
 veryclean: clean
 	rm -rf src/server/vm[12]/netmash.log
 	rm -rf src/server/vm[12]/forest.db
+	rm -rf bin/NetMash-*.apk
+
+
