@@ -54,9 +54,9 @@ allconfig:
 editdb:
 	vi src/server/vm1/test-forest.db
 
-runlocalserver: kill clean setlocalhost run1 logout1
+runlocalserver: kill clean setlocalconfig run1 logout1
 
-runnet: kill clean sethost run1 logout1
+runnet: kill clean setnetconfig run1 logout1
 
 runcur: kill curconfig run1n2
 
@@ -73,11 +73,13 @@ runon2:
 whappen:
 	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
 
-setlocalhost:
-	sed -i -e "s:localhost:${YOUR_IP}:" src/server/vm1/netmashconfig.json
+setappconfig:
 	sed -i -e "s:localhost:${YOUR_IP}:" res/raw/netmashconfig.json
 
-sethost:
+setlocalconfig:
+	sed -i -e "s:localhost:${YOUR_IP}:" src/server/vm1/netmashconfig.json
+
+setnetconfig:
 	sed -i -e "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
 
 setup:
@@ -102,7 +104,7 @@ runuid: jar
 jar: ./build/classes classes
 	( cd ./build/classes; jar cfm ../netmash.jar ../META-INF/MANIFEST.MF . )
 
-android: clean
+android: clean setappconfig
 	ant debug
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
