@@ -1,15 +1,25 @@
 
-# Your IP number
-YOUR_IP=169.254.106.153
+################################################################################
 
-# Where you want the Android apk to be copied
+# IP number of host to run the NetMash server and visible to the emulator
+# .. probably what you see in "ifconfig"
+
+YOUR_IP=192.168.207.191
+
+################################################################################
+
+# Where you want the Android apk to be copied (not for quickstart)
+
 DEBUG_TARGET=~/HostDesktop
 
-# Where you want the release Android apk to be copied
+# Where you want the release Android apk to be copied (not for quickstart)
+
 RELEASE_TARGET=../net/netmash.net/NetMash.apk
 
+################################################################################
+
 noargs:
-	@echo "make init && make android && make editdb && make runlocalserver"
+	@echo "vi makefile && make init && make android && make editdb && make runlocalserver"
 
 classes: \
 ./build/classes/netmash/Version.class \
@@ -109,7 +119,7 @@ android: clean setappconfig
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
 
-netmash: clean
+netmashdebug: clean
 	ant debug
 	cp bin/NetMash-debug.apk $(DEBUG_TARGET)
 
