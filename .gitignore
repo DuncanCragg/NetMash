@@ -1,0 +1,14 @@
+,*
+.*.swp
+doc/local/
+build/classes/
+src/server/vm?/forest.db
+src/server/vm?/*.class
+src/server/vm?/*.log
+src/server/vm2/netmashconfig.json
+local.properties
+bin/
+gen/
+libs/
+netmash.keystore
+

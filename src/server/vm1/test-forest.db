@@ -1,3 +1,20 @@
+{   "%uid": "uid-e02f-e1af-1c06-7d5d",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Your Name Here",
+    "email": "you@yourdomain.com",
+    "address": {
+      "street": "150 Old Park Ln",
+      "locality": "London",
+      "postalCode": "W1K 1QZ",
+      "countryName": "UK"
+    },
+    "tel": { "home": "020 8888 8888", "mobile": "0777 77 77 777" }
+}
+
 {   "%uid": "uid-c47f-5e67-9fc8-b842",
     "%etag": 11,
     "%notify": [],

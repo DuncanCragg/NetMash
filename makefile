@@ -1,7 +1,15 @@
 
+# Your IP number
+YOUR_IP=169.254.106.153
+
 # Where you want the Android apk to be copied
 DEBUG_TARGET=~/HostDesktop
+
+# Where you want the release Android apk to be copied
 RELEASE_TARGET=../net/netmash.net/NetMash.apk
+
+noargs:
+	@echo "make init && make android && make editdb && make runlocalserver"
 
 classes: \
 ./build/classes/netmash/Version.class \
@@ -28,10 +36,8 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 ./build/classes/%.class: ./src/%.java
 	javac $(LIBOPTIONS) $<
 
-runnet: kill clean sethost run1 logout1
-
-sethost:
-	sed -i "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
+init:
+	android update project -p .
 
 run1: jar
 	(cd src/server/vm1; ./run.sh)
@@ -44,6 +50,13 @@ curconfig:
 
 allconfig:
 	cp src/server/vm2/allconfig.json src/server/vm2/netmashconfig.json
+
+editdb:
+	vi src/server/vm1/test-forest.db
+
+runlocalserver: kill clean setlocalhost run1 logout1
+
+runnet: kill clean sethost run1 logout1
 
 runcur: kill curconfig run1n2
 
@@ -59,6 +72,13 @@ runon2:
 
 whappen:
 	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
+
+setlocalhost:
+	sed -i -e "s:localhost:${YOUR_IP}:" src/server/vm1/netmashconfig.json
+	sed -i -e "s:localhost:${YOUR_IP}:" res/raw/netmashconfig.json
+
+sethost:
+	sed -i -e "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
 
 setup:
 	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test-forest.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test-forest.db
@@ -76,8 +96,16 @@ runjson: jar
 runuid: jar
 	java -ea -classpath ./build/netmash.jar netmash.forest.UID
 
-jar: classes
+./build/classes:
+	mkdir -p ./build/classes
+
+jar: ./build/classes classes
 	( cd ./build/classes; jar cfm ../netmash.jar ../META-INF/MANIFEST.MF . )
+
+android: clean
+	ant debug
+	adb uninstall android.gui
+	adb install bin/NetMash-debug.apk
 
 netmash: clean
 	ant debug

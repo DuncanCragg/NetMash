@@ -7,5 +7,6 @@
                "log": true,
                "home-cache-notify": "http://netmash.net:8081/o/c-n-14d5-99c5-da00-806a" },
   "ots": { "homeusers": "http://netmash.net:8081/o/uid-6332-84e1-c1de-3364.json",
-           "links": [   "http://netmash.net:8081/o/uid-4b71-f8d4-c761-be2d.json" ] }
+           "links": [   "http://localhost:8081/o/uid-e02f-e1af-1c06-7d5d.json",
+                        "http://netmash.net:8081/o/uid-4b71-f8d4-c761-be2d.json" ] }
 }
