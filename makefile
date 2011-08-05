@@ -87,13 +87,13 @@ whappen:
 	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
 
 setappconfig:
-	sed -i"" -e "s:localhost:${YOUR_IP}:" res/raw/netmashconfig.json
+	sed -i "" -e "s:localhost:${YOUR_IP}:" res/raw/netmashconfig.json
 
 setlocalconfig:
-	sed -i"" -e "s:localhost:${YOUR_IP}:" src/server/vm1/netmashconfig.json
+	sed -i "" -e "s:localhost:${YOUR_IP}:" src/server/vm1/netmashconfig.json
 
 setnetconfig:
-	sed -i"" -e "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
+	sed -i "" -e "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
 
 setup:
 	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test-forest.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test-forest.db
