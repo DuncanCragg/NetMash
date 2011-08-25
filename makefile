@@ -4,7 +4,7 @@
 # IP number of host to run the NetMash server and visible to the emulator
 # try "make myip" .. it's probably what you see in "ifconfig"
 
-YOUR_IP=192.168.207.191
+YOUR_IP=192.168.0.7
 
 ################################################################################
 
@@ -121,6 +121,11 @@ android: clean setappconfig
 	ant debug
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
+
+androidrel: clean setappconfig
+	ant release
+	adb uninstall android.gui
+	adb install bin/NetMash-release.apk
 
 netmashdebug: clean
 	ant debug
