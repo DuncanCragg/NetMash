@@ -4,7 +4,7 @@
     "%observe": [],
     "%class": "",
     "is": [ "vcard" ],
-    "fullName": "Your Name Here",
+    "fullName": "Enter Your Full Name Here",
     "email": "you@yourdomain.com",
     "address": {
       "street": "150 Old Park Ln",

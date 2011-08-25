@@ -1,13 +1,6 @@
 
 ################################################################################
 
-# IP number of host to run the NetMash server and visible to the emulator
-# try "make myip" .. it's probably what you see in "ifconfig"
-
-YOUR_IP=192.168.0.7
-
-################################################################################
-
 # Where you want the Android apk to be copied (not for quickstart)
 
 DEBUG_TARGET=~/HostDesktop
@@ -19,7 +12,7 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 ################################################################################
 
 noargs:
-	@echo "vi makefile && make init && make android && make editdb && make runlocalserver"
+	@echo "make android && make editdb && make runlocalserver"
 
 classes: \
 ./build/classes/netmash/Version.class \
@@ -46,11 +39,13 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 ./build/classes/%.class: ./src/%.java
 	javac $(LIBOPTIONS) $<
 
-init:
+init:   proguard.cfg local.properties
+
+proguard.cfg:
 	android update project -p .
 
-myip:
-	@ifconfig | egrep inet.addr: | head -1 | sed "s/[a-z :]*\([0-9\.]*\).*/\1/"
+local.properties:
+	android update project -p .
 
 run1: jar
 	(cd src/server/vm1; ./run.sh)
@@ -87,10 +82,10 @@ whappen:
 	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
 
 setappconfig:
-	sed -i"" -e "s:localhost:${YOUR_IP}:" res/raw/netmashconfig.json
+	sed -i"" -e "s:localhost:10.0.2.2:" res/raw/netmashconfig.json
 
 setlocalconfig:
-	sed -i"" -e "s:localhost:${YOUR_IP}:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
 
 setnetconfig:
 	sed -i"" -e "s:localhost:netmash.net:" src/server/vm1/netmashconfig.json
@@ -117,24 +112,24 @@ runuid: jar
 jar: ./build/classes classes
 	( cd ./build/classes; jar cfm ../netmash.jar ../META-INF/MANIFEST.MF . )
 
-android: clean setappconfig
+android: clean init setappconfig
 	ant debug
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
 
-androidrel: clean setappconfig
+androidrel: clean init setappconfig
 	ant release
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
 
-netmashdebug: clean
+netmashdebug: clean init
 	ant debug
 	cp bin/NetMash-debug.apk $(DEBUG_TARGET)
 
-netmashtestrel: clean
+netmashtestrel: clean init
 	ant release
 
-netmashrel: clean
+netmashrel: clean init
 	ant release
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
@@ -165,5 +160,7 @@ veryclean: clean
 	rm -rf src/server/vm[12]/netmash.log
 	rm -rf src/server/vm[12]/forest.db
 	rm -rf bin/NetMash-*.apk
+	git checkout res/raw/netmashconfig.json src/server/vm1/netmashconfig.json
+
 
 
