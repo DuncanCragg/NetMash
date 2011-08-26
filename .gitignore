@@ -3,6 +3,7 @@ gen/
 libs/
 build/classes/
 local.properties
+proguard.cfg
 netmash.keystore
 doc/local/
 src/server/vm?/forest.db
