@@ -44,9 +44,9 @@ runquickserver: kill clean usequickdb run1 logout1
 
 runtestserver: kill clean setvmtestconfig usetestdb run1 logout1
 
-runcur: kill curconfig run1n2
+runcur: kill curconfig usetestdb run1n2
 
-runall: kill allconfig run1n2
+runall: kill allconfig usetestdb run1n2
 
 runon1:
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
