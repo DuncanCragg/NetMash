@@ -148,7 +148,6 @@ veryclean: clean
 	rm -rf src/server/vm[12]/netmash.log
 	rm -rf src/server/vm[12]/forest.db
 	rm -rf bin/NetMash-*.apk
-	git checkout res/raw/netmashconfig.json src/server/vm1/netmashconfig.json
 
 # -------------------------------------------------------------------
 
