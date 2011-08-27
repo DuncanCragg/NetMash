@@ -42,11 +42,11 @@ testonphone: androidtestrel reinstall logcat
 
 runquickserver: kill clean usequickdb run1 logout1
 
-runtestserver: kill clean setvmtestconfig usetestdb run1 logout1
+runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
 
-runcur: kill curconfig usetestdb run1n2
+runcur: kill curconfig setvmtestconfig usetestdb run1n2
 
-runall: kill allconfig usetestdb run1n2
+runall: kill allconfig setvmtestconfig usetestdb run1n2
 
 runon1:
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
@@ -86,6 +86,9 @@ allconfig:
 	cp src/server/vm2/allconfig.json src/server/vm2/netmashconfig.json
 
 setvmtestconfig:
+	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
+
+setvmremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
 
 setup:
