@@ -40,7 +40,7 @@ testonphone: androidtestrel reinstall logcat
 
 # -------------------------------------------------------------------
 
-runquickserver: kill clean usequickdb run1 logout1
+runquickserver: kill clean setvmquickconfig usequickdb run1 logout1
 
 runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
 
@@ -79,17 +79,20 @@ usetestdb:
 	cp src/server/vm1/test-forest.db src/server/vm1/forest.db
 	cp src/server/vm2/test-forest.db src/server/vm2/forest.db
 
+setvmtestconfig:
+	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
+
+setvmquickconfig:
+	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
+
+setvmremoteconfig:
+	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
+
 curconfig:
 	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json
 
 allconfig:
 	cp src/server/vm2/allconfig.json src/server/vm2/netmashconfig.json
-
-setvmtestconfig:
-	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
-
-setvmremoteconfig:
-	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
 
 setup:
 	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test-forest.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test-forest.db
@@ -110,6 +113,8 @@ logout2:
 
 classes: \
 ./build/classes/netmash/NetMash.class \
+./build/classes/server/types/Twitter.class \
+./build/classes/server/types/UserHome.class
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
