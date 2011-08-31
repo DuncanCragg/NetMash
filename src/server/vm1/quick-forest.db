@@ -15,4 +15,51 @@
     "tel": { "home": "020 8888 8888", "mobile": "0777 77 77 777" }
 }
 
+{   "%uid": "uid-4b71-f8d4-c761-be2d",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "is": "links",
+    "title": "Random Collection of Links",
+    "list" : [ "http://10.0.2.2:8081/o/uid-6332-84e1-c1de-3364.json",
+               "http://10.0.2.2:8081/o/uid-7235-60ba-d323-d5d6.json",
+    ]
+}
+
+{   "%uid": "uid-6332-84e1-c1de-3364",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "server.types.UserHome",
+    "is": [ "userhome", "userlist" ],
+    "title": "User Home",
+    "list": []
+}
+
+{   "%uid": "uid-7235-60ba-d323-d5d6",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "DynamicPage",
+    "is": [ "gui" ],
+    "title": "Demo of Dynamic GUI and Remote App",
+    "view": {
+        "direction": "vertical",
+        "colours": "lightturquoise, lightblue",
+        "#title": "Demo of Dynamic GUI and Remote App",
+        "#incre": 1000,
+        "#stuff": [
+            "direction:vertical",
+            [ "direction:horizontal", "proportions:50%", "colours:lightgreen,lightpink", "Showing", [ "direction:vertical", "horizontal", "vertical" ] ],
+            [ "direction:horizontal", "proportions:33%", "colours:lightblue,lightmauve*", "layouts, colours", "![text]!", "/[effects]/" ],
+            [ "direction:horizontal", "proportions:99%", "colours:lightpink",            "and forms backed by server functions:" ],
+            { "direction":"horizontal", "proportions":"98%",                        "#something": "?[Type something: /string/]?" },
+            { "direction":"horizontal", "proportions":"98%", "colours":"lightblue", "#checkit":   "?[Check me! /boolean/]?" },
+            { "direction":"horizontal", "proportions":"98%", "colours":"lightblue", "#radioin":   "?[ /string;|this|that|other/ ]?" },
+            { "direction":"horizontal", "#spinme":    "?[Choose one: /string;this is the first choice|that is another|here is the final option/ ]?" },
+            { "direction":"horizontal",                                             "#toggler":   "?[ /boolean;I'm now off|I'm now on/ ]?" },
+            { "direction":"horizontal", "proportions":"95%", "colours":"lightblue", "#rateme":    "?[ /integer;0||4/ ]?" }
+         ]
+    }
+}
 
