@@ -13,30 +13,23 @@ editdb:
 
 # -------------------------------------------------------------------
 
-androidquick: clean init
+androidquick: clean init setappquickconfig
 	ant debug
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
 
-androidquickrel: clean init
+androidquickrel: clean init setappquickconfig
 	ant release
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
 
-androidtest: clean init
-	ant debug
-	adb uninstall android.gui
-	adb install bin/NetMash-debug.apk
-
-androidtestrel: clean init
+androidremoterel: clean init setappremoteconfig
 	ant release
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 reinstall:
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
-
-testonphone: androidtestrel reinstall logcat
 
 # -------------------------------------------------------------------
 
@@ -79,11 +72,17 @@ usetestdb:
 	cp src/server/vm1/test-forest.db src/server/vm1/forest.db
 	cp src/server/vm2/test-forest.db src/server/vm2/forest.db
 
-setvmtestconfig:
-	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
+setappquickconfig:
+	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/netmashconfig.json
 
 setvmquickconfig:
 	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
+
+setvmtestconfig:
+	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
+
+setappremoteconfig:
+	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
 
 setvmremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
