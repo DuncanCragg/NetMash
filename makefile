@@ -6,10 +6,15 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noargs: editdb androidquick runquickserver
+noargs: editquickdb androidquick runquickserver
 
-editdb:
-	vi -o -N src/server/vm1/quick.db src/server/vm1/local.db
+local: editlocaldb androidquick runlocalserver
+
+editquickdb:
+	vi -o -N src/server/vm1/quick.db
+
+editlocaldb:
+	vi -o -N src/server/vm1/local.db
 
 # -------------------------------------------------------------------
 
