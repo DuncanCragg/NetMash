@@ -9,7 +9,7 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 noargs: editdb androidquick runquickserver
 
 editdb:
-	vi src/server/vm1/quick-forest.db
+	vi -o -N src/server/vm1/quick.db src/server/vm1/local.db
 
 # -------------------------------------------------------------------
 
@@ -34,6 +34,8 @@ reinstall:
 # -------------------------------------------------------------------
 
 runquickserver: kill clean setvmquickconfig usequickdb run1 logout1
+
+runlocalserver: kill clean setvmquickconfig uselocaldb run1 logout1
 
 runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
 
@@ -66,11 +68,14 @@ run1n2: run1 run2
 # -------------------------------------------------------------------
 
 usequickdb:
-	cp src/server/vm1/quick-forest.db src/server/vm1/forest.db
+	cp src/server/vm1/quick.db src/server/vm1/netmash.db
+
+uselocaldb:
+	cp src/server/vm1/local.db src/server/vm1/netmash.db
 
 usetestdb:
-	cp src/server/vm1/test-forest.db src/server/vm1/forest.db
-	cp src/server/vm2/test-forest.db src/server/vm2/forest.db
+	cp src/server/vm1/test.db src/server/vm1/netmash.db
+	cp src/server/vm2/test.db src/server/vm2/netmash.db
 
 setappquickconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/netmashconfig.json
@@ -94,10 +99,10 @@ allconfig:
 	cp src/server/vm2/allconfig.json src/server/vm2/netmashconfig.json
 
 setup:
-	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test-forest.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test-forest.db
+	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test.db
 
 whappen:
-	vim -o -N src/server/vm1/forest.db src/server/vm1/netmash.log src/server/vm2/forest.db src/server/vm2/netmash.log
+	vim -o -N src/server/vm1/netmash.db src/server/vm1/netmash.log src/server/vm2/netmash.db src/server/vm2/netmash.log
 
 logcat:
 	adb logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"
@@ -151,7 +156,7 @@ clean:
 
 veryclean: clean
 	rm -rf src/server/vm[12]/netmash.log
-	rm -rf src/server/vm[12]/forest.db
+	rm -rf src/server/vm[12]/netmash.db
 	rm -rf bin/NetMash-*.apk
 
 # -------------------------------------------------------------------
