@@ -112,8 +112,9 @@ logout2:
 
 classes: \
 ./build/classes/netmash/NetMash.class \
+./build/classes/server/types/UserHome.class \
+./build/classes/server/types/Event.class \
 ./build/classes/server/types/Twitter.class \
-./build/classes/server/types/UserHome.class
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes

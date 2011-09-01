@@ -343,14 +343,14 @@
     "%class": "",
     "is": [ "vcard" ],
     "fullName": "Duncan Cragg",
-    "email": "dcragg@thoughtworks.com",
+    "email": "someone@thoughtworks.com",
     "address": {
-        "street": [ "110 Gloucester Road" ],
-        "locality": "Kingston-upon-Thames",
+        "street": [ "111 Bristol Road" ],
+        "locality": "Richmond",
         "region": "Surrey",
-        "postalCode": "KT1 3QN"
+        "postalCode": "KT2 2PP"
     },
-    "tel": { "home": "020 8547 0249", "mobile": "0776 92 92 900" },
+    "tel": { "home": "020 8567 8900", "mobile": "0777 77 77 777" }
 }
 
 {   "%uid": "uid-a0b2-0521-d5f1-b994",
