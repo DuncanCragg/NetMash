@@ -160,7 +160,7 @@ clean:
 	rm -rf gen/android/gui/R.java
 	rm -rf ,*
 
-veryclean: clean
+veryclean: clean setappquickconfig setvmquickconfig
 	rm -rf src/server/vm[12]/netmash.log
 	rm -rf src/server/vm[12]/netmash.db
 	rm -rf bin/NetMash-*.apk
