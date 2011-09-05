@@ -158,6 +158,7 @@ clean:
 	rm -rf bin/classes bin/classes.dex
 	rm -rf bin/NetMash.ap_ bin/NetMash*un*ed.apk
 	rm -rf gen/android/gui/R.java
+	rm -rf ,*
 
 veryclean: clean
 	rm -rf src/server/vm[12]/netmash.log

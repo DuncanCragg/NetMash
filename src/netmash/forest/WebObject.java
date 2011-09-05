@@ -475,17 +475,17 @@ public class WebObject {
     }
 
     /** Simple logger for ya. */
-    public void log(Object o){ FunctionalObserver.log(o); }
+    static public void log(Object o){ FunctionalObserver.log(o); }
 
     /** Log which rule you're in. */
-    public void logrule(){
+    static public void logrule(){
         try{ throw new Exception(); } catch(Exception e){
             StackTraceElement[] stack=e.getStackTrace();
             log("================"+stack[1]+"================");
         }
     }
 
-    public void whereAmI(Object message){
+    static public void whereAmI(Object message){
         try{ throw new Exception(); } catch(Exception e){ log(message+": "+Arrays.asList(e.getStackTrace())); }
     }
 
