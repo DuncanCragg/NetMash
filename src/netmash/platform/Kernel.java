@@ -58,7 +58,7 @@ public class Kernel {
     */
     static public void threadObject(final Object o){
         if(o==null) return;
-        threadPool.execute(new Runnable(){ public void run(){ synchronized(o){ runmodule.threadedObject(o); } } });
+        threadPool.execute(new Runnable(){public void run(){try{synchronized(o){runmodule.threadedObject(o);}}catch(Throwable t){t.printStackTrace();}}});
     }
 
     //-----------------------------------------------------
@@ -85,7 +85,9 @@ public class Kernel {
             channel = SocketChannel.open();
             channel.configureBlocking(false);
             channel.socket().setTcpNoDelay(true);
+            logOut("If you're watching this, it's hung on DNS in InetSocketAddress");
             channel.connect(new InetSocketAddress(host, port));
+            logOut("DNS done");
             selock.lock(); try{ selector.wakeup();
             channel.register(selector, SelectionKey.OP_CONNECT);
             channels.put(channel, channeluser);
@@ -430,7 +432,6 @@ public class Kernel {
     }
 
     static private void closeSelectableChannel(SelectableChannel channel){
-logOut("closeSelectableChannel");
         try{
             channel.close();
         }catch(Exception e){ logErr("channel.close",e,null); }

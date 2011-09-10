@@ -38,7 +38,7 @@ reinstall:
 
 # -------------------------------------------------------------------
 
-runquickserver: kill clean setvmquickconfig usequickdb run1 logout1
+runquickserver: kill clean setvmquickconfig usequickdb run1 logboth
 
 runlocalserver: kill clean setvmquickconfig uselocaldb run1 logout1
 
@@ -108,6 +108,10 @@ setup:
 
 whappen:
 	vim -o -N src/server/vm1/netmash.db src/server/vm1/netmash.log src/server/vm2/netmash.db src/server/vm2/netmash.log
+
+logboth:
+	xterm -geometry 97x50+0+80   -e make logcat &
+	xterm -geometry 97x20+700+500 -e make logout1 &
 
 logcat:
 	adb logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"

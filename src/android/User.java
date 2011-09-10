@@ -21,6 +21,7 @@ import static android.location.LocationManager.*;
 import netmash.lib.JSON;
 import netmash.forest.*;
 import netmash.platform.Kernel;
+import static netmash.platform.Logging.*;
 
 /** User viewing the Object Web.
   */
@@ -101,7 +102,6 @@ public class User extends WebObject {
     CurrentLocation currentlocation;
 
     public void onTopCreate(){
-        ots2gui = new OTS2GUI(this);
         currentlocation = new CurrentLocation(this);
     }
 
@@ -324,6 +324,7 @@ public class User extends WebObject {
     }
 
     private void showWhatIAmViewing(){
+        if(ots2gui==null) ots2gui = new OTS2GUI(this);
         if(content("private:viewing")==null) content("private:viewing", content("private:links"));
         if(contentIs("private:viewas","gui")){
             showWhatIAmViewingAsGUI();
