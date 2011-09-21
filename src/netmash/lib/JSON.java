@@ -273,6 +273,13 @@ public class JSON {
         return removeAllListPath(tophash, path, value);
     }
 
+    /** Merge this JSON with the supplied one. */
+    public boolean merge(JSON json){
+        ensureContent();
+        json.ensureContent();
+        return mergeJSON(tophash, json.tophash);
+    }
+
     /** Apply map to the list of hashes at path and return it. */
     @SuppressWarnings("unchecked")
     public LinkedList<LinkedHashMap> mapList(String path, JSON map){
@@ -824,6 +831,16 @@ public class JSON {
         }catch(PathOvershot po){ return false; }
         if(list==null) return false;
         list.removeAll(value);
+        return true;
+    }
+
+
+    private boolean mergeJSON(LinkedHashMap hashmap, LinkedHashMap other){
+        for(Iterator it=other.keySet().iterator(); it.hasNext(); ){
+            String tag = (String)it.next();
+            Object val = other.get(tag);
+            setObject(hashmap, tag, val);
+        }
         return true;
     }
 

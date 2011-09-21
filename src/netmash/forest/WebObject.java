@@ -398,6 +398,12 @@ public class WebObject {
         statemod = updatingState.hashPath(path, val.content()) || statemod;
     }
 
+    /** Merge in JSON to this object. */
+    public void contentMerge(JSON json){
+        doCopyOnWrite("");
+        statemod = updatingState.merge(json) || statemod;
+    }
+
     /** Set this object up to notify the object at this uid.
       * That object may or may not be observing us already.
       */

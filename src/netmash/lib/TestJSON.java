@@ -79,6 +79,21 @@ public class TestJSON {
 
         }
 
+        System.out.println("---Test-3------------------");
+
+        {
+
+        JSON m = new JSON("{ \"a\": \"b\", \"l\": \"m\", \"x\": [ \"y\", \"z\" ] }");
+        System.out.println(m);
+        JSON n = new JSON("{ \"c\": \"d\", \"l\": \"n\", \"o\": [ \"p\", \"q\" ] }");
+        System.out.println(n);
+        m.merge(n);
+
+        String expected = "{  \"a\": \"b\", \"l\": \"n\", \"x\": [ \"y\", \"z\" ], \"c\": \"d\", \"o\": [ \"p\", \"q\" ]}";
+        assert m.toString(100).equals(expected): "merge failed: \n"+m.toString(100)+" not \n"+expected;
+
+        }
+
 
         System.out.println("---All-Tests-Passed----------------------");
 
