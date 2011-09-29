@@ -23,6 +23,14 @@
     "tel": { "home": "020 8888 8888", "mobile": "0777 77 77 777" }
 }
 
+{   "%uid": "uid-7756-cb46-4b1b-89cc",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "server.types.DynamicFile",
+    "watching": "guitest.json",
+}
+
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
     "%etag": 1,
     "%notify": [],
