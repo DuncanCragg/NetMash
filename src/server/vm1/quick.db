@@ -1,3 +1,11 @@
+{   "%uid": "uid-7756-cb46-4b1b-89cc",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "server.types.DynamicFile",
+    "watching": "guitest.json",
+}
+
 {   "%uid": "uid-e02f-e1af-1c06-7d5d",
     "%etag": 1,
     "%notify": [],
@@ -44,21 +52,20 @@
     "is": [ "gui" ],
     "title": "Demo of Dynamic GUI and Remote App",
     "view": {
-        "direction": "vertical",
-        "colours": "lightturquoise, lightblue",
+        "style": { "is": "style", "direction": "vertical", "colours": "lightturquoise, lightblue" },
         "#title": "Demo of Dynamic GUI and Remote App",
         "#incre": 1000,
         "#stuff": [
-            "direction:vertical",
-            [ "direction:horizontal", "proportions:50%", "colours:lightgreen,lightpink", "Showing", [ "direction:vertical", "horizontal", "vertical" ] ],
-            [ "direction:horizontal", "proportions:33%", "colours:lightblue,lightmauve*", "layouts, colours", "![text]!", "/[effects]/" ],
-            [ "direction:horizontal", "proportions:99%", "colours:lightpink",            "and forms backed by server functions:" ],
-            { "direction":"horizontal", "proportions":"98%",                        "#something": "?[Type something: /string/]?" },
-            { "direction":"horizontal", "proportions":"98%", "colours":"lightblue", "#checkit":   "?[Check me! /boolean/]?" },
-            { "direction":"horizontal", "proportions":"98%", "colours":"lightblue", "#radioin":   "?[ /string;|this|that|other/ ]?" },
-            { "direction":"horizontal", "#spinme":    "?[Choose one: /string;this is the first choice|that is another|here is the final option/ ]?" },
-            { "direction":"horizontal",                                             "#toggler":   "?[ /boolean;I'm now off|I'm now on/ ]?" },
-            { "direction":"horizontal", "proportions":"95%", "colours":"lightblue", "#rateme":    "?[ /integer;0||4/ ]?" }
+            { "is": "style", "direction":"vertical" },
+            [ { "is": "style", "direction":"horizontal", "proportions":"50%", "colours":"lightgreen,lightpink" }, "Showing", [ { "is":"style", "direction":"vertical" }, "horizontal", "vertical" ] ],
+            [ { "is": "style", "direction":"horizontal", "proportions":"33%", "colours":"lightblue,lightmauve*" }, "layouts, colours", "![text]!", "/[effects]/" ],
+            [ { "is": "style", "direction":"horizontal", "proportions":"99%", "colours":"lightpink" },             "and forms backed by server functions:" ],
+            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%" },                        "#something": "?[Type something: /string/]?" },
+            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%", "colours":"lightblue" }, "#checkit":   "?[Check me! /boolean/]?" },
+            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%", "colours":"lightblue" }, "#radioin":   "?[ /string;|this|that|other/ ]?" },
+            { "style": { "is": "style", "direction":"horizontal" },         "#spinme": "?[Choose one: /string;the first choice|that is another|the final option/ ]?" },
+            { "style": { "is": "style", "direction":"horizontal" },                                             "#toggler": "?[ /boolean;I'm now off|I'm now on/ ]?" },
+            { "style": { "is": "style", "direction":"horizontal", "proportions":"95%", "colours":"lightblue" }, "#rateme":  "?[ /integer;0||4/ ]?" }
          ]
     }
 }

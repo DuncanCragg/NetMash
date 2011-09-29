@@ -1,18 +1,16 @@
 {   "is": [ "gui" ],
     "title": "Horizontal scrolling like a Calendar",
     "view": {
-        "direction":"horizontal",
-        "height":"99%",
+        "style": { "is":"style", "direction":"horizontal", "height":"49%", },
         "#stuff": [
-        "direction:horizontal",
-        "height:90%",
-        [ "direction:vertical", "height:80%", "colours:lightgreen,lightmauve*", "width:14", "![Mon 12]!", "That", "there", "this", "here" ],
-        [ "direction:vertical", "height:80%", "colours:lightblue,white*",       "width:14", "![Tue 13]!", "The trip", "/[out]/" ],
-        [ "direction:vertical", "height:80%", "colours:lightgreen,lightmauve*", "width:14", "![Wed 14]!", "The","/[best]/","ever conference" ],
-        [ "direction:vertical", "height:80%", "colours:lightblue,white*",       "width:14", "![Thu 15]!", "This thing" ],
-        [ "direction:vertical", "height:80%", "colours:lightgreen,lightmauve*", "width:14", "![Fri 16]!", "That thing" ],
-        [ "direction:vertical", "height:80%", "colours:lightblue,white*",       "width:14", "![Sat 17]!", "This thing" ],
-        [ "direction:vertical", "height:80%", "colours:lightgreen,lightmauve*", "width:14", "![Sun 18]!", "That thing" ],
-         ]
+            { "is":"style", "direction":"horizontal", "height":"50%" },
+            [ { "is":"style", "direction":"vertical", "height":"17%", "colours":"lightgreen,lightmauve*", "width":"10" }, "![Mon 12]!", "That", "a", "b", "c" ],
+            [ { "is":"style", "direction":"vertical", "height":"17%", "colours":"lightblue,white*",       "width":"10" }, "![Tue 13]!", "The trip", "/[out]/" ],
+            [ { "is":"style", "direction":"vertical", "height":"17%", "colours":"lightgreen,lightmauve*", "width":"10" }, "![Wed 14]!", "The","/[best]/","ever " ],
+            [ { "is":"style", "direction":"vertical", "height":"17%", "colours":"lightblue,white*",       "width":"10" }, "![Thu 15]!", "nnnnnnnnnn" ],
+            [ { "is":"style", "direction":"vertical", "height":"17%", "colours":"lightgreen,lightmauve*", "width":"10" }, "![Fri 16]!", "That thing" ],
+            [ { "is":"style", "direction":"vertical", "height":"17%", "colours":"lightblue,white*",       "width":"10" }, "![Sat 17]!", "This thing" ],
+            [ { "is":"style", "direction":"vertical", "height":"17%", "colours":"lightgreen,lightmauve*", "width":"10" }, "![Sun 18]!", "That thing" ],
+        ]
     }
 }

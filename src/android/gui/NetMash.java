@@ -102,11 +102,13 @@ public class NetMash extends MapActivity{
     private RelativeLayout layout;
     private float          screenDensity;
     private int            screenWidth;
+    private int            screenHeight;
 
     public void drawInitialView(){
 
         screenDensity = getResources().getDisplayMetrics().density;
         screenWidth   = getResources().getDisplayMetrics().widthPixels;
+        screenHeight  = getResources().getDisplayMetrics().heightPixels;
 
         setContentView(R.layout.main);
         layout = (RelativeLayout)findViewById(R.id.Layout);
@@ -133,7 +135,6 @@ public class NetMash extends MapActivity{
         focused=false; viewUID=uiUID;
         Object      o=uiJSON.hashPathN("view");
         if(o==null) o=uiJSON.listPathN("view");
-        boolean horizontal=isHorizontal(o);
         View view;
         if(isMapList(o)){
             view = createMapView(o);
@@ -142,7 +143,7 @@ public class NetMash extends MapActivity{
             view.setLayoutParams(lp);
         }
         else
-        if(horizontal){
+        if(isHorizontal(o)){
             view=createHorizontalStrip(o);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
             lp.setMargins(0,5,5,0);
@@ -244,30 +245,34 @@ public class NetMash extends MapActivity{
         String[] colours=null;
         float dim0=0;
         float dimn=0;
+        float height=0;
+        float width=0;
         int i=0;
-        for(String tag: hm.keySet()){
+        for(String tag: hm.keySet()){ Object o=hm.get(tag);
+            if(o instanceof LinkedHashMap && "style".equals(((LinkedHashMap)o).get("is"))){
+                LinkedHashMap<String,String> style=(LinkedHashMap<String,String>)o;
+                for(String styletag: style.keySet()){
+                    if(styletag.equals("colours")) colours=style.get(styletag).split(",");
+                    else
+                    if(styletag.equals("height")) height=parseFirstInt(style.get(styletag));
+                    else
+                    if(styletag.equals("width")) width=parseFirstInt(style.get(styletag));
+                    else
+                    if(styletag.equals("proportions")) dim0=parseFirstInt(style.get(styletag));
+                }
+                continue;
+            }
             if(tag.equals("render")) continue;
-            if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
-            if(tag.equals("colours")){
-                colours=hm.get(tag).toString().split(",");
-                continue;
-            }
-            if(tag.equals("proportions")){
-                dim0=parseFirstInt(hm.get(tag).toString());
-                continue;
-            }
             i++;
         }
         if(dim0 >0 && i>1) dimn=(99-dim0)/(i-1);
         i=0;
-        for(String tag: hm.keySet()){
+        for(String tag: hm.keySet()){ Object o=hm.get(tag);
+            if(o instanceof LinkedHashMap && "style".equals(((LinkedHashMap)o).get("is"))) continue;
             if(tag.equals("render")) continue;
-            if(tag.equals("direction")) continue;
             if(tag.equals("options")) continue;
-            if(tag.equals("colours")) continue;
-            if(tag.equals("proportions")) continue;
-            addToLayout(layout, tag, hm.get(tag), selectColour(colours,i), i==0? dim0: dimn);
+            addToLayout(layout, tag, o, selectColour(colours,i), i==0? dim0: dimn, width, height);
             i++;
         }
     }
@@ -276,57 +281,61 @@ public class NetMash extends MapActivity{
         String[] colours=null;
         float dim0=0;
         float dimn=0;
+        float height=0;
+        float width=0;
         int i=0;
         for(Object o: ll){
+            if(o instanceof LinkedHashMap && "style".equals(((LinkedHashMap)o).get("is"))){
+                LinkedHashMap<String,String> style=(LinkedHashMap<String,String>)o;
+                for(String styletag: style.keySet()){
+                    if(styletag.equals("colours")) colours=style.get(styletag).split(",");
+                    else
+                    if(styletag.equals("height")) height=parseFirstInt(style.get(styletag));
+                    else
+                    if(styletag.equals("width")) width=parseFirstInt(style.get(styletag));
+                    else
+                    if(styletag.equals("proportions")) dim0=parseFirstInt(style.get(styletag));
+                }
+                continue;
+            }
             if(o instanceof String){
                 String s=(String)o;
                 if(s.startsWith("render:")) continue;
-                if(s.startsWith("direction:")) continue;
                 if(s.startsWith("options:")) continue;
-                if(s.startsWith("colours:")){
-                    colours=s.substring(8).split(",");
-                    continue;
-                }
-                if(s.startsWith("proportions:")){
-                    dim0=parseFirstInt(s);
-                    continue;
-                }
             }
             i++;
         }
         if(dim0 >0 && i>1) dimn=(99-dim0)/(i-1);
         i=0;
         for(Object o: ll){
+            if(o instanceof LinkedHashMap && "style".equals(((LinkedHashMap)o).get("is"))) continue;
             if(o instanceof String){
                 String s=(String)o;
                 if(s.startsWith("render:")) continue;
-                if(s.startsWith("direction:")) continue;
                 if(s.startsWith("options:")) continue;
-                if(s.startsWith("colours:")) continue;
-                if(s.startsWith("proportions:")) continue;
             }
-            addToLayout(layout, null, o, selectColour(colours,i), i==0? dim0: dimn);
+            addToLayout(layout, null, o, selectColour(colours,i), i==0? dim0: dimn, height, width);
             i++;
         }
     }
 
-    private void addToLayout(LinearLayout layout, String tag, Object o, int colour, float prop){
+    private void addToLayout(LinearLayout layout, String tag, Object o, int colour, float prop, float height, float width){
         if(o==null) return;
         if(isMapList(o)){
-            addAView(layout, createMapView(o), colour, prop);
+            addAView(layout, createMapView(o), colour, prop, height, width);
         }
         else
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
-            if("horizontal".equals(hm.get("direction"))) addHorizontalStrip(layout, createHorizontalStrip(hm), colour, prop);
-            else                                         addVerticalStrip(  layout, createVerticalStrip(hm), colour, prop);
+            if(isHorizontal(hm)) addHorizontalStrip(layout, createHorizontalStrip(hm), colour, prop, height, width);
+            else                 addVerticalStrip(  layout, createVerticalStrip(hm), colour, prop, height, width);
         }
         else
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
             if(ll.size()==0) return;
-            if("direction:horizontal".equals(ll.get(0).toString())) addHorizontalStrip(layout, createHorizontalStrip(ll), colour, prop);
-            else                                                    addVerticalStrip(  layout, createVerticalStrip(ll), colour, prop);
+            if(isHorizontal(ll)) addHorizontalStrip(layout, createHorizontalStrip(ll), colour, prop, height, width);
+            else                 addVerticalStrip(  layout, createVerticalStrip(ll), colour, prop, height, width);
         }
         else{
             String s=o.toString();
@@ -337,27 +346,28 @@ public class NetMash extends MapActivity{
                     (isImage?     createImageView(s):
                     (isFormField? createFormView(tag, s):
                                   createTextView(s)));
-            addAView(layout, v, colour, prop);
+            addAView(layout, v, colour, prop, height, width);
         }
     }
 
-    private void addHorizontalStrip(LinearLayout layout, View view, int colour, float prop){
+    private void addHorizontalStrip(LinearLayout layout, View view, int colour, float prop, float height, float width){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
-    private void addVerticalStrip(LinearLayout layout, View view, int colour, float prop){
+    private void addVerticalStrip(LinearLayout layout, View view, int colour, float prop, float height, float width){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
     }
 
-    private void addAView(LinearLayout layout, View view, int colour, float prop){
-        int width=(prop==0? FILL_PARENT: (int)((prop/100.0)*screenWidth+0.5));
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, FILL_PARENT);
+    private void addAView(LinearLayout layout, View view, int colour, float prop, float height, float width){
+        int w=(width>0?  (int)(width*10): (prop!=0? (int)((prop/100.0)*screenWidth+0.5): FILL_PARENT));
+        int h=(height>0? (int)((height/100.0)*screenHeight+0.5): FILL_PARENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(w, h);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         if(colour!=0) view.setBackgroundColor(colour);
@@ -615,24 +625,34 @@ public class NetMash extends MapActivity{
 
     private boolean isHorizontal(Object o){
         if(o instanceof LinkedHashMap){
-            LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
-            return "horizontal".equals(hm.get("direction"));
+            LinkedHashMap hm=(LinkedHashMap)o;
+            for(Object oo: hm.values()){
+                if(oo instanceof LinkedHashMap &&
+                   "style".equals(((LinkedHashMap)oo).get("is")) &&
+                   "horizontal".equals(((LinkedHashMap)oo).get("direction"))) return true;
+            }
         }
-        else{
+        else
+        if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
-            return "direction:horizontal".equals(ll.get(0));
+            for(Object oo: ll){
+                if(oo instanceof LinkedHashMap &&
+                   "style".equals(((LinkedHashMap)oo).get("is")) &&
+                   "horizontal".equals(((LinkedHashMap)oo).get("direction"))) return true;
+            }
         }
+        return false;
     }
 
     private boolean isMapList(Object o){
         if(o instanceof LinkedHashMap){
-            LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
+            LinkedHashMap hm=(LinkedHashMap)o;
             return "map".equals(hm.get("render"));
         }
         else
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
-            return !ll.isEmpty() && "render:map".equals(ll.get(0).toString());
+            for(Object oo: ll) if("render:map".equals(oo)) return true;
         }
         return false;
     }

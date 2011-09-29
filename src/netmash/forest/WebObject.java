@@ -268,9 +268,28 @@ public class WebObject {
         return new LinkedList(Arrays.asList(args));
     }
 
-    /** Construct a hash utility. */
+    /** Construct a hash utility. hash("a","b","c","d")={"a":"b", "c":"d"} */
     @SuppressWarnings("unchecked")
-    public LinkedHashMap hash(Object...args){
+    static public LinkedHashMap hash(Object...args){
+        return hash(new LinkedHashMap(), args);
+    }
+
+    /** Construct a hash utility. As above but pass in hash to fill. */
+    @SuppressWarnings("unchecked")
+    static public LinkedHashMap hash(LinkedHashMap hm, Object...args){
+        int i=0;
+        Object tag=null;
+        for(Object tagorval: args){
+            i++;
+            if(i%2==1)  tag=tagorval;
+            else hm.put(tag,tagorval);
+        }
+        return hm;
+    }
+
+    /** Construct a hash utility. deephash("a","b","c","d")={"a":{"b":{"c":"d"}}} */
+    @SuppressWarnings("unchecked")
+    static public LinkedHashMap deephash(Object...args){
         LinkedHashMap hm = new LinkedHashMap();
         if(args.length==0){                           return hm; }
         if(args.length==1){ hm.put(args[0], ""     ); return hm; }

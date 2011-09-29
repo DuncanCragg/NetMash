@@ -6,7 +6,7 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noargs: editquickdb androidquick runquickserver
+noargs: editquickdb androidquick runquickserver editdynamicfile
 
 local: editlocaldb androidquick runlocalserver
 
@@ -15,6 +15,9 @@ editquickdb:
 
 editlocaldb:
 	vi -o -N src/server/vm1/local.db
+
+editdynamicfile:
+	vi -o -N src/server/vm1/guitest.json
 
 # -------------------------------------------------------------------
 
