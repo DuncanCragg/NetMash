@@ -29,8 +29,8 @@
     "%observe": [],
     "is": "links",
     "title": "Random Collection of Links",
-    "list" : [ "http://10.0.2.2:8081/o/uid-6332-84e1-c1de-3364.json",
-               "http://10.0.2.2:8081/o/uid-7235-60ba-d323-d5d6.json",
+    "list" : [ "uid-6332-84e1-c1de-3364",
+               "uid-7235-60ba-d323-d5d6",
     ]
 }
 

@@ -21,17 +21,17 @@ editdynamicfile:
 
 # -------------------------------------------------------------------
 
-androidquick: clean init setappquickconfig
+androidquick: clean init setappquickconfig setdebugmapkey
 	ant debug
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
 
-androidquickrel: clean init setappquickconfig
+androidquickrel: clean init setappquickconfig setreleasemapkey
 	ant release
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
 
-androidremoterel: clean init setappremoteconfig
+androidremoterel: clean init setappremoteconfig setreleasemapkey
 	ant release
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
@@ -43,7 +43,7 @@ reinstall:
 
 runquickserver: kill clean setvmquickconfig usequickdb run1 logboth
 
-runlocalserver: kill clean setvmquickconfig uselocaldb run1 logout1
+runlocalserver: kill clean setvmquickconfig uselocaldb run1 logcat
 
 runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
 
@@ -84,6 +84,12 @@ uselocaldb:
 usetestdb:
 	cp src/server/vm1/test.db src/server/vm1/netmash.db
 	cp src/server/vm2/test.db src/server/vm2/netmash.db
+
+setreleasemapkey:
+	sed -i"" -e "s:03Hoq1TEN3zbZ9y69dEoFX0Tc20g14mWm-hImbQ:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/android/gui/NetMash.java
+
+setdebugmapkey:
+	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zbZ9y69dEoFX0Tc20g14mWm-hImbQ:" src/android/gui/NetMash.java
 
 setappquickconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/netmashconfig.json

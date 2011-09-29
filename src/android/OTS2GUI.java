@@ -29,7 +29,7 @@ public class OTS2GUI {
     private User user;
     public OTS2GUI(User user){ this.user=user; }
 
-    public LinkedHashMap user2GUI(){ WebObject.logrule();
+    public LinkedHashMap user2GUI(){ logrule();
         String useruid = user.content("private:viewing");
 
         String fullname = user.content("private:viewing:vcard:fullName");
@@ -37,26 +37,26 @@ public class OTS2GUI {
 
         String vcarduid = UID.normaliseUID(useruid, user.content("private:viewing:vcard"));
         LinkedList vcard=null;
-        if(vcarduid!=null) vcard = WebObject.list(style("direction","horizontal", "options","jump", "proportions","75%"), "Contact Info:", vcarduid);
+        if(vcarduid!=null) vcard = list(style("direction","horizontal", "options","jump", "proportions","75%"), "Contact Info:", vcarduid);
 
         String contactsuid = UID.normaliseUID(useruid, user.content("private:viewing:private:contacts"));
         LinkedList contacts=null;
-        if(contactsuid!=null) contacts = WebObject.list(style("direction","horizontal", "options","jump", "proportions","75%"),"Phone Contacts:", contactsuid);
+        if(contactsuid!=null) contacts = list(style("direction","horizontal", "options","jump", "proportions","75%"),"Phone Contacts:", contactsuid);
 
         LinkedHashMap loc = user.contentHash("private:viewing:location");
         LinkedList location=null;
-        if(loc!=null) location = WebObject.list(style("direction","horizontal"), "Location:", loc.get("lat"), loc.get("lon"));
+        if(loc!=null) location = list(style("direction","horizontal"), "Location:", loc.get("lat"), loc.get("lon"));
 
-        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
-        guitop.put("style", style("direction","vertical", "colours","lightpink"));
-        guitop.put("#title", fullname);
-        if(vcard    !=null) guitop.put("#vcard",    vcard);
-        if(contacts !=null) guitop.put("#contacts", contacts);
-        if(location !=null) guitop.put("#location", location);
-        return guitop;
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightpink"));
+        viewhash.put("#title", fullname);
+        if(vcard    !=null) viewhash.put("#vcard",    vcard);
+        if(contacts !=null) viewhash.put("#contacts", contacts);
+        if(location !=null) viewhash.put("#location", location);
+        return viewhash;
     }
 
-    public LinkedHashMap links2GUI(){ WebObject.logrule();
+    public LinkedHashMap links2GUI(){ logrule();
         String listuid = user.content("private:viewing");
         LinkedList<String> links = user.contentList("private:viewing:list");
         if(links==null) return null;
@@ -74,17 +74,17 @@ public class OTS2GUI {
             }
             if(bmtext==null) bmtext="Loading..";
             String bmuid = UID.normaliseUID(listuid, uid);
-            viewlist.add(WebObject.list(style("direction","horizontal", "options","jump", "proportions","75%"), bmtext, bmuid));
+            viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), bmtext, bmuid));
         }
         String title = user.content("private:viewing:title");
-        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
-        guitop.put("style", style("direction","vertical", "colours","lightgreen"));
-        guitop.put("#title", title!=null? title: "Links");
-        guitop.put("#links", viewlist);
-        return guitop;
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightgreen"));
+        viewhash.put("#title", title!=null? title: "Links");
+        viewhash.put("#links", viewlist);
+        return viewhash;
     }
 
-    public LinkedHashMap vCardList2GUI(String vcardprefix){ WebObject.logrule();
+    public LinkedHashMap vCardList2GUI(String vcardprefix){ logrule();
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
         if(contacts==null) return null;
@@ -96,17 +96,17 @@ public class OTS2GUI {
             String fullname=            user.content("private:viewing:list:"+i+":"+vcardprefix+"fullName");
             if(fullname==null) fullname=user.content("private:viewing:list:"+i+":is");
             if(fullname==null) viewlist.add("Loading..");
-            else               viewlist.add(WebObject.list(style("direction","horizontal", "options","jump", "proportions","75%"), fullname, contactuid));
+            else               viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), fullname, contactuid));
         }
         String title = user.content("private:viewing:title");
-        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
-        guitop.put("style", style("direction","vertical", "colours","lightpink"));
-        guitop.put("#title", title!=null? title: "Contacts List");
-        guitop.put("#contactlist", viewlist);
-        return guitop;
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightpink"));
+        viewhash.put("#title", title!=null? title: "Contacts List");
+        viewhash.put("#contactlist", viewlist);
+        return viewhash;
     }
 
-    public LinkedList vCard2Map(String vcardprefix){ WebObject.logrule();
+    public LinkedList vCard2Map(String vcardprefix){ logrule();
         String useruid = user.content("private:viewing");
         LinkedList maplist = new LinkedList();
         maplist.add("render:map");
@@ -125,7 +125,7 @@ public class OTS2GUI {
         return maplist;
     }
 
-    public LinkedList vCardList2Map(String vcardprefix){ WebObject.logrule();
+    public LinkedList vCardList2Map(String vcardprefix){ logrule();
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
         if(contacts==null) return null;
@@ -152,51 +152,68 @@ public class OTS2GUI {
         return maplist;
     }
 
-    public LinkedHashMap vCard2GUI(){ WebObject.logrule();
+    public LinkedHashMap vCard2GUI(){ logrule();
 
         LinkedList vcarddetail = new LinkedList();
         vcarddetail.add(style("direction","vertical"));
 
         String mainphone=user.content("private:viewing:tel:0");
         if(mainphone==null) mainphone=user.content("private:viewing:tel");
-        if(mainphone!=null) vcarddetail.add(WebObject.list(style("direction","horizontal", "proportions","35%"), "Phone:", mainphone));
+        if(mainphone!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Phone:", mainphone));
 
         String homephone=user.content("private:viewing:tel:home:0");
         if(homephone==null) homephone=user.content("private:viewing:tel:home");
-        if(homephone!=null) vcarddetail.add(WebObject.list(style("direction","horizontal", "proportions","35%"), "Home phone:", homephone));
+        if(homephone!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Home phone:", homephone));
 
         String workphone=user.content("private:viewing:tel:work:0");
         if(workphone==null) workphone=user.content("private:viewing:tel:work");
-        if(workphone!=null) vcarddetail.add(WebObject.list(style("direction","horizontal", "proportions","35%"), "Work phone:", workphone));
+        if(workphone!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Work phone:", workphone));
 
         String mobilephone=user.content("private:viewing:tel:mobile:0");
         if(mobilephone==null) mobilephone=user.content("private:viewing:tel:mobile");
-        if(mobilephone!=null) vcarddetail.add(WebObject.list(style("direction","horizontal", "proportions","35%"), "Mobile:", mobilephone));
+        if(mobilephone!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Mobile:", mobilephone));
 
         String faxnumber=user.content("private:viewing:tel:fax:0");
         if(faxnumber==null) faxnumber=user.content("private:viewing:tel:fax");
-        if(faxnumber!=null) vcarddetail.add(WebObject.list(style("direction","horizontal", "proportions","35%"), "Fax:", faxnumber));
+        if(faxnumber!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Fax:", faxnumber));
 
         String email=user.content("private:viewing:email:0");
         if(email==null) email=user.content("private:viewing:email");
-        if(email!=null) vcarddetail.add(WebObject.list(style("direction","horizontal", "proportions","35%"), "Email address:", email));
+        if(email!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Email address:", email));
 
         String url=user.content("private:viewing:url:0");
         if(url==null) url=user.content("private:viewing:url");
-        if(url!=null) vcarddetail.add(WebObject.list(style("direction","horizontal", "proportions","35%"), "Website:", url));
+        if(url!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Website:", url));
 
         String address=getAddressString("private:viewing:address");
-        if(address!=null) vcarddetail.add(WebObject.list(style("direction","horizontal", "proportions","35%"), "Address:", address));
+        if(address!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", address));
 
         String fullname=user.content("private:viewing:fullName");
         String photourl=user.content("private:viewing:photo");
         if(photourl==null) photourl="";
 
-        LinkedHashMap<String,Object> guitop = new LinkedHashMap<String,Object>();
-        guitop.put("style", style("direction","vertical", "colours","lightpink"));
-        guitop.put("#title", WebObject.list(style("direction","horizontal", "proportions","25%"), photourl, fullname));
-        guitop.put("#vcard", vcarddetail);
-        return guitop;
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightpink"));
+        viewhash.put("#title", list(style("direction","horizontal", "proportions","25%"), photourl, fullname));
+        viewhash.put("#vcard", vcarddetail);
+        return viewhash;
+    }
+
+    public LinkedHashMap event2GUI(){ logrule();
+        String eventuid = user.content("private:viewing");
+        String locationuid = UID.normaliseUID(eventuid, user.content("private:viewing:location"));
+        LinkedList event = list(style("colours","lightmauve"),
+                                user.content("private:viewing:content"),
+                                list(style("direction","horizontal", "proportions","30%"), "Start:", user.content("private:viewing:start")),
+                                list(style("direction","horizontal", "proportions","30%"), "End:",   user.content("private:viewing:end")),
+                                list(style("direction","horizontal", "options","jump", "proportions","75%"), "Location:", locationuid)
+        );
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        String title = user.content("private:viewing:title");
+        viewhash.put("style", style("direction","vertical", "colours","lightblue"));
+        viewhash.put("#title", "!["+(title!=null? title: "Event")+"]!");
+        viewhash.put("#event", event);
+        return viewhash;
     }
 
     public String getGeoAddressString(String path){
@@ -244,7 +261,7 @@ public class OTS2GUI {
         return as.toString();
     }
 
-    public LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, String objuid){ WebObject.logrule();
+    public LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, String objuid){ logrule();
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
         hm2.put("style", style("direction", hm.size()<=1? "horizontal": "vertical"));
         hm2.put(".open","{");
@@ -279,16 +296,16 @@ public class OTS2GUI {
     }
 
     private HashMap<String,LinkedHashMap<String,Double>> geoCodeCache=new HashMap<String,LinkedHashMap<String,Double>>();
-    private LinkedHashMap<String,Double> geoCode(String address){ WebObject.log("geoCode "+address);
+    private LinkedHashMap<String,Double> geoCode(String address){ log("geoCode "+address);
         if(address==null || address.equals("")) return null;
         LinkedHashMap<String,Double> loc=geoCodeCache.get(address);
-        if(loc!=null){ WebObject.log("cached result="+loc); return loc; }
-        if(NetMash.top==null){ WebObject.log("No Activity to geoCode from"); return null; }
+        if(loc!=null){ log("cached result="+loc); return loc; }
+        if(NetMash.top==null){ log("No Activity to geoCode from"); return null; }
         Geocoder geocoder = new Geocoder(NetMash.top.getApplicationContext(), Locale.getDefault());
         try{
             List<Address> geos = geocoder.getFromLocationName(address, 1);
             if(!geos.isEmpty()){
-                if(geos.size() >=2) WebObject.log(geos.size()+" locations found for "+address);
+                if(geos.size() >=2) log(geos.size()+" locations found for "+address);
                 Address geo1 = geos.get(0);
                 loc = new LinkedHashMap<String,Double>();
                 loc.put("lat", geo1.getLatitude());
@@ -296,13 +313,14 @@ public class OTS2GUI {
                 geoCodeCache.put(address,loc);
                 return loc;
             }
-            else WebObject.log("No getFromLocationName for "+address);
-        }catch(Exception e){ WebObject.log("No getFromLocationName for "+address); WebObject.log(e); }
+            else log("No getFromLocationName for "+address);
+        }catch(Exception e){ log("No getFromLocationName for "+address); log(e); }
         return null;
     }
 
-    static public LinkedHashMap style(Object...args){
-        return WebObject.hash(WebObject.hash("is","style"), args);
-    }
+    static public void log(Object o){ WebObject.log(o); }
+    static public void logrule(){ WebObject.logrule(); }
+    static public LinkedList list(Object...args){ return WebObject.list(args); }
+    static public LinkedHashMap style(Object...args){ return WebObject.hash(WebObject.hash("is","style"), args); }
 }
 

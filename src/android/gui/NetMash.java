@@ -365,8 +365,8 @@ public class NetMash extends MapActivity{
     }
 
     private void addAView(LinearLayout layout, View view, int colour, float prop, float height, float width){
-        int w=(width>0?  (int)(width*10): (prop!=0? (int)((prop/100.0)*screenWidth+0.5): FILL_PARENT));
-        int h=(height>0? (int)((height/100.0)*screenHeight+0.5): FILL_PARENT);
+        int w=(width>0?  (int)(width*14): (prop!=0? (int)((prop/101.0)*screenWidth+0.5): FILL_PARENT));
+        int h=(height>0? (int)((height/101.0)*screenHeight+0.5): FILL_PARENT);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(w, h);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
@@ -570,7 +570,7 @@ public class NetMash extends MapActivity{
 
     private MapView createMapView(LinkedList ll){
         if(mapview==null){
-            mapview = new MapView(this, "03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA");
+            mapview = new MapView(this, "03Hoq1TEN3zbZ9y69dEoFX0Tc20g14mWm-hImbQ");
             mapview.setEnabled(true);
             mapview.setClickable(true);
             mapview.setBuiltInZoomControls(true);

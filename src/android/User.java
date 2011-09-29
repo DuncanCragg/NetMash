@@ -350,6 +350,10 @@ public class User extends WebObject {
                 viewhash=ots2gui.vCard2GUI();
             }
             else
+            if(contentIsOrListContains("private:viewing:is", "event")){
+                viewhash=ots2gui.event2GUI();
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "userlist")){
                 viewhash=ots2gui.vCardList2GUI("vcard:");
             }
