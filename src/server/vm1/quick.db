@@ -1,11 +1,3 @@
-{   "%uid": "uid-7756-cb46-4b1b-89cc",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
-    "%class": "server.types.DynamicFile",
-    "watching": "guitest.json",
-}
-
 {   "%uid": "uid-e02f-e1af-1c06-7d5d",
     "%etag": 1,
     "%notify": [],
