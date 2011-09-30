@@ -8,7 +8,7 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 
 noargs: editquickdb androidquick runquickserver editdynamicfile
 
-local: editlocaldb androidquick runlocalserver
+local: androidquick runlocalserver editlocaldbanddynamicfile
 
 editquickdb:
 	vi -o -N src/server/vm1/quick.db
@@ -18,6 +18,9 @@ editlocaldb:
 
 editdynamicfile:
 	vi -o -N src/server/vm1/guitest.json
+
+editlocaldbanddynamicfile:
+	vi -o -N src/server/vm1/local.db src/server/vm1/guitest.json
 
 # -------------------------------------------------------------------
 
@@ -43,7 +46,7 @@ reinstall:
 
 runquickserver: kill clean setvmquickconfig usequickdb run1 logboth
 
-runlocalserver: kill clean setvmquickconfig uselocaldb run1 logcat
+runlocalserver: kill clean setvmquickconfig uselocaldb run1 logboth
 
 runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
 

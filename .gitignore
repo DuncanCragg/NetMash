@@ -6,7 +6,7 @@ local.properties
 proguard.cfg
 netmash.keystore
 doc/local/
-src/server/vm?/local.db
+src/server/vm?/local*.db
 src/server/vm?/netmash.db
 src/server/vm?/*.class
 src/server/vm?/*.log
