@@ -7,7 +7,5 @@
                "log": true,
                "home-cache-notify": "http://10.0.2.2:8081/o/c-n-14d5-99c5-da00-806a" },
   "ots": { "homeusers": "http://10.0.2.2:8081/o/uid-6332-84e1-c1de-3364.json",
-           "links": [   "http://10.0.2.2:8081/o/uid-e02f-e1af-1c06-7d5d.json",
-                        "http://10.0.2.2:8081/o/uid-7756-cb46-4b1b-89cc.json",
-                        "http://10.0.2.2:8081/o/uid-4b71-f8d4-c761-be2d.json" ] }
+           "links": [   "http://10.0.2.2:8081/o/uid-4b71-f8d4-c761-be2d.json" ] }
 }

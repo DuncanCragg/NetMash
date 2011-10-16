@@ -1,0 +1,62 @@
+{   "%uid": "uid-e02f-e1af-1c06-7d5d",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Contact card: enter full name here",
+    "email": "you@yourdomain.com",
+    "address": {
+      "street": "150 Old Park Ln",
+      "locality": "London",
+      "postalCode": "W1K 1QZ",
+      "countryName": "UK"
+    },
+    "tel": { "home": "020 8888 8888", "mobile": "0777 77 77 777" }
+}
+
+{   "%uid": "uid-4b71-f8d4-c761-be2d",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "is": "links",
+    "title": "More Links",
+    "list" : [ "uid-e02f-e1af-1c06-7d5d",
+               "uid-a205-babf-72a4-1272",
+    ]
+}
+
+{   "%uid": "uid-a205-babf-72a4-1272",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "server.types.Event",
+    "is": [ "event" ],
+    "title": "Over the Air 2011",
+    "content": "The premier UK Mobile meetup taking place this year at Bletchley Park",
+    "start": "Fri, 30 Sep 2011 09:00:00 GMT",
+    "end":   "Sat,  1 Oct 2011 23:00:00 GMT",
+    "location": "uid-35c0-9017-99c1-db63",
+    "attendees": [ "uid-e02f-e1af-1c06-7d5d" ]
+}
+
+{   "%uid": "uid-35c0-9017-99c1-db63",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "",
+    "is": [ "vcard" ],
+    "fullName": "Bletchley Park",
+    "address": {
+        "street": [ "The Mansion, Bletchley Park, Sherwood Drive" ],
+        "locality": "Bletchley",
+        "region": "Milton Keynes",
+        "postalCode": "MK3 6EB",
+        "countryName": "UK"
+    },
+    "tel": { "work": "01908 640404" },
+    "email": [ "info@bletchleypark.org.uk" ],
+    "url": "http://www.bletchleypark.org/"
+}
+
+

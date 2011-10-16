@@ -6,9 +6,16 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noargs: editquickdb androidquick runquickserver editdynamicfile
+noargs: editstaticdb androidemu runstaticserver
 
-local: androidquick runlocalserver editlocaldbanddynamicfile
+quickdyn: editquickdb androidemu runquickserver editdynamicfile
+
+local: androidemu runlocalserver editlocaldbanddynamicfile
+
+# -------------------------------------------------------------------
+
+editstaticdb:
+	vi -o -N src/server/vm1/static.db
 
 editquickdb:
 	vi -o -N src/server/vm1/quick.db
@@ -24,12 +31,12 @@ editlocaldbanddynamicfile:
 
 # -------------------------------------------------------------------
 
-androidquick: clean init setappquickconfig setdebugmapkey
+androidemu: clean init setappemuconfig setdebugmapkey
 	ant debug
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
 
-androidquickrel: clean init setappquickconfig setreleasemapkey
+androidemurel: clean init setappemuconfig setreleasemapkey
 	ant release
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
@@ -44,9 +51,11 @@ reinstall:
 
 # -------------------------------------------------------------------
 
-runquickserver: kill clean setvmquickconfig usequickdb run1 logboth
+runstaticserver: kill clean setvmemuconfig usestaticdb run1 logboth
 
-runlocalserver: kill clean setvmquickconfig uselocaldb run1 logboth
+runquickserver: kill clean setvmemuconfig usequickdb run1 logboth
+
+runlocalserver: kill clean setvmemuconfig uselocaldb run1 logboth
 
 runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
 
@@ -78,6 +87,9 @@ run1n2: run1 run2
 
 # -------------------------------------------------------------------
 
+usestaticdb:
+	cp src/server/vm1/static.db src/server/vm1/netmash.db
+
 usequickdb:
 	cp src/server/vm1/quick.db src/server/vm1/netmash.db
 
@@ -94,10 +106,10 @@ setreleasemapkey:
 setdebugmapkey:
 	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zbZ9y69dEoFX0Tc20g14mWm-hImbQ:" src/android/gui/NetMash.java
 
-setappquickconfig:
+setappemuconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/netmashconfig.json
 
-setvmquickconfig:
+setvmemuconfig:
 	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
 
 setvmtestconfig:
@@ -179,7 +191,7 @@ clean:
 	rm -rf gen/android/gui/R.java
 	rm -rf ,*
 
-veryclean: clean setappquickconfig setvmquickconfig
+veryclean: clean setappemuconfig setvmemuconfig
 	rm -rf src/server/vm[12]/netmash.log
 	rm -rf src/server/vm[12]/netmash.db
 	rm -rf bin/NetMash-*.apk
