@@ -737,7 +737,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
             w.setURL(httpLocation);
         }
         if(contentLength > 0){
-            PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.webobject, request.param);
+            PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.webobject, request.param); // XXX! request.path for when no C-L
             retryRequest=false;
             longFailedSoWait=(pr.code!=200);
         }

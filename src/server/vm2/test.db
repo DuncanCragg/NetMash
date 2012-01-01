@@ -17,6 +17,26 @@
     "dealer": "http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json"
 }
 
+{   "%uid": "uid-61c2-20d0-c001-aa46",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "HRRequestResponse",
+    "is": [ "hr", "leave-request", "event" ],
+    "title":  "Trip to Spain",
+    "start": "2011-06-08+01:00",
+    "end": "2011-06-13+01:00",
+    "attendees": "/employees/1233123",
+    "created": "2011-05-03T16:23:25.761+01:00",
+    "status": "requested",
+    "leaveType": "Annual Leave",
+    "leaveAmount":  5,
+    "leaveUnits": "Days",
+    "leaveRecords": "http://localhost:8081/o/uid-4574-a96f-f796-c5fb.json",
+    "params": [ "usd/jpy", "buylim", 81.7, 500.00 ],
+}
+
+
 {   "%uid": "uid-d7ec-6c0f-68a9-81df",
     "%etag": 1,
     "%notify": [],

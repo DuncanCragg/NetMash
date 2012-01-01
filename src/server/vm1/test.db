@@ -16,6 +16,20 @@
     "tickets": [ ]
 }
 
+{   "%uid": "uid-4574-a96f-f796-c5fb",
+    "%etag": 1,
+    "%notify": [],
+    "%observe": [],
+    "%class": "HRLeavePeriods",
+    "is": [ "hr", "leave-record" ],
+    "employee": "/employees/1233123",
+    "organisation": "/..",
+    "daysAllocated": 23,
+    "daysUsed": 12,
+    "daysLeft": 11,
+    "leavePeriods": [ ]
+}
+
 {   "%uid": "uid-2161-baf3-858b-858c",
     "%etag": 1,
     "%notify": [],
