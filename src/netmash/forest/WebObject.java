@@ -30,7 +30,7 @@ public class WebObject {
     public  String uid;
     public  String url=null;
     public  int    etag=0;
-    public  int    maxAge= -1;
+    public  int    maxAge=0;
     public  String cacheNotify;
 
     public  JSON publicState=null;
@@ -147,7 +147,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                WebObject w = observing(parentuid, (String)po.leaf);
                 if(w==null)break;
                 try{ s = w.publicState.stringPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -164,7 +164,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                WebObject w = observing(parentuid, (String)po.leaf);
                 if(w==null)break;
                 try{ s = w.publicState.isAtPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -207,7 +207,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                WebObject w = observing(parentuid, (String)po.leaf);
                 if(w==null)break;
                 try{ i = w.publicState.intPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -230,7 +230,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                WebObject w = observing(parentuid, (String)po.leaf);
                 if(w==null)break;
                 try{ d = w.publicState.doublePath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -253,7 +253,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                WebObject w = observing(parentuid, (String)po.leaf);
                 if(w==null)break;
                 try{ b = w.publicState.boolPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -312,7 +312,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                WebObject w = observing(parentuid, (String)po.leaf);
                 if(w==null)break;
                 try{ l = w.publicState.listPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -408,7 +408,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(UID.normaliseUID(parentuid, (String)po.leaf));
+                WebObject w = observing(parentuid, (String)po.leaf);
                 if(w==null)break;
                 try{ h = w.publicState.hashPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -439,9 +439,8 @@ public class WebObject {
       * That object may or may not be observing us already.
       */
     public void notifying(String alertuid){
-        if(notify.contains(alertuid)) return;
-        obsalmod = true;
-        newalert.add(alertuid);
+        // what if you pull notifying uid off remote object?
+        notifying(uid, alertuid);
     }
 
     /** Add to notifying set for construction-time. */
@@ -528,10 +527,18 @@ public class WebObject {
 
     /* ---------------------------------------------------- */
 
-    private WebObject observing(String observeduid){
+    private WebObject observing(String baseurl, String uid2url){
+        String observeduid=UID.normaliseUID(baseurl, uid2url);
         if(!UID.isUID(observeduid)) return null;
         obsalmod = true;
         return funcobs.observing(this, observeduid);
+    }
+
+    private void notifying(String baseurl, String uid2url){
+        String alertuid=UID.normaliseUID(baseurl, uid2url);
+        if(notify.contains(alertuid)) return;
+        obsalmod = true;
+        newalert.add(alertuid);
     }
 
     private void doCopyOnWrite(String path){
