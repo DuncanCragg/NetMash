@@ -9,10 +9,17 @@ public class HRLeavePeriods extends WebObject {
     public HRLeavePeriods(){}
 
     public HRLeavePeriods(String leaveRequestuid){
-        super("{ \"is\": [ \"hr\", \"leave-period\" ],\n"+
-              "  \"leaveRequest\": \""+leaveRequestuid+"\",\n"+
-              "  \"ask\": 81.9,\n"+
-              "  \"status\": \"waiting\"\n"+
+        super("{ \"is\": [ \"hr\", \"leave-period\", \"event\" ],\n"+
+              "  \"title\":  \"Trip to Spain\",\n"+
+              "  \"start\": \"2011-06-08+01:00\",\n"+
+              "  \"end\": \"2011-06-13+01:00\",\n"+
+              "  \"attendees\": \"/employees/32323424\",\n"+
+              "  \"created\": \"2011-05-05T16:23:25.761+01:00\",\n"+
+              "  \"status\": \"created\",\n"+
+              "  \"leaveType\": \"Annual Leave\",\n"+
+              "  \"leaveAmount\":  5,\n"+
+              "  \"leaveUnits\": \"Days\",\n"+
+              "  \"leaveRequest\": \""+leaveRequestuid+"\"\n"+
               "}");
     }
 
@@ -22,90 +29,60 @@ public class HRLeavePeriods extends WebObject {
         }
         else
         if(contentListContains("is", "leave-period")){
-            mirrorLeaveRequest();
-            configLeavePeriod();
-            checkNotAsRequested();
-            acceptLeaveResponse();
+            createOnBackEnd();
+            approveOnBackEnd();
         }
     }
 
     private void makeLeavePeriod(){
         for(String leaveRequestuid: alerted()){ logrule();
             content("leaveRequest", leaveRequestuid);
-            String leaveRequestLeavePeriod = content("leaveRequest:leavePeriod");
-            if(leaveRequestLeavePeriod==null){
+            if(!contentSet("leaveRequest:leavePeriod")){ // !!
                 contentListAdd("leavePeriods", spawn(new HRLeavePeriods(leaveRequestuid)));
             }
         }
     }
 
-    private void configLeavePeriod(){
-        if(!contentSet("buylim")){
-            contentDouble("buylim", contentDouble("leaveRequest:buylim"));
-            contentDouble("price",  contentDouble("leaveRequest:price"));
+    private void createOnBackEnd(){
+        if(contentIs("status", "created")){
+            content("status", "new");
             notifying(content("leaveRequest"));
-            setUpPseudoMarketMoverInterfaceCallback();
+            triggerStatusRoundtrip(content("leaveRequest:status"));
         }
     }
 
-    private void mirrorLeaveRequest(){
-        if(contentIs("status", "waiting") && 
-           contentSet("buylim") && 
-           contentSet("leaveRequest:buylim")){ logrule();
+    private void approveOnBackEnd(){
+        for(String alertedUid: alerted()){ logrule();
+            content("alerted", alertedUid);
+            if(contentListContains("alerted:is", "leave-response") &&
+               contentIs("status", "requested")                       ){
 
-            contentDouble("buylim", contentDouble("leaveRequest:buylim"));
-            contentDouble("price",  contentDouble("leaveRequest:price"));
-        }
-    }
-
-    private void checkNotAsRequested(){
-        if(contentIs("status", "filled") || contentListContains("status", "filled")){ logrule();
-            if( contentDouble("buylim") !=     contentDouble("leaveRequest:buylim")  ||
-                contentDouble("price") !=     contentDouble("leaveRequest:price")    ){
-
-                contentList("status", list("filled", "not-as-requested"));
+                content("leaveResponse", alertedUid);
+                triggerStatusRoundtrip(content("leaveResponse:status"));
             }
-            else{
-                content("status", "filled");
-            }
-        }
-    }
-
-    private void acceptLeaveResponse(){
-        if(contentIs("status","filled") || contentListContains("status", "filled")){ logrule();
-            if(contentDouble("leaveRequest:leaveResponse:amount") == contentDouble("ask") * contentDouble("price")){
-                content("status", "paid");
-                content("leaveResponse", content("leaveRequest:leaveResponse"));
-            }
+            content("alerted", null);
         }
     }
 
     // ----------------------------------------------------
 
-    private void marketMoved(final double price){
+    private void backEndStatus(final String status){
         new Evaluator(this){
             public void evaluate(){ logrule();
-                contentDouble("ask", price);
-                if(price < contentDouble("buylim")){
-                    content("status", "filled");
-                }
+                content("status", status);
                 refreshObserves();
             }
         };
     }
 
-    // ----------------------------------------------------
-
-    static private double[] prices = { 81.8, 81.6 };
-    private void setUpPseudoMarketMoverInterfaceCallback(){
+    private void triggerStatusRoundtrip(final String status){
         new Thread(){ public void run(){
-            for(int i=0; i<prices.length; i++){
-                try{ Thread.sleep(500); }catch(Exception e){}
-                marketMoved(prices[i]);
-            }
-        } }.start();
+            try{ Thread.sleep(500); }catch(Exception e){}
+            backEndStatus(status);
+        }}.start();
     }
 
     // ----------------------------------------------------
 }
+
 

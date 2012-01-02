@@ -7,12 +7,17 @@ public class HRRequestResponse extends WebObject {
 
     public HRRequestResponse(){}
 
-    public HRRequestResponse(String leaveRequestuid, String leavePerioduid, double amount){
-        super("{ \"is\": [ \"leave-response\" ],\n"+
-              "  \"leavePeriod\": \""+leavePerioduid+"\",\n"+
-              "  \"leaveRequest\": \""+leaveRequestuid+"\",\n"+
-              "  \"amount\": "+amount+",\n"+
-              "  \"account\": { }\n"+
+    public HRRequestResponse(String leavePerioduid){
+        super("{ \"is\": [ \"hr\", \"leave-response\" ],\n"+
+              "  \"start\": \"2011-06-08+01:00\",\n"+
+              "  \"end\": \"2011-06-13+01:00\",\n"+
+              "  \"manager\": \"/employees/32323424\",\n"+
+              "  \"created\": \"2011-05-05T16:23:25.761+01:00\",\n"+
+              "  \"status\": \"approved\",\n"+
+              "  \"leaveType\": \"Annual Leave\",\n"+
+              "  \"leaveAmount\":  5,\n"+
+              "  \"leaveUnits\": \"Days\",\n"+
+              "  \"leavePeriod\": \""+leavePerioduid+"\"\n"+
               "}");
     }
 
@@ -20,9 +25,7 @@ public class HRRequestResponse extends WebObject {
         if(contentListContains("is", "leave-request")){
             alertLeaveRecords();
             setLeavePeriod();
-            investMore();
-            cheaperPriceSimulatingRace();
-            acceptDealAndPay();
+            managerApproves();
         }
         else
         if(contentListContains("is", "leave-response")){
@@ -44,26 +47,10 @@ public class HRRequestResponse extends WebObject {
         }
     }
 
-    private void investMore(){
-       if(contentSet("leavePeriod") && contentDouble("price")==500.0){ logrule();
-           contentDouble("price", 1000.0);
-       }
-    }
-
-    private void cheaperPriceSimulatingRace(){
-        if(contentIs("leavePeriod:status", "filled") && content("leaveResponse")==null){ logrule();
-            contentDouble("buylim", 81.5);
-        }
-    }
-
-    private void acceptDealAndPay(){
-        if(contentListContains("leavePeriod:status", "not-as-requested") &&
-           contentDouble("buylim")==81.5 &&
-           content("leaveResponse")==null              ){ logrule();
-
-            contentDouble("buylim", 81.7);
-            double amount = contentDouble("leavePeriod:ask") * contentDouble("price");
-            content("leaveResponse", spawn(new HRRequestResponse(uid, content("leavePeriod"), amount)));
+    private void managerApproves(){
+        if( contentIs("leavePeriod:status", "requested") &&
+           !contentSet("leaveResponse")                    ){
+            content("leaveResponse", spawn(new HRRequestResponse(content("leavePeriod"))));
         }
     }
 
