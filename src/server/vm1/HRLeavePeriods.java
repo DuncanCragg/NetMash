@@ -35,17 +35,19 @@ public class HRLeavePeriods extends WebObject {
     }
 
     private void makeLeavePeriod(){
-        for(String leaveRequestuid: alerted()){ logrule();
-            content("leaveRequest", leaveRequestuid);
-            if(!contentSet("leaveRequest:leavePeriod")){ // !!
-                contentListAdd("leavePeriods", spawn(new HRLeavePeriods(leaveRequestuid)));
+        for(String alertedUid: alerted()){ logrule();
+            content("alerted", alertedUid);
+            if(!contentSet("alerted:leavePeriod")){ // !!
+                contentListAddURL("leavePeriods", spawn(new HRLeavePeriods(alertedUid)));
             }
+            content("alerted", null);
         }
     }
 
     private void createOnBackEnd(){
         if(contentIs("status", "created")){
             content("status", "new");
+            contentURL("leaveRequest", content("leaveRequest"));
             notifying(content("leaveRequest"));
             triggerStatusRoundtrip(content("leaveRequest:status"));
         }
@@ -57,7 +59,7 @@ public class HRLeavePeriods extends WebObject {
             if(contentListContains("alerted:is", "leave-response") &&
                contentIs("status", "requested")                       ){
 
-                content("leaveResponse", alertedUid);
+                contentURL("leaveResponse", alertedUid);
                 triggerStatusRoundtrip(content("leaveResponse:status"));
             }
             content("alerted", null);
@@ -77,7 +79,7 @@ public class HRLeavePeriods extends WebObject {
 
     private void triggerStatusRoundtrip(final String status){
         new Thread(){ public void run(){
-            try{ Thread.sleep(500); }catch(Exception e){}
+            try{ Thread.sleep(10000); }catch(Exception e){}
             backEndStatus(status);
         }}.start();
     }

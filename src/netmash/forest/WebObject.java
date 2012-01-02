@@ -193,6 +193,12 @@ public class WebObject {
         statemod = updatingState.stringPath(path, val) || statemod;
     }
 
+    /** Set UID at this path in the JSON content as a fully-qualified URL. */
+    public void contentURL(String path, String val){
+        doCopyOnWrite(path);
+        statemod = updatingState.stringPath(path, UID.toURL(val)) || statemod;
+    }
+
     /** Get int at this path in the JSON content. */
     public int contentInt(String path){
         int i=0;
@@ -356,6 +362,12 @@ public class WebObject {
     public void contentListAdd(String path, Object val){
         doCopyOnWrite(path);
         statemod = updatingState.listPathAdd(path, val) || statemod;
+    }
+
+    /** Add the value onto the list at the path, making it into a fully-qualified URL. */
+    public void contentListAddURL(String path, String val){
+        doCopyOnWrite(path);
+        statemod = updatingState.listPathAdd(path, UID.toURL(val)) || statemod;
     }
 
     /** Add this value as if the list were a set. */
