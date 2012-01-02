@@ -40,34 +40,28 @@ public class HRLeavePeriods extends WebObject {
     }
 
     private void configLeavePeriod(){
-        if(contentList("params")==null){
-            LinkedList ll = contentListClone("leaveRequest:params");
-            if(ll!=null){ logrule();
-                contentList("params", ll);
-                notifying(content("leaveRequest"));
-                setUpPseudoMarketMoverInterfaceCallback();
-            }
+        if(!contentSet("buylim")){
+            contentDouble("buylim", contentDouble("leaveRequest:buylim"));
+            contentDouble("price",  contentDouble("leaveRequest:price"));
+            notifying(content("leaveRequest"));
+            setUpPseudoMarketMoverInterfaceCallback();
         }
     }
 
     private void mirrorLeaveRequest(){
         if(contentIs("status", "waiting") && 
-           contentSet("params") && 
-           contentSet("leaveRequest:params")){ logrule();
+           contentSet("buylim") && 
+           contentSet("leaveRequest:buylim")){ logrule();
 
-            content(      "params:0", content(      "leaveRequest:params:0"));
-            content(      "params:1", content(      "leaveRequest:params:1"));
-            contentDouble("params:2", contentDouble("leaveRequest:params:2"));
-            contentDouble("params:3", contentDouble("leaveRequest:params:3"));
+            contentDouble("buylim", contentDouble("leaveRequest:buylim"));
+            contentDouble("price",  contentDouble("leaveRequest:price"));
         }
     }
 
     private void checkNotAsRequested(){
         if(contentIs("status", "filled") || contentListContains("status", "filled")){ logrule();
-            if(!content(      "params:0").equals(content(      "leaveRequest:params:0")) ||
-               !content(      "params:1").equals(content(      "leaveRequest:params:1")) ||
-                contentDouble("params:2") !=     contentDouble("leaveRequest:params:2")  ||
-                contentDouble("params:3") !=     contentDouble("leaveRequest:params:3")    ){
+            if( contentDouble("buylim") !=     contentDouble("leaveRequest:buylim")  ||
+                contentDouble("price") !=     contentDouble("leaveRequest:price")    ){
 
                 contentList("status", list("filled", "not-as-requested"));
             }
@@ -79,7 +73,7 @@ public class HRLeavePeriods extends WebObject {
 
     private void acceptLeaveResponse(){
         if(contentIs("status","filled") || contentListContains("status", "filled")){ logrule();
-            if(contentDouble("leaveRequest:leaveResponse:amount") == contentDouble("ask") * contentDouble("params:3")){
+            if(contentDouble("leaveRequest:leaveResponse:amount") == contentDouble("ask") * contentDouble("price")){
                 content("status", "paid");
                 content("leaveResponse", content("leaveRequest:leaveResponse"));
             }
@@ -92,7 +86,7 @@ public class HRLeavePeriods extends WebObject {
         new Evaluator(this){
             public void evaluate(){ logrule();
                 contentDouble("ask", price);
-                if(price < contentDouble("params:2")){
+                if(price < contentDouble("buylim")){
                     content("status", "filled");
                 }
                 refreshObserves();

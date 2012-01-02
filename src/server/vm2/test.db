@@ -33,7 +33,8 @@
     "leaveAmount":  5,
     "leaveUnits": "Days",
     "leaveRecords": "http://localhost:8081/o/uid-4574-a96f-f796-c5fb.json",
-    "params": [ "usd/jpy", "buylim", 81.7, 500.00 ],
+    "buylim": 81.7,
+    "price": 500.00
 }
 
 

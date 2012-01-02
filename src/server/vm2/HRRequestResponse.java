@@ -45,24 +45,24 @@ public class HRRequestResponse extends WebObject {
     }
 
     private void investMore(){
-       if(contentSet("leavePeriod") && contentDouble("params:3")==500.0){ logrule();
-           contentDouble("params:3", 1000.0);
+       if(contentSet("leavePeriod") && contentDouble("price")==500.0){ logrule();
+           contentDouble("price", 1000.0);
        }
     }
 
     private void cheaperPriceSimulatingRace(){
         if(contentIs("leavePeriod:status", "filled") && content("leaveResponse")==null){ logrule();
-            contentDouble("params:2", 81.5);
+            contentDouble("buylim", 81.5);
         }
     }
 
     private void acceptDealAndPay(){
         if(contentListContains("leavePeriod:status", "not-as-requested") &&
-           contentDouble("params:2")==81.5 &&
+           contentDouble("buylim")==81.5 &&
            content("leaveResponse")==null              ){ logrule();
 
-            contentDouble("params:2", 81.7);
-            double amount = contentDouble("leavePeriod:ask") * contentDouble("params:3");
+            contentDouble("buylim", 81.7);
+            double amount = contentDouble("leavePeriod:ask") * contentDouble("price");
             content("leaveResponse", spawn(new HRRequestResponse(uid, content("leavePeriod"), amount)));
         }
     }
