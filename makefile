@@ -185,16 +185,17 @@ kill:
 clean:
 	rm -rf ./build/classes/netmash
 	rm -rf ./build/classes/server
-	rm -rf ./src/server/vm?/*.class
+	rm -f  ./src/server/vm?/*.class
 	rm -rf bin/classes bin/classes.dex
-	rm -rf bin/NetMash.ap_ bin/NetMash*un*ed.apk
-	rm -rf gen/android/gui/R.java
-	rm -rf ,*
+	rm -f  bin/NetMash.ap_ bin/NetMash*un*ed.apk
+	rm -f  gen/android/gui/R.java
+	rm -f  ,*
 
 veryclean: clean setappemuconfig setvmemuconfig
-	rm -rf src/server/vm[12]/netmash.log
-	rm -rf src/server/vm[12]/netmash.db
-	rm -rf bin/NetMash-*.apk
+	rm -f  src/server/vm[12]/netmash.log
+	rm -f  src/server/vm[12]/netmash.db
+	rm -f  bin/NetMash-*.apk
+	rm -f  src/server/vm2/netmashconfig.json
 
 # -------------------------------------------------------------------
 
