@@ -9,14 +9,9 @@ public class HRRequestResponse extends WebObject {
 
     public HRRequestResponse(String leavePerioduid){
         super("{ \"is\": [ \"hr\", \"leave-response\" ],\n"+
-              "  \"start\": \"2011-06-08+01:00\",\n"+
-              "  \"end\": \"2011-06-13+01:00\",\n"+
               "  \"manager\": \"/employees/32323424\",\n"+
               "  \"created\": \"2011-05-05T16:23:25.761+01:00\",\n"+
               "  \"status\": \"approved\",\n"+
-              "  \"leaveType\": \"Annual Leave\",\n"+
-              "  \"leaveAmount\":  5,\n"+
-              "  \"leaveUnits\": \"Days\",\n"+
               "  \"leavePeriod\": \""+leavePerioduid+"\"\n"+
               "}");
     }

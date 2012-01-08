@@ -10,15 +10,8 @@ public class HRLeavePeriods extends WebObject {
 
     public HRLeavePeriods(String leaveRequestuid){
         super("{ \"is\": [ \"hr\", \"leave-period\", \"event\" ],\n"+
-              "  \"title\":  \"Trip to Spain\",\n"+
-              "  \"start\": \"2011-06-08+01:00\",\n"+
-              "  \"end\": \"2011-06-13+01:00\",\n"+
-              "  \"attendees\": \"/employees/32323424\",\n"+
               "  \"created\": \"2011-05-05T16:23:25.761+01:00\",\n"+
               "  \"status\": \"created\",\n"+
-              "  \"leaveType\": \"Annual Leave\",\n"+
-              "  \"leaveAmount\":  5,\n"+
-              "  \"leaveUnits\": \"Days\",\n"+
               "  \"leaveRequest\": \""+leaveRequestuid+"\"\n"+
               "}");
     }
