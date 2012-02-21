@@ -54,10 +54,11 @@ public class FunctionalObserver implements Module {
     }
 
     private Thread pollingThread=null;
-    boolean ispolling=true;
+    boolean ispolling=false;
+    boolean visible=false;
     private void startPollingThread(){
+        visible=Kernel.config.isAtPathN("network:host");
         pollingThread=new Thread(){ public void run(){
-            boolean visible=Kernel.config.isAtPathN("network:host");
             while(ispolling){
                 Kernel.sleep(10000);
                 HashSet<String> cachenotifies=new HashSet<String>();
@@ -65,7 +66,7 @@ public class FunctionalObserver implements Module {
                     WebObject w=cacheGet(uid);
                     if(w.isShell()){ polling.remove(uid); continue; }
                     if(w.notify.isEmpty()) continue;
-                    if(visible || w.cacheNotify==null) http.poll(w);
+                    if(doShortPoll(w)) http.poll(w);
                     else cachenotifies.add(w.cacheNotify);
                 }
                 http.longpoll(cachenotifies);
@@ -75,7 +76,11 @@ public class FunctionalObserver implements Module {
 
     private void addToPolling(WebObject w){
         polling.add(w.uid);
-        pollingThread.interrupt(); // to kick off first long poll as soon as possible
+        if(!doShortPoll(w)) pollingThread.interrupt();
+    }
+
+    private boolean doShortPoll(WebObject w){
+        return (visible || w.cacheNotify==null);
     }
 
     WebObject cacheGet(String uid){
@@ -243,7 +248,7 @@ public class FunctionalObserver implements Module {
         String location=null;
         WebObject s=cacheGet(w.uid);  // must look in db
         if(!w.isVisibleRemote() && s.isShell()) location=UID.toURL(w.uid);
-        if(w.etag<=s.etag && w.notify.isEmpty()){ log(":\n"+w+"\nnot newer than:\n"+s+"\n"); return location; }
+        if(w.etag>0 && !(w.etag>s.etag) && w.notify.isEmpty()){ log(":\n"+w+"\nnot newer than:\n"+s+"\n"); return location; }
         cachePut(w);
         transferNotifyAndAlerted(s,w);
         if(w.isVisibleRemote()) addToPolling(w);

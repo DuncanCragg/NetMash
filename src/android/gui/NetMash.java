@@ -339,7 +339,7 @@ public class NetMash extends MapActivity{
         }
         else{
             String s=o.toString();
-            boolean isUID       = s.startsWith("uid-") || (s.startsWith("http://") && s.indexOf("uid-")!= -1 && s.endsWith(".json"));
+            boolean isUID       = s.startsWith("uid-") || (s.startsWith("http://") && s.endsWith(".json"));
             boolean isImage     = s.startsWith("http://") && s.endsWith(".jpg");
             boolean isFormField = s.startsWith("?[") && s.endsWith("]?");
             View v = isUID?       createUIDView(s):

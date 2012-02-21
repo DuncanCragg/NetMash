@@ -32,12 +32,12 @@ public class OTS2GUI {
     public LinkedHashMap user2GUI(){ logrule();
         String useruid = user.content("private:viewing");
 
-        String fullname = user.content("private:viewing:vcard:fullName");
-        if(fullname==null) fullname="Waiting for contact details "+user.content("private:viewing:vcard");
+        String fullname = user.content("private:viewing:contact:fullName");
+        if(fullname==null) fullname="Waiting for contact details "+user.content("private:viewing:contact");
 
-        String vcarduid = UID.normaliseUID(useruid, user.content("private:viewing:vcard"));
-        LinkedList vcard=null;
-        if(vcarduid!=null) vcard = list(style("direction","horizontal", "options","jump", "proportions","75%"), "Contact Info:", vcarduid);
+        String contactuid = UID.normaliseUID(useruid, user.content("private:viewing:contact"));
+        LinkedList contact=null;
+        if(contactuid!=null) contact = list(style("direction","horizontal", "options","jump", "proportions","75%"), "Contact Info:", contactuid);
 
         String contactsuid = UID.normaliseUID(useruid, user.content("private:viewing:private:contacts"));
         LinkedList contacts=null;
@@ -50,7 +50,7 @@ public class OTS2GUI {
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours","lightpink"));
         viewhash.put("#title", fullname);
-        if(vcard    !=null) viewhash.put("#vcard",    vcard);
+        if(contact    !=null) viewhash.put("#contact",    contact);
         if(contacts !=null) viewhash.put("#contacts", contacts);
         if(location !=null) viewhash.put("#location", location);
         return viewhash;
@@ -68,7 +68,7 @@ public class OTS2GUI {
             if(user.contentSet("private:viewing:list:"+i+":is")){
                 if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":title");
                 if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":fullName");
-                if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":vcard:fullName");
+                if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":contact:fullName");
                 if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":is");
                 if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":tags");
             }
@@ -84,7 +84,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedHashMap vCardList2GUI(String vcardprefix){ logrule();
+    public LinkedHashMap contactList2GUI(String contactprefix){ logrule();
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
         if(contacts==null) return null;
@@ -93,7 +93,7 @@ public class OTS2GUI {
         int i= -1;
         for(String uid: contacts){ i++;
             String contactuid = UID.normaliseUID(listuid, uid);
-            String fullname=            user.content("private:viewing:list:"+i+":"+vcardprefix+"fullName");
+            String fullname=            user.content("private:viewing:list:"+i+":"+contactprefix+"fullName");
             if(fullname==null) fullname=user.content("private:viewing:list:"+i+":is");
             if(fullname==null) viewlist.add("Loading..");
             else               viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), fullname, contactuid));
@@ -106,17 +106,17 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedList vCard2Map(String vcardprefix){ logrule();
+    public LinkedList contact2Map(String contactprefix){ logrule();
         String useruid = user.content("private:viewing");
         LinkedList maplist = new LinkedList();
         maplist.add("render:map");
         maplist.add("layerkey:"+useruid);
         LinkedHashMap location=user.contentHash("private:viewing:location");
-        if(location==null) location=geoCode(getGeoAddressString("private:viewing:"+vcardprefix+"address"));
+        if(location==null) location=geoCode(getGeoAddressString("private:viewing:"+contactprefix+"address"));
         if(location==null) return maplist;
         LinkedHashMap point = new LinkedHashMap();
-        String fullname=user.content(   "private:viewing:"+vcardprefix+"fullName");
-        String address=getAddressString("private:viewing:"+vcardprefix+"address");
+        String fullname=user.content(   "private:viewing:"+contactprefix+"fullName");
+        String address=getAddressString("private:viewing:"+contactprefix+"address");
         point.put("label",    fullname!=null? fullname: "");
         point.put("sublabel", address!=null? address: "");
         point.put("location", location);
@@ -125,7 +125,7 @@ public class OTS2GUI {
         return maplist;
     }
 
-    public LinkedList vCardList2Map(String vcardprefix){ logrule();
+    public LinkedList contactList2Map(String contactprefix){ logrule();
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
         if(contacts==null) return null;
@@ -135,13 +135,13 @@ public class OTS2GUI {
         int i= -1;
         for(String uid: contacts){ i++;
             LinkedHashMap<String,Double> location=null;
-            if(!vcardprefix.equals(""))   location=user.contentHash("private:viewing:list:"+i+":location");
-            if(location==null)            location=user.contentHash("private:viewing:list:"+i+":"+vcardprefix+"location");
-            if(location==null) location=geoCode(getGeoAddressString("private:viewing:list:"+i+":"+vcardprefix+"address"));
+            if(!contactprefix.equals("")) location=user.contentHash("private:viewing:list:"+i+":location");
+            if(location==null)            location=user.contentHash("private:viewing:list:"+i+":"+contactprefix+"location");
+            if(location==null) location=geoCode(getGeoAddressString("private:viewing:list:"+i+":"+contactprefix+"address"));
             if(location==null) continue;
             LinkedHashMap point = new LinkedHashMap();
-            String fullname=user.content(   "private:viewing:list:"+i+":"+vcardprefix+"fullName");
-            String address=getAddressString("private:viewing:list:"+i+":"+vcardprefix+"address");
+            String fullname=user.content(   "private:viewing:list:"+i+":"+contactprefix+"fullName");
+            String address=getAddressString("private:viewing:list:"+i+":"+contactprefix+"address");
             String contactuid = UID.normaliseUID(listuid, uid);
             point.put("label",    fullname!=null? fullname: "");
             point.put("sublabel", address!=null? address: "");
@@ -152,41 +152,41 @@ public class OTS2GUI {
         return maplist;
     }
 
-    public LinkedHashMap vCard2GUI(){ logrule();
+    public LinkedHashMap contact2GUI(){ logrule();
 
-        LinkedList vcarddetail = new LinkedList();
-        vcarddetail.add(style("direction","vertical"));
+        LinkedList contactdetail = new LinkedList();
+        contactdetail.add(style("direction","vertical"));
 
-        String mainphone=user.content("private:viewing:tel:0");
-        if(mainphone==null) mainphone=user.content("private:viewing:tel");
-        if(mainphone!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Phone:", mainphone));
+        String mainphone=user.content("private:viewing:phone:0");
+        if(mainphone==null) mainphone=user.content("private:viewing:phone");
+        if(mainphone!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Phone:", mainphone));
 
-        String homephone=user.content("private:viewing:tel:home:0");
-        if(homephone==null) homephone=user.content("private:viewing:tel:home");
-        if(homephone!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Home phone:", homephone));
+        String homephone=user.content("private:viewing:phone:home:0");
+        if(homephone==null) homephone=user.content("private:viewing:phone:home");
+        if(homephone!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Home phone:", homephone));
 
-        String workphone=user.content("private:viewing:tel:work:0");
-        if(workphone==null) workphone=user.content("private:viewing:tel:work");
-        if(workphone!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Work phone:", workphone));
+        String workphone=user.content("private:viewing:phone:work:0");
+        if(workphone==null) workphone=user.content("private:viewing:phone:work");
+        if(workphone!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Work phone:", workphone));
 
-        String mobilephone=user.content("private:viewing:tel:mobile:0");
-        if(mobilephone==null) mobilephone=user.content("private:viewing:tel:mobile");
-        if(mobilephone!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Mobile:", mobilephone));
+        String mobilephone=user.content("private:viewing:phone:mobile:0");
+        if(mobilephone==null) mobilephone=user.content("private:viewing:phone:mobile");
+        if(mobilephone!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Mobile:", mobilephone));
 
-        String faxnumber=user.content("private:viewing:tel:fax:0");
-        if(faxnumber==null) faxnumber=user.content("private:viewing:tel:fax");
-        if(faxnumber!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Fax:", faxnumber));
+        String faxnumber=user.content("private:viewing:phone:fax:0");
+        if(faxnumber==null) faxnumber=user.content("private:viewing:phone:fax");
+        if(faxnumber!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Fax:", faxnumber));
 
         String email=user.content("private:viewing:email:0");
         if(email==null) email=user.content("private:viewing:email");
-        if(email!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Email address:", email));
+        if(email!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Email address:", email));
 
-        String url=user.content("private:viewing:url:0");
-        if(url==null) url=user.content("private:viewing:url");
-        if(url!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Website:", url));
+        String webURL=user.content("private:viewing:webURL:0");
+        if(webURL==null) webURL=user.content("private:viewing:webURL");
+        if(webURL!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Website:", webURL));
 
         String address=getAddressString("private:viewing:address");
-        if(address!=null) vcarddetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", address));
+        if(address!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", address));
 
         String fullname=user.content("private:viewing:fullName");
         String photourl=user.content("private:viewing:photo");
@@ -195,7 +195,7 @@ public class OTS2GUI {
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours","lightpink"));
         viewhash.put("#title", list(style("direction","horizontal", "proportions","25%"), photourl, fullname));
-        viewhash.put("#vcard", vcarddetail);
+        viewhash.put("#contact", contactdetail);
         return viewhash;
     }
 
@@ -229,9 +229,9 @@ public class OTS2GUI {
             street=streetb.toString().trim();
         }
         StringBuilder as=new StringBuilder();
-        Object l=street;              if(l!=null){                   as.append(l); }
-        l=address.get("postalCode");  if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
-        l=address.get("countryName"); if(l!=null){ as.append(" ");   as.append(l); }
+        Object l=street;             if(l!=null){                   as.append(l); }
+        l=address.get("postalCode"); if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
+        l=address.get("country");    if(l!=null){ as.append(" ");   as.append(l); }
         return as.toString();
     }
 
@@ -253,11 +253,11 @@ public class OTS2GUI {
             street=streetb.toString().trim();
         }
         StringBuilder as=new StringBuilder();
-        Object l=street;              if(l!=null){ as.append(l); as.append("\n"); }
-        l=address.get("locality");    if(l!=null){ as.append(l); as.append("\n"); }
-        l=address.get("region");      if(l!=null){ as.append(l); as.append("\n"); }
-        l=address.get("postalCode");  if(l!=null){ as.append(l); as.append("\n"); }
-        l=address.get("countryName"); if(l!=null){ as.append(l); as.append("\n"); }
+        Object l=street;             if(l!=null){ as.append(l); as.append("\n"); }
+        l=address.get("locality");   if(l!=null){ as.append(l); as.append("\n"); }
+        l=address.get("region");     if(l!=null){ as.append(l); as.append("\n"); }
+        l=address.get("postalCode"); if(l!=null){ as.append(l); as.append("\n"); }
+        l=address.get("country");    if(l!=null){ as.append(l); as.append("\n"); }
         return as.toString();
     }
 

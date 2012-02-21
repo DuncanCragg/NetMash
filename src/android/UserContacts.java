@@ -72,7 +72,7 @@ int i=0;
             String address     =getAddress(cr, id);
             if(phonenumber==null && emailaddress==null && address==null) continue;
             WebObject.log("Contact: "+id+" "+name+" "+phonenumber+" "+emailaddress+" "+address);
-            contactslist.add(createVCard(user, id, name, phonenumber, emailaddress, address));
+            contactslist.add(createContact(user, id, name, phonenumber, emailaddress, address));
 if(++i>100) break;
         } while(concur.moveToNext());
         concur.close();
@@ -113,15 +113,15 @@ if(++i>100) break;
         return address;
     }
 
-    static public String createVCard(User user, String id, String name, String phonenumber, String emailaddress, String address){
+    static public String createContact(User user, String id, String name, String phonenumber, String emailaddress, String address){
         String inlineaddress = address!=null? address.replaceAll("\n", ", "): "";
-        return user.spawn(newVcard(name, phonenumber, emailaddress, inlineaddress));
+        return user.spawn(newContact(name, phonenumber, emailaddress, inlineaddress));
     }
 
-    static User newVcard(String name, String phonenumber, String emailaddress, String address){
-        return new User(         "{ \"is\": \"vcard\", \n"+
+    static User newContact(String name, String phonenumber, String emailaddress, String address){
+        return new User(         "{ \"is\": \"contact\", \n"+
                                  "  \"fullName\": \""+name+"\""+
-            (phonenumber!=null?  ",\n  \"tel\": \""+phonenumber+"\"": "")+
+            (phonenumber!=null?  ",\n  \"phone\": \""+phonenumber+"\"": "")+
             (emailaddress!=null? ",\n  \"email\": \""+emailaddress+"\"": "")+
             (address!=null?      ",\n  \"address\": \""+address+"\"": "")+
                                  "\n}");

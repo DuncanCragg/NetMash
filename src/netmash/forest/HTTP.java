@@ -19,9 +19,10 @@ import netmash.platform.*;
   */
 public class HTTP implements ChannelUser {
 
-    static public final String  WURLRE = "http://([^:]+)(:([0-9]+))?(/.*/(uid-[-0-9a-f]+.json|c-n-[-0-9a-f]+))$";
-    static public final Pattern WURLPA = Pattern.compile(WURLRE);
+    static public final String STRCTRE = "http://([^:/]+)(:([0-9]+))?(/.*/(uid-[-0-9a-f]+.json|c-n-[-0-9a-f]+))$";
+    static public final String  WURLRE = "http://([^:/]+)(:([0-9]+))?(/.*(.json|/c-n-[-0-9a-f]+))$";
     static public final String   URLRE = "http://([^:/]+)(:([0-9]+))?(/.*)";
+    static public final Pattern WURLPA = Pattern.compile(WURLRE);
     static public final Pattern  URLPA = Pattern.compile(URLRE);
 
     // ----------------------------------------
@@ -119,7 +120,7 @@ public class HTTP implements ChannelUser {
         if(clientpath==null) return false;
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
-        client.pollRequest(path, w.etag);
+        client.pollRequest(path, w.uid, w.etag);
         return true;
     }
 
@@ -234,9 +235,11 @@ abstract class HTTPCommon {
     protected String httpIfNoneMatch=null;
     protected String httpContentLocation=null;
     protected String httpLocation=null;
-    protected String httpEtag=null;
+    protected String httpETag=null;
+    protected String httpMaxAge=null;
     protected String httpContentType=null;
     protected String httpContentLength=null;
+    protected String httpTransferEncoding=null;
 
     public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
         boolean sof = (len==  0);
@@ -346,9 +349,11 @@ abstract class HTTPCommon {
         httpIfNoneMatch=null;
         httpContentLocation=null;
         httpLocation=null;
-        httpEtag=null;
+        httpETag=null;
+        httpMaxAge=null;
         httpContentType=null;
         httpContentLength=null;
+        httpTransferEncoding=null;
     }
 
     private void fishOutInterestingHeaders(String tag, String val){
@@ -358,9 +363,11 @@ abstract class HTTPCommon {
         if(tag.equals("If-None-Match")){    httpIfNoneMatch=val; return; }
         if(tag.equals("Content-Location")){ httpContentLocation=val; return; }
         if(tag.equals("Location")){         httpLocation=val; return; }
-        if(tag.equals("Etag")){             httpEtag=val.substring(1,val.length()-1); return; }
+        if(tag.equals("ETag")){             httpETag=val.substring(1,val.length()-1); return; }
+        if(tag.equals("Cache-Control")){    httpMaxAge=val.substring(8); return; }
         if(tag.equals("Content-Type")){     httpContentType=val; return; }
         if(tag.equals("Content-Length")){   httpContentLength=val; return; }
+        if(tag.equals("transfer-encoding")){httpTransferEncoding=val; return; }
     }
 
     public void fixKeepAlive(){
@@ -406,16 +413,19 @@ abstract class HTTPCommon {
     protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents){
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
         sb.append("Content-Location: "); sb.append(UID.toURL(w.uid)); sb.append("\r\n");
-        sb.append("Etag: \""); sb.append(w.etag); sb.append("\"\r\n");
+        sb.append("ETag: \""); sb.append(w.etag); sb.append("\"\r\n");
         if(w.maxAge>=0){
         sb.append("Cache-Control: max-age="); sb.append(w.maxAge); sb.append("\r\n");}
         sb.append("Content-Type: application/json\r\n");
+        sb.append("Access-Control-Allow-Origin: *\r\n");
+        sb.append("Access-Control-Allow-Headers: X-Requested-With\r\n");
+
         String content=w.toString(percents);
         sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n\r\n");
         sb.append(content);
     }
 
-    protected PostResponse readWebObject(ByteBuffer bytebuffer, int contentLength, String uid, WebObject webobject, String param){
+    protected PostResponse readWebObject(ByteBuffer bytebuffer, int contentLength, String httpNotify, String httpReqURL, WebObject webobject, String param){
 
         ByteBuffer body = Kernel.chopAtLength(bytebuffer, contentLength);
         CharBuffer jsonchars = UTF8.decode(body);
@@ -426,7 +436,8 @@ abstract class HTTPCommon {
             JSON json = new JSON(jsonchars);
             WebObject w=null;
             try{
-                w=new WebObject(json, httpContentLocation, httpEtag, null, httpCacheNotify, uid);
+                String httpUID=(httpContentLocation==null)? httpReqURL: httpContentLocation;
+                w=new WebObject(json, httpUID, httpETag, httpMaxAge, httpCacheNotify, httpNotify);
             }
             catch(Exception e){ log(e); }
             if(w==null){ log("Cannot convert to WebObject:\n"+json); return new PostResponse(400,null); }
@@ -565,20 +576,20 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         else try{ longQ.put(notifieruid); }catch(Exception e){}
     }
 
-    private void readPOST(ByteBuffer bytebuffer, String uid) throws Exception{
+    private void readPOST(ByteBuffer bytebuffer, String httpNotify) throws Exception{
         int contentLength=0;
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         else throw new Exception("POST without Content-Length");
         if(contentLength > bytebuffer.position()) return;
-        processContent(bytebuffer, uid, contentLength);
+        processContent(bytebuffer, httpNotify, contentLength);
     }
 
-    void processContent(ByteBuffer bytebuffer, String uid, int contentLength){
+    void processContent(ByteBuffer bytebuffer, String httpNotify, int contentLength){
         setDoingResponse();
-        if(uid.startsWith("c-n-") && !uid.equals(CacheNotify())) send404();
+        if(httpNotify.startsWith("c-n-") && !httpNotify.equals(CacheNotify())) send404();
         else
         if(contentLength >0){
-            PostResponse pr=readWebObject(bytebuffer, contentLength, uid, null, null);
+            PostResponse pr=readWebObject(bytebuffer, contentLength, httpNotify, null, null, null);
             if(pr.code==200) send200(null);
             else
             if(pr.code==201) send201(pr.location);
@@ -649,24 +660,24 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
 
     //------------------------------------------
 
-    synchronized void pollRequest(String path, int etag){
-        try{ requests.put(new Request("POLL", path, etag, null, null, null)); }catch(Exception e){}
+    synchronized void pollRequest(String path, String uid, int etag){
+        try{ requests.put(new Request("POLL", path, uid, etag, null, null, null)); }catch(Exception e){}
         doNextRequestIfIdle();
     }
 
     synchronized void postRequest(String path, String notifieruid){
-        try{ requests.put(new Request("POST", path, 0, null, null, notifieruid)); }catch(Exception e){}
+        try{ requests.put(new Request("POST", path, null, 0, null, null, notifieruid)); }catch(Exception e){}
         doNextRequestIfIdle();
     }
 
     synchronized void longPollRequest(String path){
         if(!requests.isEmpty()) return;
-        try{ requests.put(new Request("LONG", path, 0, null, null, null)); }catch(Exception e){}
+        try{ requests.put(new Request("LONG", path, null, 0, null, null, null)); }catch(Exception e){}
         doNextRequestIfIdle();
     }
 
     synchronized void jsonRequest(String path, WebObject webobject, String param){
-        try{ requests.put(new Request("JSON", path, 0, webobject, param, null)); }catch(Exception e){}
+        try{ requests.put(new Request("JSON", path, null, 0, webobject, param, null)); }catch(Exception e){}
         doNextRequestIfIdle();
     }
 
@@ -724,6 +735,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) needsConnect=true;
         int contentLength= -1;
+        if("chunked".equals(httpTransferEncoding)) throw new Exception("We don't do chunked yet!");
         if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
         if(eof) contentLength = bytebuffer.position();
         if(contentLength == -1 || contentLength > bytebuffer.position()) return;
@@ -737,7 +749,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
             w.setURL(httpLocation);
         }
         if(contentLength > 0){
-            PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.webobject, request.param); // XXX! request.path for when no C-L
+            PostResponse pr=readWebObject(bytebuffer, contentLength, null, request.uid, request.webobject, request.param);
             retryRequest=false;
             longFailedSoWait=(pr.code!=200);
         }
@@ -782,17 +794,17 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
     protected void stop(){ running=false; close(null,null); }
 
     class Request { 
-        String type, path; int etag; WebObject webobject; String param, notifieruid;
-        Request(String t, String p, int e, WebObject o, String m, String n){
-            type=t; path=p; etag=e; webobject=o; param=m; notifieruid=n;
+        String type, path, uid; int etag; WebObject webobject; String param, notifieruid;
+        Request(String t, String p, String u, int e, WebObject o, String m, String n){
+            type=t; path=p; uid=u; etag=e; webobject=o; param=m; notifieruid=n;
         }
         public String toString(){
-            return "Request: { type:"+type+" path:"+path+" etag:"+etag+" webobject:"+(webobject==null?"null":webobject.uid)+
+            return "Request: { type:"+type+" path:"+path+" uid:"+uid+" etag:"+etag+" webobject:"+(webobject==null?"null":webobject.uid)+
                              " param:"+param+" notifieruid:"+notifieruid+" }";
         }
     }
 
-    public void log(Object s){ FunctionalObserver.log(host+":"+port+" "+s); }
+    public void log(Object s){ FunctionalObserver.log("HTTPClient["+host+":"+port+"] "+s); }
 }
 
 

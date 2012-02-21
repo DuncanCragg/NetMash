@@ -3,16 +3,16 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enter Your Full Name Here",
     "email": "you@yourdomain.com",
     "address": {
       "street": "150 Old Park Ln",
       "locality": "London",
       "postalCode": "W1K 1QZ",
-      "countryName": "UK"
+      "country": "UK"
     },
-    "tel": { "home": "020 8888 8888", "mobile": "0777 77 77 777" }
+    "phone": { "home": "020 8888 8888", "mobile": "0777 77 77 777" }
 }
 
 {   "%uid": "uid-7756-cb46-4b1b-89cc",

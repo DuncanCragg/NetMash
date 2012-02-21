@@ -70,12 +70,12 @@ public class WebObject {
     }
 
     /** Create WebObject from HTTP. */
-    public WebObject(JSON json, String httpUID, String httpEtag, String httpMaxAge, String httpCacheNotify, String httpNotify){
+    public WebObject(JSON json, String httpUID, String httpETag, String httpMaxAge, String httpCacheNotify, String httpNotify){
         funcobs = FunctionalObserver.funcobs;
-        int httpetag   = (httpEtag  !=null)? Integer.parseInt(httpEtag): 0;
-        int httpmaxage = (httpMaxAge!=null)? Integer.parseInt(httpMaxAge): 0;
+        int httpetag=0;   try{ httpetag   = Integer.parseInt(httpETag);   }catch(Throwable t){ httpETag  =null; }
+        int httpmaxage=0; try{ httpmaxage = Integer.parseInt(httpMaxAge); }catch(Throwable t){ httpMaxAge=null; }
         uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%uid");     json.removePath("%uid");
-        etag    = (httpEtag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
+        etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "%max-age"); json.removePath("%max-age");
         listToSet(notify,                         json.listPathN(  "%notify")); json.removePath("%notify");
         if(httpNotify!=null && !httpNotify.startsWith("c-n-")) notify.add(httpNotify);

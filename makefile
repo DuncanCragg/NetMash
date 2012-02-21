@@ -59,6 +59,8 @@ runlocalserver: kill clean setvmemuconfig uselocaldb run1 logboth
 
 runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
 
+run1server: kill clean setvmtestconfig usetestdb run1 logout1
+
 runcur: kill curconfig setvmtestconfig usetestdb run1n2
 
 runall: kill allconfig setvmtestconfig usetestdb run1n2

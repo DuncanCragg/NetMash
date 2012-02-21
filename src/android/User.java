@@ -34,8 +34,8 @@ public class User extends WebObject {
 
     static public void createUserAndDevice(){
         String fullName=UserContacts.getUsersFullName();
-        User vcard = new User(
-              "{   \"is\": \"vcard\", \n"+
+        User contact = new User(
+              "{   \"is\": \"contact\", \n"+
               "    \"fullName\": \""+fullName+"\", \n"+
               "    \"address\": { } \n"+
               "}");
@@ -47,17 +47,17 @@ public class User extends WebObject {
         links.publicState.listPath("list", otslinks);
 
         User contacts = new User(
-              "{   \"is\": [ \"private\", \"vcardlist\" ], \n"+
+              "{   \"is\": [ \"private\", \"contact\", \"list\" ], \n"+
               "    \"title\": \"Phone Contacts\", \n"+
               "    \"list\": null \n"+
               "}");
 
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
-        me = new User(homeusers, vcard.uid, links.uid, contacts.uid);
+        me = new User(homeusers, contact.uid, links.uid, contacts.uid);
         otslinks.addFirst(me.uid);
 
         me.funcobs.setCacheNotifyAndSaveConfig(me);
-        me.funcobs.cacheSaveAndEvaluate(vcard, true);
+        me.funcobs.cacheSaveAndEvaluate(contact, true);
         me.funcobs.cacheSaveAndEvaluate(links);
         me.funcobs.cacheSaveAndEvaluate(contacts);
         me.funcobs.cacheSaveAndEvaluate(me, true);
@@ -70,11 +70,11 @@ public class User extends WebObject {
         super(jsonstring);
     }
 
-    public User(String homeusers, String vcarduid, String linksuid, String contactsuid){
+    public User(String homeusers, String contactuid, String linksuid, String contactsuid){
         super("{   \"is\": \"user\", \n"+
               "    \"homeusers\": \""+homeusers+"\", \n"+
               "    \"location\": { \"lat\": 0, \"lon\": 0 }, \n"+
-              "    \"vcard\": \""+vcarduid+"\", \n"+
+              "    \"contact\": \""+contactuid+"\", \n"+
               "    \"private\": { \n"+
               "        \"viewing\": null, \n"+
               "        \"viewas\": \"gui\", \n"+
@@ -313,7 +313,7 @@ public class User extends WebObject {
             showWhatIAmViewing();
         }
         else
-        if(contentListContainsAll("is", list("private", "vcardlist"))){ log("contacts: "+this);
+        if(contentListContainsAll("is", list("private", "contact", "list"))){ log("contacts: "+this);
             if(!contentSet("list")) contentList("list", UserContacts.populateContacts(this));
         }
         else
@@ -342,24 +342,28 @@ public class User extends WebObject {
     private void showWhatIAmViewingAsGUI(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
+            if(contentIsOrListContains("private:viewing:is", "user")&&
+               contentIsOrListContains("private:viewing:is", "list")  ){
+
+                viewhash=ots2gui.contactList2GUI("contact:");
+            }
+            else
+            if(contentIsOrListContains("private:viewing:is", "contact")&&
+               contentIsOrListContains("private:viewing:is", "list"   )   ){
+
+                viewhash=ots2gui.contactList2GUI("");
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "user")){
                 viewhash=ots2gui.user2GUI();
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "vcard")){
-                viewhash=ots2gui.vCard2GUI();
+            if(contentIsOrListContains("private:viewing:is", "contact")){
+                viewhash=ots2gui.contact2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "event")){
                 viewhash=ots2gui.event2GUI();
-            }
-            else
-            if(contentIsOrListContains("private:viewing:is", "userlist")){
-                viewhash=ots2gui.vCardList2GUI("vcard:");
-            }
-            else
-            if(contentIsOrListContains("private:viewing:is", "vcardlist")){
-                viewhash=ots2gui.vCardList2GUI("");
             }
             else
             if(contentIsOrListContains("private:viewing:is", "links")){
@@ -384,20 +388,26 @@ public class User extends WebObject {
     private void showWhatIAmViewingOnMap(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedList viewlist=null;
+            if(contentIsOrListContains("private:viewing:is", "user")&&
+               contentIsOrListContains("private:viewing:is", "list")  ){
+
+                viewlist=ots2gui.contactList2Map("contact:");
+            }
+            else
+            if(contentIsOrListContains("private:viewing:is", "contact")&&
+               contentIsOrListContains("private:viewing:is", "list"   )   ){
+
+                viewlist=ots2gui.contactList2Map("");
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "user")){
-                viewlist=ots2gui.vCard2Map("vcard:");
+
+                viewlist=ots2gui.contact2Map("contact:");
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "vcard")){
-                viewlist=ots2gui.vCard2Map("");
-            }
-            else
-            if(contentIsOrListContains("private:viewing:is", "userlist")){
-                viewlist=ots2gui.vCardList2Map("vcard:");
-            }
-            else
-            if(contentIsOrListContains("private:viewing:is", "vcardlist")){
-                viewlist=ots2gui.vCardList2Map("");
+            if(contentIsOrListContains("private:viewing:is", "contact")){
+
+                viewlist=ots2gui.contact2Map("");
             }
             else{
             }

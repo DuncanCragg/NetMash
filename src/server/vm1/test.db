@@ -80,7 +80,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcardlist" ],
+    "is": [ "contact", "list" ],
     "title": "Enterprise Locations NorthWest",
     "list": [
         "uid-4c3f-9b0f-3bf3-abe6",
@@ -102,7 +102,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise - Head Office",
     "address": {
       "street": [ "Gordon House",
@@ -112,7 +112,7 @@
       "region": "Lancashire",
       "postalCode": "PR5 6AW"
     },
-    "tel": { "work": "01772 819000" }
+    "phone": { "work": "01772 819000" }
 }
 
 {   "%uid": "uid-05cc-e687-907f-cf7b",
@@ -120,7 +120,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise - Central",
     "address": {
       "street": [ "Lancaster House",
@@ -129,7 +129,7 @@
       "region": "Lancashire",
       "postalCode": "PR26 6TX"
     },
-    "tel": { "work": "01772 819000",
+    "phone": { "work": "01772 819000",
              "fax":  "01772 819001" }
 }
 
@@ -138,7 +138,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise - Energy (Power)",
     "address": {
       "street": [ "Unit B2 Redscar Industrial Estate", 
@@ -148,7 +148,7 @@
       "region": "Lancashire",
       "postalCode": "PR2 5NJ"
     },
-    "tel": { "work": "01772 705253",
+    "phone": { "work": "01772 705253",
              "fax":  "01772 655971" }
 }
 
@@ -157,7 +157,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise - Customer Contact Centre",
     "address": {
       "street": [ "The Matchworks",
@@ -168,7 +168,7 @@
       "region": "Merseyside",
       "postalCode": "L19 2PH"
     },
-    "tel": { "work": "0800 521660" }
+    "phone": { "work": "0800 521660" }
 }
 
 {   "%uid": "uid-fe83-20d2-9fe7-47bd",
@@ -176,7 +176,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise - Environmental",
     "address": {
       "street": [ "Moss Side Depot",
@@ -186,7 +186,7 @@
       "region": "Lancashire",
       "postalCode": "PR26 7QR"
     },
-    "tel": { "work": "01772 624182" }
+    "phone": { "work": "01772 624182" }
 }
 
 {   "%uid": "uid-8531-41a0-5a6c-172f",
@@ -194,7 +194,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise - Energy (Gas)",
     "address": {
       "street": [ "Building 005",
@@ -203,9 +203,9 @@
       "locality": "Manchester",
       "region": "Lancashire",
       "postalCode": "M31 4BR",
-      "countryName": "UK"
+      "country": "UK"
     },
-    "tel": { "work": "0161 7767800" }
+    "phone": { "work": "0161 7767800" }
 }
 
 {   "%uid": "uid-178e-2950-002f-1c03",
@@ -213,7 +213,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise Liverpool - Environmental",
     "address": {
       "street": [ "Moorgate Point",
@@ -222,7 +222,7 @@
       "region": "Merseyside",
       "postalCode": "L33 7DR"
     },
-    "tel": { "work": "0151 5477370" }
+    "phone": { "work": "0151 5477370" }
 }
 
 {   "%uid": "uid-2622-e06c-bf3b-62b4",
@@ -230,7 +230,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise - Environmental",
     "address": {
       "street": [ "20 Old London Road Depot" ],
@@ -238,7 +238,7 @@
       "region": "Cumbria",
       "postalCode": "CA11 8GU"
     },
-    "tel": { "work": "01768 212800" }
+    "phone": { "work": "01768 212800" }
 }
 
 {   "%uid": "uid-543f-d8a4-bcbd-88d5",
@@ -246,7 +246,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise Liverpool - Environmental",
     "address": {
       "street": [ "Newton Road Depot",
@@ -254,9 +254,9 @@
       "locality": "Liverpool",
       "region": "Merseyside",
       "postalCode": "L13 3HS",
-      "countryName": "UK"
+      "country": "UK"
     },
-    "tel": { "work": "0151 2336550" }
+    "phone": { "work": "0151 2336550" }
 }
 
 {   "%uid": "uid-b32e-52a8-130f-6ce7",
@@ -264,7 +264,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise - Highways",
     "address": {
       "street": [ "Holmesfield Road" ],
@@ -272,7 +272,7 @@
       "region": "Cheshire",
       "postalCode": "WA1 2DS"
     },
-    "tel": { "work": "01925 425780",
+    "phone": { "work": "01925 425780",
              "fax":  "01925 425798" }
 }
 
@@ -281,7 +281,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Enterprise Manchester - Environmental",
     "address": {
       "street": [ "c/o Manchester City Council",
@@ -291,7 +291,7 @@
       "region": "Lancashire",
       "postalCode": "M18 8EQ"
     },
-    "tel": { "work": "0161 9578304",
+    "phone": { "work": "0161 9578304",
              "fax":  "0161 9578304" }
 }
 
@@ -300,7 +300,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "MeetUsUp",
-    "is": [ "meetusup", "vcardlist" ],
+    "is": [ "meetusup", "contact", "list" ],
     "title": "MeetUsUp List",
     "venue": "uid-fc61-ba84-a7d8-9874",
     "organiser": "uid-1b84-142d-4f34-3734",
@@ -320,7 +320,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": "contact",
     "fullName": "Mr Brian Rock",
     "role": "Business Analyst",
     "photo": "http://farm5.static.flickr.com/4030/4334369685_ab7a06960f.jpg",
@@ -334,7 +334,7 @@
       "street": "150 Old Park Ln",
       "locality": "London",
       "postalCode": "W1K 1QZ",
-      "countryName": "UK"
+      "country": "UK"
     },
     "email": [ "brian.rock@site.com", "bri2001@hotmail.com" ],
     "organisation": {
@@ -342,12 +342,12 @@
       "unit": "site.com"
     },
     "birthday": "1995-02-12",
-    "tel": { "work": [ "+44 20 7514 1700", "020 7231 3212" ], "home": "020 8323 2343" },
-    "url": [
+    "phone": { "work": [ "+44 20 7514 1700", "020 7231 3212" ], "home": "020 8323 2343" },
+    "webURL": [
       "http://brian.org/",
       "http://facebook.com/brio"
     ],
-    "description": "I love rock"
+    "bio": "I /[love]/ rock",
 }
 
 {   "%uid": "uid-1b84-142d-4f34-3734",
@@ -355,7 +355,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Duncan Cragg",
     "email": "someone@thoughtworks.com",
     "address": {
@@ -364,7 +364,7 @@
         "region": "Surrey",
         "postalCode": "KT2 2PP"
     },
-    "tel": { "home": "020 8567 8900", "mobile": "0777 77 77 777" }
+    "phone": { "home": "020 8567 8900", "mobile": "0777 77 77 777" }
 }
 
 {   "%uid": "uid-a0b2-0521-d5f1-b994",
@@ -372,10 +372,10 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Joe Test",
     "email": "joe.test@testing.com",
-    "tel": { "mobile": "0777 88 77 555" },
+    "phone": { "mobile": "0777 88 77 555" },
 }
 
 {   "%uid": "uid-b4b3-586c-88e5-05ae",
@@ -383,7 +383,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Sam Bloggs",
     "email": "sam.bloggs@aol.com",
 }
@@ -393,7 +393,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Jack Bloggs",
     "email": "jack.bloggs@aol.com",
 }
@@ -403,7 +403,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Bobby Bloggs",
     "email": "bob.bloggs@aol.com",
 }
@@ -413,7 +413,7 @@
     "%notify": [],
     "%observe": [],
     "%class": "",
-    "is": [ "vcard" ],
+    "is": [ "contact" ],
     "fullName": "Janice Bloggs",
     "email": "jan.bloggs@aol.com",
 }
