@@ -328,7 +328,7 @@ abstract class HTTPCommon {
                 donln=true;
                 String tag = new String(tagbuf); tagbuf = new StringBuilder();
                 String val = new String(valbuf); valbuf = new StringBuilder();
-                fishOutInterestingHeaders(tag, val);
+                fishOutInterestingHeaders(tag.toLowerCase(), val);
                 continue;
             }   
             
@@ -357,17 +357,17 @@ abstract class HTTPCommon {
     }
 
     private void fishOutInterestingHeaders(String tag, String val){
-        if(tag.equals("Host")){             httpHost=val; return; }
-        if(tag.equals("Connection")){       httpConnection=val; return; }
-        if(tag.equals("Cache-Notify")){     httpCacheNotify=val; return; }
-        if(tag.equals("If-None-Match")){    httpIfNoneMatch=val; return; }
-        if(tag.equals("Content-Location")){ httpContentLocation=val; return; }
-        if(tag.equals("Location")){         httpLocation=val; return; }
-        if(tag.equals("ETag")){             httpETag=val.substring(1,val.length()-1); return; }
-        if(tag.equals("Cache-Control")){    httpMaxAge=val.substring(8); return; }
-        if(tag.equals("Content-Type")){     httpContentType=val; return; }
-        if(tag.equals("Content-Length")){   httpContentLength=val; return; }
-        if(tag.equals("transfer-encoding")){httpTransferEncoding=val; return; }
+        if(tag.equals("host")){              httpHost=val; return; }
+        if(tag.equals("connection")){        httpConnection=val; return; }
+        if(tag.equals("cache-notify")){      httpCacheNotify=val; return; }
+        if(tag.equals("if-none-match")){     httpIfNoneMatch=val; return; }
+        if(tag.equals("content-location")){  httpContentLocation=val; return; }
+        if(tag.equals("location")){          httpLocation=val; return; }
+        if(tag.equals("etag")){              httpETag=val.substring(1,val.length()-1); return; }
+        if(tag.equals("cache-control")){     httpMaxAge=val.substring(8); return; }
+        if(tag.equals("content-type")){      httpContentType=val; return; }
+        if(tag.equals("content-length")){    httpContentLength=val; return; }
+        if(tag.equals("transfer-encoding")){ httpTransferEncoding=val; return; }
     }
 
     public void fixKeepAlive(){
