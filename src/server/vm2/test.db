@@ -35,7 +35,6 @@
     "leaveRecords": "http://localhost:8081/o/uid-4574-a96f-f796-c5fb.json"
 }
 
-
 {   "%uid": "uid-d7ec-6c0f-68a9-81df",
     "%etag": 1,
     "%notify": [],
