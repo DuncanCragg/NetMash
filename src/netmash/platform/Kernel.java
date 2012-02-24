@@ -397,6 +397,7 @@ public class Kernel {
 
         bytebuffer.position(0);
         bytebuffer.limit(lentake);
+
         bb.limit(bb.capacity());
         bb.put(bytebuffer);
         bb.limit(bb.position());
