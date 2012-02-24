@@ -153,8 +153,16 @@ public class Kernel {
         return doChopAtDivider(bytebuffer, divider);
     }
 
+    static public ByteBuffer chopAtDivider(ByteBuffer bytebuffer, byte[] divider, ByteBuffer bb){
+        return doChopAtDivider(bytebuffer, divider, bb);
+    }
+
     static public ByteBuffer chopAtLength(ByteBuffer bytebuffer, int length){
         return doChopAtLength(bytebuffer, length);
+    }
+
+    static public ByteBuffer chopAtLength(ByteBuffer bytebuffer, int length, ByteBuffer bb){
+        return doChopAtLength(bytebuffer, length, bb);
     }
 
     static public void close(SocketChannel channel){
@@ -334,34 +342,68 @@ public class Kernel {
             if(j!=divider.length) continue;
 
             ByteBuffer bb=ByteBuffer.allocate(len);
-            bytebuffer.position(0);
-            bytebuffer.limit(len);
 
-            bb.put(bytebuffer);
-            bb.position(0);
-
-            bytebuffer.limit(pos);
-            bytebuffer.position(len+divider.length);
-            bytebuffer.compact();
-
-            return bb;
+            return dumpInto(bytebuffer, len, len+divider.length, bb);
         }
         return null;
+    }
+
+    static private ByteBuffer doChopAtDivider(ByteBuffer bytebuffer, byte[] divider, ByteBuffer bb){
+        int len;
+        int pos=bytebuffer.position();
+        for(len=0; len<=pos-divider.length; len++){
+            int j;
+            for(j=0; j< divider.length; j++){
+                if(bytebuffer.get(len+j)!=divider[j]) break;
+            }
+            if(j!=divider.length) continue;
+
+            bb=ensureBufferBigEnough(bb, len);
+
+            return dumpInto(bytebuffer, len, len+divider.length, bb);
+        }
+        bb.limit(bb.position());
+        return bb;
     }
 
     static private ByteBuffer doChopAtLength(ByteBuffer bytebuffer, int len){
 
         int pos=bytebuffer.position();
+        if(pos >= len){
 
-        ByteBuffer bb=ByteBuffer.allocate(len);
+            ByteBuffer bb=ByteBuffer.allocate(len);
+
+            return dumpInto(bytebuffer, len, len, bb);
+        }
+        return null;
+    }
+
+    static private ByteBuffer doChopAtLength(ByteBuffer bytebuffer, int len, ByteBuffer bb){
+
+        int pos=bytebuffer.position();
+        if(pos >=len){
+
+            bb=ensureBufferBigEnough(bb, len);
+
+            return dumpInto(bytebuffer, len, len, bb);
+        }
+        bb.limit(bb.position());
+        return bb;
+    }
+
+    static private ByteBuffer dumpInto(ByteBuffer bytebuffer, int lentake, int lencut, ByteBuffer bb){
+
+        int pos=bytebuffer.position();
+
         bytebuffer.position(0);
-        bytebuffer.limit(len);
-
+        bytebuffer.limit(lentake);
+        bb.limit(bb.capacity());
         bb.put(bytebuffer);
+        bb.limit(bb.position());
         bb.position(0);
 
         bytebuffer.limit(pos);
-        bytebuffer.position(len);
+        bytebuffer.position(lencut);
         bytebuffer.compact();
 
         return bb;
@@ -387,16 +429,26 @@ public class Kernel {
         return biggerbuffer;
     }
 
+    static private ByteBuffer ensureBufferBigEnough(ByteBuffer bytebuffer, int len){
+        if(bytebuffer.position()+len <= bytebuffer.capacity()) return bytebuffer;
+        ByteBuffer biggerbuffer = ByteBuffer.allocate((bytebuffer.position()+len)*2);
+        bytebuffer.flip();
+        biggerbuffer.put(bytebuffer);
+        if(biggerbuffer.capacity() >= 64 * 1024){
+            logOut("New file read buffer size="+biggerbuffer.capacity());
+        }
+        return biggerbuffer;
+    }
+
     static private void ensureBufferBigEnough(SocketChannel channel, ByteBuffer bytebuffer){
-        if(bytebuffer.position() == bytebuffer.capacity()){
-            ByteBuffer biggerbuffer = ByteBuffer.allocate(bytebuffer.capacity()*2);
-            bytebuffer.flip();
-            biggerbuffer.put(bytebuffer);
-            bytebuffer = biggerbuffer;
-            rdbuffers.put(channel, bytebuffer);
-            if(bytebuffer.capacity() >= 64 * 1024){
-                logOut("New socket read buffer size="+bytebuffer.capacity());
-            }
+        if(bytebuffer.position() != bytebuffer.capacity()) return;
+        ByteBuffer biggerbuffer = ByteBuffer.allocate(bytebuffer.capacity()*2);
+        bytebuffer.flip();
+        biggerbuffer.put(bytebuffer);
+        bytebuffer = biggerbuffer;
+        rdbuffers.put(channel, bytebuffer);
+        if(bytebuffer.capacity() >= 64 * 1024){
+            logOut("New socket read buffer size="+bytebuffer.capacity());
         }
     }
 

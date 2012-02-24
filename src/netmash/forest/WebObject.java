@@ -665,7 +665,7 @@ public class WebObject {
     private void listToSet(AbstractSet<String> set, List list){
         if(list==null) return;
         Iterator i = list.iterator();
-        while(i.hasNext()) set.add((String)i.next());
+        while(i.hasNext()){ String s=(String)i.next(); if(s!=null) set.add(s); }
     }
 
     static public Object[] copyOfRange(Object[] a, int start, int end){

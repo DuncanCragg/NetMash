@@ -652,6 +652,12 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
     LinkedBlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
     Request request;
 
+    boolean waitingForChunkLength=true;
+    int contentLength=0;
+    int currentChunkLength=0;
+    ByteBuffer chunkBuffer    =ByteBuffer.allocate(4096);
+    ByteBuffer chunkSizeBuffer=ByteBuffer.allocate(32);
+
     public HTTPClient(String host, int port){
         funcobs = FunctionalObserver.funcobs;
         this.host = host;
@@ -732,14 +738,45 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
+    // refactor/use in incoming POST
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) needsConnect=true;
-        int contentLength= -1;
-        if("chunked".equals(httpTransferEncoding)) throw new Exception("We don't do chunked yet!");
-        if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
-        if(eof) contentLength = bytebuffer.position();
-        if(contentLength == -1 || contentLength > bytebuffer.position()) return;
-        processContent(bytebuffer, eof, contentLength);
+        if("chunked".equals(httpTransferEncoding)){
+            while(true){
+                if(waitingForChunkLength){
+                    chunkSizeBuffer=Kernel.chopAtDivider(bytebuffer, "\r\n".getBytes(), chunkSizeBuffer);
+                    if(chunkSizeBuffer.limit()==0) return;
+                    currentChunkLength=Integer.parseInt(ASCII.decode(chunkSizeBuffer).toString(), 16);
+                    chunkSizeBuffer.rewind();
+                    contentLength+=currentChunkLength;
+                    waitingForChunkLength=false;
+                }
+                if(currentChunkLength==0){
+                    int p=bytebuffer.position();
+                    chunkSizeBuffer=Kernel.chopAtDivider(bytebuffer, "\r\n".getBytes(), chunkSizeBuffer);
+                    if(bytebuffer.position()==p) return;
+                    chunkBuffer.position(chunkBuffer.limit());
+                    processContent(chunkBuffer, eof, contentLength);
+                    chunkBuffer.rewind();
+                    contentLength=0;
+                    waitingForChunkLength=true;
+                    return;
+                }
+                chunkBuffer=Kernel.chopAtLength(bytebuffer, currentChunkLength, chunkBuffer);
+                if(chunkBuffer.limit()!=contentLength) return;
+                int p=bytebuffer.position();
+                chunkSizeBuffer=Kernel.chopAtDivider(bytebuffer, "\r\n".getBytes(), chunkSizeBuffer);
+                if(bytebuffer.position()==p) return;
+                waitingForChunkLength=true;
+            }
+        }
+        else{
+            contentLength= -1;
+            if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
+            if(eof) contentLength = bytebuffer.position();
+            if(contentLength == -1 || contentLength > bytebuffer.position()) return;
+            processContent(bytebuffer, eof, contentLength);
+        }
     }
 
     void processContent(ByteBuffer bytebuffer, boolean eof, int contentLength){

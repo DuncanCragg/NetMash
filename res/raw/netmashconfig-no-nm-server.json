@@ -1,0 +1,9 @@
+{ "name": "NetMash",
+  "kernel": { "threadpool": 3 },
+  "persist": { "db": "netmash.db",
+               "syncrate": 100,
+               "preload": [ ] },
+  "network": { "pathprefix": "/o/",
+               "log": true },
+  "ots": { "links": [ "http://the-object.net/123-456.json" ] }
+}
