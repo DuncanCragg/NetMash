@@ -653,7 +653,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
     Request request;
 
     boolean waitingForChunkLength=true;
-    int contentLength=0;
+    int chunkContentLength=0;
     int currentChunkLength=0;
     ByteBuffer chunkBuffer    =ByteBuffer.allocate(4096);
     ByteBuffer chunkSizeBuffer=ByteBuffer.allocate(32);
@@ -748,7 +748,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
                     if(chunkSizeBuffer.limit()==0) return;
                     currentChunkLength=Integer.parseInt(ASCII.decode(chunkSizeBuffer).toString(), 16);
                     chunkSizeBuffer.rewind();
-                    contentLength+=currentChunkLength;
+                    chunkContentLength+=currentChunkLength;
                     waitingForChunkLength=false;
                 }
                 if(currentChunkLength==0){
@@ -756,14 +756,14 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
                     chunkSizeBuffer=Kernel.chopAtDivider(bytebuffer, "\r\n".getBytes(), chunkSizeBuffer);
                     if(bytebuffer.position()==p) return;
                     chunkBuffer.position(chunkBuffer.limit());
-                    processContent(chunkBuffer, eof, contentLength);
+                    processContent(chunkBuffer, eof, chunkContentLength);
                     chunkBuffer.rewind();
-                    contentLength=0;
+                    chunkContentLength=0;
                     waitingForChunkLength=true;
                     return;
                 }
                 chunkBuffer=Kernel.chopAtLength(bytebuffer, currentChunkLength, chunkBuffer);
-                if(chunkBuffer.limit()!=contentLength) return;
+                if(chunkBuffer.limit()!=chunkContentLength) return;
                 int p=bytebuffer.position();
                 chunkSizeBuffer=Kernel.chopAtDivider(bytebuffer, "\r\n".getBytes(), chunkSizeBuffer);
                 if(bytebuffer.position()==p) return;
@@ -771,7 +771,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
             }
         }
         else{
-            contentLength= -1;
+            int contentLength= -1;
             if(httpContentLength!=null) contentLength = Integer.parseInt(httpContentLength);
             if(eof) contentLength = bytebuffer.position();
             if(contentLength == -1 || contentLength > bytebuffer.position()) return;
