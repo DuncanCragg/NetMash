@@ -44,7 +44,7 @@ public class HRRequestResponse extends WebObject {
 
     private void managerApproves(){
         if( contentIs("leavePeriod:status", "requested") &&
-           !contentSet("leaveResponse")                    ){
+           !contentSet("leaveResponse")                    ){ logrule();
             content("leaveResponse", spawn(new HRRequestResponse(content("leavePeriod"))));
         }
     }

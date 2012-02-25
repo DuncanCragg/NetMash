@@ -12,3 +12,4 @@ src/server/vm?/*.class
 src/server/vm?/*.log
 ,*
 .*.swp
+build/netmash.jar

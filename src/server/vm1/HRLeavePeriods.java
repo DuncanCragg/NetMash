@@ -38,7 +38,7 @@ public class HRLeavePeriods extends WebObject {
     }
 
     private void createOnBackEnd(){
-        if(contentIs("status", "created")){
+        if(contentIs("status", "created")){ logrule();
             content("status", "new");
             contentURL("leaveRequest", content("leaveRequest"));
             notifying(content("leaveRequest"));
@@ -50,7 +50,7 @@ public class HRLeavePeriods extends WebObject {
         for(String alertedUid: alerted()){ logrule();
             content("alerted", alertedUid);
             if(contentListContains("alerted:is", "leave-response") &&
-               contentIs("status", "requested")                       ){
+               contentIs("status", "requested")                       ){ logrule();
 
                 contentURL("leaveResponse", alertedUid);
                 triggerStatusRoundtrip(content("leaveResponse:status"));

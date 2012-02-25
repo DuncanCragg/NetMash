@@ -56,8 +56,8 @@ public class JSON {
             cb.append(" }");
             charbuffer = cb;
         }
-        if(charbuffer.hasArray()) chars = charbuffer.array();
-        else                      chars = charbuffer.toString().toCharArray();
+      /*if(charbuffer.hasArray()) chars = charbuffer.array();
+        else                    */chars = charbuffer.toString().toCharArray();
         chp=0;
     }
 
@@ -413,6 +413,7 @@ public class JSON {
 
     @SuppressWarnings("unchecked")
     private LinkedHashMap readHashMap() throws Exception{
+        for(; chp<chars.length; chp++) if(chars[chp]>' '){ if(chars[chp]=='{') break; else parseError('{'); }
         chp++;
         LinkedHashMap hm = new LinkedHashMap();
         boolean dotag=false;

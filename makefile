@@ -117,11 +117,11 @@ setvmemuconfig:
 setvmtestconfig:
 	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
 
-setappremoteconfig:
-	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
-
 setvmremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
+
+setappremoteconfig:
+	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
 
 curconfig:
 	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json

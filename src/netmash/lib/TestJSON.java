@@ -25,7 +25,7 @@ public class TestJSON {
         String funkychars = JSON.replaceEscapableChars("\"quote\" 'quote' ")+"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3";
 
         JSON m=new JSON(
-            "{ \"kernel\": { \"modules\": {              \"cache\": \"netmash.cache.JSONCache\",\n"+
+            " \t\n \n { \"kernel\": { \"modules\": {              \"cache\": \"netmash.cache.JSONCache\",\n"+
             "                                            \"http\": \"netmash.drivers.HTTP\",\n"+
             "                                            \"logic\": \"netmash.drivers.TestDriver\" } },\n"+
             "                   \"modules\":  { \"cache\": { \"funky\": \""+funkychars+"\"},\n"+
