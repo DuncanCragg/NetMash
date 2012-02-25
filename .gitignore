@@ -10,6 +10,7 @@ src/server/vm?/local*.db
 src/server/vm?/netmash.db
 src/server/vm?/*.class
 src/server/vm?/*.log
+src/server/vm2/netmashconfig.json
 ,*
 .*.swp
 build/netmash.jar
