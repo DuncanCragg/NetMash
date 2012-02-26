@@ -193,7 +193,7 @@ clean:
 	rm -f  gen/android/gui/R.java
 	rm -f  ,*
 
-veryclean: clean setappemuconfig setvmemuconfig
+veryclean: clean setappemuconfig setvmemuconfig setdebugmapkey
 	rm -f  src/server/vm[12]/netmash.log
 	rm -f  src/server/vm[12]/netmash.db
 	rm -f  bin/NetMash-*.apk
