@@ -135,9 +135,9 @@ public class HTTP implements ChannelUser {
         return true;
     }
 
-    boolean longpush(WebObject w){ // !!?? log("longpush:\n"+w);
+    boolean longpush(WebObject w){ log("longpush:\n"+w);
         HTTPServer server = getLongPusher(w.isAsymmetricCN()? w.uid: w.cacheNotify);
-        if(server==null) return false;
+        if(server==null){ log(String.format("!! No longpush AsymmetricCN=%s, cacheNotify=%s\n%s",w.isAsymmetricCN(),w.cacheNotify,w)); return false; }
         for(String notifieruid: w.alertedin){
             server.longRequest(notifieruid);
         }

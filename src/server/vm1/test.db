@@ -1,25 +1,17 @@
 {   "%uid": "uid-c47f-5e67-9fc8-b842",
     "%etag": 11,
-    "%notify": [],
-    "%observe": [],
     "%class": "CountTo200",
     "pair": "",
     "count": 1
 }
 
 {   "%uid": "uid-ba2b-8619-fdea-8c2c",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "FXDealerTicket",
     "is": [ "fx", "dealer" ],
     "tickets": [ ]
 }
 
 {   "%uid": "uid-4574-a96f-f796-c5fb",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "HRLeavePeriods",
     "is": [ "hr", "leave-record" ],
     "employee": "/employees/1233123",
@@ -31,9 +23,6 @@
 }
 
 {   "%uid": "uid-2161-baf3-858b-858c",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "server.types.Twitter",
     "is": [ "twitter" ],
     "title": "Twitter Gateway",
@@ -76,9 +65,6 @@
 }
 
 {   "%uid": "uid-f3fd-b3a5-a88c-8dd7",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact", "list" ],
     "title": "Enterprise Locations NorthWest",
@@ -98,9 +84,6 @@
 }
 
 {   "%uid": "uid-4c3f-9b0f-3bf3-abe6",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise - Head Office",
@@ -116,9 +99,6 @@
 }
 
 {   "%uid": "uid-05cc-e687-907f-cf7b",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise - Central",
@@ -134,9 +114,6 @@
 }
 
 {   "%uid": "uid-691a-dd2e-2512-902e",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise - Energy (Power)",
@@ -153,9 +130,6 @@
 }
 
 {   "%uid": "uid-836b-7ca9-0e54-613a",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise - Customer Contact Centre",
@@ -172,9 +146,6 @@
 }
 
 {   "%uid": "uid-fe83-20d2-9fe7-47bd",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise - Environmental",
@@ -190,9 +161,6 @@
 }
 
 {   "%uid": "uid-8531-41a0-5a6c-172f",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise - Energy (Gas)",
@@ -209,9 +177,6 @@
 }
 
 {   "%uid": "uid-178e-2950-002f-1c03",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise Liverpool - Environmental",
@@ -226,9 +191,6 @@
 }
 
 {   "%uid": "uid-2622-e06c-bf3b-62b4",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise - Environmental",
@@ -242,9 +204,6 @@
 }
 
 {   "%uid": "uid-543f-d8a4-bcbd-88d5",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise Liverpool - Environmental",
@@ -260,9 +219,6 @@
 }
 
 {   "%uid": "uid-b32e-52a8-130f-6ce7",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise - Highways",
@@ -277,9 +233,6 @@
 }
 
 {   "%uid": "uid-f857-3568-b57e-89b9",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enterprise Manchester - Environmental",
@@ -296,9 +249,6 @@
 }
 
 {   "%uid": "uid-76b8-8502-45d3-0543",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "MeetUsUp",
     "is": [ "meetusup", "contact", "list" ],
     "title": "MeetUsUp List",
@@ -316,9 +266,6 @@
 }
 
 {   "%uid": "uid-35ad-af7a-93fb-896d",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": "contact",
     "fullName": "Mr Brian Rock",
@@ -351,9 +298,6 @@
 }
 
 {   "%uid": "uid-1b84-142d-4f34-3734",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Duncan Cragg",
@@ -368,9 +312,6 @@
 }
 
 {   "%uid": "uid-a0b2-0521-d5f1-b994",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Joe Test",
@@ -379,9 +320,6 @@
 }
 
 {   "%uid": "uid-b4b3-586c-88e5-05ae",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Sam Bloggs",
@@ -389,9 +327,6 @@
 }
 
 {   "%uid": "uid-6eab-8bc0-10a8-db4e",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Jack Bloggs",
@@ -399,9 +334,6 @@
 }
 
 {   "%uid": "uid-bb90-d577-703b-e7a9",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Bobby Bloggs",
@@ -409,9 +341,6 @@
 }
 
 {   "%uid": "uid-f95d-8864-a3ef-7604",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Janice Bloggs",
@@ -419,9 +348,6 @@
 }
 
 {   "%uid": "uid-7235-60ba-d323-d5d6",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "DynamicPage",
     "is": [ "gui" ],
     "title": "Demo of Dynamic GUI and Remote App",
@@ -445,9 +371,6 @@
 }
 
 {   "%uid": "uid-6332-84e1-c1de-3364",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "server.types.UserHome",
     "is": [ "userhome", "userlist" ],
     "title": "User Home",
@@ -455,9 +378,6 @@
 }
 
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "is": "links",
     "title": "Random Collection of Links",
     "list" : [ "http://netmash.net:8081/o/uid-6332-84e1-c1de-3364.json",

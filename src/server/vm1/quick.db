@@ -1,7 +1,4 @@
 {   "%uid": "uid-e02f-e1af-1c06-7d5d",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Enter Your Full Name Here",
@@ -16,17 +13,11 @@
 }
 
 {   "%uid": "uid-7756-cb46-4b1b-89cc",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "server.types.DynamicFile",
     "watching": "guitest.json",
 }
 
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "is": "links",
     "title": "Random Collection of Links",
     "list" : [ "uid-6332-84e1-c1de-3364",
@@ -35,9 +26,6 @@
 }
 
 {   "%uid": "uid-6332-84e1-c1de-3364",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "server.types.UserHome",
     "is": [ "userhome", "userlist" ],
     "title": "User Home",
@@ -45,9 +33,6 @@
 }
 
 {   "%uid": "uid-7235-60ba-d323-d5d6",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "DynamicPage",
     "is": [ "gui" ],
     "title": "Demo of Dynamic GUI and Remote App",

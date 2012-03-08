@@ -34,7 +34,7 @@ public class FXOrderPayment extends WebObject {
     }
 
     private void alertDealer(){
-        if(content("ticket")==null && contentSet("dealer:is:0")){ logrule();
+        if(!contentSet("ticket") && contentSet("dealer:is:0")){ logrule();
             notifying(content("dealer"));
         }
     }
@@ -54,15 +54,15 @@ public class FXOrderPayment extends WebObject {
     }
 
     private void cheaperPriceSimulatingRace(){
-        if(contentIs("ticket:status", "filled") && content("payment")==null){ logrule();
+        if(contentIs("ticket:status", "filled") && !contentSet("payment")){ logrule();
             contentDouble("params:2", 81.5);
         }
     }
 
     private void acceptDealAndPay(){
-        if(contentListContains("ticket:status", "not-as-ordered") &&
-           contentDouble("params:2")==81.5 &&
-           content("payment")==null              ){ logrule();
+        if( contentListContains("ticket:status", "not-as-ordered") &&
+            contentDouble("params:2")==81.5 &&
+           !contentSet("payment")               ){ logrule();
 
             contentDouble("params:2", 81.7);
             double amount = contentDouble("ticket:ask") * contentDouble("params:3");

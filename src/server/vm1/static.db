@@ -1,7 +1,4 @@
 {   "%uid": "uid-e02f-e1af-1c06-7d5d",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Contact card: enter full name here",
@@ -16,9 +13,6 @@
 }
 
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "is": "links",
     "title": "More Links",
     "list" : [ "uid-e02f-e1af-1c06-7d5d",
@@ -28,9 +22,6 @@
 }
 
 {   "%uid": "uid-a205-babf-72a4-1272",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "server.types.Event",
     "is": [ "event" ],
     "title": "Over the Air 2011",
@@ -42,9 +33,6 @@
 }
 
 {   "%uid": "uid-35c0-9017-99c1-db63",
-    "%etag": 1,
-    "%notify": [],
-    "%observe": [],
     "%class": "",
     "is": [ "contact" ],
     "fullName": "Bletchley Park",

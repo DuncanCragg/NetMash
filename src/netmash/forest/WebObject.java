@@ -60,7 +60,7 @@ public class WebObject {
         funcobs = FunctionalObserver.funcobs;
         uid     =          json.stringPathN("%uid");          json.removePath("%uid");
         url     =          json.stringPathN("%url");          json.removePath("%url");
-        etag    =          json.intPathN(   "%etag");         json.removePath("%etag");
+        etag    =          json.intPathN(   "%etag");         json.removePath("%etag"); if(etag==0) etag=1;
         maxAge  =          json.intPathN(   "%max-age");      json.removePath("%max-age");
         listToSet(notify,  json.listPathN(  "%notify"));      json.removePath("%notify");
         listToSet(observe, json.listPathN(  "%observe"));     json.removePath("%observe");

@@ -29,7 +29,7 @@ public class HRRequestResponse extends WebObject {
     }
 
     private void alertLeaveRecords(){
-        if(content("leavePeriod")==null && contentSet("leaveRecords:is:0")){ logrule();
+        if(!contentSet("leavePeriod") && contentSet("leaveRecords:is:0")){ logrule();
             notifying(content("leaveRecords"));
         }
     }

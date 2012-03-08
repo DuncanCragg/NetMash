@@ -43,7 +43,7 @@ public class FXDealerTicket extends WebObject {
     }
 
     private void configTicket(){
-        if(contentList("params")==null){
+        if(!contentSet("params")){
             LinkedList ll = contentListClone("order:params");
             if(ll!=null){ logrule();
                 contentList("params", ll);

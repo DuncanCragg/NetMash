@@ -3,7 +3,7 @@
   "persist": { "directory": ".",
                "db": "netmash.db",
                "syncrate": 100,
-               "preload": [ "uid-61c2-20d0-c001-aa46" ] },
+               "preload": [ "uid-0145-54f4-36db-302e"  ] },
   "network": { "pathprefix": "/o/",
                "log": true }
 }

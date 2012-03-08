@@ -72,7 +72,7 @@ public class HRLeavePeriods extends WebObject {
 
     private void triggerStatusRoundtrip(final String status){
         new Thread(){ public void run(){
-            try{ Thread.sleep(10000); }catch(Exception e){}
+            try{ Thread.sleep(1000); }catch(Exception e){}
             backEndStatus(status);
         }}.start();
     }
