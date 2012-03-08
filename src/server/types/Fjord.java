@@ -21,7 +21,6 @@ public class Fjord extends WebObject {
     public void evaluate(){
         runRules();
         if(contentListContains("is", "order")){
-            setTicket();
             investMore();
             cheaperPriceSimulatingRace();
             acceptDealAndPay();
@@ -49,11 +48,22 @@ public class Fjord extends WebObject {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void runRule(int i){
+        if(alerted().size()==0) runRule(i,null);
+        else for(String alerted: alerted()) runRule(i,alerted);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void runRule(int i, String alerted){
         log("Running rule \"When "+content(String.format("%%rules:%d:when", i))+"\"");
-        LinkedHashMap<String,Object> rule = contentHash(String.format("%%rules:%d:#", i));
-        log("==========\nscanRuleHash="+scanRuleHash(rule, "")+"\n"+rule+"\n"+this+"===========\n");
+
+        LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", i));
+
+        content("%alerted", alerted);
+        boolean ok=scanRuleHash(rule, "");
+        // if(!ok) roll back
+log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
+        content("%alerted", null);
     }
 
     @SuppressWarnings("unchecked")
@@ -68,15 +78,19 @@ public class Fjord extends WebObject {
             if(v instanceof String){
                 String vs=(String)v;
                 if(vs.startsWith("<")){
-                    if(vs.equals("<[]>")){
+                    if(vs.startsWith("<[]>")){
                         if(contentSet(k)) return false;
+                        String setv=vs.substring(4);
+                        if(setv.equals("%alerted")) content(k,content(setv));
                     }
                     else
                     if(vs.startsWith("<>")){
-                        if(k.equals("%notifying") && vs.startsWith("<>has(")){
-                            String notify=vs.substring(6, vs.length()-1);
-                            if(notify.startsWith("$")){
-                                notifying(content(notify.substring(1)));
+                        if(k.equals("%notifying") && vs.startsWith("<>")){
+                            String[] notify=vs.substring(2).split(";");
+                            for(int i=0; i<notify.length; i++){
+                                String n=notify[i];
+                                if(n.startsWith("has($"))     notifying(content(n.substring(5,n.length()-1)));
+                                if(n.startsWith("hasno($")) unnotifying(content(n.substring(7,n.length()-1)));
                             }
                         }
                         String setv=vs.substring(2);
@@ -92,14 +106,6 @@ public class Fjord extends WebObject {
             else return false;
         }
         return true;
-    }
-
-    private void setTicket(){
-        for(String ticketuid: alerted()){ logrule();
-            content("ticket", ticketuid);
-            notifying(ticketuid);
-            break;
-        }
     }
 
     private void investMore(){

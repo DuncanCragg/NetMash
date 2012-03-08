@@ -439,6 +439,7 @@ public class WebObject {
       * That object may or may not be observing us already.
       */
     public void notifying(String alertuid){
+        if(alertuid==null) return;
         // what if you pull notifying uid off remote object?
         notifying(uid, alertuid);
     }
@@ -452,6 +453,7 @@ public class WebObject {
       * entries are set by local observing.
       */
     public void unnotifying(String alertuid){
+        if(alertuid==null) return;
         obsalmod = true;
         remalert.add(alertuid);
     }
