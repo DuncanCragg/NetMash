@@ -26,7 +26,7 @@
     "when": "you see the order filled, simulate a race by dropping the price",
     "ticket": { "status": "filled" },
     "payment": "<[]>",
-    "params": { "price": "<81.7>81.55" }
+    "params": { "price": "<81.7>81.5" }
 }
 
 {   "%uid": "uid-0145-54f4-36db-302e",

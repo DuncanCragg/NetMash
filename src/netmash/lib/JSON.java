@@ -956,7 +956,7 @@ public class JSON {
                         String n = value.toString();
                         if(!n.equals(p)){
                             changed = true;
-                            hm.put(part, n);
+                            hm.put(part, value);
                         }
                     }
                     else { hm.remove(part); changed = true; }
@@ -970,7 +970,7 @@ public class JSON {
                         Number n = toNumber(value);
                         if(!n.equals(p)){
                             changed = true;
-                            hm.put(part, n);
+                            hm.put(part, toNumberIfPoss(value));
                         }
                     }
                     else { hm.remove(part); changed = true; }
@@ -984,7 +984,7 @@ public class JSON {
                         Boolean n = toBoolean(value);
                         if(!n.equals(p)){
                             changed = true;
-                            hm.put(part, n);
+                            hm.put(part, toBooleanIfPoss(value));
                         }
                     }
                     else { hm.remove(part); changed = true; }
@@ -1071,14 +1071,30 @@ public class JSON {
 
     private Number toNumber(Object o){
         if(o instanceof Number) return (Number)o;
-        if(o instanceof String) return Double.parseDouble((String)o);
+        if(o instanceof String) try{ return Double.parseDouble((String)o); } catch(NumberFormatException e){}
         return new Double(0);
     }
 
     private Boolean toBoolean(Object o){
         if(o instanceof Boolean) return (Boolean)o;
-        if(o instanceof String) return ((String)o).toLowerCase().equals("true");
+        if(o instanceof String){
+            if(((String)o).toLowerCase().equals("true" )) return new Boolean(true);
+            if(((String)o).toLowerCase().equals("false")) return new Boolean(false);
+        }
         return new Boolean(false);
+    }
+
+    private Object toNumberIfPoss(Object o){
+        if(o instanceof String) try{ return Double.parseDouble((String)o); } catch(NumberFormatException e){}
+        return o;
+    }
+
+    private Object toBooleanIfPoss(Object o){
+        if(o instanceof String){
+            if(((String)o).toLowerCase().equals("true" )) return new Boolean(true);
+            if(((String)o).toLowerCase().equals("false")) return new Boolean(false);
+        }
+        return o;
     }
 
     static public final String INDENTSPACES = "                                                                                                                                                                                                                                                        ";
