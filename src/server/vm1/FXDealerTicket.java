@@ -44,9 +44,9 @@ public class FXDealerTicket extends WebObject {
 
     private void configTicket(){
         if(!contentSet("params")){
-            LinkedList ll = contentListClone("order:params");
-            if(ll!=null){ logrule();
-                contentList("params", ll);
+            LinkedHashMap lh = contentHashClone("order:params");
+            if(lh!=null){ logrule();
+                contentHash("params", lh);
                 notifying(content("order"));
                 setUpPseudoMarketMoverInterfaceCallback();
             }
@@ -58,19 +58,19 @@ public class FXDealerTicket extends WebObject {
            contentSet("params") && 
            contentSet("order:params")){ logrule();
 
-            content(      "params:0", content(      "order:params:0"));
-            content(      "params:1", content(      "order:params:1"));
-            contentDouble("params:2", contentDouble("order:params:2"));
-            contentDouble("params:3", contentDouble("order:params:3"));
+            content(      "params:fxpair",     content(      "order:params:fxpair"));
+            content(      "params:fxtype",     content(      "order:params:fxtype"));
+            contentDouble("params:price",      contentDouble("order:params:price"));
+            contentDouble("params:investment", contentDouble("order:params:investment"));
         }
     }
 
     private void checkNotAsOrdered(){
         if(contentIs("status", "filled") || contentListContains("status", "filled")){ logrule();
-            if(!content(      "params:0").equals(content(      "order:params:0")) ||
-               !content(      "params:1").equals(content(      "order:params:1")) ||
-                contentDouble("params:2") !=     contentDouble("order:params:2")  ||
-                contentDouble("params:3") !=     contentDouble("order:params:3")    ){
+            if(!content(      "params:fxpair").equals(content(      "order:params:fxpair"))  ||
+               !content(      "params:fxtype").equals(content(      "order:params:fxtype"))  ||
+                contentDouble("params:price")      != contentDouble("order:params:price")    ||
+                contentDouble("params:investment") != contentDouble("order:params:investment") ){
 
                 contentList("status", list("filled", "not-as-ordered"));
             }
@@ -82,7 +82,7 @@ public class FXDealerTicket extends WebObject {
 
     private void acceptPayment(){
         if(contentIs("status","filled") || contentListContains("status", "filled")){ logrule();
-            if(contentDouble("order:payment:amount") == contentDouble("ask") * contentDouble("params:3")){
+            if(contentDouble("order:payment:amount") == contentDouble("ask") * contentDouble("params:investment")){
                 content("status", "paid");
                 content("payment", content("order:payment"));
             }
@@ -95,7 +95,7 @@ public class FXDealerTicket extends WebObject {
         new Evaluator(this){
             public void evaluate(){ logrule();
                 contentDouble("ask", price);
-                if(price < contentDouble("params:2")){
+                if(price < contentDouble("params:price")){
                     content("status", "filled");
                 }
                 refreshObserves();

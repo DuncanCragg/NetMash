@@ -1,5 +1,6 @@
 
 import java.util.*;
+import java.util.regex.*;
 import netmash.forest.WebObject;
 
 /** Fjord Language.
@@ -21,7 +22,6 @@ public class Fjord extends WebObject {
     public void evaluate(){
         runRules();
         if(contentListContains("is", "order")){
-            investMore();
             cheaperPriceSimulatingRace();
             acceptDealAndPay();
         }
@@ -66,10 +66,14 @@ log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\
         content("%alerted", null);
     }
 
+    static public final String REWRITERE = "^<(.*)>(.*)$";
+    static public final Pattern REWRITEPA = Pattern.compile(REWRITERE);
+
     @SuppressWarnings("unchecked")
     private boolean scanRuleHash(LinkedHashMap<String,Object> hash, String path){
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String k=entry.getKey();
+            String pk=path+k;
             if(path.equals("")){
                 if(k.equals("is"  )) continue;
                 if(k.equals("when")) continue;
@@ -79,54 +83,60 @@ log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\
                 String vs=(String)v;
                 if(vs.startsWith("<")){
                     if(vs.startsWith("<[]>")){
-                        if(contentSet(k)) return false;
-                        String setv=vs.substring(4);
-                        if(setv.equals("%alerted")) content(k,content(setv));
+                        if(contentSet(pk)) return false;
+                        String rhs=vs.substring(4);
+                        if(rhs.equals("%alerted")) content(k,content(rhs));
                     }
                     else
                     if(vs.startsWith("<>")){
-                        if(k.equals("%notifying") && vs.startsWith("<>")){
-                            String[] notify=vs.substring(2).split(";");
-                            for(int i=0; i<notify.length; i++){
-                                String n=notify[i];
-                                if(n.startsWith("has($"))     notifying(content(n.substring(5,n.length()-1)));
-                                if(n.startsWith("hasno($")) unnotifying(content(n.substring(7,n.length()-1)));
+                        String[] rhsparts=vs.substring(2).split(";");
+                        if(k.equals("%notifying")){
+                            for(int i=0; i<rhsparts.length; i++){
+                                String rhs=rhsparts[i];
+                                if(rhs.startsWith("has($"))     notifying(content(rhs.substring(5,rhs.length()-1)));
+                                if(rhs.startsWith("hasno($")) unnotifying(content(rhs.substring(7,rhs.length()-1)));
                             }
                         }
-                        String setv=vs.substring(2);
+                    }
+                    else{
+                        Matcher m = REWRITEPA.matcher(vs);
+                        if(!m.matches()){ if(!contentIsOrListContains(pk,vs)) return false; }
+                        else{
+                            String lhs = m.group(1);
+                            String rhs = m.group(2);
+                            if(!contentIsString(pk,lhs)) return false;
+                            content(pk,rhs);
+                        }
                     }
                 }
-                else if(!contentIsOrListContains(path+k,vs)) return false;
+                else if(!contentIsOrListContains(pk,vs)) return false;
             }
             else
             if(v instanceof LinkedHashMap){
                 LinkedHashMap<String,Object> vh=(LinkedHashMap<String,Object>)v;
-                if(!scanRuleHash(vh, path+k+":")) return false;
+                if(!scanRuleHash(vh, pk+":")) return false;
             }
             else return false;
         }
         return true;
     }
 
-    private void investMore(){
-       if(contentSet("ticket") && contentDouble("params:3")==500.0){ logrule();
-           contentDouble("params:3", 1000.0);
-       }
-    }
+// two-phase
+// $dealer: not $dealer, cos need $x as well
 
     private void cheaperPriceSimulatingRace(){
         if(contentIs("ticket:status", "filled") && !contentSet("payment")){ logrule();
-            contentDouble("params:2", 81.5);
+            contentDouble("params:price", 81.5);
         }
     }
 
     private void acceptDealAndPay(){
         if( contentListContains("ticket:status", "not-as-ordered") &&
-            contentDouble("params:2")==81.5 &&
+            contentDouble("params:price")==81.5 &&
            !contentSet("payment")              ){ logrule();
 
-            contentDouble("params:2", 81.7);
-            double amount = contentDouble("ticket:ask") * contentDouble("params:3");
+            contentDouble("params:price", 81.7);
+            double amount = contentDouble("ticket:ask") * contentDouble("params:investment");
             content("payment", spawn(new Fjord(uid, content("ticket"), amount)));
         }
     }

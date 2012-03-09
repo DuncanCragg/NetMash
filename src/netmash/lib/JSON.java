@@ -100,8 +100,9 @@ public class JSON {
         chp=0;
     }
 
-    /** Get String value (or String form of
-      * value) at the given path.
+    //----------------------------------
+
+    /** Get String value at the given path.
       */
     public String stringPath(String path) throws PathOvershot{
         ensureContent();
@@ -113,6 +114,14 @@ public class JSON {
       */
     public String stringPathN(String path){
         try{ return stringPath(path); }catch(PathOvershot po){ return null; }
+    }
+
+    /** Get String value (or String form of
+      * value) at the given path.
+      */
+    public String asStringPath(String path) throws PathOvershot{
+        ensureContent();
+        return getAsStringPath(tophash, path);
     }
 
     /** Check whether there's anything at the path. */
@@ -142,11 +151,13 @@ public class JSON {
         try{ return isStringPath(path, value); }catch(PathOvershot po){ return false; }
     }
 
-    /** Set String value. Returns true if it really was different. */
+    /** Set String value. */
     public boolean stringPath(String path, String value) {
         ensureContent();
         return setStringPath(tophash, path, value);
     }
+
+    //----------------------------------
 
     /** Get integer (or int form of string or 
       * 0 if not integer) at the given path.
@@ -163,11 +174,13 @@ public class JSON {
         try{ return intPath(path); }catch(PathOvershot po){ return 0; }
     }
 
-    /** Set int value. Returns true if it really was different. */
+    /** Set int value.  */
     public boolean intPath(String path, int value) {
         ensureContent();
         return setIntPath(tophash, path, value);
     }
+
+    //----------------------------------
 
     /** Get boolean at the given path.
       * Returns false if not boolean!
@@ -185,7 +198,6 @@ public class JSON {
     }
 
     /** Set boolean at the given path.
-      * Returns true if actually changed.
       */
     public boolean boolPath(String path, boolean value){
         ensureContent();
@@ -208,6 +220,16 @@ public class JSON {
         ensureContent();
         return setDoublePath(tophash, path, value);
     }
+
+    //----------------------------------
+
+    /** Get Object at the given path. */
+    public Object objectPath(String path) throws PathOvershot{
+        ensureContent();
+        return getObjectPath(tophash, path);
+    }
+
+    //----------------------------------
 
     /** Get hash at the given path.  */
     public LinkedHashMap hashPath(String path) throws PathOvershot{
@@ -255,6 +277,8 @@ public class JSON {
         return addAllListPath(tophash, path, value);
     }
 
+    //----------------------------------
+
     /** Remove this entry in its hash or list */
     public boolean removePath(String path){
         ensureContent();
@@ -272,6 +296,8 @@ public class JSON {
         ensureContent();
         return removeAllListPath(tophash, path, value);
     }
+
+    //----------------------------------
 
     /** Merge this JSON with the supplied one. */
     public boolean merge(JSON json){
@@ -302,6 +328,8 @@ public class JSON {
         }
         return out;
     }
+
+    //----------------------------------
 
     /** Format this JSON.  */
     public String toString(){
@@ -677,6 +705,24 @@ public class JSON {
         return 0;
     }
 
+    private String getAsStringPath(LinkedHashMap content, String path) throws PathOvershot{
+        Object o=getObject(content, path);
+        if(o instanceof String){
+            return (String)o;
+        }
+        if(o instanceof Number){
+            return ((Number)o).toString();
+        }
+        if(o instanceof Boolean){
+            return ((Boolean)o).toString();
+        }
+        return null;
+    }
+
+    private Object getObjectPath(LinkedHashMap content, String path) throws PathOvershot{
+        return getObject(content, path);
+    }
+
     private LinkedHashMap getHashPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
         if(o instanceof LinkedHashMap){
@@ -910,7 +956,7 @@ public class JSON {
                         String n = value.toString();
                         if(!n.equals(p)){
                             changed = true;
-                            hm.put(part, value);
+                            hm.put(part, n);
                         }
                     }
                     else { hm.remove(part); changed = true; }
@@ -921,10 +967,10 @@ public class JSON {
                 if(i==parts.length-1){
                     if(value!=null){
                         Number p = (Number)o;
-                        Number n = (Number)value;
+                        Number n = toNumber(value);
                         if(!n.equals(p)){
                             changed = true;
-                            hm.put(part, value);
+                            hm.put(part, n);
                         }
                     }
                     else { hm.remove(part); changed = true; }
@@ -935,10 +981,10 @@ public class JSON {
                 if(i==parts.length-1){
                     if(value!=null){
                         Boolean p = (Boolean)o;
-                        Boolean n = (Boolean)value;
+                        Boolean n = toBoolean(value);
                         if(!n.equals(p)){
                             changed = true;
-                            hm.put(part, value);
+                            hm.put(part, n);
                         }
                     }
                     else { hm.remove(part); changed = true; }
@@ -1021,6 +1067,18 @@ public class JSON {
         if(structured) buf.append("\n"+indentation(indent-4)+" ]");
         else           buf.append(" ]");
         return buf.toString();
+    }
+
+    private Number toNumber(Object o){
+        if(o instanceof Number) return (Number)o;
+        if(o instanceof String) return Double.parseDouble((String)o);
+        return new Double(0);
+    }
+
+    private Boolean toBoolean(Object o){
+        if(o instanceof Boolean) return (Boolean)o;
+        if(o instanceof String) return ((String)o).toLowerCase().equals("true");
+        return new Boolean(false);
     }
 
     static public final String INDENTSPACES = "                                                                                                                                                                                                                                                        ";

@@ -14,11 +14,18 @@
     "%notifying": "<>has($ticket);hasno($dealer)"
 }
 
+{   "%uid": "uid-7d0c-5348-3aaa-bfc1",
+    "is": [ "fx", "order", "rule" ],
+    "when": "you have the ticket at 500, bump up your investment",
+    "ticket": {},
+    "params": { "investment": "<500.00>1000.00" }
+}
+
 {   "%uid": "uid-0145-54f4-36db-302e",
     "%class": "Fjord",
-    "%rules": [ "uid-5348-3aaa-bfc1-7d0c", "uid-3aaa-bfc1-7d0c-5348" ],
+    "%rules": [ "uid-5348-3aaa-bfc1-7d0c", "uid-3aaa-bfc1-7d0c-5348", "uid-7d0c-5348-3aaa-bfc1" ],
     "is": [ "fx", "order" ],
-    "params": [ "usd/jpy", "buylim", 81.7, 500.00 ],
+    "params": { "fxpair": "usd/jpy", "fxtype": "buylim", "price": 81.7, "investment": 500.00 },
     "dealer": "http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json"
 }
 

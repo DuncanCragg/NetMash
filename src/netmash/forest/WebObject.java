@@ -156,6 +156,40 @@ public class WebObject {
         return s;
     }
 
+    /** Get Object at this path in the JSON content. */
+    public Object contentObject(String path){
+        Object o=null;
+        try{ o = updatingState.objectPath(path);
+        }catch(PathOvershot po){
+            String parentuid=uid;
+            while(true){
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf);
+                if(w==null)break;
+                try{ o = w.publicState.objectPath(po.path); break;
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
+            }
+        }
+        return o;
+    }
+
+    /** Get String, or string form of number or boolean, at this path in the JSON content. */
+    public String contentString(String path){
+        String s=null;
+        try{ s = updatingState.asStringPath(path);
+        }catch(PathOvershot po){
+            String parentuid=uid;
+            while(true){
+                if(!(po.leaf instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf);
+                if(w==null)break;
+                try{ s = w.publicState.asStringPath(po.path); break;
+                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
+            }
+        }
+        return s;
+    }
+
     /** Test if anything set at path. */
     public boolean contentSet(String path){
         boolean s=false;
@@ -171,6 +205,16 @@ public class WebObject {
             }
         }
         return s;
+    }
+
+    /** Test if Object at path is value, whether String, Number or Boolean. */
+    public boolean contentIsString(String path, String val){
+        Object o = contentObject(path);
+        if(o==null) return val==null;
+        if(o instanceof String)  return ((String)o).equals(val);
+        if(o instanceof Number)  return ((Number)o).doubleValue()==Double.parseDouble(val);
+        if(o instanceof Boolean) return ((Boolean)o).toString().equals(val.toLowerCase());
+        return o.toString().equals(val);
     }
 
     /** Test if String at path is value. */
@@ -326,6 +370,13 @@ public class WebObject {
         LinkedList list=contentList(path);
         if(list==null) return null;
         return (LinkedList)list.clone();
+    }
+
+    /** Get clone copy of hash at path. */
+    public LinkedHashMap contentHashClone(String path){
+        LinkedHashMap hash=contentHash(path);
+        if(hash==null) return null;
+        return (LinkedHashMap)hash.clone();
     }
 
     /** Returns true if list at path contains the value. */
