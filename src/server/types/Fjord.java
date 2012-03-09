@@ -22,7 +22,6 @@ public class Fjord extends WebObject {
     public void evaluate(){
         runRules();
         if(contentListContains("is", "order")){
-            cheaperPriceSimulatingRace();
             acceptDealAndPay();
         }
         else
@@ -123,12 +122,6 @@ log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\
 
 // two-phase
 // $dealer: not $dealer, cos need $x as well
-
-    private void cheaperPriceSimulatingRace(){
-        if(contentIs("ticket:status", "filled") && !contentSet("payment")){ logrule();
-            contentDouble("params:price", 81.5);
-        }
-    }
 
     private void acceptDealAndPay(){
         if( contentListContains("ticket:status", "not-as-ordered") &&
