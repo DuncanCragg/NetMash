@@ -1,6 +1,6 @@
 {   "%uid": "uid-5348-3aaa-bfc1-7d0c",
     "is": [ "fx", "order", "rule" ],
-    "when": "you can see the dealer but have no ticket, notify the dealer",
+    "when": "you can see the dealer but have no ticket, notify the dealer. 1",
     "ticket": "<[]>",
     "dealer": { "is": "dealer" },
     "%notifying": "<>has($dealer)"
@@ -8,7 +8,7 @@
 
 {   "%uid": "uid-3aaa-bfc1-7d0c-5348",
     "is": [ "fx", "order", "rule" ],
-    "when": "you see the ticket, link to it and start notifying it instead of the dealer",
+    "when": "you see the ticket, link to it and start notifying it instead of the dealer. 2",
     "%alerted": { "is": "ticket" },
     "ticket": "<[]>%alerted",
     "%notifying": "<>has($ticket);hasno($dealer)"
@@ -16,22 +16,50 @@
 
 {   "%uid": "uid-7d0c-5348-3aaa-bfc1",
     "is": [ "fx", "order", "rule" ],
-    "when": "you have the ticket at 500, bump up your investment",
+    "when": "you have the ticket at 500, bump up your investment. 3",
     "ticket": {},
     "params": { "investment": "<500.00>1000.00" }
 }
 
 {   "%uid": "uid-bfc1-7d0c-5348-3aaa",
     "is": [ "fx", "order", "rule" ],
-    "when": "you see the order filled, simulate a race by dropping the price",
+    "when": "you see the order filled, simulate a race by dropping the price. 4",
     "ticket": { "status": "filled" },
-    "payment": "<[]>",
-    "params": { "price": "<81.7>81.5" }
+    "params": { "price": "<81.7>81.5" },
+    "payment": "<[]>"
+}
+
+{   "%uid": "uid-4e30-2365-3015-e181",
+    "is": [ "fx", "order", "rule" ],
+    "when": "race noticed, set price back and create payment shell. 5",
+    "ticket": { "status": "not-as-ordered" },
+    "params": { "price": "<81.5>81.7" },
+    "payment": "<[]>{}"
+}
+
+{   "%uid": "uid-5411-baae-d459-4c6c",
+    "is": [ "fx", "order", "rule" ],
+    "when": "payment shell there, fill it out and spawn it. 6",
+    "payment": { "%uid": "<[]>new",
+                 "%rules": [ "uid-c8f2-3fcb-bea9-08b4" ],
+                 "is": "<[]>payment",
+                 "order": "<[]>$/",
+                 "invoice": "<[]>$ticket",
+                 "amount": "<[]>($ticket:ask * $params:investment)"
+    }
+}
+
+{   "%uid": "uid-c8f2-3fcb-bea9-08b4",
+    "is": [ "payment", "rule" ],
+    "when": "invoice has no payment, notify it that we are paying. 7",
+    "invoice": { "payment": "<[]>" },
+    "%notifying": "<>has($invoice)"
 }
 
 {   "%uid": "uid-0145-54f4-36db-302e",
     "%class": "Fjord",
-    "%rules": [ "uid-5348-3aaa-bfc1-7d0c", "uid-3aaa-bfc1-7d0c-5348", "uid-7d0c-5348-3aaa-bfc1", "uid-bfc1-7d0c-5348-3aaa" ],
+    "%rules": [ "uid-5348-3aaa-bfc1-7d0c", "uid-3aaa-bfc1-7d0c-5348", "uid-7d0c-5348-3aaa-bfc1",
+                "uid-bfc1-7d0c-5348-3aaa", "uid-4e30-2365-3015-e181", "uid-xx5411-baae-d459-4c6c" ],
     "is": [ "fx", "order" ],
     "params": { "fxpair": "usd/jpy", "fxtype": "buylim", "price": 81.7, "investment": 500.00 },
     "dealer": "http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json"

@@ -12,6 +12,7 @@ public class Fjord extends WebObject {
 
     public Fjord(String orderuid, String ticketuid, double amount){
         super("{ \"is\": [ \"payment\" ],\n"+
+              "  \"%rules\": [ \"uid-c8f2-3fcb-bea9-08b4\" ],\n"+
               "  \"invoice\": \""+ticketuid+"\",\n"+
               "  \"order\": \""+orderuid+"\",\n"+
               "  \"amount\": "+amount+",\n"+
@@ -23,10 +24,6 @@ public class Fjord extends WebObject {
         runRules();
         if(contentListContains("is", "order")){
             acceptDealAndPay();
-        }
-        else
-        if(contentListContains("is", "payment")){
-            alertTicket();
         }
     }
 
@@ -54,14 +51,15 @@ public class Fjord extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void runRule(int i, String alerted){
-        log("Running rule \"When "+content(String.format("%%rules:%d:when", i))+"\"");
+//log("Running rule \"When "+content(String.format("%%rules:%d:when", i))+"\"");
 
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", i));
 
         content("%alerted", alerted);
         boolean ok=scanRuleHash(rule, "");
         // if(!ok) roll back
-log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
+        if(ok) log("Rule fired: \"When "+content(String.format("%%rules:%d:when", i))+"\"");
+//log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
         content("%alerted", null);
     }
 
@@ -84,7 +82,12 @@ log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\
                     if(vs.startsWith("<[]>")){
                         if(contentSet(pk)) return false;
                         String rhs=vs.substring(4);
-                        if(rhs.equals("%alerted")) content(k,content(rhs));
+                        if(rhs.length()!=0){
+                            if(rhs.equals("%alerted")) content(k,content(rhs));
+                            else
+                            if(rhs.startsWith("$"))    content(k,content(rhs.substring(1)));
+                            else                       content(k,rhs);
+                        }
                     }
                     else
                     if(vs.startsWith("<>")){
@@ -125,18 +128,10 @@ log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\
 
     private void acceptDealAndPay(){
         if( contentListContains("ticket:status", "not-as-ordered") &&
-            contentDouble("params:price")==81.5 &&
-           !contentSet("payment")              ){ logrule();
+            contentIs("payment","{}")                                  ){ logrule();
 
-            contentDouble("params:price", 81.7);
             double amount = contentDouble("ticket:ask") * contentDouble("params:investment");
             content("payment", spawn(new Fjord(uid, content("ticket"), amount)));
-        }
-    }
-
-    private void alertTicket(){
-        if(!contentSet("invoice:payment")){ logrule();
-            notifying(content("invoice"));
         }
     }
 }
