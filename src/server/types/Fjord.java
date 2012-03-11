@@ -44,36 +44,38 @@ public class Fjord extends WebObject {
         }
     }
 
-    private void runRule(int i){
-        if(alerted().size()==0) runRule(i,null);
-        else for(String alerted: alerted()) runRule(i,alerted);
+    private void runRule(int r){
+        if(alerted().size()==0) runRule(r,null);
+        else for(String alerted: alerted()) runRule(r,alerted);
     }
 
     @SuppressWarnings("unchecked")
-    private void runRule(int i, String alerted){
-//log("Running rule \"When "+content(String.format("%%rules:%d:when", i))+"\"");
+    private void runRule(int r, String alerted){
+//log("Running rule \"When "+content(String.format("%%rules:%d:when", r))+"\"");
 
-        LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", i));
+        LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
 
         content("%alerted", alerted);
         boolean ok=scanRuleHash(rule, "");
         // if(!ok) roll back
-        if(ok) log("Rule fired: \"When "+content(String.format("%%rules:%d:when", i))+"\"");
+        if(ok) log("Rule fired: \"When "+content(String.format("%%rules:%d:when", r))+"\"");
 //log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
         content("%alerted", null);
     }
 
-    static public final String REWRITERE = "^<(.*)>(.*)$";
+    static public final String  REWRITERE = "^<(.*)>(.*)$";
     static public final Pattern REWRITEPA = Pattern.compile(REWRITERE);
+    static public final String  FUNCTIONRE = "(^[a-zA-Z][-a-zA-Z0-9]*)\\((.*)\\)$";
+    static public final Pattern FUNCTIONPA = Pattern.compile(FUNCTIONRE);
 
     @SuppressWarnings("unchecked")
     private boolean scanRuleHash(LinkedHashMap<String,Object> hash, String path){
+        if(contentHash(path+"#")==null) return false;
         for(Map.Entry<String,Object> entry: hash.entrySet()){
-            String k=entry.getKey();
-            String pk=path+k;
+            String pk=path+entry.getKey();
             if(path.equals("")){
-                if(k.equals("is"  )) continue;
-                if(k.equals("when")) continue;
+                if(pk.equals("is"  )) continue;
+                if(pk.equals("when")) continue;
             }
             Object v=entry.getValue();
             if(v instanceof String){
@@ -83,20 +85,26 @@ public class Fjord extends WebObject {
                         if(contentSet(pk)) return false;
                         String rhs=vs.substring(4);
                         if(rhs.length()!=0){
-                            if(rhs.equals("%alerted")) content(k,content(rhs));
+                            if(rhs.equals("%alerted")) content(pk,content(rhs));
                             else
-                            if(rhs.startsWith("$"))    content(k,content(rhs.substring(1)));
-                            else                       content(k,rhs);
+                            if(rhs.equals("$:"))       content(pk,uid);
+                            else
+                            if(rhs.startsWith("$:"))   content(pk,content(rhs.substring(2)));
+                            else
+                            if(rhs.equals("{}"))       contentHash(pk,new LinkedHashMap());
+                            else
+                            if(functionCall(pk,rhs));
+                            else                       content(pk,rhs);
                         }
                     }
                     else
                     if(vs.startsWith("<>")){
                         String[] rhsparts=vs.substring(2).split(";");
-                        if(k.equals("%notifying")){
+                        if(pk.equals("%notifying")){
                             for(int i=0; i<rhsparts.length; i++){
                                 String rhs=rhsparts[i];
-                                if(rhs.startsWith("has($"))     notifying(content(rhs.substring(5,rhs.length()-1)));
-                                if(rhs.startsWith("hasno($")) unnotifying(content(rhs.substring(7,rhs.length()-1)));
+                                if(rhs.startsWith("has($:"))     notifying(content(rhs.substring(6,rhs.length()-1)));
+                                if(rhs.startsWith("hasno($:")) unnotifying(content(rhs.substring(8,rhs.length()-1)));
                             }
                         }
                     }
@@ -123,13 +131,26 @@ public class Fjord extends WebObject {
         return true;
     }
 
+    private boolean functionCall(String pk, String rhs){
+        Matcher m = FUNCTIONPA.matcher(rhs);
+        if(!m.matches()) return false;
+        String   func = m.group(1);
+        String[] args = m.group(2).split(",");
+        if(func.equals("prod")){
+            double r = 1;
+            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
+                r *= contentDouble(arg.substring(2));
+            }
+            contentDouble(pk,r);
+        }
+        else content(pk,func+" on "+args);
+        return true;
+    }
+
 // two-phase
-// $dealer: not $dealer, cos need $x as well
 
     private void acceptDealAndPay(){
-        if( contentListContains("ticket:status", "not-as-ordered") &&
-            contentIs("payment","{}")                                  ){ logrule();
-
+        if(contentHash("payment")!=null){ logrule();
             double amount = contentDouble("ticket:ask") * contentDouble("params:investment");
             content("payment", spawn(new Fjord(uid, content("ticket"), amount)));
         }
