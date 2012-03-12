@@ -143,7 +143,7 @@ public class Persistence implements FileUser {
 
     // ----------------------------------------
 
-    static public final String  UIDRE = ".*\"%uid\":\\s*\"([^\"]+)\".*";
+    static public final String  UIDRE = "^\\s*\\{\\s*\"%uid\":\\s*\"([^\"]+)\".*";
     static public final Pattern UIDPA = Pattern.compile(UIDRE, Pattern.MULTILINE | Pattern.DOTALL);
 
     static public String findUID(CharBuffer chars){

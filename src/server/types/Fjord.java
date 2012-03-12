@@ -80,7 +80,7 @@ public class Fjord extends WebObject {
                             else
                             if(functionCall(pk,rhs));
                             else
-                            if(rhs.equals("new") && pk.endsWith("&uid")){
+                            if(rhs.equals("new") && pk.endsWith("%uid")){
                                 String basepath=pk.substring(0,pk.length()-5);
                                 content(basepath, spawn(new Fjord(contentHash(basepath))));
                             }

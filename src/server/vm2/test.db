@@ -46,7 +46,7 @@
                  "invoice": "<[]>$:ticket",
                  "amount": "<[]>prod($:ticket:ask, $:params:investment)",
                  "account": "<[]>{}",
-                 "&uid": "<[]>new"
+                 "%uid": "<[]>new"
     }
 }
 
