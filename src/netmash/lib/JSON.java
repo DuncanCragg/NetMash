@@ -61,6 +61,13 @@ public class JSON {
         chp=0;
     }
 
+    /** From top-level hash. */
+    public JSON(LinkedHashMap hm){
+        tophash = hm;
+        chars=null;
+        chp=0;
+    }
+
     /** Shallow clone of given JSON. */
     @SuppressWarnings("unchecked")
     public JSON(JSON json){

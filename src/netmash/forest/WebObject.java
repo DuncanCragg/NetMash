@@ -100,6 +100,15 @@ public class WebObject {
         updatingState = publicState;
     }
 
+    /** For spawning from Fjord. */
+    public WebObject(LinkedHashMap hm){
+        funcobs = FunctionalObserver.funcobs;
+        uid = UID.generateUID();
+        etag = 1;
+        publicState = new JSON(hm);
+        updatingState = publicState;
+    }
+
     public boolean isShell(){
         return shellstate != ShellState.FOUND;
     }

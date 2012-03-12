@@ -10,24 +10,9 @@ public class Fjord extends WebObject {
 
     public Fjord(){}
 
-    public Fjord(String orderuid, String ticketuid, double amount){
-        super("{ \"is\": [ \"payment\" ],\n"+
-              "  \"%rules\": [ \"uid-c8f2-3fcb-bea9-08b4\" ],\n"+
-              "  \"invoice\": \""+ticketuid+"\",\n"+
-              "  \"order\": \""+orderuid+"\",\n"+
-              "  \"amount\": "+amount+",\n"+
-              "  \"account\": { }\n"+
-              "}");
-    }
+    public Fjord(LinkedHashMap hm){ super(hm); }
 
     public void evaluate(){
-        runRules();
-        if(contentListContains("is", "order")){
-            acceptDealAndPay();
-        }
-    }
-
-    private void runRules(){
         LinkedList rules=contentList("%rules");
         if(rules==null) return;
         int r=0;
@@ -37,7 +22,7 @@ public class Fjord extends WebObject {
             boolean ok=true;
             for(Object is: ruleis){
                 if("rule".equals(is)) continue;
-                if(!contentListContains("is", is.toString())){ ok=false; break; }
+                if(!contentIsOrListContains("is", is.toString())){ ok=false; break; }
             }
             if(ok) runRule(r);
             r++;
@@ -94,7 +79,12 @@ public class Fjord extends WebObject {
                             if(rhs.equals("{}"))       contentHash(pk,new LinkedHashMap());
                             else
                             if(functionCall(pk,rhs));
-                            else                       content(pk,rhs);
+                            else
+                            if(rhs.equals("new") && pk.endsWith("&uid")){
+                                String basepath=pk.substring(0,pk.length()-5);
+                                content(basepath, spawn(new Fjord(contentHash(basepath))));
+                            }
+                            else content(pk,rhs);
                         }
                     }
                     else
@@ -131,11 +121,21 @@ public class Fjord extends WebObject {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private boolean functionCall(String pk, String rhs){
         Matcher m = FUNCTIONPA.matcher(rhs);
         if(!m.matches()) return false;
         String   func = m.group(1);
         String[] args = m.group(2).split(",");
+
+        if(func.equals("list")){
+            LinkedList l=new LinkedList();
+            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
+                l.add(makeBestObject(arg));
+            }
+            contentList(pk,l);
+        }
+        else
         if(func.equals("prod")){
             double r = 1;
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
@@ -147,14 +147,15 @@ public class Fjord extends WebObject {
         return true;
     }
 
+    private Object makeBestObject(String s){
+       try{ return Double.parseDouble(s); } catch(NumberFormatException e){}
+       if(s.toLowerCase().equals("true" )) return new Boolean(true);
+       if(s.toLowerCase().equals("false")) return new Boolean(false);
+       return s;
+    }
+
 // two-phase
 
-    private void acceptDealAndPay(){
-        if(contentHash("payment")!=null){ logrule();
-            double amount = contentDouble("ticket:ask") * contentDouble("params:investment");
-            content("payment", spawn(new Fjord(uid, content("ticket"), amount)));
-        }
-    }
 }
 
 

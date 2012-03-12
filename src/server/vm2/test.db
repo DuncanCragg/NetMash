@@ -34,19 +34,19 @@
     "when": "race noticed, set price back and create payment shell. 5",
     "ticket": { "status": "not-as-ordered" },
     "params": { "price": "<81.5>81.7" },
-    "poyment": "<[]>{}",
     "payment": "<[]>{}"
 }
 
 {   "%uid": "uid-5411-baae-d459-4c6c",
     "is": [ "fx", "order", "rule" ],
     "when": "payment shell there, fill it out and spawn it. 6",
-    "poyment": { "uid": "<[]>new",
-                 "rules": "<[]>uid-c8f2-3fcb-bea9-08b4",
+    "payment": { "%rules": "<[]>list(uid-c8f2-3fcb-bea9-08b4)",
                  "is": "<[]>payment",
                  "order": "<[]>$:",
                  "invoice": "<[]>$:ticket",
-                 "amount": "<[]>prod($:ticket:ask, $:params:investment)"
+                 "amount": "<[]>prod($:ticket:ask, $:params:investment)",
+                 "account": "<[]>{}",
+                 "&uid": "<[]>new"
     }
 }
 
