@@ -1,14 +1,36 @@
+{   "%uid": "uid-424d-01c5-ee08-2ec9",
+    "is": [ "fx", "dealer", "rule" ],
+    "when": "FX order comes in, start building ticket. 1",
+    "%alerted": { "is": "order", "ticket": "<[]>" },
+    "ticketfor": "<[]>%alerted",
+    "ticket": "<[]>{}"
+}
+
+{   "%uid": "uid-e772-4f4f-f981-0cea",
+    "is": [ "fx", "dealer", "rule" ],
+    "when": "FX order comes in, spawn and add ticket to tickets list. 2",
+    "ticket": { "%rules": "<[]>list()",
+                 "is": "<[]>list(fx, ticket)",
+                 "order": "<[]>$:ticketfor",
+                 "ask": "<[]>81.9",
+                 "status": "<[]>waiting",
+                 "%uid": "<[]>new"
+    },
+    "tickets": "<>has($:ticket)"
+}
+
+{   "%uid": "uid-ba2b-8619-fdea-8c2c",
+    "%class": "Fjord",
+    "%rules": [ "uid-424d-01c5-ee08-2ec9", "uid-e772-4f4f-f981-0cea" ],
+    "is": [ "fx", "dealer" ],
+    "tickets": [ ]
+}
+
 {   "%uid": "uid-c47f-5e67-9fc8-b842",
     "%etag": 11,
     "%class": "CountTo200",
     "pair": "",
     "count": 1
-}
-
-{   "%uid": "uid-ba2b-8619-fdea-8c2c",
-    "%class": "FXDealerTicket",
-    "is": [ "fx", "dealer" ],
-    "tickets": [ ]
 }
 
 {   "%uid": "uid-4574-a96f-f796-c5fb",

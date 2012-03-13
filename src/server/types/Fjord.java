@@ -12,7 +12,16 @@ public class Fjord extends WebObject {
 
     public Fjord(LinkedHashMap hm){ super(hm); }
 
+    public Fjord(String orderuid){
+        super("{ \"is\": [ \"fx\", \"ticket\" ],\n"+
+              "  \"order\": \""+orderuid+"\",\n"+
+              "  \"ask\": 81.9,\n"+
+              "  \"status\": \"waiting\"\n"+
+              "}");
+    }
+
     public void evaluate(){
+try{
         LinkedList rules=contentList("%rules");
         if(rules==null) return;
         int r=0;
@@ -27,6 +36,14 @@ public class Fjord extends WebObject {
             if(ok) runRule(r);
             r++;
         }
+}finally{
+        if(contentListContains("is", "ticket")){
+            mirrorOrder();
+            configTicket();
+            checkNotAsOrdered();
+            acceptPayment();
+        }
+}
     }
 
     private void runRule(int r){
@@ -90,11 +107,14 @@ public class Fjord extends WebObject {
                     else
                     if(vs.startsWith("<>")){
                         String[] rhsparts=vs.substring(2).split(";");
-                        if(pk.equals("%notifying")){
-                            for(int i=0; i<rhsparts.length; i++){
-                                String rhs=rhsparts[i];
+                        for(int i=0; i<rhsparts.length; i++){
+                            String rhs=rhsparts[i];
+                            if(pk.equals("%notifying")){
                                 if(rhs.startsWith("has($:"))     notifying(content(rhs.substring(6,rhs.length()-1)));
                                 if(rhs.startsWith("hasno($:")) unnotifying(content(rhs.substring(8,rhs.length()-1)));
+                            }
+                            else{
+                                if(rhs.startsWith("has($:")) contentListAdd(pk, content(rhs.substring(6,rhs.length()-1)));
                             }
                         }
                     }
@@ -155,7 +175,82 @@ public class Fjord extends WebObject {
     }
 
 // two-phase
+// "<[]>payment": { .. }
 
+    private void configTicket(){
+        if(!contentSet("params")){
+            LinkedHashMap lh = contentHashClone("order:params");
+            if(lh!=null){ logrule();
+                contentHash("params", lh);
+                notifying(content("order"));
+                setUpPseudoMarketMoverInterfaceCallback();
+            }
+        }
+    }
+
+    private void mirrorOrder(){
+        if(contentIs("status", "waiting") && 
+           contentSet("params") && 
+           contentSet("order:params")){ logrule();
+
+            content(      "params:fxpair",     content(      "order:params:fxpair"));
+            content(      "params:fxtype",     content(      "order:params:fxtype"));
+            contentDouble("params:price",      contentDouble("order:params:price"));
+            contentDouble("params:investment", contentDouble("order:params:investment"));
+        }
+    }
+
+    private void checkNotAsOrdered(){
+        if(contentIs("status", "filled") || contentListContains("status", "filled")){ logrule();
+            if(!content(      "params:fxpair").equals(content(      "order:params:fxpair"))  ||
+               !content(      "params:fxtype").equals(content(      "order:params:fxtype"))  ||
+                contentDouble("params:price")      != contentDouble("order:params:price")    ||
+                contentDouble("params:investment") != contentDouble("order:params:investment") ){
+
+                contentList("status", list("filled", "not-as-ordered"));
+            }
+            else{
+                content("status", "filled");
+            }
+        }
+    }
+
+    private void acceptPayment(){
+        if(contentIs("status","filled") || contentListContains("status", "filled")){ logrule();
+            if(contentDouble("order:payment:amount") == contentDouble("ask") * contentDouble("params:investment")){
+                content("status", "paid");
+                content("payment", content("order:payment"));
+            }
+        }
+    }
+
+    // ----------------------------------------------------
+
+    private void marketMoved(final double price){
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                contentDouble("ask", price);
+                if(price < contentDouble("params:price")){
+                    content("status", "filled");
+                }
+                refreshObserves();
+            }
+        };
+    }
+
+    // ----------------------------------------------------
+
+    static private double[] prices = { 81.8, 81.6 };
+    private void setUpPseudoMarketMoverInterfaceCallback(){
+        new Thread(){ public void run(){
+            for(int i=0; i<prices.length; i++){
+                try{ Thread.sleep(500); }catch(Exception e){}
+                marketMoved(prices[i]);
+            }
+        } }.start();
+    }
+
+    // ----------------------------------------------------
 }
 
 
