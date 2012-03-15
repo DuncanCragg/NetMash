@@ -240,10 +240,33 @@ public class WebObject {
         return s==val;
     }
 
+    // --------------------------------------------------------------
+
     /** Set String at this path in the JSON content. */
     public void content(String path, String val){
         doCopyOnWrite(path);
         statemod = updatingState.stringPath(path, val) || statemod;
+    }
+
+    /** Set String at this path in the JSON content: don't mark as Etag change. */
+    public void contentTemp(String path, String val){
+        doCopyOnWrite(path);
+        updatingState.stringPath(path, val);
+    }
+
+    /** Clone from source path to path. */
+    public void contentClone(String path, String source){
+        Object o = contentObject(source);
+        if(o==null) return;
+        if(o instanceof String) content(path,(String)o);
+        else
+        if(o instanceof Double) contentDouble(path,(Double)o);
+        else
+        if(o instanceof Boolean) contentBool(path,(Boolean)o);
+        else
+        if(o instanceof LinkedHashMap) contentHash(path, contentHashClone(source));
+        else
+        if(o instanceof LinkedList) contentList(path, contentListClone(source));
     }
 
     /** Set UID at this path in the JSON content as a fully-qualified URL. */
@@ -251,6 +274,8 @@ public class WebObject {
         doCopyOnWrite(path);
         statemod = updatingState.stringPath(path, UID.toURL(val)) || statemod;
     }
+
+    // --------------------------------------------------------------
 
     /** Get int at this path in the JSON content. */
     public int contentInt(String path){

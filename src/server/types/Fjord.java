@@ -57,12 +57,12 @@ try{
 
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
 
-        content("%alerted", alerted);
+        contentTemp("%alerted", alerted);
         boolean ok=scanRuleHash(rule, "");
         // if(!ok) roll back
         if(ok) log("Rule fired: \"When "+content(String.format("%%rules:%d:when", r))+"\"");
 //log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
-        content("%alerted", null);
+        contentTemp("%alerted", null);
     }
 
     static public final String  REWRITERE = "^<(.*)>(.*)$";
@@ -91,7 +91,7 @@ try{
                             else
                             if(rhs.equals("$:"))       content(pk,uid);
                             else
-                            if(rhs.startsWith("$:"))   content(pk,content(rhs.substring(2)));
+                            if(rhs.startsWith("$:"))   contentClone(pk, rhs.substring(2));
                             else
                             if(rhs.equals("{}"))       contentHash(pk,new LinkedHashMap());
                             else
@@ -176,13 +176,12 @@ try{
 
 // two-phase
 // "<[]>payment": { .. }
+// <#> not <[]>
 
     private void configTicket(){
         if(!contentSet("params")){
             LinkedHashMap lh = contentHashClone("order:params");
             if(lh!=null){ logrule();
-                contentHash("params", lh);
-                notifying(content("order"));
                 setUpPseudoMarketMoverInterfaceCallback();
             }
         }
