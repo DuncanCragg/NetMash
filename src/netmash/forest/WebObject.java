@@ -258,15 +258,11 @@ public class WebObject {
     public void contentClone(String path, String source){
         Object o = contentObject(source);
         if(o==null) return;
-        if(o instanceof String) content(path,(String)o);
-        else
-        if(o instanceof Double) contentDouble(path,(Double)o);
-        else
-        if(o instanceof Boolean) contentBool(path,(Boolean)o);
-        else
-        if(o instanceof LinkedHashMap) contentHash(path, contentHashClone(source));
-        else
-        if(o instanceof LinkedList) contentList(path, contentListClone(source));
+        if(o instanceof String)        content(      path,(String)o); else
+        if(o instanceof Double)        contentDouble(path,(Double)o); else
+        if(o instanceof Boolean)       contentBool(  path,(Boolean)o); else
+        if(o instanceof LinkedHashMap) contentHash(  path,(LinkedHashMap)((LinkedHashMap)o).clone()); else
+        if(o instanceof LinkedList)    contentList(  path,(LinkedList)((LinkedList)o).clone());
     }
 
     /** Set UID at this path in the JSON content as a fully-qualified URL. */

@@ -39,7 +39,7 @@ try{
 }finally{
         if(contentListContains("is", "ticket")){
             mirrorOrder();
-            configTicket();
+            setUpPseudoMarketMover();
             checkNotAsOrdered();
             acceptPayment();
         }
@@ -83,9 +83,9 @@ try{
             if(v instanceof String){
                 String vs=(String)v;
                 if(vs.startsWith("<")){
-                    if(vs.startsWith("<[]>")){
+                    if(vs.startsWith("<#>")){
                         if(contentSet(pk)) return false;
-                        String rhs=vs.substring(4);
+                        String rhs=vs.substring(3);
                         if(rhs.length()!=0){
                             if(rhs.equals("%alerted")) content(pk,content(rhs));
                             else
@@ -175,16 +175,10 @@ try{
     }
 
 // two-phase
-// "<[]>payment": { .. }
-// <#> not <[]>
+// "<#>payment": { .. }
 
-    private void configTicket(){
-        if(!contentSet("params")){
-            LinkedHashMap lh = contentHashClone("order:params");
-            if(lh!=null){ logrule();
-                setUpPseudoMarketMoverInterfaceCallback();
-            }
-        }
+    private void setUpPseudoMarketMover(){
+        if(!contentSet("params")) setUpPseudoMarketMoverInterfaceCallback();
     }
 
     private void mirrorOrder(){

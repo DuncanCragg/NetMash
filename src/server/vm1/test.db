@@ -1,20 +1,20 @@
 {   "%uid": "uid-424d-01c5-ee08-2ec9",
     "is": [ "fx", "dealer", "rule" ],
     "when": "FX order comes in, start building ticket. 1",
-    "%alerted": { "is": "order", "ticket": "<[]>" },
-    "ticketfor": "<[]>%alerted",
-    "ticket": "<[]>{}"
+    "%alerted": { "is": "order", "ticket": "<#>" },
+    "ticketfor": "<#>%alerted",
+    "ticket": "<#>{}"
 }
 
 {   "%uid": "uid-e772-4f4f-f981-0cea",
     "is": [ "fx", "dealer", "rule" ],
     "when": "FX order comes in, spawn and add ticket to tickets list. 2",
-    "ticket": { "%rules": "<[]>list(uid-05cf-8cb9-7b52-db80)",
-                 "is": "<[]>list(fx, ticket)",
-                 "order": "<[]>$:ticketfor",
-                 "ask": "<[]>81.9",
-                 "status": "<[]>waiting",
-                 "%uid": "<[]>new"
+    "ticket": { "%rules": "<#>list(uid-05cf-8cb9-7b52-db80)",
+                 "is": "<#>list(fx, ticket)",
+                 "order": "<#>$:ticketfor",
+                 "ask": "<#>81.9",
+                 "status": "<#>waiting",
+                 "%uid": "<#>new"
     },
     "tickets": "<>has($:ticket)"
 }
@@ -22,7 +22,7 @@
 {   "%uid": "uid-05cf-8cb9-7b52-db80",
     "is": [ "fx", "ticket", "rule" ],
     "when": "new ticket, set params and notify order. 3",
-    "params": "<[]>$:order:params",
+    "params": "<#>$:order:params",
     "%notifying": "<>has($:order)"
 }
 
