@@ -38,7 +38,6 @@ try{
         }
 }finally{
         if(contentListContains("is", "ticket")){
-            mirrorOrder();
             setUpPseudoMarketMover();
             checkNotAsOrdered();
             acceptPayment();
@@ -86,23 +85,7 @@ try{
                     if(vs.startsWith("<#>")){
                         if(contentSet(pk)) return false;
                         String rhs=vs.substring(3);
-                        if(rhs.length()!=0){
-                            if(rhs.equals("%alerted")) content(pk,content(rhs));
-                            else
-                            if(rhs.equals("$:"))       content(pk,uid);
-                            else
-                            if(rhs.startsWith("$:"))   contentClone(pk, rhs.substring(2));
-                            else
-                            if(rhs.equals("{}"))       contentHash(pk,new LinkedHashMap());
-                            else
-                            if(functionCall(pk,rhs));
-                            else
-                            if(rhs.equals("new") && pk.endsWith("%uid")){
-                                String basepath=pk.substring(0,pk.length()-5);
-                                content(basepath, spawn(new Fjord(contentHash(basepath))));
-                            }
-                            else content(pk,rhs);
-                        }
+                        if(rhs.length()!=0) doRHS(pk,rhs);
                     }
                     else
                     if(vs.startsWith("<>")){
@@ -124,8 +107,10 @@ try{
                         else{
                             String lhs = m.group(1);
                             String rhs = m.group(2);
+                            if(lhs.equals("{}")){ if(contentHash(pk)==null) return false; }
+                            else
                             if(!contentIsString(pk,lhs)) return false;
-                            content(pk,rhs);
+                            if(rhs.length()!=0) doRHS(pk,rhs);
                         }
                     }
                 }
@@ -139,6 +124,24 @@ try{
             else return false;
         }
         return true;
+    }
+
+    private void doRHS(String pk, String rhs){
+        if(rhs.equals("%alerted")) content(pk,content(rhs));
+        else
+        if(rhs.equals("$:"))       content(pk,uid);
+        else
+        if(rhs.startsWith("$:"))   contentClone(pk, rhs.substring(2));
+        else
+        if(rhs.equals("{}"))       contentHash(pk, new LinkedHashMap());
+        else
+        if(functionCall(pk,rhs));
+        else
+        if(rhs.equals("new") && pk.endsWith("%uid")){
+            String basepath=pk.substring(0,pk.length()-5);
+            content(basepath, spawn(new Fjord(contentHash(basepath))));
+        }
+        else content(pk,rhs);
     }
 
     @SuppressWarnings("unchecked")
@@ -176,21 +179,10 @@ try{
 
 // two-phase
 // "<#>payment": { .. }
+// detect equality of hashes for changed, and/or mirror each param val
 
     private void setUpPseudoMarketMover(){
         if(!contentSet("params")) setUpPseudoMarketMoverInterfaceCallback();
-    }
-
-    private void mirrorOrder(){
-        if(contentIs("status", "waiting") && 
-           contentSet("params") && 
-           contentSet("order:params")){ logrule();
-
-            content(      "params:fxpair",     content(      "order:params:fxpair"));
-            content(      "params:fxtype",     content(      "order:params:fxtype"));
-            contentDouble("params:price",      contentDouble("order:params:price"));
-            contentDouble("params:investment", contentDouble("order:params:investment"));
-        }
     }
 
     private void checkNotAsOrdered(){

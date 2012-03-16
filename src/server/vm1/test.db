@@ -9,7 +9,7 @@
 {   "%uid": "uid-e772-4f4f-f981-0cea",
     "is": [ "fx", "dealer", "rule" ],
     "when": "FX order comes in, spawn and add ticket to tickets list. 2",
-    "ticket": { "%rules": "<#>list(uid-05cf-8cb9-7b52-db80)",
+    "ticket": { "%rules": "<#>list(uid-05cf-8cb9-7b52-db80, uid-bce3-b010-e869-f26e)",
                  "is": "<#>list(fx, ticket)",
                  "order": "<#>$:ticketfor",
                  "ask": "<#>81.9",
@@ -24,6 +24,13 @@
     "when": "new ticket, set params and notify order. 3",
     "params": "<#>$:order:params",
     "%notifying": "<>has($:order)"
+}
+
+{   "%uid": "uid-bce3-b010-e869-f26e",
+    "is": [ "fx", "ticket", "rule" ],
+    "when": "waiting, if order params change, update ticket params. 4",
+    "status": "waiting",
+    "params": "<{}>$:order:params",
 }
 
 {   "%uid": "uid-ba2b-8619-fdea-8c2c",
