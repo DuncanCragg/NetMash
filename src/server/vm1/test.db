@@ -9,7 +9,7 @@
 {   "%uid": "uid-e772-4f4f-f981-0cea",
     "is": [ "fx", "dealer", "rule" ],
     "when": "FX order comes in, spawn and add ticket to tickets list. 2",
-    "ticket": { "%rules": "<#>list(uid-05cf-8cb9-7b52-db80, uid-bce3-b010-e869-f26e)",
+    "ticket": { "%rules": "<#>list(uid-05cf-8cb9-7b52-db80, uid-bce3-b010-e869-f26e, uid-1b6c-16b6-64aa-8d48, uid-a36b-54ea-7dd6-2626)",
                  "is": "<#>list(fx, ticket)",
                  "order": "<#>$:ticketfor",
                  "ask": "<#>81.9",
@@ -30,7 +30,21 @@
     "is": [ "fx", "ticket", "rule" ],
     "when": "waiting, if order params change, update ticket params. 4",
     "status": "waiting",
-    "params": "<{}>$:order:params",
+    "params": "<{}>$:order:params"
+}
+
+{   "%uid": "uid-1b6c-16b6-64aa-8d48",
+    "is": [ "fx", "ticket", "rule" ],
+    "when": "flag if order differs once ticket filled. 5",
+    "params": "<!$:order:params>",
+    "status": "<filled>has(not-as-ordered)"
+}
+
+{   "%uid": "uid-a36b-54ea-7dd6-2626",
+    "is": [ "fx", "ticket", "rule" ],
+    "when": "no flag if order matches once ticket filled. 6",
+    "params": "<$:order:params>",
+    "status": "<filled>hasno(not-as-ordered)"
 }
 
 {   "%uid": "uid-ba2b-8619-fdea-8c2c",

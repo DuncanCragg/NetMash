@@ -12,14 +12,6 @@ public class Fjord extends WebObject {
 
     public Fjord(LinkedHashMap hm){ super(hm); }
 
-    public Fjord(String orderuid){
-        super("{ \"is\": [ \"fx\", \"ticket\" ],\n"+
-              "  \"order\": \""+orderuid+"\",\n"+
-              "  \"ask\": 81.9,\n"+
-              "  \"status\": \"waiting\"\n"+
-              "}");
-    }
-
     public void evaluate(){
 try{
         LinkedList rules=contentList("%rules");
@@ -85,20 +77,14 @@ try{
                     if(vs.startsWith("<#>")){
                         if(contentSet(pk)) return false;
                         String rhs=vs.substring(3);
-                        if(rhs.length()!=0) doRHS(pk,rhs);
+                        doRHS(pk,rhs);
                     }
                     else
                     if(vs.startsWith("<>")){
                         String[] rhsparts=vs.substring(2).split(";");
                         for(int i=0; i<rhsparts.length; i++){
                             String rhs=rhsparts[i];
-                            if(pk.equals("%notifying")){
-                                if(rhs.startsWith("has($:"))     notifying(content(rhs.substring(6,rhs.length()-1)));
-                                if(rhs.startsWith("hasno($:")) unnotifying(content(rhs.substring(8,rhs.length()-1)));
-                            }
-                            else{
-                                if(rhs.startsWith("has($:")) contentListAdd(pk, content(rhs.substring(6,rhs.length()-1)));
-                            }
+                            doRHS(pk,rhs);
                         }
                     }
                     else{
@@ -106,11 +92,9 @@ try{
                         if(!m.matches()){ if(!contentIsOrListContains(pk,vs)) return false; }
                         else{
                             String lhs = m.group(1);
+                            if(!doLHS(pk,lhs)) return false;
                             String rhs = m.group(2);
-                            if(lhs.equals("{}")){ if(contentHash(pk)==null) return false; }
-                            else
-                            if(!contentIsString(pk,lhs)) return false;
-                            if(rhs.length()!=0) doRHS(pk,rhs);
+                            doRHS(pk,rhs);
                         }
                     }
                 }
@@ -126,7 +110,27 @@ try{
         return true;
     }
 
+    private boolean doLHS(String pk, String lhs){
+        if(lhs.equals("{}")) return contentHash(pk)!=null;
+        if(lhs.startsWith("$:")) return contentObject(pk).equals(contentObject(lhs.substring(2)));
+        return contentIsString(pk,lhs) || contentListContains(pk,lhs);
+    }
+
     private void doRHS(String pk, String rhs){
+        if(rhs.length()==0) return;
+        if(pk.equals("%notifying")){
+            if(rhs.startsWith("has($:"))     notifying(content(rhs.substring(6,rhs.length()-1)));
+            if(rhs.startsWith("hasno($:")) unnotifying(content(rhs.substring(8,rhs.length()-1)));
+            return;
+        }
+        if(rhs.startsWith("has($:"))   contentListAdd(   pk, content(rhs.substring(6,rhs.length()-1)));
+        else
+        if(rhs.startsWith("hasno($:")) contentListRemove(pk, content(rhs.substring(6,rhs.length()-1)));
+        else
+        if(rhs.startsWith("has("))     contentListAdd(   pk,         rhs.substring(6,rhs.length()-1));
+        else
+        if(rhs.startsWith("hasno("))   contentListRemove(pk,         rhs.substring(6,rhs.length()-1));
+        else
         if(rhs.equals("%alerted")) content(pk,content(rhs));
         else
         if(rhs.equals("$:"))       content(pk,uid);
@@ -179,7 +183,7 @@ try{
 
 // two-phase
 // "<#>payment": { .. }
-// detect equality of hashes for changed, and/or mirror each param val
+// mirror each param val?
 
     private void setUpPseudoMarketMover(){
         if(!contentSet("params")) setUpPseudoMarketMoverInterfaceCallback();
@@ -193,9 +197,6 @@ try{
                 contentDouble("params:investment") != contentDouble("order:params:investment") ){
 
                 contentList("status", list("filled", "not-as-ordered"));
-            }
-            else{
-                content("status", "filled");
             }
         }
     }

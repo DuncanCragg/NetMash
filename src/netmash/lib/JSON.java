@@ -919,8 +919,12 @@ public class JSON {
             }
             if(o instanceof LinkedHashMap){
                 if(i==parts.length-1){
-                    if(value!=null){ hm.put(part, value); changed=true; }
-                    else           { hm.remove(part);     changed=true; }
+                    if(value!=null){
+                        if(!o.equals(value)){
+                            hm.put(part, value); changed=true;
+                        }
+                    }
+                    else { hm.remove(part); changed=true; }
                     return changed;
                 }
                 hm=(LinkedHashMap)o;
@@ -928,8 +932,12 @@ public class JSON {
             }
             if(o instanceof LinkedList){
                 if(i==parts.length-1){
-                    if(value!=null){ hm.put(part, value); changed=true; }
-                    else           { hm.remove(part);     changed=true; }
+                    if(value!=null){
+                        if(!o.equals(value)){
+                            hm.put(part, value); changed=true;
+                        }
+                    }
+                    else { hm.remove(part); changed=true; }
                     return changed;
                 }
                 String sx=parts[i+1];
@@ -941,8 +949,7 @@ public class JSON {
                        if(i+1==parts.length-1){
                            if(value!=null){
                                if(!o.equals(value)){
-                                   changed=true;
-                                   ll.set(x, value);
+                                   ll.set(x, value); changed=true;
                                }
                            }
                            else{ ll.remove(x); changed=true; }
@@ -962,11 +969,10 @@ public class JSON {
                         String p = (String)o;
                         String n = value.toString();
                         if(!n.equals(p)){
-                            changed = true;
-                            hm.put(part, value);
+                            hm.put(part, value); changed=true;
                         }
                     }
-                    else { hm.remove(part); changed = true; }
+                    else { hm.remove(part); changed=true; }
                 }
                 return changed;
             }
@@ -976,11 +982,10 @@ public class JSON {
                         Number p = (Number)o;
                         Number n = toNumber(value);
                         if(!n.equals(p)){
-                            changed = true;
-                            hm.put(part, toNumberIfPoss(value));
+                            hm.put(part, toNumberIfPoss(value)); changed=true;
                         }
                     }
-                    else { hm.remove(part); changed = true; }
+                    else { hm.remove(part); changed=true; }
                 }
                 return changed;
             }
@@ -990,11 +995,10 @@ public class JSON {
                         Boolean p = (Boolean)o;
                         Boolean n = toBoolean(value);
                         if(!n.equals(p)){
-                            changed = true;
-                            hm.put(part, toBooleanIfPoss(value));
+                            hm.put(part, toBooleanIfPoss(value)); changed=true;
                         }
                     }
-                    else { hm.remove(part); changed = true; }
+                    else { hm.remove(part); changed=true; }
                 }
                 return changed;
             }

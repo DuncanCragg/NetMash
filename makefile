@@ -12,6 +12,8 @@ quickdyn: editquickdb androidemu runquickserver editdynamicfile
 
 local: androidemu runlocalserver editlocaldbanddynamicfile
 
+fjord: kill runcur whappen
+
 # -------------------------------------------------------------------
 
 editstaticdb:
@@ -133,7 +135,7 @@ setup:
 	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test.db
 
 whappen:
-	vim -o -N src/server/vm2/netmash.log src/server/vm1/netmash.log src/server/vm1/netmash.db src/server/vm2/netmash.db
+	vim -o -N src/server/vm1/netmash.log src/server/vm2/netmash.log src/server/vm1/netmash.db src/server/vm2/netmash.db
 
 logboth:
 	xterm -geometry 97x50+0+80   -e make logcat &
