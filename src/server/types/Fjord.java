@@ -31,8 +31,6 @@ try{
 }finally{
         if(contentListContains("is", "ticket")){
             setUpPseudoMarketMover();
-            checkNotAsOrdered();
-            acceptPayment();
         }
 }
     }
@@ -110,14 +108,15 @@ try{
         return true;
     }
 
-    private boolean doLHS(String pk, String lhs){
+    private boolean doLHS(String pk, String lhs){ try{
         if(lhs.equals("{}"))      return  contentHash(pk)!=null;
         if(lhs.startsWith( "$:")) return  contentObject(pk).equals(contentObject(lhs.substring(2)));
         if(lhs.startsWith("!$:")) return !contentObject(pk).equals(contentObject(lhs.substring(3)));
+        if(functionMatch(pk, lhs)) return true;
         return contentIsString(pk,lhs) || contentListContains(pk,lhs);
-    }
+    } catch(Throwable t){ log(t); return false; } }
 
-    private void doRHS(String pk, String rhs){
+    private void doRHS(String pk, String rhs){ try{
         if(rhs.length()==0) return;
         if(pk.equals("%notifying")){
             if(rhs.startsWith("has($:"))     notifying(content(rhs.substring(6,rhs.length()-1)));
@@ -140,19 +139,36 @@ try{
         else
         if(rhs.equals("{}"))       contentHash(pk, new LinkedHashMap());
         else
-        if(functionCall(pk,rhs));
+        if(functionSet(pk,rhs));
         else
         if(rhs.equals("new") && pk.endsWith("%uid")){
             String basepath=pk.substring(0,pk.length()-5);
             content(basepath, spawn(new Fjord(contentHash(basepath))));
         }
         else content(pk,rhs);
+    } catch(Throwable t){ log(t); } }
+
+    private boolean functionMatch(String pk, String lhs){
+        Object o = evalFunction(lhs);
+        if(o==null) return false;
+        if(o instanceof Double) return ((Double)o).equals(contentDouble(pk));
+        return false;
+    }
+
+    private boolean functionSet(String pk, String rhs){
+        Object o = evalFunction(rhs);
+        if(o==null) return false;
+        if(o instanceof LinkedList) contentList(pk,(LinkedList)o); else
+        if(o instanceof Double)     contentDouble(pk,(Double)o); else
+        if(o instanceof String)     content(pk,(String)o); else
+                                    content(pk,o.toString());
+        return true;
     }
 
     @SuppressWarnings("unchecked")
-    private boolean functionCall(String pk, String rhs){
-        Matcher m = FUNCTIONPA.matcher(rhs);
-        if(!m.matches()) return false;
+    private Object evalFunction(String function){
+        Matcher m = FUNCTIONPA.matcher(function);
+        if(!m.matches()) return null;
         String   func = m.group(1);
         String[] args = m.group(2).split(",");
 
@@ -161,18 +177,16 @@ try{
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 l.add(makeBestObject(arg));
             }
-            contentList(pk,l);
+            return l;
         }
-        else
         if(func.equals("prod")){
-            double r = 1;
+            double r=1.0;
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                r *= contentDouble(arg.substring(2));
+                r *= arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
             }
-            contentDouble(pk,r);
+            return new Double(r);
         }
-        else content(pk,func+" on "+args);
-        return true;
+        return function;
     }
 
     private Object makeBestObject(String s){
@@ -185,27 +199,6 @@ try{
 // two-phase
 // "<#>payment": { .. }
 // mirror each param val?
-
-    private void checkNotAsOrdered(){
-        if(contentIs("status", "filled") || contentListContains("status", "filled")){ logrule();
-            if(!content(      "params:fxpair").equals(content(      "order:params:fxpair"))  ||
-               !content(      "params:fxtype").equals(content(      "order:params:fxtype"))  ||
-                contentDouble("params:price")      != contentDouble("order:params:price")    ||
-                contentDouble("params:investment") != contentDouble("order:params:investment") ){
-
-                contentList("status", list("filled", "not-as-ordered"));
-            }
-        }
-    }
-
-    private void acceptPayment(){
-        if(contentIs("status","filled") || contentListContains("status", "filled")){ logrule();
-            if(contentDouble("order:payment:amount") == contentDouble("ask") * contentDouble("params:investment")){
-                content("status", "paid");
-                content("payment", content("order:payment"));
-            }
-        }
-    }
 
     // ----------------------------------------------------
 
