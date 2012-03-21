@@ -278,6 +278,12 @@ public class JSON {
         return addListPath(tophash, path, value);
     }
 
+    /** Add to list at the given path, taking list as set. */
+    public boolean setPathAdd(String path, Object value){
+        ensureContent();
+        return addSetPath(tophash, path, value);
+    }
+
     /** Add to list at the given path. */
     public boolean listPathAddAll(String path, List value){
         ensureContent();
@@ -844,28 +850,42 @@ public class JSON {
 
     @SuppressWarnings("unchecked")
     private boolean addListPath(LinkedHashMap hashmap, String path, Object value){
-        LinkedList list=null;
-        try{ list = getListPath(hashmap, path);
+        LinkedList list;
+        try{ list=getOrMakeListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
-        if(list==null){
-           list = new LinkedList();
-           if(!setListPath(hashmap, path, list)) return false;
-        }
         list.add(value);
         return true;
     }
 
     @SuppressWarnings("unchecked")
-    private boolean addAllListPath(LinkedHashMap hashmap, String path, List value){
-        LinkedList list=null;
-        try{ list = getListPath(hashmap, path);
+    private boolean addSetPath(LinkedHashMap hashmap, String path, Object value){
+        LinkedList list;
+        try{ list=getOrMakeListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
-        if(list==null){
-           list = new LinkedList();
-           if(!setListPath(hashmap, path, list)) return false;
-        }
+        if(!list.contains(value)) list.add(value);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean addAllListPath(LinkedHashMap hashmap, String path, List value){
+        LinkedList list;
+        try{ list=getOrMakeListPath(hashmap, path);
+        }catch(PathOvershot po){ return false; }
         list.addAll(value);
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedList getOrMakeListPath(LinkedHashMap hashmap, String path) throws PathOvershot{
+        LinkedList list=null;
+        Object o=getObject(hashmap, path);
+        if(o==null || !(o instanceof LinkedList)){
+           list = new LinkedList();
+           if(o!=null) list.add(o);
+           setListPath(hashmap, path, list);
+        }
+        else list=(LinkedList)o;
+        return list;
     }
 
     @SuppressWarnings("unchecked")

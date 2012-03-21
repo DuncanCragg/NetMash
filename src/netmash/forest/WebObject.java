@@ -453,8 +453,8 @@ public class WebObject {
 
     /** Add this value as if the list were a set. */
     public void contentSetAdd(String path, Object val){
-        LinkedList list=contentList(path);
-        if(list==null || !list.contains(val)) contentListAdd(path, val);
+        doCopyOnWrite(path);
+        statemod = updatingState.setPathAdd(path, val) || statemod;
     }
 
     /** Add all the values onto the list at the path. */

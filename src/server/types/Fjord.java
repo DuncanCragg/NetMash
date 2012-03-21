@@ -111,8 +111,9 @@ try{
     }
 
     private boolean doLHS(String pk, String lhs){
-        if(lhs.equals("{}")) return contentHash(pk)!=null;
-        if(lhs.startsWith("$:")) return contentObject(pk).equals(contentObject(lhs.substring(2)));
+        if(lhs.equals("{}"))      return  contentHash(pk)!=null;
+        if(lhs.startsWith( "$:")) return  contentObject(pk).equals(contentObject(lhs.substring(2)));
+        if(lhs.startsWith("!$:")) return !contentObject(pk).equals(contentObject(lhs.substring(3)));
         return contentIsString(pk,lhs) || contentListContains(pk,lhs);
     }
 
@@ -123,11 +124,11 @@ try{
             if(rhs.startsWith("hasno($:")) unnotifying(content(rhs.substring(8,rhs.length()-1)));
             return;
         }
-        if(rhs.startsWith("has($:"))   contentListAdd(   pk, content(rhs.substring(6,rhs.length()-1)));
+        if(rhs.startsWith("has($:"))   contentSetAdd(    pk, content(rhs.substring(6,rhs.length()-1)));
         else
-        if(rhs.startsWith("hasno($:")) contentListRemove(pk, content(rhs.substring(6,rhs.length()-1)));
+        if(rhs.startsWith("hasno($:")) contentListRemove(pk, content(rhs.substring(8,rhs.length()-1)));
         else
-        if(rhs.startsWith("has("))     contentListAdd(   pk,         rhs.substring(6,rhs.length()-1));
+        if(rhs.startsWith("has("))     contentSetAdd(    pk,         rhs.substring(4,rhs.length()-1));
         else
         if(rhs.startsWith("hasno("))   contentListRemove(pk,         rhs.substring(6,rhs.length()-1));
         else
@@ -185,10 +186,6 @@ try{
 // "<#>payment": { .. }
 // mirror each param val?
 
-    private void setUpPseudoMarketMover(){
-        if(!contentSet("params")) setUpPseudoMarketMoverInterfaceCallback();
-    }
-
     private void checkNotAsOrdered(){
         if(contentIs("status", "filled") || contentListContains("status", "filled")){ logrule();
             if(!content(      "params:fxpair").equals(content(      "order:params:fxpair"))  ||
@@ -212,6 +209,10 @@ try{
 
     // ----------------------------------------------------
 
+    private void setUpPseudoMarketMover(){
+        if(!contentSet("params")) setUpPseudoMarketMoverInterfaceCallback();
+    }
+
     private void marketMoved(final double price){
         new Evaluator(this){
             public void evaluate(){ logrule();
@@ -223,8 +224,6 @@ try{
             }
         };
     }
-
-    // ----------------------------------------------------
 
     static private double[] prices = { 81.8, 81.6 };
     private void setUpPseudoMarketMoverInterfaceCallback(){
