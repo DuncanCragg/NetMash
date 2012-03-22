@@ -108,7 +108,7 @@ public class Fjord extends WebObject {
         if(lhs.equals("{}"))      return  contentHash(pk)!=null;
         if(lhs.startsWith( "$:")) return  contentObject(pk).equals(contentObject(lhs.substring(2)));
         if(lhs.startsWith("!$:")) return !contentObject(pk).equals(contentObject(lhs.substring(3)));
-        if(functionMatch(pk, lhs)) return true;
+        if(evalFunction(pk,lhs,true)) return true;
         return contentIsString(pk,lhs) || contentListContains(pk,lhs);
     } catch(Throwable t){ log(t); return false; } }
 
@@ -135,7 +135,7 @@ public class Fjord extends WebObject {
         else
         if(rhs.equals("{}"))       contentHash(pk, new LinkedHashMap());
         else
-        if(functionSet(pk,rhs));
+        if(evalFunction(pk,rhs,false));
         else
         if(rhs.equals("new") && pk.endsWith("%uid")){
             String basepath=pk.substring(0,pk.length()-5);
@@ -144,27 +144,11 @@ public class Fjord extends WebObject {
         else content(pk,rhs);
     } catch(Throwable t){ log(t); } }
 
-    private boolean functionMatch(String pk, String lhs){
-        Object o = evalFunction(lhs);
-        if(o==null) return false;
-        if(o instanceof Double) return ((Double)o).equals(contentDouble(pk));
-        return false;
-    }
-
-    private boolean functionSet(String pk, String rhs){
-        Object o = evalFunction(rhs);
-        if(o==null) return false;
-        if(o instanceof LinkedList) contentList(pk,(LinkedList)o); else
-        if(o instanceof Double)     contentDouble(pk,(Double)o); else
-        if(o instanceof String)     content(pk,(String)o); else
-                                    content(pk,o.toString());
-        return true;
-    }
-
     @SuppressWarnings("unchecked")
-    private Object evalFunction(String function){
+    private boolean evalFunction(String pk, String function, boolean match){
+
         Matcher m = FUNCTIONPA.matcher(function);
-        if(!m.matches()) return null;
+        if(!m.matches()) return false;
         String   func = m.group(1);
         String[] args = m.group(2).split(",");
 
@@ -173,16 +157,27 @@ public class Fjord extends WebObject {
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 l.add(makeBestObject(arg));
             }
-            return l;
+            if(match) return contentList(pk).equals(l);
+            else      {      contentList(pk,l); return true; }
         }
         if(func.equals("prod")){
-            double r=1.0;
+            double d=1.0;
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                r *= arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+                d *= arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
             }
-            return new Double(r);
+            if(match) return contentDouble(pk)==d;
+            else      {      contentDouble(pk,new Double(d)); return true; }
         }
-        return function;
+        if(func.equals("lt")){
+            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
+                double v=arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+                if(match) return contentDouble(pk) < v;
+                else      return true;
+            }
+            return !match;
+        }
+        if(match) return false;
+        else      {      content(pk,function); return true; }
     }
 
     private Object makeBestObject(String s){
