@@ -10,10 +10,12 @@ public class Fjord extends WebObject {
 
     public Fjord(){}
 
+    public Fjord(String s){ super(s); }
+
     public Fjord(LinkedHashMap hm){ super(hm); }
 
     public void evaluate(){
-try{
+
         LinkedList rules=contentList("%rules");
         if(rules==null) return;
         int r=0;
@@ -28,11 +30,6 @@ try{
             if(ok) runRule(r);
             r++;
         }
-}finally{
-        if(contentListContains("is", "ticket")){
-            setUpPseudoMarketMover();
-        }
-}
     }
 
     private void runRule(int r){
@@ -48,7 +45,6 @@ try{
 
         contentTemp("%alerted", alerted);
         boolean ok=scanRuleHash(rule, "");
-        // if(!ok) roll back
         if(ok) log("Rule fired: \"When "+content(String.format("%%rules:%d:when", r))+"\"");
 //log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
         contentTemp("%alerted", null);
@@ -143,7 +139,7 @@ try{
         else
         if(rhs.equals("new") && pk.endsWith("%uid")){
             String basepath=pk.substring(0,pk.length()-5);
-            content(basepath, spawn(new Fjord(contentHash(basepath))));
+            content(basepath, spawn(getClass().newInstance().construct(contentHash(basepath))));
         }
         else content(pk,rhs);
     } catch(Throwable t){ log(t); } }
@@ -196,37 +192,8 @@ try{
        return s;
     }
 
-// two-phase
 // "<#>payment": { .. }
-// mirror each param val?
-
-    // ----------------------------------------------------
-
-    private void setUpPseudoMarketMover(){
-        if(!contentSet("params")) setUpPseudoMarketMoverInterfaceCallback();
-    }
-
-    private void marketMoved(final double price){
-        new Evaluator(this){
-            public void evaluate(){ logrule();
-                contentDouble("ask", price);
-                if(price < contentDouble("params:price")){
-                    content("status", "filled");
-                }
-                refreshObserves();
-            }
-        };
-    }
-
-    static private double[] prices = { 81.8, 81.6 };
-    private void setUpPseudoMarketMoverInterfaceCallback(){
-        new Thread(){ public void run(){
-            for(int i=0; i<prices.length; i++){
-                try{ Thread.sleep(500); }catch(Exception e){}
-                marketMoved(prices[i]);
-            }
-        } }.start();
-    }
+// two-phase
 
     // ----------------------------------------------------
 }

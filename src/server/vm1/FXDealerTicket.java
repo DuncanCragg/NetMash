@@ -3,13 +3,52 @@ import java.util.*;
 import netmash.forest.WebObject;
 
 /** FX Dealer Object from Book Chapter example.
+  * Run by Fjord rules, but have a pseudo-market ticker.
+  */
+public class FXDealerTicket extends Fjord {
+
+    public FXDealerTicket(){}
+
+    static boolean running=false;
+
+    public void evaluate(){
+        super.evaluate();
+        if(!running && contentListContains("is", "ticket")) setUpPseudoMarketMoverInterfaceCallback();
+    }
+
+    private void marketMoved(final double price){
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                contentDouble("ask", price);
+                if(price < contentDouble("params:price")){
+                    content("status", "filled");
+                }
+                refreshObserves();
+            }
+        };
+    }
+
+    static private double[] prices = { 81.8, 81.6 };
+
+    private void setUpPseudoMarketMoverInterfaceCallback(){
+        running=true;
+        new Thread(){ public void run(){
+            for(int i=0; i<prices.length; i++){
+                try{ Thread.sleep(500); }catch(Exception e){}
+                marketMoved(prices[i]);
+            }
+        } }.start();
+    }
+
+    // ----------------------------------------------------
+    // ----------------------------------------------------
+    // ----------------------------------------------------
+
+/** FX Dealer Object from Book Chapter example. Original Java version.
   * In NetMash, these WebObject classes are buckets for animation rules, as there isn't a
   * strict concept of class in FOREST. Here we bundle the rules for two 'classes' - dealers
   * and tickets - into one Java file for convenience.
   */
-public class FXDealerTicket extends WebObject {
-
-    public FXDealerTicket(){}
 
     public FXDealerTicket(String orderuid){
         super("{ \"is\": [ \"fx\", \"ticket\" ],\n"+
@@ -19,7 +58,7 @@ public class FXDealerTicket extends WebObject {
               "}");
     }
 
-    public void evaluate(){
+    public void evaluateOriginal(){
         if(contentListContains("is", "dealer")){
             makeTicket();
         }
@@ -87,32 +126,6 @@ public class FXDealerTicket extends WebObject {
                 content("payment", content("order:payment"));
             }
         }
-    }
-
-    // ----------------------------------------------------
-
-    private void marketMoved(final double price){
-        new Evaluator(this){
-            public void evaluate(){ logrule();
-                contentDouble("ask", price);
-                if(price < contentDouble("params:price")){
-                    content("status", "filled");
-                }
-                refreshObserves();
-            }
-        };
-    }
-
-    // ----------------------------------------------------
-
-    static private double[] prices = { 81.8, 81.6 };
-    private void setUpPseudoMarketMoverInterfaceCallback(){
-        new Thread(){ public void run(){
-            for(int i=0; i<prices.length; i++){
-                try{ Thread.sleep(500); }catch(Exception e){}
-                marketMoved(prices[i]);
-            }
-        } }.start();
     }
 
     // ----------------------------------------------------

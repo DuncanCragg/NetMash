@@ -109,6 +109,15 @@ public class WebObject {
         updatingState = publicState;
     }
 
+    public WebObject construct(LinkedHashMap hm){
+        funcobs = FunctionalObserver.funcobs;
+        uid = UID.generateUID();
+        etag = 1;
+        publicState = new JSON(hm);
+        updatingState = publicState;
+        return this;
+    }
+
     public boolean isShell(){
         return shellstate != ShellState.FOUND;
     }

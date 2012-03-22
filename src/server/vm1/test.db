@@ -56,7 +56,7 @@
 }
 
 {   "%uid": "uid-ba2b-8619-fdea-8c2c",
-    "%class": "Fjord",
+    "%class": "FXDealerTicket",
     "%rules": [ "uid-424d-01c5-ee08-2ec9", "uid-e772-4f4f-f981-0cea" ],
     "is": [ "fx", "dealer" ],
     "tickets": [ ]
