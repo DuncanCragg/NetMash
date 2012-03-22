@@ -37,16 +37,21 @@ public class Fjord extends WebObject {
         else for(String alerted: alerted()) runRule(r,alerted);
     }
 
+    private boolean extralogging = false;
+
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
-//log("Running rule \"When "+content(String.format("%%rules:%d:when", r))+"\"");
+        if(extralogging) log("Running rule \"When "+content(String.format("%%rules:%d:when", r))+"\"");
 
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
 
         contentTemp("%alerted", alerted);
+
         boolean ok=scanRuleHash(rule, "");
+
         if(ok) log("Rule fired: \"When "+content(String.format("%%rules:%d:when", r))+"\"");
-//log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
+        if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
+
         contentTemp("%alerted", null);
     }
 
@@ -66,41 +71,44 @@ public class Fjord extends WebObject {
             }
             Object v=entry.getValue();
             if(v instanceof String){
-                String vs=(String)v;
-                if(vs.startsWith("<")){
-                    if(vs.startsWith("<#>")){
-                        if(contentSet(pk)) return false;
-                        String rhs=vs.substring(3);
-                        doRHS(pk,rhs);
-                    }
-                    else
-                    if(vs.startsWith("<>")){
-                        String[] rhsparts=vs.substring(2).split(";");
-                        for(int i=0; i<rhsparts.length; i++){
-                            String rhs=rhsparts[i];
-                            doRHS(pk,rhs);
-                        }
-                    }
-                    else{
-                        Matcher m = REWRITEPA.matcher(vs);
-                        if(!m.matches()){ if(!contentIsOrListContains(pk,vs)) return false; }
-                        else{
-                            String lhs = m.group(1);
-                            if(!doLHS(pk,lhs)) return false;
-                            String rhs = m.group(2);
-                            doRHS(pk,rhs);
-                        }
-                    }
-                }
-                else if(!contentIsOrListContains(pk,vs)) return false;
+                if(!scanString((String)v, pk)) return false;
             }
             else
             if(v instanceof LinkedHashMap){
-                LinkedHashMap<String,Object> vh=(LinkedHashMap<String,Object>)v;
-                if(!scanRuleHash(vh, pk+":")) return false;
+                if(!scanRuleHash((LinkedHashMap<String,Object>)v, pk+":")) return false;
             }
             else return false;
         }
+        return true;
+    }
+
+    private boolean scanString(String vs, String pk){
+        if(vs.startsWith("<")){
+            if(vs.startsWith("<#>")){
+                if(contentSet(pk)) return false;
+                String rhs=vs.substring(3);
+                doRHS(pk,rhs);
+            }
+            else
+            if(vs.startsWith("<>")){
+                String[] rhsparts=vs.substring(2).split(";");
+                for(int i=0; i<rhsparts.length; i++){
+                    String rhs=rhsparts[i];
+                    doRHS(pk,rhs);
+                }
+            }
+            else{
+                Matcher m = REWRITEPA.matcher(vs);
+                if(!m.matches()){ if(!contentIsOrListContains(pk,vs)) return false; }
+                else{
+                    String lhs = m.group(1);
+                    if(!doLHS(pk,lhs)) return false;
+                    String rhs = m.group(2);
+                    doRHS(pk,rhs);
+                }
+            }
+        }
+        else if(!contentIsOrListContains(pk,vs)) return false;
         return true;
     }
 
