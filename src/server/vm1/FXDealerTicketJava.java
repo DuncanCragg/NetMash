@@ -7,7 +7,7 @@ import netmash.forest.WebObject;
   * strict concept of class in FOREST. Here we bundle the rules for two 'classes' - dealers
   * and tickets - into one Java file for convenience.
   */
-public class FXDealerTicket extends Fjord {
+public class FXDealerTicket extends WebObject {
 
     public FXDealerTicket(){}
 
@@ -103,6 +103,8 @@ public class FXDealerTicket extends Fjord {
         };
     }
 
+    // ----------------------------------------------------
+
     static private double[] prices = { 81.8, 81.6 };
 
     private void setUpPseudoMarketMoverInterfaceCallback(){
@@ -116,5 +118,3 @@ public class FXDealerTicket extends Fjord {
 
     // ----------------------------------------------------
 }
-
-
