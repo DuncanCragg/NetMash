@@ -7,11 +7,11 @@ import netmash.forest.WebObject;
   * strict concept of class in FOREST. Here we bundle the rules for two 'classes' - dealers
   * and tickets - into one Java file for convenience.
   */
-public class FXDealerTicket extends WebObject {
+public class FXDealerTicketJava extends WebObject {
 
-    public FXDealerTicket(){}
+    public FXDealerTicketJava(){}
 
-    public FXDealerTicket(String orderuid){
+    public FXDealerTicketJava(String orderuid){
         super("{ \"is\": [ \"fx\", \"ticket\" ],\n"+
               "  \"order\": \""+orderuid+"\",\n"+
               "  \"ask\": 81.9,\n"+
@@ -37,7 +37,7 @@ public class FXDealerTicket extends WebObject {
             content("order", orderuid);
             String orderticket = content("order:ticket");
             if(orderticket==null){
-                contentListAdd("tickets", spawn(new FXDealerTicket(orderuid)));
+                contentListAdd("tickets", spawn(new FXDealerTicketJava(orderuid)));
             }
         }
     }
