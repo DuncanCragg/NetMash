@@ -715,6 +715,9 @@ public class JSON {
             Number n=(Number)o;
             return n.doubleValue();
         }
+        if(o instanceof String) try{
+            return Double.parseDouble((String)o);
+        } catch(NumberFormatException e){}
         return 0;
     }
 

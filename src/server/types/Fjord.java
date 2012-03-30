@@ -77,7 +77,20 @@ public class Fjord extends WebObject {
             if(v instanceof LinkedHashMap){
                 if(!scanRuleHash((LinkedHashMap<String,Object>)v, pk+":")) return false;
             }
-            else return false;
+            else
+            if(v instanceof LinkedList){
+                if(!scanRuleList((LinkedList)v, pk+":")) return false;
+            }
+            else{ log("oh noes "+v); return false; }
+        }
+        return true;
+    }
+
+    private boolean scanRuleList(LinkedList list, String pk){
+        for(Object v: list){
+            if(v instanceof String){
+                if(!scanString((String)v, pk)) return false;
+            }
         }
         return true;
     }
@@ -114,6 +127,7 @@ public class Fjord extends WebObject {
 
     private boolean doLHS(String pk, String lhs){ try{
         if(lhs.equals("{}"))      return  contentHash(pk)!=null;
+        if(lhs.equals("$:"))      return  content(pk).equals(uid);
         if(lhs.startsWith( "$:")) return  contentObject(pk).equals(contentObject(lhs.substring(2)));
         if(lhs.startsWith("!$:")) return !contentObject(pk).equals(contentObject(lhs.substring(3)));
         if(evalFunction(pk,lhs,true)) return true;
@@ -130,6 +144,10 @@ public class Fjord extends WebObject {
         if(rhs.startsWith("has($:"))   contentSetAdd(    pk, content(rhs.substring(6,rhs.length()-1)));
         else
         if(rhs.startsWith("hasno($:")) contentListRemove(pk, content(rhs.substring(8,rhs.length()-1)));
+        else
+        if(rhs.startsWith("has(%"))    contentSetAdd(    pk, content(rhs.substring(4,rhs.length()-1)));
+        else
+        if(rhs.startsWith("hasno(%"))  contentListRemove(pk, content(rhs.substring(6,rhs.length()-1)));
         else
         if(rhs.startsWith("has("))     contentSetAdd(    pk,         rhs.substring(4,rhs.length()-1));
         else
