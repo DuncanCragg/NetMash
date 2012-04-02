@@ -237,6 +237,19 @@ public class OTS2GUI {
         return viewhash;
     }
 
+    public LinkedHashMap article2GUI(){ logrule();
+        String title=user.content("private:viewing:title");
+        LinkedList articledetail = new LinkedList();
+        articledetail.add(style("direction","vertical"));
+        LinkedList<String> content=user.contentList("private:viewing:content");
+        if(content!=null) for(String para: content) articledetail.add(para);
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightpink"));
+        viewhash.put("#title", title!=null? title: "Article");
+        viewhash.put("#article", articledetail);
+        return viewhash;
+    }
+
     public String getGeoAddressString(String path){
         int numberofstreetlines=1;
         LinkedHashMap address = user.contentHash(path);
