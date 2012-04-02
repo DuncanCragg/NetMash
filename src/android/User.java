@@ -354,7 +354,8 @@ public class User extends WebObject {
                 viewhash=ots2gui.contactList2GUI("");
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "document")&&
+            if((contentIsOrListContains("private:viewing:is", "document")||
+                contentIsOrListContains("private:viewing:is", "article")   ) &&
                contentIsOrListContains("private:viewing:is", "list"   )   ){
 
                 viewhash=ots2gui.documentList2GUI();

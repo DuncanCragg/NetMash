@@ -108,12 +108,22 @@ public class OTS2GUI {
 
     public LinkedHashMap documentList2GUI(){ logrule();
         String listuid = user.content("private:viewing");
-        LinkedList<String> documents = user.contentList("private:viewing:list");
+        LinkedList documents = user.contentList("private:viewing:list");
         LinkedList viewlist = new LinkedList();
         viewlist.add(style("direction","vertical"));
         int i= -1;
-        if(documents!=null) for(String uid: documents){ i++;
-            String documentuid = UID.normaliseUID(listuid, uid);
+        if(documents!=null) for(Object inlineoruid: documents){ i++;
+            String documentuid=null;
+            if(inlineoruid instanceof String){
+                String uid = (String)inlineoruid;
+                documentuid = UID.normaliseUID(listuid, uid);
+            }
+            else
+            if(inlineoruid instanceof LinkedHashMap){
+                LinkedHashMap<String,String> inl = (LinkedHashMap<String,String>)inlineoruid;
+                documentuid = UID.normaliseUID(listuid, inl.get("%more"));
+            }
+            if(documentuid==null) documentuid=listuid;
             String          title=user.content("private:viewing:list:"+i+":title");
             if(title==null) title=user.content("private:viewing:list:"+i+":is");
             if(title==null) viewlist.add("Loading..");
@@ -241,8 +251,8 @@ public class OTS2GUI {
         String title=user.content("private:viewing:title");
         LinkedList articledetail = new LinkedList();
         articledetail.add(style("direction","vertical"));
-        LinkedList<String> content=user.contentList("private:viewing:content");
-        if(content!=null) for(String para: content) articledetail.add(para);
+        LinkedList content=user.contentList("private:viewing:content");
+        if(content!=null) for(Object para: content) articledetail.add(para.toString());
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours","lightpink"));
         viewhash.put("#title", title!=null? title: "Article");
