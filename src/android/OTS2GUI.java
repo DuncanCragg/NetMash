@@ -106,6 +106,27 @@ public class OTS2GUI {
         return viewhash;
     }
 
+    public LinkedHashMap documentList2GUI(){ logrule();
+        String listuid = user.content("private:viewing");
+        LinkedList<String> documents = user.contentList("private:viewing:list");
+        LinkedList viewlist = new LinkedList();
+        viewlist.add(style("direction","vertical"));
+        int i= -1;
+        if(documents!=null) for(String uid: documents){ i++;
+            String documentuid = UID.normaliseUID(listuid, uid);
+            String          title=user.content("private:viewing:list:"+i+":title");
+            if(title==null) title=user.content("private:viewing:list:"+i+":is");
+            if(title==null) viewlist.add("Loading..");
+            else            viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), title, documentuid));
+        }
+        String title = user.content("private:viewing:title");
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightyellow"));
+        viewhash.put("#title", title!=null? title: "Document List");
+        viewhash.put("#documentlist", viewlist);
+        return viewhash;
+    }
+
     public LinkedList contact2Map(String contactprefix){ logrule();
         String useruid = user.content("private:viewing");
         LinkedList maplist = new LinkedList();

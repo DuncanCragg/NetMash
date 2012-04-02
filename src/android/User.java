@@ -354,6 +354,12 @@ public class User extends WebObject {
                 viewhash=ots2gui.contactList2GUI("");
             }
             else
+            if(contentIsOrListContains("private:viewing:is", "document")&&
+               contentIsOrListContains("private:viewing:is", "list"   )   ){
+
+                viewhash=ots2gui.documentList2GUI();
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "user")){
                 viewhash=ots2gui.user2GUI();
             }
