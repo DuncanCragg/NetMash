@@ -133,6 +133,7 @@ public class OTS2GUI {
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours","lightyellow"));
         viewhash.put("#title", title!=null? title: "Document List");
+        viewhash.put("#query", "?[Query the collection: /string/]?");
         viewhash.put("#documentlist", viewlist);
         return viewhash;
     }

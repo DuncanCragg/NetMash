@@ -89,11 +89,20 @@ public class User extends WebObject {
     public User(){ if(me==null){ me=this; if(NetMash.top!=null) NetMash.top.onUserReady(me); } }
 
     static User newForm(String useruid, String guiuid){
-        return new User("{ \"is\": \"form\", \n"+
-                        "  \"user\": \""+useruid+"\", \n"+
-                        "  \"gui\": \""+guiuid+"\", \n"+
+        return new User("{ \"is\": \"form\",\n"+
+                        "  \"user\": \""+useruid+"\",\n"+
+                        "  \"gui\": \""+guiuid+"\",\n"+
                         "  \"form\": { }\n"+
                         "}");
+    }
+
+    static User newDocumentQuery(String useruid, String listuid, String words){
+        return new User(String.format(
+                        "{ \"is\": [ \"document\", \"query\" ], \n"+
+                        "  \"user\": \""+useruid+"\",\n"+
+                        "  \"list\": \""+listuid+"\",\n"+
+                        "  \"content\": \"<hasWords(%s)>\"\n"+
+                        "}", words));
     }
 
     // ---------------------------------------------------------
@@ -140,6 +149,7 @@ public class User extends WebObject {
 
     class View{
         String uid,as; View(String u, String a){ uid=u; as=a; }
+        public String toString(){ return String.format("View(%s, %s)", uid, as); }
         public boolean equals(Object v){ return (v instanceof View) && uid.equals(((View)v).uid) && as.equals(((View)v).as); }
     };
     class History extends Stack<View>{
@@ -277,7 +287,10 @@ public class User extends WebObject {
         new Evaluator(this){
             public void evaluate(){ logrule();
                 content("form:"+dehash(tag), val);
-                notifying(content("gui"));
+                if(contentListContainsAll("gui:is", list("document", "list"))){
+                    if(!contentSet("query")) content("query", spawn(newDocumentQuery(content("user"), content("gui"), content("form:query"))));
+                }
+                else notifying(content("gui"));
             }
         };
     }
@@ -319,6 +332,11 @@ public class User extends WebObject {
         else
         if(contentIs("is", "form")){ log("form: "+this);
             currentform=this;
+        }
+        else
+        if(contentListContainsAll("is", list("document", "query"))){ log("query: "+this);
+            for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
+            notifying(content("list"));
         }
         else log("no evaluate: "+this);
     }
