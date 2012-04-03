@@ -132,6 +132,7 @@ public class HTTP implements ChannelUser {
         for(String notifieruid: w.alertedin){
             client.postRequest(path, notifieruid);
         }
+        w.alertedin = new CopyOnWriteArraySet<String>();
         return true;
     }
 
@@ -141,6 +142,7 @@ public class HTTP implements ChannelUser {
         for(String notifieruid: w.alertedin){
             server.longRequest(notifieruid);
         }
+        w.alertedin = new CopyOnWriteArraySet<String>();
         return true;
     }
 

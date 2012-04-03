@@ -288,7 +288,7 @@ public class User extends WebObject {
             public void evaluate(){ logrule();
                 content("form:"+dehash(tag), val);
                 if(contentListContainsAll("gui:is", list("document", "list"))){
-                    if(!contentSet("query")) content("query", spawn(newDocumentQuery(content("user"), content("gui"), content("form:query"))));
+                    content("query", spawn(newDocumentQuery(content("user"), content("gui"), val)));
                 }
                 else notifying(content("gui"));
             }
