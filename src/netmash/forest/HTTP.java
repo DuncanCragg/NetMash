@@ -130,7 +130,7 @@ public class HTTP implements ChannelUser {
         HTTPClient client = (HTTPClient)clientpath.get(0);
         String     path   = (String)    clientpath.get(1);
         for(String notifieruid: w.alertedin){
-            client.postRequest(path, notifieruid);
+            client.postRequest(path, w.uid, notifieruid);
         }
         w.alertedin = new CopyOnWriteArraySet<String>();
         return true;
@@ -437,12 +437,9 @@ abstract class HTTPCommon {
 
             JSON json = new JSON(jsonchars);
             WebObject w=null;
-            try{
-                String httpUID=(httpContentLocation==null)? httpReqURL: httpContentLocation;
-                w=new WebObject(json, httpUID, httpETag, httpMaxAge, httpCacheNotify, httpNotify);
-            }
+            try{ w=new WebObject(json, httpContentLocation, httpReqURL, httpETag, httpMaxAge, httpCacheNotify, httpNotify); }
             catch(Exception e){ log(e); }
-            if(w==null){ log("Cannot convert to WebObject:\n"+json); return new PostResponse(400,null); }
+            if(w==null||w.uid==null){ log("Cannot convert to WebObject:\n"+json); return new PostResponse(400,null); }
 
             String location=funcobs.httpNotify(w);
             return new PostResponse(location==null? 200:201, location);
@@ -673,8 +670,8 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         doNextRequestIfIdle();
     }
 
-    synchronized void postRequest(String path, String notifieruid){
-        try{ requests.put(new Request("POST", path, null, 0, null, null, notifieruid)); }catch(Exception e){}
+    synchronized void postRequest(String path, String uid, String notifieruid){
+        try{ requests.put(new Request("POST", path, uid, 0, null, null, notifieruid)); }catch(Exception e){}
         doNextRequestIfIdle();
     }
 

@@ -101,7 +101,7 @@ public class OTS2GUI {
         int i= -1;
         if(documents!=null) for(Object inlineoruid: documents){ i++;
             String documentuid=null;
-            String contentType=null;
+            String contentType="article";
             String htmlurl=null;
             String published=null;
             if(inlineoruid instanceof String){
@@ -290,11 +290,11 @@ public class OTS2GUI {
         if(value!=null) list.add(list(style("direction","horizontal", "proportions",isLink? "75%": "50%"), label, value));
     }
 
-    private void addListIfPresent(LinkedList list, String tag, String label){
+    private void addListIfPresent(LinkedList viewlist, String tag, String label){
         String listuid = user.content("private:viewing");
         String prefix="private:viewing:"+tag;
-        LinkedList<String> values = (LinkedList<String>)user.contentList(prefix);
-        if(values!=null) linksList2GUI(values, list, prefix, listuid);
+        LinkedList<String> links = (LinkedList<String>)user.contentList(prefix);
+        if(links!=null) linksList2GUI(links, viewlist, prefix, listuid);
     }
 
     public void linksList2GUI(LinkedList<String> links, LinkedList viewlist, String prefix, String listuid){

@@ -70,11 +70,13 @@ public class WebObject {
     }
 
     /** Create WebObject from HTTP. */
-    public WebObject(JSON json, String httpUID, String httpETag, String httpMaxAge, String httpCacheNotify, String httpNotify){
+    public WebObject(JSON json, String httpUID, String httpReqURL, String httpETag, String httpMaxAge, String httpCacheNotify, String httpNotify){
         funcobs = FunctionalObserver.funcobs;
         int httpetag=0;   try{ httpetag   = Integer.parseInt(httpETag);   }catch(Throwable t){ httpETag  =null; }
         int httpmaxage=0; try{ httpmaxage = Integer.parseInt(httpMaxAge); }catch(Throwable t){ httpMaxAge=null; }
-        uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%uid");     json.removePath("%uid");
+        uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%url");     json.removePath("%url");
+        uid     = (uid       !=null)? uid:        json.stringPathN("%uid");     json.removePath("%uid");
+        uid     = (uid       !=null)? uid:        httpReqURL;
         etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "%max-age"); json.removePath("%max-age");
         listToSet(notify,                         json.listPathN(  "%notify")); json.removePath("%notify");
