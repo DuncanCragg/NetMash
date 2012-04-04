@@ -262,17 +262,47 @@ public class OTS2GUI {
         return viewhash;
     }
 
+/*
+{ "authors": [ "http://172.18.10.109:8080/o/author/Susan+E+Celniker/article/10.1186/gb-2002-3-12-research0079.json" ],
+  "references": [ "http://172.18.10.109:8080/o/summary/article/10.1186/gb-2002-3-12-research0085.json" ],
+  "doi": "10.1186/gb-2002-3-12-research0079",
+  "dxDoi": "http://dx.doi.org/10.1186/gb-2002-3-12-research0079",
+  "pages": "1-14",
+  "volume": "3",
+  "issue": "12"
+}
+*/
     public LinkedHashMap article2GUI(){ logrule();
+
+        boolean article=user.contentIsOrListContains("private:viewing:is", "article");
         String title=user.content("private:viewing:title");
-        LinkedList articledetail = new LinkedList();
-        articledetail.add(style("direction","vertical"));
+
+        LinkedList citationcol = new LinkedList();
+        citationcol.add(style("direction","vertical"));
+        addIfPresent(citationcol, "html", "View on Web:", true);
+        addIfPresent(citationcol, "published", "Published:", false);
+        addIfPresent(citationcol, "publisher", "Publisher:", false);
+        addIfPresent(citationcol, "journaltitle", "Journal:", false);
+        addIfPresent(citationcol, "booktitle", "From:", false);
+        LinkedList authors = user.contentList("private:viewing:authors");
+        if(authors!=null) for(Object author: authors) citationcol.add(author);
+
+        LinkedList contentcol = new LinkedList();
+        contentcol.add(style("direction","vertical"));
         LinkedList content=user.contentList("private:viewing:content");
-        if(content!=null) for(Object para: content) articledetail.add(para.toString());
+        if(content!=null) for(Object para: content) contentcol.add(para);
+
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
-        viewhash.put("style", style("direction","vertical", "colours","lightpink"));
+        viewhash.put("style", style("direction","vertical", "colours",article? "lightblue": "lightmauve"));
         viewhash.put("#title", title!=null? title: "Article");
-        viewhash.put("#article", articledetail);
+        viewhash.put("#citation", citationcol);
+        viewhash.put("#content", contentcol);
         return viewhash;
+    }
+
+    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink){
+        String value=user.content("private:viewing:"+tag);
+        if(value!=null) list.add(list(style("direction","horizontal", "proportions",isLink? "75%": "50%"), label, value));
     }
 
     public String getGeoAddressString(String path){
@@ -295,15 +325,38 @@ public class OTS2GUI {
     }
 
     public String getAddressString(String path){
-        String address=getAddressAsString(path);
+        String address=getAddressesAsString(path);
         if(address==null) return null;
         if(address.length()==0) return null;
-        return address;
+        return address.trim();
     }
 
-    public String getAddressAsString(String path){
-        LinkedHashMap address = user.contentHash(path);
-        if(address==null) return user.content(path);
+    public String getAddressesAsString(String path){
+        LinkedList addresses = user.contentList(path);
+        if(addresses==null){
+            LinkedHashMap address = user.contentHash(path);
+            if(address==null) return user.contentString(path);
+            addresses.add(address);
+        }
+        StringBuilder as=new StringBuilder();
+        for(Object address: addresses) getAddressAsString(address, as);
+        return as.toString();
+    }
+
+    public void getAddressAsString(Object o, StringBuilder as){
+        if(!(o instanceof LinkedHashMap)){ as.append(o.toString()); as.append("\n");  return; }
+        LinkedHashMap address = (LinkedHashMap)o;
+        Object l; String s;
+        l=address.get("postbox");    if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=addressGetStreet(address); if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("locality");   if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("region");     if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("postalCode"); if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("country");    if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        as.append("\n"); 
+    }
+
+    public Object addressGetStreet(LinkedHashMap address){
         Object street = address.get("street");
         if(street instanceof List){
             List<String> streetlist = (List<String>)street;
@@ -311,13 +364,7 @@ public class OTS2GUI {
             for(String line: streetlist){ streetb.append(line); streetb.append("\n"); }
             street=streetb.toString().trim();
         }
-        StringBuilder as=new StringBuilder();
-        Object l=street;             if(l!=null){ as.append(l); as.append("\n"); }
-        l=address.get("locality");   if(l!=null){ as.append(l); as.append("\n"); }
-        l=address.get("region");     if(l!=null){ as.append(l); as.append("\n"); }
-        l=address.get("postalCode"); if(l!=null){ as.append(l); as.append("\n"); }
-        l=address.get("country");    if(l!=null){ as.append(l); as.append("\n"); }
-        return as.toString();
+        return street;
     }
 
     public LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, String objuid){ logrule();

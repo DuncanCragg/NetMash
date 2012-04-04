@@ -391,7 +391,8 @@ public class User extends WebObject {
                 viewhash=ots2gui.event2GUI();
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "article")){
+            if(contentIsOrListContains("private:viewing:is", "article") ||
+               contentIsOrListContains("private:viewing:is", "chapter")   ){
                 viewhash=ots2gui.article2GUI();
             }
             else
