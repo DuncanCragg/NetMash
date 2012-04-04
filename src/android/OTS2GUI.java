@@ -62,20 +62,7 @@ public class OTS2GUI {
         if(links==null) return null;
         LinkedList viewlist = new LinkedList();
         viewlist.add(style("direction","vertical"));
-        int i= -1;
-        for(String uid: links){ i++;
-            String bmtext=null;
-            if(user.contentSet("private:viewing:list:"+i+":is")){
-                if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":title");
-                if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":fullName");
-                if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":contact:fullName");
-                if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":is");
-                if(bmtext==null) bmtext=user.content("private:viewing:list:"+i+":tags");
-            }
-            if(bmtext==null) bmtext="Loading..";
-            String bmuid = UID.normaliseUID(listuid, uid);
-            viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), bmtext, bmuid));
-        }
+        linksList2GUI(links, viewlist, "private:viewing:list", listuid);
         String title = user.content("private:viewing:title");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours","lightgreen"));
@@ -105,7 +92,6 @@ public class OTS2GUI {
         viewhash.put("#contactlist", viewlist);
         return viewhash;
     }
-
 
     public LinkedHashMap documentList2GUI(){ logrule();
         String listuid = user.content("private:viewing");
@@ -262,16 +248,6 @@ public class OTS2GUI {
         return viewhash;
     }
 
-/*
-{ "authors": [ "http://172.18.10.109:8080/o/author/Susan+E+Celniker/article/10.1186/gb-2002-3-12-research0079.json" ],
-  "references": [ "http://172.18.10.109:8080/o/summary/article/10.1186/gb-2002-3-12-research0085.json" ],
-  "doi": "10.1186/gb-2002-3-12-research0079",
-  "dxDoi": "http://dx.doi.org/10.1186/gb-2002-3-12-research0079",
-  "pages": "1-14",
-  "volume": "3",
-  "issue": "12"
-}
-*/
     public LinkedHashMap article2GUI(){ logrule();
 
         boolean article=user.contentIsOrListContains("private:viewing:is", "article");
@@ -284,8 +260,16 @@ public class OTS2GUI {
         addIfPresent(citationcol, "publisher", "Publisher:", false);
         addIfPresent(citationcol, "journaltitle", "Journal:", false);
         addIfPresent(citationcol, "booktitle", "From:", false);
-        LinkedList authors = user.contentList("private:viewing:authors");
-        if(authors!=null) for(Object author: authors) citationcol.add(author);
+        addIfPresent(citationcol, "pages", "Pages:", false);
+        addIfPresent(citationcol, "volume", "Volume:", false);
+        addIfPresent(citationcol, "issue", "Issue:", false);
+        addIfPresent(citationcol, "doi", "DOI:", false);
+        addIfPresent(citationcol, "dxDoi", "View via dx.doi:", true);
+
+        LinkedList authorsandrefscol = new LinkedList();
+        authorsandrefscol.add(style("direction","vertical"));
+        addListIfPresent(authorsandrefscol, "authors", "Authors");
+        addListIfPresent(authorsandrefscol, "references", "References");
 
         LinkedList contentcol = new LinkedList();
         contentcol.add(style("direction","vertical"));
@@ -296,6 +280,7 @@ public class OTS2GUI {
         viewhash.put("style", style("direction","vertical", "colours",article? "lightblue": "lightmauve"));
         viewhash.put("#title", title!=null? title: "Article");
         viewhash.put("#citation", citationcol);
+        viewhash.put("#authorsandrefs", authorsandrefscol);
         viewhash.put("#content", contentcol);
         return viewhash;
     }
@@ -303,6 +288,30 @@ public class OTS2GUI {
     private void addIfPresent(LinkedList list, String tag, String label, boolean isLink){
         String value=user.content("private:viewing:"+tag);
         if(value!=null) list.add(list(style("direction","horizontal", "proportions",isLink? "75%": "50%"), label, value));
+    }
+
+    private void addListIfPresent(LinkedList list, String tag, String label){
+        String listuid = user.content("private:viewing");
+        String prefix="private:viewing:"+tag;
+        LinkedList<String> values = (LinkedList<String>)user.contentList(prefix);
+        if(values!=null) linksList2GUI(values, list, prefix, listuid);
+    }
+
+    public void linksList2GUI(LinkedList<String> links, LinkedList viewlist, String prefix, String listuid){
+        int i= -1;
+        for(String uid: links){ i++;
+            String bmtext=null;
+            if(user.contentSet(prefix+":"+i+":is")){
+                if(bmtext==null) bmtext=user.content(prefix+":"+i+":title");
+                if(bmtext==null) bmtext=user.content(prefix+":"+i+":fullName");
+                if(bmtext==null) bmtext=user.content(prefix+":"+i+":contact:fullName");
+                if(bmtext==null) bmtext=user.content(prefix+":"+i+":is");
+                if(bmtext==null) bmtext=user.content(prefix+":"+i+":tags");
+            }
+            if(bmtext==null) bmtext="Loading..";
+            String bmuid = UID.normaliseUID(listuid, uid);
+            viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), bmtext, bmuid));
+        }
     }
 
     public String getAddressString(String path){
