@@ -158,7 +158,7 @@ public class OTS2GUI {
         maplist.add("render:map");
         maplist.add("layerkey:"+useruid);
         LinkedHashMap location=user.contentHash("private:viewing:location");
-        if(location==null) location=geoCode(getGeoAddressString("private:viewing:"+contactprefix+"address"));
+        if(location==null) location=geoCode(getAddressesAsString("private:viewing:"+contactprefix+"address", true));
         if(location==null) return maplist;
         LinkedHashMap point = new LinkedHashMap();
         String fullname=user.content(   "private:viewing:"+contactprefix+"fullName");
@@ -183,7 +183,7 @@ public class OTS2GUI {
             LinkedHashMap<String,Double> location=null;
             if(!contactprefix.equals("")) location=user.contentHash("private:viewing:list:"+i+":location");
             if(location==null)            location=user.contentHash("private:viewing:list:"+i+":"+contactprefix+"location");
-            if(location==null) location=geoCode(getGeoAddressString("private:viewing:list:"+i+":"+contactprefix+"address"));
+            if(location==null) location=geoCode(getAddressesAsString("private:viewing:list:"+i+":"+contactprefix+"address", true));
             if(location==null) continue;
             LinkedHashMap point = new LinkedHashMap();
             String fullname=user.content(   "private:viewing:list:"+i+":"+contactprefix+"fullName");
@@ -305,42 +305,35 @@ public class OTS2GUI {
         if(value!=null) list.add(list(style("direction","horizontal", "proportions",isLink? "75%": "50%"), label, value));
     }
 
-    public String getGeoAddressString(String path){
-        int numberofstreetlines=1;
-        LinkedHashMap address = user.contentHash(path);
-        if(address==null) return user.content(path);
-        Object street = address.get("street");
-        if(street instanceof List){
-            List<String> streetlist = (List<String>)street;
-            StringBuilder streetb=new StringBuilder();
-            int i=0;
-            for(String line: streetlist){ i++; streetb.append(line); if(i==numberofstreetlines) break; }
-            street=streetb.toString().trim();
-        }
-        StringBuilder as=new StringBuilder();
-        Object l=street;             if(l!=null){                   as.append(l); }
-        l=address.get("postalCode"); if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
-        l=address.get("country");    if(l!=null){ as.append(" ");   as.append(l); }
-        return as.toString();
-    }
-
     public String getAddressString(String path){
-        String address=getAddressesAsString(path);
+        String address=getAddressesAsString(path,false);
         if(address==null) return null;
         if(address.length()==0) return null;
         return address.trim();
     }
 
-    public String getAddressesAsString(String path){
+    public String getAddressesAsString(String path, boolean geo){
         LinkedList addresses = user.contentList(path);
         if(addresses==null){
             LinkedHashMap address = user.contentHash(path);
             if(address==null) return user.contentString(path);
+            addresses=new LinkedList();
             addresses.add(address);
         }
         StringBuilder as=new StringBuilder();
-        for(Object address: addresses) getAddressAsString(address, as);
+        for(Object address: addresses) if(geo) getGeoAddressAsString(address, as); else getAddressAsString(address, as);
         return as.toString();
+    }
+
+    public void getGeoAddressAsString(Object o, StringBuilder as){
+        if(!(o instanceof LinkedHashMap)){ as.append(o.toString()); as.append("\n");  return; }
+        LinkedHashMap address = (LinkedHashMap)o;
+        Object l;
+        l=addressGetGeoStreet(address); if(l!=null){                   as.append(l); }
+        l=address.get("locality");      if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
+        l=address.get("region");        if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
+        l=address.get("postalCode");    if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
+        l=address.get("country");       if(l!=null){ as.append(" ");   as.append(l); }
     }
 
     public void getAddressAsString(Object o, StringBuilder as){
@@ -356,15 +349,23 @@ public class OTS2GUI {
         as.append("\n"); 
     }
 
+    public Object addressGetGeoStreet(LinkedHashMap address){
+        Object street = address.get("street");
+        if(!(street instanceof List)) return street.toString();
+        List<String> streetlist = (List<String>)street;
+        StringBuilder streetb=new StringBuilder();
+        int i=0;
+        for(String line: streetlist){ i++; streetb.append(line); streetb.append(" "); if(i==10) break; }
+        return streetb.toString().trim();
+    }
+
     public Object addressGetStreet(LinkedHashMap address){
         Object street = address.get("street");
-        if(street instanceof List){
-            List<String> streetlist = (List<String>)street;
-            StringBuilder streetb=new StringBuilder();
-            for(String line: streetlist){ streetb.append(line); streetb.append("\n"); }
-            street=streetb.toString().trim();
-        }
-        return street;
+        if(!(street instanceof List)) return street.toString();
+        List<String> streetlist = (List<String>)street;
+        StringBuilder streetb=new StringBuilder();
+        for(String line: streetlist){ streetb.append(line); streetb.append("\n"); }
+        return streetb.toString().trim();
     }
 
     public LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, String objuid){ logrule();

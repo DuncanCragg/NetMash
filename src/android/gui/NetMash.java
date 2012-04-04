@@ -627,7 +627,10 @@ public class NetMash extends MapActivity{
         if(minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
             MapController mapcontrol = mapview.getController();
             mapcontrol.animateTo(new GeoPoint((maxlat+minlat)/2, (maxlon+minlon)/2));
-            mapcontrol.zoomToSpan(             maxlat-minlat,     maxlon-minlon);
+            int minspan=40000;
+            int latspan=(maxlat-minlat); if(latspan<minspan) latspan=minspan;
+            int lonspan=(maxlon-minlon); if(lonspan<minspan) lonspan=minspan;
+            mapcontrol.zoomToSpan(latspan, lonspan);
         }
         List overlays = mapview.getOverlays();
         if(!overlays.contains(itemizedoverlay)) overlays.add(itemizedoverlay);
