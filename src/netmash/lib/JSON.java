@@ -723,6 +723,7 @@ public class JSON {
 
     private String getAsStringPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
+        if(o==null) return null;
         if(o instanceof String){
             return (String)o;
         }
@@ -732,7 +733,13 @@ public class JSON {
         if(o instanceof Boolean){
             return ((Boolean)o).toString();
         }
-        return null;
+        if(o instanceof LinkedHashMap){
+            LinkedHashMap hm=(LinkedHashMap)o;
+            String r="";
+            for(Object key: hm.keySet()){ r+=key+": "+hm.get(key)+" "; }
+            return r.trim();
+        }
+        return o.toString();
     }
 
     private Object getObjectPath(LinkedHashMap content, String path) throws PathOvershot{

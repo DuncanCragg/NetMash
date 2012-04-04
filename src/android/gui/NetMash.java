@@ -6,10 +6,12 @@ import java.util.regex.*;
 import java.io.*;
 import java.net.*;
 
+import android.util.AttributeSet;
 import android.app.Activity;
 import android.os.*;
 import android.net.*;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.*;
 import android.graphics.drawable.*;
 
@@ -90,7 +92,7 @@ public class NetMash extends MapActivity{
         }
         return super.onKeyDown(keyCode, event);
     }
- 
+
     @Override
     public void onBackPressed(){
         user.jumpBack();
@@ -322,7 +324,7 @@ public class NetMash extends MapActivity{
     private void addToLayout(LinearLayout layout, String tag, Object o, int colour, float prop, float height, float width){
         if(o==null) return;
         if(isMapList(o)){
-            addAView(layout, createMapView(o), colour, prop, height, width);
+            addAView(layout, createMapView(o), prop, height, width);
         }
         else
         if(o instanceof LinkedHashMap){
@@ -340,13 +342,15 @@ public class NetMash extends MapActivity{
         else{
             String s=o.toString();
             boolean isUID       = s.startsWith("uid-") || (s.startsWith("http://") && s.endsWith(".json"));
-            boolean isImage     = s.startsWith("http://") && s.endsWith(".jpg");
+            boolean isImage     = s.startsWith("http://") && ( s.endsWith(".jpg") || s.endsWith(".gif") || s.endsWith(".png") || s.endsWith(".ico"));
+            boolean isWebURL    = s.startsWith("http://");
             boolean isFormField = s.startsWith("?[") && s.endsWith("]?");
-            View v = isUID?       createUIDView(s):
-                    (isImage?     createImageView(s):
-                    (isFormField? createFormView(tag, s):
-                                  createTextView(s)));
-            addAView(layout, v, colour, prop, height, width);
+            View v= isUID?       createUIDView(s):
+                   (isImage?     createImageView(s):
+                   (isWebURL?    createWebLinkView(s):
+                   (isFormField? createFormView(tag, s, colour):
+                                 createTextView(s, colour))));
+            addAView(layout, v, prop, height, width);
         }
     }
 
@@ -364,23 +368,21 @@ public class NetMash extends MapActivity{
         layout.addView(view);
     }
 
-    private void addAView(LinearLayout layout, View view, int colour, float prop, float height, float width){
+    private void addAView(LinearLayout layout, View view, float prop, float height, float width){
         int w=(width>0?  (int)(width*14): (prop!=0? (int)((prop/101.0)*screenWidth+0.5): FILL_PARENT));
         int h=(height>0? (int)((height/101.0)*screenHeight+0.5): FILL_PARENT);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(w, h);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
-        if(colour!=0) view.setBackgroundColor(colour);
         layout.addView(view);
     }
 
-    private TextView createUIDView(final String s){
-        final TextView view=new TextView(this);
+    private TextView createUIDView(final String uid){
+        final TextView view=new BoxTextView(this,R.drawable.box);
         view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
             view.setTextColor(0xffff9900);
-            user.jumpToUID(s);
+            user.jumpToUID(uid);
         }});
-        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
         view.setText(" >>");
         view.setTextSize(34);
         view.setTextColor(0xff000000);
@@ -391,19 +393,32 @@ public class NetMash extends MapActivity{
     private ImageView createImageView(String url){
         ImageView view = new ImageView(this);
         view.setAdjustViewBounds(true);
-        view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         view.setPadding(8,8,8,8);
         view.setImageBitmap(getImageBitmap(url));
         return view;
     }
 
-    private View createFormView(String tag, String s){
-        int b=s.indexOf("/");     
+    private TextView createWebLinkView(final String url){
+        final TextView view=new BoxTextView(this,R.drawable.box);
+        view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
+            Intent browserIntent=new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(browserIntent);
+        }});
+        view.setText(" >>");
+        view.setTextSize(34);
+        view.setTextColor(0xff000000);
+        view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        return view;
+    }
+
+    private View createFormView(String tag, String s, int colour){
+        int b=s.indexOf("/");
         int e=s.lastIndexOf("/");
-        if(b== -1 || e== -1 || b==e) return createTextView(s);
+        if(b== -1 || e== -1 || b==e) return createTextView(s,colour);
         String   label=s.substring(2,b).trim();
         String[] types=s.substring(b+1,e).split(";");
-        if(types.length==0) return createTextView(s);
+        if(types.length==0) return createTextView(s,colour);
         View view=null;
         if(types[0].equals("string")){
             if(types.length==1) view=createFormTextView(tag, label);
@@ -421,7 +436,7 @@ public class NetMash extends MapActivity{
             if(types.length==1) view=createFormRatingView(tag, label, null);
             else                view=createFormRatingView(tag, label, types[1].split("\\|", -1));
         }
-        if(view==null) return createTextView(s);
+        if(view==null) return createTextView(s,colour);
         return view;
     }
 
@@ -538,8 +553,10 @@ public class NetMash extends MapActivity{
         return view;
     }
 
-    private TextView createTextView(String s){
-        TextView view=new TextView(this);
+    private TextView createTextView(String s, int colour){
+        final TextView view;
+        if(colour!=0){ view=new BorderedTextView(this, colour); }
+        else{          view=new BoxTextView(this,R.drawable.box); }
         if(s.startsWith("![") && s.endsWith("]!")){
             view.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
             s=s.substring(2,s.length()-2);
@@ -548,7 +565,6 @@ public class NetMash extends MapActivity{
             view.setTypeface(Typeface.DEFAULT, Typeface.ITALIC);
             s=s.substring(2,s.length()-2);
         }
-        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
         view.setText(s);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
@@ -745,6 +761,30 @@ public class NetMash extends MapActivity{
         String thread=Thread.currentThread().toString();
         System.out.println("---"+thread+"-----------\n"+o);
     }
+
+class BorderedTextView extends TextView {
+    public BorderedTextView(Context context, int colour){ super(context); this.colour=colour; }
+    int colour;
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        setBackgroundColor(colour);
+        setPadding(15,5,5,5);
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(1);
+        paint.setColor(0xff888877);
+        Rect rect = new Rect();
+        getLocalVisibleRect(rect);
+        rect.inset(1,1);
+        canvas.drawRect(rect, paint);
+    }
+}
+
+class BoxTextView extends TextView{
+    public BoxTextView(Context context, int drawable){ super(context); setBackgroundDrawable(getResources().getDrawable(drawable)); }
+}
+
 }
 
 //---------------------------------------------------------

@@ -54,7 +54,7 @@ public class FunctionalObserver implements Module {
     }
 
     private Thread pollingThread=null;
-    boolean ispolling=true;
+    boolean ispolling=false;
     boolean visible=false;
     private void startPollingThread(){
         visible=Kernel.config.isAtPathN("network:host");

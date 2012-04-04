@@ -191,7 +191,7 @@ public class WebObject {
         return o;
     }
 
-    /** Get String, or string form of number or boolean, at this path in the JSON content. */
+    /** Get String, or string form of object, at this path in the JSON content. */
     public String contentString(String path){
         String s=null;
         try{ s = updatingState.asStringPath(path);

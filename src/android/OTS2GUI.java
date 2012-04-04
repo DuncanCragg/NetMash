@@ -106,6 +106,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
+
     public LinkedHashMap documentList2GUI(){ logrule();
         String listuid = user.content("private:viewing");
         LinkedList documents = user.contentList("private:viewing:list");
@@ -114,6 +115,9 @@ public class OTS2GUI {
         int i= -1;
         if(documents!=null) for(Object inlineoruid: documents){ i++;
             String documentuid=null;
+            String contentType=null;
+            String htmlurl=null;
+            String published=null;
             if(inlineoruid instanceof String){
                 String uid = (String)inlineoruid;
                 documentuid = UID.normaliseUID(listuid, uid);
@@ -122,17 +126,27 @@ public class OTS2GUI {
             if(inlineoruid instanceof LinkedHashMap){
                 LinkedHashMap<String,String> inl = (LinkedHashMap<String,String>)inlineoruid;
                 documentuid = UID.normaliseUID(listuid, inl.get("%more"));
+                contentType=inl.get("is");
+                htmlurl = inl.get("html");
+                published=inl.get("published");
             }
             if(documentuid==null) documentuid=listuid;
             String          title=user.content("private:viewing:list:"+i+":title");
             if(title==null) title=user.content("private:viewing:list:"+i+":is");
             if(title==null) viewlist.add("Loading..");
-            else            viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), title, documentuid));
+            else {
+                String colour=contentType.equals("article")? "lightblue": "lightmauve";
+                viewlist.add(list(style("direction","horizontal", "colours",colour, "proportions","75%"), title, documentuid));
+                if(htmlurl!=null) viewlist.add(list(style("direction","horizontal", "colours",colour, "proportions","75%"), "View on Web:", htmlurl));
+                if(published!=null) viewlist.add(list(style("direction","horizontal", "colours",colour, "proportions","50%"), "Published:", published));
+            }
         }
         String title = user.content("private:viewing:title");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
-        viewhash.put("style", style("direction","vertical", "colours","lightyellow"));
+        viewhash.put("style", style("direction","vertical", "colours","lightblue"));
         viewhash.put("#title", title!=null? title: "Document List");
+        viewhash.put("#logo", user.content("private:viewing:logo"));
+        viewhash.put("#counts", user.contentString("private:viewing:contentCount"));
         viewhash.put("#query", "?[Query the collection: /string/]?");
         viewhash.put("#documentlist", viewlist);
         return viewhash;
