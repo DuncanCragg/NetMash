@@ -62,11 +62,10 @@ public class OTS2GUI {
         if(links==null) return null;
         LinkedList viewlist = new LinkedList();
         viewlist.add(style("direction","vertical"));
-        linksList2GUI(links, viewlist, "private:viewing:list", listuid);
         String title = user.content("private:viewing:title");
+        linksList2GUI(links, viewlist, "private:viewing:list", listuid, title!=null? title: "Links");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours","lightgreen"));
-        viewhash.put("#title", title!=null? title: "Links");
         viewhash.put("#links", viewlist);
         return viewhash;
     }
@@ -113,7 +112,7 @@ public class OTS2GUI {
                 LinkedHashMap<String,String> inl = (LinkedHashMap<String,String>)inlineoruid;
                 documentuid = UID.normaliseUID(listuid, inl.get("%more"));
                 contentType=inl.get("is");
-                htmlurl = inl.get("html");
+                htmlurl = inl.get("webView");
                 published=inl.get("published");
             }
             if(documentuid==null) documentuid=listuid;
@@ -133,7 +132,7 @@ public class OTS2GUI {
         viewhash.put("#title", title!=null? title: "Document List");
         viewhash.put("#logo", user.content("private:viewing:logo"));
         viewhash.put("#counts", user.contentString("private:viewing:contentCount"));
-        viewhash.put("#query", "?[Query the collection: /string/]?");
+        viewhash.put("#query", "?[Search terms /string/]?");
         viewhash.put("#documentlist", viewlist);
         return viewhash;
     }
@@ -213,12 +212,14 @@ public class OTS2GUI {
         if(email==null) email=user.content("private:viewing:email");
         if(email!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Email address:", email));
 
-        String webURL=user.content("private:viewing:webURL:0");
-        if(webURL==null) webURL=user.content("private:viewing:webURL");
-        if(webURL!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Website:", webURL));
+        String webView=user.content("private:viewing:webView:0");
+        if(webView==null) webView=user.content("private:viewing:webView");
+        if(webView!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Website:", webView));
 
         String address=getAddressString("private:viewing:address");
         if(address!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", address));
+
+        addListIfPresent(contactdetail, "publications", null);
 
         String fullname=user.content("private:viewing:fullName");
         String photourl=user.content("private:viewing:photo");
@@ -255,7 +256,7 @@ public class OTS2GUI {
 
         LinkedList citationcol = new LinkedList();
         citationcol.add(style("direction","vertical"));
-        addIfPresent(citationcol, "html", "View on Web:", true);
+        addIfPresent(citationcol, "webView", "View on Web:", true);
         addIfPresent(citationcol, "published", "Published:", false);
         addIfPresent(citationcol, "publisher", "Publisher:", false);
         addIfPresent(citationcol, "journaltitle", "Journal:", false);
@@ -294,10 +295,11 @@ public class OTS2GUI {
         String listuid = user.content("private:viewing");
         String prefix="private:viewing:"+tag;
         LinkedList<String> links = (LinkedList<String>)user.contentList(prefix);
-        if(links!=null) linksList2GUI(links, viewlist, prefix, listuid);
+        if(links!=null && links.size()!=0) linksList2GUI(links, viewlist, prefix, listuid, label);
     }
 
-    public void linksList2GUI(LinkedList<String> links, LinkedList viewlist, String prefix, String listuid){
+    public void linksList2GUI(LinkedList<String> links, LinkedList viewlist, String prefix, String listuid, String label){
+        if(label!=null && label.length()!=0) viewlist.add(label);
         int i= -1;
         for(String uid: links){ i++;
             String bmtext=null;
@@ -360,6 +362,7 @@ public class OTS2GUI {
 
     public Object addressGetGeoStreet(LinkedHashMap address){
         Object street = address.get("street");
+        if(street==null) return null;
         if(!(street instanceof List)) return street.toString();
         List<String> streetlist = (List<String>)street;
         StringBuilder streetb=new StringBuilder();
@@ -370,6 +373,7 @@ public class OTS2GUI {
 
     public Object addressGetStreet(LinkedHashMap address){
         Object street = address.get("street");
+        if(street==null) return null;
         if(!(street instanceof List)) return street.toString();
         List<String> streetlist = (List<String>)street;
         StringBuilder streetb=new StringBuilder();

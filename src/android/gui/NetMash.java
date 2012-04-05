@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.*;
 import android.graphics.drawable.*;
+import android.view.inputmethod.InputMethodManager;
 
 import android.view.*;
 import android.view.View.*;
@@ -451,13 +452,14 @@ public class NetMash extends MapActivity{
         view.setOnKeyListener(new OnKeyListener(){
             public boolean onKey(View v, int keyCode, KeyEvent event){
                 if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
+                    ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                     user.setFormVal(viewUID, tag, ((EditText)v).getText().toString());
                     return true;
                 }
                 return false;
             }
         });
-        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.box));
+        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         String val=user.getFormStringVal(viewUID, tag);
         if(val!=null) view.setText(val);
         else          view.setText(label);

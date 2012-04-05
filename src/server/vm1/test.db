@@ -355,7 +355,7 @@
     },
     "birthday": "1995-02-12",
     "phone": { "work": [ "+44 20 7514 1700", "020 7231 3212" ], "home": "020 8323 2343" },
-    "webURL": [
+    "webView": [
       "http://brian.org/",
       "http://facebook.com/brio"
     ],
