@@ -143,16 +143,15 @@ public class OTS2GUI {
         maplist.add("render:map");
         maplist.add("layerkey:"+useruid);
         LinkedHashMap location=user.contentHash("private:viewing:location");
-        if(location==null) location=geoCode(getAddressesAsString("private:viewing:"+contactprefix+"address", true));
-        if(location==null) return maplist;
-        LinkedHashMap point = new LinkedHashMap();
-        String fullname=user.content(   "private:viewing:"+contactprefix+"fullName");
-        String address=getAddressString("private:viewing:"+contactprefix+"address");
-        point.put("label",    fullname!=null? fullname: "");
-        point.put("sublabel", address!=null? address: "");
-        point.put("location", location);
-        point.put("jump", useruid);
-        maplist.add(point);
+        if(location!=null) maplist.add(point(contactprefix, "Location", location, useruid));
+        LinkedList<String> addressStrings=getAddressesAsString("private:viewing:"+contactprefix+"address", false);
+        LinkedList<String> geoAddrStrings=getAddressesAsString("private:viewing:"+contactprefix+"address", true);
+        int i= -1;
+        for(String address: addressStrings){ i++;
+            location=geoCode(geoAddrStrings.get(i));
+            if(location==null) continue;
+            maplist.add(point(contactprefix, address, location, useruid));
+        }
         return maplist;
     }
 
@@ -163,24 +162,33 @@ public class OTS2GUI {
         LinkedList maplist = new LinkedList();
         maplist.add("render:map");
         maplist.add("layerkey:"+listuid);
-        int i= -1;
-        for(String uid: contacts){ i++;
-            LinkedHashMap<String,Double> location=null;
-            if(!contactprefix.equals("")) location=user.contentHash("private:viewing:list:"+i+":location");
-            if(location==null)            location=user.contentHash("private:viewing:list:"+i+":"+contactprefix+"location");
-            if(location==null) location=geoCode(getAddressesAsString("private:viewing:list:"+i+":"+contactprefix+"address", true));
-            if(location==null) continue;
-            LinkedHashMap point = new LinkedHashMap();
-            String fullname=user.content(   "private:viewing:list:"+i+":"+contactprefix+"fullName");
-            String address=getAddressString("private:viewing:list:"+i+":"+contactprefix+"address");
+        int c= -1;
+        for(String uid: contacts){ c++;
             String contactuid = UID.normaliseUID(listuid, uid);
-            point.put("label",    fullname!=null? fullname: "");
-            point.put("sublabel", address!=null? address: "");
-            point.put("location", location);
-            point.put("jump", contactuid);
-            maplist.add(point);
+            LinkedHashMap<String,Double> location=null;
+            if(!contactprefix.equals("")) location=user.contentHash("private:viewing:list:"+c+":location");
+            if(location==null)            location=user.contentHash("private:viewing:list:"+c+":"+contactprefix+"location");
+            if(location!=null) maplist.add(point("list:"+c+":"+contactprefix, "Location", location, contactuid));
+            LinkedList<String> addressStrings=getAddressesAsString("private:viewing:list:"+c+":"+contactprefix+"address", false);
+            LinkedList<String> geoAddrStrings=getAddressesAsString("private:viewing:list:"+c+":"+contactprefix+"address", true);
+            int i= -1;
+            for(String address: addressStrings){ i++;
+                location=geoCode(geoAddrStrings.get(i));
+                if(location==null) continue;
+                maplist.add(point("list:"+c+":"+contactprefix, address, location, contactuid));
+            }
         }
         return maplist;
+    }
+
+    private LinkedHashMap point(String contactprefix, String address, LinkedHashMap location, String uid){
+        LinkedHashMap point = new LinkedHashMap();
+        String fullname=user.content("private:viewing:"+contactprefix+"fullName");
+        point.put("label",    fullname!=null? fullname: "");
+        point.put("sublabel", address!=null? address: "");
+        point.put("location", location);
+        point.put("jump", uid);
+        return point;
     }
 
     public LinkedHashMap contact2GUI(){ logrule();
@@ -216,10 +224,10 @@ public class OTS2GUI {
         if(webView==null) webView=user.content("private:viewing:webView");
         if(webView!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Website:", webView));
 
-        String address=getAddressString("private:viewing:address");
-        if(address!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", address));
+        LinkedList<String> addressStrings=getAddressesAsString("private:viewing:address",false);
+        if(addressStrings.size()!=0) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", join(addressStrings, "\n---\n")));
 
-        addListIfPresent(contactdetail, "publications", null);
+        addListIfPresent(contactdetail, "publications", "Publications");
 
         String fullname=user.content("private:viewing:fullName");
         String photourl=user.content("private:viewing:photo");
@@ -316,28 +324,26 @@ public class OTS2GUI {
         }
     }
 
-    public String getAddressString(String path){
-        String address=getAddressesAsString(path,false);
-        if(address==null) return null;
-        if(address.length()==0) return null;
-        return address.trim();
-    }
-
-    public String getAddressesAsString(String path, boolean geo){
+    public LinkedList<String> getAddressesAsString(String path, boolean geo){
+        LinkedList<String> addressStrings = new LinkedList<String>();
         LinkedList addresses = user.contentList(path);
         if(addresses==null){
             LinkedHashMap address = user.contentHash(path);
-            if(address==null) return user.contentString(path);
+            if(address==null){ String a=user.contentString(path); if(a!=null) addressStrings.add(a); return addressStrings; }
             addresses=new LinkedList();
             addresses.add(address);
         }
-        StringBuilder as=new StringBuilder();
-        for(Object address: addresses) if(geo) getGeoAddressAsString(address, as); else getAddressAsString(address, as);
-        return as.toString();
+        for(Object address: addresses){
+            StringBuilder as=new StringBuilder();
+            if(geo) getGeoAddressAsString(address, as);
+            else    getAddressAsString(address, as);
+            addressStrings.add(as.toString().trim());
+        }
+        return addressStrings;
     }
 
     public void getGeoAddressAsString(Object o, StringBuilder as){
-        if(!(o instanceof LinkedHashMap)){ as.append(o.toString()); as.append("\n");  return; }
+        if(!(o instanceof LinkedHashMap)){ as.append(o.toString());  return; }
         LinkedHashMap address = (LinkedHashMap)o;
         Object l;
         l=addressGetGeoStreet(address); if(l!=null){                   as.append(l); }
@@ -357,7 +363,6 @@ public class OTS2GUI {
         l=address.get("region");     if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
         l=address.get("postalCode"); if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
         l=address.get("country");    if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
-        as.append("\n"); 
     }
 
     public Object addressGetGeoStreet(LinkedHashMap address){
@@ -436,6 +441,13 @@ public class OTS2GUI {
             else log("No getFromLocationName for "+address);
         }catch(Exception e){ log("No getFromLocationName for "+address); log(e); }
         return null;
+    }
+
+    public String join(LinkedList<String> strings, String joinwith){
+	StringBuilder sb=new StringBuilder();
+        for(String s: strings){ sb.append(s); sb.append(joinwith); }
+        String all=sb.toString();
+        return all.substring(0,all.length()-joinwith.length());
     }
 
     static public void log(Object o){ WebObject.log(o); }
