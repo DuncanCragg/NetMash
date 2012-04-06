@@ -44,11 +44,12 @@ public class NetMash extends MapActivity{
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState); log("onCreate");
+        String url = getIntent().getDataString();
         top=this;
         if(!Kernel.running) runKernel();
         drawInitialView();
         if(user==null) User.createUserAndDevice();
-        user.onTopCreate();
+        user.onTopCreate(url);
     }
 
     @Override

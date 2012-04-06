@@ -110,8 +110,9 @@ public class User extends WebObject {
     OTS2GUI ots2gui;
     CurrentLocation currentlocation;
 
-    public void onTopCreate(){
+    public void onTopCreate(String url){
         currentlocation = new CurrentLocation(this);
+        if(url!=null) jumpToUID(url);
     }
 
     public void onTopResume(){
