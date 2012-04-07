@@ -135,7 +135,7 @@ public class NetMash extends MapActivity{
     }
 
     private void uiDrawJSON(){ log("uiDrawJSON "+uiUID+":\n"+uiJSON);
-        if(focused && viewUID.equals(uiUID)){ log("** locked"); return; }
+     // if(focused && viewUID.equals(uiUID)){ log("** locked"); return; }
         focused=false; viewUID=uiUID;
         Object      o=uiJSON.hashPathN("view");
         if(o==null) o=uiJSON.listPathN("view");

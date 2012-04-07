@@ -16,14 +16,13 @@
     "is": "links",
     "title": "More Links",
     "list" : [ "uid-e02f-e1af-1c06-7d5d",
+               "http://the-object.net/123-456.json",
+               "http://duncan-cragg.org/blog/atom.json",
                "uid-a205-babf-72a4-1272",
                "uid-2a68-0c60-16da-9796",
                "http://172.18.10.109:8080/o/home.json",
                "http://172.18.10.109:8080/o/query/eyAgICAgICAgImlzIjogWyAiZG9jdW1lbnQiLCAicXVlcnkiIF0sICAgICAidXNlciI6ICJ1aWQtNWEyZC1jOGM0LTAwMmUtNDhhNyIsICAgICAibGlzdCI6ICJodHRwOi8vMTcyLjE4LjEwLjEwOTo4MDgwL28vaG9tZS5qc29uIiwgICAgICJjb250ZW50IjogIjxoYXNXb3JkcyhsaW1pbmFsKT4iIH0g.json",
-               "http://172.18.10.109:8080/o/query/eyAgICAgICAgImlzIjogWyAiZG9jdW1lbnQiLCAicXVlcnkiIF0sICAgICAidXNlciI6ICJ1aWQtNDZkZS03NDA5LThiYWMtNDlkMyIsICAgICAibGlzdCI6ICJodHRwOi8vMTcyLjE4LjEwLjEwOTo4MDgwL28vaG9tZS5qc29uIiwgICAgICJjb250ZW50IjogIjxoYXNXb3JkcyhnZXJhbGQgcnViaW4pPiIgfSA.json",
-               "http://duncan-cragg.org/blog/atom.json",
-               "http://duncan-cragg.org/blog/post/forest-news/atom.json",
-               "http://the-object.net/123-456.json"
+               "http://172.18.10.109:8080/o/query/eyAgICAgICAgImlzIjogWyAiZG9jdW1lbnQiLCAicXVlcnkiIF0sICAgICAidXNlciI6ICJ1aWQtNDZkZS03NDA5LThiYWMtNDlkMyIsICAgICAibGlzdCI6ICJodHRwOi8vMTcyLjE4LjEwLjEwOTo4MDgwL28vaG9tZS5qc29uIiwgICAgICJjb250ZW50IjogIjxoYXNXb3JkcyhnZXJhbGQgcnViaW4pPiIgfSA.json"
     ]
 }
 
