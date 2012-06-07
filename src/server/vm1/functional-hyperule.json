@@ -1,0 +1,5 @@
+{   "is": [ "gui", "rule" ],
+    "when": "stuff happens, do stuff",
+    "%alerted": { "is": "form" },
+    "title": "<>Yay"
+}

@@ -1,8 +1,8 @@
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
     "is": "links",
     "title": "Links for Demo",
-    "list" : [ "uid-7756-cb46-4b1b-89cc",
-               "uid-6332-84e1-c1de-3364"
+    "list" : [
+        "uid-7756-cb46-4b1b-89cc"
     ]
 }
 
@@ -11,10 +11,8 @@
     "watching": "functional-hyper.json",
 }
 
-{   "%uid": "uid-6332-84e1-c1de-3364",
-    "%class": "server.types.UserHome",
-    "is": [ "userhome", "userlist" ],
-    "title": "User Home",
-    "list": []
+{   "%uid": "uid-bbfb-f9c4-81f5-fb57",
+    "%class": "server.types.DynamicFile",
+    "watching": "functional-hyperule.json",
 }
 

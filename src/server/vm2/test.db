@@ -58,7 +58,7 @@
 }
 
 {   "%uid": "uid-0145-54f4-36db-302e",
-    "%class": "Fjord",
+    "%class": "server.types.Fjord",
     "%rules": [ "uid-5348-3aaa-bfc1-7d0c", "uid-3aaa-bfc1-7d0c-5348", "uid-7d0c-5348-3aaa-bfc1",
                 "uid-bfc1-7d0c-5348-3aaa", "uid-4e30-2365-3015-e181", "uid-5411-baae-d459-4c6c" ],
     "is": [ "fx", "order" ],
@@ -107,21 +107,21 @@
 }
 
 {   "%uid": "uid-a39f-b330-0492-100f",
-    "%class": "Fjord",
+    "%class": "server.types.Fjord",
     "%rules": [ "uid-2520-44e1-a2a2-8ef1" ],
     "is": [ "equity", "bid" ],
     "on": "uid-1488-6110-092d-2bae"
 }
 
 {   "%uid": "uid-09e4-e69b-54a4-a725",
-    "%class": "Fjord",
+    "%class": "server.types.Fjord",
     "%rules": [ "uid-b382-de77-f352-efe6" ],
     "is": [ "equity", "ask" ],
     "on": "uid-1488-6110-092d-2bae"
 }
 
 {   "%uid": "uid-1488-6110-092d-2bae",
-    "%class": "Fjord",
+    "%class": "server.types.Fjord",
     "%rules": [ "uid-286a-b820-14ff-8d02", "uid-1cb9-6b32-be37-8f3b", "uid-fed3-2712-f1c8-7c49", "uid-dd27-36cf-f13d-3768" ],
     "is": [ "equity", "instrument" ],
     "long-name": "Acme Co., Inc",

@@ -1,3 +1,4 @@
+package server.types;
 
 import java.util.*;
 import java.util.regex.*;
@@ -66,8 +67,9 @@ public class Fjord extends WebObject {
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=path+entry.getKey();
             if(path.equals("")){
-                if(pk.equals("is"  )) continue;
+                if(pk.equals("is")) continue;
                 if(pk.equals("when")) continue;
+                if(pk.equals("watching")) continue;
             }
             Object v=entry.getValue();
             if(v instanceof String){

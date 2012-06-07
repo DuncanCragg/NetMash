@@ -137,9 +137,12 @@ public class NetMash extends MapActivity{
     private void uiDrawJSON(){ log("uiDrawJSON "+uiUID+":\n"+uiJSON);
      // if(focused && viewUID.equals(uiUID)){ log("** locked"); return; }
         focused=false; viewUID=uiUID;
+        String title =uiJSON.stringPathN("title");
+        if(title==null) setTitle(       "NetMash");
+        else            setTitle(title+"|NetMash");
         Object      o=uiJSON.hashPathN("view");
         if(o==null) o=uiJSON.listPathN("view");
-        View view;
+        ViewGroup view;
         if(isMapList(o)){
             view = createMapView(o);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
@@ -187,17 +190,17 @@ public class NetMash extends MapActivity{
         return user.menuItem(item.getItemId());
     }
 
-    private View createVerticalStrip(Object o){
+    private ViewGroup createVerticalStrip(Object o){
         if(o instanceof LinkedHashMap) return createVerticalStrip((LinkedHashMap<String,Object>)o);
         else                           return createVerticalStrip((LinkedList)o);
     }
 
-    private View createHorizontalStrip(Object o){
+    private ViewGroup createHorizontalStrip(Object o){
         if(o instanceof LinkedHashMap) return createHorizontalStrip((LinkedHashMap<String,Object>)o);
         else                           return createHorizontalStrip((LinkedList)o);
     }
 
-    private View createVerticalStrip(LinkedHashMap<String,Object> hm){
+    private ViewGroup createVerticalStrip(LinkedHashMap<String,Object> hm){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(0,0,0,0);
@@ -209,7 +212,7 @@ public class NetMash extends MapActivity{
         return view;
     }
 
-    private View createHorizontalStrip(LinkedHashMap<String,Object> hm){
+    private ViewGroup createHorizontalStrip(LinkedHashMap<String,Object> hm){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setPadding(0,0,0,0);
@@ -221,7 +224,7 @@ public class NetMash extends MapActivity{
         return view;
     }
 
-    private View createVerticalStrip(LinkedList ll){
+    private ViewGroup createVerticalStrip(LinkedList ll){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(0,0,0,0);
@@ -233,7 +236,7 @@ public class NetMash extends MapActivity{
         return view;
     }
 
-    private View createHorizontalStrip(LinkedList ll){
+    private ViewGroup createHorizontalStrip(LinkedList ll){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setPadding(0,0,0,0);

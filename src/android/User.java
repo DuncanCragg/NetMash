@@ -371,6 +371,7 @@ public class User extends WebObject {
     private void showWhatIAmViewingAsGUI(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
+            String title=null;
             if(contentIsOrListContains("private:viewing:is", "user")&&
                contentIsOrListContains("private:viewing:is", "list")  ){
 
@@ -412,6 +413,7 @@ public class User extends WebObject {
             }
             else
             if(contentIsOrListContains("private:viewing:is", "gui")){
+                title   =content(    "private:viewing:title");
                 viewhash=contentHash("private:viewing:view");
             }
             else{
@@ -420,6 +422,7 @@ public class User extends WebObject {
             }
             if(viewhash!=null){
                 JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
+                uiJSON.stringPath("title", title);
                 uiJSON.hashPath("view", viewhash);
                 if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
             }

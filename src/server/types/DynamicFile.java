@@ -4,19 +4,19 @@ import java.io.*;
 import netmash.lib.JSON;
 import netmash.forest.WebObject;
 
-public class DynamicFile extends WebObject {
+public class DynamicFile extends Fjord {
 
     public DynamicFile(){}
 
     private boolean running=false;
     private long fileModified=0;
 
-    public void evaluate(){ if(!running){ running=true; runTicker(); } }
+    public void evaluate(){ if(!running){ running=true; runTicker(); } super.evaluate(); }
 
     private void runTicker(){
         new Thread(){ public void run(){
             while(running){
-                try{ Thread.sleep(2000); }catch(Exception e){}
+                try{ Thread.sleep(200); }catch(Exception e){}
                 tick();
             }
         }}.start();

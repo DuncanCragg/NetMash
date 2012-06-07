@@ -50,7 +50,7 @@
 }
 
 {   "%uid": "uid-2a68-0c60-16da-9796",
-    "%class": "Fjord",
+    "%class": "server.types.Fjord",
     "%rules": [ "uid-b6d6-c2be-e69d-abbf", "uid-fb3f-b8ca-3187-5175" ],
     "is": [ "document", "list" ],
     "title": "Test document database",
