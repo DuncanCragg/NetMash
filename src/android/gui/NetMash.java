@@ -772,21 +772,22 @@ public class NetMash extends MapActivity{
     }
 
 class BorderedTextView extends TextView {
-    public BorderedTextView(Context context, int colour){ super(context); this.colour=colour; }
-    int colour;
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    Paint paint = new Paint();
+    public BorderedTextView(Context context, int colour){
+        super(context);
         setBackgroundColor(colour);
         setPadding(15,5,5,5);
-        Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(1);
         paint.setColor(0xff888877);
+    }
+    @Override
+    protected void onDraw(Canvas canvas) {
         Rect rect = new Rect();
         getLocalVisibleRect(rect);
         rect.inset(1,1);
         canvas.drawRect(rect, paint);
+        super.onDraw(canvas);
     }
 }
 

@@ -1,7 +1,7 @@
 {   "is": [ "gui", "rule" ],
-    "when": "stuff happens, do stuff",
+    "when": "checkboxes change, do logic",
     "%alerted": { "is": "form", "form": { "a": true } },
-    "title": "<>Yay",
+    "title": "<>$:%alerted:form:t",
     "view": {
         "#result": { "#c": "<>$:%alerted:form:b" }
     }

@@ -92,6 +92,7 @@ public class Fjord extends WebObject {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private boolean scanRuleList(LinkedList list, String pk){
         for(Object v: list){
             if(v instanceof String){

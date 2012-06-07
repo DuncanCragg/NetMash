@@ -1,13 +1,17 @@
 {   "is": [ "gui" ],
     "%rules": [ "uid-bbfb-f9c4-81f5-fb57" ],
-    "title": "Boolean",
+    "title": "Demo",
     "view": {
-        "style": { "is": "style", "direction": "vertical", "colours": "lightturquoise, lightblue" },
-        "#result":  { "style": { "is": "style", "direction":"horizontal", "proportions":"99%", "colours":"lightturquoise" }, "#c": ".." },
+        "style": { "is": "style", "direction": "vertical" },
         "#stuff": [
             { "is": "style", "direction":"vertical" },
-            { "style": { "is": "style", "direction":"horizontal" }, "#a": "?[a /boolean/]?" },
-            { "style": { "is": "style", "direction":"horizontal" }, "#b": "?[ /boolean;b|b/ ]?" }
-         ]
+            { "#a": "?[A /boolean/ ]?" },
+            { "#b": "?[B /boolean/ ]?" },
+            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%" },
+              "#t": "?[new title /string/]?" },
+         ],
+        "#result":  { "style": { "is": "style", "direction":"horizontal",
+                                 "proportions":"50%", "colours":"lightturquoise" },
+                      "#c": "..." }
     }
 }
