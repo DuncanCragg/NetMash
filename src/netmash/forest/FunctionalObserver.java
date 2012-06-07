@@ -54,7 +54,8 @@ public class FunctionalObserver implements Module {
     }
 
     private Thread pollingThread=null;
-    boolean ispolling=false;
+    boolean ispolling=true;
+    boolean isshortpolling=false;
     boolean visible=false;
     private void startPollingThread(){
         visible=Kernel.config.isAtPathN("network:host");
@@ -80,7 +81,7 @@ public class FunctionalObserver implements Module {
     }
 
     private boolean doShortPoll(WebObject w){
-        return (visible || w.cacheNotify==null);
+        return isshortpolling && (visible || w.cacheNotify==null);
     }
 
     WebObject cacheGet(String uid){

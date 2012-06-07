@@ -119,6 +119,7 @@ public class User extends WebObject {
         new Evaluator(this){
             public void evaluate(){ logrule();
                 showWhatIAmViewing();
+                refreshObserves();
             }
         };
         currentlocation.getLocationUpdates();
@@ -185,6 +186,7 @@ public class User extends WebObject {
                 content("private:viewing", uid);
                 content("private:viewas", "gui");
                 showWhatIAmViewing();
+                refreshObserves();
             }
         };
     }
@@ -194,6 +196,7 @@ public class User extends WebObject {
             public void evaluate(){ logrule();
                 if(!history.back()) return;
                 showWhatIAmViewing();
+                refreshObserves();
             }
         };
     }
@@ -226,6 +229,7 @@ public class User extends WebObject {
                         showWhatIAmViewing();
                     break;
                 }
+                refreshObserves();
             }
         };
         return true;
@@ -243,6 +247,7 @@ public class User extends WebObject {
                 else{
                     returnstringhack=content("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 }
+                refreshObserves();
             }
         };
         return returnstringhack;
@@ -260,6 +265,7 @@ public class User extends WebObject {
                 else{
                     returnboolhack=contentBool("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 }
+                refreshObserves();
             }
         };
         return returnboolhack;
@@ -277,6 +283,7 @@ public class User extends WebObject {
                 else{
                     returninthack=contentInt("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 }
+                refreshObserves();
             }
         };
         return returninthack;
@@ -292,6 +299,7 @@ public class User extends WebObject {
                     content("query", spawn(newDocumentQuery(content("user"), content("gui"), val)));
                 }
                 else notifying(content("gui"));
+                refreshObserves();
             }
         };
     }
@@ -303,6 +311,7 @@ public class User extends WebObject {
             public void evaluate(){ logrule();
                 contentBool("form:"+dehash(tag), val);
                 notifying(content("gui"));
+                refreshObserves();
             }
         };
     }
@@ -314,6 +323,7 @@ public class User extends WebObject {
             public void evaluate(){ logrule();
                 contentInt("form:"+dehash(tag), val);
                 notifying(content("gui"));
+                refreshObserves();
             }
         };
     }

@@ -1,28 +1,14 @@
-{   "%uid": "uid-e02f-e1af-1c06-7d5d",
-    "%class": "",
-    "is": [ "contact" ],
-    "fullName": "Enter Your Full Name Here",
-    "email": "you@yourdomain.com",
-    "address": {
-      "street": "150 Old Park Ln",
-      "locality": "London",
-      "postalCode": "W1K 1QZ",
-      "country": "UK"
-    },
-    "phone": { "home": "020 8888 8888", "mobile": "0777 77 77 777" }
+{   "%uid": "uid-4b71-f8d4-c761-be2d",
+    "is": "links",
+    "title": "Links for Demo",
+    "list" : [ "uid-7756-cb46-4b1b-89cc",
+               "uid-6332-84e1-c1de-3364"
+    ]
 }
 
 {   "%uid": "uid-7756-cb46-4b1b-89cc",
     "%class": "server.types.DynamicFile",
-    "watching": "guitest.json",
-}
-
-{   "%uid": "uid-4b71-f8d4-c761-be2d",
-    "is": "links",
-    "title": "Random Collection of Links",
-    "list" : [ "uid-6332-84e1-c1de-3364",
-               "uid-7235-60ba-d323-d5d6",
-    ]
+    "watching": "functional-hyper.json",
 }
 
 {   "%uid": "uid-6332-84e1-c1de-3364",
@@ -30,28 +16,5 @@
     "is": [ "userhome", "userlist" ],
     "title": "User Home",
     "list": []
-}
-
-{   "%uid": "uid-7235-60ba-d323-d5d6",
-    "%class": "DynamicPage",
-    "is": [ "gui" ],
-    "title": "Demo of Dynamic GUI and Remote App",
-    "view": {
-        "style": { "is": "style", "direction": "vertical", "colours": "lightturquoise, lightblue" },
-        "#title": "Demo of Dynamic GUI and Remote App",
-        "#incre": 1000,
-        "#stuff": [
-            { "is": "style", "direction":"vertical" },
-            [ { "is": "style", "direction":"horizontal", "proportions":"50%", "colours":"lightgreen,lightpink" }, "Showing", [ { "is":"style", "direction":"vertical" }, "horizontal", "vertical" ] ],
-            [ { "is": "style", "direction":"horizontal", "proportions":"33%", "colours":"lightblue,lightmauve*" }, "layouts, colours", "![text]!", "/[effects]/" ],
-            [ { "is": "style", "direction":"horizontal", "proportions":"99%", "colours":"lightpink" },             "and forms backed by server functions:" ],
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%" },                        "#something": "?[Type something: /string/]?" },
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%", "colours":"lightblue" }, "#checkit":   "?[Check me! /boolean/]?" },
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%", "colours":"lightblue" }, "#radioin":   "?[ /string;|this|that|other/ ]?" },
-            { "style": { "is": "style", "direction":"horizontal" },         "#spinme": "?[Choose one: /string;the first choice|that is another|the final option/ ]?" },
-            { "style": { "is": "style", "direction":"horizontal" },                                             "#toggler": "?[ /boolean;I'm now off|I'm now on/ ]?" },
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"95%", "colours":"lightblue" }, "#rateme":  "?[ /integer;0||4/ ]?" }
-         ]
-    }
 }
 

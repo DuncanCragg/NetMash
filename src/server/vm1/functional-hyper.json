@@ -1,0 +1,11 @@
+{   "is": [ "gui" ],
+    "title": "Boolean",
+    "view": {
+        "style": { "is": "style", "direction": "vertical", "colours": "lightturquoise, lightblue" },
+        "#stuff": [
+            { "is": "style", "direction":"vertical" },
+            { "style": { "is": "style", "direction":"horizontal" }, "#a": "?[a /boolean/]?" },
+            { "style": { "is": "style", "direction":"horizontal" }, "#b": "?[ /boolean;b|b/ ]?" }
+         ]
+    }
+}

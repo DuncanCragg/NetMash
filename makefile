@@ -26,7 +26,7 @@ editlocaldb:
 	vi -o -N src/server/vm1/local.db
 
 editdynamicfile:
-	vi -o -N src/server/vm1/guitest.json
+	vi -o -N src/server/vm1/functional-hyper.json
 
 editlocaldbanddynamicfile:
 	vi -o -N src/server/vm1/local.db src/server/vm1/guitest.json
