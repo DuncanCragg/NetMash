@@ -1,6 +1,8 @@
 {   "is": [ "gui", "rule" ],
     "when": "checkboxes change, do logic",
-    "%alerted": { "is": "form", "form": { "a": true } },
+    "%alerted": { "is": "form",
+                  "form": { "a": "<!$:%alerted:form:b>" }
+    },
     "title": "<>$:%alerted:form:t",
     "view": {
         "#result": { "#c": "<>$:%alerted:form:b" }
