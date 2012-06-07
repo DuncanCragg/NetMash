@@ -3,9 +3,9 @@
     "title": "Boolean",
     "view": {
         "style": { "is": "style", "direction": "vertical", "colours": "lightturquoise, lightblue" },
+        "#result":  { "style": { "is": "style", "direction":"horizontal", "proportions":"99%", "colours":"lightturquoise" }, "#c": ".." },
         "#stuff": [
             { "is": "style", "direction":"vertical" },
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"99%", "colours":"lightturquoise" },  "#c": "A=B" },
             { "style": { "is": "style", "direction":"horizontal" }, "#a": "?[a /boolean/]?" },
             { "style": { "is": "style", "direction":"horizontal" }, "#b": "?[ /boolean;b|b/ ]?" }
          ]

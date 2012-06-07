@@ -1,5 +1,8 @@
 {   "is": [ "gui", "rule" ],
     "when": "stuff happens, do stuff",
-    "%alerted": { "is": "form" },
-    "title": "<>Yay"
+    "%alerted": { "is": "form", "form": { "a": true } },
+    "title": "<>Yay",
+    "view": {
+        "#result": { "#c": "<>$:%alerted:form:b" }
+    }
 }

@@ -76,12 +76,16 @@ public class Fjord extends WebObject {
                 if(!scanString((String)v, pk)) return false;
             }
             else
+            if(v instanceof Boolean){
+                if(!scanBoolean((Boolean)v, pk)) return false;
+            }
+            else
             if(v instanceof LinkedHashMap){
                 if(!scanRuleHash((LinkedHashMap<String,Object>)v, pk+":")) return false;
             }
             else
             if(v instanceof LinkedList){
-                if(!scanRuleList((LinkedList)v, pk+":")) return false;
+                if(!scanRuleList((LinkedList)v, pk)) return false;
             }
             else{ log("oh noes "+v); return false; }
         }
@@ -93,6 +97,15 @@ public class Fjord extends WebObject {
             if(v instanceof String){
                 if(!scanString((String)v, pk)) return false;
             }
+            else
+            if(v instanceof LinkedHashMap){
+                if(!scanRuleHash((LinkedHashMap<String,Object>)v, pk+":")) return false;
+            }
+            else
+            if(v instanceof LinkedList){
+                if(!scanRuleList((LinkedList)v, pk)) return false;
+            }
+            else{ log("oh noes "+v); return false; }
         }
         return true;
     }
@@ -125,6 +138,10 @@ public class Fjord extends WebObject {
         }
         else if(!contentIsOrListContains(pk,vs)) return false;
         return true;
+    }
+
+    private boolean scanBoolean(Boolean vb, String pk){
+        return contentBool(pk)==vb;
     }
 
     private boolean doLHS(String pk, String lhs){ try{
