@@ -4,7 +4,7 @@
                "db": "netmash.db",
                "syncrate": 100,
                "preload": [ ] },
-  "network": { "host": "localhost",
+  "network": { "host": "10.0.2.2",
                "port": 8081,
                "pathprefix": "/o/",
                "cache-notify": "c-n-14d5-99c5-da00-806a",
