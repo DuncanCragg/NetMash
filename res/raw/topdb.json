@@ -1,5 +1,5 @@
 {   "%uid": "uid-d9e4-4f7c-d9fe-9e7c",
-    "%class": "server.types.Fjord",
+    "%class": "netmash.forest.Fjord",
     "is": [ "gui" ],
     "%rules": [ "uid-58cb-cc31-1769-c2c4" ],
     "title": "On-board Demo",

@@ -3,6 +3,7 @@ package server.types;
 import java.io.*;
 import netmash.lib.JSON;
 import netmash.forest.WebObject;
+import netmash.forest.Fjord;
 
 public class DynamicFile extends Fjord {
 

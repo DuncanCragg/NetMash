@@ -1,8 +1,7 @@
-package server.types;
+package netmash.forest;
 
 import java.util.*;
 import java.util.regex.*;
-import netmash.forest.WebObject;
 
 /** Fjord Language.
   * .
