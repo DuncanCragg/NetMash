@@ -220,9 +220,10 @@ public class FunctionalObserver implements Module {
     WebObject observing(WebObject observer, String observeduid, boolean tempObserve){
         if(!tempObserve) observer.newobserve.add(observeduid);
         WebObject observed = cacheGet(observeduid);
-        if(!tempObserve) observed.notify.add(observer.uid);
+        boolean changed=false;
+        if(!tempObserve) changed=observed.notify.add(observer.uid);
         if(!observed.isShell()){
-            if(!tempObserve) persistence.save(observed);
+            if(changed) persistence.save(observed);
             return observed;
         }
         evaluatable(observed);

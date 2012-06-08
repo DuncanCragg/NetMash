@@ -66,44 +66,44 @@
     "dealer": "http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json"
 }
 
-{   "%uid": "uid-286a-b820-14ff-8d02",
-    "is": [ "equity", "instrument", "rule" ],
-    "when": "someone bids on this instrument, add to buyers. 1",
-    "%alerted": { "is": [ "equity", "bid" ], "on": "<$:>" },
-    "buyers": "<>has(%alerted)"
-}
-
-{   "%uid": "uid-1cb9-6b32-be37-8f3b",
-    "is": [ "equity", "instrument", "rule" ],
-    "when": "someone asks on this instrument, add to sellers. 2",
-    "%alerted": { "is": [ "equity", "ask" ], "on": "<$:>" },
-    "sellers": "<>has(%alerted)"
-}
-
-{   "%uid": "uid-fed3-2712-f1c8-7c49",
-    "is": [ "equity", "instrument", "rule" ],
-    "when": "any buyer price changes, recalculate the high-bid. 3",
-    "bid-ask-spread": { "high-bid": "<>max($:buyers:price)" }
-}
-
-{   "%uid": "uid-dd27-36cf-f13d-3768",
-    "is": [ "equity", "instrument", "rule" ],
-    "when": "any seller price changes, recalculate the low-ask. 4",
-    "bid-ask-spread": { "low-ask":  "<>min($:sellers:price)>" }
-}
-
 {   "%uid": "uid-2520-44e1-a2a2-8ef1",
     "is": [ "equity", "bid", "rule" ],
-    "when": "a bid has no price, set it 10% above the high-bid and notify the instrument. 5",
+    "when": "a bid has no price, set it 10% above the high-bid and notify the instrument. 1",
     "price": "<#>prod($:on:bid-ask-spread:high-bid, 1.10)",
     "%notifying": "<>has($:on)"
 }
 
 {   "%uid": "uid-b382-de77-f352-efe6",
     "is": [ "equity", "ask", "rule" ],
-    "when": "an ask has no price, set it 10% below the low-ask and notify the instrument. 6",
+    "when": "an ask has no price, set it 10% below the low-ask and notify the instrument. 2",
     "price": "<#>prod($:on:bid-ask-spread:low-ask, 0.90)",
     "%notifying": "<>has($:on)"
+}
+
+{   "%uid": "uid-286a-b820-14ff-8d02",
+    "is": [ "equity", "instrument", "rule" ],
+    "when": "someone bids on this instrument, add to buyers. 3",
+    "%alerted": { "is": [ "equity", "bid" ], "on": "<$:>" },
+    "buyers": "<>has(%alerted)"
+}
+
+{   "%uid": "uid-1cb9-6b32-be37-8f3b",
+    "is": [ "equity", "instrument", "rule" ],
+    "when": "someone asks on this instrument, add to sellers. 4",
+    "%alerted": { "is": [ "equity", "ask" ], "on": "<$:>" },
+    "sellers": "<>has(%alerted)"
+}
+
+{   "%uid": "uid-fed3-2712-f1c8-7c49",
+    "is": [ "equity", "instrument", "rule" ],
+    "when": "any buyer price changes, recalculate the high-bid. 5",
+    "bid-ask-spread": { "high-bid": "<>max($:buyers:price)" }
+}
+
+{   "%uid": "uid-dd27-36cf-f13d-3768",
+    "is": [ "equity", "instrument", "rule" ],
+    "when": "any seller price changes, recalculate the low-ask. 6",
+    "bid-ask-spread": { "low-ask":  "<>min($:sellers:price)>" }
 }
 
 {   "%uid": "uid-a39f-b330-0492-100f",

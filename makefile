@@ -158,7 +158,9 @@ classes: \
 ./build/classes/netmash/NetMash.class \
 ./build/classes/netmash/lib/JSON.class \
 ./build/classes/netmash/lib/TestJSON.class \
+./build/classes/netmash/forest/FunctionalObserver.class \
 ./build/classes/netmash/forest/Fjord.class \
+./build/classes/netmash/forest/Persistence.class \
 ./build/classes/server/types/UserHome.class \
 ./build/classes/server/types/Event.class \
 ./build/classes/server/types/Twitter.class \
