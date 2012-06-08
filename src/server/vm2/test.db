@@ -103,7 +103,7 @@
 {   "%uid": "uid-dd27-36cf-f13d-3768",
     "is": [ "equity", "instrument", "rule" ],
     "when": "any seller price changes, recalculate the low-ask. 6",
-    "bid-ask-spread": { "low-ask":  "<>min($:sellers:price)>" }
+    "bid-ask-spread": { "low-ask":  "<>min($:sellers:price)" }
 }
 
 {   "%uid": "uid-a39f-b330-0492-100f",
