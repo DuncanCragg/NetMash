@@ -224,15 +224,47 @@ public class Fjord extends WebObject {
             }
             return !match;
         }
+        if(func.equals("min")){
+            double min=Double.MAX_VALUE;
+            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
+                if(arg.startsWith("$:")){
+                    for(String s: contentAll(arg.substring(2))) min=minFromString(min,s);
+                }
+            }
+            if(match) return false;
+            else{ contentDouble(pk,min); return true; }
+        }
+        if(func.equals("max")){
+            double max=Double.MIN_VALUE;
+            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
+                if(arg.startsWith("$:")){
+                    for(String s: contentAll(arg.substring(2))) max=maxFromString(max,s);
+                }
+            }
+            if(match) return false;
+            else{ contentDouble(pk,max); return true; }
+        }
         if(match) return false;
-        else      {      content(pk,function); return true; }
+        else{ content(pk,function); return true; }
+    }
+
+    private double minFromString(double min, String s){
+        double d;
+        try{ d=Double.parseDouble(s); } catch(NumberFormatException e){ return min; }
+        return d<min? d: min;
+    }
+
+    private double maxFromString(double max, String s){
+        double d;
+        try{ d=Double.parseDouble(s); } catch(NumberFormatException e){ return max; }
+        return d>max? d: max;
     }
 
     private Object makeBestObject(String s){
-       try{ return Double.parseDouble(s); } catch(NumberFormatException e){}
-       if(s.toLowerCase().equals("true" )) return new Boolean(true);
-       if(s.toLowerCase().equals("false")) return new Boolean(false);
-       return s;
+        try{ return Double.parseDouble(s); } catch(NumberFormatException e){}
+        if(s.toLowerCase().equals("true" )) return new Boolean(true);
+        if(s.toLowerCase().equals("false")) return new Boolean(false);
+        return s;
     }
 
 // "<#>payment": { .. }

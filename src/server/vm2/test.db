@@ -113,6 +113,13 @@
     "on": "uid-1488-6110-092d-2bae"
 }
 
+{   "%uid": "uid-9272-b51a-1606-32e0",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-2520-44e1-a2a2-8ef1" ],
+    "is": [ "equity", "bid" ],
+    "on": "uid-1488-6110-092d-2bae"
+}
+
 {   "%uid": "uid-09e4-e69b-54a4-a725",
     "%class": "netmash.forest.Fjord",
     "%rules": [ "uid-b382-de77-f352-efe6" ],

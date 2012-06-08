@@ -332,6 +332,30 @@ public class WebObject {
         statemod = updatingState.doublePath(path, val) || statemod;
     }
 
+    /** Get list of String forms at path, iterating one intervening list if any. */
+    public LinkedList<String> contentAll(String path){
+        LinkedList<String> l = new LinkedList<String>();
+        String s=contentString(path);
+        if(s!=null) l.add(s);
+        else{
+            String[] parts=path.split(":");
+            for(int x=1; x<=parts.length && l.size()==0; x++){
+                StringBuilder sb=new StringBuilder();
+                int p=0;
+                for(; p<x; p++){ sb.append(parts[p]); sb.append(":"); }
+                sb.append("%d");
+                for(; p<parts.length; p++){ sb.append(":"); sb.append(parts[p]); }
+                for(int i=0; ; i++){
+                    String pi=String.format(sb.toString(),i);
+                    s=contentString(pi);
+                    if(s==null) break;
+                    l.add(s);
+                }
+            }
+        }
+        return l;
+    }
+
     /** Get boolean at this path in the JSON content. */
     public boolean contentBool(String path){
         boolean b=false;
