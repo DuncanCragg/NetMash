@@ -1,10 +1,10 @@
 {   "is": [ "gui", "rule" ],
     "when": "checkboxes change, do logic",
     "%alerted": { "is": "form",
-                  "form": { "a": "<!$:%alerted:form:b>" }
+                  "form": { "a": "<$:%alerted:form:b>" }
     },
     "title": "<>$:%alerted:form:t",
     "view": {
-        "#result": { "#c": "<>$:%alerted:form:b" }
+        "#result": { "#c": "<>prod($:%alerted:form:t,$:%alerted:form:u)" }
     }
 }

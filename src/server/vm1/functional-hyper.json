@@ -9,6 +9,8 @@
             { "#b": "?[B /boolean/ ]?" },
             { "style": { "is": "style", "direction":"horizontal", "proportions":"98%" },
               "#t": "?[new title /string/]?" },
+            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%" },
+              "#u": "?[new title /string/]?" },
          ],
         "#result":  { "style": { "is": "style", "direction":"horizontal",
                                  "proportions":"50%", "colours":"lightturquoise" },
