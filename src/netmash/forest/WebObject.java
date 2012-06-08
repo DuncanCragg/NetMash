@@ -37,6 +37,7 @@ public class WebObject {
     public  JSON updatingState=null;
 
     private boolean copyshallow = true;
+    private String  tempPath = null;
     public  boolean statemod = false;
     public  boolean obsalmod = false;
     public  boolean refreshobserves = false;
@@ -167,7 +168,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ s = w.publicState.stringPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -184,7 +185,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ o = w.publicState.objectPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -201,7 +202,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ s = w.publicState.asStringPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -218,7 +219,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ s = w.publicState.isAtPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -261,6 +262,7 @@ public class WebObject {
 
     /** Set String at this path in the JSON content: don't mark as Etag change. */
     public void contentTemp(String path, String val){
+        if(val!=null) tempPath = path; else tempPath = null;
         doCopyOnWrite(path);
         updatingState.stringPath(path, val);
     }
@@ -292,7 +294,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ i = w.publicState.intPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -315,7 +317,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ d = w.publicState.doublePath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -338,7 +340,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ b = w.publicState.boolPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -397,7 +399,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ l = w.publicState.listPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -500,7 +502,7 @@ public class WebObject {
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf);
+                WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
                 try{ h = w.publicState.hashPath(po.path); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
@@ -621,11 +623,12 @@ public class WebObject {
 
     /* ---------------------------------------------------- */
 
-    private WebObject observing(String baseurl, String uid2url){
+    private WebObject observing(String baseurl, String uid2url, String path){
+        boolean tempObserve = tempPath!=null && path.startsWith(tempPath);
         String observeduid=UID.normaliseUID(baseurl, uid2url);
         if(!UID.isUID(observeduid)) return null;
         obsalmod = true;
-        return funcobs.observing(this, observeduid);
+        return funcobs.observing(this, observeduid, tempObserve);
     }
 
     private void notifying(String baseurl, String uid2url){

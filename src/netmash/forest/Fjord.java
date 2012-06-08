@@ -8,6 +8,8 @@ import java.util.regex.*;
   */
 public class Fjord extends WebObject {
 
+    private boolean extralogging = true;
+
     public Fjord(){}
 
     public Fjord(String s){ super(s); }
@@ -16,7 +18,9 @@ public class Fjord extends WebObject {
 
     public void evaluate(){
 
+        if(extralogging) log("Running Fjord on "+contentHash("#"));
         LinkedList rules=contentList("%rules");
+        if(extralogging) log("Rules: "+rules);
         if(rules==null) return;
         int r=0;
         for(Object o: rules){
@@ -33,11 +37,10 @@ public class Fjord extends WebObject {
     }
 
     private void runRule(int r){
+        if(extralogging) log("Rule "+r+" alerted: "+alerted);
         if(alerted().size()==0) runRule(r,null);
         else for(String alerted: alerted()) runRule(r,alerted);
     }
-
-    private boolean extralogging = false;
 
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
