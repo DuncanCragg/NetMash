@@ -120,6 +120,7 @@ public class Twitter extends WebObject {
                     }
                 }
                 if(indpath!=null) spawn(new Twitter(queryuid, uid, indpath));
+                refreshObserves();
             }
         };
     }
