@@ -30,7 +30,6 @@ public class User extends WebObject {
     // ---------------------------------------------------------
 
     static public User me=null;
-    static public User currentform=null;
 
     static public void createUserAndDevice(){
         String fullName=UserContacts.getUsersFullName();
@@ -241,7 +240,6 @@ public class User extends WebObject {
             public void evaluate(){ logrule();
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))){
                     content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
-                    currentform=null;
                     returnstringhack=null;
                 }
                 else{
@@ -259,7 +257,6 @@ public class User extends WebObject {
             public void evaluate(){ logrule();
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))){
                     content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
-                    currentform=null;
                     returnboolhack=false;
                 }
                 else{
@@ -277,7 +274,6 @@ public class User extends WebObject {
             public void evaluate(){ logrule();
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))){
                     content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
-                    currentform=null;
                     returninthack=0;
                 }
                 else{
@@ -289,10 +285,14 @@ public class User extends WebObject {
         return returninthack;
     }
 
+    User currentForm(String guiuid){
+        String formuid = content("private:forms:"+UID.toUID(guiuid));
+        return (User)onlyUseThisToGetIfYouHaveNoChoice(formuid);
+    }
+
     public void setFormVal(final String guiuid, final String tag, final String val){
-        if(this==me && currentform!=null) currentform.setFormVal(guiuid, tag, val);
-        if(this!=currentform) return;
-        new Evaluator(this){
+        if(this==me) currentForm(guiuid).setFormVal(guiuid, tag, val);
+        else new Evaluator(this){
             public void evaluate(){ logrule();
                 content("form:"+dehash(tag), val);
                 if(contentListContainsAll("gui:is", list("document", "list"))){
@@ -305,9 +305,8 @@ public class User extends WebObject {
     }
 
     public void setFormVal(final String guiuid, final String tag, final boolean val){
-        if(this==me && currentform!=null) currentform.setFormVal(guiuid, tag, val);
-        if(this!=currentform) return;
-        new Evaluator(this){
+        if(this==me) currentForm(guiuid).setFormVal(guiuid, tag, val);
+        else new Evaluator(this){
             public void evaluate(){ logrule();
                 contentBool("form:"+dehash(tag), val);
                 notifying(content("gui"));
@@ -317,9 +316,8 @@ public class User extends WebObject {
     }
 
     public void setFormVal(final String guiuid, final String tag, final int val){
-        if(this==me && currentform!=null) currentform.setFormVal(guiuid, tag, val);
-        if(this!=currentform) return;
-        new Evaluator(this){
+        if(this==me) currentForm(guiuid).setFormVal(guiuid, tag, val);
+        else new Evaluator(this){
             public void evaluate(){ logrule();
                 contentInt("form:"+dehash(tag), val);
                 notifying(content("gui"));
@@ -341,8 +339,8 @@ public class User extends WebObject {
             if(!contentSet("list")) contentList("list", UserContacts.populateContacts(this));
         }
         else
-        if(contentIs("is", "form")){ log("form: "+this);
-            currentform=this;
+        if(contentIs("is", "form")){
+            log("evaluate form: "+this);
         }
         else
         if(contentListContainsAll("is", list("document", "query"))){ log("query: "+this);

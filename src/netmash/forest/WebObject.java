@@ -606,6 +606,9 @@ public class WebObject {
         newobserve.clear();
     }
 
+    /** Don't use this. */
+    public WebObject onlyUseThisToGetIfYouHaveNoChoice(String uid){ return funcobs.cacheGet(uid); }
+
     /** Simple logger for ya. */
     static public void log(Object o){ FunctionalObserver.log(o); }
 
