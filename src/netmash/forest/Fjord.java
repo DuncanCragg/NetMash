@@ -2,6 +2,7 @@ package netmash.forest;
 
 import java.util.*;
 import java.util.regex.*;
+import java.text.*;
 
 /** Fjord Language.
   * .
@@ -225,39 +226,49 @@ public class Fjord extends WebObject {
             return !match;
         }
         if(func.equals("min")){
-            double min=Double.MAX_VALUE;
+            String min="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 if(arg.startsWith("$:")){
                     for(String s: contentAll(arg.substring(2))) min=minFromString(min,s);
                 }
             }
             if(match) return false;
-            else{ contentDouble(pk,min); return true; }
+            else{ content(pk,min); return true; }
         }
         if(func.equals("max")){
-            double max=Double.MIN_VALUE;
+            String max="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 if(arg.startsWith("$:")){
                     for(String s: contentAll(arg.substring(2))) max=maxFromString(max,s);
                 }
             }
             if(match) return false;
-            else{ contentDouble(pk,max); return true; }
+            else{ content(pk,max); return true; }
         }
         if(match) return false;
         else{ content(pk,function); return true; }
     }
 
-    private double minFromString(double min, String s){
-        double d;
-        try{ d=Double.parseDouble(s); } catch(NumberFormatException e){ return min; }
-        return d<min? d: min;
+    private String minFromString(String a, String b){
+        if(a==null || a.length()==0) return b;
+        if(b==null || b.length()==0) return a;
+        return findNumberIn(a) < findNumberIn(b)? a: b;
     }
 
-    private double maxFromString(double max, String s){
-        double d;
-        try{ d=Double.parseDouble(s); } catch(NumberFormatException e){ return max; }
-        return d>max? d: max;
+    private String maxFromString(String a, String b){
+        if(a==null || a.length()==0) return b;
+        if(b==null || b.length()==0) return a;
+        return findNumberIn(a) > findNumberIn(b)? a: b;
+    }
+
+    static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    private double findNumberIn(String s){
+        double n=0;
+        Date d = dateFormat.parse(s, new ParsePosition(0));
+        if(d!=null) n=d.getTime();
+        else try{ n=Double.parseDouble(s); } catch(NumberFormatException e){ }
+        return n;
     }
 
     private Object makeBestObject(String s){

@@ -1,3 +1,20 @@
+{   "%uid": "uid-1b56-01ce-b820-ee90",
+    "is": [ "x", "rule" ],
+    "when": "Blog visible, get titles and dates. 1",
+    "blog": {},
+    "title": "<#>$:blog:title",
+    "newest": "<#>max($:blog:list:published)",
+    "oldest": "<#>min($:blog:list:published)",
+    "titles": "<#>$:blog:list:title"
+}
+
+{   "%uid": "uid-a622-4f18-719f-2903",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-1b56-01ce-b820-ee90" ],
+    "is": [ "x" ],
+    "blog": "http://duncan-cragg.org/blog/atom.json"
+}
+
 {   "%uid": "uid-5348-3aaa-bfc1-7d0c",
     "is": [ "fx", "order", "rule" ],
     "when": "you can see the dealer but have no ticket, notify the dealer. 1",
