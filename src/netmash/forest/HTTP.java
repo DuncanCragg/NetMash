@@ -146,15 +146,15 @@ public class HTTP implements ChannelUser {
         return true;
     }
 
-    void longpoll(HashSet<String> cachenotifies){
+    void longpoll(HashSet<String> longPollURLs){
         for(String key: longPollerPool.keySet()) longPollerPool.get(key).inactive=true;
-        openNewConnections(cachenotifies);
+        openNewConnections(longPollURLs);
         closeOldConnections();
     }
 
-    void openNewConnections(HashSet<String> cachenotifies){
-        for(String cn: cachenotifies){
-            List clientpath = getClient(cn, true);
+    void openNewConnections(HashSet<String> longPollURLs){
+        for(String url: longPollURLs){
+            List clientpath = getClient(url, true);
             if(clientpath==null) continue;
             HTTPClient client = (HTTPClient)clientpath.get(0);
             String     path   = (String)    clientpath.get(1);

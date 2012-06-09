@@ -62,26 +62,26 @@ public class FunctionalObserver implements Module {
         pollingThread=new Thread(){ public void run(){
             while(ispolling){
                 Kernel.sleep(10000);
-                HashSet<String> cachenotifies=new HashSet<String>();
+                HashSet<String> longPollURLs=new HashSet<String>();
                 for(String uid: polling){
                     WebObject w=cacheGet(uid);
                     if(w.isShell()){ polling.remove(uid); continue; }
                     if(w.notify.isEmpty()) continue;
-                    if(doShortPoll(w)) http.poll(w);
-                    else cachenotifies.add(w.cacheNotify);
+                    if(doLongPoll(w)) longPollURLs.add(w.cacheNotify);
+                    else { if(isshortpolling) http.poll(w); }
                 }
-                http.longpoll(cachenotifies);
+                http.longpoll(longPollURLs);
             }
         }}; pollingThread.start();
     }
 
     private void addToPolling(WebObject w){
         polling.add(w.uid);
-        if(!doShortPoll(w)) pollingThread.interrupt();
+        if(doLongPoll(w)) pollingThread.interrupt();
     }
 
-    private boolean doShortPoll(WebObject w){
-        return isshortpolling && (visible || w.cacheNotify==null);
+    private boolean doLongPoll(WebObject w){
+        return (!visible && w.cacheNotify!=null);
     }
 
     WebObject cacheGet(String uid){

@@ -1,11 +1,3 @@
-{   "%uid": "uid-4b71-f8d4-c761-be2d",
-    "is": "links",
-    "title": "Links for Demo",
-    "list" : [
-        "uid-7756-cb46-4b1b-89cc"
-    ]
-}
-
 {   "%uid": "uid-7756-cb46-4b1b-89cc",
     "%class": "server.types.DynamicFile",
     "watching": "functional-hyper.json",

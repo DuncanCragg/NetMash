@@ -1,6 +1,6 @@
 {   "is": [ "gui" ],
     "%rules": [ "uid-bbfb-f9c4-81f5-fb57" ],
-    "title": "Demo",
+    "title": "Remote Demo",
     "view": {
         "style": { "is": "style", "direction": "vertical" },
         "#stuff": [

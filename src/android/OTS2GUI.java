@@ -132,6 +132,7 @@ public class OTS2GUI {
         viewhash.put("#title", title!=null? title: "Document List");
         viewhash.put("#logo", user.content("private:viewing:logo"));
         viewhash.put("#counts", user.contentString("private:viewing:contentCount"));
+        if(user.contentIsOrListContains("private:viewing:is", "searchable"))
         viewhash.put("#query", "?[Search terms /string/]?");
         viewhash.put("#documentlist", viewlist);
         return viewhash;
