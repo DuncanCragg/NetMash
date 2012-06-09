@@ -1,0 +1,24 @@
+
+NetMash is..
+
+ - a JSON or mobile-related data browser
+
+ - programmed in declarative JSON and JSON animation rules
+
+ - that fixes many of the problems of HTML/JS/CSS browsers
+
+    - talking in semantic terms, not just presentational
+       - mobile stuff like identity, contacts, events, media, news, etc
+
+    - two-way and dynamic data
+       - auto-syncing, sending, saving, downloading, refreshing, etc
+
+    - allowing much closer access to native functionality
+       - including offline and better cacheing
+
+ - but keeps the mashability and cacheability of the Web
+
+    - there are no application boundaries, API boundaries, silos, walled gardens, identity boundaries
+
+
+

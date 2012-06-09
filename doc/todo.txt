@@ -2,6 +2,10 @@
 To Do
 -----
 
+ - 201 Created may be missed
+ - http://www.infoq.com/news/2012/04/AQuery
+ - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
+
  - HTTP - 403 if not observing
  - HTTP - poll while waiting - max-age
  - HTTP - need to hang POST responses so not POST requests; should be 204
@@ -14,6 +18,4 @@ To Do
  - FuncObs - option to bail via exception if observed object not there
 
  - Overall - tighten up thread syncing
-
- - 201 Created may be missed
 
