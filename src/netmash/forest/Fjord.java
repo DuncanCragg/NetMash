@@ -233,7 +233,7 @@ public class Fjord extends WebObject {
             String min="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 if(arg.startsWith("$:")){
-                    for(String s: contentAll(arg.substring(2))) min=minFromString(min,s);
+                    for(String s: in(contentAll(arg.substring(2)))) min=minFromString(min,s);
                 }
             }
             if(match) return false;
@@ -243,7 +243,7 @@ public class Fjord extends WebObject {
             String max="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 if(arg.startsWith("$:")){
-                    for(String s: contentAll(arg.substring(2))) max=maxFromString(max,s);
+                    for(String s: in(contentAll(arg.substring(2)))) max=maxFromString(max,s);
                 }
             }
             if(match) return false;
@@ -281,6 +281,8 @@ public class Fjord extends WebObject {
         if(s.toLowerCase().equals("false")) return new Boolean(false);
         return s;
     }
+
+    public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
 
 // "<#>payment": { .. }
 // two-phase
