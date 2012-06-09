@@ -180,7 +180,7 @@ public class Fjord extends WebObject {
         else
         if(rhs.equals("$:"))       content(pk,uid);
         else
-        if(rhs.startsWith("$:"))   contentClone(pk, rhs.substring(2));
+        if(rhs.startsWith("$:"))   getAllContent(pk, rhs.substring(2));
         else
         if(rhs.equals("{}"))       contentHash(pk, new LinkedHashMap());
         else
@@ -192,6 +192,10 @@ public class Fjord extends WebObject {
         }
         else content(pk,rhs);
     } catch(Throwable t){ log(t); } }
+
+    private void getAllContent(String pk, String source){
+        if(!contentClone(pk,source)){ LinkedList<String> l=contentAll(source); if(l!=null) contentList(pk,l); }
+    }
 
     @SuppressWarnings("unchecked")
     private boolean evalFunction(String pk, String function, boolean match){

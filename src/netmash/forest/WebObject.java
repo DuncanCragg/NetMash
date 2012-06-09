@@ -268,14 +268,15 @@ public class WebObject {
     }
 
     /** Clone from source path to path. */
-    public void contentClone(String path, String source){
+    public boolean contentClone(String path, String source){
         Object o = contentObject(source);
-        if(o==null) return;
+        if(o==null) return false;
         if(o instanceof String)        content(      path,(String)o); else
         if(o instanceof Double)        contentDouble(path,(Double)o); else
         if(o instanceof Boolean)       contentBool(  path,(Boolean)o); else
         if(o instanceof LinkedHashMap) contentHash(  path,(LinkedHashMap)((LinkedHashMap)o).clone()); else
         if(o instanceof LinkedList)    contentList(  path,(LinkedList)((LinkedList)o).clone());
+        return true;
     }
 
     /** Set UID at this path in the JSON content as a fully-qualified URL. */
@@ -353,7 +354,7 @@ public class WebObject {
                 }
             }
         }
-        return l;
+        return l.size()!=0? l: null;
     }
 
     /** Get boolean at this path in the JSON content. */

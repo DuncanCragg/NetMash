@@ -1087,7 +1087,7 @@ public class JSON {
         if(maxlength==0){
             int i=0;
             for(Object val: ll){
-                if(val instanceof LinkedHashMap || val instanceof LinkedList){
+                if(val instanceof LinkedHashMap || val instanceof LinkedList || ( val instanceof String && ((String)val).length() >25)){
                     structured=true;
                     break;
                 }
