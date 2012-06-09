@@ -341,20 +341,24 @@ public class WebObject {
         else{
             String[] parts=path.split(":");
             for(int x=1; x<=parts.length && l.size()==0; x++){
-                StringBuilder sb=new StringBuilder();
-                int p=0;
-                for(; p<x; p++){ sb.append(parts[p]); sb.append(":"); }
-                sb.append("%d");
-                for(; p<parts.length; p++){ sb.append(":"); sb.append(parts[p]); }
+                String ss=pathWithIndexIndicator(x,parts);
                 for(int i=0; ; i++){
-                    String pi=String.format(sb.toString(),i);
-                    s=contentString(pi);
-                    if(s==null) break;
-                    l.add(s);
+                    s=contentString(ss.replaceFirst(":::",String.format(":%d",i)));
+                    if(s!=null) l.add(s);
+                    else break;
                 }
             }
         }
         return l.size()!=0? l: null;
+    }
+
+    private String pathWithIndexIndicator(int x, String[] parts){
+        StringBuilder sb=new StringBuilder();
+        int p=0;
+        for(; p<x; p++){ sb.append(parts[p]); sb.append(":"); }
+        sb.append("::");
+        for(; p<parts.length; p++){ sb.append(":"); sb.append(parts[p]); }
+        return sb.toString();
     }
 
     /** Get boolean at this path in the JSON content. */
