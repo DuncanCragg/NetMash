@@ -39,17 +39,6 @@ Overall
 
 
 
-Fjord and jumping lists and links together
-
- - put updateds first so <#> fail won't kill while not yet two-phase
- - actually, <#> is a snapshot; use <> to keep up to date
- - updateds must be continuously watched and set as each comes in
-
- - check size of list and iterate that so failure due to missing object doesn't stop the rest being fetched
-
-
-
-
 
 
 
