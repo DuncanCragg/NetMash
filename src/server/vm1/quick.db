@@ -9,7 +9,16 @@
 }
 
 {   "%uid": "uid-b236-2c49-c6f8-fea6",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-648d-beb0-89a1-d613" ],
     "is": "coordinator",
     "blog": "http://duncan-cragg.org/blog/atom.json"
+}
+
+{   "%uid": "uid-648d-beb0-89a1-d613",
+    "is": [ "coordinator", "rule" ],
+    "when": "event notified, take content. 1",
+    "%alerted": { "is": "event" },
+    "blogcontent": "<#>$:%alerted:content"
 }
 

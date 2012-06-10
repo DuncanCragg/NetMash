@@ -39,12 +39,13 @@
 
 {   "%uid": "uid-1b56-01ce-b820-ee90",
     "is": [ "event", "rule" ],
-    "when": "Blog visible, get titles and dates and make into event. 1",
+    "when": "blog visible, get titles and dates and make into event. 1",
     "coord": { "blog": {} },
     "title": "<>$:coord:blog:title",
     "content": "<>join(Titles:,$:coord:blog:list:title)",
     "start": "<>min($:coord:blog:list:published)",
     "end": "<>max($:coord:blog:list:published)",
-    "updated": "<>$:coord:blog:list:%more:updated"
+    "updated": "<>$:coord:blog:list:%more:updated",
+    "%notifying": "<>has($:coord)"
 }
 
