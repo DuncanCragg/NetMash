@@ -2,20 +2,56 @@
 To Do
 -----
 
- - 201 Created may be missed
+Fjord
+
+ - two-phase: do all LHS, accumulate $s, RHS
+ - contentAll everywhere
+ - %more like jumping lists
+ - "<#>payment": { .. }
+ - "<a|b>": ..
+ - see below
+
+Android
+
  - http://www.infoq.com/news/2012/04/AQuery
  - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
 
- - HTTP - 403 if not observing
- - HTTP - poll while waiting - max-age
- - HTTP - need to hang POST responses so not POST requests; should be 204
-        - actually this is long-polling GET for C-N=object URL not cache
+HTTP
+ - 201 Created may be missed
+ - 403 if not observing
+ - poll while waiting - max-age
+ - need to hang POST responses so not POST requests; should be 204
+    - actually this is long-polling GET for C-N=object URL not cache
 
- - Logic - hello world stdio interface object - user object on command line
+Stuff 
 
- - FuncObs - make etag increment atomic with state change - put all in '%'s?
- - FuncObs - allow relative links
- - FuncObs - option to bail via exception if observed object not there
+ - hello world stdio interface object - user object on command line
 
- - Overall - tighten up thread syncing
+FuncObs 
+
+ - make etag increment atomic with state change - put all in '%'s?
+ - allow relative links
+ - option to bail via exception if observed object not there
+
+Overall
+
+ - tighten up thread syncing
+
+
+
+Fjord and jumping lists and links together
+
+ - put updateds first so <#> fail won't kill while not yet two-phase
+ - actually, <#> is a snapshot; use <> to keep up to date
+ - updateds must be continuously watched and set as each comes in
+
+ - check size of list and iterate that so failure due to missing object doesn't stop the rest being fetched
+
+
+
+
+
+
+
+
 

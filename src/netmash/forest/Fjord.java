@@ -284,9 +284,6 @@ public class Fjord extends WebObject {
 
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
 
-// "<#>payment": { .. }
-// two-phase
-
     // ----------------------------------------------------
 }
 
