@@ -340,19 +340,23 @@ public class WebObject {
         if(s!=null) l.add(s);
         else{
             String[] parts=path.split(":");
-            for(int x=1; x<=parts.length && l.size()==0; x++){
-                String ss=pathWithIndexIndicator(x,parts);
-                for(int i=0; ; i++){
-                    s=contentString(ss.replaceFirst(":::",String.format(":%d",i)));
-                    if(s!=null) l.add(s);
-                    else break;
+            for(int x=1; x<=parts.length; x++){
+                String ss=pathWithIndexIndicator(parts,x);
+                String listpath = ss.replaceFirst(":::.*","");
+                LinkedList li=contentList(listpath);
+                if(li!=null){
+                    for(int i=0; i<li.size(); i++){
+                        s=contentString(ss.replaceFirst(":::",String.format(":%d",i)));
+                        if(s!=null) l.add(s);
+                    }
+                    break;
                 }
             }
         }
-        return l.size()!=0? l: null;
+        return l.isEmpty()? null: l;
     }
 
-    private String pathWithIndexIndicator(int x, String[] parts){
+    private String pathWithIndexIndicator(String[] parts, int x){
         StringBuilder sb=new StringBuilder();
         int p=0;
         for(; p<x; p++){ sb.append(parts[p]); sb.append(":"); }

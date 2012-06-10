@@ -1086,10 +1086,12 @@ public class JSON {
         boolean structured=false;
         if(maxlength==0){
             int i=0;
+            int w=0;
             for(Object val: ll){
-                if(val instanceof LinkedHashMap || val instanceof LinkedList || ( val instanceof String && ((String)val).length() >25)){
-                    structured=true;
-                    break;
+                if(val instanceof LinkedHashMap || val instanceof LinkedList){ structured=true; break; }
+                if(val instanceof String){
+                    w+=((String)val).length();
+                    if(w>50){ structured=true; break; }
                 }
                 i++; if(i>10) break;
             }

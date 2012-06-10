@@ -2,11 +2,11 @@
     "is": [ "x", "rule" ],
     "when": "Blog visible, get titles and dates. 1",
     "blog": {},
-    "title": "<#>$:blog:title",
-    "newest": "<#>max($:blog:list:published)",
-    "oldest": "<#>min($:blog:list:published)",
-    "titles": "<#>$:blog:list:title",
-    "updateds": "<#>$:blog:list:%more:updated"
+    "title": "<>$:blog:title",
+    "newest": "<>max($:blog:list:published)",
+    "oldest": "<>min($:blog:list:published)",
+    "titles": "<>$:blog:list:title",
+    "updateds": "<>$:blog:list:%more:updated"
 }
 
 {   "%uid": "uid-a622-4f18-719f-2903",
