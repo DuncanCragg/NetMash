@@ -9,7 +9,6 @@ Fjord
  - %more like jumping lists
  - "<#>payment": { .. }
  - "<a|b>": ..
- - see below
 
 Android
 

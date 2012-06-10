@@ -1,18 +1,18 @@
 {   "%uid": "uid-1b56-01ce-b820-ee90",
-    "is": [ "x", "rule" ],
-    "when": "Blog visible, get titles and dates. 1",
+    "is": [ "event", "rule" ],
+    "when": "Blog visible, get titles and dates and make into event. 1",
     "blog": {},
     "title": "<>$:blog:title",
-    "newest": "<>max($:blog:list:published)",
-    "oldest": "<>min($:blog:list:published)",
-    "titles": "<>$:blog:list:title",
-    "updateds": "<>$:blog:list:%more:updated"
+    "content": "<>join(Titles:,$:blog:list:title)",
+    "start": "<>min($:blog:list:published)",
+    "end": "<>max($:blog:list:published)",
+    "updated": "<>$:blog:list:%more:updated"
 }
 
 {   "%uid": "uid-a622-4f18-719f-2903",
     "%class": "netmash.forest.Fjord",
     "%rules": [ "uid-1b56-01ce-b820-ee90" ],
-    "is": [ "x" ],
+    "is": [ "event" ],
     "blog": "http://duncan-cragg.org/blog/atom.json"
 }
 

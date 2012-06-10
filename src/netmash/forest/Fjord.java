@@ -213,6 +213,15 @@ public class Fjord extends WebObject {
             if(match) return contentList(pk).equals(l);
             else      {      contentList(pk,l); return true; }
         }
+        if(func.equals("join")){
+            String s="";
+            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
+                if(arg.startsWith("$:")) for(String e: in(contentAll(arg.substring(2)))) s+=e+" ";
+                else s+=arg+" ";
+            }
+            if(match) return content(pk).equals(s);
+            else      {      content(pk,s); return true; }
+        }
         if(func.equals("prod")){
             double d=1.0;
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
