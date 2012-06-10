@@ -34,7 +34,7 @@
     "%class": "netmash.forest.Fjord",
     "%rules": [ "uid-1b56-01ce-b820-ee90" ],
     "is": [ "event" ],
-    "coord": "http://netmash.net:8081/o/uid-b236-2c49-c6f8-fea6.json"
+    "coord": "http://10.0.2.2:8081/o/uid-b236-2c49-c6f8-fea6.json"
 }
 
 {   "%uid": "uid-1b56-01ce-b820-ee90",
