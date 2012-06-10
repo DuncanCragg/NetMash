@@ -114,6 +114,11 @@ setdebugmapkey:
 
 setappemuconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/netmashconfig.json
+	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/topdb.json
+
+setappremoteconfig:
+	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
+	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/topdb.json
 
 setvmemuconfig:
 	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
@@ -123,9 +128,6 @@ setvmtestconfig:
 
 setvmremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
-
-setappremoteconfig:
-	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
 
 curconfig:
 	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json

@@ -34,17 +34,17 @@
     "%class": "netmash.forest.Fjord",
     "%rules": [ "uid-1b56-01ce-b820-ee90" ],
     "is": [ "event" ],
-    "blog": "http://duncan-cragg.org/blog/atom.json"
+    "coord": "http://netmash.net:8081/o/uid-b236-2c49-c6f8-fea6.json"
 }
 
 {   "%uid": "uid-1b56-01ce-b820-ee90",
     "is": [ "event", "rule" ],
     "when": "Blog visible, get titles and dates and make into event. 1",
-    "blog": {},
-    "title": "<>$:blog:title",
-    "content": "<>join(Titles:,$:blog:list:title)",
-    "start": "<>min($:blog:list:published)",
-    "end": "<>max($:blog:list:published)",
-    "updated": "<>$:blog:list:%more:updated"
+    "coord": { "blog": {} },
+    "title": "<>$:coord:blog:title",
+    "content": "<>join(Titles:,$:coord:blog:list:title)",
+    "start": "<>min($:coord:blog:list:published)",
+    "end": "<>max($:coord:blog:list:published)",
+    "updated": "<>$:coord:blog:list:%more:updated"
 }
 
