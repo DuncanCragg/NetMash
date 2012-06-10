@@ -3,8 +3,8 @@
   "persist": { "directory": ".",
                "db": "netmash.db",
                "syncrate": 100,
-               "preload": [ "uid-a622-4f18-719f-2903" ],
-               "pieload": [ "uid-0145-54f4-36db-302e", "uid-1488-6110-092d-2bae", "uid-a39f-b330-0492-100f", "uid-09e4-e69b-54a4-a725" ]
+               "preload": [ "uid-1488-6110-092d-2bae", "uid-a39f-b330-0492-100f", "uid-09e4-e69b-54a4-a725" ],
+               "pieload": [ "uid-0145-54f4-36db-302e" ]
    },
   "network": { "host": "localhost",
                "port": 8082,

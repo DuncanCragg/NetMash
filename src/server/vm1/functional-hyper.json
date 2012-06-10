@@ -1,5 +1,5 @@
-{   "is": [ "gui" ],
-    "%rules": [ "uid-bbfb-f9c4-81f5-fb57" ],
+{   "%rules": [ "uid-bbfb-f9c4-81f5-fb57" ],
+    "is": [ "gui" ],
     "title": "Remote Demo",
     "view": {
         "style": { "is": "style", "direction": "vertical" },

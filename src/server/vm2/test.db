@@ -1,21 +1,3 @@
-{   "%uid": "uid-1b56-01ce-b820-ee90",
-    "is": [ "event", "rule" ],
-    "when": "Blog visible, get titles and dates and make into event. 1",
-    "blog": {},
-    "title": "<>$:blog:title",
-    "content": "<>join(Titles:,$:blog:list:title)",
-    "start": "<>min($:blog:list:published)",
-    "end": "<>max($:blog:list:published)",
-    "updated": "<>$:blog:list:%more:updated"
-}
-
-{   "%uid": "uid-a622-4f18-719f-2903",
-    "%class": "netmash.forest.Fjord",
-    "%rules": [ "uid-1b56-01ce-b820-ee90" ],
-    "is": [ "event" ],
-    "blog": "http://duncan-cragg.org/blog/atom.json"
-}
-
 {   "%uid": "uid-5348-3aaa-bfc1-7d0c",
     "is": [ "fx", "order", "rule" ],
     "when": "you can see the dealer but have no ticket, notify the dealer. 1",
