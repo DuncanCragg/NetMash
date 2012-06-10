@@ -9,6 +9,7 @@
 }
 
 {   "%uid": "uid-b236-2c49-c6f8-fea6",
+    "is": "coordinator",
     "blog": "http://duncan-cragg.org/blog/atom.json"
 }
 
