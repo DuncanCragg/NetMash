@@ -104,6 +104,15 @@ public class User extends WebObject {
                         "}", words));
     }
 
+    static User newRSVP(String useruid, String eventuid, String attending){
+        return new User(String.format(
+                        "{ \"is\": \"rsvp\", \n"+
+                        "  \"user\": \""+useruid+"\",\n"+
+                        "  \"event\": \""+eventuid+"\",\n"+
+                        "  \"attending\": \"%s\"\n"+
+                        "}", attending));
+    }
+
     // ---------------------------------------------------------
 
     OTS2GUI ots2gui;
@@ -309,7 +318,10 @@ public class User extends WebObject {
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 contentBool("form:"+dehash(tag), val);
-                notifying(content("gui"));
+                if(contentIsOrListContains("gui:is", "event")){
+                    content("rsvp", spawn(newRSVP(content("user"), content("gui"), val? "yes": "no")));
+                }
+                else notifying(content("gui"));
                 refreshObserves();
             }
         };
@@ -346,6 +358,10 @@ public class User extends WebObject {
         if(contentListContainsAll("is", list("document", "query"))){ log("query: "+this);
             for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
             notifying(content("list"));
+        }
+        else
+        if(contentIsOrListContains("is", "rsvp")){ log("rsvp: "+this);
+            notifying(content("event"));
         }
         else log("no evaluate: "+this);
     }

@@ -247,14 +247,20 @@ public class OTS2GUI {
         LinkedList event = list(style("colours","lightmauve"),
                                 user.content("private:viewing:content"),
                                 list(style("direction","horizontal", "proportions","30%"), "Start:", user.content("private:viewing:start")),
-                                list(style("direction","horizontal", "proportions","30%"), "End:",   user.content("private:viewing:end")),
-                                list(style("direction","horizontal", "options","jump", "proportions","75%"), "Location:", locationuid)
+                                list(style("direction","horizontal", "proportions","30%"), "End:",   user.content("private:viewing:end"))
         );
+        if(locationuid!=null) event.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), "Location:", locationuid));
+        LinkedList attendees = new LinkedList();
+        attendees.add(style("direction","vertical"));
+        addListIfPresent(attendees, "attendees", "Attendees");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         String title = user.content("private:viewing:title");
         viewhash.put("style", style("direction","vertical", "colours","lightblue"));
         viewhash.put("#title", "!["+(title!=null? title: "Event")+"]!");
         viewhash.put("#event", event);
+        viewhash.put("#attendees", attendees);
+        if(user.contentIsOrListContains("private:viewing:is", "attendable"))
+        viewhash.put("#rsvp", "?[Attending /boolean/]?");
         return viewhash;
     }
 

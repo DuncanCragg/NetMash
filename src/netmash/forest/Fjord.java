@@ -150,7 +150,7 @@ public class Fjord extends WebObject {
 
     private boolean doLHS(String pk, String lhs){ try{
         if(lhs.equals("{}"))      return  contentHash(pk)!=null;
-        if(lhs.equals("$:"))      return  content(pk).equals(uid);
+        if(lhs.equals("$:"))      return  content(pk).equals(uid) || content(pk).equals(UID.toURL(uid));
         if(lhs.startsWith( "$:")) return  contentObject(pk).equals(contentObject(lhs.substring(2)));
         if(lhs.startsWith("!$:")) return !contentObject(pk).equals(contentObject(lhs.substring(3)));
         if(evalFunction(pk,lhs,true)) return true;
