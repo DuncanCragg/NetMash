@@ -4,7 +4,5 @@
                   "form": { "a": "<$:%alerted:form:b>" }
     },
     "title": "<>$:%alerted:form:t",
-    "view": {
-        "#result": { "#c": "<>prod($:%alerted:form:t,$:%alerted:form:u)" }
-    }
+    "view": { "#result": { "#c": "<>prod($:%alerted:form:t,$:%alerted:form:u)" } }
 }

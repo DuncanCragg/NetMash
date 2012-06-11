@@ -724,8 +724,7 @@ public class WebObject {
             funcobs.saveAndNotifyUpdated(this, true);
         }
         else{
-            // if(obsalmod)
-            funcobs.saveAndAlertFirstTime(this);
+            if(obsalmod) funcobs.saveAndAlertFirstTime(this);
         }
         funcobs.evalSpawned(this);
     }

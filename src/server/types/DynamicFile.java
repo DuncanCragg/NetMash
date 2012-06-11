@@ -12,9 +12,13 @@ public class DynamicFile extends Fjord {
     private boolean running=false;
     private long fileModified=0;
 
-    public void evaluate(){ if(!running){ running=true; runTicker(); } super.evaluate(); }
+    public void evaluate(){
+        super.evaluate();
+        if(!running) runTicker();
+    }
 
     private void runTicker(){
+        running=true;
         new Thread(){ public void run(){
             while(running){
                 try{ Thread.sleep(200); }catch(Exception e){}
@@ -24,6 +28,7 @@ public class DynamicFile extends Fjord {
     }
 
     private void tick(){
+        final WebObject self=this;
         new Evaluator(this){
             public void evaluate(){
                 try{
@@ -34,7 +39,7 @@ public class DynamicFile extends Fjord {
                     if(modified > fileModified){
                         fileModified=modified;
                         contentMerge(new JSON(file));
-                        refreshObserves();
+                        self.evaluate();
                     }
                 }catch(Exception e){ logFail(e); }
             }
