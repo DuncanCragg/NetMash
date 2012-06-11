@@ -155,7 +155,7 @@ public class Fjord extends WebObject {
         if(lhs.startsWith("!$:")) return !contentObject(pk).equals(contentObject(lhs.substring(3)));
         if(evalFunction(pk,lhs,true)) return true;
         return contentIsString(pk,lhs) || contentListContains(pk,lhs);
-    } catch(Throwable t){ log(t); return false; } }
+    } catch(Throwable t){ log(pk); log(lhs); t.printStackTrace(); return false; } }
 
     private void doRHS(String pk, String rhs){ try{
         if(rhs.length()==0) return;
@@ -191,7 +191,7 @@ public class Fjord extends WebObject {
             content(basepath, spawn(getClass().newInstance().construct(contentHash(basepath))));
         }
         else content(pk,rhs);
-    } catch(Throwable t){ log(t); } }
+    } catch(Throwable t){ log(pk); log(rhs); t.printStackTrace(); } }
 
     private void getAllContent(String pk, String source){
         if(!contentClone(pk,source)){ LinkedList<String> l=contentAll(source); if(l!=null) contentList(pk,l); }

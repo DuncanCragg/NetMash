@@ -1,9 +1,9 @@
 
 NetMash is..
 
- - a JSON or mobile-related data browser
+ - a JSON or mobile-related data browser (and server)
 
- - programmed in declarative JSON and JSON animation rules
+ - programmed in declarative JSON and JSON animation rules (in client and on server)
 
  - that fixes many of the problems of HTML/JS/CSS browsers
 

@@ -15,13 +15,35 @@
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
     "is": "links",
     "title": "More Links",
-    "list" : [ "uid-e02f-e1af-1c06-7d5d",
-               "http://the-object.net/123-456.json",
+    "list" : [ "http://the-object.net/123-456.json",
                "http://duncan-cragg.org/blog/atom.json",
-               "uid-a205-babf-72a4-1272",
                "uid-2a68-0c60-16da-9796",
                "http://10.0.2.2:8080/o/home.json"
     ]
+}
+
+{   "%uid": "uid-7756-cb46-4b1b-89cc",
+    "%class": "server.types.DynamicFile",
+    "watching": "functional-hyper.json",
+}
+
+{   "%uid": "uid-bbfb-f9c4-81f5-fb57",
+    "%class": "server.types.DynamicFile",
+    "watching": "functional-hyperule.json",
+}
+
+{   "%uid": "uid-b236-2c49-c6f8-fea6",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-648d-beb0-89a1-d613" ],
+    "is": "coordinator",
+    "blog": "http://duncan-cragg.org/blog/atom.json"
+}
+
+{   "%uid": "uid-648d-beb0-89a1-d613",
+    "is": [ "coordinator", "rule" ],
+    "when": "event notified, take content. 1",
+    "%alerted": { "is": "event" },
+    "blogcontent": "<#>$:%alerted:content"
 }
 
 {   "%uid": "uid-b6d6-c2be-e69d-abbf",
