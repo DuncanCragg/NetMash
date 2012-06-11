@@ -27,6 +27,11 @@
     "watching": "functional-hyper.json",
 }
 
+{   "%uid": "uid-bbfb-f9c4-81f5-fb57",
+    "%class": "server.types.DynamicFile",
+    "watching": "functional-hyperule.json",
+}
+
 {   "%uid": "uid-6373-8190-fe6c-27ba",
     "is": [ "gui", "rule" ],
     "when": "demo gui is animated, set up its styles. 1",
@@ -37,11 +42,6 @@
     "is": [ "gui", "rule" ],
     "when": "demo gui is animated, set up its styles. 2",
     "view": { "#result": { "style": { "is": "<#>style", "proportions":"<#>70%", "colours":"<#>lightturquoise" } } }
-}
-
-{   "%uid": "uid-bbfb-f9c4-81f5-fb57",
-    "%class": "server.types.DynamicFile",
-    "watching": "functional-hyperule.json",
 }
 
 {   "%uid": "uid-b236-2c49-c6f8-fea6",
