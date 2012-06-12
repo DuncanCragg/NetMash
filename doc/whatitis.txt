@@ -21,4 +21,7 @@ NetMash is..
     - there are no application boundaries, API boundaries, silos, walled gardens, identity boundaries
 
 
+.. the Web was for the PC age; the Object Net (and NetMash) is for the mobile age
+
+
 

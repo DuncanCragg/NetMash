@@ -1,7 +1,7 @@
 {   "%uid": "uid-e02f-e1af-1c06-7d5d",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Contact card: enter full name here",
+    "fullName": "Contact: type full name",
     "email": "you@yourdomain.com",
     "address": {
       "street": "150 Old Park Ln",
@@ -15,10 +15,11 @@
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
     "is": "links",
     "title": "More Links",
-    "list" : [ "http://the-object.net/123-456.json",
-               "uid-a205-babf-72a4-1272",
-               "http://duncan-cragg.org/blog/atom.json",
+    "list" : [ "uid-a205-babf-72a4-1272",
+               "uid-afcb-9ff0-9270-98b0",
                "uid-2a68-0c60-16da-9796",
+               "http://duncan-cragg.org/blog/atom.json",
+               "http://the-object.net/123-456.json",
                "http://10.0.2.2:8080/o/home.json"
     ]
 }
@@ -131,7 +132,7 @@
     "%rules": [ "uid-5f5d-6d29-64d8-2d8c", "uid-b3ae-5b55-65ad-a296" ],
     "is": [ "event", "attendable" ],
     "title": "Over the Air 2011",
-    "content": "The premier UK Mobile meetup taking place this year at Bletchley Park",
+    "content": "Top UK Mobile meetup at Bletchley Park",
     "start": "Fri, 30 Sep 2011 09:00:00 GMT",
     "end":   "Sat,  1 Oct 2011 23:00:00 GMT",
     "location": "uid-35c0-9017-99c1-db63",
@@ -153,5 +154,49 @@
     "phone": { "work": "01908 640404" },
     "email": [ "info@bletchleypark.org.uk" ],
     "webView": "http://www.bletchleypark.org/"
+}
+
+{   "%uid": "uid-afcb-9ff0-9270-98b0",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-6db8-55e9-793e-e35c" ],
+    "is": [ "gui" ],
+    "title": "The Simple Event Attendance Manager Mk I",
+    "view": {
+         "#attending": "?[Attending /boolean/ ]?",
+         "#event": [ { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
+                     "Event:", "http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json" ]
+    },
+    "event": "http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json",
+    "rsvp": {}
+}
+
+{   "%uid": "uid-6db8-55e9-793e-e35c",
+    "is": [ "gui", "rule" ],
+    "when": "user sets attendance first time, set form and create new rsvp",
+    "%alerted": { "is": "form", "gui": "<$:>" },
+    "form": "<#>%alerted",
+    "rsvp": { "%rules": "<#>list(uid-da1d-583e-0be6-ad59,uid-939a-8ca9-4845-94cc)",
+              "is": "<#>rsvp",
+              "gui": "<#>$:",
+              "user": "<#>$:form:user",
+              "event": "<#>$:event",
+              "%uid": "<#>new"
+    }
+}
+
+{   "%uid": "uid-da1d-583e-0be6-ad59",
+    "is": [ "rsvp", "rule" ],
+    "when": "user sets attendance each time, set rsvp status for event. 1",
+    "gui": { "form": { "form": { "attending": true }}},
+    "attending": "<>yes",
+    "%notifying": "<>has($:gui:event)"
+}
+
+{   "%uid": "uid-939a-8ca9-4845-94cc",
+    "is": [ "rsvp", "rule" ],
+    "when": "user sets attendance each time, set rsvp status for event. 2",
+    "gui": { "form": { "form": { "attending": false }}},
+    "attending": "<>no",
+    "%notifying": "<>has($:gui:event)"
 }
 
