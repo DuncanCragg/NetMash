@@ -201,3 +201,29 @@
     "%notifying": "<>has($:gui:event)"
 }
 
+{   "%uid": "uid-f74b-020f-af28-5671",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-3c3a-7576-a61b-ed87", "uid-61fd-78a2-60b6-4c27" ],
+    "is": "fibonacci",
+    "me": "uid-f74b-020f-af28-5671",
+    "x": 1,
+    "y": 1
+}
+
+{   "%uid": "uid-3c3a-7576-a61b-ed87",
+    "is": [ "fibonacci", "rule" ],
+    "when": "below 100, z is sum of x and y",
+    "me": {},
+    "y": "<lt(100)>",
+    "z": "<>sum($:x,$:y)",
+    "r": "<>div($:y,$:x)"
+}
+
+{   "%uid": "uid-61fd-78a2-60b6-4c27",
+    "is": [ "fibonacci", "rule" ],
+    "when": "z calculated, shift back",
+    "me": {},
+    "x": "<>$:y",
+    "y": "<>$:z"
+}
+

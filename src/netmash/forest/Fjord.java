@@ -222,10 +222,27 @@ public class Fjord extends WebObject {
             if(match) return content(pk).equals(s);
             else      {      content(pk,s); return true; }
         }
+        if(func.equals("sum")){
+            double d=0.0;
+            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
+                d += arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+            }
+            if(match) return contentDouble(pk)==d;
+            else      {      contentDouble(pk,new Double(d)); return true; }
+        }
         if(func.equals("prod")){
             double d=1.0;
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 d *= arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+            }
+            if(match) return contentDouble(pk)==d;
+            else      {      contentDouble(pk,new Double(d)); return true; }
+        }
+        if(func.equals("div")){
+            String arg=args[0].trim();
+            double d=arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+            for(int i=1; i<args.length; i++){ arg=args[i].trim();
+                d /= arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
             }
             if(match) return contentDouble(pk)==d;
             else      {      contentDouble(pk,new Double(d)); return true; }
