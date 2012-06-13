@@ -36,7 +36,11 @@ Overall
 
  - tighten up thread syncing
 
+Types
 
+ - queryable not searchable
+ - always roundtrip extra tags in queryable
+ - preview (?) not summary?
 
 
 
