@@ -207,16 +207,18 @@
     "is": "fibonacci",
     "me": "uid-f74b-020f-af28-5671",
     "x": 1,
-    "y": 1
+    "y": 1,
+    "seq": []
 }
 
 {   "%uid": "uid-3c3a-7576-a61b-ed87",
     "is": [ "fibonacci", "rule" ],
-    "when": "below 100, z is sum of x and y",
+    "when": "running, z is sum of x and y",
     "me": {},
-    "y": "<lt(100)>",
+    "y": "<lt(100000)>",
     "z": "<>sum($:x,$:y)",
-    "r": "<>div($:y,$:x)"
+    "r": "<>div($:y,$:x)",
+    "seq": "<>has($:z)"
 }
 
 {   "%uid": "uid-61fd-78a2-60b6-4c27",

@@ -164,7 +164,7 @@ public class Fjord extends WebObject {
             if(rhs.startsWith("hasno($:")) unnotifying(content(rhs.substring(8,rhs.length()-1)));
             return;
         }
-        if(rhs.startsWith("has($:"))   contentSetAdd(    pk, content(rhs.substring(6,rhs.length()-1)));
+        if(rhs.startsWith("has($:"))   contentSetAdd(    pk, contentObject(rhs.substring(6,rhs.length()-1)));
         else
         if(rhs.startsWith("hasno($:")) contentListRemove(pk, content(rhs.substring(8,rhs.length()-1)));
         else
