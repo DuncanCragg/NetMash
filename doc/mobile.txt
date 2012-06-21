@@ -1,12 +1,13 @@
 
 Mobile Spectrum
 
- + responsive design; mobile first; progressive enhancement; HTML5 declarative; no JS; pure Web
+ + Mobile First; Responsive Design/Progressive Enhancement; HTML5 declarative; no JS; pure Web
  + HTML5 JS APIs only: offline, JSON driven, localstorage, single page; iPhone app.ft.com bookmark on home page
  + native wrapper around some HTML5 JS APIs plus own APIs: Phonegap; WAC; Android FT, LinkedIn iPad
  + native wrapper around JS with native controls and own APIs: Kirin; Future Platforms
- + native pure native code and APIs
+ + native pure native code and APIs: RD/PE/GD
 
  + NetMash is at the top but offline, JSON driven, full native access, native controls
  + Netmash collapses spectrum
+ + still benefits from RD/PE/GD
 

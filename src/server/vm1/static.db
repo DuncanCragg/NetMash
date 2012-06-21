@@ -26,10 +26,20 @@
 
 {   "%uid": "uid-7756-cb46-4b1b-89cc",
     "%class": "server.types.DynamicFile",
-    "watching": "functional-hyper.json",
+    "watching": "gui.json",
 }
 
 {   "%uid": "uid-bbfb-f9c4-81f5-fb57",
+    "%class": "server.types.DynamicFile",
+    "watching": "gui-rule.json",
+}
+
+{   "%uid": "uid-3927-d995-837f-f165",
+    "%class": "server.types.DynamicFile",
+    "watching": "functional-hyper.json",
+}
+
+{   "%uid": "uid-71b5-57fa-cf4b-6435",
     "%class": "server.types.DynamicFile",
     "watching": "functional-hyperule.json",
 }

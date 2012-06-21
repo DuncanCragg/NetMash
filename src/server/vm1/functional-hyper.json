@@ -1,13 +1,5 @@
-{   "%rules": [ "uid-6373-8190-fe6c-27ba", "uid-cc96-00ff-a9df-381a", "uid-bbfb-f9c4-81f5-fb57" ],
-    "is": [ "gui" ],
-    "title": "Remote GUI Demo",
-    "view": {
-        "#stuff": [
-            { "#a": "?[A /boolean/ ]?" },
-            { "#b": "?[B /boolean/ ]?" },
-            { "#t": "?[4 /string/]?" },
-            { "#u": "?[5 /string/]?" },
-         ],
-        "#result":  { "#c": "..." }
-    }
+{   "%rules": [ "uid-71b5-57fa-cf4b-6435" ],
+    "is": [ "demo" ],
+    "title": "uid-f74b-020f-af28-5671",
+    "link": "uid-f74b-020f-af28-5671"
 }

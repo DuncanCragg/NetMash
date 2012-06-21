@@ -1,0 +1,13 @@
+{   "%rules": [ "uid-6373-8190-fe6c-27ba", "uid-cc96-00ff-a9df-381a", "uid-bbfb-f9c4-81f5-fb57" ],
+    "is": [ "gui" ],
+    "title": "Remote GUI Demo",
+    "view": {
+        "#stuff": [
+            { "#a": "?[A /boolean/ ]?" },
+            { "#b": "?[B /boolean/ ]?" },
+            { "#t": "?[4 /string/]?" },
+            { "#u": "?[5 /string/]?" },
+         ],
+        "#result":  { "#c": "..." }
+    }
+}

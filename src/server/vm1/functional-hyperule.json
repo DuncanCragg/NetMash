@@ -1,6 +1,4 @@
-{   "is": [ "gui", "rule" ],
-    "when": "checkboxes change, do logic",
-    "%alerted": { "is": "form", "form": { "a": "<$:%alerted:form:b>" } },
-    "title": "<>$:%alerted:form:t",
-    "view": { "#result": { "#c": "<>prod($:%alerted:form:t,$:%alerted:form:u)" } }
+{   "is": [ "demo", "rule" ],
+    "when": "run, change title",
+    "link": {}, "title": "<>1"
 }

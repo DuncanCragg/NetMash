@@ -6,13 +6,13 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noargs: androidemu runstaticserver
+noargs: androidemu runstaticserver logboth
 
-demo: editstaticdb androidemu runquickserver editdynamicfile
+demo: editstaticdb androidemu runquickserver logboth editdynamicfile
 
-quickdyn: editquickdb androidemu runquickserver editdynamicfile
+quickdyn: editquickdb androidemu runquickserver logboth editdynamicfile
 
-local: androidemu runlocalserver editlocaldbanddynamicfile
+local: androidemu runlocalserver logboth editlocaldbanddynamicfile
 
 fjord: kill runcur whappen
 
@@ -55,11 +55,11 @@ reinstall:
 
 # -------------------------------------------------------------------
 
-runstaticserver: kill clean setvmemuconfig usestaticdb run1 logboth
+runstaticserver: kill clean setvmemuconfig usestaticdb run1
 
-runquickserver: kill clean setvmemuconfig usequickdb run1 logboth
+runquickserver: kill clean setvmemuconfig usequickdb run1
 
-runlocalserver: kill clean setvmemuconfig uselocaldb run1 logboth
+runlocalserver: kill clean setvmemuconfig uselocaldb run1
 
 runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
 
