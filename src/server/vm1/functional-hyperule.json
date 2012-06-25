@@ -1,4 +1,4 @@
 {   "is": [ "demo", "rule" ],
     "when": "run, change title",
-    "link": {}, "title": "<>1"
+    "title": "<>div($:fib:seq:16,$:fib:seq:15)"
 }

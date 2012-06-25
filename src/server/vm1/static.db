@@ -1,5 +1,4 @@
 {   "%uid": "uid-e02f-e1af-1c06-7d5d",
-    "%class": "",
     "is": [ "contact" ],
     "fullName": "Contact: type full name",
     "email": "you@yourdomain.com",
@@ -151,7 +150,6 @@
 }
 
 {   "%uid": "uid-35c0-9017-99c1-db63",
-    "%class": "",
     "is": [ "contact" ],
     "fullName": "Bletchley Park",
     "address": {

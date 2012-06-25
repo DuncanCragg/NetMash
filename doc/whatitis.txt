@@ -25,3 +25,5 @@ NetMash is..
 
 RD/PE/GD
 
+See MF programmer rant
+
