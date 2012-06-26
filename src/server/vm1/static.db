@@ -1,16 +1,3 @@
-{   "%uid": "uid-e02f-e1af-1c06-7d5d",
-    "is": [ "contact" ],
-    "fullName": "Contact: type full name",
-    "email": "you@yourdomain.com",
-    "address": {
-      "street": "150 Old Park Ln",
-      "locality": "London",
-      "postalCode": "W1K 1QZ",
-      "country": "UK"
-    },
-    "phone": { "home": "020 8888 8888", "mobile": "0777 77 77 777" }
-}
-
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
     "is": "links",
     "title": "More Links",
@@ -146,7 +133,7 @@
     "start": "Fri, 30 Sep 2011 09:00:00 GMT",
     "end":   "Sat,  1 Oct 2011 23:00:00 GMT",
     "location": "uid-35c0-9017-99c1-db63",
-    "attendees": [ "uid-e02f-e1af-1c06-7d5d" ]
+    "attendees": [ ]
 }
 
 {   "%uid": "uid-35c0-9017-99c1-db63",
