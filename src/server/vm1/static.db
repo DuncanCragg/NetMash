@@ -8,13 +8,32 @@
     "watching": "functional-hyperule.json",
 }
 
-{   "%uid": "uid-4b71-f8d4-c761-be2d",
-    "is": "links",
-    "title": "More Examples",
-    "list" : [ "uid-2a68-0c60-16da-9796",
-               "http://the-object.net/123-456.json",
-               "http://10.0.2.2:8080/o/home.json"
-    ]
+{   "%uid": "uid-f74b-020f-af28-5671",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-3c3a-7576-a61b-ed87", "uid-61fd-78a2-60b6-4c27" ],
+    "is": "fibonacci",
+    "me": "uid-f74b-020f-af28-5671",
+    "x": 1,
+    "y": 1,
+    "seq": []
+}
+
+{   "%uid": "uid-3c3a-7576-a61b-ed87",
+    "is": [ "fibonacci", "rule" ],
+    "when": "running, z is sum of x and y",
+    "me": {},
+    "y": "<lt(100000)>",
+    "z": "<>sum($:x,$:y)",
+    "r": "<>div($:y,$:x)",
+    "seq": "<>has($:z)"
+}
+
+{   "%uid": "uid-61fd-78a2-60b6-4c27",
+    "is": [ "fibonacci", "rule" ],
+    "when": "z calculated, shift back",
+    "me": {},
+    "x": "<>$:y",
+    "y": "<>$:z"
 }
 
 {   "%uid": "uid-7756-cb46-4b1b-89cc",
@@ -37,6 +56,32 @@
     "is": [ "gui", "rule" ],
     "when": "demo gui is animated, set up its styles. 2",
     "view": { "#result": { "style": { "is": "<#>style", "proportions":"<#>70%", "colours":"<#>lightturquoise" } } }
+}
+
+{   "%uid": "uid-a205-babf-72a4-1272",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-5f5d-6d29-64d8-2d8c", "uid-b3ae-5b55-65ad-a296" ],
+    "is": [ "event", "attendable" ],
+    "title": "Over the Air 2011",
+    "content": "Top UK Mobile meetup at Bletchley Park",
+    "start": "Fri, 30 Sep 2011 09:00:00 GMT",
+    "end":   "Sat,  1 Oct 2011 23:00:00 GMT",
+    "location": "uid-35c0-9017-99c1-db63",
+    "attendees": [ ]
+}
+
+{   "%uid": "uid-afcb-9ff0-9270-98b0",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-6db8-55e9-793e-e35c" ],
+    "is": [ "gui" ],
+    "title": "The Simple Event Attendance Manager Mk I",
+    "view": {
+         "#attending": "?[Attending /boolean/ ]?",
+         "#event": [ { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
+                     "Event:", "http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json" ]
+    },
+    "event": "http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json",
+    "rsvp": {}
 }
 
 {   "%uid": "uid-b236-2c49-c6f8-fea6",
@@ -121,18 +166,6 @@
     "attendees": "<>hasno($:%alerted:user)"
 }
 
-{   "%uid": "uid-a205-babf-72a4-1272",
-    "%class": "netmash.forest.Fjord",
-    "%rules": [ "uid-5f5d-6d29-64d8-2d8c", "uid-b3ae-5b55-65ad-a296" ],
-    "is": [ "event", "attendable" ],
-    "title": "Over the Air 2011",
-    "content": "Top UK Mobile meetup at Bletchley Park",
-    "start": "Fri, 30 Sep 2011 09:00:00 GMT",
-    "end":   "Sat,  1 Oct 2011 23:00:00 GMT",
-    "location": "uid-35c0-9017-99c1-db63",
-    "attendees": [ ]
-}
-
 {   "%uid": "uid-35c0-9017-99c1-db63",
     "is": [ "contact" ],
     "fullName": "Bletchley Park",
@@ -147,20 +180,6 @@
     "phone": { "work": "01908 640404" },
     "email": [ "info@bletchleypark.org.uk" ],
     "webView": "http://www.bletchleypark.org/"
-}
-
-{   "%uid": "uid-afcb-9ff0-9270-98b0",
-    "%class": "netmash.forest.Fjord",
-    "%rules": [ "uid-6db8-55e9-793e-e35c" ],
-    "is": [ "gui" ],
-    "title": "The Simple Event Attendance Manager Mk I",
-    "view": {
-         "#attending": "?[Attending /boolean/ ]?",
-         "#event": [ { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
-                     "Event:", "http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json" ]
-    },
-    "event": "http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json",
-    "rsvp": {}
 }
 
 {   "%uid": "uid-6db8-55e9-793e-e35c",
@@ -193,31 +212,12 @@
     "%notifying": "<>has($:gui:event)"
 }
 
-{   "%uid": "uid-f74b-020f-af28-5671",
-    "%class": "netmash.forest.Fjord",
-    "%rules": [ "uid-3c3a-7576-a61b-ed87", "uid-61fd-78a2-60b6-4c27" ],
-    "is": "fibonacci",
-    "me": "uid-f74b-020f-af28-5671",
-    "x": 1,
-    "y": 1,
-    "seq": []
-}
-
-{   "%uid": "uid-3c3a-7576-a61b-ed87",
-    "is": [ "fibonacci", "rule" ],
-    "when": "running, z is sum of x and y",
-    "me": {},
-    "y": "<lt(100000)>",
-    "z": "<>sum($:x,$:y)",
-    "r": "<>div($:y,$:x)",
-    "seq": "<>has($:z)"
-}
-
-{   "%uid": "uid-61fd-78a2-60b6-4c27",
-    "is": [ "fibonacci", "rule" ],
-    "when": "z calculated, shift back",
-    "me": {},
-    "x": "<>$:y",
-    "y": "<>$:z"
+{   "%uid": "uid-4b71-f8d4-c761-be2d",
+    "is": "links",
+    "title": "More Examples",
+    "list" : [ "uid-2a68-0c60-16da-9796",
+               "http://the-object.net/123-456.json",
+               "http://10.0.2.2:8080/o/home.json"
+    ]
 }
 
