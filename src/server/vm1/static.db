@@ -70,6 +70,20 @@
     "attendees": [ ]
 }
 
+{   "%uid": "uid-5f5d-6d29-64d8-2d8c",
+    "is": [ "event", "rule" ],
+    "when": "rsvp attending received, ensure user is in attendees. 1",
+    "%alerted": { "is": "rsvp", "event": "<$:>", "attending": "yes" },
+    "attendees": "<>has($:%alerted:user)"
+}
+
+{   "%uid": "uid-b3ae-5b55-65ad-a296",
+    "is": [ "event", "rule" ],
+    "when": "rsvp not attending received, ensure user is not in attendees. 2",
+    "%alerted": { "is": "rsvp", "event": "<$:>", "attending": "no" },
+    "attendees": "<>hasno($:%alerted:user)"
+}
+
 {   "%uid": "uid-35c0-9017-99c1-db63",
     "is": [ "contact" ],
     "fullName": "Bletchley Park",
@@ -100,34 +114,6 @@
     "rsvp": {}
 }
 
-{   "%uid": "uid-b236-2c49-c6f8-fea6",
-    "%class": "netmash.forest.Fjord",
-    "%rules": [ "uid-648d-beb0-89a1-d613" ],
-    "is": "coordinator",
-    "blog": "http://duncan-cragg.org/blog/atom.json"
-}
-
-{   "%uid": "uid-648d-beb0-89a1-d613",
-    "is": [ "coordinator", "rule" ],
-    "when": "event notified, take content. 1",
-    "%alerted": { "is": "event" },
-    "blogcontent": "<#>$:%alerted:content"
-}
-
-{   "%uid": "uid-5f5d-6d29-64d8-2d8c",
-    "is": [ "event", "rule" ],
-    "when": "rsvp attending received, ensure user is in attendees. 1",
-    "%alerted": { "is": "rsvp", "event": "<$:>", "attending": "yes" },
-    "attendees": "<>has($:%alerted:user)"
-}
-
-{   "%uid": "uid-b3ae-5b55-65ad-a296",
-    "is": [ "event", "rule" ],
-    "when": "rsvp not attending received, ensure user is not in attendees. 2",
-    "%alerted": { "is": "rsvp", "event": "<$:>", "attending": "no" },
-    "attendees": "<>hasno($:%alerted:user)"
-}
-
 {   "%uid": "uid-6db8-55e9-793e-e35c",
     "is": [ "gui", "rule" ],
     "when": "user sets attendance first time, set form and create new rsvp",
@@ -156,6 +142,20 @@
     "gui": { "form": { "form": { "attending": false }}},
     "attending": "<>no",
     "%notifying": "<>has($:gui:event)"
+}
+
+{   "%uid": "uid-b236-2c49-c6f8-fea6",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-648d-beb0-89a1-d613" ],
+    "is": "coordinator",
+    "blog": "http://duncan-cragg.org/blog/atom.json"
+}
+
+{   "%uid": "uid-648d-beb0-89a1-d613",
+    "is": [ "coordinator", "rule" ],
+    "when": "event notified, take content. 1",
+    "%alerted": { "is": "event" },
+    "blogcontent": "<#>$:%alerted:content"
 }
 
 {   "%uid": "uid-4b71-f8d4-c761-be2d",
