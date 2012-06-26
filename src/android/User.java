@@ -385,7 +385,7 @@ public class User extends WebObject {
     private void showWhatIAmViewingAsGUI(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
-            String title=null;
+            String title=content("private:viewing:title");
             if(contentIsOrListContains("private:viewing:is", "user")&&
                contentIsOrListContains("private:viewing:is", "list")  ){
 
@@ -427,7 +427,6 @@ public class User extends WebObject {
             }
             else
             if(contentIsOrListContains("private:viewing:is", "gui")){
-                title   =content(    "private:viewing:title");
                 viewhash=contentHash("private:viewing:view");
             }
             else{

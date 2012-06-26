@@ -143,7 +143,7 @@ whappen:
 
 logboth:
 	xterm -geometry 97x50+0+80   -e make logcat &
-	xterm -geometry 97x20+700+500 -e make logout1 &
+	xterm -geometry 97x20+0+80 -e make logout1 &
 
 logcat:
 	adb logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"
