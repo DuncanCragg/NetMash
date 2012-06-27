@@ -63,18 +63,14 @@ public class JSON {
 
     /** From top-level hash. */
     public JSON(LinkedHashMap hm){
-        tophash = hm;
-        chars=null;
-        chp=0;
+        setTopHash(hm);
     }
 
     /** Shallow clone of given JSON. */
     @SuppressWarnings("unchecked")
     public JSON(JSON json){
         json.ensureContent();
-        tophash = new LinkedHashMap(json.tophash);
-        chars=null;
-        chp=0;
+        setTopHash(new LinkedHashMap(json.tophash));
     }
 
     //----------------------------------
@@ -82,7 +78,7 @@ public class JSON {
     /** Get content LinkedHashMap. */
     public LinkedHashMap content(){
         ensureContent();
-        return (LinkedHashMap)tophash;
+        return tophash;
     }
 
     /** Check this JSON is empty. */
@@ -95,16 +91,28 @@ public class JSON {
     public void content(String json) throws Exception{
         chars=json.toCharArray();
         chp=0;
-        tophash = readHashMap();
-        chars=null;
-        chp=0;
+        setTopHash(readHashMap());
     }
 
     /** Set content LinkedHashMap. */
     public void content(LinkedHashMap content){
-        tophash = content;
-        chars=null;
-        chp=0;
+        setTopHash(content);
+    }
+
+    /** Merge this JSON with the supplied one. */
+    public boolean mergeWith(JSON json){
+        ensureContent();
+        json.ensureContent();
+        mergeHash(tophash, json.tophash);
+        return true;
+    }
+
+    /** Replace this JSON with the supplied one. */
+    @SuppressWarnings("unchecked")
+    public boolean replaceWith(JSON json){
+        json.ensureContent();
+        setTopHash(new LinkedHashMap(json.tophash));
+        return true;
     }
 
     //----------------------------------
@@ -312,13 +320,6 @@ public class JSON {
 
     //----------------------------------
 
-    /** Merge this JSON with the supplied one. */
-    public boolean merge(JSON json){
-        ensureContent();
-        json.ensureContent();
-        return mergeJSON(tophash, json.tophash);
-    }
-
     /** Apply map to the list of hashes at path and return it. */
     @SuppressWarnings("unchecked")
     public LinkedList<LinkedHashMap> mapList(String path, JSON map){
@@ -422,7 +423,11 @@ public class JSON {
     private void ensureContentX() throws Exception{
         if(tophash!=null) return;
         if(chars==null) return;
-        tophash = readHashMap();
+        setTopHash(readHashMap());
+    }
+
+    private void setTopHash(LinkedHashMap hm){
+        tophash = hm;
         chars=null;
         chp=0;
     }
@@ -918,14 +923,12 @@ public class JSON {
         return true;
     }
 
-
-    private boolean mergeJSON(LinkedHashMap hashmap, LinkedHashMap other){
+    private void mergeHash(LinkedHashMap hashmap, LinkedHashMap other){
         for(Iterator it=other.keySet().iterator(); it.hasNext(); ){
             String tag = (String)it.next();
             Object val = other.get(tag);
             setObject(hashmap, tag, val);
         }
-        return true;
     }
 
     @SuppressWarnings("unchecked")
@@ -1045,7 +1048,7 @@ public class JSON {
     private void ensureChars(int maxlength){
         StringBuilder buf = new StringBuilder();
         if(tophash!=null){
-            buf.append(hashToString((LinkedHashMap)tophash,4,maxlength));
+            buf.append(hashToString(tophash,4,maxlength));
         }
         chars = new String(buf).toCharArray();
         chp=0;

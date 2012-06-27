@@ -510,10 +510,12 @@ public class WebObject {
         statemod = updatingState.listPathAddAll(path, val) || statemod;
     }
 
-    /** Remove item at path. */
-    public void contentRemove(String path){
+    /** Remove item at path and return object that was at that path. */
+    public Object contentRemove(String path){
+        Object o = contentObject(path);
         doCopyOnWrite(path);
         statemod = updatingState.removePath(path) || statemod;
+        return o;
     }
 
     /** Remove the given value in the list at the path. */
@@ -560,7 +562,13 @@ public class WebObject {
     /** Merge in JSON to this object. */
     public void contentMerge(JSON json){
         doCopyOnWrite("");
-        statemod = updatingState.merge(json) || statemod;
+        statemod = updatingState.mergeWith(json) || statemod;
+    }
+
+    /** Replace all content with supplied JSON. */
+    public void contentReplace(JSON json){
+        doCopyOnWrite("");
+        statemod = updatingState.replaceWith(json) || statemod;
     }
 
     /** Set this object up to notify the object at this uid.

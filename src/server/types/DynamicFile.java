@@ -20,25 +20,26 @@ public class DynamicFile extends Fjord {
     private void runTicker(){
         running=true;
         new Thread(){ public void run(){
+            String watching=content("watching");
             while(running){
                 try{ Thread.sleep(200); }catch(Exception e){}
-                tick();
+                tick(watching);
             }
         }}.start();
     }
 
-    private void tick(){
+    private void tick(final String watching){
         final WebObject self=this;
         new Evaluator(this){
             public void evaluate(){
                 try{
-                    String filename=content("watching");
-                    File file = new File(filename);
+                    File file = new File(watching);
                     if(!(file.exists() && file.canRead())) throw new Exception("Can't read file");
                     long modified=file.lastModified();
                     if(modified > fileModified){
                         fileModified=modified;
-                        contentMerge(new JSON(file));
+                        contentReplace(new JSON(file));
+                        content("watching", watching);
                         self.evaluate();
                     }
                     else refreshObserves();
