@@ -217,8 +217,8 @@ public class Fjord extends WebObject {
             String d=arg.startsWith("$:")? content(arg.substring(2)): arg;
             if(d==null) d="";
             StringBuilder sb=new StringBuilder();
-            for(int i=1; i<args.length; i++){ arg=args[i].trim();
-                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))){ sb.append(o); sb.append(d); }
+            for(int i=1; i<args.length; i++){ arg=args[i];
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2).trim()))){ sb.append(o); sb.append(d); }
                 else{ sb.append(arg); sb.append(d); }
             }
             String s=sb.toString();
