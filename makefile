@@ -33,6 +33,14 @@ editdynamicfile:
 editlocaldbanddynamicfile:
 	vi -o -N src/server/vm1/local.db src/server/vm1/guitest.json
 
+demohello:
+	cp src/server/vm1/functional-hyper-hello.json src/server/vm1/functional-hyper.json
+	cp src/server/vm1/functional-hyperule-hello.json src/server/vm1/functional-hyperule.json
+
+demofib:
+	cp src/server/vm1/functional-hyper-fib.json src/server/vm1/functional-hyper.json
+	cp src/server/vm1/functional-hyperule-fib.json src/server/vm1/functional-hyperule.json
+
 # -------------------------------------------------------------------
 
 androidemu: clean init setappemuconfig setdebugmapkey
