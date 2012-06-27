@@ -235,8 +235,8 @@ public class OTS2GUI {
         if(photourl==null) photourl="";
 
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
-        viewhash.put("style", style("direction","vertical", "colours","lightpink"));
-        viewhash.put("#title", list(style("direction","horizontal", "proportions","25%"), photourl, fullname));
+        viewhash.put("style", style("direction","vertical"));
+        viewhash.put("#title", list(style("direction","horizontal", "proportions","25%", "colours","lightpink*"), photourl, fullname));
         viewhash.put("#contact", contactdetail);
         return viewhash;
     }
