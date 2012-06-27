@@ -334,23 +334,24 @@ public class WebObject {
     }
 
     /** Get list of String forms at path, iterating one intervening list if any. */
-    public LinkedList<String> contentAll(String path){
-        LinkedList<String> l = new LinkedList<String>();
+    @SuppressWarnings("unchecked")
+    public LinkedList contentAll(String path){
+        LinkedList l=contentList(path);
+        if(l!=null){ return l.isEmpty()? null: l; }
         String s=contentString(path);
-        if(s!=null) l.add(s);
-        else{
-            String[] parts=path.split(":");
-            for(int x=1; x<=parts.length; x++){
-                String ss=pathWithIndexIndicator(parts,x);
-                String listpath = ss.replaceFirst(":::.*","");
-                LinkedList li=contentList(listpath);
-                if(li!=null){
-                    for(int i=0; i<li.size(); i++){
-                        s=contentString(ss.replaceFirst(":::",String.format(":%d",i)));
-                        if(s!=null) l.add(s);
-                    }
-                    break;
+        l=new LinkedList();
+        if(s!=null){ l.add(s); return l; }
+        String[] parts=path.split(":");
+        for(int x=1; x<=parts.length; x++){
+            String ss=pathWithIndexIndicator(parts,x);
+            String listpath = ss.replaceFirst(":::.*","");
+            LinkedList li=contentList(listpath);
+            if(li!=null){
+                for(int i=0; i<li.size(); i++){
+                    s=contentString(ss.replaceFirst(":::",String.format(":%d",i)));
+                    if(s!=null) l.add(s);
                 }
+                break;
             }
         }
         return l.isEmpty()? null: l;

@@ -1,5 +1,5 @@
 {   "is": [ "demo", "rule" ],
     "when": "run, change title",
-    "x": "<>div($:fib:seq:10,$:fib:seq:9)",
-    "title": "<>join(Value is,$:x)"
+    "x": "<>sum($:fib:seq)",
+    "title": "<>join(x =,$:x)"
 }

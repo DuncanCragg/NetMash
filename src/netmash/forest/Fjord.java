@@ -194,7 +194,7 @@ public class Fjord extends WebObject {
     } catch(Throwable t){ log(pk); log(rhs); t.printStackTrace(); } }
 
     private void getAllContent(String pk, String source){
-        if(!contentClone(pk,source)){ LinkedList<String> l=contentAll(source); if(l!=null) contentList(pk,l); }
+        if(!contentClone(pk,source)){ LinkedList l=contentAll(source); if(l!=null) contentList(pk,l); }
     }
 
     @SuppressWarnings("unchecked")
@@ -216,16 +216,17 @@ public class Fjord extends WebObject {
         if(func.equals("join")){
             String s="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                if(arg.startsWith("$:")) for(String e: in(contentAll(arg.substring(2)))) s+=e+" ";
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))) s+=o+" ";
                 else s+=arg+" ";
             }
-            if(match) return content(pk).equals(s);
-            else      {      content(pk,s); return true; }
+            if(match) return content(pk).equals(s.trim());
+            else      {      content(pk,s.trim()); return true; }
         }
         if(func.equals("sum")){
             double d=0.0;
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                d += arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))) d+=tryDouble(o,0);
+                else d+=tryDouble(arg,0);
             }
             if(match) return contentDouble(pk)==d;
             else      {      contentDouble(pk,new Double(d)); return true; }
@@ -233,24 +234,34 @@ public class Fjord extends WebObject {
         if(func.equals("prod")){
             double d=1.0;
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                d *= arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))) d*=tryDouble(o,1);
+                else d*=tryDouble(arg,1);
             }
             if(match) return contentDouble(pk)==d;
             else      {      contentDouble(pk,new Double(d)); return true; }
         }
         if(func.equals("div")){
             String arg=args[0].trim();
-            double d=arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+            double d=arg.startsWith("$:")? contentDouble(arg.substring(2)): tryDouble(arg,0);
             for(int i=1; i<args.length; i++){ arg=args[i].trim();
-                d /= arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))) d/=tryDouble(o,1);
+                else d/=tryDouble(arg,1);
             }
             if(match) return contentDouble(pk)==d;
             else      {      contentDouble(pk,new Double(d)); return true; }
         }
         if(func.equals("lt")){
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                double v=arg.startsWith("$:")? contentDouble(arg.substring(2)): Double.parseDouble(arg);
+                double v=arg.startsWith("$:")? contentDouble(arg.substring(2)): tryDouble(arg,0);
                 if(match) return contentDouble(pk) < v;
+                else      return true;
+            }
+            return !match;
+        }
+        if(func.equals("gt")){
+            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
+                double v=arg.startsWith("$:")? contentDouble(arg.substring(2)): tryDouble(arg,0);
+                if(match) return contentDouble(pk) > v;
                 else      return true;
             }
             return !match;
@@ -259,7 +270,7 @@ public class Fjord extends WebObject {
             String min="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 if(arg.startsWith("$:")){
-                    for(String s: in(contentAll(arg.substring(2)))) min=minFromString(min,s);
+                    for(Object o: in(contentAll(arg.substring(2)))) min=minFromString(min,o.toString());
                 }
             }
             if(match) return false;
@@ -269,7 +280,7 @@ public class Fjord extends WebObject {
             String max="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
                 if(arg.startsWith("$:")){
-                    for(String s: in(contentAll(arg.substring(2)))) max=maxFromString(max,s);
+                    for(Object o: in(contentAll(arg.substring(2)))) max=maxFromString(max,o.toString());
                 }
             }
             if(match) return false;
@@ -294,11 +305,9 @@ public class Fjord extends WebObject {
     static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     private double findNumberIn(String s){
-        double n=0;
         Date d = dateFormat.parse(s, new ParsePosition(0));
-        if(d!=null) n=d.getTime();
-        else try{ n=Double.parseDouble(s); } catch(NumberFormatException e){ }
-        return n;
+        if(d!=null) return d.getTime();
+        else return tryDouble(s,0);
     }
 
     private Object makeBestObject(String s){
@@ -306,6 +315,10 @@ public class Fjord extends WebObject {
         if(s.toLowerCase().equals("true" )) return new Boolean(true);
         if(s.toLowerCase().equals("false")) return new Boolean(false);
         return s;
+    }
+
+    private double tryDouble(Object o, double d){
+        try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return d; }
     }
 
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
