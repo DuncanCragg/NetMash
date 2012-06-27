@@ -18,7 +18,6 @@ public class Fjord extends WebObject {
     public Fjord(LinkedHashMap hm){ super(hm); }
 
     public void evaluate(){
-
         if(extralogging) log("Running Fjord on "+contentHash("#"));
         LinkedList rules=contentList("%rules");
         if(extralogging) log("Rules: "+rules);
@@ -214,11 +213,16 @@ public class Fjord extends WebObject {
             else      {      contentList(pk,l); return true; }
         }
         if(func.equals("join")){
-            String s="";
-            for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))) s+=o+" ";
-                else s+=arg+" ";
+            String arg=args[0];
+            String d=arg.startsWith("$:")? content(arg.substring(2)): arg;
+            if(d==null) d="";
+            StringBuilder sb=new StringBuilder();
+            for(int i=1; i<args.length; i++){ arg=args[i].trim();
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))){ sb.append(o); sb.append(d); }
+                else{ sb.append(arg); sb.append(d); }
             }
+            String s=sb.toString();
+            s=s.substring(0,s.length()-d.length());
             if(match) return content(pk).equals(s.trim());
             else      {      content(pk,s.trim()); return true; }
         }

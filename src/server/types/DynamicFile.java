@@ -41,7 +41,8 @@ public class DynamicFile extends Fjord {
                         contentMerge(new JSON(file));
                         self.evaluate();
                     }
-                }catch(Exception e){ logFail(e); }
+                    else refreshObserves();
+                }catch(Exception e){ logFail(e); refreshObserves(); }
             }
         };
     }
