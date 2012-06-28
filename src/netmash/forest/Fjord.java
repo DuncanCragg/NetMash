@@ -207,7 +207,8 @@ public class Fjord extends WebObject {
         if(func.equals("list")){
             LinkedList l=new LinkedList();
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                l.add(makeBestObject(arg));
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))) l.add(o);
+                else l.add(makeBestObject(arg));
             }
             if(match) return contentList(pk).equals(l);
             else      {      contentList(pk,l); return true; }
@@ -218,7 +219,7 @@ public class Fjord extends WebObject {
             if(d==null) d="";
             StringBuilder sb=new StringBuilder();
             for(int i=1; i<args.length; i++){ arg=args[i];
-                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2).trim()))){ sb.append(o); sb.append(d); }
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))){ sb.append(o); sb.append(d); }
                 else{ sb.append(arg); sb.append(d); }
             }
             String s=sb.toString();
@@ -273,9 +274,7 @@ public class Fjord extends WebObject {
         if(func.equals("min")){
             String min="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                if(arg.startsWith("$:")){
-                    for(Object o: in(contentAll(arg.substring(2)))) min=minFromString(min,o.toString());
-                }
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))) min=minFromString(min,o.toString());
             }
             if(match) return false;
             else{ content(pk,min); return true; }
@@ -283,9 +282,7 @@ public class Fjord extends WebObject {
         if(func.equals("max")){
             String max="";
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
-                if(arg.startsWith("$:")){
-                    for(Object o: in(contentAll(arg.substring(2)))) max=maxFromString(max,o.toString());
-                }
+                if(arg.startsWith("$:")) for(Object o: in(contentAll(arg.substring(2)))) max=maxFromString(max,o.toString());
             }
             if(match) return false;
             else{ content(pk,max); return true; }

@@ -762,6 +762,7 @@ public class JSON {
 
     @SuppressWarnings("unchecked")
     static private Object getObject(LinkedHashMap hashmap, String path) throws PathOvershot{
+        path=path.trim();
         if(path.length()==0) return null;
         if(path.charAt(0)==':') path=path.substring(1);
         String[] parts=path.split(":");
@@ -921,7 +922,8 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean setObject(LinkedHashMap hashmap, String path, Object value){
+    static private boolean setObject(LinkedHashMap hashmap, String path, Object value){
+        path=path.trim();
         boolean changed = false;
         if(path.length()==0) return changed;
         if(path.charAt(0)==':') path=path.substring(1);
@@ -1104,13 +1106,13 @@ public class JSON {
         return buf.toString();
     }
 
-    private Number toNumber(Object o){
+    static private Number toNumber(Object o){
         if(o instanceof Number) return (Number)o;
         if(o instanceof String) try{ return Double.parseDouble((String)o); } catch(NumberFormatException e){}
         return new Double(0);
     }
 
-    private Boolean toBoolean(Object o){
+    static private Boolean toBoolean(Object o){
         if(o instanceof Boolean) return (Boolean)o;
         if(o instanceof String){
             if(((String)o).toLowerCase().equals("true" )) return new Boolean(true);
@@ -1119,12 +1121,12 @@ public class JSON {
         return new Boolean(false);
     }
 
-    private Object toNumberIfPoss(Object o){
+    static private Object toNumberIfPoss(Object o){
         if(o instanceof String) try{ return Double.parseDouble((String)o); } catch(NumberFormatException e){}
         return o;
     }
 
-    private Object toBooleanIfPoss(Object o){
+    static private Object toBooleanIfPoss(Object o){
         if(o instanceof String){
             if(((String)o).toLowerCase().equals("true" )) return new Boolean(true);
             if(((String)o).toLowerCase().equals("false")) return new Boolean(false);
