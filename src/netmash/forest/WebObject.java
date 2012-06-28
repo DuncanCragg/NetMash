@@ -230,12 +230,14 @@ public class WebObject {
 
     /** Test if Object at path is value, whether String, Number or Boolean. */
     public boolean contentIsString(String path, String val){
-        Object o = contentObject(path);
-        if(o==null) return val==null;
-        if(o instanceof String)  return ((String)o).equals(val);
-        if(o instanceof Number)  return ((Number)o).doubleValue()==Double.parseDouble(val);
-        if(o instanceof Boolean) return ((Boolean)o).toString().equals(val.toLowerCase());
-        return o.toString().equals(val);
+        try{
+            Object o = contentObject(path);
+            if(o==null) return val==null;
+            if(o instanceof String)  return ((String)o).equals(val);
+            if(o instanceof Number)  return ((Number)o).doubleValue()==Double.parseDouble(val);
+            if(o instanceof Boolean) return ((Boolean)o).toString().equals(val.toLowerCase());
+            return o.toString().equals(val);
+        }catch(Exception e){ return false; }
     }
 
     /** Test if String at path is value. */
@@ -813,6 +815,10 @@ public class WebObject {
         Object[] r = new Object[end-start];
         System.arraycopy(a, start, r, 0, end-start);
         return r;
+    }
+
+    static public double tryDouble(Object o, double d){
+        try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return d; }
     }
 }
 

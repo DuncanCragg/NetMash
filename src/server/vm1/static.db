@@ -15,6 +15,7 @@
     "me": "uid-f74b-020f-af28-5671",
     "x": 1,
     "y": 1,
+    "o": {},
     "seq": []
 }
 
@@ -25,7 +26,8 @@
     "y": "<lt(100000)>",
     "z": "<>sum($:x,$:y)",
     "r": "<>div($:y,$:x)",
-    "seq": "<>has($:z)"
+    "o": { "n": "<>$:z" },
+    "seq": "<>has($:o)"
 }
 
 {   "%uid": "uid-61fd-78a2-60b6-4c27",
@@ -148,7 +150,8 @@
     "%class": "netmash.forest.Fjord",
     "%rules": [ "uid-648d-beb0-89a1-d613" ],
     "is": "coordinator",
-    "blog": "http://duncan-cragg.org/blog/atom.json"
+    "blog": "uid-d88e-7954-590f-a2d8",
+    "blig": "http://duncan-cragg.org/blog/atom.json"
 }
 
 {   "%uid": "uid-648d-beb0-89a1-d613",
@@ -219,5 +222,65 @@
         "that can be queried",
         "with hasWords(article)"
     ]
+}
+
+{ "%uid": "uid-d88e-7954-590f-a2d8",
+  "is": [ "site", "article", "list" ],
+  "title": "What Not How",
+  "subTitle": "Duncan Cragg on Declarative Architectures",
+  "author": { "is": "contact", "fullName": "Duncan Cragg" },
+  "id": "http://duncan-cragg.org/blog/",
+  "logo": "http://duncan-cragg.org/favicon.gif",
+  "icon": "http://duncan-cragg.org/favicon.ico",
+  "rights": "All content including photos and images by Duncan Cragg. Copyright (c) Duncan Cragg, your rights preserved: see [the CXL][http://duncan-cragg.org/CXL.html].",
+  "generator": "Duncan Cragg's Django Blog",
+  "webView": "http://duncan-cragg.org/blog/",
+  "atom": "http://duncan-cragg.org/blog/atom/",
+  "updated": "2012-01-20T18:07:00Z",
+  "list": [
+       { "is": "article",
+         "title": "The Basics | The Object Network",
+         "published": "2012-01-20T18:07:00Z",
+         "webView": "http://duncan-cragg.org/blog/post/basics-object-network/",
+         "%more": "http://duncan-cragg.org/blog/post/basics-object-network/atom.json"
+       },
+       { "is": "article",
+         "title": "Why we should link up our Web APIs | The Object Network",
+         "published": "2012-01-19T20:58:00Z",
+         "webView": "http://duncan-cragg.org/blog/post/why-we-should-link-our-web-apis-object-network/",
+         "%more": "http://duncan-cragg.org/blog/post/why-we-should-link-our-web-apis-object-network/atom.json"
+       },
+       { "is": "article",
+         "title": "Introduction | The Object Network",
+         "published": "2011-11-29T23:11:00Z",
+         "webView": "http://duncan-cragg.org/blog/post/introduction-object-network/",
+         "%more": "http://duncan-cragg.org/blog/post/introduction-object-network/atom.json"
+       },
+       { "is": "article",
+         "title": "OTS: The Benefits of both Native and Web Mobile",
+         "published": "2011-05-10T11:11:00Z",
+         "webView": "http://duncan-cragg.org/blog/post/benefits-native-web-mobile-apps-with-ots-netmash/",
+         "%more": "http://duncan-cragg.org/blog/post/benefits-native-web-mobile-apps-with-ots-netmash/atom.json"
+       },
+       { "is": "article",
+         "title": "Mature REST In Six Lines!",
+         "published": "2011-05-06T11:11:00Z",
+         "webView": "http://duncan-cragg.org/blog/post/mature-rest-easy/",
+         "%more": "http://duncan-cragg.org/blog/post/mature-rest-easy/atom.json"
+       },
+       { "is": "article",
+         "title": "Minted Media Types are Usually Less RESTful Than JSON",
+         "published": "2011-05-05T12:16:00Z",
+         "webView": "http://duncan-cragg.org/blog/post/minting-media-types-usually-less-restful-using-raw/",
+         "%more": "http://duncan-cragg.org/blog/post/minting-media-types-usually-less-restful-using-raw/atom.json"
+       },
+       { "is": "article",
+         "title": "FOREST News",
+         "published": "2011-02-12T14:07:00Z",
+         "webView": "http://duncan-cragg.org/blog/post/forest-news/",
+         "%more": "http://duncan-cragg.org/blog/post/forest-news/atom.json"
+       },
+       {}
+     ]
 }
 

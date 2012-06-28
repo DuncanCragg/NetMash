@@ -321,10 +321,6 @@ public class Fjord extends WebObject {
         return s;
     }
 
-    private double tryDouble(Object o, double d){
-        try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return d; }
-    }
-
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
 
     // ----------------------------------------------------

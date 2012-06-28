@@ -23,8 +23,8 @@
 
 {   "%uid": "uid-a622-4f18-719f-2903",
     "%class": "netmash.forest.Fjord",
-    "%rules": [ "uid-1b56-01ce-b820-ee90" ],
-    "is": [ "event" ],
+    "%rules": [ "uid-1b56-01ce-b820-ee90", "http://10.0.2.2:8081/o/uid-5f5d-6d29-64d8-2d8c.json", "http://10.0.2.2:8081/o/uid-b3ae-5b55-65ad-a296.json"  ],
+    "is": [ "event", "attendable" ],
     "coord": "http://10.0.2.2:8081/o/uid-b236-2c49-c6f8-fea6.json"
 }
 

@@ -716,28 +716,17 @@ public class JSON {
 
     private double getDoublePath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
-        if(o instanceof Number){
-            Number n=(Number)o;
-            return n.doubleValue();
-        }
-        if(o instanceof String) try{
-            return Double.parseDouble((String)o);
-        } catch(NumberFormatException e){}
+        if(o instanceof Number) return ((Number)o).doubleValue();
+        if(o instanceof String) try{ return Double.parseDouble((String)o); } catch(NumberFormatException e){}
         return 0;
     }
 
     private String getAsStringPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
         if(o==null) return null;
-        if(o instanceof String){
-            return (String)o;
-        }
-        if(o instanceof Number){
-            return ((Number)o).toString();
-        }
-        if(o instanceof Boolean){
-            return ((Boolean)o).toString();
-        }
+        if(o instanceof String)  return o.toString();
+        if(o instanceof Number)  return o.toString();
+        if(o instanceof Boolean) return o.toString();
         if(o instanceof LinkedHashMap){
             LinkedHashMap hm=(LinkedHashMap)o;
             String r="";
