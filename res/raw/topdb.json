@@ -46,3 +46,18 @@
     "%notifying": "<>has($:coord)"
 }
 
+{   "%uid": "uid-52f3-5a91-e30f-4ae9",
+    "%class": "netmash.forest.Fjord",
+    "%rules": [ "uid-b6ba-9745-6a5a-8cf1"  ],
+    "is": [ "processor" ],
+    "fibonacci": "http://10.0.2.2:8081/o/uid-f74b-020f-af28-5671.json",
+    "gui": "http://10.0.2.2:8081/o/uid-7756-cb46-4b1b-89cc.json"
+}
+
+{   "%uid": "uid-b6ba-9745-6a5a-8cf1",
+    "is": [ "processor", "rule" ],
+    "when": "fibonacci updates, calculate something",
+    "results": "<>sum($:fibonacci:seq:n)",
+    "%notifying": "<>has($:gui)"
+}
+

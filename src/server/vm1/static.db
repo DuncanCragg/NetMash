@@ -15,7 +15,7 @@
     "me": "uid-f74b-020f-af28-5671",
     "x": 1,
     "y": 1,
-    "max": 30,
+    "config": "uid-7756-cb46-4b1b-89cc",
     "o": {},
     "seq": []
 }
@@ -24,7 +24,7 @@
     "is": [ "fibonacci", "rule" ],
     "when": "running, z is sum of x and y",
     "me": {},
-    "y": "<lt($:max)>",
+    "y": "<lt($:config:max)>",
     "z": "<>sum($:x,$:y)",
     "r": "<>div($:y,$:x)",
     "o": { "n": "<>$:z" },
@@ -35,6 +35,7 @@
     "is": [ "fibonacci", "rule" ],
     "when": "z calculated, shift back",
     "me": {},
+    "z": "<sum($:x,$:y)>",
     "x": "<>$:y",
     "y": "<>$:z"
 }
@@ -45,8 +46,17 @@
 }
 
 {   "%uid": "uid-bbfb-f9c4-81f5-fb57",
-    "%class": "server.types.DynamicFile",
-    "watching": "gui-rule.json",
+    "is": [ "gui", "rule" ],
+    "when": "max changed, set it",
+    "%alerted": { "is": "form" },
+    "max": "<>$:%alerted:form:max"
+}
+
+{   "%uid": "uid-0c8f-4a83-b6c2-84c0",
+    "is": [ "gui", "rule" ],
+    "when": "processor changed, set it",
+    "%alerted": { "is": "processor" },
+    "view": { "#res": "<>$:%alerted:results" }
 }
 
 {   "%uid": "uid-6373-8190-fe6c-27ba",

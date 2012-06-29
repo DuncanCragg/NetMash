@@ -1,6 +1,0 @@
-{   "is": [ "gui", "rule" ],
-    "when": "checkboxes change, do logic",
-    "%alerted": { "is": "form", "form": { "a": "<!$:%alerted:form:b>" } },
-    "title": "<>join(,Remote GUI Demo: ,$:%alerted:form:t,+,$:%alerted:form:u)",
-    "view": { "#result": { "#c": "<>sum($:%alerted:form:t,$:%alerted:form:u)" } }
-}

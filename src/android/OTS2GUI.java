@@ -319,11 +319,11 @@ public class OTS2GUI {
         for(String uid: links){ i++;
             String bmtext=null;
             if(user.contentSet(prefix+":"+i+":is")){
-                if(bmtext==null) bmtext=user.content(prefix+":"+i+":title");
-                if(bmtext==null) bmtext=user.content(prefix+":"+i+":fullName");
-                if(bmtext==null) bmtext=user.content(prefix+":"+i+":contact:fullName");
-                if(bmtext==null) bmtext=user.content(prefix+":"+i+":is");
-                if(bmtext==null) bmtext=user.content(prefix+":"+i+":tags");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":title");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":fullName");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":contact:fullName");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":is");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":tags");
             }
             if(bmtext==null) bmtext="Loading..";
             String bmuid = UID.normaliseUID(listuid, uid);
