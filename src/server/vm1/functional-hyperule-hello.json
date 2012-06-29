@@ -1,4 +1,0 @@
-{   "is": [ "demo", "rule" ],
-    "when": "run, change title",
-    "title": "<>join( ,$:x,$:y)"
-}
