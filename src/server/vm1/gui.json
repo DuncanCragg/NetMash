@@ -1,11 +1,13 @@
-{   "%rules": [ "uid-bbfb-f9c4-81f5-fb57", "uid-0c8f-4a83-b6c2-84c0" ],
-    "is": [ "gui" ],
-    "title": "Fibonacci Panel",
-    "view": {
-        "#panel": [
-            { "#maxlabel": "max:",    "#max": "?[10 /string/]?" }
-         ],
-         "#reslabel": "result:", "#res": "?[0 /string/]?",
-    },
-    "max": 10
+{ "%rules": [ "uid-bbfb-f9c4-81f5-fb57",
+              "uid-0c8f-4a83-b6c2-84c0" ],
+  "is":[ "gui" ],
+  "title": "Fibonacci Panel",
+  "view":{
+      "style":{ "is": "style", "colours":"lightturquoise,white,lightturquoise,lightblue*" },
+      "#maxlabel": "Max:",
+      "#max": "?[10 /string/]?",
+      "#reslabel": "Result:",
+      "#res": "0.0"
+  },
+  "max": 10
 }
