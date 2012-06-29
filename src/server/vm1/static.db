@@ -62,18 +62,17 @@
 
 { "%uid": "uid-6373-8190-fe6c-27ba",
   "is": [ "gui", "rule" ],
-  "when": "demo gui built, set up its styles. 1",
-  "view": { "#result": { "style": "<#>{}" } }
+  "when": "gui built, set up its styles. 1",
+  "view": { "style": "<#>{}" }
 }
 
 { "%uid": "uid-cc96-00ff-a9df-381a",
   "is": [ "gui", "rule" ],
-  "when": "demo gui built, set up its styles. 2",
-  "view": { "#result": { "style": {
-              "is": "<#>style",
-              "proportions":"<#>70%",
-              "colours":"<#>lightturquoise"
-          }}}
+  "when": "gui built, set up its styles. 2",
+  "view": { "style":{
+      "is": "<#>style",
+      "colours":"<#>lightturquoise,white,lightturquoise,lightblue*"
+  } }
 }
 
 { "%uid": "uid-a205-babf-72a4-1272",
