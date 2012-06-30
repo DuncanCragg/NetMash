@@ -14,7 +14,6 @@
               "uid-61fd-78a2-60b6-4c27" ],
   "is": "fibonacci",
   "title": "Fibonacci Generator",
-  "me": "uid-f74b-020f-af28-5671",
   "x": 1,
   "y": 1,
   "config": "uid-7756-cb46-4b1b-89cc",
@@ -25,18 +24,16 @@
 { "%uid": "uid-3c3a-7576-a61b-ed87",
   "is": [ "fibonacci", "rule" ],
   "when": "running, z is sum of x and y",
-  "me": {},
   "y": "<lt($:config:max)>",
   "z": "<>sum($:x,$:y)",
-  "r": "<>div($:y,$:x)",
   "o": { "n": "<>$:z" },
-  "seq": "<>has($:o)"
+  "seq": "<>has($:o)",
+  "ratio": "<>div($:y,$:x)"
 }
 
 { "%uid": "uid-61fd-78a2-60b6-4c27",
   "is": [ "fibonacci", "rule" ],
   "when": "z calculated, shift back",
-  "me": {},
   "z": "<sum($:x,$:y)>",
   "x": "<>$:y",
   "y": "<>$:z"
