@@ -4,7 +4,7 @@
              "uid-cc96-00ff-a9df-381a"
   ],
   "is":[ "gui" ],
-  "title": "Fibonacci Panel",
+  "title": "Fibonacci Config",
   "view":{
       "#maxlabel": "Max:",
       "#max": "?[10 /string/]?",

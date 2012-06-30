@@ -13,6 +13,7 @@
   "%rules": [ "uid-3c3a-7576-a61b-ed87",
               "uid-61fd-78a2-60b6-4c27" ],
   "is": "fibonacci",
+  "title": "Fibonacci Generator",
   "me": "uid-f74b-020f-af28-5671",
   "x": 1,
   "y": 1,
