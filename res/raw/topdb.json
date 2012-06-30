@@ -1,7 +1,8 @@
 { "%uid": "uid-52f3-5a91-e30f-4ae9",
   "%class": "netmash.forest.Fjord",
   "%rules": [ "uid-b6ba-9745-6a5a-8cf1" ],
-  "is": [ "processor" ],
+  "is": "processor",
+  "title": "Droid@Home",
   "fib": "http://10.0.2.2:8081/o/uid-f74b-020f-af28-5671.json",
   "gui": "http://10.0.2.2:8081/o/uid-7756-cb46-4b1b-89cc.json"
 }
@@ -11,6 +12,20 @@
   "when": "fibonacci updates, calculate something",
   "results": "<>sum($:fib:seq:n)",
   "%notifying": "<>has($:gui)"
+}
+
+{ "%uid": "uid-4b71-f8d4-c761-be2d",
+  "is": "links",
+  "title": "More Examples",
+  "list" : [ "uid-d9e4-4f7c-d9fe-9e7c",
+             "uid-a622-4f18-719f-2903",
+             "http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json",
+             "http://10.0.2.2:8081/o/uid-afcb-9ff0-9270-98b0.json",
+             "http://10.0.2.2:8081/o/uid-2a68-0c60-16da-9796.json",
+             "http://the-object.net/123-456.json",
+             "http://duncan-cragg.org/blog/atom.json",
+             "http://10.0.2.2:8080/o/home.json"
+  ]
 }
 
 { "%uid": "uid-d9e4-4f7c-d9fe-9e7c",

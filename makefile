@@ -6,7 +6,7 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noargs: androidemu runstaticserver logboth
+noargs: androidemu runstaticserver
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
 
