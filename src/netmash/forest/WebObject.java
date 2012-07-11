@@ -590,6 +590,12 @@ public class WebObject {
         statemod = updatingState.mergeWith(json) || statemod;
     }
 
+    /** Merge in hash to this object. */
+    public void contentMerge(LinkedHashMap hm){
+        doCopyOnWrite("");
+        statemod = updatingState.mergeWith(hm) || statemod;
+    }
+
     /** Replace all content with supplied JSON. */
     public void contentReplace(JSON json){
         doCopyOnWrite("");

@@ -95,32 +95,26 @@ public class User extends WebObject {
                         "}");
     }
 
-    static User newEditableRule(String editableuid, String useruid, LinkedHashMap rule){
-        JSON json=new JSON("{ \"is\": [ \"editable\", \"rule\" ], \n"+
-                           "  \"when\": \"edited\",\n"+
-                           "  \"editable\": \""+editableuid+"\",\n"+
-                           "  \"user\": \""+useruid+"\",\n"+
-                           "}");
-        json.mergeWith(rule);
-        return new User(json);
+    static User newEditableRule(String editableuid, String useruid){
+        return new User("{ \"is\": [ \"editable\", \"rule\" ],\n"+
+                        "  \"when\": \"edited\",\n"+
+                        "  \"editable\": \""+editableuid+"\",\n"+
+                        "  \"user\": \""+useruid+"\"\n"+
+                        "}");
     }
 
-    static User newDocumentQuery(String listuid, String useruid, String words){
-        return new User(String.format(
-                        "{ \"is\": [ \"document\", \"query\" ], \n"+
+    static User newDocumentQuery(String listuid, String useruid){
+        return new User("{ \"is\": [ \"document\", \"query\" ], \n"+
                         "  \"list\": \""+listuid+"\",\n"+
-                        "  \"user\": \""+useruid+"\",\n"+
-                        "  \"content\": \"<hasWords(%s)>\"\n"+
-                        "}", words));
+                        "  \"user\": \""+useruid+"\"\n"+
+                        "}");
     }
 
-    static User newRSVP(String eventuid, String useruid, String attending){
-        return new User(String.format(
-                        "{ \"is\": \"rsvp\", \n"+
+    static User newRSVP(String eventuid, String useruid){
+        return new User("{ \"is\": \"rsvp\", \n"+
                         "  \"event\": \""+eventuid+"\",\n"+
-                        "  \"user\": \""+useruid+"\",\n"+
-                        "  \"attending\": \"%s\"\n"+
-                        "}", attending));
+                        "  \"user\": \""+useruid+"\"\n"+
+                        "}");
     }
 
     // ---------------------------------------------------------
@@ -257,13 +251,9 @@ public class User extends WebObject {
     public String getFormStringVal(final String guiuid, final String tag){
         new Evaluator(this){
             public void evaluate(){ logrule();
-                if(!contentSet("private:forms:"+UID.toUID(guiuid))){
-                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(guiuid, uid)));
-                    returnstringhack=null;
-                }
-                else{
-                    returnstringhack=content("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
-                }
+                returnstringhack=null;
+                if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
+                else returnstringhack=content("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 refreshObserves();
             }
         };
@@ -274,13 +264,9 @@ public class User extends WebObject {
     public boolean getFormBoolVal(final String guiuid, final String tag){
         new Evaluator(this){
             public void evaluate(){ logrule();
-                if(!contentSet("private:forms:"+UID.toUID(guiuid))){
-                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(guiuid, uid)));
-                    returnboolhack=false;
-                }
-                else{
-                    returnboolhack=contentBool("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
-                }
+                returnboolhack=false;
+                if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
+                else returnboolhack=contentBool("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 refreshObserves();
             }
         };
@@ -291,17 +277,28 @@ public class User extends WebObject {
     public int getFormIntVal(final String guiuid, final String tag){
         new Evaluator(this){
             public void evaluate(){ logrule();
-                if(!contentSet("private:forms:"+UID.toUID(guiuid))){
-                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(guiuid, uid)));
-                    returninthack=0;
-                }
-                else{
-                    returninthack=contentInt("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
-                }
+                returninthack=0;
+                if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
+                else returninthack=contentInt("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 refreshObserves();
             }
         };
         return returninthack;
+    }
+
+    private void spawnResponse(String guiuid){
+        User resp;
+        if(contentIsOrListContains("private:viewing:is", "editable")){
+            resp=newEditableRule(guiuid, uid);
+        }
+        else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
+            resp=newDocumentQuery(guiuid, uid);
+        }
+        else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
+            resp=newRSVP(guiuid, uid);
+        }
+        else resp=newForm(guiuid, uid);
+        content("private:forms:"+UID.toUID(guiuid), spawn(resp));
     }
 
     User currentForm(String guiuid){
@@ -313,15 +310,16 @@ public class User extends WebObject {
         if(this==me) currentForm(guiuid).setFormVal(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
-                content("form:"+dehash(tag), val);
-                if(contentIsOrListContains("gui:is", "editable")){
-                    content("edit", spawn(newEditableRule(content("gui"), content("user"), makeEditRule(tag.substring("#val-".length()),val))));
+                if(contentListContainsAll("is", list("editable", "rule"))){
+                    LinkedHashMap rule=makeEditRule(tag.substring("#val-".length()),val);
+                    contentMerge(rule);
                 }
                 else
-                if(contentListContainsAll("gui:is", list("searchable", "document", "list"))){
-                    content("query", spawn(newDocumentQuery(content("gui"), content("user"), val)));
+                if(contentListContainsAll("is", list("document", "query"))){
+                    content("content", String.format("<hasWords(%s)>",val));
                 }
-                else notifying(content("gui"));
+                else content("form:"+dehash(tag), val);
+                notifying(guiuid);
                 refreshObserves();
             }
         };
@@ -331,11 +329,11 @@ public class User extends WebObject {
         if(this==me) currentForm(guiuid).setFormVal(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
-                contentBool("form:"+dehash(tag), val);
-                if(contentListContainsAll("gui:is", list("attendable","event"))){
-                    content("rsvp", spawn(newRSVP(content("gui"), content("user"), val? "yes": "no")));
+                if(contentIsOrListContains("is", "rsvp")){
+                    content("attending", val? "yes": "no");
                 }
-                else notifying(content("gui"));
+                else contentBool("form:"+dehash(tag), val);
+                notifying(guiuid);
                 refreshObserves();
             }
         };
@@ -346,7 +344,7 @@ public class User extends WebObject {
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 contentInt("form:"+dehash(tag), val);
-                notifying(content("gui"));
+                notifying(guiuid);
                 refreshObserves();
             }
         };
@@ -369,21 +367,21 @@ public class User extends WebObject {
             if(!contentSet("list")) contentList("list", UserContacts.populateContacts(this));
         }
         else
-        if(contentIs("is", "form")){
-            log("evaluate form: "+this);
-        }
-        else
         if(contentListContainsAll("is", list("editable", "rule"))){ log("edit: "+this);
-            notifying(content("editable"));
+            log("evaluate editable: "+this);
         }
         else
         if(contentListContainsAll("is", list("document", "query"))){ log("query: "+this);
+            log("evaluate query: "+this);
             for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
-            notifying(content("list"));
         }
         else
         if(contentIsOrListContains("is", "rsvp")){ log("rsvp: "+this);
-            notifying(content("event"));
+            log("evaluate rsvp: "+this);
+        }
+        else
+        if(contentIs("is", "form")){
+            log("evaluate form: "+this);
         }
         else log("no evaluate: "+this);
     }
