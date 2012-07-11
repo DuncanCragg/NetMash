@@ -431,16 +431,15 @@ public class WebObject {
         return hm;
     }
 
-    /** Construct a hash utility. deephash("a","b","c","d")={"a":{"b":{"c":"d"}}}
-                                  deephash("a:b:c:d")={"a":{"b":{"c":"d"}}} */
+    /** Construct a hash utility. deephash("x","a","b","c")={"a":{"b":{"c":"x"}}}
+                                  deephash("x","a:b:c")={"a":{"b":{"c":"x"}}} */
     @SuppressWarnings("unchecked")
-    static public LinkedHashMap deephash(String...args){
-        if(args.length >0 && args[0].indexOf(":")!= -1) args=args[0].split(":");
+    static public LinkedHashMap deephash(Object val, Object...path){
+        if(path.length >0 && path[0] instanceof String && path[0].toString().indexOf(":")!= -1) path=path[0].toString().split(":");
         LinkedHashMap hm = new LinkedHashMap();
-        if(args.length==0){                           return hm; }
-        if(args.length==1){ hm.put(args[0], ""     ); return hm; }
-        if(args.length==2){ hm.put(args[0], args[1]); return hm; }
-        else                hm.put(args[0], hash(copyOfRange(args,1,args.length)));
+        if(path.length==0) return hm;
+        if(path.length==1) hm.put(path[0], val);
+        else               hm.put(path[0], deephash(val, copyOfRange(path,1,path.length)));
         return hm;
     }
 

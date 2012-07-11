@@ -9,6 +9,7 @@
 
 { "%uid": "uid-16f2-2db0-e9fe-1d7d",
   "%class": "server.types.Editable",
+  "%rules": [ ],
   "is": [ "demo", "rule", "editable" ],
   "when": "run, set title to join of x and y",
   "title": "<>join( ,$:x,$:y)"

@@ -351,7 +351,7 @@ public class User extends WebObject {
     }
 
     private LinkedHashMap makeEditRule(String path, String val){
-        return deephash(String.format("%s:<>%s", path, val));
+        return deephash("<>"+val, path);
     }
 
     private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }
