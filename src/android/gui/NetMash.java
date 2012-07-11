@@ -180,7 +180,7 @@ public class NetMash extends MapActivity{
         menu.add(1, MENU_ITEM_LNX, Menu.NONE, "Links");
         menu.add(2, MENU_ITEM_GUI, Menu.NONE, "Object");
         menu.add(3, MENU_ITEM_MAP, Menu.NONE, "On Map");
-        menu.add(4, MENU_ITEM_RAW, Menu.NONE, "Raw JSON");
+        menu.add(4, MENU_ITEM_RAW, Menu.NONE, "View/Edit");
         return true;
     }
 

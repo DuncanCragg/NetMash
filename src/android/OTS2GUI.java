@@ -393,39 +393,39 @@ public class OTS2GUI {
         return streetb.toString().trim();
     }
 
-    public LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, String objuid){ logrule();
+    public LinkedHashMap guifyHash(String path, LinkedHashMap<String,Object> hm, String objuid, boolean editable){ logrule();
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
         hm2.put("style", style("direction", hm.size()<=1? "horizontal": "vertical"));
-        hm2.put(".open","{");
         for(String tag: hm.keySet()){
-            LinkedList ll = new LinkedList();
-            ll.add(style("direction","horizontal"));
-            ll.add(" "+tag+":");
-            Object o=hm.get(tag);
-            addToList(ll,o,objuid);
-            hm2.put("#"+tag,ll);
+            LinkedHashMap hm3 = new LinkedHashMap();
+            hm3.put("style", style("direction", "horizontal"));
+            hm3.put("#tag-"+path+tag, editable? "?["+tag+": /string/]?": tag+":");
+            addToHash(hm3,"#val-"+path+tag,hm.get(tag),objuid,editable);
+            hm2.put("#"+tag,hm3);
         }
-        hm2.put(".close","}");
+        if(editable) hm2.put(".addnew","?[New Entry /string/]?");
         return hm2;
     }
 
-    public LinkedList guifyList(LinkedList ll, String objuid){
-        LinkedList ll2 = new LinkedList();
-        ll2.add(style("direction", ll.size()<=1? "horizontal": "vertical"));
-        ll2.add("[");
-        for(Object o: ll) addToList(ll2,o,objuid);
-        ll2.add("]");
-        return ll2;
+    public LinkedHashMap guifyList(String path, LinkedList ll, String objuid, boolean editable){
+        LinkedHashMap hm3 = new LinkedHashMap();
+        hm3.put("style", style("direction", ll.size()<=1? "horizontal": "vertical"));
+        int i=0;
+        for(Object o: ll){ addToHash(hm3,path+i,o,objuid,editable); i++; }
+        if(editable) hm3.put(".addnew","?[New Item /string/]?");
+        return hm3;
     }
 
-    public void addToList(LinkedList ll, Object o, String objuid){
-        if(o instanceof LinkedHashMap) ll.add(guifyHash((LinkedHashMap<String,Object>)o, objuid));
+    public void addToHash(LinkedHashMap hm, String path, Object o, String objuid, boolean editable){
+        if(o instanceof LinkedHashMap) hm.put(path,guifyHash(path+":",(LinkedHashMap<String,Object>)o, objuid, editable));
         else
-        if(o instanceof LinkedList)    ll.add(guifyList((LinkedList)o, objuid));
+        if(o instanceof LinkedList)    hm.put(path,guifyList(path+":", (LinkedList)o, objuid, editable));
         else
-        if(UID.isUID(o))               ll.add(UID.normaliseUID(objuid, (String)o));
-        else                           ll.add(" "+o);
+        if(UID.isUID(o))               hm.put(path,UID.normaliseUID(objuid, (String)o));
+        else           { if(!editable) hm.put(path,""+o); else hm.put(path,"?["+o+" /string/]?"); }
     }
+
+    // ---------------------------------------------------------------------------
 
     private HashMap<String,LinkedHashMap<String,Double>> geoCodeCache=new HashMap<String,LinkedHashMap<String,Double>>();
     private LinkedHashMap<String,Double> geoCode(String address){ log("geoCode "+address);

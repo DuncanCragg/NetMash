@@ -103,6 +103,15 @@ public class WebObject {
         updatingState = publicState;
     }
 
+    /** For creating new WebObjects inside evaluate(). */
+    public WebObject(JSON json){
+        funcobs = FunctionalObserver.funcobs;
+        uid = UID.generateUID();
+        etag = 1;
+        publicState = json;
+        updatingState = publicState;
+    }
+
     /** For spawning from Fjord. */
     public WebObject(LinkedHashMap hm){
         funcobs = FunctionalObserver.funcobs;
@@ -175,6 +184,12 @@ public class WebObject {
             }
         }
         return s;
+    }
+
+    /** Get String at this path in the JSON content, or given alternative if none. */
+    public String contentOr(String path, String or){
+        String s=content(path);
+        return s!=null? s: or;
     }
 
     /** Get Object at this path in the JSON content. */
@@ -416,9 +431,11 @@ public class WebObject {
         return hm;
     }
 
-    /** Construct a hash utility. deephash("a","b","c","d")={"a":{"b":{"c":"d"}}} */
+    /** Construct a hash utility. deephash("a","b","c","d")={"a":{"b":{"c":"d"}}}
+                                  deephash("a:b:c:d")={"a":{"b":{"c":"d"}}} */
     @SuppressWarnings("unchecked")
-    static public LinkedHashMap deephash(Object...args){
+    static public LinkedHashMap deephash(String...args){
+        if(args.length >0 && args[0].indexOf(":")!= -1) args=args[0].split(":");
         LinkedHashMap hm = new LinkedHashMap();
         if(args.length==0){                           return hm; }
         if(args.length==1){ hm.put(args[0], ""     ); return hm; }
@@ -504,6 +521,12 @@ public class WebObject {
     public void contentSetAdd(String path, Object val){
         doCopyOnWrite(path);
         statemod = updatingState.setPathAdd(path, val) || statemod;
+    }
+
+    /** Push this value as if the list were a set. */
+    public void contentSetPush(String path, Object val){
+        doCopyOnWrite(path);
+        statemod = updatingState.setPathPush(path, val) || statemod;
     }
 
     /** Add all the values onto the list at the path. */

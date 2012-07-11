@@ -6,7 +6,7 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noargs: androidemu runstaticserver
+noargs: androidemu runstaticserver logboth
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
 
@@ -142,7 +142,7 @@ whappen:
 	vim -o -N src/server/vm2/netmash.log src/server/vm1/netmash.log src/server/vm1/netmash.db src/server/vm2/netmash.db
 
 logboth:
-	xterm -geometry 97x50+0+80   -e make logcat &
+	xterm -geometry 97x50+0+80 -e make logcat &
 	xterm -geometry 97x20+0+80 -e make logout1 &
 
 logcat:
@@ -168,6 +168,7 @@ classes: \
 ./build/classes/server/types/Event.class \
 ./build/classes/server/types/Twitter.class \
 ./build/classes/server/types/DynamicFile.class \
+./build/classes/server/types/Editable.class \
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes

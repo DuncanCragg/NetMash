@@ -65,9 +65,9 @@ public class User extends WebObject {
         NetMash.top.onUserReady(me);
     }
 
-    public User(String jsonstring){
-        super(jsonstring);
-    }
+    public User(String jsonstring){ super(jsonstring); }
+
+    public User(JSON json){ super(json); }
 
     public User(String homeusers, String contactuid, String linksuid, String contactsuid){
         super("{   \"is\": \"user\", \n"+
@@ -87,28 +87,38 @@ public class User extends WebObject {
 
     public User(){ if(me==null){ me=this; if(NetMash.top!=null) NetMash.top.onUserReady(me); } }
 
-    static User newForm(String useruid, String guiuid){
+    static User newForm(String guiuid, String useruid){
         return new User("{ \"is\": \"form\",\n"+
-                        "  \"user\": \""+useruid+"\",\n"+
                         "  \"gui\": \""+guiuid+"\",\n"+
+                        "  \"user\": \""+useruid+"\",\n"+
                         "  \"form\": { }\n"+
                         "}");
     }
 
-    static User newDocumentQuery(String useruid, String listuid, String words){
+    static User newEditableRule(String editableuid, String useruid, LinkedHashMap rule){
+        JSON json=new JSON("{ \"is\": [ \"editable\", \"rule\" ], \n"+
+                           "  \"when\": \"edited\",\n"+
+                           "  \"editable\": \""+editableuid+"\",\n"+
+                           "  \"user\": \""+useruid+"\",\n"+
+                           "}");
+        json.mergeWith(rule);
+        return new User(json);
+    }
+
+    static User newDocumentQuery(String listuid, String useruid, String words){
         return new User(String.format(
                         "{ \"is\": [ \"document\", \"query\" ], \n"+
-                        "  \"user\": \""+useruid+"\",\n"+
                         "  \"list\": \""+listuid+"\",\n"+
+                        "  \"user\": \""+useruid+"\",\n"+
                         "  \"content\": \"<hasWords(%s)>\"\n"+
                         "}", words));
     }
 
-    static User newRSVP(String useruid, String eventuid, String attending){
+    static User newRSVP(String eventuid, String useruid, String attending){
         return new User(String.format(
                         "{ \"is\": \"rsvp\", \n"+
-                        "  \"user\": \""+useruid+"\",\n"+
                         "  \"event\": \""+eventuid+"\",\n"+
+                        "  \"user\": \""+useruid+"\",\n"+
                         "  \"attending\": \"%s\"\n"+
                         "}", attending));
     }
@@ -248,7 +258,7 @@ public class User extends WebObject {
         new Evaluator(this){
             public void evaluate(){ logrule();
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))){
-                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
+                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(guiuid, uid)));
                     returnstringhack=null;
                 }
                 else{
@@ -265,7 +275,7 @@ public class User extends WebObject {
         new Evaluator(this){
             public void evaluate(){ logrule();
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))){
-                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
+                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(guiuid, uid)));
                     returnboolhack=false;
                 }
                 else{
@@ -282,7 +292,7 @@ public class User extends WebObject {
         new Evaluator(this){
             public void evaluate(){ logrule();
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))){
-                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(uid, guiuid)));
+                    content(   "private:forms:"+UID.toUID(guiuid), spawn(newForm(guiuid, uid)));
                     returninthack=0;
                 }
                 else{
@@ -304,8 +314,12 @@ public class User extends WebObject {
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 content("form:"+dehash(tag), val);
-                if(contentListContainsAll("gui:is", list("document", "list"))){
-                    content("query", spawn(newDocumentQuery(content("user"), content("gui"), val)));
+                if(contentIsOrListContains("gui:is", "editable")){
+                    content("edit", spawn(newEditableRule(content("gui"), content("user"), makeEditRule(tag.substring("#val-".length()),val))));
+                }
+                else
+                if(contentListContainsAll("gui:is", list("searchable", "document", "list"))){
+                    content("query", spawn(newDocumentQuery(content("gui"), content("user"), val)));
                 }
                 else notifying(content("gui"));
                 refreshObserves();
@@ -318,8 +332,8 @@ public class User extends WebObject {
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 contentBool("form:"+dehash(tag), val);
-                if(contentIsOrListContains("gui:is", "event")){
-                    content("rsvp", spawn(newRSVP(content("user"), content("gui"), val? "yes": "no")));
+                if(contentListContainsAll("gui:is", list("attendable","event"))){
+                    content("rsvp", spawn(newRSVP(content("gui"), content("user"), val? "yes": "no")));
                 }
                 else notifying(content("gui"));
                 refreshObserves();
@@ -338,6 +352,10 @@ public class User extends WebObject {
         };
     }
 
+    private LinkedHashMap makeEditRule(String path, String val){
+        return deephash(String.format("%s:<>%s", path, val));
+    }
+
     private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }
 
     // ---------------------------------------------------------
@@ -353,6 +371,10 @@ public class User extends WebObject {
         else
         if(contentIs("is", "form")){
             log("evaluate form: "+this);
+        }
+        else
+        if(contentListContainsAll("is", list("editable", "rule"))){ log("edit: "+this);
+            notifying(content("editable"));
         }
         else
         if(contentListContainsAll("is", list("document", "query"))){ log("query: "+this);
@@ -430,7 +452,7 @@ public class User extends WebObject {
                 viewhash=contentHash("private:viewing:view");
             }
             else{
-                viewhash=ots2gui.guifyHash(contentHash("private:viewing:#"), content("private:viewing"));
+                viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), false);
                 viewhash.put("#uid", "uid: "+content("private:viewing"));
             }
             if(viewhash!=null){
@@ -479,7 +501,10 @@ public class User extends WebObject {
 
     private void showWhatIAmViewingAsRawJSON(){ logrule();
         if(contentSet("private:viewing:is")){
-            LinkedHashMap viewhash=ots2gui.guifyHash(contentHash("private:viewing:#"), content("private:viewing"));
+            LinkedHashMap viewhash=ots2gui.guifyHash("",
+                                                     contentHash("private:viewing:#"),
+                                                     content("private:viewing"),
+                                                     contentIsOrListContains("private:viewing:is","editable"));
             viewhash.put("#uid", "uid: "+content("private:viewing"));
             JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
             uiJSON.hashPath("view", viewhash);

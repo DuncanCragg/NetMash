@@ -44,7 +44,7 @@ public class Fjord extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
-        if(extralogging) log("Running rule \"When "+content(String.format("%%rules:%d:when", r))+"\"");
+        if(extralogging) log("Running rule \"When "+contentOr(String.format("%%rules:%d:when", r),"fired")+"\"");
 
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
 
@@ -52,7 +52,7 @@ public class Fjord extends WebObject {
 
         boolean ok=scanRuleHash(rule, "");
 
-        if(ok) log("Rule fired: \"When "+content(String.format("%%rules:%d:when", r))+"\"");
+        if(ok) log("Rule fired: \"When "+contentOr(String.format("%%rules:%d:when", r),"fired")+"\"");
         if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
 
         contentTemp("%alerted", null);
@@ -72,6 +72,8 @@ public class Fjord extends WebObject {
                 if(pk.equals("is")) continue;
                 if(pk.equals("when")) continue;
                 if(pk.equals("watching")) continue;
+                if(pk.equals("editable")) continue;
+                if(pk.equals("user")) continue;
             }
             Object v=entry.getValue();
             if(v instanceof String){

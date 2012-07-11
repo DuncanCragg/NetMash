@@ -1,3 +1,19 @@
+{ "%uid": "uid-26bc-8ee9-5443-851a",
+  "%class": "server.types.Editable",
+  "%rules": [ "uid-16f2-2db0-e9fe-1d7d" ],
+  "is": [ "demo", "editable" ],
+  "x": "Hello",
+  "y": "World",
+  "title": "Demo.."
+}
+
+{ "%uid": "uid-16f2-2db0-e9fe-1d7d",
+  "%class": "server.types.Editable",
+  "is": [ "demo", "rule", "editable" ],
+  "when": "run, set title to join of x and y",
+  "title": "<>join( ,$:x,$:y)"
+}
+
 { "%uid": "uid-3927-d995-837f-f165",
   "%class": "server.types.DynamicFile",
   "watching": "functional-hyper.json",
@@ -77,7 +93,7 @@
   "%class": "netmash.forest.Fjord",
   "%rules": [ "uid-5f5d-6d29-64d8-2d8c",
               "uid-b3ae-5b55-65ad-a296" ],
-  "is": [ "event", "attendable" ],
+  "is": [ "attendable", "event" ],
   "title": "Over the Air 2011",
   "content": "UK Mobile meetup at Bletchley Park",
   "start": "Fri, 30 Sep 2011 09:00:00 GMT",

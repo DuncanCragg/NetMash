@@ -107,6 +107,13 @@ public class JSON {
         return true;
     }
 
+    /** Merge this JSON with the supplied hash. */
+    public boolean mergeWith(LinkedHashMap hm){
+        ensureContent();
+        mergeHash(tophash, hm);
+        return true;
+    }
+
     /** Replace this JSON with the supplied one. */
     @SuppressWarnings("unchecked")
     public boolean replaceWith(JSON json){
@@ -290,6 +297,12 @@ public class JSON {
     public boolean setPathAdd(String path, Object value){
         ensureContent();
         return addSetPath(tophash, path, value);
+    }
+
+    /** Push on list at the given path, taking list as set. */
+    public boolean setPathPush(String path, Object value){
+        ensureContent();
+        return pushSetPath(tophash, path, value);
     }
 
     /** Add to list at the given path. */
@@ -868,6 +881,15 @@ public class JSON {
         try{ list=getOrMakeListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
         if(!list.contains(value)) list.add(value);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean pushSetPath(LinkedHashMap hashmap, String path, Object value){
+        LinkedList list;
+        try{ list=getOrMakeListPath(hashmap, path);
+        }catch(PathOvershot po){ return false; }
+        if(!list.contains(value)) list.addFirst(value);
         return true;
     }
 

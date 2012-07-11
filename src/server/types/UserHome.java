@@ -1,4 +1,3 @@
-
 package server.types;
 
 import netmash.forest.WebObject;

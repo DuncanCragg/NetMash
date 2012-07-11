@@ -3,6 +3,8 @@ NetMash is..
 
  - a JSON or mobile-related data browser (and server)
 
+ - that empowers the user to create, mash and animate their own stuff and apps
+
  - programmed in declarative JSON and JSON animation rules (in client and on server)
 
  - that fixes many of the problems of HTML/JS/CSS browsers
@@ -16,14 +18,18 @@ NetMash is..
     - allowing much closer access to native functionality
        - including offline and better cacheing
 
+    - one language, Media/Content Type (One-T) for data, animation, layout and styling
+
  - but keeps the mashability and cacheability of the Web
 
     - there are no application boundaries, API boundaries, silos, walled gardens, identity boundaries
 
 
-.. the Web was for the PC age; the Object Net (and NetMash) is for the mobile age
+the Web was for the PC age; the Object Net (and NetMash) is for the mobile age
 
 RD/PE/GD
 
 See MF programmer rant
+
+
 
