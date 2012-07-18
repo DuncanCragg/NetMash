@@ -61,7 +61,7 @@ runquickserver: kill clean setvmemuconfig usequickdb run1
 
 runlocalserver: kill clean setvmemuconfig uselocaldb run1
 
-runremoteserver: kill clean setvmremoteconfig usetestdb run1 logout1
+runremoteserver: kill clean setvmremoteconfig usestaticdb run1 logout1
 
 run1server: kill clean setvmtestconfig usetestdb run1 logout1
 
