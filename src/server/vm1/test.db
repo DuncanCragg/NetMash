@@ -331,35 +331,26 @@
 }
 
 {   "%uid": "uid-35ad-af7a-93fb-896d",
-    "%class": "",
     "is": "contact",
     "fullName": "Mr Brian Rock",
-    "role": "Business Analyst",
-    "photo": "http://farm5.static.flickr.com/4030/4334369685_ab7a06960f.jpg",
     "name": {
       "given":  "Brian",
       "middle": [ "Andy", "Charles" ],
       "family": "Rock"
     },
-    "nickname": "The Masher",
     "address": {
       "street": "150 Old Park Ln",
-      "locality": "London",
       "postalCode": "W1K 1QZ",
       "country": "UK"
     },
-    "email": [ "brian.rock@site.com", "bri2001@hotmail.com" ],
-    "organisation": {
-      "name": "Super Site",
-      "unit": "site.com"
-    },
-    "birthday": "1995-02-12",
-    "phone": { "work": [ "+44 20 7514 1700", "020 7231 3212" ], "home": "020 8323 2343" },
+    "phone": { "work": "+44 20 7514 1700", "home": "020 8323 2343" },
+    "email": "brian.a.c.rock@site.com",
+    "bio": "I /[love]/ rock",
+    "role": "Business Analyst",
     "webView": [
       "http://brian.org/",
       "http://facebook.com/brio"
-    ],
-    "bio": "I /[love]/ rock",
+    ]
 }
 
 {   "%uid": "uid-1b84-142d-4f34-3734",

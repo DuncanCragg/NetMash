@@ -3,11 +3,12 @@
   "persist": { "directory": ".",
                "db": "netmash.db",
                "syncrate": 100,
-               "preload": [ "uid-1488-6110-092d-2bae", "uid-a39f-b330-0492-100f", "uid-09e4-e69b-54a4-a725" ],
-               "pieload": [ "uid-0145-54f4-36db-302e" ]
+               "preload": [ ],
+               "pieload": [ "uid-1488-6110-092d-2bae", "uid-a39f-b330-0492-100f", "uid-09e4-e69b-54a4-a725" ]
    },
   "network": { "host": "localhost",
                "port": 8082,
                "pathprefix": "/o/",
+               "cache-notify": "c-n-0a3a-8cd3-d5c3-ed1c",
                "log": true }
 }
