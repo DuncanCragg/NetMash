@@ -498,7 +498,7 @@ public class User extends WebObject {
             }
 
             if(viewlist!=null){
-                JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
+                JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
                 uiJSON.listPath("view", viewlist);
                 if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
             }
@@ -512,7 +512,7 @@ public class User extends WebObject {
                                                      content("private:viewing"),
                                                      contentIsOrListContains("private:viewing:is","editable"));
             viewhash.put("#uid", "uid: "+content("private:viewing"));
-            JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
+            JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
             uiJSON.hashPath("view", viewhash);
             if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }

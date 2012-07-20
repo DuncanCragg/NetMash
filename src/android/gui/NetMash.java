@@ -20,6 +20,8 @@ import android.view.*;
 import android.view.View.*;
 import android.widget.*;
 
+import android.opengl.GLSurfaceView;
+
 import static android.view.ViewGroup.LayoutParams.*;
 
 import com.google.android.maps.*;
@@ -145,13 +147,16 @@ public class NetMash extends MapActivity{
             if(o==null) o=uiJSON.listPathN("view");
             addGUI(o);
         }else{
-            Object o=uiJSON.hashPathN("mesh");
-            addMesh(o);
+            LinkedHashMap hm=uiJSON.hashPathN("mesh");
+            addMesh(hm);
         }
     }
 
-    private void addMesh(Object o){
-log("xxxxxxxxxxxxxxxxxxxxxxxx "+o);
+    private void addMesh(LinkedHashMap hm){
+        View view=createMeshView(hm);
+        View v=layout.getChildAt(0);
+        if(v!=null) layout.removeView(v);
+        layout.addView(view, 0);
     }
 
     private void addGUI(Object o){
@@ -655,6 +660,14 @@ log("xxxxxxxxxxxxxxxxxxxxxxxx "+o);
         if(!overlays.contains(itemizedoverlay)) overlays.add(itemizedoverlay);
         mapview.postInvalidate();
         return mapview;
+    }
+
+    private GLSurfaceView createMeshView(LinkedHashMap hm){
+        GLSurfaceView meshview = new GLSurfaceView(this);
+        meshview.setEGLContextClientVersion(2);
+        //Renderer renderer = new Renderer(this);
+        //meshview.setRenderer(renderer);
+        return meshview;
     }
 
     public void jumpToUID(String s){
