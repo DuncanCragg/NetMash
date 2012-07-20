@@ -8,6 +8,8 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 
 noargs: androidemu runstaticserver logboth
 
+mesh: androidemu
+
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
 
 quickdyn: editquickdb androidemu runquickserver logboth editdynamicfile

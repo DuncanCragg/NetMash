@@ -43,8 +43,9 @@ public class CurrentLocation implements LocationListener {
         Location gpsloc=locationManager.getLastKnownLocation(GPS_PROVIDER);
         currentLocation = isBetterLocation(netloc, gpsloc)? netloc: gpsloc;
         if(currentLocation!=null) user.onNewLocation(currentLocation);
-        locationManager.requestLocationUpdates(NETWORK_PROVIDER, 15*SECONDS, 0, this);
-        locationManager.requestLocationUpdates(GPS_PROVIDER,     15*SECONDS, 0, this);
+        // http://code.google.com/p/android/issues/detail?id=19857
+        try{ locationManager.requestLocationUpdates(NETWORK_PROVIDER, 15*SECONDS, 0, this); }catch(Exception e){}
+        try{ locationManager.requestLocationUpdates(GPS_PROVIDER,     15*SECONDS, 0, this); }catch(Exception e){}
     }
 
     public void stopLocationUpdates(){

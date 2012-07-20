@@ -140,8 +140,21 @@ public class NetMash extends MapActivity{
         String title =uiJSON.stringPathN("title");
         if(title==null) setTitle(       "NetMash");
         else            setTitle(title+"|NetMash");
-        Object      o=uiJSON.hashPathN("view");
-        if(o==null) o=uiJSON.listPathN("view");
+        if(uiJSON.stringPathN("is").equals("gui")){
+            Object      o=uiJSON.hashPathN("view");
+            if(o==null) o=uiJSON.listPathN("view");
+            addGUI(o);
+        }else{
+            Object o=uiJSON.hashPathN("mesh");
+            addMesh(o);
+        }
+    }
+
+    private void addMesh(Object o){
+log("xxxxxxxxxxxxxxxxxxxxxxxx "+o);
+    }
+
+    private void addGUI(Object o){
         ViewGroup view;
         if(isMapList(o)){
             view = createMapView(o);

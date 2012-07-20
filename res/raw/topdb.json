@@ -1,3 +1,11 @@
+{ "%uid": "uid-1e51-f298-5f55-6caa",
+  "%class": "netmash.forest.Fjord",
+  "is": [ "3d", "mesh" ],
+  "title": "Textured Cube",
+  "mesh": {
+  }
+}
+
 { "%uid": "uid-52f3-5a91-e30f-4ae9",
   "%class": "netmash.forest.Fjord",
   "%rules": [ "uid-b6ba-9745-6a5a-8cf1" ],

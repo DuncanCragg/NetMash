@@ -61,7 +61,7 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(contacts);
         me.funcobs.cacheSaveAndEvaluate(me, true);
 
-        me.notifying(list(homeusers));
+        if(homeusers!=null) me.notifying(list(homeusers));
         NetMash.top.onUserReady(me);
     }
 
@@ -405,22 +405,20 @@ public class User extends WebObject {
     private void showWhatIAmViewingAsGUI(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
+            LinkedHashMap meshhash=null;
             String title=content("private:viewing:title");
-            if(contentIsOrListContains("private:viewing:is", "user")&&
-               contentIsOrListContains("private:viewing:is", "list")  ){
+            if(contentListContainsAll("private:viewing:is", list("user", "list"))){
 
                 viewhash=ots2gui.contactList2GUI("contact:");
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "contact")&&
-               contentIsOrListContains("private:viewing:is", "list"   )   ){
+            if(contentListContainsAll("private:viewing:is", list("contact", "list"))){
 
                 viewhash=ots2gui.contactList2GUI("");
             }
             else
-            if((contentIsOrListContains("private:viewing:is", "document")||
-                contentIsOrListContains("private:viewing:is", "article")   ) &&
-               contentIsOrListContains("private:viewing:is", "list"   )   ){
+            if(contentListContainsAll("private:viewing:is", list("document", "list"))||
+               contentListContainsAll("private:viewing:is", list("article",  "list"))  ){
 
                 viewhash=ots2gui.documentList2GUI();
             }
@@ -449,16 +447,26 @@ public class User extends WebObject {
             if(contentIsOrListContains("private:viewing:is", "gui")){
                 viewhash=contentHash("private:viewing:view");
             }
+            else
+            if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
+                meshhash=contentHash("private:viewing:mesh");
+            }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), false);
                 viewhash.put("#uid", "uid: "+content("private:viewing"));
             }
+            JSON uiJSON=null;
             if(viewhash!=null){
-                JSON uiJSON=new JSON("{ \"is\": [ \"gui\" ] }");
+                uiJSON=new JSON("{ \"is\": \"gui\" }");
                 uiJSON.stringPath("title", title);
                 uiJSON.hashPath("view", viewhash);
-                if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
             }
+            if(meshhash!=null){
+                uiJSON=new JSON("{ \"is\": \"mesh\" }");
+                uiJSON.stringPath("title", title);
+                uiJSON.hashPath("mesh", meshhash);
+            }
+            if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }
     }
 
