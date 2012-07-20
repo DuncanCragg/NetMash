@@ -209,8 +209,8 @@ clean:
 veryclean: clean setappemuconfig setvmemuconfig setdebugmapkey
 	rm -f  src/server/vm[12]/netmash.log
 	rm -f  src/server/vm[12]/netmash.db
-	rm -f  bin/NetMash-*.apk
 	rm -f  src/server/vm2/netmashconfig.json
+	rm -rf bin gen
 
 # -------------------------------------------------------------------
 
