@@ -250,7 +250,7 @@ public class User extends WebObject {
     private String returnstringhack; // so fix it
     public String getFormStringVal(final String guiuid, final String tag){
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 returnstringhack=null;
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
                 else returnstringhack=content("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
@@ -263,7 +263,7 @@ public class User extends WebObject {
     private boolean returnboolhack; // so fix it
     public boolean getFormBoolVal(final String guiuid, final String tag){
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 returnboolhack=false;
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
                 else returnboolhack=contentBool("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
@@ -276,7 +276,7 @@ public class User extends WebObject {
     private int returninthack; // so fix it
     public int getFormIntVal(final String guiuid, final String tag){
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 returninthack=0;
                 if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
                 else returninthack=contentInt("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));

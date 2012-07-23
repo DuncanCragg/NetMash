@@ -507,6 +507,7 @@ public class Kernel {
 
     static private void logErr(String message, Throwable t, AbstractInterruptibleChannel c){
         System.err.println("Kernel: "+message+":\n"+t);
+        t.printStackTrace();
         try{ if(c!=null) c.close(); } catch(Throwable tt){}
     }
 

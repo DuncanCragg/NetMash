@@ -331,8 +331,10 @@
 }
 
 {   "%uid": "uid-35ad-af7a-93fb-896d",
-    "is": "contact",
-    "fullName": "Mr Brian Rock",
+    "%class": "server.types.Editable",
+    "%rules": [ ],
+    "is": [ "contact", "editable" ],
+    "fullName": "Brian Rock",
     "name": {
       "given":  "Brian",
       "middle": [ "Andy", "Charles" ],

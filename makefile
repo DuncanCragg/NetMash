@@ -8,15 +8,17 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 
 noargs: androidemu runstaticserver logboth
 
-mesh: androidemu
+twoservers: androidemu runtwo logthree
+
+mesh: androidemu logcat
+
+fjord: kill runcur whappen
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
 
 quickdyn: editquickdb androidemu runquickserver logboth editdynamicfile
 
 local: androidemu runlocalserver logboth editlocaldbanddynamicfile
-
-fjord: kill runcur whappen
 
 # -------------------------------------------------------------------
 
@@ -65,11 +67,13 @@ runlocalserver: kill clean setvmemuconfig uselocaldb run1
 
 runremoteserver: kill clean setvmremoteconfig usestaticdb run1 logout1
 
-run1server: kill clean setvmtestconfig usetestdb run1 logout1
+runone: kill clean curconfig setvmtestconfig usetestdb run1 logout1
 
-runcur: kill curconfig setvmtestconfig usetestdb run1n2
+runtwo: kill clean curconfig setvmemuconfig usetestdb run1n2
 
-runall: kill allconfig setvmtestconfig usetestdb run1n2
+runcur: kill clean curconfig setvmtestconfig usetestdb run1n2
+
+runall: kill clean allconfig setvmtestconfig usetestdb run1n2
 
 runon1:
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
@@ -124,12 +128,15 @@ setappremoteconfig:
 
 setvmemuconfig:
 	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm2/netmashconfig.json
 
 setvmtestconfig:
 	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm2/netmashconfig.json
 
 setvmremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm2/netmashconfig.json
 
 curconfig:
 	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json
@@ -146,6 +153,11 @@ whappen:
 logboth:
 	xterm -geometry 97x50+0+80 -e make logcat &
 	xterm -geometry 97x20+0+80 -e make logout1 &
+
+logthree:
+	xterm -geometry 97x50+0+80 -e make logcat &
+	xterm -geometry 97x20+0+80 -e make logout1 &
+	xterm -geometry 97x20+0+80 -e make logout2 &
 
 logcat:
 	adb logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"

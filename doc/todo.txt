@@ -16,6 +16,7 @@ Android
  - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
 
 HTTP
+ - still two network conns on main thread: at start and images
  - 201 Created may be missed
  - 403 if not observing
  - poll while waiting - max-age
@@ -35,6 +36,7 @@ FuncObs
 Overall
 
  - tighten up thread syncing
+ - HTTP.java longPollerPool concurrentmod.txt
 
 Types
 

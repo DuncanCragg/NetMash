@@ -722,8 +722,9 @@ public class NetMash extends MapActivity{
             BufferedInputStream bis = new BufferedInputStream(is, 8092);
             bm = BitmapFactory.decodeStream(bis);
             bis.close(); is.close();
-        } catch (IOException e){
-            System.err.println("Couldn't load image at "+url+"\n"+e);
+        } catch (Throwable t){
+            t.printStackTrace();
+            System.err.println("Couldn't load image at "+url+"\n"+t);
         }
         return bm;
     }
