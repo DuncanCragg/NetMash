@@ -142,7 +142,7 @@ public class FunctionalObserver implements Module {
 
     public void cacheSaveAndEvaluate(WebObject w, boolean savehome){
         cachePut(w);
-        if(savehome){ http.setHomeCN(w); notifyUpdated(w, true); }
+        if(savehome){ http.setHomeCN(w); notifyUpdatedOnAThread(w); }
         persistence.save(w);
         evaluatable(w);
     }
@@ -197,6 +197,10 @@ public class FunctionalObserver implements Module {
             if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); }
             else                             { if(realupdate) http.push(notified);     }
         }
+    }
+
+    private void notifyUpdatedOnAThread(final WebObject notifier){
+        new Thread(){ public void run(){ notifyUpdated(notifier, true); } }.start();
     }
 
     private void notifyHTTPUpdated(WebObject notifier){
