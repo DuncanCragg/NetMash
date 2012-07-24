@@ -418,7 +418,7 @@ public class NetMash extends MapActivity{
         view.setAdjustViewBounds(true);
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         view.setPadding(8,8,8,8);
-        view.setImageBitmap(getImageBitmap(url));
+        eventuallySetImageUsingDecentApproach(view,url);
         return view;
     }
 
@@ -713,8 +713,18 @@ public class NetMash extends MapActivity{
         return false;
     }
 
+    private void eventuallySetImageUsingDecentApproach(final ImageView view, final String url){
+        new Thread(){ public void run(){
+            final Bitmap bitmap = getImageBitmap(url);
+            guiHandler.post(new Runnable(){ public void run(){ view.setImageBitmap(bitmap); }});
+        }}.start();
+    }
+
+    private HashMap<String,Bitmap> imageCache = new HashMap<String,Bitmap>();
+
     private Bitmap getImageBitmap(String url){
-        Bitmap bm=null;
+        Bitmap bm=imageCache.get(url);
+        if(bm!=null) return bm;
         try{
             URLConnection conn = new URL(url).openConnection();
             conn.connect();
@@ -725,7 +735,9 @@ public class NetMash extends MapActivity{
         } catch (Throwable t){
             t.printStackTrace();
             System.err.println("Couldn't load image at "+url+"\n"+t);
+            return null;
         }
+        imageCache.put(url,bm);
         return bm;
     }
 
