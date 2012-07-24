@@ -64,9 +64,9 @@ public class HTTP implements ChannelUser {
 
     // ----------------------------------------
 
-    private HashMap<String,HTTPClient> connectionPool = new HashMap<String,HTTPClient>();
-    private HashMap<String,HTTPClient> longPollerPool = new HashMap<String,HTTPClient>();
-    private HashMap<String,HTTPServer> longPusherPool = new HashMap<String,HTTPServer>();
+    private ConcurrentHashMap<String,HTTPClient> connectionPool = new ConcurrentHashMap<String,HTTPClient>();
+    private ConcurrentHashMap<String,HTTPClient> longPollerPool = new ConcurrentHashMap<String,HTTPClient>();
+    private ConcurrentHashMap<String,HTTPServer> longPusherPool = new ConcurrentHashMap<String,HTTPServer>();
 
     private HTTPClient poolClient(String host, int port){
         String key = host+":"+port;
