@@ -417,7 +417,7 @@ public class NetMash extends MapActivity{
         ImageView view = new ImageView(this);
         view.setAdjustViewBounds(true);
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        view.setPadding(8,8,8,8);
+        view.setPadding(3,3,3,3);
         eventuallySetImageUsingDecentApproach(view,url);
         return view;
     }

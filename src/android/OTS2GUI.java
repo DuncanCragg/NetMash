@@ -192,7 +192,7 @@ public class OTS2GUI {
         return point;
     }
 
-    public LinkedHashMap contact2GUI(){ logrule();
+    public LinkedHashMap contact2GUI(boolean editable){ logrule();
 
         LinkedList contactdetail = new LinkedList();
         contactdetail.add(style("direction","vertical"));
@@ -225,18 +225,25 @@ public class OTS2GUI {
         if(webView==null) webView=user.content("private:viewing:webView");
         if(webView!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Website:", webView));
 
+        String bio=user.content("private:viewing:bio:0");
+        if(bio==null) bio=user.content("private:viewing:bio");
+        if(bio!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Bio:", bio));
+
         LinkedList<String> addressStrings=getAddressesAsString("private:viewing:address",false);
         if(addressStrings.size()!=0) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", join(addressStrings, "\n---\n")));
 
         addListIfPresent(contactdetail, "publications", "Publications");
 
         String fullname=user.content("private:viewing:fullName");
-        String photourl=user.content("private:viewing:photo");
-        if(photourl==null) photourl="";
+        String photourl=user.contentOr("private:viewing:photo","");
+        LinkedHashMap<String,Object> titlehash=new LinkedHashMap<String,Object>();
+        titlehash.put("style", style("direction","horizontal", "proportions","25%", "colours","lightpink*"));
+        titlehash.put("#photo", photourl);
+        titlehash.put("#val-fullName", editable? "?["+fullname+" /string/]?": fullname);
 
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical"));
-        viewhash.put("#title", list(style("direction","horizontal", "proportions","25%", "colours","lightpink*"), photourl, fullname));
+        viewhash.put("#title", titlehash);
         viewhash.put("#contact", contactdetail);
         return viewhash;
     }

@@ -407,6 +407,7 @@ public class User extends WebObject {
             LinkedHashMap viewhash=null;
             LinkedHashMap meshhash=null;
             String title=content("private:viewing:title");
+            boolean editable=contentIsOrListContains("private:viewing:is","editable");
             if(contentListContainsAll("private:viewing:is", list("user", "list"))){
 
                 viewhash=ots2gui.contactList2GUI("contact:");
@@ -428,7 +429,7 @@ public class User extends WebObject {
             }
             else
             if(contentIsOrListContains("private:viewing:is", "contact")){
-                viewhash=ots2gui.contact2GUI();
+                viewhash=ots2gui.contact2GUI(editable);
             }
             else
             if(contentIsOrListContains("private:viewing:is", "event")){
@@ -452,7 +453,7 @@ public class User extends WebObject {
                 meshhash=contentHash("private:viewing:mesh");
             }
             else{
-                viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), false);
+                viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
                 viewhash.put("#uid", "uid: "+content("private:viewing"));
             }
             JSON uiJSON=null;
@@ -507,10 +508,8 @@ public class User extends WebObject {
 
     private void showWhatIAmViewingAsRawJSON(){ logrule();
         if(contentSet("private:viewing:is")){
-            LinkedHashMap viewhash=ots2gui.guifyHash("",
-                                                     contentHash("private:viewing:#"),
-                                                     content("private:viewing"),
-                                                     contentIsOrListContains("private:viewing:is","editable"));
+            boolean editable=contentIsOrListContains("private:viewing:is","editable");
+            LinkedHashMap viewhash=ots2gui.guifyHash("", contentHash("private:viewing:#"), content("private:viewing"), editable);
             viewhash.put("#uid", "uid: "+content("private:viewing"));
             JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
             uiJSON.hashPath("view", viewhash);
