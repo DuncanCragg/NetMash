@@ -407,7 +407,7 @@ public class OTS2GUI {
             LinkedHashMap hm3 = new LinkedHashMap();
             hm3.put("style", style("direction", "horizontal"));
             hm3.put("#tag-"+path+tag, editable? "?["+tag+": /string/]?": tag+":");
-            addToHash(hm3,"#val-"+path+tag,hm.get(tag),objuid,editable);
+            addToHash(hm3,path+tag,hm.get(tag),objuid,editable);
             hm2.put("#"+tag,hm3);
         }
         if(editable) hm2.put(".addnew","?[New Entry /string/]?");
@@ -429,7 +429,7 @@ public class OTS2GUI {
         if(o instanceof LinkedList)    hm.put(path,guifyList(path+":", (LinkedList)o, objuid, editable));
         else
         if(UID.isUID(o))               hm.put(path,UID.normaliseUID(objuid, (String)o));
-        else           { if(!editable) hm.put(path,""+o); else hm.put(path,"?["+o+" /string/]?"); }
+        else           { if(!editable) hm.put(path,""+o); else hm.put("#val-"+path,"?["+o+" /string/]?"); }
     }
 
     // ---------------------------------------------------------------------------
