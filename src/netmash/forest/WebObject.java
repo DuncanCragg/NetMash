@@ -288,11 +288,11 @@ public class WebObject {
     public boolean contentClone(String path, String source){
         Object o = contentObject(source);
         if(o==null) return false;
-        if(o instanceof String)        content(      path,(String)o); else
-        if(o instanceof Double)        contentDouble(path,(Double)o); else
-        if(o instanceof Boolean)       contentBool(  path,(Boolean)o); else
-        if(o instanceof LinkedHashMap) contentHash(  path,(LinkedHashMap)((LinkedHashMap)o).clone()); else
-        if(o instanceof LinkedList)    contentList(  path,(LinkedList)((LinkedList)o).clone());
+        if(o instanceof String)        content(      path, (String)o); else
+        if(o instanceof Number)        contentDouble(path,((Number)o).doubleValue()); else
+        if(o instanceof Boolean)       contentBool(  path, (Boolean)o); else
+        if(o instanceof LinkedHashMap) contentHash(  path, (LinkedHashMap)((LinkedHashMap)o).clone()); else
+        if(o instanceof LinkedList)    contentList(  path, (LinkedList)((LinkedList)o).clone());
         return true;
     }
 

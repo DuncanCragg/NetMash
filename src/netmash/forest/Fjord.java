@@ -65,7 +65,7 @@ public class Fjord extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanRuleHash(LinkedHashMap<String,Object> hash, String path){
-        if(contentHash(path+"#")==null) return false;
+        if(contentHash(path+"#")==null && contentList(path)==null) return false;
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=path+entry.getKey();
             if(path.equals("")){
@@ -151,7 +151,7 @@ public class Fjord extends WebObject {
     }
 
     private boolean doLHS(String pk, String lhs){ try{
-        if(lhs.equals("{}"))      return  contentHash(pk)!=null;
+        if(lhs.equals("{}"))      return  contentHash(pk+":#")!=null;
         if(lhs.equals("$:"))      return  content(pk).equals(uid) || content(pk).equals(UID.toURL(uid));
         if(lhs.startsWith( "$:")) return  contentObject(pk).equals(contentObject(lhs.substring(2)));
         if(lhs.startsWith("!$:")) return !contentObject(pk).equals(contentObject(lhs.substring(3)));
