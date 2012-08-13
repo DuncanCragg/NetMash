@@ -1,11 +1,11 @@
-NetMash is Apps Without Boundaries!
+NetMash
 
-See http://netmash.net for an Android quick-start:
+See http://netmash.net - it's experimental at the moment so you probably shouldn't be
+reading this, you should be reading the code or something. Or contacting me.
 
-Run the emulator with Google maps at API 7, then:
+Run the emulator with Google maps at API 10-16, then:
 
+$ make mesh       -- installs the app for local, no server
 $ make            -- installs the app and runs the server
-$ make runtests   -- just JSON tests at the moment
-$ make runall     -- run up two vms and run some examples
 
 

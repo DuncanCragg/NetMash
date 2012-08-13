@@ -1,5 +1,5 @@
 
-NetMash is..
+NetMash is (was, before the 3D VW thing)..
 
  - a JSON or mobile-related data browser (and server)
 
@@ -10,15 +10,19 @@ NetMash is..
  - that fixes many of the problems of HTML/JS/CSS browsers
 
     - talking in semantic terms, not just presentational
+
        - mobile stuff like identity, contacts, events, media, news, etc
+       - device stuff like location, orientation, sound, image
 
     - two-way and dynamic data
+
        - auto-syncing, sending, saving, downloading, refreshing, etc
 
     - allowing much closer access to native functionality
+
        - including offline and better cacheing
 
-    - one language, Media/Content Type (One-T) for data, animation, layout and styling
+    - one language, Media/Content Type for data, animation, layout and styling
 
  - but keeps the mashability and cacheability of the Web
 
