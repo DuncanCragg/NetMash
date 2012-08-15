@@ -147,13 +147,13 @@ public class NetMash extends MapActivity{
             if(o==null) o=uiJSON.listPathN("view");
             addGUI(o);
         }else{
-            LinkedHashMap hm=uiJSON.hashPathN("mesh");
-            addMesh(hm);
+            LinkedHashMap mesh=uiJSON.hashPathN("mesh");
+            addMesh(mesh);
         }
     }
 
-    private void addMesh(LinkedHashMap hm){
-        View view=createMeshView(hm);
+    private void addMesh(LinkedHashMap mesh){
+        View view=createMeshView(mesh);
         View v=layout.getChildAt(0);
         if(v!=null) layout.removeView(v);
         layout.addView(view, 0);
@@ -662,10 +662,10 @@ public class NetMash extends MapActivity{
         return mapview;
     }
 
-    private GLSurfaceView createMeshView(LinkedHashMap hm){
+    private GLSurfaceView createMeshView(LinkedHashMap mesh){
         GLSurfaceView meshview = new GLSurfaceView(this);
         meshview.setEGLContextClientVersion(2);
-        //Renderer renderer = new Renderer(this);
+        //Renderer renderer = new Renderer(this,mesh);
         //meshview.setRenderer(renderer);
         return meshview;
     }

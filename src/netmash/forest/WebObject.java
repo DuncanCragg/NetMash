@@ -443,6 +443,13 @@ public class WebObject {
         return hm;
     }
 
+    /** Get list at path, jumping 'list' at end if necessary. */
+    public LinkedList contentListMayJump(String path){
+        LinkedList ll=contentList(path);
+        if(ll!=null) return ll;
+        return contentList(path+":list");
+    }
+
     /** Get list at path. */
     public LinkedList contentList(String path){
         LinkedList l=null;

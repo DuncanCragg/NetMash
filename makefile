@@ -57,6 +57,9 @@ reinstall:
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
 
+uninstall:
+	adb uninstall android.gui
+
 # -------------------------------------------------------------------
 
 runstaticserver: kill clean setvmemuconfig usestaticdb run1
@@ -125,6 +128,9 @@ setappemuconfig:
 setappremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
 	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/topdb.json
+
+setvm1emuconfig:
+	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
 
 setvmemuconfig:
 	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
@@ -218,7 +224,7 @@ clean:
 	rm -f  gen/android/gui/R.java
 	rm -f  ,*
 
-veryclean: clean setappemuconfig setvmemuconfig setdebugmapkey
+veryclean: clean setappemuconfig setvm1emuconfig setdebugmapkey
 	rm -f  src/server/vm[12]/netmash.log
 	rm -f  src/server/vm[12]/netmash.db
 	rm -f  src/server/vm2/netmashconfig.json

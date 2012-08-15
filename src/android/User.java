@@ -450,7 +450,7 @@ public class User extends WebObject {
             }
             else
             if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
-                meshhash=contentHash("private:viewing:mesh");
+                meshhash=ots2gui.mesh2mesh();
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
