@@ -418,6 +418,7 @@ public class NetMash extends MapActivity{
         view.setAdjustViewBounds(true);
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         view.setPadding(3,3,3,3);
+        view.setImageBitmap(getPlaceHolderBitmap());
         eventuallySetImageUsingDecentApproach(view,url);
         return view;
     }
@@ -713,6 +714,15 @@ public class NetMash extends MapActivity{
         return false;
     }
 
+    private HashMap<String,Bitmap> imageCache = new HashMap<String,Bitmap>();
+
+    public Bitmap getBitmapOrStartFetching(final String url){
+        Bitmap bm=imageCache.get(url);
+        if(bm!=null) return bm;
+        new Thread(){ public void run(){ getImageBitmap(url); }}.start();
+        return null;
+    }
+
     private void eventuallySetImageUsingDecentApproach(final ImageView view, final String url){
         new Thread(){ public void run(){
             final Bitmap bitmap = getImageBitmap(url);
@@ -720,24 +730,29 @@ public class NetMash extends MapActivity{
         }}.start();
     }
 
-    private HashMap<String,Bitmap> imageCache = new HashMap<String,Bitmap>();
+    private Bitmap placeHolderBitmap;
+    private Bitmap getPlaceHolderBitmap(){
+        if(placeHolderBitmap==null){
+            InputStream placeis=getResources().openRawResource(R.raw.placeholder);
+            placeHolderBitmap=BitmapFactory.decodeStream(placeis);
+            try{ placeis.close(); }catch(IOException e){}
+        }
+        return placeHolderBitmap;
+    }
 
     private Bitmap getImageBitmap(String url){
         Bitmap bm=imageCache.get(url);
         if(bm!=null) return bm;
+        imageCache.put(url, getPlaceHolderBitmap());
         try{
             URLConnection conn = new URL(url).openConnection();
             conn.connect();
             InputStream is = conn.getInputStream();
             BufferedInputStream bis = new BufferedInputStream(is, 8092);
             bm = BitmapFactory.decodeStream(bis);
+            imageCache.put(url,bm);
             bis.close(); is.close();
-        } catch (Throwable t){
-            t.printStackTrace();
-            System.err.println("Couldn't load image at "+url+"\n"+t);
-            return null;
-        }
-        imageCache.put(url,bm);
+        } catch (Throwable t){ t.printStackTrace(); System.err.println("Couldn't load image at "+url+"\n"+t); }
         return bm;
     }
 
