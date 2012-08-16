@@ -62,6 +62,8 @@ uninstall:
 
 # -------------------------------------------------------------------
 
+runtestserver: kill clean setvmemuconfig usetestdb run1
+
 runstaticserver: kill clean setvmemuconfig usestaticdb run1
 
 runquickserver: kill clean setvmemuconfig usequickdb run1
@@ -72,7 +74,7 @@ runremoteserver: kill clean setvmremoteconfig usestaticdb run1 logout1
 
 runone: kill clean curconfig setvmtestconfig usetestdb run1 logout1
 
-runtwo: kill clean curconfig setvmemuconfig usetestdb run1n2
+runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
 
 runcur: kill clean curconfig setvmtestconfig usetestdb run1n2
 
@@ -129,10 +131,10 @@ setappremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
 	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/topdb.json
 
-setvm1emuconfig:
+setvmemuconfig:
 	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
 
-setvmemuconfig:
+setvm2emuconfig:
 	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
 	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm2/netmashconfig.json
 
@@ -142,7 +144,6 @@ setvmtestconfig:
 
 setvmremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm2/netmashconfig.json
 
 curconfig:
 	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json
@@ -224,7 +225,7 @@ clean:
 	rm -f  gen/android/gui/R.java
 	rm -f  ,*
 
-veryclean: clean setappemuconfig setvm1emuconfig setdebugmapkey
+veryclean: clean setappemuconfig setvmemuconfig setdebugmapkey
 	rm -f  src/server/vm[12]/netmash.log
 	rm -f  src/server/vm[12]/netmash.db
 	rm -f  src/server/vm2/netmashconfig.json
