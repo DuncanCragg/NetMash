@@ -6,11 +6,11 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noargs: androidemu runstaticserver logboth
+noservers: androidemu logcat
 
 twoservers: androidemu runtwo logthree
 
-mesh: androidemu logcat
+static: androidemu runstaticserver logboth
 
 fjord: kill runcur whappen
 
@@ -70,9 +70,9 @@ runquickserver: kill clean setvmemuconfig usequickdb run1
 
 runlocalserver: kill clean setvmemuconfig uselocaldb run1
 
-runremoteserver: kill clean setvmremoteconfig usestaticdb run1 logout1
+runremoteserver: kill clean setvmremoteconfig usestaticdb run1
 
-runone: kill clean curconfig setvmtestconfig usetestdb run1 logout1
+runone: kill clean curconfig setvmtestconfig usetestdb run1
 
 runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
 
