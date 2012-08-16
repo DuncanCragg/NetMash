@@ -418,7 +418,6 @@ public class NetMash extends MapActivity{
         view.setAdjustViewBounds(true);
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         view.setPadding(3,3,3,3);
-        view.setImageBitmap(getPlaceHolderBitmap());
         eventuallySetImageUsingDecentApproach(view,url);
         return view;
     }
@@ -671,6 +670,8 @@ public class NetMash extends MapActivity{
         return meshview;
     }
 
+    // ---------------------------------------------------------------------
+
     public void jumpToUID(String s){
         user.jumpToUID(s);
     }
@@ -714,19 +715,29 @@ public class NetMash extends MapActivity{
         return false;
     }
 
+    // ---------------------------------------------------------------------
+
     private HashMap<String,Bitmap> imageCache = new HashMap<String,Bitmap>();
 
     public Bitmap getBitmapOrStartFetching(final String url){
         Bitmap bm=imageCache.get(url);
         if(bm!=null) return bm;
+        bm=getPlaceHolderBitmap();
+        imageCache.put(url, bm);
         new Thread(){ public void run(){ getImageBitmap(url); }}.start();
-        return null;
+        return bm;
     }
 
     private void eventuallySetImageUsingDecentApproach(final ImageView view, final String url){
+        Bitmap bm=imageCache.get(url);
+        if(bm!=null){ view.setImageBitmap(bm); return; }
+        // view doesn't refresh when placeholder replaced by actual
+        // bm=getPlaceHolderBitmap();
+        // imageCache.put(url, bm);
+        // view.setImageBitmap(bm);
         new Thread(){ public void run(){
-            final Bitmap bitmap = getImageBitmap(url);
-            guiHandler.post(new Runnable(){ public void run(){ view.setImageBitmap(bitmap); }});
+            final Bitmap bm2 = getImageBitmap(url);
+            guiHandler.post(new Runnable(){ public void run(){ view.setImageBitmap(bm2); }});
         }}.start();
     }
 
@@ -741,20 +752,19 @@ public class NetMash extends MapActivity{
     }
 
     private Bitmap getImageBitmap(String url){
-        Bitmap bm=imageCache.get(url);
-        if(bm!=null) return bm;
-        imageCache.put(url, getPlaceHolderBitmap());
+        Bitmap bm=null;
         try{
-            URLConnection conn = new URL(url).openConnection();
-            conn.connect();
+            URLConnection conn = new URL(url).openConnection(); conn.connect();
             InputStream is = conn.getInputStream();
             BufferedInputStream bis = new BufferedInputStream(is, 8092);
             bm = BitmapFactory.decodeStream(bis);
-            imageCache.put(url,bm);
+            if(bm!=null) imageCache.put(url,bm);
             bis.close(); is.close();
         } catch (Throwable t){ t.printStackTrace(); System.err.println("Couldn't load image at "+url+"\n"+t); }
         return bm;
     }
+
+    // ---------------------------------------------------------------------
 
     private static final Map<String,Integer> COLOURMAP;
     static{
