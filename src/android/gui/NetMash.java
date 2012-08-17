@@ -665,11 +665,20 @@ public class NetMash extends MapActivity{
     private GLSurfaceView createMeshView(LinkedHashMap mesh){
         GLSurfaceView meshview = new GLSurfaceView(this);
         meshview.setEGLContextClientVersion(2);
-        //Renderer renderer = new Renderer(this,mesh);
-        //meshview.setRenderer(renderer);
+        Renderer renderer = new Renderer(this,mesh);
+        meshview.setRenderer(renderer);
         return meshview;
     }
-
+/*
+    @Override
+    protected void onPause() {
+        meshview.onPause();
+    }
+    @Override
+    protected void onResume() {
+        meshview.onResume();
+    }
+*/
     // ---------------------------------------------------------------------
 
     public void jumpToUID(String s){
@@ -719,7 +728,7 @@ public class NetMash extends MapActivity{
 
     private HashMap<String,Bitmap> imageCache = new HashMap<String,Bitmap>();
 
-    public Bitmap getBitmapOrStartFetching(final String url){
+    public Bitmap getBitmap(final String url){
         Bitmap bm=imageCache.get(url);
         if(bm!=null) return bm;
         bm=getPlaceHolderBitmap();

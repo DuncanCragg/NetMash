@@ -436,8 +436,8 @@ public class OTS2GUI {
 
     public LinkedHashMap mesh2mesh(){
         LinkedHashMap hm=user.contentHashClone("private:viewing:mesh");
-        hm.put("fragmentShader", join(user.contentListMayJump("private:viewing:mesh:fragmentShader")," "));
         hm.put("vertexShader",   join(user.contentListMayJump("private:viewing:mesh:vertexShader")," "));
+        hm.put("fragmentShader", join(user.contentListMayJump("private:viewing:mesh:fragmentShader")," "));
         return hm;
     }
 

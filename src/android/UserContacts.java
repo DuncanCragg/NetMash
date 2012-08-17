@@ -73,7 +73,7 @@ int i=0;
             if(phonenumber==null && emailaddress==null && address==null) continue;
             WebObject.log("Contact: "+id+" "+name+" "+phonenumber+" "+emailaddress+" "+address);
             contactslist.add(createContact(user, id, name, phonenumber, emailaddress, address));
-if(++i>100) break;
+if(++i>10) break;
         } while(concur.moveToNext());
         concur.close();
         return contactslist;
