@@ -185,12 +185,12 @@ classes: \
 ./build/classes/netmash/forest/WebObject.class \
 ./build/classes/netmash/forest/FunctionalObserver.class \
 ./build/classes/netmash/forest/Fjord.class \
+./build/classes/netmash/forest/Editable.class \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/server/types/UserHome.class \
 ./build/classes/server/types/Event.class \
 ./build/classes/server/types/Twitter.class \
 ./build/classes/server/types/DynamicFile.class \
-./build/classes/server/types/Editable.class \
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes

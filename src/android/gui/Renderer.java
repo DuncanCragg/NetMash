@@ -85,6 +85,7 @@ class Renderer implements GLSurfaceView.Renderer {
         Matrix.invertM(     matrixNor, 0, matrixMVP, 0);
         Matrix.transposeM(  matrixNor, 0, matrixNor, 0);
 
+        // glGetUniformLocation, glGetAttribLocation - do these once on program creation
         GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program, "mvpm"), 1, false, matrixMVP, 0);
         GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program, "norm"), 1, false, matrixNor, 0);
 
@@ -103,6 +104,7 @@ class Renderer implements GLSurfaceView.Renderer {
         // use JNI and glBufferData: http://stackoverflow.com/questions/5402567/whats-glbufferdata-for-in-opengl-es
         //                           http://code.google.com/p/gdc2011-android-opengl/wiki/TalkTranscript
         // or glBindBuffer:          http://www.learnopengles.com/android-lesson-seven-an-introduction-to-vertex-buffer-objects-vbos/
+        //                           http://www.androidenea.com/2012/02/opengl-es-20-on-android.html
         int ph=GLES20.glGetAttribLocation(program, "pos");
         GLES20.glEnableVertexAttribArray(ph);
         vb.position(0);
@@ -155,6 +157,7 @@ Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+ey
         GLES20.glDepthMask(true);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES20.glDepthFunc(GLES20.GL_LEQUAL);
         GLES20.glCullFace(GLES20.GL_BACK);
     }
 

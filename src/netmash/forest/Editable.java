@@ -1,6 +1,4 @@
-package server.types;
-
-import netmash.forest.*;
+package netmash.forest;
 
 public class Editable extends Fjord {
 

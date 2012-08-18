@@ -1,8 +1,10 @@
 { "%uid": "uid-1e51-f298-5f55-6caa",
-  "%class": "netmash.forest.Fjord",
-  "is": [ "3d", "mesh" ],
+  "%class": "netmash.forest.Editable",
+  "is": [ "3d", "mesh", "editable" ],
   "title": "Textured Cube",
   "mesh": {
+    "rotation": [ 0, 0, 0 ],
+    "scale": [ 1.0, 1.0, 1.0 ],
     "vertices": [
       [  2.0, -2.0, -2.0 ], [  2.0, -2.0,  2.0 ], [ -2.0, -2.0,  2.0 ], [ -2.0, -2.0, -2.0 ],
       [  2.0,  2.0, -2.0 ], [  2.0,  2.0,  2.0 ], [ -2.0,  2.0,  2.0 ], [ -2.0,  2.0, -2.0 ]
@@ -20,9 +22,7 @@
     ],
     "textures": [ "http://10.0.2.2/netmash.png" ],
     "vertexShader": "uid-ff5d-1ef4-cfa5-5f92",
-    "fragmentShader": "uid-6e92-c60d-d16a-6b35",
-    "rotation": [ 0, 0, 0 ],
-    "scale": [ 1.0, 1.0, 1.0 ]
+    "fragmentShader": "uid-6e92-c60d-d16a-6b35"
   }
 }
 

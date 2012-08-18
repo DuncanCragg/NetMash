@@ -331,7 +331,7 @@
 }
 
 {   "%uid": "uid-35ad-af7a-93fb-896d",
-    "%class": "server.types.Editable",
+    "%class": "netmash.forest.Editable",
     "%rules": [ ],
     "is": [ "contact", "editable" ],
     "fullName": "Brian Rock",
