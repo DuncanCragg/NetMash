@@ -40,6 +40,14 @@ class Renderer implements GLSurfaceView.Renderer {
     private float[] specular = { 0.9f, 0.4f, 0.4f, 1.0f };
     private float   shininess = 5.0f;
 
+    private float eyeX=5;
+    private float eyeY=0;
+    private float eyeZ= -5;
+
+    private float seeX=0;
+    private float seeY=0;
+    private float seeZ=0;
+
     public Renderer(NetMash netmash, LinkedHashMap mesh) {
         this.netmash=netmash;
         this.mesh=new Mesh(mesh);
@@ -70,10 +78,7 @@ class Renderer implements GLSurfaceView.Renderer {
         Matrix.scaleM(      matrixScl, 0, mesh.scaleX, mesh.scaleY, mesh.scaleZ);
         Matrix.multiplyMM(  matrixMSR, 0, matrixScl, 0, matrixRot, 0);
 
-        long timeToGoOnceAround = 8000;
-        long time = SystemClock.uptimeMillis() % timeToGoOnceAround;
-        float angle = (float)(2*Math.PI*time/timeToGoOnceAround);
-        Matrix.setLookAtM(  matrixVVV, 0, (float)(6*Math.sin(angle)), 0, (float)(6*Math.cos(angle)),  0f,0f,0f,  0f,1f,0f);
+        Matrix.setLookAtM(  matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
 
         Matrix.multiplyMM(  matrixMVV, 0, matrixVVV, 0, matrixMSR, 0);
         Matrix.multiplyMM(  matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
@@ -95,6 +100,9 @@ class Renderer implements GLSurfaceView.Renderer {
         ShortBuffer ib = mesh.ib;
         int indslength = mesh.il;
 
+        // use JNI and glBufferData: http://stackoverflow.com/questions/5402567/whats-glbufferdata-for-in-opengl-es
+        //                           http://code.google.com/p/gdc2011-android-opengl/wiki/TalkTranscript
+        // or glBindBuffer:          http://www.learnopengles.com/android-lesson-seven-an-introduction-to-vertex-buffer-objects-vbos/
         int ph=GLES20.glGetAttribLocation(program, "pos");
         GLES20.glEnableVertexAttribArray(ph);
         vb.position(0);
@@ -125,6 +133,12 @@ class Renderer implements GLSurfaceView.Renderer {
 
     // -------------------------------------------------------------
 
+    public void down(float x, float y){
+        Log.d("down: ",x+"/"+y);
+    }
+
+    // -------------------------------------------------------------
+
     public void doBasicSetup(){
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         GLES20.glClearDepthf(1.0f);
@@ -134,6 +148,8 @@ class Renderer implements GLSurfaceView.Renderer {
         GLES20.glCullFace(GLES20.GL_BACK);
     }
 
+    // use ETC compression
+    // figure out how to rebind
     private void setupTextures(){
         int numtextures = mesh.textures.size();
         int[] textureIDs = new int[numtextures];

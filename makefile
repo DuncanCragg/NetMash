@@ -6,7 +6,7 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noservers: androidemu logcat
+noservers: androidemurel logcat
 
 twoservers: androidemu runtwo logthree
 
@@ -48,6 +48,7 @@ androidemurel: clean init setappemuconfig setreleasemapkey
 	ant release
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
+	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 androidremoterel: clean init setappremoteconfig setreleasemapkey
 	ant release

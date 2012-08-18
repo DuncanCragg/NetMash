@@ -105,12 +105,10 @@ public class Mesh {
             for(int i=0; i< ind.size(); i++) ia[i]=ind.get(i);
 
             vb = ByteBuffer.allocateDirect(va.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-            vb.put(va);
-            vb.position(0);
+            vb.put(va).position(0);
 
             ib = ByteBuffer.allocateDirect(ia.length*2).order(ByteOrder.nativeOrder()).asShortBuffer();
-            ib.put(ia);
-            ib.position(0);
+            ib.put(ia).position(0);
 
             il=ia.length;
 

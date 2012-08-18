@@ -68,12 +68,14 @@ public class NetMash extends MapActivity{
     public void onResume(){
         super.onResume(); log("onResume");
         user.onTopResume();
+        if(onemeshview!=null) onemeshview.onResume();
     }
 
     @Override
     public void onPause(){
         super.onPause(); log("onPause");
         user.onTopPause();
+        if(onemeshview!=null) onemeshview.onPause();
     }
 
     @Override
@@ -101,6 +103,26 @@ public class NetMash extends MapActivity{
     public void onBackPressed(){
         user.jumpBack();
         return;
+    }
+
+    private float px=0f;
+    private float py=0f;
+    public volatile float xx;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e){
+        if(onemeshview==null) return false;
+        final float x=e.getX();
+        final float y=e.getY();
+        switch(e.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                onemeshview.queueEvent(new Runnable(){ public void run(){ onerenderer.down(x,y); }});
+                break;
+        }
+      //onemeshview.requestRender();
+        onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        new Thread(){ public void run(){ Kernel.sleep(2000); if(onemeshview!=null) onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY); }}.start();
+        return false;
     }
 
     //---------------------------------------------------------
@@ -152,14 +174,18 @@ public class NetMash extends MapActivity{
         }
     }
 
+    private GLSurfaceView onemeshview=null;
+    private Renderer      onerenderer=null;
+
     private void addMesh(LinkedHashMap mesh){
-        View view=createMeshView(mesh);
+        createMeshView(mesh);
         View v=layout.getChildAt(0);
         if(v!=null) layout.removeView(v);
-        layout.addView(view, 0);
+        layout.addView(onemeshview, 0);
     }
 
     private void addGUI(Object o){
+        onemeshview=null;
         ViewGroup view;
         if(isMapList(o)){
             view = createMapView(o);
@@ -662,23 +688,14 @@ public class NetMash extends MapActivity{
         return mapview;
     }
 
-    private GLSurfaceView createMeshView(LinkedHashMap mesh){
-        GLSurfaceView meshview = new GLSurfaceView(this);
-        meshview.setEGLContextClientVersion(2);
-        Renderer renderer = new Renderer(this,mesh);
-        meshview.setRenderer(renderer);
-        return meshview;
+    private void createMeshView(LinkedHashMap mesh){
+        onemeshview = new GLSurfaceView(this);
+        onemeshview.setEGLContextClientVersion(2);
+        onerenderer = new Renderer(this,mesh);
+        onemeshview.setRenderer(onerenderer);
+        onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
-/*
-    @Override
-    protected void onPause() {
-        meshview.onPause();
-    }
-    @Override
-    protected void onResume() {
-        meshview.onResume();
-    }
-*/
+
     // ---------------------------------------------------------------------
 
     public void jumpToUID(String s){
@@ -772,6 +789,15 @@ public class NetMash extends MapActivity{
         } catch (Throwable t){ t.printStackTrace(); System.err.println("Couldn't load image at "+url+"\n"+t); }
         return bm;
     }
+/* For scalable non-compressed images in res:
+            BitmapFactory.Options bmfo=new BitmapFactory.Options();
+            bmfo.inScaled = false;
+            bmfo.inPreferredConfig = Bitmap.Config.RGB_565;
+            Bitmap bitmap = BitmapFactory.decodeStream(bis, null, bmfo);
+            .. GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bm, 0); ..
+            bitmap.recycle();
+   http://code.google.com/p/gdc2011-android-opengl/wiki/TalkTranscript
+*/
 
     // ---------------------------------------------------------------------
 
