@@ -21,6 +21,7 @@ class Renderer implements GLSurfaceView.Renderer {
     private NetMash netmash;
     private Mesh mesh;
     private int program;
+    private int[] textureIDs;
 
     private float[] matrixPrj = new float[16];
     private float[] matrixRtx = new float[16];
@@ -71,7 +72,8 @@ class Renderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl){try{
 
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glUseProgram(program); throwAnyGLException("glUseProgram");
+        GLES20.glUseProgram(program);
+        throwAnyGLException("glUseProgram");
 
         Matrix.setIdentityM(matrixRtx, 0);
         Matrix.setIdentityM(matrixRty, 0);
@@ -104,6 +106,8 @@ class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "specular"),  1, specular, 0);
         GLES20.glUniform1f(       GLES20.glGetUniformLocation(program, "shininess"),    shininess);
 
+        throwAnyGLException("uniforms");
+
         FloatBuffer vb = mesh.vb;
         ShortBuffer ib = mesh.ib;
         int indslength = mesh.il;
@@ -127,16 +131,24 @@ class Renderer implements GLSurfaceView.Renderer {
         vb.position(6);
         GLES20.glVertexAttribPointer(th, 2, GLES20.GL_FLOAT, false, 32, vb);
 
+        throwAnyGLException("VBOs");
+
         for(int i=0; i < mesh.textures.size(); i++) {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIDs[i]);
             GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);
         }
 
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, indslength, GLES20.GL_UNSIGNED_SHORT, ib); throwAnyGLException("glDrawElements");
+        throwAnyGLException("textures");
+
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, indslength, GLES20.GL_UNSIGNED_SHORT, ib);
+        throwAnyGLException("glDrawElements");
 
         GLES20.glDisableVertexAttribArray(ph);
         GLES20.glDisableVertexAttribArray(nh);
         GLES20.glDisableVertexAttribArray(th);
+
+        throwAnyGLException("Draw frame end");
 
     }catch(Throwable t){ Log.e("Draw frame:", t.getLocalizedMessage()); }}
 
@@ -172,7 +184,7 @@ Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+ey
     // figure out how to rebind
     private void setupTextures(){
         int numtextures = mesh.textures.size();
-        int[] textureIDs = new int[numtextures];
+        textureIDs = new int[numtextures];
         GLES20.glGenTextures(numtextures, textureIDs, 0);
         for(int i=0; i< numtextures; i++) {
             Bitmap bm=netmash.getBitmap(mesh.textures.get(i).toString());
