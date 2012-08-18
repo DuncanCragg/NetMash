@@ -5,9 +5,13 @@ To Do
 Functionality
 
  - is:cube object generates that mesh
- - first animation rule
- - cube on server viewed by two clients, updating on edit or animation
- - two cubes on a floor container
+ - or create sphere mesh and sphere object - blender or unity?
+ - first animation rule: cube that stays cubic when rescaled
+ - second animation rule: introduce time into Fjord, rotate slowly
+ - cube on server viewed by two clients, updating on edit or animation from/to either client
+ - two cubes on a floor container: beginning of infite world - two servers
+ - user on home server plus avatar
+ - split-screen and/or easy-flip
 
 Fixes
 
