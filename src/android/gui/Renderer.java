@@ -85,7 +85,7 @@ class Renderer implements GLSurfaceView.Renderer {
         Matrix.scaleM(      matrixScl, 0, mesh.scaleX, mesh.scaleY, mesh.scaleZ);
         Matrix.multiplyMM(  matrixRxy, 0, matrixRty, 0, matrixRtx, 0);
         Matrix.multiplyMM(  matrixRot, 0, matrixRtz, 0, matrixRxy, 0);
-        Matrix.multiplyMM(  matrixMSR, 0, matrixScl, 0, matrixRot, 0);
+        Matrix.multiplyMM(  matrixMSR, 0, matrixRot, 0, matrixScl, 0);
 
         Matrix.setLookAtM(  matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
 
