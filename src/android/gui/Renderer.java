@@ -25,6 +25,8 @@ class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixPrj = new float[16];
     private float[] matrixRtx = new float[16];
     private float[] matrixRty = new float[16];
+    private float[] matrixRtz = new float[16];
+    private float[] matrixRxy = new float[16];
     private float[] matrixRot = new float[16];
     private float[] matrixScl = new float[16];
     private float[] matrixMSR = new float[16];
@@ -71,11 +73,16 @@ class Renderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glUseProgram(program); throwAnyGLException("glUseProgram");
 
+        Matrix.setIdentityM(matrixRtx, 0);
+        Matrix.setIdentityM(matrixRty, 0);
+        Matrix.setIdentityM(matrixRtz, 0);
+        Matrix.setIdentityM(matrixScl, 0);
         Matrix.setRotateM(  matrixRtx, 0, mesh.rotationX, -1.0f, 0.0f, 0.0f);
         Matrix.setRotateM(  matrixRty, 0, mesh.rotationY,  0.0f, 1.0f, 0.0f);
-        Matrix.multiplyMM(  matrixRot, 0, matrixRty, 0, matrixRtx, 0);
-        Matrix.setIdentityM(matrixScl, 0);
+        Matrix.setRotateM(  matrixRtz, 0, mesh.rotationZ,  0.0f, 0.0f, 1.0f);
         Matrix.scaleM(      matrixScl, 0, mesh.scaleX, mesh.scaleY, mesh.scaleZ);
+        Matrix.multiplyMM(  matrixRxy, 0, matrixRty, 0, matrixRtx, 0);
+        Matrix.multiplyMM(  matrixRot, 0, matrixRtz, 0, matrixRxy, 0);
         Matrix.multiplyMM(  matrixMSR, 0, matrixScl, 0, matrixRot, 0);
 
         Matrix.setLookAtM(  matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
@@ -167,7 +174,7 @@ Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+ey
         int numtextures = mesh.textures.size();
         int[] textureIDs = new int[numtextures];
         GLES20.glGenTextures(numtextures, textureIDs, 0);
-        for(int i=0; i< textureIDs.length; i++) {
+        for(int i=0; i< numtextures; i++) {
             Bitmap bm=netmash.getBitmap(mesh.textures.get(i).toString());
             GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, textureIDs[i]);
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);

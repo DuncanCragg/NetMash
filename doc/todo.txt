@@ -4,8 +4,9 @@ To Do
 
 Functionality
 
+ - is:cube object generates that mesh
  - first animation rule
- - cube on server viewed by two clients
+ - cube on server viewed by two clients, updating on edit or animation
  - two cubes on a floor container
 
 Fixes
