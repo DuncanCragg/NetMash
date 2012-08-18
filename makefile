@@ -6,7 +6,7 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-noservers: androidemurel logcat
+noservers: androidusbrel logcat
 
 twoservers: androidemu runtwo logthree
 
@@ -44,7 +44,7 @@ androidemu: clean init setappemuconfig setdebugmapkey
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
 
-androidemurel: clean init setappemuconfig setreleasemapkey
+androidusbrel: clean init setappusbconfig setreleasemapkey
 	ant release
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
@@ -127,6 +127,10 @@ setdebugmapkey:
 setappemuconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/netmashconfig.json
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/topdb.json
+
+setappusbconfig:
+	sed -i"" -e "s:netmash.net:192.168.0.8:" res/raw/netmashconfig.json
+	sed -i"" -e "s:netmash.net:192.168.0.8:" res/raw/topdb.json
 
 setappremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json

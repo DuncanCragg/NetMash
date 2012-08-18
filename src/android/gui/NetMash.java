@@ -47,6 +47,7 @@ public class NetMash extends MapActivity{
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState); log("onCreate");
         String url = getIntent().getDataString();
+        if(url!=null) log("Being created with URL: "+url);
         top=this;
         if(!Kernel.running) runKernel();
         drawInitialView();

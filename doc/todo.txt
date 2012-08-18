@@ -4,12 +4,18 @@ To Do
 
 Functionality
 
+ - go straight to two avatar cubes moving around in shared box
+    - two clients, two servers
+    - shared box has to point to users at some translation
+    - can see turning - model rotation
+    - can see movement - shared box translation
+
  - is:cube object generates that mesh
  - or create sphere mesh and sphere object - blender or unity?
  - first animation rule: cube that stays cubic when rescaled
  - second animation rule: introduce time into Fjord, rotate slowly
  - cube on server viewed by two clients, updating on edit or animation from/to either client
- - two cubes on a floor container: beginning of infite world - two servers
+ - two cubes on a floor container: beginning of infinite world - two servers
  - user on home server plus avatar
  - split-screen and/or easy-flip
 
@@ -35,6 +41,7 @@ Android
  - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
 
 HTTP
+ - match to uid not URL - e.g when fetch 192.168.. and C-L set to 10.0.2.2
  - still two network conns on main thread: at start and images
  - 201 Created may be missed
  - 403 if not observing
