@@ -143,8 +143,10 @@ public class Mesh {
     static Float getFloatFromList(Object ll, int i, float d){
         if(ll==null || !(ll instanceof LinkedList)) return d;
         Object o=((LinkedList)ll).get(i);
-        if(o==null || !(o instanceof Number)) return d;
-        return ((Number)o).floatValue();
+        if(o==null) return d;
+        if(o instanceof Number) return ((Number)o).floatValue();
+        if(o instanceof String) return Float.parseFloat((String)o);
+        return d;
     }
 
     static String getStringFromList(Object ll, int i, String d){
