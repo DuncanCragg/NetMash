@@ -73,13 +73,15 @@ runlocalserver: kill clean setvmemuconfig uselocaldb run1
 
 runremoteserver: kill clean setvmremoteconfig usestaticdb run1
 
-runone: kill clean curconfig setvmtestconfig usetestdb run1
+runone: kill clean           setvmtestconfig usetestdb run1
 
 runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
 
-runcur: kill clean curconfig setvmtestconfig usetestdb run1n2
+runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
-runall: kill clean allconfig setvmtestconfig usetestdb run1n2
+runall: kill clean allconfig setvm2tstconfig usetestdb run1n2
+
+runusb: kill clean curconfig setvm2usbconfig usetestdb run1n2
 
 runon1:
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
@@ -127,25 +129,46 @@ setdebugmapkey:
 setappemuconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/netmashconfig.json
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/topdb.json
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" res/raw/netmashconfig.json
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" res/raw/topdb.json
 
 setappusbconfig:
 	sed -i"" -e "s:netmash.net:192.168.0.8:" res/raw/netmashconfig.json
 	sed -i"" -e "s:netmash.net:192.168.0.8:" res/raw/topdb.json
+	sed -i"" -e    "s:10.0.2.2:192.168.0.8:" res/raw/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:192.168.0.8:" res/raw/topdb.json
 
 setappremoteconfig:
-	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
-	sed -i"" -e "s:10.0.2.2:netmash.net:" res/raw/topdb.json
+	sed -i"" -e    "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:netmash.net:" res/raw/topdb.json
+	sed -i"" -e "s:192.168.0.8:netmash.net:" res/raw/netmashconfig.json
+	sed -i"" -e "s:192.168.0.8:netmash.net:" res/raw/topdb.json
 
 setvmemuconfig:
-	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
+	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm1/netmashconfig.json
 
 setvm2emuconfig:
-	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:localhost:10.0.2.2:" src/server/vm2/netmashconfig.json
+	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
+	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm2/netmashconfig.json
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm2/netmashconfig.json
+
+setvm2usbconfig:
+	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm2/netmashconfig.json
+	sed -i"" -e  "s:10.0.2.2:192.168.0.8:" src/server/vm1/netmashconfig.json
+	sed -i"" -e  "s:10.0.2.2:192.168.0.8:" src/server/vm2/netmashconfig.json
 
 setvmtestconfig:
-	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:10.0.2.2:localhost:" src/server/vm2/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:192.168.0.8:localhost:" src/server/vm1/netmashconfig.json
+
+setvm2tstconfig:
+	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm2/netmashconfig.json
+	sed -i"" -e "s:192.168.0.8:localhost:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:192.168.0.8:localhost:" src/server/vm2/netmashconfig.json
 
 setvmremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json

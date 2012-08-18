@@ -5,10 +5,12 @@ To Do
 Functionality
 
  - go straight to two avatar cubes moving around in shared box
-    - two clients, two servers
     - shared box has to point to users at some translation
     - can see turning - model rotation
     - can see movement - shared box translation
+    - two clients, two servers
+    - run on LAN - test GPS thing; home server
+    - step one: two boxes from two servers in room on first server
 
  - is:cube object generates that mesh
  - or create sphere mesh and sphere object - blender or unity?
