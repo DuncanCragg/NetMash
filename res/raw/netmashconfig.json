@@ -6,12 +6,12 @@
   "network": { "pathprefix": "/o/",
                "log": true,
                "home-cache-notify": "http://10.0.2.2:8081/o/c-n-14d5-99c5-da00-806a" },
-  "ots": { "hameusers": "http://10.0.2.2:8081/o/uid-6332-84e1-c1de-3364.json",
-           "links": [  "uid-1e51-f298-5f55-6caa",
-                       "http://10.0.2.2:8081/o/uid-35ad-af7a-93fb-896d.json",
-                       "http://10.0.2.2:8082/o/uid-9153-8032-3fd4-9156.json"
+  "ots": { "homeusers": "http://10.0.2.2:8081/o/uid-6332-84e1-c1de-3364.json",
+           "links": [  "uid-1e51-f298-5f55-6caa"
           ],
-           "lonks": [  "http://10.0.2.2:8081/o/uid-26bc-8ee9-5443-851a.json",
+           "lonks": [  "http://10.0.2.2:8081/o/uid-35ad-af7a-93fb-896d.json",
+                       "http://10.0.2.2:8082/o/uid-9153-8032-3fd4-9156.json",
+                       "http://10.0.2.2:8081/o/uid-26bc-8ee9-5443-851a.json",
                        "http://10.0.2.2:8081/o/uid-3927-d995-837f-f165.json",
                        "http://10.0.2.2:8081/o/uid-f74b-020f-af28-5671.json",
                        "http://10.0.2.2:8081/o/uid-7756-cb46-4b1b-89cc.json",

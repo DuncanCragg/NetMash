@@ -6,13 +6,15 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
+lan: androidusbrel runusb
+
 noservers: androidusbrel logcat
 
 twoservers: androidemu runtwo logthree
 
 static: androidemu runstaticserver logboth
 
-fjord: kill runcur whappen
+fjord: runcur whappen
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
 
