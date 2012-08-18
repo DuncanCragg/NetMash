@@ -63,7 +63,7 @@ class Renderer implements GLSurfaceView.Renderer {
         GLES20.glViewport(0, 0, width, height);
         float r = ((float)width)/height;
         float n = 1.0f;
-        Matrix.frustumM(matrixPrj, 0, -r*n, r*n, -n, n, 0.5f, 10.0f);
+        Matrix.frustumM(matrixPrj, 0, -r*n, r*n, -n, n, 0.5f, 100.0f);
     }
 
     public void onDrawFrame(GL10 gl){try{
@@ -133,8 +133,17 @@ class Renderer implements GLSurfaceView.Renderer {
 
     // -------------------------------------------------------------
 
-    public void down(float x, float y){
-        Log.d("down: ",x+"/"+y);
+    private float direction= (float)-Math.PI/4;
+
+    public void stroke(float dx, float dy){
+        direction -= dx/50f;
+        if(direction> 2*Math.PI) direction-=2*Math.PI;
+        if(direction<-2*Math.PI) direction+=2*Math.PI;
+        seeX=eyeX+7f*(float)Math.sin(direction);
+        seeZ=eyeZ+7f*(float)Math.cos(direction);
+        eyeX-=dy/7f*(float)Math.sin(direction);
+        eyeZ-=dy/7f*(float)Math.cos(direction);
+Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+eyeX+"/"+eyeZ);
     }
 
     // -------------------------------------------------------------

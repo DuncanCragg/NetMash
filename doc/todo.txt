@@ -3,7 +3,6 @@ To Do
 -----
 
  * fix 100% and heap churn when no connection to server
- * add navigation: first left/right, then movement
 
 
 Fjord
