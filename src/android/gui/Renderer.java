@@ -149,11 +149,12 @@ Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+ey
     // -------------------------------------------------------------
 
     public void doBasicSetup(){
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(0.6f, 0.8f, 0.9f, 1.0f);
         GLES20.glClearDepthf(1.0f);
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
         GLES20.glDepthMask(true);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glCullFace(GLES20.GL_BACK);
     }
 
