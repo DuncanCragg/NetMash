@@ -13,7 +13,6 @@ Fixes
 
  - projection not re-setting properly on landscape
  - lighting all wrong: model, camera, lightpos needs sorting
- - no texture on Nexus
  - rebinding the texture when it comes in
  - all those efficiency improvements noted in the code
  - fix 100% and heap churn (only in emu?) when no connection to server
