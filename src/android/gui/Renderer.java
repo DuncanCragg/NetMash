@@ -45,13 +45,15 @@ class Renderer implements GLSurfaceView.Renderer {
     private float[] specular = { 0.9f, 0.4f, 0.4f, 1.0f };
     private float   shininess = 5.0f;
 
-    private float eyeX=5;
+    private float eyeX=0;
     private float eyeY=0;
-    private float eyeZ= -5;
+    private float eyeZ= -6;
 
     private float seeX=0;
     private float seeY=0;
     private float seeZ=0;
+
+    private float direction=0;
 
     public Renderer(NetMash netmash, LinkedHashMap mesh) {
         this.netmash=netmash;
@@ -177,8 +179,6 @@ class Renderer implements GLSurfaceView.Renderer {
     }catch(Throwable t){ Log.e("Draw frame:", t.getLocalizedMessage()); }}
 
     // -------------------------------------------------------------
-
-    private float direction= (float)-Math.PI/4;
 
     public void stroke(float dx, float dy){
         direction -= dx/50f;

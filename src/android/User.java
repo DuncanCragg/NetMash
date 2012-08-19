@@ -462,10 +462,10 @@ public class User extends WebObject {
                               OTS2GUI.join(contentListMayJump("private:viewing:mesh:vertexShader")," "));
                 glElementsPut(content(                        "private:viewing:mesh:fragmentShader"),
                               OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
-                glElementsPut(content(                        "private:viewing:mesh:subObjects:0:object"),
-                              contentHash(                    "private:viewing:mesh:subObjects:0:object:mesh"));
-                glElementsPut(content(                        "private:viewing:mesh:subObjects:1:object"),
-                              contentHash(                    "private:viewing:mesh:subObjects:1:object:mesh"));
+                LinkedList subs=contentAll("private:viewing:mesh:subObjects:object");
+                if(subs!=null) for(int i=0; i< subs.size(); i++){
+                    glElementsPut((String)subs.get(i), contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh",i)));
+                }
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
