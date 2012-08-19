@@ -24,7 +24,8 @@
     "vertexShader": "uid-ff5d-1ef4-cfa5-5f92",
     "fragmentShader": "uid-6e92-c60d-d16a-6b35",
     "subObjects": [
-        { "object": "http://192.168.0.8:8082/o/uid-7794-3aa8-2192-7a60.json", "translation": [ 4, 0, 4 ]  }
+        { "object": "http://192.168.0.8:8082/o/uid-7794-3aa8-2192-7a60.json", "translation": [ 4, 0, 4 ] },
+        { "object": "http://192.168.0.8:8082/o/uid-c058-2db1-0b26-8f48.json", "translation": [ -4, 0, -4 ] }
     ]
   }
 }

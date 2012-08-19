@@ -80,12 +80,16 @@ class Renderer implements GLSurfaceView.Renderer {
 
         drawMesh(mesh, 0,0,0);
 
-        LinkedHashMap subob=(LinkedHashMap)(this.mesh.subObjects.get(0));
-        String     subobuid=(String)    subob.get("object");
-        LinkedList subobtrx=(LinkedList)subob.get("translation");
-        Mesh       submesh=new Mesh((LinkedHashMap)netmash.user.glElements.get(subobuid));
+        for(Object o: this.mesh.subObjects){ try{
 
-        drawMesh(submesh, ((Number)subobtrx.get(0)).floatValue(), ((Number)subobtrx.get(1)).floatValue(), ((Number)subobtrx.get(2)).floatValue());
+            LinkedHashMap subob=(LinkedHashMap)o;
+            Object subobuid=subob.get("object");
+            Object subobtrx=subob.get("translation");
+            Mesh   submesh=new Mesh((LinkedHashMap)netmash.user.glElements.get(subobuid));
+
+            drawMesh(submesh, Mesh.getFloatFromList(subobtrx,0,0), Mesh.getFloatFromList(subobtrx,1,0), Mesh.getFloatFromList(subobtrx,2,0));
+
+        }catch(Throwable t){} }
     }
 
     private void drawMesh(Mesh mesh, float tx, float ty, float tz){try{

@@ -404,6 +404,10 @@ public class User extends WebObject {
     }
 
     public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
+    private void glElementsPut(String tag, Object o){
+        if(tag==null || o==null || tag.equals("")) return;
+        glElements.put(tag,o);
+    }
 
     private void showWhatIAmViewingAsGUI(){ logrule();
         if(contentSet("private:viewing:is")){
@@ -454,12 +458,14 @@ public class User extends WebObject {
             else
             if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
                 meshhash=contentHash(  "private:viewing:mesh");
-                glElements.put(content(                        "private:viewing:mesh:vertexShader"),
-                               OTS2GUI.join(contentListMayJump("private:viewing:mesh:vertexShader")," "));
-                glElements.put(content(                        "private:viewing:mesh:fragmentShader"),
-                               OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
-                glElements.put(content(                        "private:viewing:mesh:subObjects:0:object"),
-                               contentHash(                    "private:viewing:mesh:subObjects:0:object:mesh"));
+                glElementsPut(content(                        "private:viewing:mesh:vertexShader"),
+                              OTS2GUI.join(contentListMayJump("private:viewing:mesh:vertexShader")," "));
+                glElementsPut(content(                        "private:viewing:mesh:fragmentShader"),
+                              OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
+                glElementsPut(content(                        "private:viewing:mesh:subObjects:0:object"),
+                              contentHash(                    "private:viewing:mesh:subObjects:0:object:mesh"));
+                glElementsPut(content(                        "private:viewing:mesh:subObjects:1:object"),
+                              contentHash(                    "private:viewing:mesh:subObjects:1:object:mesh"));
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);

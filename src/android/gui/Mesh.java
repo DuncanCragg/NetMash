@@ -128,25 +128,25 @@ public class Mesh {
         } catch (Exception e) { e.printStackTrace(); Log.d("ERROR", e.getLocalizedMessage()); return; }
     }
 
-    static LinkedList getListFromHash(LinkedHashMap hm, String tag){
+    static public LinkedList getListFromHash(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);
         if(o==null || !(o instanceof LinkedList)) return new LinkedList();
         return (LinkedList)o;
     }
 
-    static LinkedHashMap getHashFromHash(LinkedHashMap hm, String tag){
+    static public LinkedHashMap getHashFromHash(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);
         if(o==null || !(o instanceof LinkedHashMap)) return new LinkedHashMap();
         return (LinkedHashMap)o;
     }
 
-    static String getStringFromHash(LinkedHashMap hm, String tag, String d){
+    static public String getStringFromHash(LinkedHashMap hm, String tag, String d){
         Object o=hm.get(tag);
         if(o==null || !(o instanceof String) || ((String)o).length()==0) return d;
         return (String)o;
     }
 
-    static Float getFloatFromList(Object ll, int i, float d){
+    static public Float getFloatFromList(Object ll, int i, float d){
         if(ll==null || !(ll instanceof LinkedList)) return d;
         Object o=((LinkedList)ll).get(i);
         if(o==null) return d;
@@ -155,7 +155,7 @@ public class Mesh {
         return d;
     }
 
-    static String getStringFromList(Object ll, int i, String d){
+    static public String getStringFromList(Object ll, int i, String d){
         if(!(ll instanceof LinkedList)) return d;
         Object o=((LinkedList)ll).get(i);
         if(o==null || !(o instanceof String)) return d;
