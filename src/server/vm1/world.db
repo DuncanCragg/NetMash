@@ -1,0 +1,84 @@
+{ "%uid": "uid-1e51-f298-5f55-6caa",
+  "%class": "netmash.forest.Editable",
+  "is": [ "3d", "mesh", "editable" ],
+  "title": "Textured Cube",
+  "mesh": {
+    "rotation": [ 0, 0, 0 ],
+    "scale": [ 1.0, 1.0, 1.0 ],
+    "vertices": [
+      [  2.0, -2.0, -2.0 ], [  2.0, -2.0,  2.0 ], [ -2.0, -2.0,  2.0 ], [ -2.0, -2.0, -2.0 ],
+      [  2.0,  2.0, -2.0 ], [  2.0,  2.0,  2.0 ], [ -2.0,  2.0,  2.0 ], [ -2.0,  2.0, -2.0 ]
+    ],
+    "texturepoints": [ [ 0.0, 0.0 ], [ 1.0, 0.0 ], [ 1.0, 1.0 ], [ 0.0, 1.0 ] ],
+    "normals": [
+      [  0.5,  0.5, -0.5 ], [  0.5, -0.5, -0.5 ], [ -0.5, -0.5, -0.5 ], [ -0.5,  0.5, -0.5 ],
+      [ -0.5, -0.5,  0.5 ], [ -0.5,  0.5,  0.5 ], [  0.5, -0.5,  0.5 ], [  0.5,  0.5,  0.5 ]
+    ],
+    "faces": [
+      [ "5/1/1","1/2/2","4/3/3" ], [ "5/1/1","4/3/3","8/4/4" ], [ "3/1/5","7/2/6","8/3/4" ],
+      [ "3/1/5","8/3/4","4/4/3" ], [ "2/1/7","6/2/8","3/4/5" ], [ "6/2/8","7/3/6","3/4/5" ],
+      [ "1/1/2","5/2/1","2/4/7" ], [ "5/2/1","6/3/8","2/4/7" ], [ "5/1/1","8/2/4","6/4/8" ],
+      [ "8/2/4","7/3/6","6/4/8" ], [ "1/1/2","2/2/7","3/3/5" ], [ "1/1/2","3/3/5","4/4/3" ]
+    ],
+    "textures": [ "http://192.168.0.8/netmash.png" ],
+    "vertexShader": "uid-ff5d-1ef4-cfa5-5f92",
+    "fragmentShader": "uid-6e92-c60d-d16a-6b35"
+  }
+}
+
+{ "%uid": "uid-ff5d-1ef4-cfa5-5f92",
+  "is": [ "3d", "vertex", "shader", "string", "list" ],
+  "title": "Phong Vertex Shader",
+  "list": [
+    "uniform mat4 mvpm;",
+    "uniform mat4 norm;",
+    "uniform vec4 lightPos;",
+    "attribute vec4 pos;",
+    "attribute vec3 nor;",
+    "attribute vec2 tex;",
+    "varying vec3 NN;",
+    "varying vec3 LL;",
+    "varying vec3 VV;",
+    "varying vec2 TT;",
+    "void main() {",
+      "vec4 glp = mvpm * pos;",
+      "vec4 lps = mvpm * lightPos;",
+      "NN = vec3(norm * vec4(nor, 1.0));",
+      "LL = -lps.xyz;",
+      "VV = -glp.xyz;",
+      "TT = tex;",
+      "gl_Position = glp;",
+    "}"
+  ]
+}
+
+{ "%uid": "uid-6e92-c60d-d16a-6b35",
+  "is": [ "3d", "fragment", "shader", "string", "list" ],
+  "title": "Phong Fragment Shader",
+  "list": [
+    "precision mediump float;",
+    "uniform vec4  lightCol;",
+    "uniform vec4  ambient;",
+    "uniform vec4  diffuse;",
+    "uniform vec4  specular;",
+    "uniform float shininess;",
+    "uniform sampler2D texture0;",
+    "varying vec3 NN;",
+    "varying vec3 LL;",
+    "varying vec3 VV;",
+    "varying vec2 TT;",
+    "void main(){",
+      "vec3 N = normalize(NN);",
+      "vec3 L = normalize(LL);",
+      "vec3 R = reflect(L,N);",
+      "vec3 V = normalize(VV);",
+      "vec4 T = texture2D(texture0, TT);",
+      "vec4 A = ambient * lightCol;",
+      "vec4 D = diffuse * max(dot(N, L), 0.0);",
+      "vec4 S = specular * pow(max(dot(R, V), 0.0), shininess);",
+      "gl_FragColor = T * A + D + S;",
+    "}"
+  ]
+}
+
+

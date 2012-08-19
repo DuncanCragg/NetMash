@@ -6,11 +6,12 @@ Functionality
 
  - go straight to two avatar cubes moving around in shared box
     - shared box has to point to users at some translation
-    - can see turning - model rotation
-    - can see movement - shared box translation
-    - two clients, two servers
-    - run on LAN - test GPS thing; home server
-    - step one: two boxes from two servers in room on first server
+       - can see turning - model rotation
+       - can see movement - shared box translation, driven by user xy
+    - step one: two user boxes from second server around cube on first server
+       - add translated-linked objects to another cube on vm2
+       - user POSTs self to cube, which adds it and this renders as user box
+       - when user is looking at it, set user's xy to translated box coords
 
  - is:cube object generates that mesh
  - or create sphere mesh and sphere object - blender or unity?

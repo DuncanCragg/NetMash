@@ -6,9 +6,9 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-lan: androidusbrel runusb
+lan: androidlanrel runlan
 
-noservers: androidusbrel logcat
+noservers: androidlanrel logcat
 
 twoservers: androidemu runtwo logthree
 
@@ -46,7 +46,7 @@ androidemu: clean init setappemuconfig setdebugmapkey
 	adb uninstall android.gui
 	adb install bin/NetMash-debug.apk
 
-androidusbrel: clean init setappusbconfig setreleasemapkey
+androidlanrel: clean init setapplanconfig setreleasemapkey
 	ant release
 	adb uninstall android.gui
 	adb install bin/NetMash-release.apk
@@ -83,7 +83,7 @@ runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
 runall: kill clean allconfig setvm2tstconfig usetestdb run1n2
 
-runusb: kill clean curconfig setvm2usbconfig usetestdb run1n2
+runlan: kill clean netconfig setvm2lanconfig useworlddb run1n2
 
 runon1:
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
@@ -122,6 +122,10 @@ usetestdb:
 	cp src/server/vm1/test.db src/server/vm1/netmash.db
 	cp src/server/vm2/test.db src/server/vm2/netmash.db
 
+useworlddb:
+	cp src/server/vm1/world.db src/server/vm1/netmash.db
+	cp src/server/vm2/world.db src/server/vm2/netmash.db
+
 setreleasemapkey:
 	sed -i"" -e "s:03Hoq1TEN3zbZ9y69dEoFX0Tc20g14mWm-hImbQ:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/android/gui/NetMash.java
 
@@ -134,7 +138,7 @@ setappemuconfig:
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" res/raw/netmashconfig.json
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" res/raw/topdb.json
 
-setappusbconfig:
+setapplanconfig:
 	sed -i"" -e "s:netmash.net:192.168.0.8:" res/raw/netmashconfig.json
 	sed -i"" -e "s:netmash.net:192.168.0.8:" res/raw/topdb.json
 	sed -i"" -e    "s:10.0.2.2:192.168.0.8:" res/raw/netmashconfig.json
@@ -156,7 +160,7 @@ setvm2emuconfig:
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm1/netmashconfig.json
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm2/netmashconfig.json
 
-setvm2usbconfig:
+setvm2lanconfig:
 	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm1/netmashconfig.json
 	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm2/netmashconfig.json
 	sed -i"" -e  "s:10.0.2.2:192.168.0.8:" src/server/vm1/netmashconfig.json
@@ -174,6 +178,9 @@ setvm2tstconfig:
 
 setvmremoteconfig:
 	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
+
+netconfig:
+	cp src/server/vm2/netconfig.json src/server/vm2/netmashconfig.json
 
 curconfig:
 	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json

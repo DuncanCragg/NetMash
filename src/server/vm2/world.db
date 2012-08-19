@@ -1,0 +1,7 @@
+{   "%uid": "uid-6332-84e1-c1de-3364",
+    "%class": "server.types.UserHome",
+    "is": [ "userhome", "user", "list" ],
+    "title": "User Home",
+    "list": []
+}
+
