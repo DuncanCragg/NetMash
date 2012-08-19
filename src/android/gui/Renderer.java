@@ -30,6 +30,8 @@ class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixRxy = new float[16];
     private float[] matrixRot = new float[16];
     private float[] matrixScl = new float[16];
+    private float[] matrixRos = new float[16];
+    private float[] matrixTrn = new float[16];
     private float[] matrixMSR = new float[16];
     private float[] matrixVVV = new float[16];
     private float[] matrixMVV = new float[16];
@@ -69,23 +71,41 @@ class Renderer implements GLSurfaceView.Renderer {
         Matrix.frustumM(matrixPrj, 0, -r*n, r*n, -n, n, 0.5f, 100.0f);
     }
 
-    public void onDrawFrame(GL10 gl){try{
+    public void onDrawFrame(GL10 gl){
 
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+
         GLES20.glUseProgram(program);
         throwAnyGLException("glUseProgram");
+
+        drawMesh(mesh, 0,0,0);
+
+        LinkedHashMap subob=(LinkedHashMap)(this.mesh.subObjects.get(0));
+        String     subobuid=(String)    subob.get("object");
+        LinkedList subobtrx=(LinkedList)subob.get("translation");
+        Mesh       submesh=new Mesh((LinkedHashMap)netmash.user.glElements.get(subobuid));
+
+        drawMesh(submesh, ((Number)subobtrx.get(0)).floatValue(), ((Number)subobtrx.get(1)).floatValue(), ((Number)subobtrx.get(2)).floatValue());
+    }
+
+    private void drawMesh(Mesh mesh, float tx, float ty, float tz){try{
 
         Matrix.setIdentityM(matrixRtx, 0);
         Matrix.setIdentityM(matrixRty, 0);
         Matrix.setIdentityM(matrixRtz, 0);
         Matrix.setIdentityM(matrixScl, 0);
+        Matrix.setIdentityM(matrixTrn, 0);
+
         Matrix.setRotateM(  matrixRtx, 0, mesh.rotationX, -1.0f, 0.0f, 0.0f);
         Matrix.setRotateM(  matrixRty, 0, mesh.rotationY,  0.0f, 1.0f, 0.0f);
         Matrix.setRotateM(  matrixRtz, 0, mesh.rotationZ,  0.0f, 0.0f, 1.0f);
         Matrix.scaleM(      matrixScl, 0, mesh.scaleX, mesh.scaleY, mesh.scaleZ);
+        Matrix.translateM(  matrixTrn, 0, tx, ty, tz);
+
         Matrix.multiplyMM(  matrixRxy, 0, matrixRty, 0, matrixRtx, 0);
         Matrix.multiplyMM(  matrixRot, 0, matrixRtz, 0, matrixRxy, 0);
-        Matrix.multiplyMM(  matrixMSR, 0, matrixRot, 0, matrixScl, 0);
+        Matrix.multiplyMM(  matrixRos, 0, matrixRot, 0, matrixScl, 0);
+        Matrix.multiplyMM(  matrixMSR, 0, matrixTrn, 0, matrixRos, 0);
 
         Matrix.setLookAtM(  matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
 
@@ -164,7 +184,6 @@ class Renderer implements GLSurfaceView.Renderer {
         seeZ=eyeZ+7f*(float)Math.cos(direction);
         eyeX-=dy/7f*(float)Math.sin(direction);
         eyeZ-=dy/7f*(float)Math.cos(direction);
-Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+eyeX+"/"+eyeZ);
     }
 
     // -------------------------------------------------------------
@@ -199,6 +218,7 @@ Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+ey
 
     private void getProgram(){
 
+        // detect using same shader and use cached gl handle
         int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, (String)netmash.user.glElements.get(mesh.vertexShader));
         if(vertexShader==0){ Log.e("getProgram", "Could not compile vertexShader"); return; }
 
