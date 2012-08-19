@@ -466,6 +466,7 @@ public class User extends WebObject {
                 if(subs!=null) for(int i=0; i< subs.size(); i++){
                     glElementsPut((String)subs.get(i), contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh",i)));
                 }
+                notifying(content("private:viewing"));
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);

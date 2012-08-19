@@ -224,6 +224,7 @@ classes: \
 ./build/classes/netmash/forest/Editable.class \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/server/types/UserHome.class \
+./build/classes/server/types/PresenceTracker.class \
 ./build/classes/server/types/Event.class \
 ./build/classes/server/types/Twitter.class \
 ./build/classes/server/types/DynamicFile.class \

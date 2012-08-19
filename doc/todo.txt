@@ -9,8 +9,8 @@ Functionality
        - can see turning - model rotation
        - can see movement - shared box translation, driven by user xy
     - step one: two user boxes from second server around cube on first server
-       - add translated-linked objects to another cube on vm2
        - user POSTs self to cube, which adds it and this renders as user box
+       - user obj POSTs x,y,z, avatar POSTs rotations; can use walking law if is: avatar
        - when user is looking at it, set user's xy to translated box coords
 
  - is:cube object generates that mesh

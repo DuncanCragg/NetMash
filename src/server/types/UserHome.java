@@ -10,11 +10,11 @@ public class UserHome extends WebObject {
 
     public void evaluate(){
         if(contentListContains("is", "userhome")){
-            testit();
+            addNewUsers();
         }
     }
 
-    private void testit(){
+    private void addNewUsers(){
         for(String useruid: alerted()){ logrule();
             contentSetAdd("list", useruid);
         }

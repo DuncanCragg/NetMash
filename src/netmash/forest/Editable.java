@@ -5,8 +5,12 @@ public class Editable extends Fjord {
     public Editable(){}
 
     public void evaluate(){
-        for(String uid: alerted()){ logrule();
-            contentSetPush("%rules",uid);
+        for(String alerted: alerted()){ logrule();
+            contentTemp("%alerted", alerted);
+            if(contentListContainsAll("%alerted:is",list("editable","rule"))){
+                contentSetPush("%rules",alerted);
+            }
+            contentTemp("%alerted", null);
         }
         super.evaluate();
     }

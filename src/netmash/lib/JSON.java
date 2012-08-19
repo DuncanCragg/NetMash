@@ -880,8 +880,8 @@ public class JSON {
         LinkedList list;
         try{ list=getOrMakeListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
-        if(!list.contains(value)) list.add(value);
-        return true;
+        if(!list.contains(value)){ list.add(value); return true; }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -889,8 +889,8 @@ public class JSON {
         LinkedList list;
         try{ list=getOrMakeListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
-        if(!list.contains(value)) list.addFirst(value);
-        return true;
+        if(!list.contains(value)){ list.addFirst(value); return true; }
+        return false;
     }
 
     @SuppressWarnings("unchecked")

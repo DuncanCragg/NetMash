@@ -1,5 +1,5 @@
 { "%uid": "uid-1e51-f298-5f55-6caa",
-  "%class": "netmash.forest.Editable",
+  "%class": "server.types.PresenceTracker",
   "is": [ "3d", "mesh", "editable" ],
   "title": "Textured Cube",
   "mesh": {
@@ -28,7 +28,8 @@
         { "object": "http://192.168.0.8:8082/o/uid-c058-2db1-0b26-8f48.json", "translation": [  4, 0, -4 ] },
         { "object": "http://192.168.0.8:8082/o/uid-7794-3aa8-2192-7a60.json", "translation": [ -4, 0,  4 ] },
         { "object": "http://192.168.0.8:8082/o/uid-c058-2db1-0b26-8f48.json", "translation": [ -4, 0, -4 ] }
-    ]
+    ],
+    "list": []
   }
 }
 
