@@ -14,6 +14,7 @@ public class Mesh {
     LinkedList  textures;
     String      vertexShader;
     String      fragmentShader;
+    LinkedList  subObjects;
     float       rotationX;
     float       rotationY;
     float       rotationZ;
@@ -112,12 +113,11 @@ public class Mesh {
 
             il=ia.length;
 
-            String basicVert="uniform mat4 mvpm; attribute vec4 pos;          void main(){ gl_Position=mvpm*pos; }";
-            String basicFrag="precision mediump float; uniform vec4 lightCol; void main(){ gl_FragColor=lightCol; }";
-
             textures       = getListFromHash(  mesh,"textures");
-            vertexShader   = getStringFromHash(mesh,"vertexShader",  basicVert);
-            fragmentShader = getStringFromHash(mesh,"fragmentShader",basicFrag);
+            vertexShader   = getStringFromHash(mesh,"vertexShader",  "");
+            fragmentShader = getStringFromHash(mesh,"fragmentShader","");
+            subObjects     = getListFromHash(  mesh,"subObjects");
+
             rotationX      = getFloatFromList(getListFromHash(mesh,"rotation"), 0, 0f);
             rotationY      = getFloatFromList(getListFromHash(mesh,"rotation"), 1, 0f);
             rotationZ      = getFloatFromList(getListFromHash(mesh,"rotation"), 2, 0f);
@@ -132,6 +132,12 @@ public class Mesh {
         Object o=hm.get(tag);
         if(o==null || !(o instanceof LinkedList)) return new LinkedList();
         return (LinkedList)o;
+    }
+
+    static LinkedHashMap getHashFromHash(LinkedHashMap hm, String tag){
+        Object o=hm.get(tag);
+        if(o==null || !(o instanceof LinkedHashMap)) return new LinkedHashMap();
+        return (LinkedHashMap)o;
     }
 
     static String getStringFromHash(LinkedHashMap hm, String tag, String d){

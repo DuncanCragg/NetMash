@@ -199,14 +199,14 @@ Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+ey
 
     private void getProgram(){
 
-        int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, mesh.vertexShader);
-        if(vertexShader==0) return;
+        int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, (String)netmash.user.glElements.get(mesh.vertexShader));
+        if(vertexShader==0){ Log.e("getProgram", "Could not compile vertexShader"); return; }
 
-        int fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, mesh.fragmentShader);
-        if(fragmentShader==0) return;
+        int fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, (String)netmash.user.glElements.get(mesh.fragmentShader));
+        if(fragmentShader==0){ Log.e("getProgram", "Could not compile fragmentShader"); return; }
 
         program = GLES20.glCreateProgram();
-        if(program==0){ Log.e("CreateProgram", "Could not create program"); return; }
+        if(program==0){ Log.e("getProgram", "Could not create program"); return; }
 
         GLES20.glAttachShader(program, vertexShader);
         GLES20.glAttachShader(program, fragmentShader);
@@ -215,8 +215,8 @@ Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+ey
         int[] linkStatus = new int[1];
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
         if(linkStatus[0]==GLES20.GL_TRUE) return;
-        Log.e("Shader", "Could not link program:");
-        Log.e("Shader", GLES20.glGetProgramInfoLog(program));
+        Log.e("getProgram", "Could not link program:");
+        Log.e("getProgram", GLES20.glGetProgramInfoLog(program));
         GLES20.glDeleteProgram(program);
         program=0;
     }
@@ -232,8 +232,8 @@ Log.d("stroke: ", dx+"/"+dy+" dir: "+direction+" see: "+seeX+"/"+seeZ+" eye:"+ey
         int[] compiled = new int[1];
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
         if(compiled[0]!=0) return shader;
-        Log.e("Shader", "Could not compile "+shaderType+" shader:");
-        Log.e("Shader", GLES20.glGetShaderInfoLog(shader));
+        Log.e("compileShader", "Could not compile "+shaderType+" shader:");
+        Log.e("compileShader", GLES20.glGetShaderInfoLog(shader));
         GLES20.glDeleteShader(shader);
         return 0;
     }

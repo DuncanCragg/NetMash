@@ -434,15 +434,6 @@ public class OTS2GUI {
 
     // ---------------------------------------------------------------------------
 
-    public LinkedHashMap mesh2mesh(){
-        LinkedHashMap hm=user.contentHashClone("private:viewing:mesh");
-        hm.put("vertexShader",   join(user.contentListMayJump("private:viewing:mesh:vertexShader")," "));
-        hm.put("fragmentShader", join(user.contentListMayJump("private:viewing:mesh:fragmentShader")," "));
-        return hm;
-    }
-
-    // ---------------------------------------------------------------------------
-
     private HashMap<String,LinkedHashMap<String,Double>> geoCodeCache=new HashMap<String,LinkedHashMap<String,Double>>();
     private LinkedHashMap<String,Double> geoCode(String address){ log("geoCode "+address);
         if(address==null || address.equals("")) return null;
@@ -466,7 +457,7 @@ public class OTS2GUI {
         return null;
     }
 
-    public String join(LinkedList strings, String joinwith){
+    static public String join(LinkedList strings, String joinwith){
         if(strings==null) return "";
 	StringBuilder sb=new StringBuilder();
         for(Object o: strings){ sb.append(o.toString()); sb.append(joinwith); }

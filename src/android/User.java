@@ -3,6 +3,7 @@ package android;
 
 import java.util.*;
 import java.util.regex.*;
+import java.util.concurrent.*;
 
 import android.gui.*;
 import android.os.*;
@@ -303,7 +304,7 @@ public class User extends WebObject {
 
     User currentForm(String guiuid){
         String formuid = content("private:forms:"+UID.toUID(guiuid));
-        return (User)onlyUseThisToGetIfYouHaveNoChoice(formuid);
+        return (User)onlyUseThisToHandControlOfThreadToDependent(formuid);
     }
 
     public void setFormVal(final String guiuid, final String tag, final String val){
@@ -402,6 +403,8 @@ public class User extends WebObject {
         }
     }
 
+    public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
+
     private void showWhatIAmViewingAsGUI(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
@@ -450,7 +453,13 @@ public class User extends WebObject {
             }
             else
             if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
-                meshhash=ots2gui.mesh2mesh();
+                meshhash=contentHash(  "private:viewing:mesh");
+                glElements.put(content(                        "private:viewing:mesh:vertexShader"),
+                               OTS2GUI.join(contentListMayJump("private:viewing:mesh:vertexShader")," "));
+                glElements.put(content(                        "private:viewing:mesh:fragmentShader"),
+                               OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
+                glElements.put(content(                        "private:viewing:mesh:subObjects:0:object"),
+                               contentHash(                    "private:viewing:mesh:subObjects:0:object:mesh"));
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);

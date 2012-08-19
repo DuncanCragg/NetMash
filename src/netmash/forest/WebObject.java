@@ -685,8 +685,8 @@ public class WebObject {
         newobserve.clear();
     }
 
-    /** Don't use this. */
-    public WebObject onlyUseThisToGetIfYouHaveNoChoice(String uid){ return funcobs.cacheGet(uid); }
+    /** Don't use this unless you're handing the thread over to the right object. */
+    public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheGet(uid); }
 
     /** Simple logger for ya. */
     static public void log(Object o){ FunctionalObserver.log(o); }
