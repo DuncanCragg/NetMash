@@ -73,6 +73,9 @@ public class User extends WebObject {
     public User(String homeusers, String contactuid, String linksuid, String contactsuid){
         super("{   \"is\": \"user\", \n"+
               "    \"homeusers\": \""+homeusers+"\", \n"+
+              "    \"saying\": \"\", \n"+
+              "    \"place\": null, \n"+
+              "    \"coords\": [ 9, 9, 9 ], \n"+
               "    \"location\": { \"lat\": 0, \"lon\": 0 }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
               "    \"private\": { \n"+
@@ -466,6 +469,7 @@ public class User extends WebObject {
                 if(subs!=null) for(int i=0; i< subs.size(); i++){
                     glElementsPut((String)subs.get(i), contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh",i)));
                 }
+                content("place",content("private:viewing"));
                 notifying(content("private:viewing"));
             }
             else{

@@ -269,6 +269,13 @@ public class WebObject {
         return s==val;
     }
 
+    /** Test if there's a link to this object. */
+    public boolean contentIsThis(String path){
+        String s = content(path);
+        if(s==null) return false;
+        return s.equals(uid) || s.equals(UID.toURL(uid));
+    }
+
     // --------------------------------------------------------------
 
     /** Set String at this path in the JSON content. */

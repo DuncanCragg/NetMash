@@ -86,10 +86,10 @@ class Renderer implements GLSurfaceView.Renderer {
 
             LinkedHashMap subob=(LinkedHashMap)o;
             Object subobuid=subob.get("object");
-            Object subobtrx=subob.get("translation");
+            Object subobcrd=subob.get("coords");
             Mesh   submesh=new Mesh((LinkedHashMap)netmash.user.glElements.get(subobuid));
 
-            drawMesh(submesh, Mesh.getFloatFromList(subobtrx,0,0), Mesh.getFloatFromList(subobtrx,1,0), Mesh.getFloatFromList(subobtrx,2,0));
+            drawMesh(submesh, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
 
         }catch(Throwable t){} }
     }
