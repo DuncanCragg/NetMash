@@ -17,15 +17,20 @@ public class PresenceTracker extends Editable {
     }
 
     @SuppressWarnings("unchecked")
-    private void trackPresence(){
-/*
-        for(String useruid: alerted()){ logrule();
-            LinkedHashMap hm=new LinkedHashMap();
-            hm.put("object",useruid);
-            hm.put("coords", list(0,4,0));
-            contentListAdd("mesh:subObjects", hm);
+    private void trackPresence(){ logrule();
+
+        LinkedList subuids=contentAll("mesh:subObjects:object");
+        for(String alerted: alerted()){
+            contentTemp("%alerted", alerted);
+            if(contentIsThis("%alerted:place") && !subuids.contains(alerted)){
+                LinkedHashMap hm=new LinkedHashMap();
+                hm.put("object", alerted);
+                hm.put("coords", list(0,0,0));
+                contentListAdd("mesh:subObjects", hm);
+            }
+            contentTemp("%alerted", null);
         }
-*/
+
         LinkedList subObjects=contentList("mesh:subObjects");
         if(subObjects!=null) for(int i=0; i< subObjects.size(); i++){
             String placepath=String.format("mesh:subObjects:%d:object:place",i);
@@ -33,7 +38,7 @@ public class PresenceTracker extends Editable {
             String mycrdpath=String.format("mesh:subObjects:%d:coords",i);
             if(contentIsThis(placepath)){
                 LinkedList coords=contentListClone(coordpath);
-                if(coords!=null) contentList(mycrdpath, coords);
+                if(coords!=null && coords.size()==3) contentList(mycrdpath, coords);
             }
         }
     }
