@@ -124,13 +124,17 @@ public class NetMash extends MapActivity{
                 break;
         }
         px=x; py=y;
+        triggerRenderingBurst();
+        return true;
+    }
+
+    private void triggerRenderingBurst(){
         onemeshview.requestRender();
         onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         new Thread(){ public void run(){ try{
             Kernel.sleep(2000);
             onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }catch(Throwable t){}}}.start();
-        return true;
     }
 
     //---------------------------------------------------------
@@ -186,14 +190,15 @@ public class NetMash extends MapActivity{
     private Renderer      onerenderer=null;
 
     private void addMesh(LinkedHashMap mesh){
-        createMeshView(mesh);
-        View v=layout.getChildAt(0);
-        if(v!=null) layout.removeView(v);
-        layout.addView(onemeshview, 0);
+        if(createMeshView(mesh)){
+            View v=layout.getChildAt(0);
+            if(v!=null) layout.removeView(v);
+            layout.addView(onemeshview, 0);
+        }
     }
 
     private void addGUI(Object o){
-        onemeshview=null;
+        disposeOfMeshView();
         ViewGroup view;
         if(isMapList(o)){
             view = createMapView(o);
@@ -696,12 +701,25 @@ public class NetMash extends MapActivity{
         return mapview;
     }
 
-    private void createMeshView(LinkedHashMap mesh){
-        onemeshview = new GLSurfaceView(this);
-        onemeshview.setEGLContextClientVersion(2);
-        onerenderer = new Renderer(this,mesh);
-        onemeshview.setRenderer(onerenderer);
-        onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    private boolean createMeshView(LinkedHashMap mesh){
+        boolean newview=(onemeshview==null);
+        if(newview){
+            onemeshview = new GLSurfaceView(this);
+            onemeshview.setEGLContextClientVersion(2);
+            onerenderer = new Renderer(this,mesh);
+            onemeshview.setRenderer(onerenderer);
+            onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        }
+        else{
+            onerenderer.newMesh(mesh);
+            triggerRenderingBurst();
+        }
+        return newview;
+    }
+
+    private void disposeOfMeshView(){
+        onemeshview=null;
+        onerenderer=null;
     }
 
     // ---------------------------------------------------------------------

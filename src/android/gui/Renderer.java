@@ -60,6 +60,10 @@ class Renderer implements GLSurfaceView.Renderer {
         this.mesh=new Mesh(mesh);
     }
 
+    public void newMesh(LinkedHashMap mesh){
+        this.mesh=new Mesh(mesh);
+    }
+
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         doBasicSetup();
         setupTextures();
@@ -95,7 +99,7 @@ class Renderer implements GLSurfaceView.Renderer {
         }catch(Throwable t){} }
     }
 
-    private void drawMesh(Mesh mesh, float tx, float ty, float tz){try{
+    private void drawMesh(Mesh thismesh, float tx, float ty, float tz){try{
 
         Matrix.setIdentityM(matrixRtx, 0);
         Matrix.setIdentityM(matrixRty, 0);
@@ -103,10 +107,10 @@ class Renderer implements GLSurfaceView.Renderer {
         Matrix.setIdentityM(matrixScl, 0);
         Matrix.setIdentityM(matrixTrn, 0);
 
-        Matrix.setRotateM(  matrixRtx, 0, mesh.rotationX, -1.0f, 0.0f, 0.0f);
-        Matrix.setRotateM(  matrixRty, 0, mesh.rotationY,  0.0f, 1.0f, 0.0f);
-        Matrix.setRotateM(  matrixRtz, 0, mesh.rotationZ,  0.0f, 0.0f, 1.0f);
-        Matrix.scaleM(      matrixScl, 0, mesh.scaleX, mesh.scaleY, mesh.scaleZ);
+        Matrix.setRotateM(  matrixRtx, 0, thismesh.rotationX, -1.0f, 0.0f, 0.0f);
+        Matrix.setRotateM(  matrixRty, 0, thismesh.rotationY,  0.0f, 1.0f, 0.0f);
+        Matrix.setRotateM(  matrixRtz, 0, thismesh.rotationZ,  0.0f, 0.0f, 1.0f);
+        Matrix.scaleM(      matrixScl, 0, thismesh.scaleX, thismesh.scaleY, thismesh.scaleZ);
         Matrix.translateM(  matrixTrn, 0, tx, ty, tz);
 
         Matrix.multiplyMM(  matrixRxy, 0, matrixRty, 0, matrixRtx, 0);
@@ -135,9 +139,9 @@ class Renderer implements GLSurfaceView.Renderer {
 
         throwAnyGLException("uniforms");
 
-        FloatBuffer vb = mesh.vb;
-        ShortBuffer ib = mesh.ib;
-        int indslength = mesh.il;
+        FloatBuffer vb = thismesh.vb;
+        ShortBuffer ib = thismesh.ib;
+        int indslength = thismesh.il;
 
         // use JNI and glBufferData: http://stackoverflow.com/questions/5402567/whats-glbufferdata-for-in-opengl-es
         //                           http://code.google.com/p/gdc2011-android-opengl/wiki/TalkTranscript
@@ -160,7 +164,7 @@ class Renderer implements GLSurfaceView.Renderer {
 
         throwAnyGLException("VBOs");
 
-        for(int i=0; i < mesh.textures.size(); i++) {
+        for(int i=0; i < thismesh.textures.size(); i++) {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIDs[i]);
             GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);

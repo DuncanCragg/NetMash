@@ -423,12 +423,6 @@ public class User extends WebObject {
         }
     }
 
-    public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
-    private void glElementsPut(String tag, Object o){
-        if(tag==null || o==null || tag.equals("")) return;
-        glElements.put(tag,o);
-    }
-
     private void showWhatIAmViewingAsGUI(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
@@ -477,17 +471,8 @@ public class User extends WebObject {
             }
             else
             if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
-                meshhash=contentHash(  "private:viewing:mesh");
-                glElementsPut(content(                        "private:viewing:mesh:vertexShader"),
-                              OTS2GUI.join(contentListMayJump("private:viewing:mesh:vertexShader")," "));
-                glElementsPut(content(                        "private:viewing:mesh:fragmentShader"),
-                              OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
-                LinkedList subs=contentAll("private:viewing:mesh:subObjects:object");
-                if(subs!=null) for(int i=0; i< subs.size(); i++){
-                    LinkedHashMap m=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh",i));
-                    if(m==null)   m=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:avatar:mesh",i));
-                    glElementsPut((String)subs.get(i), m);
-                }
+                meshhash=contentHash("private:viewing:mesh");
+                cacheVisibleSceneElements();
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
@@ -508,6 +493,27 @@ public class User extends WebObject {
                 uiJSON.hashPath("mesh", meshhash);
             }
             if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
+        }
+    }
+
+    public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
+
+    private void glElementsPut(String tag, Object o){
+        if(tag==null || o==null || tag.equals("")) return;
+        glElements.put(tag,o);
+    }
+
+    private void cacheVisibleSceneElements(){
+        glElementsPut(content(                        "private:viewing:mesh:vertexShader"),
+                      OTS2GUI.join(contentListMayJump("private:viewing:mesh:vertexShader")," "));
+        glElementsPut(content(                        "private:viewing:mesh:fragmentShader"),
+                      OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
+        LinkedList subs=contentList(                  "private:viewing:mesh:subObjects");
+        if(subs==null) return;
+        for(int i=0; i< subs.size(); i++){
+            LinkedHashMap m=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh",i));
+            if(m==null)   m=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:avatar:mesh",i));
+            glElementsPut(content(String.format(      "private:viewing:mesh:subObjects:%d:object",i)), m);
         }
     }
 
