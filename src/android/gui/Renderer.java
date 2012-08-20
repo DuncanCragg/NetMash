@@ -87,8 +87,9 @@ class Renderer implements GLSurfaceView.Renderer {
             LinkedHashMap subob=(LinkedHashMap)o;
             Object subobuid=subob.get("object");
             Object subobcrd=subob.get("coords");
-            Mesh   submesh=new Mesh((LinkedHashMap)netmash.user.glElements.get(subobuid));
-
+            LinkedHashMap m=(LinkedHashMap)netmash.user.glElements.get(subobuid);
+            if(m==null) continue;
+            Mesh submesh=new Mesh(m);
             drawMesh(submesh, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
 
         }catch(Throwable t){} }
@@ -188,6 +189,7 @@ class Renderer implements GLSurfaceView.Renderer {
         seeZ=eyeZ+7f*(float)Math.cos(direction);
         eyeX-=dy/7f*(float)Math.sin(direction);
         eyeZ-=dy/7f*(float)Math.cos(direction);
+        this.netmash.user.onNewCoords(eyeX, eyeZ);
     }
 
     // -------------------------------------------------------------

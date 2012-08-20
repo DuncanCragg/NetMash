@@ -75,7 +75,8 @@ public class User extends WebObject {
               "    \"homeusers\": \""+homeusers+"\", \n"+
               "    \"saying\": \"\", \n"+
               "    \"place\": null, \n"+
-              "    \"coords\": [ 9, 9, 9 ], \n"+
+              "    \"coords\": [ 0.0, 0.0, 0.0 ], \n"+
+              "    \"avatar\": \"http://192.168.0.8:8082/o/uid-c058-2db1-0b26-8f48.json\", \n"+
               "    \"location\": { \"lat\": 0, \"lon\": 0 }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
               "    \"private\": { \n"+
@@ -158,6 +159,22 @@ public class User extends WebObject {
                 contentDouble("location:lon", location.getLongitude());
                 contentDouble("location:acc", location.getAccuracy());
                 content(      "location:prv", location.getProvider());
+                refreshObserves();
+            }
+        };
+    }
+
+    // ---------------------------------------------------------
+
+    private float px=0,pz=0;
+    public void onNewCoords(final float x, final float z){
+        new Evaluator(this){
+            public void evaluate(){ logrule();
+                float dx=x-px, dz=z-pz;
+                if(dx*dx+dz*dz>1.0){
+                    contentList("coords", list(x,0.0f,z));
+                    px=x; pz=z;
+                }
                 refreshObserves();
             }
         };
@@ -467,10 +484,10 @@ public class User extends WebObject {
                               OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
                 LinkedList subs=contentAll("private:viewing:mesh:subObjects:object");
                 if(subs!=null) for(int i=0; i< subs.size(); i++){
-                    glElementsPut((String)subs.get(i), contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh",i)));
+                    LinkedHashMap m=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh",i));
+                    if(m==null)   m=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:avatar:mesh",i));
+                    glElementsPut((String)subs.get(i), m);
                 }
-                content("place",content("private:viewing"));
-                notifying(content("private:viewing"));
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
@@ -478,11 +495,14 @@ public class User extends WebObject {
             }
             JSON uiJSON=null;
             if(viewhash!=null){
+                content("place","");
                 uiJSON=new JSON("{ \"is\": \"gui\" }");
                 uiJSON.stringPath("title", title);
                 uiJSON.hashPath("view", viewhash);
             }
             if(meshhash!=null){
+                content("place",content("private:viewing"));
+                notifying(content("private:viewing"));
                 uiJSON=new JSON("{ \"is\": \"mesh\" }");
                 uiJSON.stringPath("title", title);
                 uiJSON.hashPath("mesh", meshhash);
