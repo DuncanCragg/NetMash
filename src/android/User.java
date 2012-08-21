@@ -178,6 +178,8 @@ public class User extends WebObject {
                 String newplaceuid=findNewPlaceNearer();
                 if(newplaceuid!=null){
                     history.forward();
+                    NetMash.top.onerenderer.resetCoordsAndView();
+                    contentList("coords", list(0,1.5f,0));
                     content("private:viewing", newplaceuid);
                     content("private:viewas", "gui");
                     showWhatIAmViewing();

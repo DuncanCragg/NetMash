@@ -16,7 +16,7 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
 
-class Renderer implements GLSurfaceView.Renderer {
+public class Renderer implements GLSurfaceView.Renderer {
 
     private NetMash netmash;
     private Mesh mesh;
@@ -45,23 +45,32 @@ class Renderer implements GLSurfaceView.Renderer {
     private float[] specular = { 0.9f, 0.4f, 0.4f, 1.0f };
     private float   shininess = 5.0f;
 
-    private float eyeX=0;
-    private float eyeY=1.5f;
-    private float eyeZ=0;
-
-    private float seeX=0;
-    private float seeY=1.5f;
-    private float seeZ=5.0f;
+    private float eyeX;
+    private float eyeY;
+    private float eyeZ;
+    private float seeX;
+    private float seeY;
+    private float seeZ;
 
     private float direction=0;
 
     public Renderer(NetMash netmash, LinkedHashMap mesh) {
         this.netmash=netmash;
         this.mesh=new Mesh(mesh);
+        resetCoordsAndView();
     }
 
     public void newMesh(LinkedHashMap mesh){
         this.mesh=new Mesh(mesh);
+    }
+
+    public void resetCoordsAndView(){
+        eyeX=0;
+        eyeY=1.5f;
+        eyeZ=0;
+        seeX=0;
+        seeY=1.5f;
+        seeZ=5.0f;
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {

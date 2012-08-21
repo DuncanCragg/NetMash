@@ -186,8 +186,8 @@ public class NetMash extends MapActivity{
         }
     }
 
-    private GLSurfaceView onemeshview=null;
-    private Renderer      onerenderer=null;
+    public GLSurfaceView onemeshview=null;
+    public Renderer      onerenderer=null;
 
     private void addMesh(LinkedHashMap mesh){
         if(createMeshView(mesh)){
