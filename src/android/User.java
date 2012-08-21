@@ -125,10 +125,11 @@ public class User extends WebObject {
     // ---------------------------------------------------------
 
     OTS2GUI ots2gui;
-    CurrentLocation currentlocation;
+    CurrentLocation currentlocation=null;
+    boolean trackGPS=false;
 
     public void onTopCreate(String url){
-        currentlocation = new CurrentLocation(this);
+        if(trackGPS) currentlocation = new CurrentLocation(this);
         if(url!=null) jumpToUID(url);
     }
 
@@ -139,11 +140,11 @@ public class User extends WebObject {
                 refreshObserves();
             }
         };
-        currentlocation.getLocationUpdates();
+        if(currentlocation!=null) currentlocation.getLocationUpdates();
     }
 
     public void onTopPause(){
-        currentlocation.stopLocationUpdates();
+        if(currentlocation!=null) currentlocation.stopLocationUpdates();
     }
 
     public void onTopDestroy(){
@@ -168,13 +169,12 @@ public class User extends WebObject {
 
     private float px=0,py=0,pz=0;
     public void onNewCoords(final float x, final float y, final float z){
+        float dx=x-px, dy=y-py, dz=z-pz;
+        if(dx*dx+dy*dy+dz*dz<1.0) return;
         new Evaluator(this){
             public void evaluate(){ logrule();
-                float dx=x-px, dy=y-py, dz=z-pz;
-                if(dx*dx+dy*dy+dz*dz>1.0){
-                    contentList("coords", list(x,y,z));
-                    px=x; py=y; pz=z;
-                }
+                contentList("coords", list(x,y,z));
+                px=x; py=y; pz=z;
                 String newplaceuid=findNewPlaceNearer();
                 if(newplaceuid!=null){
                     history.forward();

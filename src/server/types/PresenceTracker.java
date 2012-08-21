@@ -30,16 +30,21 @@ public class PresenceTracker extends Editable {
             }
             contentTemp("%alerted", null);
         }
-
         LinkedList subObjects=contentList("mesh:subObjects");
         if(subObjects==null) return;
-        for(int i=0; i< subObjects.size(); i++){
+        int sosize=subObjects.size();
+        for(int i=0; i<sosize; i++){
             String placepath=String.format("mesh:subObjects:%d:object:place",i);
-            String coordpath=String.format("mesh:subObjects:%d:object:coords",i);
-            String mycrdpath=String.format("mesh:subObjects:%d:coords",i);
+            if(!contentSet(placepath)) continue;
             if(contentIsThis(placepath)){
+                String coordpath=String.format("mesh:subObjects:%d:object:coords",i);
+                String mycrdpath=String.format("mesh:subObjects:%d:coords",i);
                 LinkedList coords=contentListClone(coordpath);
                 if(coords!=null && coords.size()==3) contentList(mycrdpath, coords);
+            }
+            else{
+                contentListRemove("mesh:subObjects", i);
+                i--; sosize--;
             }
         }
     }

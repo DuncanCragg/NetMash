@@ -325,6 +325,12 @@ public class JSON {
         return removeListPath(tophash, path, value);
     }
 
+    /** Remove indexed item from list at the given path. */
+    public boolean listPathRemove(String path, int index){
+        ensureContent();
+        return removeListPath(tophash, path, index);
+    }
+
     /** Remove from list at the given path. */
     public boolean listPathRemoveAll(String path, List value){
         ensureContent();
@@ -921,7 +927,17 @@ public class JSON {
         try{ list = getListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
         if(list==null) return false;
-        list.remove(value);
+        return list.remove(value);
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean removeListPath(LinkedHashMap hashmap, String path, int index){
+        LinkedList list=null;
+        try{ list = getListPath(hashmap, path);
+        }catch(PathOvershot po){ return false; }
+        if(list==null) return false;
+        if(index< 0 || index>=list.size()) return false;
+        list.remove(index);
         return true;
     }
 

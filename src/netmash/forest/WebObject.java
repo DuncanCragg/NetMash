@@ -562,6 +562,12 @@ public class WebObject {
         statemod = updatingState.listPathRemove(path, val) || statemod;
     }
 
+    /** Remove the indexed value in the list at the path. */
+    public void contentListRemove(String path, int ind){
+        doCopyOnWrite(path);
+        statemod = updatingState.listPathRemove(path, ind) || statemod;
+    }
+
     /** Remove all the values in the list at the path. */
     public void contentListRemoveAll(String path, List val){
         doCopyOnWrite(path);
