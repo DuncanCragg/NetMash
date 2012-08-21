@@ -8,6 +8,6 @@
                "home-cache-notify": "http://10.0.2.2:8082/o/c-n-0a3a-8cd3-d5c3-ed1c" },
   "ots": { "homeusers": "http://10.0.2.2:8082/o/uid-6332-84e1-c1de-3364.json",
            "links": [   "http://10.0.2.2:8081/o/uid-1e51-f298-5f55-6caa.json",
-                        "http://10.0.2.2:8082/o/uid-7794-3aa8-2192-7a60.json" ]
+                        "http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json" ]
   }
 }
