@@ -4,25 +4,19 @@ To Do
 
 Functionality
 
- - go straight to two avatar cubes moving around in shared box
-    - shared box has to point to users at some translation
-       - can see turning - model rotation
-       - can see movement - shared box translation, driven by user xy
-    - step one: two user boxes from second server around cube on first server
-       - user POSTs self to cube, which adds it and this renders as user box
-       - user obj POSTs x,y,z, avatar POSTs rotations; can use walking law if is: avatar
-       - when user is looking at it, set user's xy to translated box coords
+ - two floors: infinite world - two servers
+ - eventual place consistency: user-decides-they're-jumping algorithm, drop/unpresence
 
+ - chat, "saying":
+ - avatar POSTs rotations
+ - walking law to smooth/animate movement if is: avatar
  - is:cube object generates that mesh
  - or create sphere mesh and sphere object - blender or unity?
  - first animation rule: cube that stays cubic when rescaled
  - second animation rule: introduce time into Fjord, rotate slowly
- - cube on server viewed by two clients, updating on edit or animation from/to either client
- - two cubes on a floor container: beginning of infinite world - two servers
- - user on home server plus avatar
  - split-screen and/or easy-flip
 
-Fixes
+Speed, Bugfixes, Robustness
 
  - projection not re-setting properly on landscape
  - lighting all wrong: model, camera, lightpos needs sorting

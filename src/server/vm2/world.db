@@ -8,7 +8,7 @@
 { "%uid": "uid-7794-3aa8-2192-7a60",
   "%class": "netmash.forest.Editable",
   "is": [ "3d", "mesh", "editable" ],
-  "title": "Userish Cube 1",
+  "title": "Avatar",
   "mesh": {
     "rotation": [ 0, 45, 0 ],
     "scale": [ 1.0, 1.0, 1.0 ],
@@ -30,15 +30,13 @@
     "textures": [ "http://192.168.0.8/netmash.png" ],
     "vertexShader": "http://192.168.0.8:8081/o/uid-ff5d-1ef4-cfa5-5f92.json",
     "fragmentShader": "http://192.168.0.8:8081/o/uid-6e92-c60d-d16a-6b35.json"
-  },
-  "place": "http://192.168.0.8:8081/o/uid-1e51-f298-5f55-6caa.json",
-  "coords": [ 6, 6, 6 ]
+  }
 }
 
 { "%uid": "uid-c058-2db1-0b26-8f48",
   "%class": "netmash.forest.Editable",
   "is": [ "3d", "mesh", "editable" ],
-  "title": "Userish Cube 2",
+  "title": "Nice Box",
   "mesh": {
     "rotation": [ 45, 0, 45 ],
     "scale": [ 1.0, 1.0, 1.0 ],
