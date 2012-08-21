@@ -4,24 +4,31 @@ To Do
 
 Functionality
 
- - fix teleport coords forwards and back (save coords in history, thus also scroll state)
- - animation rule: turn on lights when someone comes in (need per-obj lighting)
- - chat, "saying":
+ - chat, "saying": ".."
  - avatar POSTs rotations
- - walking law to smooth/animate movement if is: avatar
  - is:cube object generates that mesh
- - or create sphere mesh and sphere object - blender or unity?
- - first animation rule: cube that stays cubic when rescaled
- - second animation rule: introduce time into Fjord, rotate slowly
- - third animation rule: react to touch (need touch, then)
+    - or create sphere mesh and sphere object - blender or unity?
  - split-screen and/or easy-flip
+ - teleport coords on back button (save coords in history, thus also scroll state)
+ - walking law to smooth/animate movement if is: avatar
 
-Speed, Bugfixes, Robustness
+Animations to enable
 
+ - turn on lights when someone comes in (need per-obj lighting)
+ - mars rover - can assume matrix/vector maths!
+ - cube that stays cubic when rescaled
+ - introduce time into Fjord, rotate slowly
+ - react to touch (need touch, then)
+
+Speed, Bugfixes, Robustness, Clean formats
+
+ - put limit on render recursion depth and detect already-rendered-at-xyz
  - projection not re-setting properly on landscape
  - lighting all wrong: model, camera, lightpos needs sorting
- - rebinding the texture when it comes in
+ - rebinding the texture when it comes in (and 256x256 don't forget)
  - all those efficiency improvements noted in the code
+ - think about multiple POSTs of user
+ - remove mesh and gui nesting
  - fix 100% and heap churn (only in emu?) when no connection to server
 
 Fjord
@@ -31,6 +38,7 @@ Fjord
  - %more like jumping lists
  - "<#>payment": { .. }
  - "<a|b>": ..
+ - fail-to-match rewrites (e.g. turn light off if no visitors)
 
 Android
 
