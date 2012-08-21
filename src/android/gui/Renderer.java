@@ -46,12 +46,12 @@ class Renderer implements GLSurfaceView.Renderer {
     private float   shininess = 5.0f;
 
     private float eyeX=0;
-    private float eyeY=0;
-    private float eyeZ= -6;
+    private float eyeY=1.5f;
+    private float eyeZ=0;
 
     private float seeX=0;
-    private float seeY=0;
-    private float seeZ=0;
+    private float seeY=1.5f;
+    private float seeZ=5.0f;
 
     private float direction=0;
 
@@ -193,7 +193,7 @@ class Renderer implements GLSurfaceView.Renderer {
         seeZ=eyeZ+7f*(float)Math.cos(direction);
         eyeX-=dy/7f*(float)Math.sin(direction);
         eyeZ-=dy/7f*(float)Math.cos(direction);
-        this.netmash.user.onNewCoords(eyeX, eyeZ);
+        this.netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
     }
 
     // -------------------------------------------------------------

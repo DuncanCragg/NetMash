@@ -75,7 +75,7 @@ public class User extends WebObject {
               "    \"homeusers\": \""+homeusers+"\", \n"+
               "    \"saying\": \"\", \n"+
               "    \"place\": null, \n"+
-              "    \"coords\": [ 0.0, 0.0, 0.0 ], \n"+
+              "    \"coords\": [ 0.0, 1.5, 0.0 ], \n"+
               "    \"avatar\": \"http://192.168.0.8:8082/o/uid-7794-3aa8-2192-7a60.json\", \n"+
               "    \"location\": { \"lat\": 0, \"lon\": 0 }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
@@ -166,14 +166,14 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    private float px=0,pz=0;
-    public void onNewCoords(final float x, final float z){
+    private float px=0,py=0,pz=0;
+    public void onNewCoords(final float x, final float y, final float z){
         new Evaluator(this){
             public void evaluate(){ logrule();
-                float dx=x-px, dz=z-pz;
-                if(dx*dx+dz*dz>1.0){
-                    contentList("coords", list(x,0.0f,z));
-                    px=x; pz=z;
+                float dx=x-px, dy=y-py, dz=z-pz;
+                if(dx*dx+dy*dy+dz*dz>1.0){
+                    contentList("coords", list(x,y,z));
+                    px=x; py=y; pz=z;
                 }
                 refreshObserves();
             }
