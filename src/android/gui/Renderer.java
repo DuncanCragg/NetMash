@@ -57,20 +57,20 @@ public class Renderer implements GLSurfaceView.Renderer {
     public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
         this.mesh=new Mesh(hm);
-        resetCoordsAndView();
+        resetCoordsAndView(0,1.5f,0);
     }
 
     public void newMesh(LinkedHashMap hm){
         this.mesh=new Mesh(hm);
     }
 
-    public void resetCoordsAndView(){
-        eyeX=0;
-        eyeY=1.5f;
-        eyeZ=0;
-        seeX=0;
-        seeY=1.5f;
-        seeZ=5.0f;
+    public void resetCoordsAndView(float x, float y, float z){
+        eyeX=x;
+        eyeY=y;
+        eyeZ=z;
+        seeX=eyeX+7f*(float)Math.sin(direction);
+        seeY=y;
+        seeZ=eyeZ+7f*(float)Math.cos(direction);
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {

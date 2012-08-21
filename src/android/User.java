@@ -178,8 +178,6 @@ public class User extends WebObject {
                 String newplaceuid=findNewPlaceNearer();
                 if(newplaceuid!=null){
                     history.forward();
-                    NetMash.top.onerenderer.resetCoordsAndView();
-                    contentList("coords", list(0,1.5f,0));
                     content("private:viewing", newplaceuid);
                     content("private:viewas", "gui");
                     showWhatIAmViewing();
@@ -191,25 +189,27 @@ public class User extends WebObject {
 
     private String findNewPlaceNearer(){
         LinkedList usercoords=contentList("coords");
+        float ux=Mesh.getFloatFromList(usercoords, 0,0);
+        float uy=Mesh.getFloatFromList(usercoords, 1,0);
+        float uz=Mesh.getFloatFromList(usercoords, 2,0);
         LinkedList subObjects=contentList("place:mesh:subObjects");
         if(subObjects==null) return null;
         for(int i=0; i< subObjects.size(); i++){
             String objispath=String.format("place:mesh:subObjects:%d:object:is",i);
             if(!contentListContains(objispath,"place")) continue;
-            String coordpath=String.format("place:mesh:subObjects:%d:coords",i);
-            String placepath=String.format("place:mesh:subObjects:%d:object",i);
-            LinkedList placecoords=contentList(coordpath);
-            float d=distanceBetween(usercoords, placecoords);
-            if(d<10) return content(placepath);
+            LinkedList placecoords=contentList(String.format("place:mesh:subObjects:%d:coords",i));
+            float px=Mesh.getFloatFromList(placecoords,0,0);
+            float py=Mesh.getFloatFromList(placecoords,1,0);
+            float pz=Mesh.getFloatFromList(placecoords,2,0);
+            float dx=ux-px; float dy=uy-py; float dz=uz-pz;
+            float d=(float)Math.sqrt(dx*dx+dy*dy+dz*dz);
+            if(d<10){
+                NetMash.top.onerenderer.resetCoordsAndView(dx,dy,dz);
+                contentList("coords", list(dx,dy,dz));
+                return content(String.format("place:mesh:subObjects:%d:object",i));
+            }
         }
         return null;
-    }
-
-    private float distanceBetween(LinkedList a, LinkedList b){
-        float dx=Mesh.getFloatFromList(a,0,0)-Mesh.getFloatFromList(b,0,0);
-        float dy=Mesh.getFloatFromList(a,1,0)-Mesh.getFloatFromList(b,1,0);
-        float dz=Mesh.getFloatFromList(a,2,0)-Mesh.getFloatFromList(b,2,0);
-        return (float)Math.sqrt(dx*dx+dy*dy+dz*dz);
     }
 
     // ---------------------------------------------------------

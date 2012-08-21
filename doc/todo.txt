@@ -4,9 +4,8 @@ To Do
 
 Functionality
 
- - two floors: infinite world - two servers
- - eventual place consistency: user-decides-they're-jumping algorithm, drop/unpresence
-
+ - fix teleport coords forwards and back (save coords in history, thus also scroll state)
+ - animation rule: turn on lights when someone comes in (need per-obj lighting)
  - chat, "saying":
  - avatar POSTs rotations
  - walking law to smooth/animate movement if is: avatar
@@ -14,6 +13,7 @@ Functionality
  - or create sphere mesh and sphere object - blender or unity?
  - first animation rule: cube that stays cubic when rescaled
  - second animation rule: introduce time into Fjord, rotate slowly
+ - third animation rule: react to touch (need touch, then)
  - split-screen and/or easy-flip
 
 Speed, Bugfixes, Robustness
