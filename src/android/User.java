@@ -188,14 +188,21 @@ public class User extends WebObject {
     }
 
     private String findNewPlaceNearer(){
-        LinkedList usercoords =contentList("coords");
-        LinkedList placecoords=contentList("place:mesh:subObjects:2:coords");
-        String     placeuid   =content(    "place:mesh:subObjects:2:object");
-        float d=distanceBetween(usercoords, placecoords);
-        return d<10? placeuid: null;
+        LinkedList usercoords=contentList("coords");
+        LinkedList subObjects=contentList("place:mesh:subObjects");
+        if(subObjects==null) return null;
+        for(int i=0; i< subObjects.size(); i++){
+            String objispath=String.format("place:mesh:subObjects:%d:object:is",i);
+            if(!contentListContains(objispath,"place")) continue;
+            String coordpath=String.format("place:mesh:subObjects:%d:coords",i);
+            String placepath=String.format("place:mesh:subObjects:%d:object",i);
+            LinkedList placecoords=contentList(coordpath);
+            float d=distanceBetween(usercoords, placecoords);
+            if(d<10) return content(placepath);
+        }
+        return null;
     }
 
-                ;
     private float distanceBetween(LinkedList a, LinkedList b){
         float dx=Mesh.getFloatFromList(a,0,0)-Mesh.getFloatFromList(b,0,0);
         float dy=Mesh.getFloatFromList(a,1,0)-Mesh.getFloatFromList(b,1,0);

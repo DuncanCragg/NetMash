@@ -32,7 +32,8 @@ public class PresenceTracker extends Editable {
         }
 
         LinkedList subObjects=contentList("mesh:subObjects");
-        if(subObjects!=null) for(int i=0; i< subObjects.size(); i++){
+        if(subObjects==null) return;
+        for(int i=0; i< subObjects.size(); i++){
             String placepath=String.format("mesh:subObjects:%d:object:place",i);
             String coordpath=String.format("mesh:subObjects:%d:object:coords",i);
             String mycrdpath=String.format("mesh:subObjects:%d:coords",i);

@@ -7,7 +7,7 @@
 
 { "%uid": "uid-39da-3645-4f58-50cb",
   "%class": "server.types.PresenceTracker",
-  "is": [ "3d", "mesh", "editable" ],
+  "is": [ "place", "3d", "mesh", "editable" ],
   "title": "Ann Droid's Place",
   "mesh": {
     "rotation": [ 0, 0, 0 ],
