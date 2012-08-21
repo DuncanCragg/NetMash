@@ -175,9 +175,32 @@ public class User extends WebObject {
                     contentList("coords", list(x,y,z));
                     px=x; py=y; pz=z;
                 }
+                String newplaceuid=findNewPlaceNearer();
+                if(newplaceuid!=null){
+                    history.forward();
+                    content("private:viewing", newplaceuid);
+                    content("private:viewas", "gui");
+                    showWhatIAmViewing();
+                }
                 refreshObserves();
             }
         };
+    }
+
+    private String findNewPlaceNearer(){
+        LinkedList usercoords =contentList("coords");
+        LinkedList placecoords=contentList("place:mesh:subObjects:2:coords");
+        String     placeuid   =content(    "place:mesh:subObjects:2:object");
+        float d=distanceBetween(usercoords, placecoords);
+        return d<10? placeuid: null;
+    }
+
+                ;
+    private float distanceBetween(LinkedList a, LinkedList b){
+        float dx=Mesh.getFloatFromList(a,0,0)-Mesh.getFloatFromList(b,0,0);
+        float dy=Mesh.getFloatFromList(a,1,0)-Mesh.getFloatFromList(b,1,0);
+        float dz=Mesh.getFloatFromList(a,2,0)-Mesh.getFloatFromList(b,2,0);
+        return (float)Math.sqrt(dx*dx+dy*dy+dz*dz);
     }
 
     // ---------------------------------------------------------
