@@ -54,14 +54,14 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private float direction=0;
 
-    public Renderer(NetMash netmash, LinkedHashMap mesh) {
+    public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
-        this.mesh=new Mesh(mesh);
+        this.mesh=new Mesh(hm);
         resetCoordsAndView();
     }
 
-    public void newMesh(LinkedHashMap mesh){
-        this.mesh=new Mesh(mesh);
+    public void newMesh(LinkedHashMap hm){
+        this.mesh=new Mesh(hm);
     }
 
     public void resetCoordsAndView(){
@@ -93,22 +93,25 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUseProgram(program);
         throwAnyGLException("glUseProgram");
 
-        drawMesh(mesh, 0,0,0);
+        drawMeshAndSubs(mesh, 0,0,0);
+    }
 
-        for(Object o: this.mesh.subObjects){ try{
+    private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
+        drawMesh(m, tx,ty,tz);
+
+        for(Object o: m.subObjects){ try{
             LinkedHashMap subob=(LinkedHashMap)o;
             Object subobuid=subob.get("object");
             Object subobcrd=subob.get("coords");
-            LinkedHashMap m=(LinkedHashMap)netmash.user.glElements.get(subobuid);
-            if(m==null) continue;
-            Mesh submesh=new Mesh(m);
-            drawMesh(submesh, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
+            LinkedHashMap sm=(LinkedHashMap)netmash.user.glElements.get(subobuid);
+            if(sm==null) continue;
+            drawMeshAndSubs(new Mesh(sm), tx+Mesh.getFloatFromList(subobcrd,0,0), ty+Mesh.getFloatFromList(subobcrd,1,0), tz+Mesh.getFloatFromList(subobcrd,2,0));
 
         }catch(Throwable t){} }
     }
 
-    private void drawMesh(Mesh thismesh, float tx, float ty, float tz){try{
+    private void drawMesh(Mesh m, float tx, float ty, float tz){try{
 
         Matrix.setIdentityM(matrixRtx, 0);
         Matrix.setIdentityM(matrixRty, 0);
@@ -116,10 +119,10 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.setIdentityM(matrixScl, 0);
         Matrix.setIdentityM(matrixTrn, 0);
 
-        Matrix.setRotateM(  matrixRtx, 0, thismesh.rotationX, -1.0f, 0.0f, 0.0f);
-        Matrix.setRotateM(  matrixRty, 0, thismesh.rotationY,  0.0f, 1.0f, 0.0f);
-        Matrix.setRotateM(  matrixRtz, 0, thismesh.rotationZ,  0.0f, 0.0f, 1.0f);
-        Matrix.scaleM(      matrixScl, 0, thismesh.scaleX, thismesh.scaleY, thismesh.scaleZ);
+        Matrix.setRotateM(  matrixRtx, 0, m.rotationX, -1.0f, 0.0f, 0.0f);
+        Matrix.setRotateM(  matrixRty, 0, m.rotationY,  0.0f, 1.0f, 0.0f);
+        Matrix.setRotateM(  matrixRtz, 0, m.rotationZ,  0.0f, 0.0f, 1.0f);
+        Matrix.scaleM(      matrixScl, 0, m.scaleX, m.scaleY, m.scaleZ);
         Matrix.translateM(  matrixTrn, 0, tx, ty, tz);
 
         Matrix.multiplyMM(  matrixRxy, 0, matrixRty, 0, matrixRtx, 0);
@@ -148,9 +151,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         throwAnyGLException("uniforms");
 
-        FloatBuffer vb = thismesh.vb;
-        ShortBuffer ib = thismesh.ib;
-        int indslength = thismesh.il;
+        FloatBuffer vb = m.vb;
+        ShortBuffer ib = m.ib;
+        int indslength = m.il;
 
         // use JNI and glBufferData: http://stackoverflow.com/questions/5402567/whats-glbufferdata-for-in-opengl-es
         //                           http://code.google.com/p/gdc2011-android-opengl/wiki/TalkTranscript
@@ -173,7 +176,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         throwAnyGLException("VBOs");
 
-        for(int i=0; i < thismesh.textures.size(); i++) {
+        for(int i=0; i < m.textures.size(); i++) {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIDs[i]);
             GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);

@@ -540,12 +540,21 @@ public class User extends WebObject {
                       OTS2GUI.join(contentListMayJump("private:viewing:mesh:vertexShader")," "));
         glElementsPut(content(                        "private:viewing:mesh:fragmentShader"),
                       OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
+
         LinkedList subs=contentList(                  "private:viewing:mesh:subObjects");
         if(subs==null) return;
         for(int i=0; i< subs.size(); i++){
-            LinkedHashMap m=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh",i));
-            if(m==null)   m=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:avatar:mesh",i));
-            glElementsPut(content(String.format(      "private:viewing:mesh:subObjects:%d:object",i)), m);
+            LinkedHashMap m=contentHash(String.format(    "private:viewing:mesh:subObjects:%d:object:mesh",i));
+            if(m==null)   m=contentHash(String.format(    "private:viewing:mesh:subObjects:%d:object:avatar:mesh",i));
+            glElementsPut(content(String.format(          "private:viewing:mesh:subObjects:%d:object",i)), m);
+
+            LinkedList subsubs=contentList(String.format( "private:viewing:mesh:subObjects:%d:object:mesh:subObjects",i));
+            if(subsubs==null) continue;
+            for(int j=0; j< subsubs.size(); j++){
+                LinkedHashMap n=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh:subObjects:%d:object:mesh",i,j));
+                if(n==null)   n=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh:subObjects:%d:object:avatar:mesh",i,j));
+                glElementsPut(content(String.format(      "private:viewing:mesh:subObjects:%d:object:mesh:subObjects:%d:object",i,j)), n);
+            }
         }
     }
 
