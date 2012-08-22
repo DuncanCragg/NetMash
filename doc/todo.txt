@@ -14,7 +14,6 @@ Functionality
 
 Animations to enable
 
- - change size or tilt when someone comes in
  - cube that stays cubic when rescaled
  - turn on lights when someone comes in (need to sort out lighting)
  - mars rover (matrix/vector maths)
@@ -23,6 +22,7 @@ Animations to enable
 
 Speed, Bugfixes, Robustness, Clean formats
 
+ - floor textures didn't come out
  - GC_CONCURRENT freed 513K, 12% free 8020K/9031K, paused 1ms+2ms, total 21ms
  - put limit on render recursion depth and detect already-rendered-at-xyz
  - projection not re-setting properly on landscape
