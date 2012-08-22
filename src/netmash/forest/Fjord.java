@@ -81,6 +81,10 @@ public class Fjord extends WebObject {
                 if(!scanString((String)v, pk)) return false;
             }
             else
+            if(v instanceof Number){
+                if(!scanNumber((Number)v, pk)) return false;
+            }
+            else
             if(v instanceof Boolean){
                 if(!scanBoolean((Boolean)v, pk)) return false;
             }
@@ -144,6 +148,10 @@ public class Fjord extends WebObject {
         }
         else if(!contentIsOrListContains(pk,vs)) return false;
         return true;
+    }
+
+    private boolean scanNumber(Number vb, String pk){
+        return contentDouble(pk)==vb.doubleValue();
     }
 
     private boolean scanBoolean(Boolean vb, String pk){

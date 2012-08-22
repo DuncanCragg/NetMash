@@ -202,6 +202,20 @@ public class JSON {
         return setIntPath(tophash, path, value);
     }
 
+    /** Increment int value. */
+    public boolean incPath(String path){
+        ensureContent();
+        int i; try{ i=getIntPath(tophash, path); }catch(PathOvershot po){ return false; }
+        return setIntPath(tophash, path, i+1);
+    }
+
+    /** Decrement int value. */
+    public boolean decPath(String path){
+        ensureContent();
+        int i; try{ i=getIntPath(tophash, path); }catch(PathOvershot po){ return false; }
+        return setIntPath(tophash, path, i-1);
+    }
+
     //----------------------------------
 
     /** Get boolean at the given path.

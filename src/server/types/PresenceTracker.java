@@ -27,6 +27,7 @@ public class PresenceTracker extends Editable {
                 hm.put("object", alerted);
                 hm.put("coords", list(0,0,0));
                 contentListAdd("mesh:subObjects", hm);
+                contentInc("mesh:present");
             }
             contentTemp("%alerted", null);
         }
@@ -44,6 +45,7 @@ public class PresenceTracker extends Editable {
             }
             else{
                 contentListRemove("mesh:subObjects", i);
+                contentDec("mesh:present");
                 i--; sosize--;
             }
         }

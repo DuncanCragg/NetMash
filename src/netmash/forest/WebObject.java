@@ -334,6 +334,18 @@ public class WebObject {
         statemod = updatingState.intPath(path, val) || statemod;
     }
 
+    /** Increment the number at this path. */
+    public void contentInc(String path){
+        doCopyOnWrite(path);
+        statemod = updatingState.incPath(path) || statemod;
+    }
+
+    /** Decrement the number at this path. */
+    public void contentDec(String path){
+        doCopyOnWrite(path);
+        statemod = updatingState.decPath(path) || statemod;
+    }
+
     /** Double value found at path. */
     public double contentDouble(String path){
         double d=0;

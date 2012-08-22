@@ -14,14 +14,16 @@ Functionality
 
 Animations to enable
 
- - turn on lights when someone comes in (need per-obj lighting)
- - mars rover - can assume matrix/vector maths!
+ - change size or tilt when someone comes in
  - cube that stays cubic when rescaled
- - introduce time into Fjord, rotate slowly
+ - turn on lights when someone comes in (need to sort out lighting)
+ - mars rover (matrix/vector maths)
+ - rotate slowly (introduce time into Fjord)
  - react to touch (need touch, then)
 
 Speed, Bugfixes, Robustness, Clean formats
 
+ - GC_CONCURRENT freed 513K, 12% free 8020K/9031K, paused 1ms+2ms, total 21ms
  - put limit on render recursion depth and detect already-rendered-at-xyz
  - projection not re-setting properly on landscape
  - lighting all wrong: model, camera, lightpos needs sorting
