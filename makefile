@@ -10,7 +10,7 @@ lan: androidlanrel runlan
 
 noservers: androidlanrel logcat
 
-twoservers: androidemu runtwo logthree
+emu: androidemu runemu logcat
 
 static: androidemu runstaticserver logboth
 
@@ -58,7 +58,7 @@ androidremoterel: clean init setappremoteconfig setreleasemapkey
 
 reinstall:
 	adb uninstall android.gui
-	adb install bin/NetMash-release.apk
+	adb install bin/NetMash-release.apk || adb install bin/NetMash-debug.apk
 
 uninstall:
 	adb uninstall android.gui
@@ -84,6 +84,8 @@ runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 runall: kill clean allconfig setvm2tstconfig usetestdb run1n2
 
 runlan: kill clean netconfig setvm2lanconfig useworlddb run1n2
+
+runemu: kill clean netconfig setvm2emuconfig useworlddb run1n2
 
 runon1:
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
@@ -135,14 +137,18 @@ setdebugmapkey:
 setappemuconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/netmashconfig.json
 	sed -i"" -e "s:netmash.net:10.0.2.2:" res/raw/topdb.json
+	sed -i"" -e "s:netmash.net:10.0.2.2:" src/android/User.java
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" res/raw/netmashconfig.json
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" res/raw/topdb.json
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/android/User.java
 
 setapplanconfig:
 	sed -i"" -e "s:netmash.net:192.168.0.8:" res/raw/netmashconfig.json
 	sed -i"" -e "s:netmash.net:192.168.0.8:" res/raw/topdb.json
+	sed -i"" -e "s:netmash.net:192.168.0.8:" src/android/User.java
 	sed -i"" -e    "s:10.0.2.2:192.168.0.8:" res/raw/netmashconfig.json
 	sed -i"" -e    "s:10.0.2.2:192.168.0.8:" res/raw/topdb.json
+	sed -i"" -e    "s:10.0.2.2:192.168.0.8:" src/android/User.java
 
 setappremoteconfig:
 	sed -i"" -e    "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
@@ -153,18 +159,28 @@ setappremoteconfig:
 setvmemuconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm1/netmashconfig.json
+	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/world.db
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm1/world.db
 
 setvm2emuconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
-	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm2/netmashconfig.json
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm1/netmashconfig.json
+	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/world.db
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm1/world.db
+	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm2/netmashconfig.json
 	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm2/netmashconfig.json
+	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm2/world.db
+	sed -i"" -e "s:192.168.0.8:10.0.2.2:" src/server/vm2/world.db
 
 setvm2lanconfig:
 	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm2/netmashconfig.json
 	sed -i"" -e  "s:10.0.2.2:192.168.0.8:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm1/world.db
+	sed -i"" -e  "s:10.0.2.2:192.168.0.8:" src/server/vm1/world.db
+	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm2/netmashconfig.json
 	sed -i"" -e  "s:10.0.2.2:192.168.0.8:" src/server/vm2/netmashconfig.json
+	sed -i"" -e "s:localhost:192.168.0.8:" src/server/vm2/world.db
+	sed -i"" -e  "s:10.0.2.2:192.168.0.8:" src/server/vm2/world.db
 
 setvmtestconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
