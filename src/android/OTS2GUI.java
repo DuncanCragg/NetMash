@@ -466,7 +466,7 @@ public class OTS2GUI {
     }
 
     static public void log(Object o){ WebObject.log(o); }
-    static public void logrule(){ WebObject.logrule(); }
+    static public void logrule(){ if(false) WebObject.logrule(); }
     static public LinkedList list(Object...args){ return WebObject.list(args); }
     static public LinkedHashMap style(Object...args){ return WebObject.hash(WebObject.hash("is","style"), args); }
 }

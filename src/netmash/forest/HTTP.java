@@ -136,9 +136,9 @@ public class HTTP implements ChannelUser {
         return true;
     }
 
-    boolean longpush(WebObject w){ log("longpush:\n"+w);
+    boolean longpush(WebObject w){ if(false) log("longpush:\n"+w);
         HTTPServer server = getLongPusher(w.isAsymmetricCN()? w.uid: w.cacheNotify);
-        if(server==null){ log(String.format("!! No longpush AsymmetricCN=%s, cacheNotify=%s\n%s",w.isAsymmetricCN(),w.cacheNotify,w)); return false; }
+        if(server==null){ if(false) log(String.format("!! No longpush AsymmetricCN=%s, cacheNotify=%s\n%s",w.isAsymmetricCN(),w.cacheNotify,w)); return false; }
         for(String notifieruid: w.alertedin){
             server.longRequest(notifieruid);
         }
@@ -293,6 +293,7 @@ abstract class HTTPCommon {
             httpStatusText = m.group(3);
         }
         if(httpProtocol==null) throw new Exception("first line of request/response: \n"+headchars);
+        if(!Kernel.config.boolPathN("network:log")) log(httpMethod+" "+httpPath+"<--");
     }
 
     private void getInterestingHeaders(CharBuffer headchars) throws Exception{
@@ -396,6 +397,7 @@ abstract class HTTPCommon {
 
     protected void topRequestHeaders(StringBuilder sb, String method, String host, int port, String path, int etag){
         sb.append(method); sb.append(path); sb.append(" HTTP/1.1\r\n");
+        if(!Kernel.config.boolPathN("network:log")) log(sb+"-->");
         sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
         sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
         sb.append("Cache-Notify: "); sb.append(UID.toURL(CacheNotify())); sb.append("\r\n");
@@ -609,7 +611,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         StringBuilder sb=new StringBuilder();
         topResponseHeaders(sb, "200 OK");
         contentHeadersAndBody(sb, w, getPercents(includeNotify));
-        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
+        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb); else log("200 OK-->");
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
@@ -628,7 +630,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         topResponseHeaders(sb, responseCode);
         if(extraHeaders!=null) sb.append(extraHeaders);
         sb.append("Content-Length: 0\r\n\r\n");
-        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
+        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb); else log(responseCode+"-->");
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 

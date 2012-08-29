@@ -173,7 +173,7 @@ public class User extends WebObject {
         float dx=x-px, dy=y-py, dz=z-pz;
         if(dx*dx+dy*dy+dz*dz<1.0) return;
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){ if(false) logrule();
                 contentList("coords", list(x,y,z));
                 px=x; py=y; pz=z;
                 String newplaceuid=findNewPlaceNearer();
@@ -247,7 +247,7 @@ public class User extends WebObject {
 
     public void jumpToUID(final String uid){
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){ if(false) logrule();
                 history.forward();
                 content("private:viewing", uid);
                 content("private:viewas", "gui");
@@ -456,7 +456,7 @@ public class User extends WebObject {
         }
     }
 
-    private void showWhatIAmViewingAsGUI(){ logrule();
+    private void showWhatIAmViewingAsGUI(){ if(false) logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
             LinkedHashMap meshhash=null;

@@ -170,7 +170,7 @@ public class NetMash extends MapActivity{
         guiHandler.post(uiDrawJSONRunnable);
     }
 
-    private void uiDrawJSON(){ log("uiDrawJSON "+uiUID+":\n"+uiJSON);
+    private void uiDrawJSON(){ if(false) log("uiDrawJSON "+uiUID+":\n"+uiJSON);
      // if(focused && viewUID.equals(uiUID)){ log("** locked"); return; }
         focused=false; viewUID=uiUID;
         String title =uiJSON.stringPathN("title");
