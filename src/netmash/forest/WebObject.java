@@ -671,7 +671,7 @@ public class WebObject {
         return alerted;
     }
 
-    /** Wrap new WebObject in this to return its UID and set 
+    /** Wrap new WebObject in this to return its UID and set
       * it up for later evaluation. */
     public String spawn(WebObject w){
         obsalmod = true;

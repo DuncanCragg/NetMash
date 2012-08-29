@@ -181,7 +181,7 @@ public class JSON {
 
     //----------------------------------
 
-    /** Get integer (or int form of string or 
+    /** Get integer (or int form of string or
       * 0 if not integer) at the given path.
       */
     public int intPath(String path) throws PathOvershot{
@@ -189,7 +189,7 @@ public class JSON {
         return getIntPath(tophash, path);
     }
 
-    /** Get integer (or int form of string or 
+    /** Get integer (or int form of string or
       * 0 if not integer) at the given path. No PathOvershot.
       */
     public int intPathN(String path){
@@ -288,7 +288,7 @@ public class JSON {
     public boolean hashPath(String path, LinkedHashMap value){
         ensureContent();
         return setHashPath(tophash, path, value);
-    }   
+    }
 
     /** Get list at the given path. */
     public LinkedList listPath(String path) throws PathOvershot{
@@ -458,7 +458,7 @@ public class JSON {
     private void ensureContent(){
         try{ ensureContentX(); } catch(Exception e){ e.printStackTrace(); }
     }
-    
+
     private void ensureContentX() throws Exception{
         if(tophash!=null) return;
         if(chars==null) return;
@@ -634,12 +634,12 @@ public class JSON {
                 if(bufs.indexOf('.')== -1){
                     boolean neg = bufs.startsWith("-");
                     int     len = bufs.length();
-                    if((!neg && len >=10 ) || 
+                    if((!neg && len >=10 ) ||
                        ( neg && len >=11 )   ){
                          n=new BigInteger(bufs);
                     }
-                    else n=new Integer(bufs); 
-                }else    n=new Double(bufs);
+                    else n=Integer.valueOf(bufs);
+                }else    n=Double.valueOf(bufs);
                 return n;
             }
             buf.append(chars[chp]);
@@ -649,30 +649,30 @@ public class JSON {
     }
 
     private Boolean readBoolean() throws Exception{
-        if(chp+3<chars.length && 
-           chars[chp+0]=='t' && 
+        if(chp+3<chars.length &&
+           chars[chp+0]=='t' &&
            chars[chp+1]=='r' &&
            chars[chp+2]=='u' &&
            chars[chp+3]=='e'){
             chp+=3;
-            return new Boolean(true);
+            return Boolean.valueOf(true);
         }
-        if(chp+4<chars.length && 
-           chars[chp+0]=='f' && 
+        if(chp+4<chars.length &&
+           chars[chp+0]=='f' &&
            chars[chp+1]=='a' &&
            chars[chp+2]=='l' &&
            chars[chp+3]=='s' &&
            chars[chp+4]=='e'){
             chp+=4;
-            return new Boolean(false);
+            return Boolean.valueOf(false);
         }
         parseError('0');
         return null;
     }
 
     private Object readNull() throws Exception{
-        if(chp+3<chars.length && 
-           chars[chp+0]=='n' && 
+        if(chp+3<chars.length &&
+           chars[chp+0]=='n' &&
            chars[chp+1]=='u' &&
            chars[chp+2]=='l' &&
            chars[chp+3]=='l'){
@@ -873,15 +873,15 @@ public class JSON {
     }
 
     private boolean setIntPath(LinkedHashMap hashmap, String path, int value){
-        return setObject(hashmap, path, new Integer(value));
+        return setObject(hashmap, path, Integer.valueOf(value));
     }
 
     private boolean setDoublePath(LinkedHashMap hashmap, String path, double value){
-        return setObject(hashmap, path, new Double(value));
+        return setObject(hashmap, path, Double.valueOf(value));
     }
 
     private boolean setBoolPath(LinkedHashMap hashmap, String path, boolean value){
-        return setObject(hashmap, path, new Boolean(value));
+        return setObject(hashmap, path, Boolean.valueOf(value));
     }
 
     private boolean setHashPath(LinkedHashMap hashmap, String path, LinkedHashMap value){
@@ -1171,16 +1171,16 @@ public class JSON {
     static private Number toNumber(Object o){
         if(o instanceof Number) return (Number)o;
         if(o instanceof String) try{ return Double.parseDouble((String)o); } catch(NumberFormatException e){}
-        return new Double(0);
+        return Double.valueOf(0);
     }
 
     static private Boolean toBoolean(Object o){
         if(o instanceof Boolean) return (Boolean)o;
         if(o instanceof String){
-            if(((String)o).toLowerCase().equals("true" )) return new Boolean(true);
-            if(((String)o).toLowerCase().equals("false")) return new Boolean(false);
+            if(((String)o).toLowerCase().equals("true" )) return Boolean.valueOf(true);
+            if(((String)o).toLowerCase().equals("false")) return Boolean.valueOf(false);
         }
-        return new Boolean(false);
+        return Boolean.valueOf(false);
     }
 
     static private Object toNumberIfPoss(Object o){
@@ -1190,8 +1190,8 @@ public class JSON {
 
     static private Object toBooleanIfPoss(Object o){
         if(o instanceof String){
-            if(((String)o).toLowerCase().equals("true" )) return new Boolean(true);
-            if(((String)o).toLowerCase().equals("false")) return new Boolean(false);
+            if(((String)o).toLowerCase().equals("true" )) return Boolean.valueOf(true);
+            if(((String)o).toLowerCase().equals("false")) return Boolean.valueOf(false);
         }
         return o;
     }
@@ -1219,7 +1219,7 @@ public class JSON {
     public void log(Object o){
         log(enableLogging, o);
     }
-        
+
     public void log(boolean doit, Object o){
         if(!doit) return;
         String thread=Thread.currentThread().toString();

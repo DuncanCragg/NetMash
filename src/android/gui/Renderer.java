@@ -14,7 +14,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.util.Log;
+import android.util.*;
 
 public class Renderer implements GLSurfaceView.Renderer {
 
@@ -68,9 +68,9 @@ public class Renderer implements GLSurfaceView.Renderer {
         eyeX=x;
         eyeY=y;
         eyeZ=z;
-        seeX=eyeX+7f*(float)Math.sin(direction);
+        seeX=eyeX+7f*FloatMath.sin(direction);
         seeY=y;
-        seeZ=eyeZ+7f*(float)Math.cos(direction);
+        seeZ=eyeZ+7f*FloatMath.cos(direction);
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -201,10 +201,10 @@ public class Renderer implements GLSurfaceView.Renderer {
         direction -= dx/50f;
         if(direction> 2*Math.PI) direction-=2*Math.PI;
         if(direction<-2*Math.PI) direction+=2*Math.PI;
-        seeX=eyeX+7f*(float)Math.sin(direction);
-        seeZ=eyeZ+7f*(float)Math.cos(direction);
-        eyeX-=dy/7f*(float)Math.sin(direction);
-        eyeZ-=dy/7f*(float)Math.cos(direction);
+        seeX=eyeX+7f*FloatMath.sin(direction);
+        seeZ=eyeZ+7f*FloatMath.cos(direction);
+        eyeX-=dy/7f*FloatMath.sin(direction);
+        eyeZ-=dy/7f*FloatMath.cos(direction);
         this.netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
     }
 

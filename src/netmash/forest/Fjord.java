@@ -245,7 +245,7 @@ public class Fjord extends WebObject {
                 else d+=tryDouble(arg,0);
             }
             if(match) return contentDouble(pk)==d;
-            else      {      contentDouble(pk,new Double(d)); return true; }
+            else      {      contentDouble(pk,Double.valueOf(d)); return true; }
         }
         if(func.equals("prod")){
             double d=1.0;
@@ -254,7 +254,7 @@ public class Fjord extends WebObject {
                 else d*=tryDouble(arg,1);
             }
             if(match) return contentDouble(pk)==d;
-            else      {      contentDouble(pk,new Double(d)); return true; }
+            else      {      contentDouble(pk,Double.valueOf(d)); return true; }
         }
         if(func.equals("div")){
             String arg=args[0].trim();
@@ -264,7 +264,7 @@ public class Fjord extends WebObject {
                 else d/=tryDouble(arg,1);
             }
             if(match) return contentDouble(pk)==d;
-            else      {      contentDouble(pk,new Double(d)); return true; }
+            else      {      contentDouble(pk,Double.valueOf(d)); return true; }
         }
         if(func.equals("lt")){
             for(int i=0; i<args.length; i++){ String arg=args[i].trim();
@@ -324,8 +324,8 @@ public class Fjord extends WebObject {
 
     private Object makeBestObject(String s){
         try{ return Double.parseDouble(s); } catch(NumberFormatException e){}
-        if(s.toLowerCase().equals("true" )) return new Boolean(true);
-        if(s.toLowerCase().equals("false")) return new Boolean(false);
+        if(s.toLowerCase().equals("true" )) return Boolean.valueOf(true);
+        if(s.toLowerCase().equals("false")) return Boolean.valueOf(false);
         return s;
     }
 

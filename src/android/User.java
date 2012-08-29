@@ -7,6 +7,7 @@ import java.util.concurrent.*;
 
 import android.gui.*;
 import android.os.*;
+import android.util.*;
 
 import android.content.*;
 import android.database.Cursor;
@@ -202,7 +203,7 @@ public class User extends WebObject {
             float py=Mesh.getFloatFromList(placecoords,1,0);
             float pz=Mesh.getFloatFromList(placecoords,2,0);
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
-            float d=(float)Math.sqrt(dx*dx+dy*dy+dz*dz);
+            float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
             if(d<10){
                 NetMash.top.onerenderer.resetCoordsAndView(dx,dy,dz);
                 contentList("coords", list(dx,dy,dz));
@@ -236,7 +237,7 @@ public class User extends WebObject {
         }
         public String toString(){
             StringBuilder sb=new StringBuilder();
-            sb.append("[ "); 
+            sb.append("[ ");
             for(View v: this){ sb.append(v.uid); sb.append("-"); sb.append(v.as); sb.append(" "); }
             sb.append("]");
             return sb.toString();

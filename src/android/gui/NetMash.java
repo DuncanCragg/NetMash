@@ -898,6 +898,7 @@ public class NetMash extends MapActivity{
 
 class BorderedTextView extends TextView {
     Paint paint = new Paint();
+    Rect rect = new Rect();
     public BorderedTextView(Context context, int colour){
         super(context);
         setBackgroundColor(colour);
@@ -908,7 +909,6 @@ class BorderedTextView extends TextView {
     }
     @Override
     protected void onDraw(Canvas canvas) {
-        Rect rect = new Rect();
         getLocalVisibleRect(rect);
         rect.inset(1,1);
         canvas.drawRect(rect, paint);
