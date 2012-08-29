@@ -2,7 +2,63 @@
 To Do
 -----
 
+Next
+
+ - OM: width: [ "=>", "$:place:present", "×", 10 ]
+    - renders as: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
+    - "rotation": [ "*","*", [ "=>", "$:present","×",10 ]]
+    - test-drive each bit of new OM
+
+Object/Net/Mash views: the Object-Net/Mash IDE
+
+ - lint, hierarchyviewer, dmtracedump http://stackoverflow.com/questions/5377445/which-order-of-nested-layouts-is-most-efficient-in-android
+ - fix view/edit not to use nested views: HTML WebView and object-mash.js
+    - HTML is probably most flexible
+    - render rules specially as recognised type
+    - render JSON as recognised ObNet type: %rules, %more, is, etc known
+    - constraints of JSON needn't be at all visible in gui
+    - smooth over ugliness: %, "", etc
+ - JSON view renders three times - use Etag, if no need to respond to incoming subs
+ - split-screen and/or easy-flip: Object, Object Net, Object Mash
+    - this has to be really easy and nice to use
+    - it's an IDE like Victor .. lighttable
+    - visual instantiation of rules - step through, see each rule firing and rewriting
+    - an IDE that extends beyond the team into the world..
+ - expand sub-linked objects, so easy to build link-jumping rule
+ - touch 3D object brings up menu with go to Object/Net/Mash views options
+ - it's an IDE. But the code is already structured.
+    - it's graph/tree reduction/rewriting
+ - Victor stylee; Light Table
+ - start with object itself as new rule
+    - then autocomplete options
+    - can expand links inline to full nested object
+ - show how lists and singles are treated the same somehow
+ - rescaling number chooser .. 10, 100, 1000 new scale set
+ - in-world clone, link, drop ..  see jxee/u-web std edit options
+
+Object Mash
+
+ - split when-then and functions
+ - render when and then in different colours
+ - strings in rules are all language, so single-tick quotes for literals
+ - not "list(a,b)" but [a,b]; [ +, a, b ] not "sum(a,b)", etc
+ - prod->multiply or *(),+() or x+y x*y
+ - JSON reduction trees - iteration not recursion
+ - * anything, # nothing
+ - %rules, etc as reserved words
+ - two-phase: do all LHS, accumulate $s, RHS, edits
+ - contentAll everywhere
+ - %more like jumping lists
+ - "<#>payment": { .. }
+ - "<a|b>": ..
+ - fail-to-match rewrites (e.g. turn light off if no visitors)
+
 Speed, Bugfixes, Robustness, Clean formats
+
+ - take out full logging and remove easy redundancies
+ - onboard and online objects for faster editing responses and rule exec
+ - is: cube / sphere.obj - no mesh, simpler, easier, quicker
+ - may need circularity detect: why doesn't User presence blow up?
 
  - client and server cycling and long/short poll
  - too chatty on the wire
@@ -16,42 +72,28 @@ GL
  - put limit on render recursion depth and detect already-rendered-at-xyz
  - lighting all wrong: model, camera, lightpos needs sorting
  - projection not re-setting properly on landscape
- - remove mesh and gui nesting
+ - remove mesh and gui nesting: easier to read and faster to draw
  - floor textures didn't come out
 
-Object/Net/Mash views
+Text render/enter - maybe have 3D Net/Mash views
 
- - fix view/edit not to use nested views: HTML?
-    - render rules specially as recognised type
-    - render JSON as recognised ObNet type: %rules, %more, is, etc known
-    - constraints of JSON needn't be at all visible in gui
-    - smooth over ugliness: %, "", etc
- - split-screen and/or easy-flip: Object, Object Net, Object Mash
-    - this has to be really easy and nice to use
-    - it's an IDE like Victor .. lighttable
-    - visual instantiation of rules - step through, see each rule firing and rewriting
-    - an IDE that extends beyond the team into the world..
- - expand sub-linked objects, so easy to build link-jumping rule
- - touch 3D object brings up menu with go to Object/Net/Mash views options
+ - render text fonts:
+    - http://fractiousg.blogspot.co.uk/2012/04/rendering-text-in-opengl-on-android.html
+ - keyboard input:
+    - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
+    - http://forum.xda-developers.com/showthread.php?t=860488
+ - needs touch detection, which is needed anyway
 
-Object Mash
+Interactions
 
- - split when-then and functions
- - render when and then in different colours
- - strings in rules are all language, so single-tick quotes for literals
- - not "list(a,b)" but [a,b]; [ +, a, b ] not "sum(a,b)", etc
- - prod->multiply or *(),+() or x+y x*y
- - JSON reduction trees - iteration not recursion
- - * anything, # nothing
- - %rules, etc as reserved words
- - is touch event a form linking to user? as you move, it updates?
+ - touch state linking to user. as you move, it updates.
+   %alerted:
+   { is: stroke, user: .., target: .., stroke: [ 1.4, 4.3 ], direction: [ -0.1, 0.23 ] }
+    .. accumulated distance / vector from start; current direction vector
+   users: +=> %alerted
+   [ [ + $:users:stroke:0 ] / [ count $:users ] ] is average of x
+
  - attaching accelerometer value to an object: %alerted, then watch user
- - two-phase: do all LHS, accumulate $s, RHS, edits
- - contentAll everywhere
- - %more like jumping lists
- - "<#>payment": { .. }
- - "<a|b>": ..
- - fail-to-match rewrites (e.g. turn light off if no visitors)
 
 Examples dotted around on arrival
 
