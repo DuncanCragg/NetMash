@@ -293,7 +293,7 @@ clean:
 	rm -f  gen/android/gui/R.java
 	rm -f  ,*
 
-veryclean: kill clean setappemuconfig setvmemuconfig setdebugmapkey
+veryclean: kill clean setappemuconfig netconfig setvm2emuconfig setdebugmapkey
 	rm -f  src/server/vm[12]/netmash.log
 	rm -f  src/server/vm[12]/netmash.db
 	rm -f  src/server/vm2/netmashconfig.json

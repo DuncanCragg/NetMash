@@ -1,8 +1,8 @@
-{   "%uid": "uid-6332-84e1-c1de-3364",
-    "%class": "server.types.UserHome",
-    "is": [ "userhome", "user", "list" ],
-    "title": "User Home",
-    "list": []
+{ "%uid": "uid-6332-84e1-c1de-3364",
+  "%class": "server.types.UserHome",
+  "is": [ "userhome", "user", "list" ],
+  "title": "User Home",
+  "list": []
 }
 
 { "%uid": "uid-39da-3645-4f58-50cb",
