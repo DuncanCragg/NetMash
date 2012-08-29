@@ -1,9 +1,10 @@
 { "%uid": "uid-39da-3645-4f58-50cb",
   "%class": "netmash.forest.ObjectMash",
-  "%rules": [ "uid-d3e7-6831-3804-7cbf", "uid-d039-5967-f60c-70f7" ],
+  "%rules": [ "uid-d3e7-6831-3804-7cbf", "uid-40fb-5964-b385-c922", "uid-d039-5967-f60c-70f7" ],
   "is": [ "test" ],
   "title": "Test Running",
-  "x": 2
+  "x": 2,
+  "z": [ 1, 2, 3 ]
 }
 
 { "%uid": "uid-d3e7-6831-3804-7cbf",
@@ -12,10 +13,16 @@
   "y": [ "=>", "$:x", "×", 10 ]
 }
 
+{ "%uid": "uid-40fb-5964-b385-c922",
+  "is": [ "test", "rule" ],
+  "when": "Test nested list and star",
+  "z": [ "*","*", [ "=>", "$:y", "×", 10 ]]
+}
+
 { "%uid": "uid-d039-5967-f60c-70f7",
   "is": [ "test", "rule" ],
   "when": "Test completion",
-  "y": 20,
+  "z": [ 1, 2, 200 ],
   "title": [ "=>", "Test Complete" ]
 }
 

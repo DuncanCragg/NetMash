@@ -50,7 +50,7 @@ public class ObjectMash extends WebObject {
         boolean ok=scanRuleHash(rule, "", rewrites);
         if(ok) doRewrites(rewrites);
         if(ok) log("Rule fired: \""+contentOr(String.format("%%rules:%d:when", r),"")+"\"");
-        if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
+        if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"\n===========");
         contentTemp("%alerted", null);
     }
 
@@ -92,13 +92,15 @@ public class ObjectMash extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean scanRuleList(LinkedList list, String pk, LinkedHashMap<String,Object> rewrites){
+    private boolean scanRuleList(LinkedList list, String path, LinkedHashMap<String,Object> rewrites){
         if(list.size() >= 2 && list.get(0).equals("=>")){
             LinkedList rhs=new LinkedList(list.subList(1,list.size()));
-            rewrites.put(pk,rhs);
+            rewrites.put(path,rhs);
             return true;
         }
+        int i=0;
         for(Object v: list){
+            String pk=String.format("%s:%d",path,i);
             if(v instanceof String){
                 if(!scanString((String)v, pk)) return false;
             }
@@ -116,15 +118,16 @@ public class ObjectMash extends WebObject {
             }
             else
             if(v instanceof LinkedList){
-                if(!scanRuleList((LinkedList)v, pk, rewrites)) return false;
+                if(!scanRuleList((LinkedList)v, pk+":", rewrites)) return false;
             }
             else{ log("oh noes "+v); return false; }
+            i++;
         }
         return true;
     }
 
     private boolean scanString(String vs, String pk){
-        return contentIsOrListContains(pk,vs);
+        return vs.equals("*") || contentIsOrListContains(pk,vs);
     }
 
     private boolean scanNumber(Number vb, String pk){
