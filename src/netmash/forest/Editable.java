@@ -1,6 +1,6 @@
 package netmash.forest;
 
-public class Editable extends Fjord {
+public class Editable extends ObjectMash {
 
     public Editable(){}
 

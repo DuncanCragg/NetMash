@@ -19,33 +19,33 @@ public class PresenceTracker extends Editable {
     @SuppressWarnings("unchecked")
     private void trackPresence(){ logrule();
 
-        LinkedList subuids=contentAll("mesh:subObjects:object");
+        LinkedList subuids=contentAll("subObjects:object");
         for(String alerted: alerted()){
             contentTemp("%alerted", alerted);
             if(contentIsThis("%alerted:place") && !subuids.contains(alerted)){
                 LinkedHashMap hm=new LinkedHashMap();
                 hm.put("object", alerted);
                 hm.put("coords", list(0,0,0));
-                contentListAdd("mesh:subObjects", hm);
-                contentInc("mesh:present");
+                contentListAdd("subObjects", hm);
+                contentInc("present");
             }
             contentTemp("%alerted", null);
         }
-        LinkedList subObjects=contentList("mesh:subObjects");
+        LinkedList subObjects=contentList("subObjects");
         if(subObjects==null) return;
         int sosize=subObjects.size();
         for(int i=0; i<sosize; i++){
-            String placepath=String.format("mesh:subObjects:%d:object:place",i);
+            String placepath=String.format("subObjects:%d:object:place",i);
             if(!contentSet(placepath)) continue;
             if(contentIsThis(placepath)){
-                String coordpath=String.format("mesh:subObjects:%d:object:coords",i);
-                String mycrdpath=String.format("mesh:subObjects:%d:coords",i);
+                String coordpath=String.format("subObjects:%d:object:coords",i);
+                String mycrdpath=String.format("subObjects:%d:coords",i);
                 LinkedList coords=contentListClone(coordpath);
                 if(coords!=null && coords.size()==3) contentList(mycrdpath, coords);
             }
             else{
-                contentListRemove("mesh:subObjects", i);
-                contentDec("mesh:present");
+                contentListRemove("subObjects", i);
+                contentDec("present");
                 i--; sosize--;
             }
         }

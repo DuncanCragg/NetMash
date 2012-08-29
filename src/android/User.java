@@ -192,12 +192,12 @@ public class User extends WebObject {
         float ux=Mesh.getFloatFromList(usercoords, 0,0);
         float uy=Mesh.getFloatFromList(usercoords, 1,0);
         float uz=Mesh.getFloatFromList(usercoords, 2,0);
-        LinkedList subObjects=contentList("place:mesh:subObjects");
+        LinkedList subObjects=contentList("place:subObjects");
         if(subObjects==null) return null;
         for(int i=0; i< subObjects.size(); i++){
-            String objispath=String.format("place:mesh:subObjects:%d:object:is",i);
+            String objispath=String.format("place:subObjects:%d:object:is",i);
             if(!contentListContains(objispath,"place")) continue;
-            LinkedList placecoords=contentList(String.format("place:mesh:subObjects:%d:coords",i));
+            LinkedList placecoords=contentList(String.format("place:subObjects:%d:coords",i));
             float px=Mesh.getFloatFromList(placecoords,0,0);
             float py=Mesh.getFloatFromList(placecoords,1,0);
             float pz=Mesh.getFloatFromList(placecoords,2,0);
@@ -206,7 +206,7 @@ public class User extends WebObject {
             if(d<10){
                 NetMash.top.onerenderer.resetCoordsAndView(dx,dy,dz);
                 contentList("coords", list(dx,dy,dz));
-                return content(String.format("place:mesh:subObjects:%d:object",i));
+                return content(String.format("place:subObjects:%d:object",i));
             }
         }
         return null;
@@ -503,7 +503,7 @@ public class User extends WebObject {
             }
             else
             if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
-                meshhash=contentHash("private:viewing:mesh");
+                meshhash=contentHash("private:viewing:#");
                 cacheVisibleSceneElements();
             }
             else{
@@ -536,24 +536,24 @@ public class User extends WebObject {
     }
 
     private void cacheVisibleSceneElements(){
-        glElementsPut(content(                        "private:viewing:mesh:vertexShader"),
-                      OTS2GUI.join(contentListMayJump("private:viewing:mesh:vertexShader")," "));
-        glElementsPut(content(                        "private:viewing:mesh:fragmentShader"),
-                      OTS2GUI.join(contentListMayJump("private:viewing:mesh:fragmentShader")," "));
+        glElementsPut(content(                        "private:viewing:vertexShader"),
+                      OTS2GUI.join(contentListMayJump("private:viewing:vertexShader")," "));
+        glElementsPut(content(                        "private:viewing:fragmentShader"),
+                      OTS2GUI.join(contentListMayJump("private:viewing:fragmentShader")," "));
 
-        LinkedList subs=contentList(                  "private:viewing:mesh:subObjects");
+        LinkedList subs=contentList(                  "private:viewing:subObjects");
         if(subs==null) return;
         for(int i=0; i< subs.size(); i++){
-            LinkedHashMap m=contentHash(String.format(    "private:viewing:mesh:subObjects:%d:object:mesh",i));
-            if(m==null)   m=contentHash(String.format(    "private:viewing:mesh:subObjects:%d:object:avatar:mesh",i));
-            glElementsPut(content(String.format(          "private:viewing:mesh:subObjects:%d:object",i)), m);
+            LinkedHashMap m=contentHash(String.format(    "private:viewing:subObjects:%d:object:avatar:#",i));
+            if(m==null)   m=contentHash(String.format(    "private:viewing:subObjects:%d:object:#",i));
+            glElementsPut(content(String.format(          "private:viewing:subObjects:%d:object",i)), m);
 
-            LinkedList subsubs=contentList(String.format( "private:viewing:mesh:subObjects:%d:object:mesh:subObjects",i));
+            LinkedList subsubs=contentList(String.format( "private:viewing:subObjects:%d:object:subObjects",i));
             if(subsubs==null) continue;
             for(int j=0; j< subsubs.size(); j++){
-                LinkedHashMap n=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh:subObjects:%d:object:mesh",i,j));
-                if(n==null)   n=contentHash(String.format("private:viewing:mesh:subObjects:%d:object:mesh:subObjects:%d:object:avatar:mesh",i,j));
-                glElementsPut(content(String.format(      "private:viewing:mesh:subObjects:%d:object:mesh:subObjects:%d:object",i,j)), n);
+                LinkedHashMap n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
+                if(n==null)   n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
+                glElementsPut(content(String.format(      "private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n);
             }
         }
     }
