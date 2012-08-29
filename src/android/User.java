@@ -405,7 +405,7 @@ public class User extends WebObject {
     }
 
     private LinkedHashMap makeEditRule(String path, String val){
-        return deephash("<>"+val, path);
+        return deephash(list("=>",val), path);
     }
 
     private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }
@@ -417,15 +417,16 @@ public class User extends WebObject {
             showWhatIAmViewing();
         }
         else
-        if(contentListContainsAll("is", list("private", "contact", "list"))){ log("contacts: "+this);
+        if(contentListContainsAll("is", list("private", "contact", "list"))){
+            log("evaluate contacts: "+this);
             if(!contentSet("list")) contentList("list", UserContacts.populateContacts(this));
         }
         else
-        if(contentListContainsAll("is", list("editable", "rule"))){ log("edit: "+this);
+        if(contentListContainsAll("is", list("editable", "rule"))){
             log("evaluate editable: "+this);
         }
         else
-        if(contentListContainsAll("is", list("document", "query"))){ log("query: "+this);
+        if(contentListContainsAll("is", list("document", "query"))){
             log("evaluate query: "+this);
             for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
         }

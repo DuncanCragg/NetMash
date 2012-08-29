@@ -29,7 +29,9 @@
 }
 
 { "%uid": "uid-56d4-91ef-a2fc-2585",
-  "is": [ "place", "rule" ],
+  "%class": "netmash.forest.Editable",
+  "%rules": [ ],
+  "is": [ "place", "rule", "editable" ],
   "when": "tilt the floor in proportion to number present",
   "rotation": [ "*","*", [ "=>", "$:present","×",10 ]]
 }

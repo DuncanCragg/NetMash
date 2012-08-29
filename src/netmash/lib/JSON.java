@@ -1026,11 +1026,11 @@ public class JSON {
                     else { hm.remove(part); changed=true; }
                     return changed;
                 }
-                String sx=parts[i+1];
-                int x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){}
-                if(sx.equals("0") || x>0){
-                   LinkedList ll = (LinkedList)o;
-                   if(x<ll.size()){
+                LinkedList ll=(LinkedList)o;
+                while(true){
+                    String sx=parts[i+1];
+                    int x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){}
+                    if((sx.equals("0") || x>0) && x<ll.size()){
                        o = ll.get(x);
                        if(i+1==parts.length-1){
                            if(value!=null){
@@ -1041,11 +1041,18 @@ public class JSON {
                            else{ ll.remove(x); changed=true; }
                            return changed;
                        }
+                       if(o instanceof LinkedList){
+                           ll=(LinkedList)o;
+                           i++;
+                           continue;
+                       }
                        if(o instanceof LinkedHashMap){
                            hm=(LinkedHashMap)o;
                            i++;
+                           break;
                        }
-                   }
+                    }
+                    return false;
                 }
                 continue;
             }
@@ -1216,11 +1223,11 @@ public class JSON {
 
     static public final boolean enableLogging=true;
 
-    public void log(Object o){
+    static public void log(Object o){
         log(enableLogging, o);
     }
 
-    public void log(boolean doit, Object o){
+    static public void log(boolean doit, Object o){
         if(!doit) return;
         String thread=Thread.currentThread().toString();
         System.out.println("["+thread+"]: "+o);
