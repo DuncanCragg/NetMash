@@ -12,6 +12,8 @@ noservers: androidlanrel logcat
 
 emu: androidemu runemu logcat
 
+om: runom whappen
+
 static: androidemu runstaticserver logboth
 
 fjord: runcur whappen
@@ -79,6 +81,8 @@ runone: kill clean           setvmtestconfig usetestdb run1
 
 runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
 
+runom:  kill clean omconfig  setvm2tstconfig useomdb run2
+
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
 runall: kill clean allconfig setvm2tstconfig usetestdb run1n2
@@ -119,6 +123,9 @@ usequickdb:
 
 uselocaldb:
 	cp src/server/vm1/local.db src/server/vm1/netmash.db
+
+useomdb:
+	cp src/server/vm2/om.db src/server/vm2/netmash.db
 
 usetestdb:
 	cp src/server/vm1/test.db src/server/vm1/netmash.db
@@ -198,6 +205,9 @@ setvmremoteconfig:
 netconfig:
 	cp src/server/vm2/netconfig.json src/server/vm2/netmashconfig.json
 
+omconfig:
+	cp src/server/vm2/omconfig.json src/server/vm2/netmashconfig.json
+
 curconfig:
 	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json
 
@@ -237,13 +247,17 @@ classes: \
 ./build/classes/netmash/forest/WebObject.class \
 ./build/classes/netmash/forest/FunctionalObserver.class \
 ./build/classes/netmash/forest/Fjord.class \
+./build/classes/netmash/forest/ObjectMash.class \
 ./build/classes/netmash/forest/Editable.class \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/server/types/UserHome.class \
 ./build/classes/server/types/PresenceTracker.class \
 ./build/classes/server/types/Event.class \
-./build/classes/server/types/Twitter.class \
 ./build/classes/server/types/DynamicFile.class \
+
+
+otherclasses: \
+./build/classes/server/types/Twitter.class \
 
 
 LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes

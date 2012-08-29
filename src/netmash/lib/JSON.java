@@ -265,6 +265,12 @@ public class JSON {
         return getObjectPath(tophash, path);
     }
 
+    /** Set Object at the given path. */
+    public boolean objectPath(String path, Object val){
+        ensureContent();
+        return setObjectPath(tophash, path, val);
+    }
+
     //----------------------------------
 
     /** Get hash at the given path.  */
@@ -398,7 +404,7 @@ public class JSON {
         ensureContent();
         ensureChars();
         if(chars.length< 2){ log("Failed toString with prepend:\n"+prepend+"\n"+this); return toString(); }
-        return "{   "+prepend.trim()+"\n"+new String(chars).substring(2);
+        return "{ "+prepend.trim()+"\n"+new String(chars).substring(2);
     }
 
     /** Format this JSON: prepend given string to top hash content; single line of given max length. */
@@ -886,6 +892,10 @@ public class JSON {
         return setObject(hashmap, path, value);
     }
 
+    private boolean setObjectPath(LinkedHashMap content, String path, Object value){
+        return setObject(content, path, value);
+    }
+
     @SuppressWarnings("unchecked")
     private boolean addListPath(LinkedHashMap hashmap, String path, Object value){
         LinkedList list;
@@ -1091,7 +1101,7 @@ public class JSON {
     private void ensureChars(int maxlength){
         StringBuilder buf = new StringBuilder();
         if(tophash!=null){
-            buf.append(hashToString(tophash,4,maxlength));
+            buf.append(hashToString(tophash,2,maxlength));
         }
         chars = new String(buf).toCharArray();
         chp=0;
@@ -1100,8 +1110,8 @@ public class JSON {
     private String objectToString(Object o, int indent, int maxlength){
         if(o==null) return "null";
         if(o instanceof String)        return "\""+replaceEscapableChars((String)o)+"\"";
-        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+4, maxlength);
-        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+4, maxlength);
+        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength);
+        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength);
         return o.toString();
     }
 
@@ -1121,7 +1131,7 @@ public class JSON {
             } else buf.append(i==0? " ": ", ");
             buf.append("\""+tag+"\": "+objectToString(val, indent, maxlength));
         }
-        if(structured) buf.append("\n"+indentation(indent-4)+"}");
+        if(structured) buf.append("\n"+indentation(indent-2)+"}");
         else           buf.append("}");
         return buf.toString();
     }
@@ -1153,7 +1163,7 @@ public class JSON {
             buf.append(objectToString(val, indent, maxlength));
             i++;
         }
-        if(structured) buf.append("\n"+indentation(indent-4)+" ]");
+        if(structured) buf.append("\n"+indentation(indent-2)+" ]");
         else           buf.append(" ]");
         return buf.toString();
     }

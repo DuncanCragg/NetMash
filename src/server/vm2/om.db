@@ -1,0 +1,21 @@
+{ "%uid": "uid-39da-3645-4f58-50cb",
+  "%class": "netmash.forest.ObjectMash",
+  "%rules": [ "uid-d3e7-6831-3804-7cbf", "uid-d039-5967-f60c-70f7" ],
+  "is": [ "test" ],
+  "title": "Test Running",
+  "x": 2
+}
+
+{ "%uid": "uid-d3e7-6831-3804-7cbf",
+  "is": [ "test", "rule" ],
+  "when": "Test multiply",
+  "y": [ "=>", "$:x", "×", 10 ]
+}
+
+{ "%uid": "uid-d039-5967-f60c-70f7",
+  "is": [ "test", "rule" ],
+  "when": "Test completion",
+  "y": 20,
+  "title": [ "=>", "Test Complete" ]
+}
+

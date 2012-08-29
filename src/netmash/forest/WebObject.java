@@ -278,6 +278,12 @@ public class WebObject {
 
     // --------------------------------------------------------------
 
+    /** Set Object at this path in the JSON content. */
+    public void contentObject(String path, Object val){
+        doCopyOnWrite(path);
+        statemod = updatingState.objectPath(path, val) || statemod;
+    }
+
     /** Set String at this path in the JSON content. */
     public void content(String path, String val){
         doCopyOnWrite(path);
@@ -827,19 +833,19 @@ public class WebObject {
     }
 
     public String toString(){
-        if(isShell()) return "{   \"%uid\": \""+uid+
-                        "\",\n    \"%notify\": "+setToListString(notify)+
-                          ",\n    \"%alertedin\": "+setToListString(alertedin)+
-                          ",\n    \"%state\": \""+shellstate+"\"\n}\n";
+        if(isShell()) return "{ \"%uid\": \""+uid+
+                        "\",\n  \"%notify\": "+setToListString(notify)+
+                          ",\n  \"%alertedin\": "+setToListString(alertedin)+
+                          ",\n  \"%state\": \""+shellstate+"\"\n}\n";
         String r = publicState.toString(
                                  "\"%uid\": \""+uid+
-            (url!=null? "\",\n    \"%url\": \""+url: "")+
-                        "\",\n    \"%etag\": "+etag+
-                          ",\n    \"%max-age\": "+maxAge+
-                          ",\n    \"%notify\": "+setToListString(notify)+
-                          ",\n    \"%observe\": "+setToListString(observe)+
-      (cacheNotify!=null? ",\n    \"%cache-notify\": \""+cacheNotify+"\"": "")+
-                          ",\n    \"%class\": \""+this.getClass().toString().substring(6)+
+            (url!=null? "\",\n  \"%url\": \""+url: "")+
+                        "\",\n  \"%etag\": "+etag+
+                          ",\n  \"%max-age\": "+maxAge+
+                          ",\n  \"%notify\": "+setToListString(notify)+
+                          ",\n  \"%observe\": "+setToListString(observe)+
+      (cacheNotify!=null? ",\n  \"%cache-notify\": \""+cacheNotify+"\"": "")+
+                          ",\n  \"%class\": \""+this.getClass().toString().substring(6)+
                         "\",\n")+"\n";
         return r;
     }
