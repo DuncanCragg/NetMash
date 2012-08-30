@@ -199,6 +199,8 @@ public class Kernel {
 
     //-----------------------------------------------------
 
+    static private int failwait=0;
+
     static private void eventLoop(){
 
         running=true;
@@ -210,9 +212,11 @@ public class Kernel {
                 int i=selector.select();
                 selock.lock(); selock.unlock();
                 if(i==0 && !Thread.interrupted()) throw new RuntimeException("select returned nothing but not interrupted?!");
+                if(i!=0) failwait=0;
             }catch(Throwable t) {
-                logErr("Failure in event loop: "+t);
-                sleep(10000);
+                logErr("Failure in event loop: "+t+" .. waiting for "+failwait+"ms");
+                sleep(failwait);
+                failwait+=250;
             }
         }
     }
