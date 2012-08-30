@@ -4,76 +4,56 @@ To Do
 
 Next
 
- - OM: width: [ "=>", "$:place:present", "×", 10 ]
-    - renders as: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
-    - "rotation": [ "*","*", [ "=>", "$:present","×",10 ]]
-    - test-drive each bit of new OM
+ - arrive at own on-board room: build interactive objects like the ones already dotted around
+ - onboard and online objects for faster editing responses and rule exec, at least while building IDE
+ - in-world clone, link, drop ..  see jxee/u-web std edit options
 
 Object/Net/Mash views: the Object-Net/Mash IDE
 
- - lint, hierarchyviewer, dmtracedump http://stackoverflow.com/questions/5377445/which-order-of-nested-layouts-is-most-efficient-in-android
- - fix view/edit not to use nested views: HTML WebView and object-mash.js
-    - HTML is probably most flexible
+ - it's an IDE. But the code is already structured.
+    - it's graph/tree reduction/rewriting
+ - render: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
     - render rules specially as recognised type
     - render JSON as recognised ObNet type: %rules, %more, is, etc known
     - constraints of JSON needn't be at all visible in gui
-    - smooth over ugliness: %, "", etc
- - JSON view renders three times - use Etag, if no need to respond to incoming subs
+    - smooths over ugliness: %, "", etc
  - split-screen and/or easy-flip: Object, Object Net, Object Mash
     - this has to be really easy and nice to use
-    - it's an IDE like Victor .. lighttable
+    - it's an IDE like Victor .. Light Table
     - visual instantiation of rules - step through, see each rule firing and rewriting
     - an IDE that extends beyond the team into the world..
- - expand sub-linked objects, so easy to build link-jumping rule
  - touch 3D object brings up menu with go to Object/Net/Mash views options
- - it's an IDE. But the code is already structured.
-    - it's graph/tree reduction/rewriting
- - Victor stylee; Light Table
+ - expand sub-linked objects, so easy to build link-jumping rule
  - start with object itself as new rule
     - then autocomplete options
     - can expand links inline to full nested object
  - show how lists and singles are treated the same somehow
  - rescaling number chooser .. 10, 100, 1000 new scale set
- - in-world clone, link, drop ..  see jxee/u-web std edit options
-
-Object Mash
-
- - split when-then and functions
- - render when and then in different colours
- - strings in rules are all language, so single-tick quotes for literals
- - not "list(a,b)" but [a,b]; [ +, a, b ] not "sum(a,b)", etc
- - prod->multiply or *(),+() or x+y x*y
- - JSON reduction trees - iteration not recursion
- - * anything, # nothing
- - %rules, etc as reserved words
- - two-phase: do all LHS, accumulate $s, RHS, edits
- - contentAll everywhere
- - %more like jumping lists
- - "<#>payment": { .. }
- - "<a|b>": ..
- - fail-to-match rewrites (e.g. turn light off if no visitors)
+ - fix view/edit not to use nested views: HTML WebView and object-mash.js
+    - HTML is probably most flexible
+    - hierarchyviewer, dmtracedump http://stackoverflow.com/questions/5377445/which-order-of-nested-layouts-is-most-efficient-in-android
+    - JSON view renders three times - use Etag, if no need to respond to incoming subs
 
 Speed, Bugfixes, Robustness, Clean formats
 
- - take out full logging and remove easy redundancies
- - onboard and online objects for faster editing responses and rule exec
  - is: cube / sphere.obj - no mesh, simpler, easier, quicker
+ - OM: width: [ "=>", "$:place:present", "×", 10 ]
  - may need circularity detect: why doesn't User presence blow up?
-
+ - remove event redundancies
+ - ?? GC_CONCURRENT freed 513K, 12% free 8020K/9031K, paused 1ms+2ms, total 21ms
+Net
  - client and server cycling and long/short poll
  - too chatty on the wire
- - no logging except from-to net transfers
  - think about multiple POSTs of user
  - fix 100% and heap churn (only in emu?) when no connection to server
- - ?? GC_CONCURRENT freed 513K, 12% free 8020K/9031K, paused 1ms+2ms, total 21ms
 GL
  - efficiency in Render as in comments
  - rebinding the texture when it comes in (and 256x256 don't forget)
  - put limit on render recursion depth and detect already-rendered-at-xyz
  - lighting all wrong: model, camera, lightpos needs sorting
  - projection not re-setting properly on landscape
- - remove mesh and gui nesting: easier to read and faster to draw
  - floor textures didn't come out
+ - remove mesh and gui nesting: easier to read and faster to draw
 
 Text render/enter - maybe have 3D Net/Mash views
 
@@ -99,7 +79,6 @@ Examples dotted around on arrival
 
  - is:cube object generates that mesh
  - is:sphere object and mesh - Blender
-
 
 Functionality
 
