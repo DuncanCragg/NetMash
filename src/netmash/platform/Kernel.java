@@ -207,12 +207,12 @@ public class Kernel {
         while(true){
             try {
                 checkSelector();
-                selector.select();
+                int i=selector.select();
                 selock.lock(); selock.unlock();
+                if(i==0 && !Thread.interrupted()) throw new RuntimeException("select returned nothing but not interrupted?!");
             }catch(Throwable t) {
-                logErr("Failure in event loop:");
-                t.printStackTrace();
-                sleep(1000);
+                logErr("Failure in event loop: "+t);
+                sleep(10000);
             }
         }
     }
@@ -222,7 +222,7 @@ public class Kernel {
     static private void checkSelector(){
 
         Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
-
+        
         while(iterator.hasNext()){
 
             SelectionKey key=null;

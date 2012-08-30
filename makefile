@@ -6,9 +6,9 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
-lan: androidlanrel runlan
+local: androidemu logcat
 
-noservers: androidlanrel logcat
+lan: androidlanrel runlan
 
 emu: androidemu runemu logcat
 
@@ -21,8 +21,6 @@ fjord: runcur whappen
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
 
 quickdyn: editquickdb androidemu runquickserver logboth editdynamicfile
-
-local: androidemu runlocalserver logboth editlocaldbanddynamicfile
 
 # -------------------------------------------------------------------
 

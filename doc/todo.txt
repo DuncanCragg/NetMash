@@ -7,6 +7,7 @@ Next
  - arrive at own on-board room: build interactive objects like the ones already dotted around
  - onboard and online objects for faster editing responses and rule exec, at least while building IDE
  - in-world clone, link, drop ..  see jxee/u-web std edit options
+ - multitouch stroke for interact, then edit menu (edit obj, rules, clone, link)
 
 Object/Net/Mash views: the Object-Net/Mash IDE
 
