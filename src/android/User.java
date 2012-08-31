@@ -20,7 +20,7 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
-import netmash.lib.JSON;
+import netmash.lib.*;
 import netmash.forest.*;
 import netmash.platform.Kernel;
 import static netmash.platform.Logging.*;
@@ -53,14 +53,25 @@ public class User extends WebObject {
               "    \"list\": null \n"+
               "}");
 
+        User room = new User(
+              "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
+              "    \"title\": \""+fullName+"'s Room\", \n"+
+              "    \"vertices\": [ [  20.0,  -1.0, -20.0 ], [  20.0,  -1.0,  20.0 ], [ -20.0,  -1.0,  20.0 ], [ -20.0,  -1.0, -20.0 ], [  20.0,  20.0, -20.0 ], [  20.0,  20.0,  20.0 ], [ -20.0,  20.0,  20.0 ], [ -20.0,  20.0, -20.0 ] ], \n"+
+              "    \"texturepoints\": [ [ 0.0, 0.0 ], [ 1.0, 0.0 ], [ 1.0, 1.0 ], [ 0.0, 1.0 ] ], \n"+
+              "    \"normals\": [ [  0.5,  0.5, -0.5 ], [  0.5, -0.5, -0.5 ], [ -0.5, -0.5, -0.5 ], [ -0.5,  0.5, -0.5 ], [ -0.5, -0.5,  0.5 ], [ -0.5,  0.5,  0.5 ], [  0.5, -0.5,  0.5 ], [  0.5,  0.5,  0.5 ] ], \n"+
+              "    \"faces\": [ [ \"5/1/1\",\"4/3/3\",\"1/2/2\" ], [ \"5/1/1\",\"8/4/4\",\"4/3/3\" ], [ \"3/1/5\",\"8/3/4\",\"7/2/6\" ], [ \"3/1/5\",\"4/4/3\",\"8/3/4\" ], [ \"2/1/7\",\"3/4/5\",\"6/2/8\" ], [ \"6/2/8\",\"3/4/5\",\"7/3/6\" ], [ \"1/1/2\",\"2/4/7\",\"5/2/1\" ], [ \"5/2/1\",\"2/4/7\",\"6/3/8\" ], [ \"5/1/1\",\"6/4/8\",\"8/2/4\" ], [ \"8/2/4\",\"6/4/8\",\"7/3/6\" ], [ \"1/1/2\",\"3/3/5\",\"2/2/7\" ], [ \"1/1/2\",\"4/4/3\",\"3/3/5\" ] ], \n"+
+              "}");
+
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, contact.uid, links.uid, contacts.uid);
+        otslinks.addFirst(room.uid);
         otslinks.addFirst(me.uid);
 
         me.funcobs.setCacheNotifyAndSaveConfig(me);
         me.funcobs.cacheSaveAndEvaluate(contact, true);
         me.funcobs.cacheSaveAndEvaluate(links);
         me.funcobs.cacheSaveAndEvaluate(contacts);
+        me.funcobs.cacheSaveAndEvaluate(room);
         me.funcobs.cacheSaveAndEvaluate(me, true);
 
         if(homeusers!=null) me.notifying(list(homeusers));
@@ -532,30 +543,35 @@ public class User extends WebObject {
 
     public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
 
-    private void glElementsPut(String tag, Object o){
-        if(tag==null || o==null || tag.equals("")) return;
-        glElements.put(tag,o);
+    private void glElementsPut(String t, Object o, Object d){
+        if(t==null || t.equals("")) return;
+        if(o==null || o.toString().equals("")) o=d;
+        if(o!=null) glElements.put(t,o);
     }
 
-    private void cacheVisibleSceneElements(){
-        glElementsPut(content(                        "private:viewing:vertexShader"),
-                      OTS2GUI.join(contentListMayJump("private:viewing:vertexShader")," "));
-        glElementsPut(content(                        "private:viewing:fragmentShader"),
-                      OTS2GUI.join(contentListMayJump("private:viewing:fragmentShader")," "));
+    static String basicVert="uniform mat4 mvpm, norm; uniform vec4 lightPos; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec2 T; varying vec3 N,L; void main(){ T=tex; N=vec3(norm*vec4(nor, 1.0)); L=vec3(mvpm*lightPos); gl_Position=mvpm*pos; }";
+    static String basicFrag="precision mediump float; uniform vec4 lightCol; uniform sampler2D texture0; varying vec2 T; varying vec3 N,L; void main(){ gl_FragColor=1.0*lightCol*texture2D(texture0, T)+0.4*max(dot(normalize(N),normalize(-L)), 0.0); }";
 
-        LinkedList subs=contentList(                  "private:viewing:subObjects");
+    private void cacheVisibleSceneElements(){
+
+        glElementsPut(content(                      "private:viewing:vertexShader"),
+                      Utils.join(contentListMayJump("private:viewing:vertexShader")," "), basicVert);
+        glElementsPut(content(                      "private:viewing:fragmentShader"),
+                      Utils.join(contentListMayJump("private:viewing:fragmentShader")," "), basicFrag);
+
+        LinkedList subs=contentList(                      "private:viewing:subObjects");
         if(subs==null) return;
         for(int i=0; i< subs.size(); i++){
             LinkedHashMap m=contentHash(String.format(    "private:viewing:subObjects:%d:object:avatar:#",i));
             if(m==null)   m=contentHash(String.format(    "private:viewing:subObjects:%d:object:#",i));
-            glElementsPut(content(String.format(          "private:viewing:subObjects:%d:object",i)), m);
+            glElementsPut(content(String.format(          "private:viewing:subObjects:%d:object",i)), m, null);
 
             LinkedList subsubs=contentList(String.format( "private:viewing:subObjects:%d:object:subObjects",i));
             if(subsubs==null) continue;
             for(int j=0; j< subsubs.size(); j++){
                 LinkedHashMap n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
                 if(n==null)   n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
-                glElementsPut(content(String.format(      "private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n);
+                glElementsPut(content(String.format(      "private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null);
             }
         }
     }

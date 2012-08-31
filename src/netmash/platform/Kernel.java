@@ -217,6 +217,7 @@ public class Kernel {
                 logErr("Failure in event loop: "+t+" .. waiting for "+failwait+"ms");
                 sleep(failwait);
                 failwait+=250;
+                if(failwait>10000) failwait=10000;
             }
         }
     }
