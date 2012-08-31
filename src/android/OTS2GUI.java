@@ -18,7 +18,7 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
-import netmash.lib.JSON;
+import netmash.lib.*;
 import netmash.forest.*;
 import netmash.platform.Kernel;
 
@@ -230,7 +230,7 @@ public class OTS2GUI {
         if(bio!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Bio:", bio));
 
         LinkedList<String> addressStrings=getAddressesAsString("private:viewing:address",false);
-        if(addressStrings.size()!=0) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", join(addressStrings, "\n---\n")));
+        if(addressStrings.size()!=0) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Address:", Utils.join(addressStrings, "\n---\n")));
 
         addListIfPresent(contactdetail, "publications", "Publications");
 
@@ -455,14 +455,6 @@ public class OTS2GUI {
             else log("No getFromLocationName for "+address);
         }catch(Exception e){ log("No getFromLocationName for "+address); log(e); }
         return null;
-    }
-
-    static public String join(LinkedList strings, String joinwith){
-        if(strings==null) return "";
-	StringBuilder sb=new StringBuilder();
-        for(Object o: strings){ sb.append(o.toString()); sb.append(joinwith); }
-        String all=sb.toString();
-        return all.substring(0,all.length()-joinwith.length());
     }
 
     static public void log(Object o){ WebObject.log(o); }

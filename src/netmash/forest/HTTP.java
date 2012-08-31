@@ -12,7 +12,7 @@ import java.nio.channels.*;
 import java.nio.charset.*;
 
 import netmash.Version;
-import netmash.lib.JSON;
+import netmash.lib.*;
 import netmash.platform.*;
 
 /** HTTP and REST: the Object Web.
@@ -99,7 +99,7 @@ public class HTTP implements ChannelUser {
 
     private List getClient(WebObject w){
         Matcher m = WURLPA.matcher(w.uid);
-        if(!m.matches()){ FunctionalObserver.whereAmI("Remote UID isn't a good URL: "+w.uid); return null; }
+        if(!m.matches()){ Utils.whereAmI("Remote UID isn't a good URL: "+w.uid); return null; }
         String host = m.group(1);
         int    port = m.group(3)!=null? Integer.parseInt(m.group(3)): 80;
         String path = m.group(4);

@@ -244,6 +244,7 @@ classes: \
 ./build/classes/netmash/NetMash.class \
 ./build/classes/netmash/lib/JSON.class \
 ./build/classes/netmash/lib/TestJSON.class \
+./build/classes/netmash/lib/Utils.class \
 ./build/classes/netmash/forest/WebObject.class \
 ./build/classes/netmash/forest/FunctionalObserver.class \
 ./build/classes/netmash/forest/Fjord.class \

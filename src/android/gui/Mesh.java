@@ -125,7 +125,7 @@ public class Mesh {
             scaleY         = getFloatFromList(getListFromHash(mesh,"scale"   ), 1, 1f);
             scaleZ         = getFloatFromList(getListFromHash(mesh,"scale"   ), 2, 1f);
 
-        } catch (Exception e) { e.printStackTrace(); Log.d("ERROR", e.getLocalizedMessage()); return; }
+        } catch (Exception e) { e.printStackTrace(); Log.e("ERROR", e.getLocalizedMessage()); return; }
     }
 
     static public LinkedList getListFromHash(LinkedHashMap hm, String tag){
@@ -146,12 +146,14 @@ public class Mesh {
         return (String)o;
     }
 
-    static public Float getFloatFromList(Object ll, int i, float d){
-        if(ll==null || !(ll instanceof LinkedList)) return d;
-        Object o=((LinkedList)ll).get(i);
-        if(o==null) return d;
-        if(o instanceof Number) return ((Number)o).floatValue();
-        if(o instanceof String) return Float.parseFloat((String)o);
+    static public Float getFloatFromList(Object o, int i, float d){
+        if(o==null || !(o instanceof LinkedList)) return d;
+        LinkedList ll=((LinkedList)o);
+        if(i>=ll.size()) return d;
+        Object f=ll.get(i);
+        if(f==null) return d;
+        if(f instanceof Number) return ((Number)f).floatValue();
+        if(f instanceof String) return Float.parseFloat((String)f);
         return d;
     }
 
