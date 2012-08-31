@@ -114,8 +114,8 @@ public class Mesh {
             il=ia.length;
 
             textures       = getListFromHash(  mesh,"textures");
-            vertexShader   = getStringFromHash(mesh,"vertexShader",  "");
-            fragmentShader = getStringFromHash(mesh,"fragmentShader","");
+            vertexShader   = getStringFromHash(mesh,"vertexShader",  "basicVert");
+            fragmentShader = getStringFromHash(mesh,"fragmentShader","basicFrag");
             subObjects     = getListFromHash(  mesh,"subObjects");
 
             rotationX      = getFloatFromList(getListFromHash(mesh,"rotation"), 0, 0f);

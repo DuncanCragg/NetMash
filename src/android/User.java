@@ -60,6 +60,7 @@ public class User extends WebObject {
               "    \"texturepoints\": [ [ 0.0, 0.0 ], [ 1.0, 0.0 ], [ 1.0, 1.0 ], [ 0.0, 1.0 ] ], \n"+
               "    \"normals\": [ [  0.5,  0.5, -0.5 ], [  0.5, -0.5, -0.5 ], [ -0.5, -0.5, -0.5 ], [ -0.5,  0.5, -0.5 ], [ -0.5, -0.5,  0.5 ], [ -0.5,  0.5,  0.5 ], [  0.5, -0.5,  0.5 ], [  0.5,  0.5,  0.5 ] ], \n"+
               "    \"faces\": [ [ \"5/1/1\",\"4/3/3\",\"1/2/2\" ], [ \"5/1/1\",\"8/4/4\",\"4/3/3\" ], [ \"3/1/5\",\"8/3/4\",\"7/2/6\" ], [ \"3/1/5\",\"4/4/3\",\"8/3/4\" ], [ \"2/1/7\",\"3/4/5\",\"6/2/8\" ], [ \"6/2/8\",\"3/4/5\",\"7/3/6\" ], [ \"1/1/2\",\"2/4/7\",\"5/2/1\" ], [ \"5/2/1\",\"2/4/7\",\"6/3/8\" ], [ \"5/1/1\",\"6/4/8\",\"8/2/4\" ], [ \"8/2/4\",\"6/4/8\",\"7/3/6\" ], [ \"1/1/2\",\"3/3/5\",\"2/2/7\" ], [ \"1/1/2\",\"4/4/3\",\"3/3/5\" ] ], \n"+
+              "    \"textures\": [ \"http://10.0.2.2/netmash.png\" ], \n"+
               "}");
 
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
@@ -543,10 +544,10 @@ public class User extends WebObject {
 
     public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
 
-    private void glElementsPut(String t, Object o, Object d){
-        if(t==null || t.equals("")) return;
-        if(o==null || o.toString().equals("")) o=d;
-        if(o!=null) glElements.put(t,o);
+    private void glElementsPut(String t, Object v, String dt, Object dv){
+        if(t==null || t           .equals("")) t=dt;
+        if(v==null || v.toString().equals("")) v=dv;
+        if(t!=null && v!=null) glElements.put(t,v);
     }
 
     static String basicVert="uniform mat4 mvpm, norm; uniform vec4 lightPos; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec2 T; varying vec3 N,L; void main(){ T=tex; N=vec3(norm*vec4(nor, 1.0)); L=vec3(mvpm*lightPos); gl_Position=mvpm*pos; }";
@@ -555,23 +556,23 @@ public class User extends WebObject {
     private void cacheVisibleSceneElements(){
 
         glElementsPut(content(                      "private:viewing:vertexShader"),
-                      Utils.join(contentListMayJump("private:viewing:vertexShader")," "), basicVert);
+                      Utils.join(contentListMayJump("private:viewing:vertexShader")," "), "basicVert", basicVert);
         glElementsPut(content(                      "private:viewing:fragmentShader"),
-                      Utils.join(contentListMayJump("private:viewing:fragmentShader")," "), basicFrag);
+                      Utils.join(contentListMayJump("private:viewing:fragmentShader")," "), "basicFrag", basicFrag);
 
         LinkedList subs=contentList(                      "private:viewing:subObjects");
         if(subs==null) return;
         for(int i=0; i< subs.size(); i++){
             LinkedHashMap m=contentHash(String.format(    "private:viewing:subObjects:%d:object:avatar:#",i));
             if(m==null)   m=contentHash(String.format(    "private:viewing:subObjects:%d:object:#",i));
-            glElementsPut(content(String.format(          "private:viewing:subObjects:%d:object",i)), m, null);
+            glElementsPut(content(String.format(          "private:viewing:subObjects:%d:object",i)), m, null, null);
 
             LinkedList subsubs=contentList(String.format( "private:viewing:subObjects:%d:object:subObjects",i));
             if(subsubs==null) continue;
             for(int j=0; j< subsubs.size(); j++){
                 LinkedHashMap n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
                 if(n==null)   n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
-                glElementsPut(content(String.format(      "private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null);
+                glElementsPut(content(String.format(      "private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
             }
         }
     }
