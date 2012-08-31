@@ -229,6 +229,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glGenTextures(numtextures, textureIDs, 0);
         for(int i=0; i< numtextures; i++) {
             Bitmap bm=netmash.getBitmap(mesh.textures.get(i).toString());
+            if(bm==null) continue;
             GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, textureIDs[i]);
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);

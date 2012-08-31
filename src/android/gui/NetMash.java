@@ -774,8 +774,9 @@ public class NetMash extends MapActivity{
     public Bitmap getBitmap(final String url){
         Bitmap bm=imageCache.get(url);
         if(bm!=null) return bm;
-        bm=getPlaceHolderBitmap();
-        imageCache.put(url, bm);
+        // figure out how to replace a texture
+        // bm=getPlaceHolderBitmap();
+        // imageCache.put(url, bm);
         new Thread(){ public void run(){ getImageBitmap(url); }}.start();
         return bm;
     }

@@ -23,7 +23,7 @@
   "texturepoints": [ [ 0.0, 0.0 ], [ 1.0, 0.0 ], [ 1.0, 1.0 ], [ 0.0, 1.0 ] ],
   "normals": [ [  0.0,  0.5, 0.0 ], [  0.0,  0.5, 0.0 ], [  0.0,  0.5, 0.0 ], [  0.0,  0.5, 0.0 ] ],
   "faces": [ [ "2/1/2","1/1/1","4/1/4" ], [ "2/1/2","4/1/4","3/1/3" ] ],
-  "textures": [ "http://10.0.2.2/netmash.png" ],
+  "textures": [ "http://athile.net/library/blog/wp-content/uploads/2011/11/grass02-300x300.png" ],
   "vertexShader": "http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json",
   "fragmentShader": "http://10.0.2.2:8081/o/uid-6e92-c60d-d16a-6b35.json"
 }
@@ -57,7 +57,7 @@
     [ "1/1/2","5/2/1","2/4/7" ], [ "5/2/1","6/3/8","2/4/7" ], [ "5/1/1","8/2/4","6/4/8" ],
     [ "8/2/4","7/3/6","6/4/8" ], [ "1/1/2","2/2/7","3/3/5" ], [ "1/1/2","3/3/5","4/4/3" ]
   ],
-  "textures": [ "http://10.0.2.2/netmash.png" ],
+  "textures": [ "http://athile.net/library/blog/wp-content/uploads/2011/11/grass02-300x300.png" ],
   "vertexShader": "http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json",
   "fragmentShader": "http://10.0.2.2:8081/o/uid-6e92-c60d-d16a-6b35.json"
 }
@@ -83,7 +83,7 @@
     [ "1/1/2","5/2/1","2/4/7" ], [ "5/2/1","6/3/8","2/4/7" ], [ "5/1/1","8/2/4","6/4/8" ],
     [ "8/2/4","7/3/6","6/4/8" ], [ "1/1/2","2/2/7","3/3/5" ], [ "1/1/2","3/3/5","4/4/3" ]
   ],
-  "textures": [ "http://10.0.2.2/netmash.png" ],
+  "textures": [ "http://athile.net/library/blog/wp-content/uploads/2011/11/grass02-300x300.png" ],
   "vertexShader": "http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json",
   "fragmentShader": "http://10.0.2.2:8081/o/uid-6e92-c60d-d16a-6b35.json"
 }
