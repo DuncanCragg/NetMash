@@ -4,8 +4,15 @@ To Do
 
 Next
 
+Get GL basics right: see WebGL tutorials
+ - lighting all wrong: model, camera, lightpos needs sorting
+ - (re)binding the texture when it comes in (and 256x256 don't forget)
+ - tiling textures
+ - efficiency in Render as in comments
+
  - arrive at own on-board room: build interactive objects like the ones already dotted around
  - onboard and online objects for faster editing responses and rule exec, at least while building IDE
+
  - in-world clone, link, drop ..  see jxee/u-web std edit options
  - multitouch stroke for interact, then edit menu (edit obj, rules, clone, link)
 
@@ -13,6 +20,7 @@ Object/Net/Mash views: the Object-Net/Mash IDE
 
  - it's an IDE. But the code is already structured.
     - it's graph/tree reduction/rewriting
+    - an IDE that extends beyond the team into the world..
  - render: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
     - render rules specially as recognised type
     - render JSON as recognised ObNet type: %rules, %more, is, etc known
@@ -22,7 +30,6 @@ Object/Net/Mash views: the Object-Net/Mash IDE
     - this has to be really easy and nice to use
     - it's an IDE like Victor .. Light Table
     - visual instantiation of rules - step through, see each rule firing and rewriting
-    - an IDE that extends beyond the team into the world..
  - touch 3D object brings up menu with go to Object/Net/Mash views options
  - expand sub-linked objects, so easy to build link-jumping rule
  - start with object itself as new rule
@@ -46,15 +53,10 @@ Net
  - client and server cycling and long/short poll
  - too chatty on the wire
  - think about multiple POSTs of user
- - fix 100% and heap churn (only in emu?) when no connection to server
 GL
- - efficiency in Render as in comments
- - rebinding the texture when it comes in (and 256x256 don't forget)
  - put limit on render recursion depth and detect already-rendered-at-xyz
- - lighting all wrong: model, camera, lightpos needs sorting
  - projection not re-setting properly on landscape
- - floor textures didn't come out
- - remove mesh and gui nesting: easier to read and faster to draw
+ - remove rest of mesh and gui nesting: easier to read and faster to draw
 
 Text render/enter - maybe have 3D Net/Mash views
 
@@ -71,8 +73,8 @@ Interactions
    %alerted:
    { is: stroke, user: .., target: .., stroke: [ 1.4, 4.3 ], direction: [ -0.1, 0.23 ] }
     .. accumulated distance / vector from start; current direction vector
-   users: +=> %alerted
-   [ [ + $:users:stroke:0 ] / [ count $:users ] ] is average of x
+   userstrokes: +=> %alerted
+   [ [ + $:userstrokes:stroke:0 ] / [ count $:userstrokes ] ] is average of x
 
  - attaching accelerometer value to an object: %alerted, then watch user
 
