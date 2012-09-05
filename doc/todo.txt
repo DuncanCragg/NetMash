@@ -2,21 +2,62 @@
 To Do
 -----
 
-Next
+--------------------------------------------------------
+Explore, Interact
+
+1. Initial on-device worldlet to explore and interact with: Open GL ES 2.0: driving GPU, lighting, JSON scene graph, collisions, physics, move -vs- interact
 
 Get GL basics right: see WebGL tutorials
+
  - lighting all wrong: model, camera, lightpos needs sorting
  - (re)binding the texture when it comes in (and 256x256 don't forget)
- - tiling textures
  - efficiency in Render as in comments
+ - circularity detect: why doesn't User presence blow up?
+ - put limit on render recursion depth and detect already-rendered-at-xyz
+ - projection not re-setting properly on landscape
+ - is: cube / sphere.obj - no mesh, simpler, easier, quicker
+    - is:cube object generates that mesh
+    - is:sphere object and mesh - Blender
+    - OM: width: [ "=>", "$:place:present", "×", 10 ]
+ - remove rest of mesh and gui nesting: easier to read and faster to draw
+
+Interactions
+
+ - move from edge, interact from middle
+ - interact using touch detection render trick
+ - touch state linking to user. as you move, it updates.
+   %alerted:
+   { is: stroke, user: .., target: .., stroke: [ 1.4, 4.3 ], direction: [ -0.1, 0.23 ] }
+    .. accumulated distance / vector from start; current direction vector
+   userstrokes: +=> %alerted
+   [ [ + $:userstrokes:stroke:0 ] / [ count $:userstrokes ] ] is average of x
+
+ - attaching accelerometer value to an object: %alerted, then watch user
+
+Functionality
+
+ - avatar chat, "saying": ".."
+ - avatar POSTs rotations
+ - teleport coords on back button (save coords in history, thus also scroll state)
+ - walking law to smooth/animate movement if is: avatar
+ - physics; collision; touch; time; shaders as laws with time, mesh bending
+
+Examples dotted around on arrival
+
+ - lights that change when you swipe them
+
+--------------------------------------------------------
+Edit
+
+2. IDE to edit worldlet Object Network and Object Mash: edit obnet/copy/link, edit obmash; two-pane edit
+
+Object/Net/Mash views: the Object-Net/Mash IDE
 
  - arrive at own on-board room: build interactive objects like the ones already dotted around
  - onboard and online objects for faster editing responses and rule exec, at least while building IDE
 
  - in-world clone, link, drop ..  see jxee/u-web std edit options
- - multitouch stroke for interact, then edit menu (edit obj, rules, clone, link)
-
-Object/Net/Mash views: the Object-Net/Mash IDE
+ - multitouch stroke for interact, then edit menu (edit obj, clone, link, rules)
 
  - it's an IDE. But the code is already structured.
     - it's graph/tree reduction/rewriting
@@ -42,22 +83,6 @@ Object/Net/Mash views: the Object-Net/Mash IDE
     - hierarchyviewer, dmtracedump http://stackoverflow.com/questions/5377445/which-order-of-nested-layouts-is-most-efficient-in-android
     - JSON view renders three times - use Etag, if no need to respond to incoming subs
 
-Speed, Bugfixes, Robustness, Clean formats
-
- - is: cube / sphere.obj - no mesh, simpler, easier, quicker
- - OM: width: [ "=>", "$:place:present", "×", 10 ]
- - may need circularity detect: why doesn't User presence blow up?
- - remove event redundancies
- - ?? GC_CONCURRENT freed 513K, 12% free 8020K/9031K, paused 1ms+2ms, total 21ms
-Net
- - client and server cycling and long/short poll
- - too chatty on the wire
- - think about multiple POSTs of user
-GL
- - put limit on render recursion depth and detect already-rendered-at-xyz
- - projection not re-setting properly on landscape
- - remove rest of mesh and gui nesting: easier to read and faster to draw
-
 Text render/enter - maybe have 3D Net/Mash views
 
  - render text fonts:
@@ -67,34 +92,23 @@ Text render/enter - maybe have 3D Net/Mash views
     - http://forum.xda-developers.com/showthread.php?t=860488
  - needs touch detection, which is needed anyway
 
-Interactions
+Object Mash
 
- - touch state linking to user. as you move, it updates.
-   %alerted:
-   { is: stroke, user: .., target: .., stroke: [ 1.4, 4.3 ], direction: [ -0.1, 0.23 ] }
-    .. accumulated distance / vector from start; current direction vector
-   userstrokes: +=> %alerted
-   [ [ + $:userstrokes:stroke:0 ] / [ count $:userstrokes ] ] is average of x
+ - see *.txt
+ - test-drive required functionality
 
- - attaching accelerometer value to an object: %alerted, then watch user
+--------------------------------------------------------
+Share
 
-Examples dotted around on arrival
+3. Sharing your worldlet online
 
- - is:cube object generates that mesh
- - is:sphere object and mesh - Blender
+Speed, Bugfixes, Robustness, Clean formats
 
-Functionality
-
- - chat, "saying": ".."
- - avatar POSTs rotations
- - teleport coords on back button (save coords in history, thus also scroll state)
- - walking law to smooth/animate movement if is: avatar
- - physics; collision; touch; time
-
-Android
-
- - http://www.infoq.com/news/2012/04/AQuery
- - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
+ - remove event redundancies
+ - ?? GC_CONCURRENT freed 513K, 12% free 8020K/9031K, paused 1ms+2ms, total 21ms
+ - client and server cycling and long/short poll
+ - too chatty on the wire
+ - think about multiple POSTs of user
 
 HTTP
  - match to uid not URL - e.g when fetch 192.168.. and C-L set to 10.0.2.2
@@ -104,6 +118,15 @@ HTTP
  - poll while waiting - max-age
  - need to hang POST responses so not POST requests; should be 204
     - actually this is long-polling GET for C-N=object URL not cache
+
+
+-------------------------------------------------------------------
+
+
+Android
+
+ - http://www.infoq.com/news/2012/04/AQuery
+ - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
 
 Stuff 
 
