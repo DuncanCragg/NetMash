@@ -38,7 +38,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixMVP = new float[16];
     private float[] matrixNor = new float[16];
 
-    private float[] lightPos = { 25.642736f, 0.0f, -18.505379f, 1.0f };
+    private float[] lightPos = { 25.642736f, 9.0f, -18.505379f, 1.0f };
     private float[] lightCol = { 0.9f, 0.9f, 0.5f, 1.0f };
     private float[] ambient  = { 0.4f, 0.9f, 0.4f, 1.0f };
     private float[] diffuse  = { 0.4f, 0.4f, 0.9f, 1.0f };
@@ -134,7 +134,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         Matrix.multiplyMM(  matrixMVV, 0, matrixVVV, 0, matrixMSR, 0);
         Matrix.multiplyMM(  matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
-        Matrix.invertM(     matrixNor, 0, matrixMVP, 0);
+        Matrix.invertM(     matrixNor, 0, matrixMSR, 0);
         Matrix.transposeM(  matrixNor, 0, matrixNor, 0);
 
         // glGetUniformLocation, glGetAttribLocation - do these once on program creation
@@ -193,7 +193,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         throwAnyGLException("Draw frame end");
 
-    }catch(Throwable t){ Log.e("Draw frame:", t.getLocalizedMessage()); }}
+    }catch(Throwable t){ t.printStackTrace(); }}
 
     // -------------------------------------------------------------
 

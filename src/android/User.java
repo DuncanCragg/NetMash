@@ -57,9 +57,9 @@ public class User extends WebObject {
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
               "    \"title\": \""+fullName+"'s Room\", \n"+
               "    \"vertices\": [ [  20.0,  -1.0, -20.0 ], [  20.0,  -1.0,  20.0 ], [ -20.0,  -1.0,  20.0 ], [ -20.0,  -1.0, -20.0 ], [  20.0,  20.0, -20.0 ], [  20.0,  20.0,  20.0 ], [ -20.0,  20.0,  20.0 ], [ -20.0,  20.0, -20.0 ] ], \n"+
-              "    \"texturepoints\": [ [ 0.0, 0.0 ], [ 1.0, 0.0 ], [ 1.0, 1.0 ], [ 0.0, 1.0 ] ], \n"+
-              "    \"normals\": [ [  0.5,  0.5, -0.5 ], [  0.5, -0.5, -0.5 ], [ -0.5, -0.5, -0.5 ], [ -0.5,  0.5, -0.5 ], [ -0.5, -0.5,  0.5 ], [ -0.5,  0.5,  0.5 ], [  0.5, -0.5,  0.5 ], [  0.5,  0.5,  0.5 ] ], \n"+
-              "    \"faces\": [ [ \"5/1/1\",\"4/3/3\",\"1/2/2\" ], [ \"5/1/1\",\"8/4/4\",\"4/3/3\" ], [ \"3/1/5\",\"8/3/4\",\"7/2/6\" ], [ \"3/1/5\",\"4/4/3\",\"8/3/4\" ], [ \"2/1/7\",\"3/4/5\",\"6/2/8\" ], [ \"6/2/8\",\"3/4/5\",\"7/3/6\" ], [ \"1/1/2\",\"2/4/7\",\"5/2/1\" ], [ \"5/2/1\",\"2/4/7\",\"6/3/8\" ], [ \"5/1/1\",\"6/4/8\",\"8/2/4\" ], [ \"8/2/4\",\"6/4/8\",\"7/3/6\" ], [ \"1/1/2\",\"3/3/5\",\"2/2/7\" ], [ \"1/1/2\",\"4/4/3\",\"3/3/5\" ] ], \n"+
+              "    \"texturepoints\": [ [ 0.0, 0.0 ], [ 5.0, 0.0 ], [ 5.0, 5.0 ], [ 0.0, 5.0 ] ], \n"+
+              "    \"normals\": [ [ 1.0, 0.0, 0.0 ], [ -1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, -1.0, 0.0 ], [ 0.0, 0.0, 1.0 ], [ 0.0, 0.0, -1.0 ] ], \n"+
+              "    \"faces\": [ [ \"5/1/5\",\"4/3/5\",\"1/2/5\" ], [ \"5/1/5\",\"8/4/5\",\"4/3/5\" ], [ \"3/1/1\",\"8/3/1\",\"7/2/1\" ], [ \"3/1/1\",\"4/4/1\",\"8/3/1\" ], [ \"2/1/6\",\"3/4/6\",\"6/2/6\" ], [ \"6/2/6\",\"3/4/6\",\"7/3/6\" ], [ \"1/1/2\",\"2/4/2\",\"5/2/2\" ], [ \"5/2/2\",\"2/4/2\",\"6/3/2\" ], [ \"5/1/4\",\"6/4/4\",\"8/2/4\" ], [ \"8/2/4\",\"6/4/4\",\"7/3/4\" ], [ \"1/1/3\",\"3/3/3\",\"2/2/3\" ], [ \"1/1/3\",\"4/4/3\",\"3/3/3\" ] ], \n"+
               "    \"textures\": [ \"http://2.bp.blogspot.com/-8bvhcheQiWg/UA_DhJZVujI/AAAAAAAAB5E/mrKogVzxi5o/s320/Seamless+marble+cream+tiles+pattern+texture.jpg\" ], \n"+
               "}");
 
@@ -550,8 +550,8 @@ public class User extends WebObject {
         if(t!=null && v!=null) glElements.put(t,v);
     }
 
-    static String basicVert="uniform mat4 mvpm, norm; uniform vec4 lightPos; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec2 T; varying vec3 N,L; void main(){ T=tex; N=vec3(norm*vec4(nor, 1.0)); L=vec3(mvpm*lightPos); gl_Position=mvpm*pos; }";
-    static String basicFrag="precision mediump float; uniform vec4 lightCol; uniform sampler2D texture0; varying vec2 T; varying vec3 N,L; void main(){ gl_FragColor=1.0*lightCol*texture2D(texture0, T)+0.4*max(dot(normalize(N),normalize(-L)), 0.0); }";
+    static String basicVert="uniform mat4 mvpm, norm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec2 T; varying vec3 N; void main(){ T=tex; N=vec3(norm*vec4(nor,1.0)); gl_Position=mvpm*pos; }";
+    static String basicFrag="precision mediump float; uniform vec4 lightCol, lightPos; uniform sampler2D texture0; varying vec2 T; varying vec3 N; void main(){ gl_FragColor=1.0*texture2D(texture0, T)+0.4*lightCol*max(dot(normalize(N),normalize(vec3(lightPos))), 0.0); }";
 
     private void cacheVisibleSceneElements(){
 
