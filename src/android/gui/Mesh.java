@@ -51,28 +51,8 @@ public class Mesh {
                 tp.add(getFloatFromList(text,1,0f));
                 numTexPoints++;
             }
-
-            float[] v = new float[numVertices * 3];
-            float[] n = new float[numVertices * 3];
-            float[] t = new float[numTexPoints * 2];
-
-            for(int i=0; i< numVertices; i++){
-
-                v[i*3]   =  vs.get(i*3);
-                v[i*3+1] =  vs.get(i*3+1);
-                v[i*3+2] =  vs.get(i*3+2);
-
-                n[i*3]   = -ns.get(i*3);
-                n[i*3+1] = -ns.get(i*3+1);
-                n[i*3+2] = -ns.get(i*3+2);
-
-                if(i>=numTexPoints) continue;
-                t[i*2]   =  tp.get(i*2);
-                t[i*2+1] =  tp.get(i*2+1);
-            }
-
-            ArrayList<Short> ind = new ArrayList<Short>(numVertices * 3);
             ArrayList<Float> vnt = new ArrayList<Float>(numVertices * 6);
+            ArrayList<Short> ind = new ArrayList<Short>(numVertices * 3);
             short index = 0;
             LinkedList faces=getListFromHash(mesh,"faces");
             for(Object face: faces){
@@ -83,16 +63,16 @@ public class Mesh {
                     int ft=Integer.parseInt(st.nextToken())-1;
                     int fn=Integer.parseInt(st.nextToken())-1;
 
-                    vnt.add(v[fv*3  ]);
-                    vnt.add(v[fv*3+1]);
-                    vnt.add(v[fv*3+2]);
+                    vnt.add(vs.get(fv*3  ));
+                    vnt.add(vs.get(fv*3+1));
+                    vnt.add(vs.get(fv*3+2));
 
-                    vnt.add(n[fn*3  ]);
-                    vnt.add(n[fn*3+1]);
-                    vnt.add(n[fn*3+2]);
+                    vnt.add(ns.get(fn*3  ));
+                    vnt.add(ns.get(fn*3+1));
+                    vnt.add(ns.get(fn*3+2));
 
-                    vnt.add(t[ft*2  ]);
-                    vnt.add(t[ft*2+1]);
+                    vnt.add(tp.get(ft*2  ));
+                    vnt.add(tp.get(ft*2+1));
 
                     ind.add(index++);
                 }
