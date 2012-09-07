@@ -22,6 +22,7 @@
   "is": [ "3d", "vertex", "shader", "string", "list" ],
   "title": "Phong Vertex Shader",
   "list": [
+    "precision mediump float;",
     "uniform mat4 mvpm, norm;",
     "uniform vec4 lightPos;",
     "attribute vec4 pos;",

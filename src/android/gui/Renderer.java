@@ -16,6 +16,8 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.*;
 
+import static netmash.lib.Utils.*;
+
 public class Renderer implements GLSurfaceView.Renderer {
 
     private NetMash netmash;
@@ -38,7 +40,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixMVP = new float[16];
     private float[] matrixNor = new float[16];
 
-    private float[] lightPos = { 25.642736f, 9.0f, -18.505379f, 1.0f };
+    private float[] lightPos = { 0.0f, 12.0f, 0.0f, 1.0f };
     private float[] ambient  = { 1.0f, 0.0f, 0.0f, 1.0f };
     private float[] diffuse  = { 0.0f, 1.0f, 0.0f, 1.0f };
     private float[] specular = { 0.0f, 0.0f, 1.0f, 1.0f };

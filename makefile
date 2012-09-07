@@ -3,14 +3,14 @@
 # Where you want the release Android apk to be copied
 #
 RELEASE_TARGET=../net/netmash.net/NetMash.apk
-LOCAL_IP=192.168.16.237
 LOCAL_IP=192.168.0.8
+LOCAL_IP=192.168.16.136
 #
 ################################################################################
 
 local: androidemu logcat
 
-lan: androidlanrel runlan
+lan: androidlanrel runlan logcat
 
 emu: androidemu runemu logcat
 
