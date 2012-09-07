@@ -1,0 +1,21 @@
+{ "is": [ "3d", "fragment", "shader", "string", "list" ],
+  "title": "Dynamic Phong Fragment Shader",
+  "list": [
+    "precision mediump float;",
+    "uniform mat4 mvpm;",
+    "uniform vec4 ambient, diffuse, specular;",
+    "uniform vec4 lightPos;",
+    "uniform float shininess;",
+    "uniform sampler2D texture0;",
+    "varying vec3 pointNorm;",
+    "varying vec2 texturePt;",
+    "varying vec3 lightPosn;",
+    "varying vec3 pointPosn;",
+    "void main(){",
+      "vec3 lightDirr=normalize(-vec3(lightPos));",
+      "vec3 lightDirn=normalize(-lightPosn);",
+      "vec3 sightDirn=normalize(pointPosn);",
+      "gl_FragColor=texture2D(texture0,texturePt)+0.4*diffuse*max(dot(pointNorm,lightDirr),0.0)+specular*pow(max(dot(reflect(lightDirn,pointNorm),sightDirn),0.0),shininess);",
+    "}"
+  ]
+}

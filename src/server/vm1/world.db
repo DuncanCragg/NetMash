@@ -15,7 +15,7 @@
   "faces": [ [ "2/3/1","1/2/1","4/1/1" ], [ "2/3/1","4/1/1","3/4/1" ] ],
   "textures": [ "http://athile.net/library/blog/wp-content/uploads/2011/11/grass02-300x300.png" ],
   "vertexShader": "uid-ff5d-1ef4-cfa5-5f92",
-  "fragmentShader": "uid-6e92-c60d-d16a-6b35"
+  "fragmentShader": "uid-1ff8-59e9-6dac-9b56"
 }
 
 { "%uid": "uid-ff5d-1ef4-cfa5-5f92",
@@ -65,5 +65,10 @@
       "gl_FragColor=ambient*texture2D(texture0,texturePt)+diffuse*max(dot(pointNorm,lightDirr),0.0)+specular*pow(max(dot(reflect(lightDirn,pointNorm),sightDirn),0.0),shininess);",
     "}"
   ]
+}
+
+{ "%uid": "uid-1ff8-59e9-6dac-9b56",
+  "%class": "server.types.DynamicFile",
+  "watching": "fragment-shader.json",
 }
 
