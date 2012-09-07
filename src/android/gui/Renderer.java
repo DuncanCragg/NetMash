@@ -40,7 +40,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixMVP = new float[16];
     private float[] matrixNor = new float[16];
 
-    private float[] lightPos = { 7.0f, 7.0f, -7.0f, 1.0f };
+    private float[] lightPos = { 21.0f, 7.0f, 14.0f, 1.0f };
     private float[] ambient  = { 1.0f, 1.0f, 1.0f, 1.0f };
     private float[] diffuse  = { 0.4f, 0.4f, 0.0f, 1.0f };
     private float[] specular = { 0.0f, 0.0f, 1.0f, 1.0f };
