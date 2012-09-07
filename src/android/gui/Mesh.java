@@ -30,13 +30,11 @@ public class Mesh {
             ArrayList<Float> ns = new ArrayList<Float>(256);
             ArrayList<Float> tp = new ArrayList<Float>(256);
 
-            int numVertices=0;
             LinkedList verts=getListFromHash(mesh,"vertices");
             for(Object vert: verts){
                 vs.add(getFloatFromList(vert,0,0f));
                 vs.add(getFloatFromList(vert,1,0f));
                 vs.add(getFloatFromList(vert,2,0f));
-                numVertices++;
             }
             LinkedList norms=getListFromHash(mesh,"normals");
             for(Object norm: norms){
@@ -44,15 +42,13 @@ public class Mesh {
                 ns.add(getFloatFromList(norm,1,0f));
                 ns.add(getFloatFromList(norm,2,0f));
             }
-            int numTexPoints=0;
             LinkedList texts=getListFromHash(mesh,"texturepoints");
             for(Object text: texts){
                 tp.add(getFloatFromList(text,0,0f));
                 tp.add(getFloatFromList(text,1,0f));
-                numTexPoints++;
             }
-            ArrayList<Float> vnt = new ArrayList<Float>(numVertices * 6);
-            ArrayList<Short> ind = new ArrayList<Short>(numVertices * 3);
+            ArrayList<Float> vnt = new ArrayList<Float>(1024);
+            ArrayList<Short> ind = new ArrayList<Short>(1024);
             short index = 0;
             LinkedList faces=getListFromHash(mesh,"faces");
             for(Object face: faces){

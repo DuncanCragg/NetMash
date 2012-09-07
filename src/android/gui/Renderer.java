@@ -39,11 +39,10 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixNor = new float[16];
 
     private float[] lightPos = { 25.642736f, 9.0f, -18.505379f, 1.0f };
-    private float[] lightCol = { 0.9f, 0.9f, 0.5f, 1.0f };
-    private float[] ambient  = { 0.4f, 0.9f, 0.4f, 1.0f };
-    private float[] diffuse  = { 0.4f, 0.4f, 0.9f, 1.0f };
-    private float[] specular = { 0.9f, 0.4f, 0.4f, 1.0f };
-    private float   shininess = 5.0f;
+    private float[] ambient  = { 1.0f, 0.0f, 0.0f, 1.0f };
+    private float[] diffuse  = { 0.0f, 1.0f, 0.0f, 1.0f };
+    private float[] specular = { 0.0f, 0.0f, 1.0f, 1.0f };
+    private float   shininess = 9.0f;
 
     private float eyeX;
     private float eyeY;
@@ -142,7 +141,6 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program, "norm"), 1, false, matrixNor, 0);
 
         GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "lightPos"),  1, lightPos, 0);
-        GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "lightCol"),  1, lightCol, 0);
 
         GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "ambient"),   1, ambient, 0);
         GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "diffuse"),   1, diffuse, 0);

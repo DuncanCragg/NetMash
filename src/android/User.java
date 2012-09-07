@@ -551,7 +551,7 @@ public class User extends WebObject {
     }
 
     static String basicVert="uniform mat4 mvpm, norm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec2 T; varying vec3 N; void main(){ T=tex; N=vec3(norm*vec4(nor,1.0)); gl_Position=mvpm*pos; }";
-    static String basicFrag="precision mediump float; uniform vec4 lightCol, lightPos; uniform sampler2D texture0; varying vec2 T; varying vec3 N; void main(){ gl_FragColor=1.0*texture2D(texture0, T)+0.4*lightCol*max(dot(normalize(N),normalize(vec3(lightPos))), 0.0); }";
+    static String basicFrag="precision mediump float; uniform vec4 lightPos; uniform sampler2D texture0; varying vec2 T; varying vec3 N; void main(){ gl_FragColor=texture2D(texture0, T)+0.4*max(dot(normalize(N),normalize(vec3(lightPos))), 0.0); }";
 
     private void cacheVisibleSceneElements(){
 
