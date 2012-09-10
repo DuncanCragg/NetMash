@@ -795,7 +795,7 @@ public class NetMash extends MapActivity{
     }
 
     private Bitmap placeHolderBitmap;
-    private Bitmap getPlaceHolderBitmap(){
+    public Bitmap getPlaceHolderBitmap(){
         if(placeHolderBitmap==null){
             InputStream placeis=getResources().openRawResource(R.raw.placeholder);
             placeHolderBitmap=BitmapFactory.decodeStream(placeis);

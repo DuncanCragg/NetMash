@@ -215,30 +215,42 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glCullFace(GLES20.GL_BACK);
     }
 
+    public ConcurrentHashMap<String,Bitmap>  textureBMs = new ConcurrentHashMap<String,Bitmap>();
+    public ConcurrentHashMap<String,Integer> textureIDs = new ConcurrentHashMap<String,Integer>();
+
     // use ETC compression
     // figure out how to rebind
     // only send textures once for a given URL
     private void setupTextures(Mesh m){
-        int numtextures = m.textures.size();
-        int[] textureIDs = new int[numtextures];
-        GLES20.glGenTextures(numtextures, textureIDs, 0);
-        for(int i=0; i< numtextures; i++) {
+        for(int i=0; i< m.textures.size(); i++) {
             String url=m.textures.get(i).toString();
             Bitmap bm=netmash.getBitmap(url);
             if(bm==null) continue;
-            GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, textureIDs[i]);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,     GLES20.GL_REPEAT);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,     GLES20.GL_REPEAT);
-            GLUtils.texImage2D(    GLES20.GL_TEXTURE_2D, 0, bm, 0);
-        }
-        for(int i=0; i< m.textures.size(); i++) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIDs[i]);
-            GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);
+            if(bm!=textureBMs.get(url)){
+                int[] texID = new int[1];
+                GLES20.glGenTextures(1, texID, 0);
+                sendTexture(texID[0],bm);
+                textureBMs.put(url, bm);
+                textureIDs.put(url, Integer.valueOf(texID[0]));
+            }
+            bindTexture(textureIDs.get(url),i);
         }
         throwAnyGLException("textures");
+    }
+
+    private void sendTexture(int texID, Bitmap bm){
+        GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, texID);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,     GLES20.GL_REPEAT);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,     GLES20.GL_REPEAT);
+        GLUtils.texImage2D(    GLES20.GL_TEXTURE_2D, 0, bm, 0);
+    }
+
+    private void bindTexture(int texID, int i){
+        GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, texID);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
+        GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);
     }
 
     static public MessageDigest SHA1;

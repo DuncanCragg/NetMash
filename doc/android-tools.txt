@@ -1,11 +1,9 @@
+#!/bin/sh
 
-root@tpubuntu/4:~ -> adb kill-server 
-root@tpubuntu/4:~ -> adb start-server
-root@tpubuntu/4:~ -> adb devices
+export JAVA_HOME=/usr/lib/jvm/java-6-sun
+export PATH="${HOME}/Android-SDK/platform-tools:${PATH}"
 
-List of devices attached 
-SH0B7RT00392    device
-
-root@tpubuntu/4:~ -> adb logcat
-
+adb kill-server
+adb start-server
+adb devices
 
