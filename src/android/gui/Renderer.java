@@ -25,7 +25,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     private NetMash netmash;
     private Mesh mesh;
     private int program;
-    private int[] textureIDs;
 
     private float[] matrixPrj = new float[16];
     private float[] matrixRtx = new float[16];
@@ -94,8 +93,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
-        setupTextures(m);
         getProgram(m);
+        setupTextures(m);
 
         drawMesh(m, tx,ty,tz);
 
@@ -174,13 +173,6 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         throwAnyGLException("VBOs");
 
-        for(int i=0; i< m.textures.size(); i++) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIDs[i]);
-            GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);
-        }
-        throwAnyGLException("textures");
-
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indslength, GLES20.GL_UNSIGNED_SHORT, ib);
         throwAnyGLException("glDrawElements");
 
@@ -223,7 +215,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     // only send textures once for a given URL
     private void setupTextures(Mesh m){
         int numtextures = m.textures.size();
-        textureIDs = new int[numtextures];
+        int[] textureIDs = new int[numtextures];
         GLES20.glGenTextures(numtextures, textureIDs, 0);
         for(int i=0; i< numtextures; i++) {
             String url=m.textures.get(i).toString();
@@ -236,6 +228,12 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,     GLES20.GL_REPEAT);
             GLUtils.texImage2D(    GLES20.GL_TEXTURE_2D, 0, bm, 0);
         }
+        for(int i=0; i< m.textures.size(); i++) {
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIDs[i]);
+            GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);
+        }
+        throwAnyGLException("textures");
     }
 
     static public MessageDigest SHA1;
