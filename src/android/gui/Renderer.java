@@ -92,14 +92,12 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
-        getProgram();
-
-        throwAnyGLException("glUseProgram");
-
         drawMeshAndSubs(mesh, 0,0,0);
     }
 
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
+
+        getProgram(m);
 
         drawMesh(m, tx,ty,tz);
 
@@ -253,13 +251,18 @@ public class Renderer implements GLSurfaceView.Renderer {
         }catch(Throwable t){ return s; }
     }
 
-    private void getProgram(){
+    private void getProgram(Mesh m){
 
-        String vertshad=(String)netmash.user.glElements.get(mesh.vertexShader);
-        String fragshad=(String)netmash.user.glElements.get(mesh.fragmentShader);
+        String vertshad=(String)netmash.user.glElements.get(m.vertexShader);
+        String fragshad=(String)netmash.user.glElements.get(m.fragmentShader);
         String shadkey=sha1(vertshad+fragshad);
         Integer prog=shaders.get(shadkey);
-        if(prog!=null){ log("found existing matching program "+prog); program=prog.intValue(); GLES20.glUseProgram(program); return; }
+        if(prog!=null){
+            program=prog.intValue();
+            GLES20.glUseProgram(program);
+            throwAnyGLException("glUseProgram "+program);
+            return;
+        }
 
         int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertshad);
         if(vertexShader==0){ Log.e("getProgram", "Could not compile vertexShader"); return; }
@@ -278,6 +281,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
         if(linkStatus[0]==GLES20.GL_TRUE){
             GLES20.glUseProgram(program);
+            throwAnyGLException("glUseProgram "+program);
             shaders.put(shadkey,program);
         }
         else{
