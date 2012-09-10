@@ -95,8 +95,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         getProgram(m);
         setupTextures(m);
-
-        drawMesh(m, tx,ty,tz);
+        setVariables(m, tx,ty,tz);
+        drawMesh(m);
 
         for(Object o: m.subObjects){ try{
             LinkedHashMap subob=(LinkedHashMap)o;
@@ -109,7 +109,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         }catch(Throwable t){} }
     }
 
-    private void drawMesh(Mesh m, float tx, float ty, float tz){try{
+    private void setVariables(Mesh m, float tx, float ty, float tz){try{
 
         Matrix.setIdentityM(matrixRtx, 0);
         Matrix.setIdentityM(matrixRty, 0);
@@ -146,7 +146,11 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "specular"),  1, specular, 0);
         GLES20.glUniform1f(       GLES20.glGetUniformLocation(program, "shininess"),    shininess);
 
-        throwAnyGLException("uniforms");
+        throwAnyGLException("setting variables");
+
+    }catch(Throwable t){ t.printStackTrace(); }}
+
+    private void drawMesh(Mesh m){try{
 
         FloatBuffer vb = m.vb;
         ShortBuffer ib = m.ib;
@@ -174,6 +178,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         throwAnyGLException("VBOs");
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indslength, GLES20.GL_UNSIGNED_SHORT, ib);
+
         throwAnyGLException("glDrawElements");
 
         GLES20.glDisableVertexAttribArray(ph);
