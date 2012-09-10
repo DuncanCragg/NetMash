@@ -78,7 +78,6 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         doBasicSetup();
-        setupTextures();
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -89,14 +88,13 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     public void onDrawFrame(GL10 gl){
-
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-
         drawMeshAndSubs(mesh, 0,0,0);
     }
 
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
+        setupTextures(m);
         getProgram(m);
 
         drawMesh(m, tx,ty,tz);
@@ -176,12 +174,11 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         throwAnyGLException("VBOs");
 
-        for(int i=0; i < m.textures.size(); i++) {
+        for(int i=0; i< m.textures.size(); i++) {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIDs[i]);
             GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);
         }
-
         throwAnyGLException("textures");
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indslength, GLES20.GL_UNSIGNED_SHORT, ib);
@@ -224,12 +221,12 @@ public class Renderer implements GLSurfaceView.Renderer {
     // use ETC compression
     // figure out how to rebind
     // only send textures once for a given URL
-    private void setupTextures(){
-        int numtextures = mesh.textures.size();
+    private void setupTextures(Mesh m){
+        int numtextures = m.textures.size();
         textureIDs = new int[numtextures];
         GLES20.glGenTextures(numtextures, textureIDs, 0);
         for(int i=0; i< numtextures; i++) {
-            String url=mesh.textures.get(i).toString();
+            String url=m.textures.get(i).toString();
             Bitmap bm=netmash.getBitmap(url);
             if(bm==null) continue;
             GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, textureIDs[i]);
@@ -255,6 +252,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         String vertshad=(String)netmash.user.glElements.get(m.vertexShader);
         String fragshad=(String)netmash.user.glElements.get(m.fragmentShader);
+
         String shadkey=sha1(vertshad+fragshad);
         Integer prog=shaders.get(shadkey);
         if(prog!=null){
@@ -263,7 +261,6 @@ public class Renderer implements GLSurfaceView.Renderer {
             throwAnyGLException("glUseProgram "+program);
             return;
         }
-
         int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertshad);
         if(vertexShader==0){ Log.e("getProgram", "Could not compile vertexShader"); return; }
 
