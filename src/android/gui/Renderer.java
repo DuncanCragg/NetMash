@@ -219,8 +219,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     public ConcurrentHashMap<String,Integer> textureIDs = new ConcurrentHashMap<String,Integer>();
 
     // use ETC compression
-    // figure out how to rebind
-    // only send textures once for a given URL
     private void setupTextures(Mesh m){
         for(int i=0; i< m.textures.size(); i++) {
             String url=m.textures.get(i).toString();

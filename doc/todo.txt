@@ -9,11 +9,10 @@ Explore, Interact
 
 Get GL basics right: see WebGL tutorials
 
- - lighting all wrong: model, camera, lightpos needs sorting
- - (re)binding the texture when it comes in (and 256x256 don't forget)
- - textures per mesh; texture per face as extra arg: use list not string
- - recreating the shaders when updated and shaders per mesh; materials
  - efficiency in Render as in comments
+ - materials
+ - lighting all wrong: model, camera, lightpos needs sorting
+ - texture per face as extra arg: use list not string
  - projection not re-setting properly on landscape
  - remove rest of mesh and gui nesting: easier to read and faster to draw
 
