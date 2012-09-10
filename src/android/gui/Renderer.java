@@ -1,8 +1,10 @@
 package android.gui;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.io.*;
 import java.nio.*;
+import java.security.MessageDigest;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -77,7 +79,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         doBasicSetup();
         setupTextures();
-        getProgram();
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -91,7 +92,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
-        GLES20.glUseProgram(program);
+        getProgram();
+
         throwAnyGLException("glUseProgram");
 
         drawMeshAndSubs(mesh, 0,0,0);
@@ -223,12 +225,14 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     // use ETC compression
     // figure out how to rebind
+    // only send textures once for a given URL
     private void setupTextures(){
         int numtextures = mesh.textures.size();
         textureIDs = new int[numtextures];
         GLES20.glGenTextures(numtextures, textureIDs, 0);
         for(int i=0; i< numtextures; i++) {
-            Bitmap bm=netmash.getBitmap(mesh.textures.get(i).toString());
+            String url=mesh.textures.get(i).toString();
+            Bitmap bm=netmash.getBitmap(url);
             if(bm==null) continue;
             GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, textureIDs[i]);
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
@@ -239,13 +243,28 @@ public class Renderer implements GLSurfaceView.Renderer {
         }
     }
 
+    static public MessageDigest SHA1;
+    public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
+
+    private String sha1(String s){
+        try{
+            if(SHA1==null) SHA1=MessageDigest.getInstance("SHA-1");
+            return new String(SHA1.digest(s.getBytes("UTF-8")),"UTF-8");
+        }catch(Throwable t){ return s; }
+    }
+
     private void getProgram(){
 
-        // detect using same shader and use cached gl handle
-        int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, (String)netmash.user.glElements.get(mesh.vertexShader));
+        String vertshad=(String)netmash.user.glElements.get(mesh.vertexShader);
+        String fragshad=(String)netmash.user.glElements.get(mesh.fragmentShader);
+        String shadkey=sha1(vertshad+fragshad);
+        Integer prog=shaders.get(shadkey);
+        if(prog!=null){ log("found existing matching program "+prog); program=prog.intValue(); GLES20.glUseProgram(program); return; }
+
+        int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertshad);
         if(vertexShader==0){ Log.e("getProgram", "Could not compile vertexShader"); return; }
 
-        int fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, (String)netmash.user.glElements.get(mesh.fragmentShader));
+        int fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, fragshad);
         if(fragmentShader==0){ Log.e("getProgram", "Could not compile fragmentShader"); return; }
 
         program = GLES20.glCreateProgram();
@@ -257,11 +276,16 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         int[] linkStatus = new int[1];
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
-        if(linkStatus[0]==GLES20.GL_TRUE) return;
-        Log.e("getProgram", "Could not link program:");
-        Log.e("getProgram", GLES20.glGetProgramInfoLog(program));
-        GLES20.glDeleteProgram(program);
-        program=0;
+        if(linkStatus[0]==GLES20.GL_TRUE){
+            GLES20.glUseProgram(program);
+            shaders.put(shadkey,program);
+        }
+        else{
+            Log.e("getProgram", "Could not link program:");
+            Log.e("getProgram", GLES20.glGetProgramInfoLog(program));
+            GLES20.glDeleteProgram(program);
+            program=0;
+        }
     }
 
     private int compileShader(int shaderType, String source){

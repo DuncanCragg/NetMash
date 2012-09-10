@@ -11,15 +11,21 @@ Get GL basics right: see WebGL tutorials
 
  - lighting all wrong: model, camera, lightpos needs sorting
  - (re)binding the texture when it comes in (and 256x256 don't forget)
+ - textures per mesh; texture per face as extra arg: use list not string
+ - recreating the shaders when updated and shaders per mesh; materials
  - efficiency in Render as in comments
+ - projection not re-setting properly on landscape
+ - remove rest of mesh and gui nesting: easier to read and faster to draw
+
+Scene Graph creation and navigation
+
  - circularity detect: why doesn't User presence blow up?
  - put limit on render recursion depth and detect already-rendered-at-xyz
- - projection not re-setting properly on landscape
+ - teleport coords and orientation on back button (save coords in history, thus also scroll state)
  - is: cube / sphere.obj - no mesh, simpler, easier, quicker
     - is:cube object generates that mesh
     - is:sphere object and mesh - Blender
     - OM: width: [ "=>", "$:place:present", "×", 10 ]
- - remove rest of mesh and gui nesting: easier to read and faster to draw
 
 Interactions
 
@@ -31,20 +37,19 @@ Interactions
     .. accumulated distance / vector from start; current direction vector
    userstrokes: +=> %alerted
    [ [ + $:userstrokes:stroke:0 ] / [ count $:userstrokes ] ] is average of x
-
+ - bumping into something can be an event too, just like stroking
  - attaching accelerometer value to an object: %alerted, then watch user
 
-Functionality
+Physics
 
- - avatar chat, "saying": ".."
- - avatar POSTs rotations
- - teleport coords on back button (save coords in history, thus also scroll state)
+ - collision; touch; time; shaders as laws with time, mesh bending
  - walking law to smooth/animate movement if is: avatar
- - physics; collision; touch; time; shaders as laws with time, mesh bending
 
 Examples dotted around on arrival
 
  - lights that change when you swipe them
+ - some rotate on swipe, some open/close, some scroll thru gallery of pix
+ - lights come on when you enter that part of map
 
 --------------------------------------------------------
 Edit
@@ -57,12 +62,12 @@ Object/Net/Mash views: the Object-Net/Mash IDE
  - onboard and online objects for faster editing responses and rule exec, at least while building IDE
 
  - in-world clone, link, drop ..  see jxee/u-web std edit options
- - multitouch stroke for interact, then edit menu (edit obj, clone, link, rules)
+ - multitouch stroke for edit menu (clone/link - add to selection list, drop from sel list, delete back to sel list, edit obj, edit rules)
 
  - it's an IDE. But the code is already structured.
     - it's graph/tree reduction/rewriting
     - an IDE that extends beyond the team into the world..
- - render: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
+ - render a rule nicely: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
     - render rules specially as recognised type
     - render JSON as recognised ObNet type: %rules, %more, is, etc known
     - constraints of JSON needn't be at all visible in gui
@@ -104,6 +109,8 @@ Share
 
 Speed, Bugfixes, Robustness, Clean formats
 
+ - avatar chat, "saying": ".."
+ - avatar POSTs rotations
  - remove event redundancies
  - ?? GC_CONCURRENT freed 513K, 12% free 8020K/9031K, paused 1ms+2ms, total 21ms
  - client and server cycling and long/short poll
