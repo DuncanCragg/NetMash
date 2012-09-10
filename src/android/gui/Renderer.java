@@ -24,7 +24,19 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private NetMash netmash;
     private Mesh mesh;
-    private int program;
+
+    private int texture0Loc;
+    private int texture1Loc;
+    private int mvpmLoc;
+    private int normLoc;
+    private int lightPosLoc;
+    private int ambientLoc;
+    private int diffuseLoc;
+    private int specularLoc;
+    private int shininessLoc;
+    private int posLoc;
+    private int norLoc;
+    private int texLoc;
 
     private float[] matrixPrj = new float[16];
     private float[] matrixRtx = new float[16];
@@ -93,7 +105,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
-        getProgram(m);
+        getProgramLocs(getProgram(m));
         setupTextures(m);
         setVariables(m, tx,ty,tz);
         drawMesh(m);
@@ -135,16 +147,14 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.invertM(     matrixNor, 0, matrixMSR, 0);
         Matrix.transposeM(  matrixNor, 0, matrixNor, 0);
 
-        // glGetUniformLocation, glGetAttribLocation - do these once on program creation
-        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program, "mvpm"), 1, false, matrixMVP, 0);
-        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program, "norm"), 1, false, matrixNor, 0);
+        GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
+        GLES20.glUniformMatrix4fv(normLoc, 1, false, matrixNor, 0);
 
-        GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "lightPos"),  1, lightPos, 0);
-
-        GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "ambient"),   1, ambient, 0);
-        GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "diffuse"),   1, diffuse, 0);
-        GLES20.glUniform4fv(      GLES20.glGetUniformLocation(program, "specular"),  1, specular, 0);
-        GLES20.glUniform1f(       GLES20.glGetUniformLocation(program, "shininess"),    shininess);
+        GLES20.glUniform4fv(lightPosLoc,  1, lightPos, 0);
+        GLES20.glUniform4fv(ambientLoc,   1, ambient, 0);
+        GLES20.glUniform4fv(diffuseLoc,   1, diffuse, 0);
+        GLES20.glUniform4fv(specularLoc,  1, specular, 0);
+        GLES20.glUniform1f( shininessLoc,    shininess);
 
         throwAnyGLException("setting variables");
 
@@ -160,20 +170,17 @@ public class Renderer implements GLSurfaceView.Renderer {
         //                           http://code.google.com/p/gdc2011-android-opengl/wiki/TalkTranscript
         // or glBindBuffer:          http://www.learnopengles.com/android-lesson-seven-an-introduction-to-vertex-buffer-objects-vbos/
         //                           http://www.androidenea.com/2012/02/opengl-es-20-on-android.html
-        int ph=GLES20.glGetAttribLocation(program, "pos");
-        GLES20.glEnableVertexAttribArray(ph);
+        GLES20.glEnableVertexAttribArray(posLoc);
         vb.position(0);
-        GLES20.glVertexAttribPointer(ph, 3, GLES20.GL_FLOAT, false, 32, vb);
+        GLES20.glVertexAttribPointer(posLoc, 3, GLES20.GL_FLOAT, false, 32, vb);
 
-        int nh=GLES20.glGetAttribLocation(program, "nor");
-        GLES20.glEnableVertexAttribArray(nh);
+        GLES20.glEnableVertexAttribArray(norLoc);
         vb.position(3);
-        GLES20.glVertexAttribPointer(nh, 3, GLES20.GL_FLOAT, false, 32, vb);
+        GLES20.glVertexAttribPointer(norLoc, 3, GLES20.GL_FLOAT, false, 32, vb);
 
-        int th=GLES20.glGetAttribLocation(program, "tex");
-        GLES20.glEnableVertexAttribArray(th);
+        GLES20.glEnableVertexAttribArray(texLoc);
         vb.position(6);
-        GLES20.glVertexAttribPointer(th, 2, GLES20.GL_FLOAT, false, 32, vb);
+        GLES20.glVertexAttribPointer(texLoc, 2, GLES20.GL_FLOAT, false, 32, vb);
 
         throwAnyGLException("VBOs");
 
@@ -181,9 +188,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         throwAnyGLException("glDrawElements");
 
-        GLES20.glDisableVertexAttribArray(ph);
-        GLES20.glDisableVertexAttribArray(nh);
-        GLES20.glDisableVertexAttribArray(th);
+        GLES20.glDisableVertexAttribArray(posLoc);
+        GLES20.glDisableVertexAttribArray(norLoc);
+        GLES20.glDisableVertexAttribArray(texLoc);
 
         throwAnyGLException("Draw frame end");
 
@@ -218,7 +225,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     public ConcurrentHashMap<String,Bitmap>  textureBMs = new ConcurrentHashMap<String,Bitmap>();
     public ConcurrentHashMap<String,Integer> textureIDs = new ConcurrentHashMap<String,Integer>();
 
-    // use ETC compression
+    // use ETC compression; mipmaps
     private void setupTextures(Mesh m){
         for(int i=0; i< m.textures.size(); i++) {
             String url=m.textures.get(i).toString();
@@ -248,7 +255,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     private void bindTexture(int texID, int i){
         GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, texID);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
-        GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "texture"+i), i);
+        if(i==0) GLES20.glUniform1i(texture0Loc, i);
+        if(i==1) GLES20.glUniform1i(texture1Loc, i);
     }
 
     static public MessageDigest SHA1;
@@ -261,7 +269,9 @@ public class Renderer implements GLSurfaceView.Renderer {
         }catch(Throwable t){ return s; }
     }
 
-    private void getProgram(Mesh m){
+    private int getProgram(Mesh m){
+
+        int program;
 
         String vertshad=(String)netmash.user.glElements.get(m.vertexShader);
         String fragshad=(String)netmash.user.glElements.get(m.fragmentShader);
@@ -272,16 +282,16 @@ public class Renderer implements GLSurfaceView.Renderer {
             program=prog.intValue();
             GLES20.glUseProgram(program);
             throwAnyGLException("glUseProgram "+program);
-            return;
+            return program;
         }
         int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertshad);
-        if(vertexShader==0){ Log.e("getProgram", "Could not compile vertexShader"); return; }
+        if(vertexShader==0){ Log.e("getProgram", "Could not compile vertexShader"); return 0; }
 
         int fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, fragshad);
-        if(fragmentShader==0){ Log.e("getProgram", "Could not compile fragmentShader"); return; }
+        if(fragmentShader==0){ Log.e("getProgram", "Could not compile fragmentShader"); return 0; }
 
         program = GLES20.glCreateProgram();
-        if(program==0){ Log.e("getProgram", "Could not create program"); return; }
+        if(program==0){ Log.e("getProgram", "Could not create program"); return 0; }
 
         GLES20.glAttachShader(program, vertexShader);
         GLES20.glAttachShader(program, fragmentShader);
@@ -300,6 +310,23 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glDeleteProgram(program);
             program=0;
         }
+        return program;
+    }
+
+    void getProgramLocs(int program){
+        if(program==0) return;
+        texture0Loc =GLES20.glGetUniformLocation(program, "texture0");
+        texture1Loc =GLES20.glGetUniformLocation(program, "texture1");
+        mvpmLoc     =GLES20.glGetUniformLocation(program, "mvpm");
+        normLoc     =GLES20.glGetUniformLocation(program, "norm");
+        lightPosLoc =GLES20.glGetUniformLocation(program, "lightPos");
+        ambientLoc  =GLES20.glGetUniformLocation(program, "ambient");
+        diffuseLoc  =GLES20.glGetUniformLocation(program, "diffuse");
+        specularLoc =GLES20.glGetUniformLocation(program, "specular");
+        shininessLoc=GLES20.glGetUniformLocation(program, "shininess");
+        posLoc      =GLES20.glGetAttribLocation( program, "pos");
+        norLoc      =GLES20.glGetAttribLocation( program, "nor");
+        texLoc      =GLES20.glGetAttribLocation( program, "tex");
     }
 
     private int compileShader(int shaderType, String source){
