@@ -108,6 +108,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         getProgramLocs(getProgram(m));
         setupTextures(m);
         setVariables(m, tx,ty,tz);
+        uploadVBO(m);
         drawMesh(m);
 
         for(Object o: m.subObjects){ try{
@@ -160,31 +161,33 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     }catch(Throwable t){ t.printStackTrace(); }}
 
+    final int vbos[] = new int[1];
+
+    // so don't uploadVBO if already done before
+    private void uploadVBO(Mesh m){
+        GLES20.glGenBuffers(1, vbos, 0);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbos[0]);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, m.vb.position(0).capacity()*4, m.vb, GLES20.GL_STATIC_DRAW);
+    }
+
     private void drawMesh(Mesh m){try{
 
-        FloatBuffer vb = m.vb;
-        ShortBuffer ib = m.ib;
-        int indslength = m.il;
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbos[0]);
 
-        // use JNI and glBufferData: http://stackoverflow.com/questions/5402567/whats-glbufferdata-for-in-opengl-es
-        //                           http://code.google.com/p/gdc2011-android-opengl/wiki/TalkTranscript
-        // or glBindBuffer:          http://www.learnopengles.com/android-lesson-seven-an-introduction-to-vertex-buffer-objects-vbos/
-        //                           http://www.androidenea.com/2012/02/opengl-es-20-on-android.html
         GLES20.glEnableVertexAttribArray(posLoc);
-        vb.position(0);
-        GLES20.glVertexAttribPointer(posLoc, 3, GLES20.GL_FLOAT, false, 32, vb);
+        GLES20.glVertexAttribPointer(posLoc, 3, GLES20.GL_FLOAT, false, 32, 0);
 
         GLES20.glEnableVertexAttribArray(norLoc);
-        vb.position(3);
-        GLES20.glVertexAttribPointer(norLoc, 3, GLES20.GL_FLOAT, false, 32, vb);
+        GLES20.glVertexAttribPointer(norLoc, 3, GLES20.GL_FLOAT, false, 32, 12);
 
         GLES20.glEnableVertexAttribArray(texLoc);
-        vb.position(6);
-        GLES20.glVertexAttribPointer(texLoc, 2, GLES20.GL_FLOAT, false, 32, vb);
+        GLES20.glVertexAttribPointer(texLoc, 2, GLES20.GL_FLOAT, false, 32, 24);
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
         throwAnyGLException("VBOs");
 
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, indslength, GLES20.GL_UNSIGNED_SHORT, ib);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, m.il, GLES20.GL_UNSIGNED_SHORT, m.ib);
 
         throwAnyGLException("glDrawElements");
 
