@@ -161,18 +161,20 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     }catch(Throwable t){ t.printStackTrace(); }}
 
-    final int vbos[] = new int[1];
+    public ConcurrentHashMap<Mesh,Integer> meshIDs = new ConcurrentHashMap<Mesh,Integer>();
 
-    // so don't uploadVBO if already done before
     private void uploadVBO(Mesh m){
-        GLES20.glGenBuffers(1, vbos, 0);
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbos[0]);
+        if(meshIDs.get(m)!=null) return;
+        int vbo[] = new int[1];
+        GLES20.glGenBuffers(1, vbo, 0);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0]);
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, m.vb.position(0).capacity()*4, m.vb, GLES20.GL_STATIC_DRAW);
+        meshIDs.put(m,vbo[0]);
     }
 
     private void drawMesh(Mesh m){try{
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbos[0]);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, meshIDs.get(m));
 
         GLES20.glEnableVertexAttribArray(posLoc);
         GLES20.glVertexAttribPointer(posLoc, 3, GLES20.GL_FLOAT, false, 32, 0);
