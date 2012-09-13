@@ -107,11 +107,14 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
-        getProgramLocs(getProgram(m));
-        setupTextures(m);
-        setVariables(m, tx,ty,tz);
-        uploadVBO(m);
-        drawMesh(m);
+        try{
+            getProgramLocs(getProgram(m));
+            setupTextures(m);
+            setVariables(m, tx,ty,tz);
+            uploadVBO(m);
+            drawMesh(m);
+
+        }catch(Throwable t){ Log.e("drawMeshAndSubs main",""+t); }
 
         for(Object o: m.subObjects){ try{
             LinkedHashMap subob=(LinkedHashMap)o;
@@ -121,10 +124,10 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(sm==null) continue;
             drawMeshAndSubs(new Mesh(sm), tx+Mesh.getFloatFromList(subobcrd,0,0), ty+Mesh.getFloatFromList(subobcrd,1,0), tz+Mesh.getFloatFromList(subobcrd,2,0));
 
-        }catch(Throwable t){} }
+        }catch(Throwable t){ Log.e("drawMeshAndSubs subs",""+t); } }
     }
 
-    private void setVariables(Mesh m, float tx, float ty, float tz){try{
+    private void setVariables(Mesh m, float tx, float ty, float tz){
 
         Matrix.setIdentityM(matrixRtx, 0);
         Matrix.setIdentityM(matrixRty, 0);
@@ -175,8 +178,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniform1f( shininessLoc,    shininess);
 
         throwAnyGLException("setting variables");
-
-    }catch(Throwable t){ t.printStackTrace(); }}
+    }
 
     public ConcurrentHashMap<Mesh,Integer> meshIDs = new ConcurrentHashMap<Mesh,Integer>();
 
@@ -189,7 +191,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         meshIDs.put(m,vbo[0]);
     }
 
-    private void drawMesh(Mesh m){try{
+    private void drawMesh(Mesh m){
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, meshIDs.get(m));
 
@@ -215,8 +217,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glDisableVertexAttribArray(texLoc);
 
         throwAnyGLException("Draw frame end");
-
-    }catch(Throwable t){ t.printStackTrace(); }}
+    }
 
     // -------------------------------------------------------------
 
@@ -334,10 +335,9 @@ public class Renderer implements GLSurfaceView.Renderer {
             shaders.put(shadkey,program);
         }
         else{
-            Log.e("getProgram", "Could not link program:");
-            Log.e("getProgram", GLES20.glGetProgramInfoLog(program));
             GLES20.glDeleteProgram(program);
             program=0;
+            throw new RuntimeException("Could not link program "+vertshad+"\n"+fragshad);
         }
         return program;
     }
