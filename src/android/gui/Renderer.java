@@ -27,6 +27,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private int texture0Loc;
     private int texture1Loc;
+    private int mvvmLoc;
     private int mvpmLoc;
     private int normLoc;
     private int lightPosLoc;
@@ -47,6 +48,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixScl = new float[16];
     private float[] matrixRos = new float[16];
     private float[] matrixTrn = new float[16];
+    private float[] matrixLgt = new float[16];
     private float[] matrixMSR = new float[16];
     private float[] matrixVVV = new float[16];
     private float[] matrixMVV = new float[16];
@@ -129,6 +131,14 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.setIdentityM(matrixRtz, 0);
         Matrix.setIdentityM(matrixScl, 0);
         Matrix.setIdentityM(matrixTrn, 0);
+        Matrix.setIdentityM(matrixLgt, 0);
+
+        long time = SystemClock.uptimeMillis() % 10000L;
+        float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
+
+        Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, -5.0f);
+        Matrix.rotateM(     matrixLgt, 0, angleInDegrees*4, 0.0f, 1.0f, 0.0f);
+        Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, 2.0f);
 
         Matrix.setRotateM(  matrixRtx, 0, m.rotationX, -1.0f, 0.0f, 0.0f);
         Matrix.setRotateM(  matrixRty, 0, m.rotationY,  0.0f, 1.0f, 0.0f);
@@ -148,6 +158,13 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.invertM(     matrixNor, 0, matrixMSR, 0);
         Matrix.transposeM(  matrixNor, 0, matrixNor, 0);
 
+        float[] lightPosInModelSpace = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
+        float[] lightPosInWorldSpace = new float[4];
+
+        Matrix.multiplyMV(lightPosInWorldSpace, 0, matrixLgt, 0, lightPosInModelSpace, 0);
+        Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
+
+        GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
         GLES20.glUniformMatrix4fv(normLoc, 1, false, matrixNor, 0);
 
@@ -216,6 +233,12 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     // -------------------------------------------------------------
 
+    public void showGPULimit(){
+        int[] x=new int[1];
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VARYING_VECTORS,x,0);
+        log("GL_MAX_VARYING_VECTORS: "+x[0]);
+    }
+
     public void doBasicSetup(){
         GLES20.glClearColor(0.6f, 0.8f, 0.9f, 1.0f);
         GLES20.glClearDepthf(1.0f);
@@ -245,7 +268,6 @@ public class Renderer implements GLSurfaceView.Renderer {
             }
             bindTexture(textureIDs.get(url),i);
         }
-        throwAnyGLException("textures");
     }
 
     private void sendTexture(int texID, Bitmap bm){
@@ -255,6 +277,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,     GLES20.GL_REPEAT);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,     GLES20.GL_REPEAT);
         GLUtils.texImage2D(    GLES20.GL_TEXTURE_2D, 0, bm, 0);
+        throwAnyGLException("sendTexture");
     }
 
     private void bindTexture(int texID, int i){
@@ -262,6 +285,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
         if(i==0) GLES20.glUniform1i(texture0Loc, i);
         if(i==1) GLES20.glUniform1i(texture1Loc, i);
+        throwAnyGLException("bindTexture");
     }
 
     static public MessageDigest SHA1;
@@ -322,6 +346,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         if(program==0) return;
         texture0Loc =GLES20.glGetUniformLocation(program, "texture0");
         texture1Loc =GLES20.glGetUniformLocation(program, "texture1");
+        mvvmLoc     =GLES20.glGetUniformLocation(program, "mvvm");
         mvpmLoc     =GLES20.glGetUniformLocation(program, "mvpm");
         normLoc     =GLES20.glGetUniformLocation(program, "norm");
         lightPosLoc =GLES20.glGetUniformLocation(program, "lightPos");

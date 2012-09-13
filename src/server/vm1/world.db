@@ -19,52 +19,8 @@
 }
 
 { "%uid": "uid-ff5d-1ef4-cfa5-5f92",
-  "is": [ "3d", "vertex", "shader", "string", "list" ],
-  "title": "Phong Vertex Shader",
-  "list": [
-    "precision mediump float;",
-    "uniform mat4 mvpm, norm;",
-    "uniform vec4 lightPos;",
-    "attribute vec4 pos;",
-    "attribute vec3 nor;",
-    "attribute vec2 tex;",
-    "varying vec3 pointNorm;",
-    "varying vec2 texturePt;",
-    "varying vec3 lightPosn;",
-    "varying vec3 pointPosn;",
-    "void main() {",
-      "vec4 ppos = mvpm*pos;",
-      "vec4 lpos = mvpm*lightPos;",
-      "pointNorm = normalize(vec3(norm*vec4(nor,1.0)));",
-      "texturePt = tex;",
-      "lightPosn = vec3(lpos);",
-      "pointPosn = vec3(ppos);",
-      "gl_Position = ppos;",
-    "}"
-  ]
-}
-
-{ "%uid": "uid-6e92-c60d-d16a-6b35",
-  "is": [ "3d", "fragment", "shader", "string", "list" ],
-  "title": "Phong Fragment Shader",
-  "list": [
-    "precision mediump float;",
-    "uniform mat4 mvpm;",
-    "uniform vec4 ambient, diffuse, specular;",
-    "uniform vec4 lightPos;",
-    "uniform float shininess;",
-    "uniform sampler2D texture0;",
-    "varying vec3 pointNorm;",
-    "varying vec2 texturePt;",
-    "varying vec3 lightPosn;",
-    "varying vec3 pointPosn;",
-    "void main(){",
-      "vec3 lightDirr=normalize(-vec3(lightPos));",
-      "vec3 lightDirn=normalize(pointPosn-lightPosn);",
-      "vec3 sightDirn=normalize(pointPosn);",
-      "gl_FragColor=ambient*texture2D(texture0,texturePt)+diffuse*max(dot(pointNorm,lightDirr),0.0)+specular*pow(max(dot(reflect(lightDirn,pointNorm),sightDirn),0.0),shininess);",
-    "}"
-  ]
+  "%class": "server.types.DynamicFile",
+  "watching": "vertex-shader.json",
 }
 
 { "%uid": "uid-1ff8-59e9-6dac-9b56",

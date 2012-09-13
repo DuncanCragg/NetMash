@@ -2,7 +2,6 @@
   "title": "Dynamic Phong Fragment Shader",
   "list": [
     "precision mediump float;",
-    "uniform mat4 mvpm;",
     "uniform vec4 ambient, diffuse, specular;",
     "uniform vec4 lightPos;",
     "uniform float shininess;",
