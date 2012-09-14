@@ -550,8 +550,8 @@ public class User extends WebObject {
         if(t!=null && v!=null) glElements.put(t,v);
     }
 
-    static String basicVert="uniform mat4 mvpm, norm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec2 T; varying vec3 N; void main(){ T=tex; N=vec3(norm*vec4(nor,1.0)); gl_Position=mvpm*pos; }";
-    static String basicFrag="precision mediump float; uniform vec4 lightPos; uniform sampler2D texture0; varying vec2 T; varying vec3 N; void main(){ gl_FragColor=texture2D(texture0, T)+0.4*max(dot(normalize(N),normalize(-vec3(lightPos))), 0.0); }";
+    static String basicVert="uniform mat4 mvpm, mvvm; uniform vec3 lightPos; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec4 colour; varying vec2 texturePt; void main(){ texturePt = tex; vec3 mvvp=vec3(mvvm*pos); vec3 mvvn=vec3(mvvm*vec4(nor,0.0)); float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); colour=vec4(1.0,1.0,1.0,1.0)*(0.15+0.85*dffus); gl_Position=mvpm*pos; }";
+    static String basicFrag="precision mediump float; uniform sampler2D texture0; varying vec4 colour; varying vec2 texturePt; void main(){ gl_FragColor=colour*texture2D(texture0,texturePt); }";
 
     private void cacheVisibleSceneElements(){
 
