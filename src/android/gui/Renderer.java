@@ -81,14 +81,19 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        doBasicSetup();
+        GLES20.glClearColor(0.6f, 0.8f, 0.9f, 1.0f);
+     // GLES20.glClearDepthf(1.0f);
+     // GLES20.glDepthFunc(GLES20.GL_LEQUAL);
+     // GLES20.glDepthMask(true);
+        GLES20.glEnable(GLES20.GL_CULL_FACE);
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+     // GLES20.glCullFace(GLES20.GL_BACK);
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
         float r = ((float)width)/height;
-        float n = 1.0f;
-        Matrix.frustumM(matrixPrj, 0, -r*n, r*n, -n, n, 0.5f, 100.0f);
+        Matrix.frustumM(matrixPrj, 0, -r, r, -1.0f, 1.0f, 1.0f, 100.0f);
     }
 
     public void onDrawFrame(GL10 gl){
@@ -238,17 +243,6 @@ public class Renderer implements GLSurfaceView.Renderer {
         int[] x=new int[1];
         GLES20.glGetIntegerv(GLES20.GL_MAX_VARYING_VECTORS,x,0);
         log("GL_MAX_VARYING_VECTORS: "+x[0]);
-    }
-
-    public void doBasicSetup(){
-        GLES20.glClearColor(0.6f, 0.8f, 0.9f, 1.0f);
-        GLES20.glClearDepthf(1.0f);
-        GLES20.glDepthFunc(GLES20.GL_LEQUAL);
-        GLES20.glDepthMask(true);
-        GLES20.glEnable(GLES20.GL_CULL_FACE);
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        GLES20.glDepthFunc(GLES20.GL_LEQUAL);
-        GLES20.glCullFace(GLES20.GL_BACK);
     }
 
     // -------------------------------------------------------------
