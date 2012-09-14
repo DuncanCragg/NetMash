@@ -360,20 +360,15 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     private int compileShader(int shaderType, String source){
-
         int shader = GLES20.glCreateShader(shaderType);
-        if(shader==0) return 0;
-
+        if(shader==0) throw new RuntimeException("Error creating shader "+shaderType);
         GLES20.glShaderSource(shader, source);
         GLES20.glCompileShader(shader);
-
         int[] compiled = new int[1];
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
         if(compiled[0]!=0) return shader;
-        Log.e("compileShader", "Could not compile "+shaderType+" shader:");
-        Log.e("compileShader", GLES20.glGetShaderInfoLog(shader));
         GLES20.glDeleteShader(shader);
-        return 0;
+        throw new RuntimeException("Could not compile "+shaderType+" shader:\n"+source+"\n"+GLES20.glGetShaderInfoLog(shader));
     }
 
     // -------------------------------------------------------------
