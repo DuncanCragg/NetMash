@@ -80,15 +80,6 @@ public class Renderer implements GLSurfaceView.Renderer {
         this.mesh=new Mesh(hm);
     }
 
-    public void resetCoordsAndView(float x, float y, float z){
-        eyeX=x;
-        eyeY=y;
-        eyeZ=z;
-        seeX=eyeX+7f*FloatMath.sin(direction);
-        seeY=y;
-        seeZ=eyeZ+7f*FloatMath.cos(direction);
-    }
-
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         doBasicSetup();
     }
@@ -221,6 +212,15 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     // -------------------------------------------------------------
 
+    public void resetCoordsAndView(float x, float y, float z){
+        eyeX=x;
+        eyeY=y;
+        eyeZ=z;
+        seeX=eyeX+7f*FloatMath.sin(direction);
+        seeY=y;
+        seeZ=eyeZ+7f*FloatMath.cos(direction);
+    }
+
     public void stroke(float dx, float dy){
         direction -= dx/50f;
         if(direction> 2*Math.PI) direction-=2*Math.PI;
@@ -250,6 +250,8 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
         GLES20.glCullFace(GLES20.GL_BACK);
     }
+
+    // -------------------------------------------------------------
 
     public ConcurrentHashMap<String,Bitmap>  textureBMs = new ConcurrentHashMap<String,Bitmap>();
     public ConcurrentHashMap<String,Integer> textureIDs = new ConcurrentHashMap<String,Integer>();
@@ -289,6 +291,8 @@ public class Renderer implements GLSurfaceView.Renderer {
         throwAnyGLException("bindTexture");
     }
 
+    // -------------------------------------------------------------
+
     static public MessageDigest SHA1;
     public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
 
@@ -311,34 +315,31 @@ public class Renderer implements GLSurfaceView.Renderer {
         if(prog!=null){
             program=prog.intValue();
             GLES20.glUseProgram(program);
-            throwAnyGLException("glUseProgram "+program);
+            throwAnyGLException("glUseProgram existing");
             return program;
         }
         int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertshad);
-        if(vertexShader==0){ Log.e("getProgram", "Could not compile vertexShader"); return 0; }
+        if(vertexShader==0) throw new RuntimeException("Could not compile vertexShader\n"+vertshad);
 
         int fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, fragshad);
-        if(fragmentShader==0){ Log.e("getProgram", "Could not compile fragmentShader"); return 0; }
+        if(fragmentShader==0) throw new RuntimeException("Could not compile fragmentShader\n"+fragshad);
 
         program = GLES20.glCreateProgram();
-        if(program==0){ Log.e("getProgram", "Could not create program"); return 0; }
+        if(program==0) throw new RuntimeException("Could not create program");
 
         GLES20.glAttachShader(program, vertexShader);
         GLES20.glAttachShader(program, fragmentShader);
-        GLES20.glLinkProgram(program);
 
+        GLES20.glLinkProgram(program);
         int[] linkStatus = new int[1];
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
-        if(linkStatus[0]==GLES20.GL_TRUE){
-            GLES20.glUseProgram(program);
-            throwAnyGLException("glUseProgram "+program);
-            shaders.put(shadkey,program);
-        }
-        else{
+        if(linkStatus[0]!=GLES20.GL_TRUE){
             GLES20.glDeleteProgram(program);
-            program=0;
-            throw new RuntimeException("Could not link program "+vertshad+"\n"+fragshad);
+            throw new RuntimeException("Could not link program " + GLES20.glGetProgramInfoLog(program)+"\n"+vertshad+"\n"+fragshad);
         }
+        GLES20.glUseProgram(program);
+        throwAnyGLException("glUseProgram new\n"+vertshad+"\n"+fragshad);
+        shaders.put(shadkey,program);
         return program;
     }
 
