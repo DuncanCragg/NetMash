@@ -101,7 +101,7 @@ public class Mesh {
             scaleY         = getFloatFromList(getListFromHash(mesh,"scale"   ), 1, 1f);
             scaleZ         = getFloatFromList(getListFromHash(mesh,"scale"   ), 2, 1f);
 
-        } catch (Exception e) { e.printStackTrace(); Log.e("ERROR", e.getLocalizedMessage()); return; }
+        } catch (Exception e) { e.printStackTrace(); Log.e("Mesh Constructor", e.getLocalizedMessage()); return; }
     }
 
     static public LinkedList getListFromHash(LinkedHashMap hm, String tag){

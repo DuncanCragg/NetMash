@@ -570,16 +570,20 @@ public class User extends WebObject {
         LinkedList subs=contentList(                      "private:viewing:subObjects");
         if(subs==null) return;
         for(int i=0; i< subs.size(); i++){
-            LinkedHashMap m=contentHash(String.format(    "private:viewing:subObjects:%d:object:avatar:#",i));
-            if(m==null)   m=contentHash(String.format(    "private:viewing:subObjects:%d:object:#",i));
-            glElementsPut(content(String.format(          "private:viewing:subObjects:%d:object",i)), m, null, null);
+            LinkedHashMap m=contentHash(    String.format("private:viewing:subObjects:%d:object:avatar:#",i));
+            if(m==null)   m=contentHash(    String.format("private:viewing:subObjects:%d:object:#",i));
+            glElementsPut(content(          String.format("private:viewing:subObjects:%d:object",i)), m, null, null);
+            glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
+              Utils.join(contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
+            glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
+              Utils.join(contentListMayJump(String.format("private:viewing:subObjects:%d:object:fragmentShader",i))," "), "basicFrag", basicFrag);
 
-            LinkedList subsubs=contentList(String.format( "private:viewing:subObjects:%d:object:subObjects",i));
+            LinkedList subsubs=contentList( String.format("private:viewing:subObjects:%d:object:subObjects",i));
             if(subsubs==null) continue;
             for(int j=0; j< subsubs.size(); j++){
                 LinkedHashMap n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
                 if(n==null)   n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
-                glElementsPut(content(String.format(      "private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
+                glElementsPut(content(      String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
             }
         }
     }

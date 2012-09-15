@@ -2,11 +2,16 @@
   "title": "Dynamic Phong Fragment Shader",
   "list": [
     "precision mediump float;",
+    "uniform vec3 lightPos;",
     "uniform sampler2D texture0;",
-    "varying vec4 colour;",
+    "varying vec3 mvvp;",
     "varying vec2 texturePt;",
+    "varying vec3 mvvn;",
     "void main(){",
-      "gl_FragColor=colour*texture2D(texture0,texturePt);",
+      "float lgtd=length(lightPos-mvvp);",
+      "vec3 lgtv=normalize(lightPos-mvvp);",
+      "float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd)));",
+      "gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt);",
     "}"
   ]
 }

@@ -119,7 +119,7 @@ public class NetMash extends MapActivity{
                 final float dx=x-px, dy=y-py;
                 if(dx*dx+dy*dy<0.1) return false;
                 onemeshview.queueEvent(new Runnable(){ public void run(){
-                    onerenderer.stroke(100*dx/screenWidth, 100*dy/screenHeight);
+                    if(onerenderer!=null) onerenderer.stroke(100*dx/screenWidth, 100*dy/screenHeight);
                 }});
                 break;
         }
