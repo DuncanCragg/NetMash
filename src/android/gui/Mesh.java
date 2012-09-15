@@ -38,9 +38,9 @@ public class Mesh {
             }
             LinkedList norms=getListFromHash(mesh,"normals");
             for(Object norm: norms){
-                ns.add(getFloatFromList(norm,0,0f));
-                ns.add(getFloatFromList(norm,1,0f));
-                ns.add(getFloatFromList(norm,2,0f));
+                ns.add(-getFloatFromList(norm,0,0f));
+                ns.add(-getFloatFromList(norm,1,0f));
+                ns.add(-getFloatFromList(norm,2,0f));
             }
             LinkedList texts=getListFromHash(mesh,"texturepoints");
             for(Object text: texts){

@@ -56,6 +56,13 @@ public class User extends WebObject {
         User room = new User(
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
               "    \"title\": \""+fullName+"'s Room\", \n"+
+              "    \"subObjects\": [ \n"+
+              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0, -7 ] }, \n"+
+              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0, -7 ] }, \n"+
+              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  4, -7 ] }, \n"+
+              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0, -4, -7 ] }, \n"+
+              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  0, -5 ] } \n"+
+              "    ], \n"+
               "    \"vertices\": [ [  20.0,  -1.0, -20.0 ], [  20.0,  -1.0,  20.0 ], [ -20.0,  -1.0,  20.0 ], [ -20.0,  -1.0, -20.0 ], [  20.0,  20.0, -20.0 ], [  20.0,  20.0,  20.0 ], [ -20.0,  20.0,  20.0 ], [ -20.0,  20.0, -20.0 ] ], \n"+
               "    \"texturepoints\": [ [ 0.0, 0.0 ], [ 5.0, 0.0 ], [ 5.0, 5.0 ], [ 0.0, 5.0 ] ], \n"+
               "    \"normals\": [ [ 1.0, 0.0, 0.0 ], [ -1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, -1.0, 0.0 ], [ 0.0, 0.0, 1.0 ], [ 0.0, 0.0, -1.0 ] ], \n"+
@@ -550,7 +557,7 @@ public class User extends WebObject {
         if(t!=null && v!=null) glElements.put(t,v);
     }
 
-    static String basicVert="uniform mat4 mvpm, mvvm; uniform vec3 lightPos; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec4 colour; varying vec2 texturePt; void main(){ texturePt = tex; vec3 mvvp=vec3(mvvm*pos); vec3 mvvn=vec3(mvvm*vec4(nor,0.0)); float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); colour=vec4(1.0,1.0,1.0,1.0)*(0.15+0.85*dffus); gl_Position=mvpm*pos; }";
+    static String basicVert="uniform mat4 mvpm, mvvm; uniform vec3 lightPos; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec4 colour; varying vec2 texturePt; void main(){ texturePt = tex; vec3 mvvp=vec3(mvvm*pos); vec3 mvvn=vec3(mvvm*vec4(nor,0.0)); float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); colour=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus); gl_Position=mvpm*pos; }";
     static String basicFrag="precision mediump float; uniform sampler2D texture0; varying vec4 colour; varying vec2 texturePt; void main(){ gl_FragColor=colour*texture2D(texture0,texturePt); }";
 
     private void cacheVisibleSceneElements(){

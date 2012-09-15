@@ -2,16 +2,14 @@ package android.gui;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.io.*;
 import java.nio.*;
 import java.security.MessageDigest;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.os.*;
+import android.os.SystemClock;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
