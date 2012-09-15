@@ -3,6 +3,11 @@ To Do
 -----
 
 --------------------------------------------------------
+
+ - eating memory
+ - need for that enable nor/pos
+
+--------------------------------------------------------
 Explore, Interact
 
 1. Initial on-device worldlet to explore and interact with: Open GL ES 2.0: driving GPU, lighting, JSON scene graph, collisions, physics, move -vs- interact

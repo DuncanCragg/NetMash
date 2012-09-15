@@ -27,12 +27,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private int texture1Loc;
     private int mvvmLoc;
     private int mvpmLoc;
-    private int normLoc;
     private int lightPosLoc;
-    private int ambientLoc;
-    private int diffuseLoc;
-    private int specularLoc;
-    private int shininessLoc;
     private int posLoc;
     private int norLoc;
     private int texLoc;
@@ -53,11 +48,9 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixMVP = new float[16];
     private float[] matrixNor = new float[16];
 
-    private float[] lightPos = { 21.0f, 7.0f, 14.0f, 1.0f };
-    private float[] ambient  = { 1.0f, 1.0f, 1.0f, 1.0f };
-    private float[] diffuse  = { 0.4f, 0.4f, 0.0f, 1.0f };
-    private float[] specular = { 0.0f, 0.0f, 1.0f, 1.0f };
-    private float   shininess = 9.0f;
+    private float[] lightPosInModelSpace = new float[] {0.0f, 0.0f, 0.0f, 1.0f};
+    private float[] lightPosInWorldSpace = new float[4];
+    private float[] lightPos = new float[4];
 
     private float eyeX;
     private float eyeY;
@@ -71,33 +64,63 @@ public class Renderer implements GLSurfaceView.Renderer {
     public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
         this.mesh=new Mesh(hm);
-        resetCoordsAndView(0,1.5f,0);
+        resetCoordsAndView(0,1.0f,-0.5f);
     }
 
     public void newMesh(LinkedHashMap hm){
         this.mesh=new Mesh(hm);
     }
 
+    @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glClearColor(0.6f, 0.8f, 0.9f, 1.0f);
-     // GLES20.glClearDepthf(1.0f);
-     // GLES20.glDepthFunc(GLES20.GL_LEQUAL);
-     // GLES20.glDepthMask(true);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-     // GLES20.glCullFace(GLES20.GL_BACK);
     }
 
+    @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
         float r = ((float)width)/height;
         Matrix.frustumM(matrixPrj, 0, -r, r, -1.0f, 1.0f, 1.0f, 100.0f);
     }
 
-    public void onDrawFrame(GL10 gl){
+    @Override
+    public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+        drawLightAndCamera();
         drawMeshAndSubs(mesh, 0,0,0);
     }
+
+    private void drawLightAndCamera(){
+        Matrix.setLookAtM(matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
+
+        long time = SystemClock.uptimeMillis() % 10000L;
+        float angle = (360.0f / 10000.0f) * ((int) time);
+
+        Matrix.setIdentityM(matrixLgt, 0);
+        Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, -5.0f);
+        Matrix.rotateM(     matrixLgt, 0, angle, 0.0f, 1.0f, 0.0f);
+        Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, 2.0f);
+        Matrix.multiplyMV(lightPosInWorldSpace, 0, matrixLgt, 0, lightPosInModelSpace, 0);
+        Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
+
+        String pointVertexShaderSource = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position = mvpm * pos; gl_PointSize = 4.0; }";
+        String pointFragmentShaderSource = "precision mediump float; void main(){ gl_FragColor = vec4(1.0, 1.0, 0.8, 1.0); }";
+        getProgramLocs(getProgram(pointVertexShaderSource, pointFragmentShaderSource));
+
+        GLES20.glVertexAttrib3f(posLoc, lightPosInModelSpace[0], lightPosInModelSpace[1], lightPosInModelSpace[2]);
+        GLES20.glDisableVertexAttribArray(posLoc);
+
+        Matrix.multiplyMM(matrixMVV, 0, matrixVVV, 0, matrixLgt, 0);
+        Matrix.multiplyMM(matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
+
+        GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
+
+        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
+    }
+
+    public ConcurrentHashMap<Object,Mesh> meshes = new ConcurrentHashMap<Object,Mesh>();
 
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
@@ -108,17 +131,22 @@ public class Renderer implements GLSurfaceView.Renderer {
             uploadVBO(m);
             drawMesh(m);
 
-        }catch(Throwable t){ Log.e("drawMeshAndSubs main",""+t); }
-
+        }catch(Throwable t){ Log.e("drawMeshAndSubs main",""+t); t.printStackTrace();
+            log("Apparently I now have to set posLoc.. (fixme!)");
+            posLoc = GLES20.glGetAttribLocation(getProgram(m), "pos");
+            GLES20.glEnableVertexAttribArray(posLoc);
+        }
         for(Object o: m.subObjects){ try{
             LinkedHashMap subob=(LinkedHashMap)o;
             Object subobuid=subob.get("object");
             Object subobcrd=subob.get("coords");
             LinkedHashMap sm=(LinkedHashMap)netmash.user.glElements.get(subobuid);
             if(sm==null) continue;
-            drawMeshAndSubs(new Mesh(sm), tx+Mesh.getFloatFromList(subobcrd,0,0), ty+Mesh.getFloatFromList(subobcrd,1,0), tz+Mesh.getFloatFromList(subobcrd,2,0));
+            Mesh ms=meshes.get(subobuid);
+            if(ms==null){ ms=new Mesh(sm); meshes.put(subobuid,ms); }
+            drawMeshAndSubs(ms, tx+Mesh.getFloatFromList(subobcrd,0,0), ty+Mesh.getFloatFromList(subobcrd,1,0), tz+Mesh.getFloatFromList(subobcrd,2,0));
 
-        }catch(Throwable t){ Log.e("drawMeshAndSubs subs",""+t); } }
+        }catch(Throwable t){ Log.e("drawMeshAndSubs subs",""+t); t.printStackTrace(); } }
     }
 
     private void setVariables(Mesh m, float tx, float ty, float tz){
@@ -128,14 +156,6 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.setIdentityM(matrixRtz, 0);
         Matrix.setIdentityM(matrixScl, 0);
         Matrix.setIdentityM(matrixTrn, 0);
-        Matrix.setIdentityM(matrixLgt, 0);
-
-        long time = SystemClock.uptimeMillis() % 10000L;
-        float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
-
-        Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, -5.0f);
-        Matrix.rotateM(     matrixLgt, 0, angleInDegrees*4, 0.0f, 1.0f, 0.0f);
-        Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, 2.0f);
 
         Matrix.setRotateM(  matrixRtx, 0, m.rotationX, -1.0f, 0.0f, 0.0f);
         Matrix.setRotateM(  matrixRty, 0, m.rotationY,  0.0f, 1.0f, 0.0f);
@@ -148,28 +168,13 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(  matrixRos, 0, matrixRot, 0, matrixScl, 0);
         Matrix.multiplyMM(  matrixMSR, 0, matrixTrn, 0, matrixRos, 0);
 
-        Matrix.setLookAtM(  matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
-
         Matrix.multiplyMM(  matrixMVV, 0, matrixVVV, 0, matrixMSR, 0);
         Matrix.multiplyMM(  matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
-        Matrix.invertM(     matrixNor, 0, matrixMSR, 0);
-        Matrix.transposeM(  matrixNor, 0, matrixNor, 0);
-
-        float[] lightPosInModelSpace = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
-        float[] lightPosInWorldSpace = new float[4];
-
-        Matrix.multiplyMV(lightPosInWorldSpace, 0, matrixLgt, 0, lightPosInModelSpace, 0);
-        Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
 
         GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
-        GLES20.glUniformMatrix4fv(normLoc, 1, false, matrixNor, 0);
 
-        GLES20.glUniform4fv(lightPosLoc,  1, lightPos, 0);
-        GLES20.glUniform4fv(ambientLoc,   1, ambient, 0);
-        GLES20.glUniform4fv(diffuseLoc,   1, diffuse, 0);
-        GLES20.glUniform4fv(specularLoc,  1, specular, 0);
-        GLES20.glUniform1f( shininessLoc,    shininess);
+        GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
 
         throwAnyGLException("setting variables");
     }
@@ -180,6 +185,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         if(meshIDs.get(m)!=null) return;
         int vbo[] = new int[1];
         GLES20.glGenBuffers(1, vbo, 0);
+        log("GPU: sending VBO "+vbo[0]+" "+m);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0]);
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, m.vb.position(0).capacity()*4, m.vb, GLES20.GL_STATIC_DRAW);
         meshIDs.put(m,vbo[0]);
@@ -189,14 +195,14 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, meshIDs.get(m));
 
-        GLES20.glEnableVertexAttribArray(posLoc);
         GLES20.glVertexAttribPointer(posLoc, 3, GLES20.GL_FLOAT, false, 32, 0);
+        GLES20.glEnableVertexAttribArray(posLoc);
 
-        GLES20.glEnableVertexAttribArray(norLoc);
         GLES20.glVertexAttribPointer(norLoc, 3, GLES20.GL_FLOAT, false, 32, 12);
+        GLES20.glEnableVertexAttribArray(norLoc);
 
-        GLES20.glEnableVertexAttribArray(texLoc);
         GLES20.glVertexAttribPointer(texLoc, 2, GLES20.GL_FLOAT, false, 32, 24);
+        GLES20.glEnableVertexAttribArray(texLoc);
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
@@ -205,33 +211,28 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, m.il, GLES20.GL_UNSIGNED_SHORT, m.ib);
 
         throwAnyGLException("glDrawElements");
-
-        GLES20.glDisableVertexAttribArray(posLoc);
-        GLES20.glDisableVertexAttribArray(norLoc);
-        GLES20.glDisableVertexAttribArray(texLoc);
-
-        throwAnyGLException("Draw frame end");
     }
 
     // -------------------------------------------------------------
 
     public void resetCoordsAndView(float x, float y, float z){
+        direction=0;
         eyeX=x;
         eyeY=y;
         eyeZ=z;
-        seeX=eyeX+7f*FloatMath.sin(direction);
-        seeY=y;
-        seeZ=eyeZ+7f*FloatMath.cos(direction);
+        seeX=eyeX;
+        seeY=eyeY;
+        seeZ=eyeZ-4.5f;
     }
 
     public void stroke(float dx, float dy){
         direction -= dx/50f;
         if(direction> 2*Math.PI) direction-=2*Math.PI;
         if(direction<-2*Math.PI) direction+=2*Math.PI;
-        seeX=eyeX+7f*FloatMath.sin(direction);
-        seeZ=eyeZ+7f*FloatMath.cos(direction);
-        eyeX-=dy/7f*FloatMath.sin(direction);
-        eyeZ-=dy/7f*FloatMath.cos(direction);
+        seeX=eyeX-4.5f*FloatMath.sin(direction);
+        seeZ=eyeZ-4.5f*FloatMath.cos(direction);
+        eyeX+=dy/7f*FloatMath.sin(direction);
+        eyeZ+=dy/7f*FloatMath.cos(direction);
         this.netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
     }
 
@@ -266,6 +267,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     private void sendTexture(int texID, Bitmap bm){
+        log("GPU: sending texture "+texID+","+bm);
         GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, texID);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
@@ -280,7 +282,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
         if(i==0) GLES20.glUniform1i(texture0Loc, i);
         if(i==1) GLES20.glUniform1i(texture1Loc, i);
-        throwAnyGLException("bindTexture");
+        throwAnyGLException("bindTexture: "+texID+","+i);
     }
 
     // -------------------------------------------------------------
@@ -295,12 +297,15 @@ public class Renderer implements GLSurfaceView.Renderer {
         }catch(Throwable t){ return s; }
     }
 
-    private int getProgram(Mesh m){
-
-        int program;
-
+    private int getProgram(Mesh m) {
         String vertshad=(String)netmash.user.glElements.get(m.vertexShader);
         String fragshad=(String)netmash.user.glElements.get(m.fragmentShader);
+        return getProgram(vertshad, fragshad);
+    }
+
+    private int getProgram(String vertshad, String fragshad){
+
+        int program;
 
         String shadkey=sha1(vertshad+fragshad);
         Integer prog=shaders.get(shadkey);
@@ -310,6 +315,8 @@ public class Renderer implements GLSurfaceView.Renderer {
             throwAnyGLException("glUseProgram existing");
             return program;
         }
+        log("GPU: sending program \n"+vertshad+"\n"+fragshad);
+
         int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertshad);
         if(vertexShader==0) throw new RuntimeException("Could not compile vertexShader\n"+vertshad);
 
@@ -321,35 +328,29 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         GLES20.glAttachShader(program, vertexShader);
         GLES20.glAttachShader(program, fragmentShader);
-
         GLES20.glLinkProgram(program);
         int[] linkStatus = new int[1];
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
-        if(linkStatus[0]!=GLES20.GL_TRUE){
+        if(linkStatus[0]==0) {
             GLES20.glDeleteProgram(program);
-            throw new RuntimeException("Could not link program " + GLES20.glGetProgramInfoLog(program)+"\n"+vertshad+"\n"+fragshad);
+            throw new RuntimeException("Could not link program " + GLES20.glGetProgramInfoLog(program)+" "+program+"\n"+vertshad+"\n"+fragshad);
         }
         GLES20.glUseProgram(program);
-        throwAnyGLException("glUseProgram new\n"+vertshad+"\n"+fragshad);
+        throwAnyGLException("glUseProgram new: "+program+"\n"+vertshad+"\n"+fragshad);
         shaders.put(shadkey,program);
         return program;
     }
 
     void getProgramLocs(int program){
         if(program==0) return;
-        texture0Loc =GLES20.glGetUniformLocation(program, "texture0");
-        texture1Loc =GLES20.glGetUniformLocation(program, "texture1");
-        mvvmLoc     =GLES20.glGetUniformLocation(program, "mvvm");
-        mvpmLoc     =GLES20.glGetUniformLocation(program, "mvpm");
-        normLoc     =GLES20.glGetUniformLocation(program, "norm");
-        lightPosLoc =GLES20.glGetUniformLocation(program, "lightPos");
-        ambientLoc  =GLES20.glGetUniformLocation(program, "ambient");
-        diffuseLoc  =GLES20.glGetUniformLocation(program, "diffuse");
-        specularLoc =GLES20.glGetUniformLocation(program, "specular");
-        shininessLoc=GLES20.glGetUniformLocation(program, "shininess");
-        posLoc      =GLES20.glGetAttribLocation( program, "pos");
-        norLoc      =GLES20.glGetAttribLocation( program, "nor");
-        texLoc      =GLES20.glGetAttribLocation( program, "tex");
+        texture0Loc = GLES20.glGetUniformLocation(program, "texture0");
+        texture1Loc = GLES20.glGetUniformLocation(program, "texture1");
+        mvvmLoc =     GLES20.glGetUniformLocation(program, "mvvm");
+        mvpmLoc =     GLES20.glGetUniformLocation(program, "mvpm");
+        lightPosLoc = GLES20.glGetUniformLocation(program, "lightPos");
+        posLoc =      GLES20.glGetAttribLocation( program, "pos");
+        texLoc =      GLES20.glGetAttribLocation( program, "tex");
+        norLoc =      GLES20.glGetAttribLocation( program, "nor");
     }
 
     private int compileShader(int shaderType, String source){
@@ -370,4 +371,3 @@ public class Renderer implements GLSurfaceView.Renderer {
         int e; while((e=GLES20.glGetError())!=GLES20.GL_NO_ERROR){ throw new RuntimeException(fn+": glError "+e); }
     }
 }
-
