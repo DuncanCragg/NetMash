@@ -3,6 +3,7 @@ To Do
 -----
 
 --------------------------------------------------------
+Fixes
 
  - eating memory
  - need for that enable nor/pos
@@ -10,25 +11,19 @@ To Do
 --------------------------------------------------------
 Explore, Interact
 
-1. Initial on-device worldlet to explore and interact with: Open GL ES 2.0: driving GPU, lighting, JSON scene graph, collisions, physics, move -vs- interact
+1. Initial on-device worldlet to explore and interact with: Open GL ES 2.0: driving GPU, lighting, JSON scene graph, move -vs- interact, collisions, physics
 
 Get GL basics right: see WebGL tutorials
 
- - use android opengl tutorial code: esp lighting
- - lighting all wrong: model, camera, lightpos needs sorting
- - projection not re-setting properly on landscape
- - texture per face as extra arg: use list not string
- - remove rest of mesh and gui nesting: easier to read and faster to draw
-
 Scene Graph creation and navigation
 
- - circularity detect: why doesn't User presence blow up?
- - put limit on render recursion depth and detect already-rendered-at-xyz
- - teleport coords and orientation on back button (save coords in history, thus also scroll state)
  - is: cube / sphere.obj - no mesh, simpler, easier, quicker
     - is:cube object generates that mesh
     - is:sphere object and mesh - Blender
     - OM: width: [ "=>", "$:place:present", "×", 10 ]
+ - circularity detect: why doesn't User presence blow up?
+ - put limit on render recursion depth and detect already-rendered-at-xyz
+ - teleport coords and orientation on back button (save coords in history, thus also scroll state)
  - materials map to shaders
 
 Interactions
@@ -56,6 +51,19 @@ Examples dotted around on arrival
  - lights come on when you enter that part of map
  - point lights, blended transparent, simple colour vert interpolated cubes, etc
  - curved shape from android tutorial made into flower
+ - rover roving
+ - accelerometer-based interactions and games like teeter - pick up a wooden toy
+ - racing 'downhill' game - get on track; physics
+ - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour
+
+Other
+
+ - texture per face as extra arg: use list not string
+ - remove rest of mesh and gui nesting: easier to read and faster to draw
+
+Pre-Edit
+
+ - can have non-edit interactions that have same effect: minecrafting, dupe
 
 --------------------------------------------------------
 Edit
