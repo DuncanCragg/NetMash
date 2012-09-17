@@ -63,6 +63,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private float direction=0;
 
+    private int     touchX, touchY;
+    private boolean touchDetect=false;
     private boolean touchDetecting=false;
 
     public Renderer(NetMash netmash, LinkedHashMap hm) {
@@ -93,6 +95,15 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        if(touchDetecting){
+            touchDetecting=false;
+            ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
+            GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
+            float touchedGrey=flipAndRound((b.get(0)+b.get(1)+b.get(2))/768.0f);
+            log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
+        }
+        if(touchDetect){ touchDetect=false; touchDetecting=true; }
+
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         drawLightAndCamera();
         currentGrey=0.0f;
@@ -104,6 +115,8 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.setLookAtM(matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
 
         if(touchDetecting) return;
+
+        try{
 
         long time = SystemClock.uptimeMillis() % 10000L;
         float angle = (360.0f / 10000.0f) * ((int) time);
@@ -128,6 +141,8 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
 
         GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
+
+        }catch(Throwable t){ Log.e("drawLightAndCamera",""+t); t.printStackTrace(); }
     }
 
     private String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
@@ -137,12 +152,15 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
+        int program=0;
         try{
             if(!touchDetecting){
-                getProgramLocs(getProgram(m));
+                program=getProgram(m);
+                getProgramLocs(program);
                 setupTextures(m); 
             }else{
-                getProgramLocs(getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource));
+                program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
+                getProgramLocs(program);
                 currentGrey+=0.05;
             }
             setVariables(m, tx,ty,tz);
@@ -151,8 +169,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         }catch(Throwable t){ Log.e("drawMeshAndSubs main",""+t); t.printStackTrace();
             log("Apparently I now have to set posLoc.. (fixme!)");
-            posLoc = GLES20.glGetAttribLocation(getProgram(m), "pos");
-            GLES20.glEnableVertexAttribArray(posLoc);
+            if(program!=0) posLoc = GLES20.glGetAttribLocation(program, "pos");
+            if(posLoc!=0) GLES20.glEnableVertexAttribArray(posLoc);
         }
         for(Object o: m.subObjects){ try{
             LinkedHashMap subob=(LinkedHashMap)o;
@@ -251,10 +269,9 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     public void touchDown(int x, int y){
-        ByteBuffer b = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
-        GLES20.glReadPixels(x, y, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
-        float touchedGrey=flipAndRound((b.get(0)+b.get(1)+b.get(2))/768.0f);
-        log("touchDown ("+x+"/"+y+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
+        if(touchDetect || touchDetecting) return;
+        touchDetect=true;
+        touchX=x; touchY=y;
     }
 
     private float flipAndRound(float n){
