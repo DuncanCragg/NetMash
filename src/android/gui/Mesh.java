@@ -8,6 +8,7 @@ import android.util.Log;
 
 public class Mesh {
 
+    String      title;
     FloatBuffer vb;
     ShortBuffer ib;
     int         il;
@@ -26,6 +27,8 @@ public class Mesh {
     public Mesh(LinkedHashMap mesh) {
 
         try {
+            title = getStringFromHash(mesh,"title", "Some Object");
+
             ArrayList<Float> vs = new ArrayList<Float>(256);
             ArrayList<Float> ns = new ArrayList<Float>(256);
             ArrayList<Float> tp = new ArrayList<Float>(256);
@@ -103,6 +106,8 @@ public class Mesh {
 
         } catch (Exception e) { e.printStackTrace(); Log.e("Mesh Constructor", e.getLocalizedMessage()); return; }
     }
+
+    public String toString(){ return title; }
 
     static public LinkedList getListFromHash(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);

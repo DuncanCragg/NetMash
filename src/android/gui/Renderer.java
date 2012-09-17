@@ -64,7 +64,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float direction=0;
 
     private int     touchX, touchY;
-    private boolean touchDetect=false;
     private boolean touchDetecting=false;
 
     public Renderer(NetMash netmash, LinkedHashMap hm) {
@@ -91,22 +90,34 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.frustumM(matrixPrj, 0, -r, r, -1.0f, 1.0f, 1.0f, 100.0f);
     }
 
-    float currentGrey;
+    int currentGrey;
+    public ConcurrentHashMap<String,Mesh> touchables = new ConcurrentHashMap<String,Mesh>();
 
     @Override
     public void onDrawFrame(GL10 gl) {
         if(touchDetecting){
-            touchDetecting=false;
+            currentGrey=0;
+            touchables.clear();
+            drawFrame();
             ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
-            float touchedGrey=flipAndRound((b.get(0)+b.get(1)+b.get(2))/768.0f);
+            int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
             log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
+            Mesh m=touchables.get(""+touchedGrey);
+            log("touched object: "+m);
+            touchDetecting=false;
         }
-        if(touchDetect){ touchDetect=false; touchDetecting=true; }
+        drawFrame();
+    }
 
+    private int flipAndRound(int n){
+        if(n<0) n+=256;
+        return (n/16)*16;
+    }
+
+    private void drawFrame(){
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         drawLightAndCamera();
-        currentGrey=0.0f;
         drawMeshAndSubs(mesh, 0,0,0);
     }
 
@@ -161,7 +172,6 @@ public class Renderer implements GLSurfaceView.Renderer {
             }else{
                 program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
                 getProgramLocs(program);
-                currentGrey+=0.05;
             }
             setVariables(m, tx,ty,tz);
             uploadVBO(m);
@@ -211,10 +221,12 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
         if(touchDetecting){
-        touchCol[0]=currentGrey;
-        touchCol[1]=currentGrey;
-        touchCol[2]=currentGrey;
-        GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
+            currentGrey+=16;
+            touchCol[0]=currentGrey/256.0f;
+            touchCol[1]=currentGrey/256.0f;
+            touchCol[2]=currentGrey/256.0f;
+            GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
+            touchables.put(""+currentGrey,m); log("put "+currentGrey+":"+m);
         }
         else
         GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
@@ -269,14 +281,9 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     public void touchDown(int x, int y){
-        if(touchDetect || touchDetecting) return;
-        touchDetect=true;
+        if(touchDetecting) return;
+        touchDetecting=true;
         touchX=x; touchY=y;
-    }
-
-    private float flipAndRound(float n){
-        if(n<0) n+=1.0f;
-        return ((int)(n*20.0f+0.5f))/20.0f;
     }
 
     public void stroke(float dx, float dy){
