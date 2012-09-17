@@ -27,6 +27,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private int texture1Loc;
     private int mvvmLoc;
     private int mvpmLoc;
+    private int touchColLoc;
     private int lightPosLoc;
     private int posLoc;
     private int norLoc;
@@ -48,7 +49,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixMVP = new float[16];
     private float[] matrixNor = new float[16];
 
-    private float[] lightPosInModelSpace = new float[] {0.0f, 0.0f, 0.0f, 1.0f};
+    private float[] touchCol = new float[4];
+    private float[] lightPosInModelSpace = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
     private float[] lightPosInWorldSpace = new float[4];
     private float[] lightPos = new float[4];
 
@@ -60,6 +62,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float seeZ;
 
     private float direction=0;
+
+    private boolean touchDetecting=false;
 
     public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
@@ -73,7 +77,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glClearColor(0.6f, 0.8f, 0.9f, 1.0f);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
     }
@@ -85,15 +89,21 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.frustumM(matrixPrj, 0, -r, r, -1.0f, 1.0f, 1.0f, 100.0f);
     }
 
+    float currentGrey;
+
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         drawLightAndCamera();
+        currentGrey=0.0f;
         drawMeshAndSubs(mesh, 0,0,0);
     }
 
     private void drawLightAndCamera(){
+
         Matrix.setLookAtM(matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
+
+        if(touchDetecting) return;
 
         long time = SystemClock.uptimeMillis() % 10000L;
         float angle = (360.0f / 10000.0f) * ((int) time);
@@ -120,13 +130,21 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
     }
 
+    private String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
+    private String grayscaleFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
+
     public ConcurrentHashMap<Object,Mesh> meshes = new ConcurrentHashMap<Object,Mesh>();
 
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
         try{
-            getProgramLocs(getProgram(m));
-            setupTextures(m);
+            if(!touchDetecting){
+                getProgramLocs(getProgram(m));
+                setupTextures(m); 
+            }else{
+                getProgramLocs(getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource));
+                currentGrey+=0.05;
+            }
             setVariables(m, tx,ty,tz);
             uploadVBO(m);
             drawMesh(m);
@@ -171,9 +189,16 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(  matrixMVV, 0, matrixVVV, 0, matrixMSR, 0);
         Matrix.multiplyMM(  matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
 
+        if(!touchDetecting)
         GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
-
+        if(touchDetecting){
+        touchCol[0]=currentGrey;
+        touchCol[1]=currentGrey;
+        touchCol[2]=currentGrey;
+        GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
+        }
+        else
         GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
 
         throwAnyGLException("setting variables");
@@ -197,13 +222,13 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         GLES20.glVertexAttribPointer(posLoc, 3, GLES20.GL_FLOAT, false, 32, 0);
         GLES20.glEnableVertexAttribArray(posLoc);
-
+        if(!touchDetecting){
         GLES20.glVertexAttribPointer(norLoc, 3, GLES20.GL_FLOAT, false, 32, 12);
         GLES20.glEnableVertexAttribArray(norLoc);
 
         GLES20.glVertexAttribPointer(texLoc, 2, GLES20.GL_FLOAT, false, 32, 24);
         GLES20.glEnableVertexAttribArray(texLoc);
-
+        }
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
         throwAnyGLException("VBOs");
@@ -223,6 +248,18 @@ public class Renderer implements GLSurfaceView.Renderer {
         seeX=eyeX;
         seeY=eyeY;
         seeZ=eyeZ-4.5f;
+    }
+
+    public void touchDown(int x, int y){
+        ByteBuffer b = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
+        GLES20.glReadPixels(x, y, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
+        float touchedGrey=flipAndRound((b.get(0)+b.get(1)+b.get(2))/768.0f);
+        log("touchDown ("+x+"/"+y+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
+    }
+
+    private float flipAndRound(float n){
+        if(n<0) n+=1.0f;
+        return ((int)(n*20.0f+0.5f))/20.0f;
     }
 
     public void stroke(float dx, float dy){
@@ -343,14 +380,18 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     void getProgramLocs(int program){
         if(program==0) return;
+        if(!touchDetecting){
         texture0Loc = GLES20.glGetUniformLocation(program, "texture0");
         texture1Loc = GLES20.glGetUniformLocation(program, "texture1");
         mvvmLoc =     GLES20.glGetUniformLocation(program, "mvvm");
-        mvpmLoc =     GLES20.glGetUniformLocation(program, "mvpm");
         lightPosLoc = GLES20.glGetUniformLocation(program, "lightPos");
-        posLoc =      GLES20.glGetAttribLocation( program, "pos");
         texLoc =      GLES20.glGetAttribLocation( program, "tex");
         norLoc =      GLES20.glGetAttribLocation( program, "nor");
+        }
+        mvpmLoc =     GLES20.glGetUniformLocation(program, "mvpm");
+        posLoc =      GLES20.glGetAttribLocation( program, "pos");
+        if(touchDetecting)
+        touchColLoc = GLES20.glGetUniformLocation(program, "touchCol");
     }
 
     private int compileShader(int shaderType, String source){

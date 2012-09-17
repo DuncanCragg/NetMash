@@ -112,9 +112,14 @@ public class NetMash extends MapActivity{
     @Override
     public boolean onTouchEvent(MotionEvent e){
         if(onemeshview==null) return false;
-        float x=e.getX();
-        float y=e.getY();
+        final float x=e.getX();
+        final float y=e.getY();
         switch(e.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                onemeshview.queueEvent(new Runnable(){ public void run(){
+                    if(onerenderer!=null) onerenderer.touchDown((int)x,screenHeight-(int)y);
+                }});
+                break;
             case MotionEvent.ACTION_MOVE:
                 final float dx=x-px, dy=y-py;
                 if(dx*dx+dy*dy<0.1) return false;
@@ -133,7 +138,7 @@ public class NetMash extends MapActivity{
         onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         new Thread(){ public void run(){ try{
             Kernel.sleep(2000);
-            onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            //onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }catch(Throwable t){}}}.start();
     }
 

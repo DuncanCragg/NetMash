@@ -3,6 +3,28 @@ To Do
 -----
 
 --------------------------------------------------------
+Prioritising
+
+ - higher priority if addressing uncertainty of implementation
+ - higher priority if showcasing high impact feature or USP
+ - higher priority if next not-done in end-to-end slice
+
+Current priority: in-world object network and object mash editing
+
+ - new unknowns like text render and targetted swipes
+ - shows off user editing USP and ease of programming
+ - done a bit of world creation, next big chunk needed
+
+Smallest subchunk:
+
+ - multitouch brings up single param panel (tag:val text)
+ - needs targetted swipe detection and text rendering
+ - swipe it right to edit, then up/down to adjust
+ - all local but still needs to be fast
+ - need to fix editing-rule stuff
+ - first step: render scene in grayscale, no lighting or textures
+
+--------------------------------------------------------
 Fixes
 
  - eating memory
@@ -13,7 +35,11 @@ Explore, Interact
 
 1. Initial on-device worldlet to explore and interact with: Open GL ES 2.0: driving GPU, lighting, JSON scene graph, move -vs- interact, collisions, physics
 
-Get GL basics right: see WebGL tutorials
+GL basics
+
+ - specular shading
+ - IBO flower
+ - blending example
 
 Scene Graph creation and navigation
 
@@ -70,7 +96,38 @@ Edit
 
 2. IDE to edit worldlet Object Network and Object Mash: edit obnet/copy/link, edit obmash; two-pane edit
 
-Object/Net/Mash views: the Object-Net/Mash IDE
+In-World Object/Net/Mash: the Object-Net/Mash Instant 3D IDE!
+
+ - multitouch swipe to edit
+    - structure panel, vertical swipe to scroll
+    - can swipe left to scroll through net and mash panes stacked
+    - right-swipe a field to edit
+       - if scalar, up/down adjusts; if text, kbd
+       - if rgb, chooser, if date, calendar, etc
+       - if hash/list, can add new or duplicate or delete
+       - if link, can copy, choose from 'clipboard'
+       - if new object, new 'is' gives prepopulated
+    - dupe subobject hash links to same, then swipe it apart
+    - or dupe whole object
+ - needs targetted swipe detection and text rendering
+
+Targetted swipe
+
+ - on touch-down
+ - render to offscreen projection with unique colour per object, no lighting
+ - read colour under x,y touched and look up back to object
+ - on touch-swipe, just keep sending deltas to object
+ - or detect multitouch and open edit
+
+Text render/enter
+
+ - render text fonts:
+    - http://fractiousg.blogspot.co.uk/2012/04/rendering-text-in-opengl-on-android.html
+ - keyboard input:
+    - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
+    - http://forum.xda-developers.com/showthread.php?t=860488
+
+IDE stuff
 
  - arrive at own on-board room: build interactive objects like the ones already dotted around
  - onboard and online objects for faster editing responses and rule exec, at least while building IDE
@@ -86,30 +143,21 @@ Object/Net/Mash views: the Object-Net/Mash IDE
     - render JSON as recognised ObNet type: %rules, %more, is, etc known
     - constraints of JSON needn't be at all visible in gui
     - smooths over ugliness: %, "", etc
+ - show how lists and singles are treated the same somehow
  - split-screen and/or easy-flip: Object, Object Net, Object Mash
     - this has to be really easy and nice to use
     - it's an IDE like Victor .. Light Table
     - visual instantiation of rules - step through, see each rule firing and rewriting
  - touch 3D object brings up menu with go to Object/Net/Mash views options
- - expand sub-linked objects, so easy to build link-jumping rule
  - start with object itself as new rule
     - then autocomplete options
     - can expand links inline to full nested object
- - show how lists and singles are treated the same somehow
+    - expand sub-linked objects, so easy to build link-jumping rule
  - rescaling number chooser .. 10, 100, 1000 new scale set
  - fix view/edit not to use nested views: HTML WebView and object-mash.js
     - HTML is probably most flexible
     - hierarchyviewer, dmtracedump http://stackoverflow.com/questions/5377445/which-order-of-nested-layouts-is-most-efficient-in-android
     - JSON view renders three times - use Etag, if no need to respond to incoming subs
-
-Text render/enter - maybe have 3D Net/Mash views
-
- - render text fonts:
-    - http://fractiousg.blogspot.co.uk/2012/04/rendering-text-in-opengl-on-android.html
- - keyboard input:
-    - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
-    - http://forum.xda-developers.com/showthread.php?t=860488
- - needs touch detection, which is needed anyway
 
 Object Mash
 
