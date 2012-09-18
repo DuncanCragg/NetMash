@@ -144,6 +144,13 @@ public class User extends WebObject {
                         "}");
     }
 
+    static User newSwipe(String objectuid, String useruid){
+        return new User("{ \"is\": \"swipe\", \n"+
+                        "  \"object\": \""+objectuid+"\",\n"+
+                        "  \"user\": \""+useruid+"\"\n"+
+                        "}");
+    }
+
     // ---------------------------------------------------------
 
     OTS2GUI ots2gui;
@@ -189,8 +196,30 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    public void onObjectTouched(Mesh m, boolean shift){
-log("touched object: "+m+", "+(shift? "edit": "send"));
+    public ConcurrentHashMap<LinkedHashMap,String> mesh2uid = new ConcurrentHashMap<LinkedHashMap,String>();
+
+    public void onObjectTouched(LinkedHashMap mesh, boolean shift){
+        final String objectuid=mesh2uid.get(mesh);
+log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+objectuid);
+        if(objectuid!=null) new Evaluator(this){
+            public void evaluate(){
+                if(!contentSet("private:forms:"+UID.toUID(objectuid))){
+                    content(   "private:forms:"+UID.toUID(objectuid), spawn(newSwipe(objectuid, uid)));
+                }
+                refreshObserves();
+            }
+        };
+    }
+
+    public void setSwipeVal(final String objectuid, final int dx, final int dy){
+        if(this==me) currentForm(objectuid).setSwipeVal(objectuid, dx, dy);
+        else new Evaluator(this){
+            public void evaluate(){
+                contentInt("dx", dx);
+                contentInt("dy", dy);
+                refreshObserves();
+            }
+        };
     }
 
     private float px=0,py=0,pz=0;
@@ -456,8 +485,13 @@ log("touched object: "+m+", "+(shift? "edit": "send"));
             for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
         }
         else
-        if(contentIsOrListContains("is", "rsvp")){ log("rsvp: "+this);
+        if(contentIsOrListContains("is", "rsvp")){
             log("evaluate rsvp: "+this);
+        }
+        else
+        if(contentIsOrListContains("is", "swipe")){
+            log("evaluate swipe: "+this);
+            notifying(content("object"));
         }
         else
         if(contentIs("is", "form")){
@@ -568,17 +602,20 @@ log("touched object: "+m+", "+(shift? "edit": "send"));
 
     private void cacheVisibleSceneElements(){
 
+        mesh2uid.put(contentHash("private:viewing:#"),content("private:viewing"));
+
         glElementsPut(content(                      "private:viewing:vertexShader"),
                       Utils.join(contentListMayJump("private:viewing:vertexShader")," "), "basicVert", basicVert);
         glElementsPut(content(                      "private:viewing:fragmentShader"),
                       Utils.join(contentListMayJump("private:viewing:fragmentShader")," "), "basicFrag", basicFrag);
 
-        LinkedList subs=contentList(                      "private:viewing:subObjects");
+        LinkedList subs=contentList(                "private:viewing:subObjects");
         if(subs==null) return;
         for(int i=0; i< subs.size(); i++){
             LinkedHashMap m=contentHash(    String.format("private:viewing:subObjects:%d:object:avatar:#",i));
             if(m==null)   m=contentHash(    String.format("private:viewing:subObjects:%d:object:#",i));
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object",i)), m, null, null);
+            mesh2uid.put(m, content(        String.format("private:viewing:subObjects:%d:object",i)));
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
               Utils.join(contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
@@ -590,6 +627,7 @@ log("touched object: "+m+", "+(shift? "edit": "send"));
                 LinkedHashMap n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
                 if(n==null)   n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
                 glElementsPut(content(      String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
+                mesh2uid.put(n, content(    String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
             }
         }
     }

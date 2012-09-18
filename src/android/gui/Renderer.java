@@ -105,7 +105,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
 log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
             Mesh m=touchables.get(""+touchedGrey);
-            if(m!=null) this.netmash.user.onObjectTouched(m,touchShift);
+            if(m!=null) this.netmash.user.onObjectTouched(m.mesh,touchShift);
             touchDetecting=false;
         }
         drawFrame();

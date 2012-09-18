@@ -8,6 +8,8 @@ import android.util.Log;
 
 public class Mesh {
 
+    LinkedHashMap mesh;
+
     String      title;
     FloatBuffer vb;
     ShortBuffer ib;
@@ -25,6 +27,8 @@ public class Mesh {
 
     @SuppressWarnings("unchecked")
     public Mesh(LinkedHashMap mesh) {
+
+        this.mesh=mesh;
 
         try {
             title = getStringFromHash(mesh,"title", "Some Object");
