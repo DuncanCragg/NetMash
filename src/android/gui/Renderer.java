@@ -65,6 +65,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private int     touchX, touchY;
     private boolean touchDetecting=false;
+    private boolean touchShift=false;
 
     public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
@@ -104,7 +105,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
 log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
             Mesh m=touchables.get(""+touchedGrey);
-            if(m!=null) this.netmash.user.onObjectTouched(m);
+            if(m!=null) this.netmash.user.onObjectTouched(m,touchShift);
             touchDetecting=false;
         }
         drawFrame();
@@ -280,7 +281,7 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         seeZ=eyeZ-4.5f;
     }
 
-    public void strokeOut(float dx, float dy){
+    public void swipeIn(float dx, float dy){
         direction -= dx/50f;
         if(direction> 2*Math.PI) direction-=2*Math.PI;
         if(direction<-2*Math.PI) direction+=2*Math.PI;
@@ -291,15 +292,10 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         this.netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
     }
 
-    public void strokeOne(int x, int y, float dx, float dy){
+    public void swipeOn(boolean shift, int x, int y, float dx, float dy){
         if(touchDetecting) return;
         touchDetecting=true;
-        touchX=x; touchY=y;
-    }
-
-    public void strokeTwo(int x, int y, float dx, float dy){
-        if(touchDetecting) return;
-        touchDetecting=true;
+        touchShift=shift;
         touchX=x; touchY=y;
     }
 

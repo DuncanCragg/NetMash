@@ -189,8 +189,8 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    public void onObjectTouched(Mesh m){
-log("touched object: "+m);
+    public void onObjectTouched(Mesh m, boolean shift){
+log("touched object: "+m+", "+(shift? "edit": "send"));
     }
 
     private float px=0,py=0,pz=0;

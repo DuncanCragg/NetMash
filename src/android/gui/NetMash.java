@@ -138,17 +138,17 @@ public class NetMash extends MapActivity{
                 if(numTouch==1){
                     if(fromEdge(tx,ty)){
                         onemeshview.queueEvent(new Runnable(){ public void run(){
-                            if(onerenderer!=null) onerenderer.strokeOut(dx, dy);
+                            if(onerenderer!=null) onerenderer.swipeIn(dx, dy);
                         }});
                     }else{
                         onemeshview.queueEvent(new Runnable(){ public void run(){
-                            if(onerenderer!=null) onerenderer.strokeOne((int)tx,screenHeight-(int)ty, dx, dy);
+                            if(onerenderer!=null) onerenderer.swipeOn(false, (int)tx,screenHeight-(int)ty, dx, dy);
                         }});
                     }
                 }
                 if(numTouch==2){
                     onemeshview.queueEvent(new Runnable(){ public void run(){
-                        if(onerenderer!=null) onerenderer.strokeTwo((int)tx,screenHeight-(int)ty, dx, dy);
+                        if(onerenderer!=null) onerenderer.swipeOn(true, (int)tx,screenHeight-(int)ty, dx, dy);
                     }});
                 }
                 break;
@@ -163,7 +163,9 @@ public class NetMash extends MapActivity{
     }
 
     private boolean fromEdge(float tx,float ty){
-        return true;
+        int borderWidth=60;
+        return tx<borderWidth   || tx>screenWidth -borderWidth ||
+               ty<borderWidth*2 || ty>screenHeight-borderWidth;
     }
 
     private void triggerRenderingBurst(){
