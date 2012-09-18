@@ -108,28 +108,61 @@ public class NetMash extends MapActivity{
 
     private float px=0f;
     private float py=0f;
+    private float tx=0f;
+    private float ty=0f;
+    private int   numTouch=0;
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
         if(onemeshview==null) return false;
-        final float x=e.getX();
-        final float y=e.getY();
-        switch(e.getAction()){
+        switch(e.getActionMasked()){
             case MotionEvent.ACTION_DOWN:
-                onemeshview.queueEvent(new Runnable(){ public void run(){
-                    if(onerenderer!=null) onerenderer.touchDown((int)x,screenHeight-(int)y);
-                }});
+                tx=e.getX(0); ty=e.getY(0);
+                px=tx; py=ty;
+                numTouch=1;
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                tx=e.getX(1); ty=e.getY(1);
+                px=tx; py=ty;
+                numTouch=2;
                 break;
             case MotionEvent.ACTION_MOVE:
-                final float dx=x-px, dy=y-py;
-                if(dx*dx+dy*dy<0.1) return false;
-                onemeshview.queueEvent(new Runnable(){ public void run(){
-                    if(onerenderer!=null) onerenderer.stroke(100*dx/screenWidth, 100*dy/screenHeight);
-                }});
+                float cx=0,cy=0;
+                if(numTouch==1){ cx=e.getX(0); cy=e.getY(0); }
+                if(numTouch==2){ cx=e.getX(1); cy=e.getY(1); }
+                final float mx=cx-px, my=cy-py;
+                if(mx*mx+my*my<0.1) return true;
+                px=cx; py=cy;
+                final float dx=100*mx/screenWidth;
+                final float dy=100*my/screenHeight;
+                if(numTouch==1){
+                    if(fromEdge(tx,ty)){
+                        onemeshview.queueEvent(new Runnable(){ public void run(){
+                            if(onerenderer!=null) onerenderer.strokeOut(dx, dy);
+                        }});
+                    }else{
+                        onemeshview.queueEvent(new Runnable(){ public void run(){
+                            if(onerenderer!=null) onerenderer.strokeOne((int)tx,screenHeight-(int)ty, dx, dy);
+                        }});
+                    }
+                }
+                if(numTouch==2){
+                    onemeshview.queueEvent(new Runnable(){ public void run(){
+                        if(onerenderer!=null) onerenderer.strokeTwo((int)tx,screenHeight-(int)ty, dx, dy);
+                    }});
+                }
+                break;
+            default:
+                tx=0; ty=0;
+                px=0; py=0;
+                numTouch=0;
                 break;
         }
-        px=x; py=y;
         triggerRenderingBurst();
+        return true;
+    }
+
+    private boolean fromEdge(float tx,float ty){
         return true;
     }
 

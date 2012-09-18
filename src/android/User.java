@@ -189,6 +189,10 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
+    public void onObjectTouched(Mesh m){
+log("touched object: "+m);
+    }
+
     private float px=0,py=0,pz=0;
     public void onNewCoords(final float x, final float y, final float z){
         float dx=x-px, dy=y-py, dz=z-pz;

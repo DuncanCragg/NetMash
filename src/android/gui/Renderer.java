@@ -102,9 +102,9 @@ public class Renderer implements GLSurfaceView.Renderer {
             ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
-            log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
+log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
             Mesh m=touchables.get(""+touchedGrey);
-            log("touched object: "+m);
+            if(m!=null) this.netmash.user.onObjectTouched(m);
             touchDetecting=false;
         }
         drawFrame();
@@ -112,7 +112,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private int flipAndRound(int n){
         if(n<0) n+=256;
-        return (n/16)*16;
+        return ((n+8)/16)*16;
     }
 
     private void drawFrame(){
@@ -226,7 +226,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             touchCol[1]=currentGrey/256.0f;
             touchCol[2]=currentGrey/256.0f;
             GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
-            touchables.put(""+currentGrey,m); log("put "+currentGrey+":"+m);
+            touchables.put(""+currentGrey,m);
         }
         else
         GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
@@ -280,13 +280,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         seeZ=eyeZ-4.5f;
     }
 
-    public void touchDown(int x, int y){
-        if(touchDetecting) return;
-        touchDetecting=true;
-        touchX=x; touchY=y;
-    }
-
-    public void stroke(float dx, float dy){
+    public void strokeOut(float dx, float dy){
         direction -= dx/50f;
         if(direction> 2*Math.PI) direction-=2*Math.PI;
         if(direction<-2*Math.PI) direction+=2*Math.PI;
@@ -295,6 +289,18 @@ public class Renderer implements GLSurfaceView.Renderer {
         eyeX+=dy/7f*FloatMath.sin(direction);
         eyeZ+=dy/7f*FloatMath.cos(direction);
         this.netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
+    }
+
+    public void strokeOne(int x, int y, float dx, float dy){
+        if(touchDetecting) return;
+        touchDetecting=true;
+        touchX=x; touchY=y;
+    }
+
+    public void strokeTwo(int x, int y, float dx, float dy){
+        if(touchDetecting) return;
+        touchDetecting=true;
+        touchX=x; touchY=y;
     }
 
     // -------------------------------------------------------------

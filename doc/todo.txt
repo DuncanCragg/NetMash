@@ -22,7 +22,7 @@ Smallest subchunk:
  - swipe it right to edit, then up/down to adjust
  - all local but still needs to be fast
  - need to fix editing-rule stuff
- - first step: render scene in grayscale, no lighting or textures
+ - next step: detect multitouch and get object param (just choose between move and edit)
 
 --------------------------------------------------------
 Fixes
