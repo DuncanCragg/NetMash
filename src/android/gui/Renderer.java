@@ -127,8 +127,6 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
 
         if(touchDetecting) return;
 
-        try{
-
         long time = SystemClock.uptimeMillis() % 10000L;
         float angle = (360.0f / 10000.0f) * ((int) time);
 
@@ -155,8 +153,6 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
 
         GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
-
-        }catch(Throwable t){ Log.e("drawLightAndCamera",""+t); t.printStackTrace(); }
     }
 
     private String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
@@ -167,7 +163,7 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
     private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
 
         int program=0;
-        try{
+
             if(!touchDetecting){
                 program=getProgram(m);
                 getProgramLocs(program);
@@ -180,12 +176,7 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
             uploadVBO(m);
             drawMesh(m);
 
-        }catch(Throwable t){ Log.e("drawMeshAndSubs main",""+t); t.printStackTrace();
-            log("Apparently I now have to set posLoc.. (fixme!)");
-            if(program!=0) posLoc = GLES20.glGetAttribLocation(program, "pos");
-            if(posLoc!=0) GLES20.glEnableVertexAttribArray(posLoc);
-        }
-        for(Object o: m.subObjects){ try{
+        for(Object o: m.subObjects){
             LinkedHashMap subob=(LinkedHashMap)o;
             Object subobuid=subob.get("object");
             Object subobcrd=subob.get("coords");
@@ -195,7 +186,7 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
             if(ms==null){ ms=new Mesh(sm); meshes.put(subobuid,ms); }
             drawMeshAndSubs(ms, tx+Mesh.getFloatFromList(subobcrd,0,0), ty+Mesh.getFloatFromList(subobcrd,1,0), tz+Mesh.getFloatFromList(subobcrd,2,0));
 
-        }catch(Throwable t){ Log.e("drawMeshAndSubs subs",""+t); t.printStackTrace(); } }
+        }
     }
 
     private void setVariables(Mesh m, float tx, float ty, float tz){

@@ -601,12 +601,16 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         if(t!=null && v!=null) glElements.put(t,v);
     }
 
+    private void mesh2uidPut(LinkedHashMap mesh, String uid){
+        if(mesh!=null && uid!=null) mesh2uid.put(mesh,uid);
+    }
+
     static String basicVert="uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
     static String basicFrag="precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
 
     private void cacheVisibleSceneElements(){
 
-        mesh2uid.put(contentHash("private:viewing:#"),content("private:viewing"));
+        mesh2uidPut(contentHash("private:viewing:#"),content("private:viewing"));
 
         glElementsPut(content(                      "private:viewing:vertexShader"),
                       Utils.join(contentListMayJump("private:viewing:vertexShader")," "), "basicVert", basicVert);
@@ -619,7 +623,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             LinkedHashMap m=contentHash(    String.format("private:viewing:subObjects:%d:object:avatar:#",i));
             if(m==null)   m=contentHash(    String.format("private:viewing:subObjects:%d:object:#",i));
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object",i)), m, null, null);
-            mesh2uid.put(m, content(        String.format("private:viewing:subObjects:%d:object",i)));
+            mesh2uidPut(m, content(         String.format("private:viewing:subObjects:%d:object",i)));
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
               Utils.join(contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
@@ -631,7 +635,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 LinkedHashMap n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
                 if(n==null)   n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
                 glElementsPut(content(      String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
-                mesh2uid.put(n, content(    String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
+                mesh2uidPut(n, content(     String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
             }
         }
     }

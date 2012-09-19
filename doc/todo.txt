@@ -28,8 +28,7 @@ Smallest subchunk:
 --------------------------------------------------------
 Fixes
 
- - eating memory
- - need for that enable nor/pos
+ - vert and frag should come together, else use basic
 
 --------------------------------------------------------
 Explore, Interact
