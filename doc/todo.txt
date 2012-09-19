@@ -22,7 +22,8 @@ Smallest subchunk:
  - swipe it right to edit, then up/down to adjust
  - all local but still needs to be fast
  - need to fix editing-rule stuff
- - next step: detect multitouch and get object param (just choose between move and edit)
+ - next step: get swiped object's scale and show in HUD panel: [ scale | 20 ]
+    - set "editing": to object link and get vals to show
 
 --------------------------------------------------------
 Fixes

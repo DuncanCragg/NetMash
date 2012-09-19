@@ -3,7 +3,6 @@ package android.gui;
 import java.util.*;
 import java.util.concurrent.*;
 import java.nio.*;
-import java.security.MessageDigest;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -353,13 +352,6 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
     static public MessageDigest SHA1;
     public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
 
-    private String sha1(String s){
-        try{
-            if(SHA1==null) SHA1=MessageDigest.getInstance("SHA-1");
-            return new String(SHA1.digest(s.getBytes("UTF-8")),"UTF-8");
-        }catch(Throwable t){ return s; }
-    }
-
     private int getProgram(Mesh m) {
         String vertshad=(String)netmash.user.glElements.get(m.vertexShader);
         String fragshad=(String)netmash.user.glElements.get(m.fragmentShader);
@@ -370,7 +362,7 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
 
         int program;
 
-        String shadkey=sha1(vertshad+fragshad);
+        String shadkey=String.format("%d%d",vertshad.hashCode(),fragshad.hashCode());
         Integer prog=shaders.get(shadkey);
         if(prog!=null){
             program=prog.intValue();
