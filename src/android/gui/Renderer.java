@@ -141,8 +141,11 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
 
         String pointVertexShaderSource = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position = mvpm * pos; gl_PointSize = 4.0; }";
         String pointFragmentShaderSource = "precision mediump float; void main(){ gl_FragColor = vec4(1.0, 1.0, 0.8, 1.0); }";
-        getProgramLocs(getProgram(pointVertexShaderSource, pointFragmentShaderSource));
+        int program=getProgram(pointVertexShaderSource, pointFragmentShaderSource);
+        if(program==0) return;
 
+        mvpmLoc = GLES20.glGetUniformLocation(program, "mvpm");
+        posLoc =  GLES20.glGetAttribLocation( program, "pos");
         GLES20.glVertexAttrib3f(posLoc, lightPosInModelSpace[0], lightPosInModelSpace[1], lightPosInModelSpace[2]);
         GLES20.glDisableVertexAttribArray(posLoc);
 
@@ -259,11 +262,12 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         GLES20.glVertexAttribPointer(texLoc, 2, GLES20.GL_FLOAT, false, 32, 24);
         GLES20.glEnableVertexAttribArray(texLoc);
         }
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
         throwAnyGLException("VBOs");
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, m.il, GLES20.GL_UNSIGNED_SHORT, m.ib);
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
         throwAnyGLException("glDrawElements");
     }
@@ -349,7 +353,6 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
 
     // -------------------------------------------------------------
 
-    static public MessageDigest SHA1;
     public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
 
     private int getProgram(Mesh m) {

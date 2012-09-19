@@ -201,7 +201,11 @@ public class User extends WebObject {
     public void onObjectTouched(LinkedHashMap mesh, boolean shift){
         final String objectuid=mesh2uid.get(mesh);
 log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+objectuid);
-        if(objectuid!=null) new Evaluator(this){
+        if(objectuid==null) return;
+        if(shift){
+        }
+        else
+        new Evaluator(this){
             public void evaluate(){
                 if(!contentSet("private:forms:"+UID.toUID(objectuid))){
                     content(   "private:forms:"+UID.toUID(objectuid), spawn(newSwipe(objectuid, uid)));
@@ -597,8 +601,8 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         if(t!=null && v!=null) glElements.put(t,v);
     }
 
-    static String basicVert="uniform mat4 mvpm, mvvm; uniform vec3 lightPos; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec4 colour; varying vec2 texturePt; void main(){ texturePt = tex; vec3 mvvp=vec3(mvvm*pos); vec3 mvvn=vec3(mvvm*vec4(nor,0.0)); float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); colour=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus); gl_Position=mvpm*pos; }";
-    static String basicFrag="precision mediump float; uniform sampler2D texture0; varying vec4 colour; varying vec2 texturePt; void main(){ gl_FragColor=colour*texture2D(texture0,texturePt); }";
+    static String basicVert="uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
+    static String basicFrag="precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
 
     private void cacheVisibleSceneElements(){
 
