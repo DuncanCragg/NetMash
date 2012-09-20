@@ -17,13 +17,23 @@ Current priority: in-world object network and object mash editing
 
 Smallest subchunk:
 
- - multitouch brings up single param panel (tag:val text)
- - needs targetted swipe detection and text rendering
+ - edit brings up single param panel (tag:val text)
+ - needs text rendering
  - swipe it right to edit, then up/down to adjust
  - all local but still needs to be fast
  - need to fix editing-rule stuff
- - next step: get swiped object's scale and show in HUD panel: [ scale | 20 ]
-    - set "editing": to object link and get vals to show
+
+ - next step:
+    - text notice/sign pre-mesh higher-level world object
+       - User renders text texture for Render to treat as usual
+       - can edit notice by swiping - default interaction is to just set text
+    - or shift-swipe to edit - which is another notice mesh(es) in HUD
+       - so edit more detail: size, material
+    - User view is aggregate mesh @ Render level
+       - from 'compiled' object network dereferenced and HUD-ed
+       - maybe flatten subs; calculate nested translations
+          - lose structure, but keep uid/mesh mapping
+       - shallow copy so share big structure
 
 --------------------------------------------------------
 Fixes

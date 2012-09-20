@@ -185,7 +185,6 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
             Mesh ms=meshes.get(subobuid);
             if(ms==null){ ms=new Mesh(sm); meshes.put(subobuid,ms); }
             drawMeshAndSubs(ms, tx+Mesh.getFloatFromList(subobcrd,0,0), ty+Mesh.getFloatFromList(subobcrd,1,0), tz+Mesh.getFloatFromList(subobcrd,2,0));
-
         }
     }
 
