@@ -111,14 +111,6 @@ In-World Object/Net/Mash: the Object-Net/Mash Instant 3D IDE!
     - or dupe whole object
  - needs targetted swipe detection and text rendering
 
-Targetted swipe
-
- - on touch-down
- - render to offscreen projection with unique colour per object, no lighting
- - read colour under x,y touched and look up back to object
- - on touch-swipe, just keep sending deltas to object
- - or detect multitouch and open edit
-
 Text render/enter
 
  - render text fonts:

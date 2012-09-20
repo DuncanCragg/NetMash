@@ -103,6 +103,7 @@ public class User extends WebObject {
               "    \"contact\": \""+contactuid+"\", \n"+
               "    \"private\": { \n"+
               "        \"viewing\": null, \n"+
+              "        \"editing\": null, \n"+
               "        \"viewas\": \"gui\", \n"+
               "        \"links\": \""+linksuid+"\", \n"+
               "        \"history\": null, \n"+
@@ -198,15 +199,16 @@ public class User extends WebObject {
 
     public ConcurrentHashMap<LinkedHashMap,String> mesh2uid = new ConcurrentHashMap<LinkedHashMap,String>();
 
-    public void onObjectTouched(LinkedHashMap mesh, boolean shift){
+    public void onObjectTouched(LinkedHashMap mesh, final boolean shift){
         final String objectuid=mesh2uid.get(mesh);
 log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+objectuid);
         if(objectuid==null) return;
-        if(shift){
-        }
-        else
         new Evaluator(this){
             public void evaluate(){
+                if(!shift){
+                    content("private:editing",objectuid);
+                }
+                else
                 if(!contentSet("private:forms:"+UID.toUID(objectuid))){
                     content(   "private:forms:"+UID.toUID(objectuid), spawn(newSwipe(objectuid, uid)));
                 }
@@ -601,8 +603,8 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         if(t!=null && v!=null) glElements.put(t,v);
     }
 
-    private void mesh2uidPut(LinkedHashMap mesh, String uid){
-        if(mesh!=null && uid!=null) mesh2uid.put(mesh,uid);
+    private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
+        if(mesh!=null && uid!=null) mesh2uid.put(mesh,UID.normaliseUID(parentuid,uid));
     }
 
     static String basicVert="uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
@@ -610,7 +612,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
 
     private void cacheVisibleSceneElements(){
 
-        mesh2uidPut(contentHash("private:viewing:#"),content("private:viewing"));
+        mesh2uidPut(contentHash("private:viewing:#"),content("private:viewing"),content("private:viewing"));
 
         glElementsPut(content(                      "private:viewing:vertexShader"),
                       Utils.join(contentListMayJump("private:viewing:vertexShader")," "), "basicVert", basicVert);
@@ -623,7 +625,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             LinkedHashMap m=contentHash(    String.format("private:viewing:subObjects:%d:object:avatar:#",i));
             if(m==null)   m=contentHash(    String.format("private:viewing:subObjects:%d:object:#",i));
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object",i)), m, null, null);
-            mesh2uidPut(m, content(         String.format("private:viewing:subObjects:%d:object",i)));
+            mesh2uidPut(m, content("private:viewing"), content(String.format("private:viewing:subObjects:%d:object",i)));
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
               Utils.join(contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
             glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
@@ -635,7 +637,8 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 LinkedHashMap n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
                 if(n==null)   n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
                 glElementsPut(content(      String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
-                mesh2uidPut(n, content(     String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
+                mesh2uidPut(n, content(String.format("private:viewing:subObjects:%d:object",i)),
+                               content(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
             }
         }
     }
