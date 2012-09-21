@@ -3,6 +3,7 @@ package android;
 
 import java.util.*;
 import java.util.regex.*;
+import java.util.concurrent.*;
 
 import android.gui.*;
 import android.os.*;
@@ -456,6 +457,57 @@ public class OTS2GUI {
         }catch(Exception e){ log("No getFromLocationName for "+address); log(e); }
         return null;
     }
+
+    // ---------------------------------------------------------------------------
+
+    public LinkedHashMap scene2GUI(){
+
+        mesh2uidPut(user.contentHash("private:viewing:#"),user.content("private:viewing"),user.content("private:viewing"));
+
+        glElementsPut(user.content(                      "private:viewing:vertexShader"),
+                      Utils.join(user.contentListMayJump("private:viewing:vertexShader")," "), "basicVert", basicVert);
+        glElementsPut(user.content(                      "private:viewing:fragmentShader"),
+                      Utils.join(user.contentListMayJump("private:viewing:fragmentShader")," "), "basicFrag", basicFrag);
+
+        LinkedList subs=user.contentList(                "private:viewing:subObjects");
+        if(subs!=null)
+        for(int i=0; i< subs.size(); i++){
+            LinkedHashMap m=user.contentHash(    String.format("private:viewing:subObjects:%d:object:avatar:#",i));
+            if(m==null)   m=user.contentHash(    String.format("private:viewing:subObjects:%d:object:#",i));
+            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object",i)), m, null, null);
+            mesh2uidPut(m, user.content("private:viewing"), user.content(String.format("private:viewing:subObjects:%d:object",i)));
+            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
+              Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
+            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
+              Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:fragmentShader",i))," "), "basicFrag", basicFrag);
+
+            LinkedList subsubs=user.contentList( String.format("private:viewing:subObjects:%d:object:subObjects",i));
+            if(subsubs==null) continue;
+            for(int j=0; j< subsubs.size(); j++){
+                LinkedHashMap n=user.contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
+                if(n==null)   n=user.contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
+                glElementsPut(user.content(      String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
+                mesh2uidPut(n, user.content(String.format("private:viewing:subObjects:%d:object",i)),
+                               user.content(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
+            }
+        }
+        return user.contentHash("private:viewing:#");
+    }
+
+    private void glElementsPut(String t, Object v, String dt, Object dv){
+        if(t==null || t           .equals("")) t=dt;
+        if(v==null || v.toString().equals("")) v=dv;
+        if(t!=null && v!=null) user.glElements.put(t,v);
+    }
+
+    private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
+        if(mesh!=null && uid!=null) user.mesh2uid.put(mesh,UID.normaliseUID(parentuid,uid));
+    }
+
+    static String basicVert="uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
+    static String basicFrag="precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
+
+    // ---------------------------------------------------------------------------
 
     static public void log(Object o){ WebObject.log(o); }
     static public void logrule(){ if(false) WebObject.logrule(); }

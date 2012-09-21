@@ -29,7 +29,9 @@ Smallest subchunk:
        - maybe flatten subs; calculate nested translations
           - lose structure, but keep uid/mesh mapping
        - shallow copy so share big structure but don't alter
-       - and fix Renderer issues (getProgram,VBO,SomeObje)
+       - and fix Renderer issues
+          - getProgram when light before, VBO/SomeObject/Avatar?
+ - then:
     - text notice/sign pre-mesh higher-level world object
        - User renders text texture for Render to treat as usual
        - can edit notice by swiping - default interaction is to just set text

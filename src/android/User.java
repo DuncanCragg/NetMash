@@ -522,6 +522,8 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         }
     }
 
+    public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
+
     private void showWhatIAmViewingAsGUI(){ if(false) logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
@@ -570,8 +572,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             }
             else
             if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
-                meshhash=contentHash("private:viewing:#");
-                cacheVisibleSceneElements();
+                meshhash=ots2gui.scene2GUI();
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
@@ -592,54 +593,6 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 uiJSON.hashPath("mesh", meshhash);
             }
             if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
-        }
-    }
-
-    public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
-
-    private void glElementsPut(String t, Object v, String dt, Object dv){
-        if(t==null || t           .equals("")) t=dt;
-        if(v==null || v.toString().equals("")) v=dv;
-        if(t!=null && v!=null) glElements.put(t,v);
-    }
-
-    private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
-        if(mesh!=null && uid!=null) mesh2uid.put(mesh,UID.normaliseUID(parentuid,uid));
-    }
-
-    static String basicVert="uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
-    static String basicFrag="precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
-
-    private void cacheVisibleSceneElements(){
-
-        mesh2uidPut(contentHash("private:viewing:#"),content("private:viewing"),content("private:viewing"));
-
-        glElementsPut(content(                      "private:viewing:vertexShader"),
-                      Utils.join(contentListMayJump("private:viewing:vertexShader")," "), "basicVert", basicVert);
-        glElementsPut(content(                      "private:viewing:fragmentShader"),
-                      Utils.join(contentListMayJump("private:viewing:fragmentShader")," "), "basicFrag", basicFrag);
-
-        LinkedList subs=contentList(                "private:viewing:subObjects");
-        if(subs==null) return;
-        for(int i=0; i< subs.size(); i++){
-            LinkedHashMap m=contentHash(    String.format("private:viewing:subObjects:%d:object:avatar:#",i));
-            if(m==null)   m=contentHash(    String.format("private:viewing:subObjects:%d:object:#",i));
-            glElementsPut(content(          String.format("private:viewing:subObjects:%d:object",i)), m, null, null);
-            mesh2uidPut(m, content("private:viewing"), content(String.format("private:viewing:subObjects:%d:object",i)));
-            glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
-              Utils.join(contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
-            glElementsPut(content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
-              Utils.join(contentListMayJump(String.format("private:viewing:subObjects:%d:object:fragmentShader",i))," "), "basicFrag", basicFrag);
-
-            LinkedList subsubs=contentList( String.format("private:viewing:subObjects:%d:object:subObjects",i));
-            if(subsubs==null) continue;
-            for(int j=0; j< subsubs.size(); j++){
-                LinkedHashMap n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
-                if(n==null)   n=contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
-                glElementsPut(content(      String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
-                mesh2uidPut(n, content(String.format("private:viewing:subObjects:%d:object",i)),
-                               content(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
-            }
         }
     }
 
