@@ -111,7 +111,7 @@ public class Mesh {
         } catch (Exception e) { e.printStackTrace(); Log.e("Mesh Constructor", e.getLocalizedMessage()); return; }
     }
 
-    public String toString(){ return title; }
+    public String toString(){ return title+" "+vb+" "+ib+" "+textures+" "+rotationX+" "+rotationY+" "+rotationZ+" subs: "+subObjects.size(); }
 
     static public LinkedList getListFromHash(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);

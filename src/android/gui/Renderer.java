@@ -117,13 +117,16 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
 
     private void drawFrame(){
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-        drawLightAndCamera();
+        drawCamera();
+        drawLight();
         drawMeshAndSubs(mesh, 0,0,0);
     }
 
-    private void drawLightAndCamera(){
-
+    private void drawCamera(){
         Matrix.setLookAtM(matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
+    }
+
+    private void drawLight(){
 
         if(touchDetecting) return;
 
@@ -145,7 +148,6 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         mvpmLoc = GLES20.glGetUniformLocation(program, "mvpm");
         posLoc =  GLES20.glGetAttribLocation( program, "pos");
         GLES20.glVertexAttrib3f(posLoc, lightPosInModelSpace[0], lightPosInModelSpace[1], lightPosInModelSpace[2]);
-        GLES20.glDisableVertexAttribArray(posLoc);
 
         Matrix.multiplyMM(matrixMVV, 0, matrixVVV, 0, matrixLgt, 0);
         Matrix.multiplyMM(matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
@@ -256,6 +258,10 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         throwAnyGLException("VBOs");
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, m.il, GLES20.GL_UNSIGNED_SHORT, m.ib);
+
+        GLES20.glDisableVertexAttribArray(posLoc);
+        GLES20.glDisableVertexAttribArray(norLoc);
+        GLES20.glDisableVertexAttribArray(texLoc);
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
