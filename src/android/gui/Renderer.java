@@ -166,17 +166,17 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
 
         int program=0;
 
-            if(!touchDetecting){
-                program=getProgram(m);
-                getProgramLocs(program);
-                setupTextures(m); 
-            }else{
-                program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
-                getProgramLocs(program);
-            }
-            setVariables(m, tx,ty,tz);
-            uploadVBO(m);
-            drawMesh(m);
+        if(!touchDetecting){
+            program=getProgram(m);
+            getProgramLocs(program);
+            setupTextures(m); 
+        }else{
+            program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
+            getProgramLocs(program);
+        }
+        setVariables(m, tx,ty,tz);
+        uploadVBO(m);
+        drawMesh(m);
 
         for(Object o: m.subObjects){
             LinkedHashMap subob=(LinkedHashMap)o;
@@ -281,13 +281,13 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
     }
 
     public void swipeIn(float dx, float dy){
-        direction -= dx/50f;
+        direction += dx/50f;
         if(direction> 2*Math.PI) direction-=2*Math.PI;
         if(direction<-2*Math.PI) direction+=2*Math.PI;
         seeX=eyeX-4.5f*FloatMath.sin(direction);
         seeZ=eyeZ-4.5f*FloatMath.cos(direction);
-        eyeX+=dy/7f*FloatMath.sin(direction);
-        eyeZ+=dy/7f*FloatMath.cos(direction);
+        eyeX-=dy/7f*FloatMath.sin(direction);
+        eyeZ-=dy/7f*FloatMath.cos(direction);
         this.netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
     }
 
