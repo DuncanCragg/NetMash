@@ -26,7 +26,7 @@ public class Utils{
     // -------------------------------
 
     static public String join(LinkedList strings, String joinwith){
-        if(strings==null) return "";
+        if(strings==null || strings.size()==0) return "";
         StringBuilder sb=new StringBuilder();
         for(Object o: strings){ sb.append(o.toString()); sb.append(joinwith); }
         String all=sb.toString();

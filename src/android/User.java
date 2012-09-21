@@ -527,7 +527,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
     private void showWhatIAmViewingAsGUI(){ if(false) logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
-            LinkedHashMap meshhash=null;
+            JSON          meshjson=null;
             String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
             if(contentListContainsAll("private:viewing:is", list("user", "list"))){
@@ -572,7 +572,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             }
             else
             if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
-                meshhash=ots2gui.scene2GUI();
+                meshjson=ots2gui.scene2GUI();
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
@@ -585,10 +585,11 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 uiJSON.stringPath("title", title);
                 uiJSON.hashPath("view", viewhash);
             }
-            if(meshhash!=null){
+            if(meshjson!=null){
                 content("place",content("private:viewing"));
                 notifying(content("private:viewing"));
-                uiJSON=new JSON(meshhash);
+                uiJSON=meshjson;
+log("XXXXXX "+uiJSON);
             }
             if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }

@@ -351,9 +351,13 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
 
     public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
 
+    static String basicVert="uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
+    static String basicFrag="precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
+
     private int getProgram(Mesh m) {
-        String vertshad=(String)netmash.user.glElements.get(m.vertexShader);
-        String fragshad=(String)netmash.user.glElements.get(m.fragmentShader);
+        String vertshad=join(m.vertexShader," ");
+        String fragshad=join(m.fragmentShader," ");
+        if(vertshad.length()==0 || fragshad.length()==0){ vertshad=basicVert; fragshad=basicFrag; }
         return getProgram(vertshad, fragshad);
     }
 

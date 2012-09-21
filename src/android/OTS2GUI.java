@@ -460,14 +460,22 @@ public class OTS2GUI {
 
     // ---------------------------------------------------------------------------
 
-    public LinkedHashMap scene2GUI(){
+    public JSON scene2GUI(){
+
+        JSON scene=new JSON("{ \"is\": \"mesh\" }");
+        scene.stringPath("title", user.content("private:viewing:title"));
+
+        scene.listPath("rotation",      user.contentList("private:viewing:rotation"));
+        scene.listPath("scale",         user.contentList("private:viewing:scale"));
+        scene.listPath("vertices",      user.contentList("private:viewing:vertices"));
+        scene.listPath("texturepoints", user.contentList("private:viewing:texturepoints"));
+        scene.listPath("normals",       user.contentList("private:viewing:normals"));
+        scene.listPath("faces",         user.contentList("private:viewing:faces"));
+        scene.listPath("textures",      user.contentList("private:viewing:textures"));
+        scene.listPath("vertexShader",  user.contentListMayJump("private:viewing:vertexShader"));
+        scene.listPath("fragmentShader",user.contentListMayJump("private:viewing:fragmentShader"));
 
         mesh2uidPut(user.contentHash("private:viewing:#"),user.content("private:viewing"),user.content("private:viewing"));
-
-        glElementsPut(user.content(                      "private:viewing:vertexShader"),
-                      Utils.join(user.contentListMayJump("private:viewing:vertexShader")," "), "basicVert", basicVert);
-        glElementsPut(user.content(                      "private:viewing:fragmentShader"),
-                      Utils.join(user.contentListMayJump("private:viewing:fragmentShader")," "), "basicFrag", basicFrag);
 
         LinkedList subs=user.contentList(                "private:viewing:subObjects");
         if(subs!=null)
@@ -476,10 +484,12 @@ public class OTS2GUI {
             if(m==null)   m=user.contentHash(    String.format("private:viewing:subObjects:%d:object:#",i));
             glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object",i)), m, null, null);
             mesh2uidPut(m, user.content("private:viewing"), user.content(String.format("private:viewing:subObjects:%d:object",i)));
+/*
             glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
               Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
             glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
               Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:fragmentShader",i))," "), "basicFrag", basicFrag);
+*/
 
             LinkedList subsubs=user.contentList( String.format("private:viewing:subObjects:%d:object:subObjects",i));
             if(subsubs==null) continue;
@@ -491,7 +501,7 @@ public class OTS2GUI {
                                user.content(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
             }
         }
-        return user.contentHash("private:viewing:#");
+        return scene;
     }
 
     private void glElementsPut(String t, Object v, String dt, Object dv){
@@ -503,9 +513,6 @@ public class OTS2GUI {
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
         if(mesh!=null && uid!=null) user.mesh2uid.put(mesh,UID.normaliseUID(parentuid,uid));
     }
-
-    static String basicVert="uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
-    static String basicFrag="precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
 
     // ---------------------------------------------------------------------------
 
