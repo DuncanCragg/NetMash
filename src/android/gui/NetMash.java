@@ -216,12 +216,12 @@ public class NetMash extends MapActivity{
         String title =uiJSON.stringPathN("title");
         if(title==null) setTitle(       "NetMash");
         else            setTitle(title+"|NetMash");
-        if(uiJSON.stringPathN("is").equals("gui")){
+        if("gui".equals(uiJSON.stringPathN("is"))){
             Object      o=uiJSON.hashPathN("view");
             if(o==null) o=uiJSON.listPathN("view");
             addGUI(o);
         }else{
-            LinkedHashMap mesh=uiJSON.hashPathN("mesh");
+            LinkedHashMap mesh=uiJSON.hashPathN("#");
             addMesh(mesh);
         }
     }

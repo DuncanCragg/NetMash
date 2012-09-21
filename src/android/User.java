@@ -588,9 +588,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             if(meshhash!=null){
                 content("place",content("private:viewing"));
                 notifying(content("private:viewing"));
-                uiJSON=new JSON("{ \"is\": \"mesh\" }");
-                uiJSON.stringPath("title", title);
-                uiJSON.hashPath("mesh", meshhash);
+                uiJSON=new JSON(meshhash);
             }
             if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }
