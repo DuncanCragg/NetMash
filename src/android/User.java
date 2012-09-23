@@ -589,7 +589,6 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 content("place",content("private:viewing"));
                 notifying(content("private:viewing"));
                 uiJSON=meshjson;
-log("XXXXXX "+uiJSON);
             }
             if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }

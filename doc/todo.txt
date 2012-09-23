@@ -30,20 +30,21 @@ Smallest subchunk:
           - limit scene graph depth
           - re-use sub-objects in entirety
           - shallow copy so share big structure but don't alter
-          - add new view-only items, like HUD
           - calculate nested translations
           - mesh2uid for tracking back to scene graph objects
+          - add new view-only items, like HUD
        - result should be something you could supply raw, including flattened nesting
-       - convert higher-level semantic, model objects into meshes
-          - user: just get their avatar
-          - sphere: convert to mesh
-          - notice: convert to mesh with text on texture
+    - fix Renderer issues
+       - getProgram when light before, VBO/SomeObject/Avatar?
+ - and:
        - detect changes in components of view - how?
           - share same shaders .. by uid
           - share same textures .. by URL
           - share same meshes? detect internal change
-    - and fix Renderer issues
-       - getProgram when light before, VBO/SomeObject/Avatar?
+       - convert higher-level semantic, model objects into meshes
+          - user: just get their avatar
+          - sphere: convert to mesh
+          - notice: convert to mesh with text on texture
  - then:
     - text notice/sign pre-mesh higher-level world object
        - User renders text texture for Render to treat as usual

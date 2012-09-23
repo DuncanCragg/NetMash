@@ -5,7 +5,7 @@ reading this, you should be reading the code or something. Or contacting me.
 
 Run the emulator with Google maps at API 10-16, then:
 
-$ make mesh       -- installs the app for local, no server
-$ make            -- installs the app and runs the server
+$ make emu -- build for the emulator
+$ make lan -- build for plugged-in device
 
 
