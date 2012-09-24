@@ -462,58 +462,75 @@ public class OTS2GUI {
 
     public JSON scene2GUI(){
 
-        JSON scene=new JSON("{ \"is\": \"mesh\" }");
-        scene.stringPath("title", user.content("private:viewing:title"));
+        JSON viewjson=new JSON("{ \"is\": \"mesh\" }");
+        viewjson.stringPath("title", user.content("private:viewing:title"));
 
-        scene.listPath("rotation",      user.contentList("private:viewing:rotation"));
-        scene.listPath("scale",         user.contentList("private:viewing:scale"));
-        scene.listPath("vertices",      user.contentList("private:viewing:vertices"));
-        scene.listPath("texturepoints", user.contentList("private:viewing:texturepoints"));
-        scene.listPath("normals",       user.contentList("private:viewing:normals"));
-        scene.listPath("faces",         user.contentList("private:viewing:faces"));
-        scene.listPath("textures",      user.contentList("private:viewing:textures"));
-        scene.listPath("vertexShader",  user.contentListMayJump("private:viewing:vertexShader"));
-        scene.listPath("fragmentShader",user.contentListMayJump("private:viewing:fragmentShader"));
+        viewjson.listPath("rotation",      user.contentList("private:viewing:rotation"));
+        viewjson.listPath("scale",         user.contentList("private:viewing:scale"));
+        viewjson.listPath("vertices",      user.contentList("private:viewing:vertices"));
+        viewjson.listPath("texturepoints", user.contentList("private:viewing:texturepoints"));
+        viewjson.listPath("normals",       user.contentList("private:viewing:normals"));
+        viewjson.listPath("faces",         user.contentList("private:viewing:faces"));
+        viewjson.listPath("textures",      user.contentList("private:viewing:textures"));
+        viewjson.listPath("vertexShader",  user.contentListMayJump("private:viewing:vertexShader"));
+        viewjson.listPath("fragmentShader",user.contentListMayJump("private:viewing:fragmentShader"));
 
-        mesh2uidPut(user.contentHash("private:viewing:#"),user.content("private:viewing"),user.content("private:viewing"));
+        mesh2uidPut(viewjson.hashPathN("#"),user.content("private:viewing"),user.content("private:viewing"));
 
-        LinkedList subs=user.contentList(                "private:viewing:subObjects");
-        if(subs!=null)
+        LinkedList subs=user.contentList("private:viewing:subObjects");
+        if(subs==null) return viewjson;
+        LinkedList subobs=new LinkedList();
+        viewjson.listPath("subObjects", subobs);
+
         for(int i=0; i< subs.size(); i++){
-            LinkedHashMap m=user.contentHash(    String.format("private:viewing:subObjects:%d:object:avatar:#",i));
-            if(m==null)   m=user.contentHash(    String.format("private:viewing:subObjects:%d:object:#",i));
-            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object",i)), m, null, null);
-            mesh2uidPut(m, user.content("private:viewing"), user.content(String.format("private:viewing:subObjects:%d:object",i)));
-/*
-            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
-              Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
-            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
-              Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:fragmentShader",i))," "), "basicFrag", basicFrag);
-*/
-
-            LinkedList subsubs=user.contentList( String.format("private:viewing:subObjects:%d:object:subObjects",i));
+            String p=String.format("private:viewing:subObjects:%d",i);
+            addObjectToSubs("private:viewing",p,subobs,0,0,0);
+        }
+        for(int i=0; i< subs.size(); i++){
+            String o=String.format("private:viewing:subObjects:%d:object",i);
+            String c=String.format("private:viewing:subObjects:%d:coords",i);
+            String s=String.format("private:viewing:subObjects:%d:object:subObjects",i);
+            LinkedList subcoords=user.contentList(c);
+            LinkedList subsubs  =user.contentList(s);
             if(subsubs==null) continue;
+            float tx=Mesh.getFloatFromList(subcoords,0,0),ty=Mesh.getFloatFromList(subcoords,1,0),tz=Mesh.getFloatFromList(subcoords,2,0);
             for(int j=0; j< subsubs.size(); j++){
-                LinkedHashMap n=user.contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:avatar:#",i,j));
-                if(n==null)   n=user.contentHash(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object:#",i,j));
-                glElementsPut(user.content(      String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)), n, null, null);
-                mesh2uidPut(n, user.content(String.format("private:viewing:subObjects:%d:object",i)),
-                               user.content(String.format("private:viewing:subObjects:%d:object:subObjects:%d:object",i,j)));
+                String q=String.format("private:viewing:subObjects:%d:object:subObjects:%d",i,j);
+                addObjectToSubs(o,q,subobs, tx,ty,tz);
             }
         }
-        return scene;
+log("XXXXXX "+viewjson);
+        return viewjson;
     }
 
-    private void glElementsPut(String t, Object v, String dt, Object dv){
-        if(t==null || t           .equals("")) t=dt;
-        if(v==null || v.toString().equals("")) v=dv;
-        if(t!=null && v!=null) user.glElements.put(t,v);
+    private void addObjectToSubs(String o, String p, LinkedList subobs, float tx, float ty, float tz){
+        LinkedHashMap hm=new LinkedHashMap();
+        LinkedHashMap             nottherighthash=user.contentHash(p+":object:avatar:#");
+        if(nottherighthash==null) nottherighthash=user.contentHash(p+":object:#");
+        if(nottherighthash==null) return;
+        hm.put("object",nottherighthash);
+        mesh2uidPut(nottherighthash, user.content(o), user.content(p+":object"));
+        LinkedList coords=new LinkedList();
+        LinkedList subcoords=user.contentList(p+":coords");
+        coords.add(tx+Mesh.getFloatFromList(subcoords,0,0));
+        coords.add(ty+Mesh.getFloatFromList(subcoords,1,0));
+        coords.add(tz+Mesh.getFloatFromList(subcoords,2,0));
+        hm.put("coords",coords);
+        subobs.add(hm);
+        user.contentListMayJump(p+":object:vertexShader");
+        user.contentListMayJump(p+":object:fragmentShader");
     }
 
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
         if(mesh!=null && uid!=null) user.mesh2uid.put(mesh,UID.normaliseUID(parentuid,uid));
     }
 
+/*
+            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
+              Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
+            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
+              Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:fragmentShader",i))," "), "basicFrag", basicFrag);
+*/
     // ---------------------------------------------------------------------------
 
     static public void log(Object o){ WebObject.log(o); }

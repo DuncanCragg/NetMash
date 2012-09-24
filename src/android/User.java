@@ -522,12 +522,10 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         }
     }
 
-    public ConcurrentHashMap<String,Object> glElements = new ConcurrentHashMap<String,Object>();
-
     private void showWhatIAmViewingAsGUI(){ if(false) logrule();
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
-            JSON          meshjson=null;
+            JSON          viewjson=null;
             String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
             if(contentListContainsAll("private:viewing:is", list("user", "list"))){
@@ -572,7 +570,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             }
             else
             if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
-                meshjson=ots2gui.scene2GUI();
+                viewjson=ots2gui.scene2GUI();
             }
             else{
                 viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
@@ -585,10 +583,10 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 uiJSON.stringPath("title", title);
                 uiJSON.hashPath("view", viewhash);
             }
-            if(meshjson!=null){
+            if(viewjson!=null){
                 content("place",content("private:viewing"));
                 notifying(content("private:viewing"));
-                uiJSON=meshjson;
+                uiJSON=viewjson;
             }
             if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }

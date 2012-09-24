@@ -102,7 +102,6 @@ public class Renderer implements GLSurfaceView.Renderer {
             ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
-log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)+"]="+touchedGrey);
             Mesh m=touchables.get(""+touchedGrey);
             if(m!=null) this.netmash.user.onObjectTouched(m.mesh,touchShift);
             touchDetecting=false;
@@ -119,12 +118,19 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         drawCamera();
         drawLight();
-        drawMeshAndSubs(mesh, 0,0,0);
+        drawMeshAndSubs(mesh);
     }
 
     private void drawCamera(){
         Matrix.setLookAtM(matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
     }
+
+    static String pointVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position = mvpm * pos; gl_PointSize = 4.0; }";
+    static String pointFragmentShaderSource     = "precision mediump float; void main(){ gl_FragColor = vec4(1.0, 1.0, 0.8, 1.0); }";
+    static String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
+    static String grayscaleFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
+    static String basicVertexShaderSource       = "uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
+    static String basicFragmentShaderSource     = "precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
 
     private void drawLight(){
 
@@ -140,8 +146,6 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         Matrix.multiplyMV(lightPosInWorldSpace, 0, matrixLgt, 0, lightPosInModelSpace, 0);
         Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
 
-        String pointVertexShaderSource = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position = mvpm * pos; gl_PointSize = 4.0; }";
-        String pointFragmentShaderSource = "precision mediump float; void main(){ gl_FragColor = vec4(1.0, 1.0, 0.8, 1.0); }";
         int program=getProgram(pointVertexShaderSource, pointFragmentShaderSource);
         if(program==0) return;
 
@@ -157,15 +161,26 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
     }
 
-    private String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
-    private String grayscaleFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
+    public ConcurrentHashMap<LinkedHashMap,Mesh> meshes = new ConcurrentHashMap<LinkedHashMap,Mesh>();
 
-    public ConcurrentHashMap<Object,Mesh> meshes = new ConcurrentHashMap<Object,Mesh>();
+    private void drawMeshAndSubs(Mesh m){
 
-    private void drawMeshAndSubs(Mesh m, float tx, float ty, float tz){
+        drawAMesh(m,0,0,0);
 
+        for(Object o: m.subObjects){
+            LinkedHashMap subob=(LinkedHashMap)o;
+            Object subobobj=subob.get("object");
+            if(!(subobobj instanceof LinkedHashMap)) continue;
+            LinkedHashMap sm=(LinkedHashMap)subobobj;
+            Object subobcrd=subob.get("coords");
+            Mesh ms=meshes.get(sm);
+            if(ms==null){ ms=new Mesh(sm); meshes.put(sm,ms); }
+            drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
+        }
+    }
+
+    private void drawAMesh(Mesh m, float tx, float ty, float tz){
         int program=0;
-
         if(!touchDetecting){
             program=getProgram(m);
             getProgramLocs(program);
@@ -177,17 +192,6 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
         setVariables(m, tx,ty,tz);
         uploadVBO(m);
         drawMesh(m);
-
-        for(Object o: m.subObjects){
-            LinkedHashMap subob=(LinkedHashMap)o;
-            Object subobuid=subob.get("object");
-            Object subobcrd=subob.get("coords");
-            LinkedHashMap sm=(LinkedHashMap)netmash.user.glElements.get(subobuid);
-            if(sm==null) continue;
-            Mesh ms=meshes.get(subobuid);
-            if(ms==null){ ms=new Mesh(sm); meshes.put(subobuid,ms); }
-            drawMeshAndSubs(ms, tx+Mesh.getFloatFromList(subobcrd,0,0), ty+Mesh.getFloatFromList(subobcrd,1,0), tz+Mesh.getFloatFromList(subobcrd,2,0));
-        }
     }
 
     private void setVariables(Mesh m, float tx, float ty, float tz){
@@ -351,13 +355,10 @@ log("touch detect: @("+touchX+"/"+touchY+")["+b.get(0)+","+b.get(1)+","+b.get(2)
 
     public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
 
-    static String basicVert="uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
-    static String basicFrag="precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
-
     private int getProgram(Mesh m) {
         String vertshad=join(m.vertexShader," ");
         String fragshad=join(m.fragmentShader," ");
-        if(vertshad.length()==0 || fragshad.length()==0){ vertshad=basicVert; fragshad=basicFrag; }
+        if(vertshad.length()==0 || fragshad.length()==0){ vertshad=basicVertexShaderSource; fragshad=basicFragmentShaderSource; }
         return getProgram(vertshad, fragshad);
     }
 
