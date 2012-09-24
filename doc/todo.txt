@@ -15,6 +15,8 @@ Current priority: in-world object network and object mash editing
  - shows off user editing USP and ease of programming
  - done a bit of world creation, next big chunk needed
 
+--------------------------------------------------------
+
 Smallest subchunk:
 
  - edit brings up single param panel (tag:val text)
@@ -24,38 +26,26 @@ Smallest subchunk:
  - need to fix editing-rule stuff
 
  - next step:
-    - User view is dereferenced obnet aggregate/compiled to mesh @ Render level
-       - and editing, etc, HUD stuff added
-       - flatten subs
-          - limit scene graph depth
-          - re-use sub-objects in entirety
-          - shallow copy so share big structure but don't alter
-          - calculate nested translations
-          - mesh2uid for tracking back to scene graph objects
-          - add new view-only items, like HUD
-       - result should be something you could supply raw, including flattened nesting
-    - fix Renderer issues
+    - shaders
+    - fix
+       - top level not editable
        - getProgram when light before, VBO/SomeObject/Avatar?
- - and:
-       - detect changes in components of view - how?
-          - share same shaders .. by uid
-          - share same textures .. by URL
-          - share same meshes? detect internal change
-       - convert higher-level semantic, model objects into meshes
-          - user: just get their avatar
-          - sphere: convert to mesh
-          - notice: convert to mesh with text on texture
+       - memory usage
+       - vert and frag should come together, else use basic
+    - detect changes in components of view - how?
+       - share same shaders .. by uid
+       - share same textures .. by URL
+       - share same meshes? detect internal change
+    - convert higher-level semantic, model objects into meshes
+       - user: just get their avatar
+       - sphere: convert to mesh
+       - notice: convert to mesh with text on texture
  - then:
     - text notice/sign pre-mesh higher-level world object
        - User renders text texture for Render to treat as usual
        - can edit notice by swiping - default interaction is to just set text
     - or shift-swipe to edit - which is another notice mesh(es) in HUD
        - so edit more detail: size, material
-
---------------------------------------------------------
-Fixes
-
- - vert and frag should come together, else use basic
 
 --------------------------------------------------------
 Explore, Interact

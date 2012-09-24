@@ -499,17 +499,17 @@ public class OTS2GUI {
                 addObjectToSubs(o,q,subobs, tx,ty,tz);
             }
         }
+        addEditingToSubs(subobs);
 log("XXXXXX "+viewjson);
         return viewjson;
     }
 
     private void addObjectToSubs(String o, String p, LinkedList subobs, float tx, float ty, float tz){
+        LinkedHashMap objhash=object2mesh(p+":object");
+        if(objhash==null) return;
         LinkedHashMap hm=new LinkedHashMap();
-        LinkedHashMap             nottherighthash=user.contentHash(p+":object:avatar:#");
-        if(nottherighthash==null) nottherighthash=user.contentHash(p+":object:#");
-        if(nottherighthash==null) return;
-        hm.put("object",nottherighthash);
-        mesh2uidPut(nottherighthash, user.content(o), user.content(p+":object"));
+        hm.put("object",objhash);
+        mesh2uidPut(objhash, user.content(o), user.content(p+":object"));
         LinkedList coords=new LinkedList();
         LinkedList subcoords=user.contentList(p+":coords");
         coords.add(tx+Mesh.getFloatFromList(subcoords,0,0));
@@ -521,16 +521,27 @@ log("XXXXXX "+viewjson);
         user.contentListMayJump(p+":object:fragmentShader");
     }
 
+    private void addEditingToSubs(LinkedList subobs){
+        if(!user.contentSet("private:editing")) return;
+        LinkedHashMap objhash=user.contentHash("private:editing:#");
+        LinkedList coords=new LinkedList();
+        coords.add(1); coords.add(1); coords.add(1);
+        LinkedHashMap hm=new LinkedHashMap();
+        hm.put("object",objhash);
+        hm.put("coords",coords);
+        subobs.add(hm);
+    }
+
+    private LinkedHashMap object2mesh(String p){
+        LinkedHashMap     objhash=user.contentHash(p+":avatar:#");
+        if(objhash==null) objhash=user.contentHash(p+":#");
+        return objhash;
+    }
+
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
         if(mesh!=null && uid!=null) user.mesh2uid.put(mesh,UID.normaliseUID(parentuid,uid));
     }
 
-/*
-            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:vertexShader",i)),
-              Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:vertexShader",i))," "), "basicVert", basicVert);
-            glElementsPut(user.content(          String.format("private:viewing:subObjects:%d:object:fragmentShader",i)),
-              Utils.join(user.contentListMayJump(String.format("private:viewing:subObjects:%d:object:fragmentShader",i))," "), "basicFrag", basicFrag);
-*/
     // ---------------------------------------------------------------------------
 
     static public void log(Object o){ WebObject.log(o); }

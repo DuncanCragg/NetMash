@@ -66,6 +66,13 @@ public class Renderer implements GLSurfaceView.Renderer {
     private boolean touchDetecting=false;
     private boolean touchShift=false;
 
+    static String pointVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position = mvpm * pos; gl_PointSize = 4.0; }";
+    static String pointFragmentShaderSource     = "precision mediump float; void main(){ gl_FragColor = vec4(1.0, 1.0, 0.8, 1.0); }";
+    static String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
+    static String grayscaleFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
+    static String basicVertexShaderSource       = "uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
+    static String basicFragmentShaderSource     = "precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
+
     public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
         this.mesh=new Mesh(hm);
@@ -117,7 +124,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private void drawFrame(){
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         drawCamera();
-        drawLight();
+        drawLight(true);
         drawMeshAndSubs(mesh);
     }
 
@@ -125,14 +132,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.setLookAtM(matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
     }
 
-    static String pointVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position = mvpm * pos; gl_PointSize = 4.0; }";
-    static String pointFragmentShaderSource     = "precision mediump float; void main(){ gl_FragColor = vec4(1.0, 1.0, 0.8, 1.0); }";
-    static String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
-    static String grayscaleFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
-    static String basicVertexShaderSource       = "uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
-    static String basicFragmentShaderSource     = "precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
-
-    private void drawLight(){
+    private void drawLight(boolean showPoint){
 
         if(touchDetecting) return;
 
@@ -146,11 +146,17 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMV(lightPosInWorldSpace, 0, matrixLgt, 0, lightPosInModelSpace, 0);
         Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
 
+        if(showPoint) drawLightPoint();
+    }
+
+    private void drawLightPoint(){
+
         int program=getProgram(pointVertexShaderSource, pointFragmentShaderSource);
         if(program==0) return;
 
         mvpmLoc = GLES20.glGetUniformLocation(program, "mvpm");
         posLoc =  GLES20.glGetAttribLocation( program, "pos");
+
         GLES20.glVertexAttrib3f(posLoc, lightPosInModelSpace[0], lightPosInModelSpace[1], lightPosInModelSpace[2]);
 
         Matrix.multiplyMM(matrixMVV, 0, matrixVVV, 0, matrixLgt, 0);
@@ -172,9 +178,9 @@ public class Renderer implements GLSurfaceView.Renderer {
             Object subobobj=subob.get("object");
             if(!(subobobj instanceof LinkedHashMap)) continue;
             LinkedHashMap sm=(LinkedHashMap)subobobj;
-            Object subobcrd=subob.get("coords");
             Mesh ms=meshes.get(sm);
             if(ms==null){ ms=new Mesh(sm); meshes.put(sm,ms); }
+            Object subobcrd=subob.get("coords");
             drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
         }
     }
