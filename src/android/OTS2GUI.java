@@ -501,7 +501,6 @@ public class OTS2GUI {
             }
         }
         addEditingToSubs(subobs);
-log("XXXXXX "+viewjson);
         return viewjson;
     }
 

@@ -28,10 +28,10 @@ Smallest subchunk:
  - next step:
     - shaders
     - fix
-       - top level not editable
+       - top level not editable: view notice
        - getProgram when light before, VBO/SomeObject/Avatar?
        - memory usage
-       - vert and frag should come together, else use basic
+       - vert and frag should come together, else use basic: why sept?
     - detect changes in components of view - how?
        - share same shaders .. by uid
        - share same textures .. by URL
@@ -147,11 +147,12 @@ IDE stuff
  - it's an IDE. But the code is already structured.
     - it's graph/tree reduction/rewriting
     - an IDE that extends beyond the team into the world..
+ - knowing type means can autocomplete and offer appropriate edit widgets (date, colour, ..)
+    - constraints of JSON needn't be at all visible in gui
+    - smooths over ugliness: %, "", etc
  - render a rule nicely: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
     - render rules specially as recognised type
     - render JSON as recognised ObNet type: %rules, %more, is, etc known
-    - constraints of JSON needn't be at all visible in gui
-    - smooths over ugliness: %, "", etc
  - show how lists and singles are treated the same somehow
  - split-screen and/or easy-flip: Object, Object Net, Object Mash
     - this has to be really easy and nice to use

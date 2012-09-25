@@ -207,6 +207,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             public void evaluate(){
                 if(!shift){
                     content("private:editing",objectuid);
+                    showWhatIAmViewing();
                 }
                 else
                 if(!contentSet("private:forms:"+UID.toUID(objectuid))){
