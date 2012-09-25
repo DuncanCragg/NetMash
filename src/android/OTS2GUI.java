@@ -23,6 +23,8 @@ import netmash.lib.*;
 import netmash.forest.*;
 import netmash.platform.Kernel;
 
+import static netmash.forest.WebObject.*;
+
 /** Convertors from std OTS JSON to common GUI OTS JSON.
   */
 public class OTS2GUI {
@@ -463,17 +465,16 @@ public class OTS2GUI {
     public JSON scene2GUI(){
 
         JSON viewjson=new JSON("{ \"is\": \"mesh\" }");
-        viewjson.stringPath("title", user.content("private:viewing:title"));
-
-        viewjson.listPath("rotation",      user.contentList("private:viewing:rotation"));
-        viewjson.listPath("scale",         user.contentList("private:viewing:scale"));
-        viewjson.listPath("vertices",      user.contentList("private:viewing:vertices"));
-        viewjson.listPath("texturepoints", user.contentList("private:viewing:texturepoints"));
-        viewjson.listPath("normals",       user.contentList("private:viewing:normals"));
-        viewjson.listPath("faces",         user.contentList("private:viewing:faces"));
-        viewjson.listPath("textures",      user.contentList("private:viewing:textures"));
-        viewjson.listPath("vertexShader",  user.contentListMayJump("private:viewing:vertexShader"));
-        viewjson.listPath("fragmentShader",user.contentListMayJump("private:viewing:fragmentShader"));
+        viewjson.stringPath("title",         user.content(           "private:viewing:title"));
+        viewjson.listPath(  "rotation",      user.contentList(       "private:viewing:rotation"));
+        viewjson.listPath(  "scale",         user.contentList(       "private:viewing:scale"));
+        viewjson.listPath(  "vertices",      user.contentList(       "private:viewing:vertices"));
+        viewjson.listPath(  "texturepoints", user.contentList(       "private:viewing:texturepoints"));
+        viewjson.listPath(  "normals",       user.contentList(       "private:viewing:normals"));
+        viewjson.listPath(  "faces",         user.contentList(       "private:viewing:faces"));
+        viewjson.listPath(  "textures",      user.contentList(       "private:viewing:textures"));
+        viewjson.listPath(  "vertexShader",  user.contentListMayJump("private:viewing:vertexShader"));
+        viewjson.listPath(  "fragmentShader",user.contentListMayJump("private:viewing:fragmentShader"));
 
         mesh2uidPut(viewjson.hashPathN("#"),user.content("private:viewing"),user.content("private:viewing"));
 
@@ -533,9 +534,31 @@ log("XXXXXX "+viewjson);
     }
 
     private LinkedHashMap object2mesh(String p){
-        LinkedHashMap     objhash=user.contentHash(p+":avatar:#");
-        if(objhash==null) objhash=user.contentHash(p+":#");
-        return objhash;
+        if(user.contentIsOrListContains(p+":is","mesh"))   return user.contentHash(p+":#");
+        if(user.contentIsOrListContains(p+":is","user"))   return user.contentHash(p+":avatar:#");
+        if(user.contentIsOrListContains(p+":is","notice")) return notice2mesh(p);
+        return null;
+    }
+
+    private LinkedHashMap notice2mesh(String p){
+        JSON json=new JSON("{ \"is\": \"mesh\" }");
+        json.stringPath("title",         user.content(           p+":title"));
+        json.listPath(  "rotation",      user.contentList(       p+":rotation"));
+        json.listPath(  "scale",         user.contentList(       p+":scale"));
+        json.listPath(  "vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
+                                              list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
+        json.listPath(  "texturepoints", list(list( 0.0, 0.0 ), list( 5.0, 0.0 ), list( 5.0, 5.0 ), list( 0.0, 5.0 ) ));
+        json.listPath(  "normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
+                                              list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
+                                              list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
+        json.listPath(  "faces",         list(list( "5/1/5","1/2/5","4/3/5" ), list( "5/1/5","4/3/5","8/4/5" ), list( "3/1/1","7/2/1","8/3/1" ),
+                                              list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
+                                              list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
+                                              list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
+        json.listPath(  "textures",      user.contentList(       p+":textures"));
+        json.listPath(  "vertexShader",  user.contentListMayJump(p+":vertexShader"));
+        json.listPath(  "fragmentShader",user.contentListMayJump(p+":fragmentShader"));
+        return json.hashPathN("#");
     }
 
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
@@ -544,9 +567,6 @@ log("XXXXXX "+viewjson);
 
     // ---------------------------------------------------------------------------
 
-    static public void log(Object o){ WebObject.log(o); }
-    static public void logrule(){ if(false) WebObject.logrule(); }
-    static public LinkedList list(Object...args){ return WebObject.list(args); }
-    static public LinkedHashMap style(Object...args){ return WebObject.hash(WebObject.hash("is","style"), args); }
+    static public LinkedHashMap style(Object...args){ return hash(hash("is","style"), args); }
 }
 

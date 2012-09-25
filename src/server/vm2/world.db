@@ -14,6 +14,7 @@
   "scale": [ 15.0, 15.0, 15.0 ],
   "present": 0,
   "subObjects": [
+    { "object": "uid-8a54-9690-a4d5-4a9c", "coords": [  0, 0, 15 ] },
     { "object": "uid-c058-2db1-0b26-8f48", "coords": [  7, 0,  7 ] },
     { "object": "uid-c058-2db1-0b26-8f48", "coords": [ -7, 0,  7 ] },
     { "object": "uid-c058-2db1-0b26-8f48", "coords": [  7, 0, -7 ] },
@@ -84,6 +85,17 @@
     [ "8/2/4","7/3/4","6/4/4" ], [ "1/1/3","2/2/3","3/3/3" ], [ "1/1/3","3/3/3","4/4/3" ]
   ],
   "textures": [ "http://2.bp.blogspot.com/-8bvhcheQiWg/UA_DhJZVujI/AAAAAAAAB5E/mrKogVzxi5o/s320/Seamless+marble+cream+tiles+pattern+texture.jpg" ],
+  "vertexShader": "http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json",
+  "fragmentShader": "http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json"
+}
+
+{ "%uid": "uid-8a54-9690-a4d5-4a9c",
+  "%class": "netmash.forest.Editable",
+  "is": [ "3d", "notice", "editable" ],
+  "title": "Important Notice",
+  "text": "Welcome to Ann Droid's Place!",
+  "rotation": [ 0, 0, 0 ],
+  "scale": [ 1.0, 1.0, 1.0 ],
   "vertexShader": "http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json",
   "fragmentShader": "http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json"
 }
