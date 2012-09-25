@@ -844,6 +844,10 @@ public class NetMash extends MapActivity{
         return placeHolderBitmap;
     }
 
+    public Drawable getPlaceHolderDrawable(){
+        return getResources().getDrawable(R.raw.placeholder);
+    }
+
     private Bitmap getImageBitmap(String url){
         Bitmap bm=null;
         try{

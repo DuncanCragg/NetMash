@@ -8,6 +8,7 @@ import java.util.concurrent.*;
 import android.gui.*;
 import android.os.*;
 import android.util.*;
+import android.graphics.*;
 
 import android.content.*;
 import android.database.Cursor;
@@ -522,6 +523,8 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             showWhatIAmViewingAsRawJSON();
         }
     }
+
+    public ConcurrentHashMap<String,Bitmap> textBitmaps = new ConcurrentHashMap<String,Bitmap>();
 
     private void showWhatIAmViewingAsGUI(){ if(false) logrule();
         if(contentSet("private:viewing:is")){

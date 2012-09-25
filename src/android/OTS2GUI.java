@@ -7,6 +7,8 @@ import java.util.concurrent.*;
 
 import android.gui.*;
 import android.os.*;
+import android.graphics.*;
+import android.graphics.drawable.*;
 
 import android.content.*;
 import android.database.Cursor;
@@ -546,7 +548,7 @@ public class OTS2GUI {
         json.listPath(  "scale",         user.contentList(       p+":scale"));
         json.listPath(  "vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
                                               list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
-        json.listPath(  "texturepoints", list(list( 0.0, 0.0 ), list( 5.0, 0.0 ), list( 5.0, 5.0 ), list( 0.0, 5.0 ) ));
+        json.listPath(  "texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));
         json.listPath(  "normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
                                               list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
                                               list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
@@ -554,10 +556,29 @@ public class OTS2GUI {
                                               list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
                                               list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                               list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
-        json.listPath(  "textures",      user.contentList(       p+":textures"));
         json.listPath(  "vertexShader",  user.contentListMayJump(p+":vertexShader"));
         json.listPath(  "fragmentShader",user.contentListMayJump(p+":fragmentShader"));
+
+        String text=user.content(p+":text");
+        user.textBitmaps.put(text, text2Bitmap(text));
+        json.listPath("textures", list(text));
         return json.hashPathN("#");
+    }
+
+    private Bitmap text2Bitmap(String text){
+        Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
+        Canvas canvas = new Canvas(bitmap);
+        if(NetMash.top!=null){
+            Drawable background = NetMash.top.getPlaceHolderDrawable();
+            background.setBounds(0, 0, 256, 256);
+            background.draw(canvas);
+        }
+        Paint textPaint = new Paint();
+        textPaint.setTextSize(24);
+        textPaint.setAntiAlias(true);
+        textPaint.setARGB(0xff, 0xff, 0xff, 0xff);
+        canvas.drawText(text, 10,30, textPaint);
+        return bitmap;
     }
 
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){

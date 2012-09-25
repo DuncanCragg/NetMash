@@ -11,7 +11,7 @@ LOCAL_IP=192.168.0.6
 
 local: androidemu logcat
 
-lan: androidlanrel runlan logcat
+lan: androidlanrel runlan lancat
 
 emu: androidemu runemu logcat
 
@@ -46,13 +46,13 @@ editlocaldbanddynamicfile:
 
 androidemu: clean init setappemuconfig setdebugmapkey
 	ant debug
-	adb uninstall android.gui
-	adb install bin/NetMash-debug.apk
+	adb -e uninstall android.gui
+	adb -e install bin/NetMash-debug.apk
 
 androidlanrel: clean init setapplanconfig setreleasemapkey
 	ant release
-	adb uninstall android.gui
-	adb install bin/NetMash-release.apk
+	adb -d uninstall android.gui
+	adb -d install bin/NetMash-release.apk
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 androidremoterel: clean init setappremoteconfig setreleasemapkey
@@ -231,7 +231,10 @@ logthree:
 	xterm -geometry 97x20+0+80 -e make logout2 &
 
 logcat:
-	adb logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"
+	adb -e logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"
+
+lancat:
+	adb -d logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"
 
 logout1:
 	tail -9999f src/server/vm1/netmash.log
