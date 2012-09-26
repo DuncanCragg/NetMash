@@ -525,12 +525,8 @@ public class OTS2GUI {
 
     private void addEditingToSubs(LinkedList subobs){
         if(!user.contentSet("private:editing")) return;
-        LinkedHashMap objhash=object2edit();
-        LinkedList coords=new LinkedList();
-        coords.add(1); coords.add(1); coords.add(1);
         LinkedHashMap hm=new LinkedHashMap();
-        hm.put("object",objhash);
-        hm.put("coords",coords);
+        hm.put("object",object2edit());
         subobs.add(hm);
     }
 

@@ -181,7 +181,8 @@ public class Renderer implements GLSurfaceView.Renderer {
             Mesh ms=meshes.get(sm);
             if(ms==null){ ms=new Mesh(sm); meshes.put(sm,ms); }
             Object subobcrd=subob.get("coords");
-            drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
+            if(subobcrd!=null) drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
+            else               drawEditMesh(ms);
         }
     }
 
@@ -190,12 +191,21 @@ public class Renderer implements GLSurfaceView.Renderer {
         if(!touchDetecting){
             program=getProgram(m);
             getProgramLocs(program);
-            setupTextures(m); 
+            setupTextures(m);
         }else{
             program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
             getProgramLocs(program);
         }
         setVariables(m, tx,ty,tz);
+        uploadVBO(m);
+        drawMesh(m);
+    }
+
+    private void drawEditMesh(Mesh m){
+        int program=getProgram(m);
+        getProgramLocs(program);
+        setupTextures(m);
+        setVariablesForEdit(m);
         uploadVBO(m);
         drawMesh(m);
     }
@@ -235,6 +245,20 @@ public class Renderer implements GLSurfaceView.Renderer {
         }
         else
         GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
+
+        throwAnyGLException("setting variables");
+    }
+
+    private void setVariablesForEdit(Mesh m){
+
+        Matrix.setIdentityM(matrixMVV, 0);
+        matrixMVV[12]= 0.0f; matrixMVV[13]= 0.5f; matrixMVV[14]= -1.6f;
+        Matrix.multiplyMM(  matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
+
+        GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
+        GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
+
+        GLES20.glUniform3f(lightPosLoc, 0f, 1f, -2f);
 
         throwAnyGLException("setting variables");
     }
