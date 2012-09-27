@@ -202,9 +202,14 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     private void drawEditMesh(Mesh m){
-        int program=getProgram(m);
-        getProgramLocs(program);
-        setupTextures(m);
+        if(!touchDetecting){
+            int program=getProgram(m);
+            getProgramLocs(program);
+            setupTextures(m);
+        }else{
+            int program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
+            getProgramLocs(program);
+        }
         setVariablesForEdit(m);
         uploadVBO(m);
         drawMesh(m);
@@ -255,9 +260,18 @@ public class Renderer implements GLSurfaceView.Renderer {
         matrixMVV[12]= 0.0f; matrixMVV[13]= 0.5f; matrixMVV[14]= -1.6f;
         Matrix.multiplyMM(  matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
 
+        if(!touchDetecting)
         GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
-
+        if(touchDetecting){
+            currentGrey+=16;
+            touchCol[0]=currentGrey/256.0f;
+            touchCol[1]=currentGrey/256.0f;
+            touchCol[2]=currentGrey/256.0f;
+            GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
+            touchables.put(""+currentGrey,m);
+        }
+        else
         GLES20.glUniform3f(lightPosLoc, 0f, 1f, -2f);
 
         throwAnyGLException("setting variables");

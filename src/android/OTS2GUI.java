@@ -480,10 +480,12 @@ public class OTS2GUI {
 
         mesh2uidPut(viewjson.hashPathN("#"),user.content("private:viewing"),user.content("private:viewing"));
 
-        LinkedList subs=user.contentList("private:viewing:subObjects");
-        if(subs==null) return viewjson;
         LinkedList subobs=new LinkedList();
         viewjson.listPath("subObjects", subobs);
+        addEditingToSubs(subobs);
+
+        LinkedList subs=user.contentList("private:viewing:subObjects");
+        if(subs==null) return viewjson;
 
         for(int i=0; i< subs.size(); i++){
             String p=String.format("private:viewing:subObjects:%d",i);
@@ -502,7 +504,6 @@ public class OTS2GUI {
                 addObjectToSubs(o,q,subobs, tx,ty,tz);
             }
         }
-        addEditingToSubs(subobs);
         return viewjson;
     }
 
@@ -525,8 +526,10 @@ public class OTS2GUI {
 
     private void addEditingToSubs(LinkedList subobs){
         if(!user.contentSet("private:editing")) return;
+        LinkedHashMap objhash=object2edit();
         LinkedHashMap hm=new LinkedHashMap();
-        hm.put("object",object2edit());
+        hm.put("object",objhash);
+        mesh2uidPut(objhash, "", "editing");
         subobs.add(hm);
     }
 
@@ -564,6 +567,7 @@ public class OTS2GUI {
 
     private LinkedHashMap object2edit(){
         JSON json=new JSON("{ \"is\": \"mesh\" }");
+        json.stringPath("title", "object being edited");
         json.listPath(  "vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
                                               list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
         json.listPath(  "texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));

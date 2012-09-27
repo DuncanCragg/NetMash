@@ -207,8 +207,11 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         new Evaluator(this){
             public void evaluate(){
                 if(!shift){
-                    content("private:editing",objectuid);
-                    showWhatIAmViewing();
+                    if(objectuid.equals("editing")) log("yay");
+                    else{
+                        content("private:editing",objectuid);
+                        showWhatIAmViewing();
+                    }
                 }
                 else
                 if(!contentSet("private:forms:"+UID.toUID(objectuid))){
