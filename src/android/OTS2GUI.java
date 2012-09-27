@@ -556,7 +556,7 @@ public class OTS2GUI {
         json.listPath(  "fragmentShader",user.contentListMayJump(p+":fragmentShader"));
 
         String text=user.content(p+":text");
-        user.textBitmaps.put(text, text2Bitmap(text));
+        text2Bitmap(text);
         json.listPath("textures", list(text));
 
         return json.hashPathN("#");
@@ -573,14 +573,16 @@ public class OTS2GUI {
         json.listPath(  "faces",         list(list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" )));
 
         String text=user.content("private:editing:title");
-        user.textBitmaps.put(text, text2Bitmap(text));
+        text2Bitmap(text);
         json.listPath("textures", list(text));
 
         return json.hashPathN("#");
     }
 
     private Bitmap text2Bitmap(String text){
-        Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
+        Bitmap bitmap = user.textBitmaps.get(text);
+        if(bitmap!=null) return bitmap;
+        bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
         Canvas canvas = new Canvas(bitmap);
         if(NetMash.top!=null){
             Drawable background = NetMash.top.getPlaceHolderDrawable();
@@ -592,6 +594,7 @@ public class OTS2GUI {
         textPaint.setAntiAlias(true);
         textPaint.setARGB(0xff, 0xff, 0xff, 0xff);
         canvas.drawText(text, 10,30, textPaint);
+        user.textBitmaps.put(text, bitmap);
         return bitmap;
     }
 
