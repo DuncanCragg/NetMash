@@ -94,9 +94,7 @@
   "is": [ "3d", "notice", "editable" ],
   "title": "Important Notice",
   "text": "Welcome to Ann Droid's Place!",
-  "rotation": [ 0, 0, 0 ],
-  "scale": [ 1.0, 1.0, 1.0 ],
-  "vertexShader": "http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json",
-  "fragmentShader": "http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json"
+  "rotation": [ 10, 10, 10 ],
+  "scale": [ 1.0, 1.0, 1.0 ]
 }
 

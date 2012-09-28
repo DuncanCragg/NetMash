@@ -3,6 +3,7 @@ package netmash.forest;
 public class Editable extends ObjectMash {
 
     public Editable(){}
+    public Editable(String jsonstring){ super(jsonstring); }
 
     public void evaluate(){
         for(String alerted: alerted()){ logrule();

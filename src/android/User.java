@@ -26,6 +26,10 @@ import netmash.forest.*;
 import netmash.platform.Kernel;
 import static netmash.platform.Logging.*;
 
+class Sign extends Editable {
+    public Sign(String jsonstring){ super(jsonstring); }
+}
+
 /** User viewing the Object Web.
   */
 public class User extends WebObject {
@@ -36,15 +40,19 @@ public class User extends WebObject {
 
     static public void createUserAndDevice(){
         String fullName=UserContacts.getUsersFullName();
+        String your=fullName.equals("You")? "Your": fullName+"'s";
+
         User contact = new User(
               "{   \"is\": \"contact\", \n"+
               "    \"fullName\": \""+fullName+"\", \n"+
               "    \"address\": { } \n"+
               "}");
+
         User links = new User(
               "{   \"is\": [ \"links\" ], \n"+
               "    \"list\": null \n"+
               "}");
+
         LinkedList otslinks=Kernel.config.listPathN("ots:links");
         links.publicState.listPath("list", otslinks);
 
@@ -54,10 +62,19 @@ public class User extends WebObject {
               "    \"list\": null \n"+
               "}");
 
+        Sign sign = new Sign(
+              "{ \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
+              "  \"title\": \"Welcome Sign\", \n"+
+              "  \"text\": \"Welcome to "+your+" Room\", \n"+
+              "  \"rotation\": [ 0, 0, 0 ], \n"+
+              "  \"scale\": [ 1.0, 1.0, 1.0 ] \n"+
+              "}");
+
         User room = new User(
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
-              "    \"title\": \""+fullName+"'s Room\", \n"+
+              "    \"title\": \""+your+" Room\", \n"+
               "    \"subObjects\": [ \n"+
+              "        { \"object\": \""+sign.uid+"\", \"coords\": [  0,  0, 0 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0, -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0, -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  4, -7 ] }, \n"+
@@ -75,6 +92,8 @@ public class User extends WebObject {
 
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, contact.uid, links.uid, contacts.uid);
+
+        otslinks.addFirst(sign.uid);
         otslinks.addFirst(room.uid);
         otslinks.addFirst(me.uid);
 
@@ -82,6 +101,7 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(contact, true);
         me.funcobs.cacheSaveAndEvaluate(links);
         me.funcobs.cacheSaveAndEvaluate(contacts);
+        me.funcobs.cacheSaveAndEvaluate(sign);
         me.funcobs.cacheSaveAndEvaluate(room);
         me.funcobs.cacheSaveAndEvaluate(me, true);
 
