@@ -16,31 +16,29 @@ Current priority: in-world object network and object mash editing
  - done a bit of world creation, next big chunk needed
 
 --------------------------------------------------------
-
 Smallest subchunk:
 
  - edit brings up single param panel at first: text mesh in HUD (tag:val text)
  - swipe it right to edit, then up/down to adjust
  - all local but still needs to be fast
  - need to fix editing-rule stuff
-
 ---------------------------------------------------------
- - shaders
- - fix
-    - top level not editable: view notice alone
-    - getProgram when light before, VBO/SomeObject/Avatar?
-    - memory usage
-    - vert and frag should come together, else use basic: why sept?
-    - set initial view right back/forward behind light
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same textures .. by URL
     - share same meshes? detect internal change
+ - shaders
+ - top level not editable: view notice alone
+ - top level mesh not cached
+ - getProgram crash on Kis; VBO/SomeObject/Avatar?
+ - memory usage: see video
+---------------------------------------------------------
+ - vert and frag should come together, else use basic: why sept?
+ - set initial view right back/forward behind light
  - can edit notice by swiping
     - default interaction for notice object is to just set text
     - or scroll by swiping, edit someotherhow
  - convert sphere to mesh
-
 --------------------------------------------------------
 Explore, Interact
 

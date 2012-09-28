@@ -62,9 +62,10 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private float direction=0;
 
-    private int     touchX, touchY;
     private boolean touchDetecting=false;
     private boolean touchShift=false;
+    private int     touchX,touchY;
+    private float   touchDX,touchDY;
 
     static String pointVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position = mvpm * pos; gl_PointSize = 4.0; }";
     static String pointFragmentShaderSource     = "precision mediump float; void main(){ gl_FragColor = vec4(1.0, 1.0, 0.8, 1.0); }";
@@ -110,7 +111,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
             Mesh m=touchables.get(""+touchedGrey);
-            if(m!=null) this.netmash.user.onObjectTouched(m.mesh,touchShift);
+            if(m!=null) this.netmash.user.onObjectTouched(m.mesh,touchShift,touchDX,touchDY);
             touchDetecting=false;
         }
         drawFrame();
@@ -344,6 +345,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         touchDetecting=true;
         touchShift=shift;
         touchX=x; touchY=y;
+        touchDX=dx; touchDY=dy;
     }
 
     // -------------------------------------------------------------

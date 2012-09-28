@@ -130,7 +130,7 @@ public class NetMash extends MapActivity{
                 float cx=0,cy=0;
                 if(numTouch==1){ cx=e.getX(0); cy=e.getY(0); }
                 if(numTouch==2){ cx=e.getX(1); cy=e.getY(1); }
-                final float mx=cx-px, my=cy-py;
+                float mx=cx-px, my=cy-py;
                 if(mx*mx+my*my<0.1) return true;
                 px=cx; py=cy;
                 final float dx=100*mx/screenWidth;

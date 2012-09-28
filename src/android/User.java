@@ -200,14 +200,14 @@ public class User extends WebObject {
 
     public ConcurrentHashMap<LinkedHashMap,String> mesh2uid = new ConcurrentHashMap<LinkedHashMap,String>();
 
-    public void onObjectTouched(LinkedHashMap mesh, final boolean shift){
+    public void onObjectTouched(LinkedHashMap mesh, final boolean shift, final float touchDX, final float touchDY){
         final String objectuid=mesh2uid.get(mesh);
 log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+objectuid);
         if(objectuid==null) return;
         new Evaluator(this){
             public void evaluate(){
                 if(!shift){
-                    if(objectuid.equals("editing")) log("yay");
+                    if(objectuid.equals("editing")) log("Editing deltas: "+touchDX+","+touchDY);
                     else{
                         content("private:editing",objectuid);
                         showWhatIAmViewing();
