@@ -18,6 +18,13 @@ Current priority: in-world object network and object mash editing
 --------------------------------------------------------
 Smallest subchunk:
 
+ - allow top-level to be edited: view notice alone
+    - top level mesh not cached - no new VBO
+ - down-swipe resizes, side-swipe edits title via pop-up kbd
+    - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
+    - http://forum.xda-developers.com/showthread.php?t=860488
+    - add title to notice text
+---------------------------------------------------------
  - edit brings up single param panel at first: text mesh in HUD (tag:val text)
  - swipe it right to edit, then up/down to adjust
  - all local but still needs to be fast
@@ -27,11 +34,11 @@ Smallest subchunk:
     - share same shaders .. by uid
     - share same textures .. by URL
     - share same meshes? detect internal change
- - shaders
- - top level not editable: view notice alone
- - top level mesh not cached
- - getProgram crash on Kis; VBO/SomeObject/Avatar?
+ - shaders: not being saved
+ - light on Kis .. SomeObject/Avatar still?
  - memory usage: see video
+ - JSON view renders three times
+    - use Etag, if no need to respond to incoming subs
 ---------------------------------------------------------
  - vert and frag should come together, else use basic: why sept?
  - set initial view right back/forward behind light
@@ -118,15 +125,7 @@ In-World Object/Net/Mash: the Object-Net/Mash Instant 3D IDE!
        - if new object, new 'is' gives prepopulated
     - dupe subobject hash links to same, then swipe it apart
     - or dupe whole object
- - needs targetted swipe detection and text rendering
-
-Text render/enter
-
- - render text fonts:
-    - http://fractiousg.blogspot.co.uk/2012/04/rendering-text-in-opengl-on-android.html
- - keyboard input:
-    - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
-    - http://forum.xda-developers.com/showthread.php?t=860488
+    - knowing type means intelligent edit, including of rules
 
 IDE stuff
 
@@ -156,10 +155,8 @@ IDE stuff
     - can expand links inline to full nested object
     - expand sub-linked objects, so easy to build link-jumping rule
  - rescaling number chooser .. 10, 100, 1000 new scale set
- - fix view/edit not to use nested views: HTML WebView and object-mash.js
-    - HTML is probably most flexible
+ - fix view/edit not to use nested views:
     - hierarchyviewer, dmtracedump http://stackoverflow.com/questions/5377445/which-order-of-nested-layouts-is-most-efficient-in-android
-    - JSON view renders three times - use Etag, if no need to respond to incoming subs
 
 Object Mash
 
@@ -173,13 +170,12 @@ Share
 
 Speed, Bugfixes, Robustness, Clean formats
 
- - avatar chat, "saying": ".."
- - avatar POSTs rotations
  - remove event redundancies
- - ?? GC_CONCURRENT freed 513K, 12% free 8020K/9031K, paused 1ms+2ms, total 21ms
  - client and server cycling and long/short poll
  - too chatty on the wire
  - think about multiple POSTs of user
+ - avatar chat, "saying": ".."
+ - avatar POSTs rotations
 
 HTTP
  - match to uid not URL - e.g when fetch 192.168.. and C-L set to 10.0.2.2
