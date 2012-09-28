@@ -523,30 +523,24 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         }
         else
         if(contentListContainsAll("is", list("private", "contact", "list"))){
-            log("evaluate contacts: "+this);
             if(!contentSet("list")) contentList("list", UserContacts.populateContacts(this));
         }
         else
         if(contentListContainsAll("is", list("editable", "rule"))){
-            log("evaluate editable: "+this);
         }
         else
         if(contentListContainsAll("is", list("document", "query"))){
-            log("evaluate query: "+this);
             for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
         }
         else
         if(contentIsOrListContains("is", "rsvp")){
-            log("evaluate rsvp: "+this);
         }
         else
         if(contentIsOrListContains("is", "swipe")){
-            log("evaluate swipe: "+this);
             notifying(content("object"));
         }
         else
         if(contentIs("is", "form")){
-            log("evaluate form: "+this);
         }
         else log("no evaluate: "+this);
     }
@@ -631,8 +625,12 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 uiJSON.hashPath("view", viewhash);
             }
             if(viewjson!=null){
-                content("place",content("private:viewing"));
-                notifying(content("private:viewing"));
+                String viewing=content("private:viewing");
+                if(!contentIs("place",viewing)){
+                    content(  "place",viewing);
+                    notifying(viewing);
+                    content("private:editing","");
+                }
                 uiJSON=viewjson;
             }
             if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));

@@ -525,8 +525,8 @@ public class OTS2GUI {
     }
 
     private void addEditingToSubs(LinkedList subobs){
-        if(!user.contentSet("private:editing")) return;
         LinkedHashMap objhash=object2edit();
+        if(objhash==null) return;
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("object",objhash);
         mesh2uidPut(objhash, "", "editing");
@@ -566,6 +566,11 @@ public class OTS2GUI {
     }
 
     private LinkedHashMap object2edit(){
+
+        if(!user.contentSet("private:editing")) return null;
+        String text=user.content("private:editing:title");
+        if(text==null) return null;
+
         JSON json=new JSON("{ \"is\": \"mesh\" }");
         json.stringPath("title", "object being edited");
         json.listPath(  "vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
@@ -576,7 +581,6 @@ public class OTS2GUI {
                                               list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
         json.listPath(  "faces",         list(list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" )));
 
-        String text=user.content("private:editing:title");
         text2Bitmap(text);
         json.listPath("textures", list(text));
 

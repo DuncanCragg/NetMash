@@ -102,7 +102,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     public ConcurrentHashMap<String,Mesh> touchables = new ConcurrentHashMap<String,Mesh>();
 
     @Override
-    public void onDrawFrame(GL10 gl) {
+    public void onDrawFrame(GL10 gl){
         if(touchDetecting){
             currentGrey=0;
             touchables.clear();
@@ -150,7 +150,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         if(showPoint) drawLightPoint();
     }
 
-    private void drawLightPoint(){
+    private void drawLightPoint(){try{
 
         int program=getProgram(pointVertexShaderSource, pointFragmentShaderSource);
         if(program==0) return;
@@ -166,7 +166,10 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
 
         GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
-    }
+
+        throwAnyGLException("glDrawArrays drawLightPoint");
+
+    }catch(Throwable t){ }}
 
     public ConcurrentHashMap<LinkedHashMap,Mesh> meshes = new ConcurrentHashMap<LinkedHashMap,Mesh>();
 
@@ -252,7 +255,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         else
         GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
 
-        throwAnyGLException("setting variables");
+        throwAnyGLException("Setting variables");
     }
 
     private void setVariablesForEdit(Mesh m){
@@ -275,7 +278,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         else
         GLES20.glUniform3f(lightPosLoc, 0f, 1f, -2f);
 
-        throwAnyGLException("setting variables");
+        throwAnyGLException("Setting variables for edit");
     }
 
     public ConcurrentHashMap<Mesh,Integer> meshIDs = new ConcurrentHashMap<Mesh,Integer>();
@@ -431,9 +434,12 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         program = GLES20.glCreateProgram();
         if(program==0) throw new RuntimeException("Could not create program");
+        throwAnyGLException("glCreateProgram: "+program);
 
         GLES20.glAttachShader(program, vertexShader);
         GLES20.glAttachShader(program, fragmentShader);
+        throwAnyGLException("glAttachShader: "+program+"\n"+vertshad+"\n"+fragshad);
+
         GLES20.glLinkProgram(program);
         int[] linkStatus = new int[1];
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
@@ -441,6 +447,8 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glDeleteProgram(program);
             throw new RuntimeException("Could not link program " + GLES20.glGetProgramInfoLog(program)+" "+program+"\n"+vertshad+"\n"+fragshad);
         }
+        throwAnyGLException("glLinkProgram: "+program+"\n"+vertshad+"\n"+fragshad);
+
         GLES20.glUseProgram(program);
         throwAnyGLException("glUseProgram new: "+program+"\n"+vertshad+"\n"+fragshad);
         shaders.put(shadkey,program);
@@ -470,6 +478,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glCompileShader(shader);
         int[] compiled = new int[1];
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
+        throwAnyGLException("compileShader: "+shaderType+"\n"+source);
         if(compiled[0]!=0) return shader;
         GLES20.glDeleteShader(shader);
         throw new RuntimeException("Could not compile "+shaderType+" shader:\n"+source+"\n"+GLES20.glGetShaderInfoLog(shader));
