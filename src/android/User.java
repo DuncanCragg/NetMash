@@ -200,18 +200,20 @@ public class User extends WebObject {
 
     public ConcurrentHashMap<LinkedHashMap,String> mesh2uid = new ConcurrentHashMap<LinkedHashMap,String>();
 
-    public void onObjectTouched(LinkedHashMap mesh, final boolean shift, final float touchDX, final float touchDY){
+    public void onObjectTouched(LinkedHashMap mesh, final boolean shift, final float dx, final float dy){
         final String objectuid=mesh2uid.get(mesh);
 log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+objectuid);
         if(objectuid==null) return;
-        new Evaluator(this){
+        if(objectuid.equals("editing")){
+            String edituid=content("private:editing");
+            currentForm(edituid).setEditVal(edituid,dx,dy);
+        }
+        else new Evaluator(this){
             public void evaluate(){
                 if(!shift){
-                    if(objectuid.equals("editing")) log("Editing deltas: "+touchDX+","+touchDY);
-                    else{
-                        content("private:editing",objectuid);
-                        showWhatIAmViewing();
-                    }
+                    if(!contentSet("private:forms:"+UID.toUID(objectuid))) spawnResponse(objectuid);
+                    content("private:editing",objectuid);
+                    showWhatIAmViewing();
                 }
                 else
                 if(!contentSet("private:forms:"+UID.toUID(objectuid))){
@@ -222,12 +224,30 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         };
     }
 
-    public void setSwipeVal(final String objectuid, final int dx, final int dy){
-        if(this==me) currentForm(objectuid).setSwipeVal(objectuid, dx, dy);
-        else new Evaluator(this){
+    public void setEditVal(final String edituid, final float dx, final float dy){
+        new Evaluator(this){
             public void evaluate(){
-                contentInt("dx", dx);
-                contentInt("dy", dy);
+                if(contentListContainsAll("is", list("editable", "rule"))){
+                    LinkedList oldscale=contentList("editable:scale");
+                    LinkedList newscale=list(Mesh.getFloatFromList(oldscale,0,1)*(1f+dx/10f),
+                                             Mesh.getFloatFromList(oldscale,1,1)*(1f+dy/10f),
+                                             Mesh.getFloatFromList(oldscale,2,1)*(1f+dy/10f));
+                    LinkedHashMap rule=makeEditRule("scale",newscale);
+                    contentMerge(rule);
+                    notifying(edituid);
+                    refreshObserves();
+                }
+            }
+        };
+    }
+
+    // currentForm(objectuid).setSwipeVal(objectuid, dx, dy);
+    public void setSwipeVal(final String objectuid, final float dx, final float dy){
+        new Evaluator(this){
+            public void evaluate(){
+                contentDouble("dx", dx);
+                contentDouble("dy", dy);
+                notifying(objectuid);
                 refreshObserves();
             }
         };
@@ -469,7 +489,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         };
     }
 
-    private LinkedHashMap makeEditRule(String path, String val){
+    private LinkedHashMap makeEditRule(String path, Object val){
         return deephash(list("=>",val), path);
     }
 
