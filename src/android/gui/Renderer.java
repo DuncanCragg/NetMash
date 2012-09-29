@@ -80,8 +80,11 @@ public class Renderer implements GLSurfaceView.Renderer {
         resetCoordsAndView(0,1.0f,-0.5f);
     }
 
-    public void newMesh(LinkedHashMap hm){
+    synchronized public void newMesh(LinkedHashMap hm){
+        this.mesh=meshes.get(hm);
+        if(this.mesh!=null) return;
         this.mesh=new Mesh(hm);
+        meshes.put(hm,this.mesh);
     }
 
     @Override
@@ -102,7 +105,9 @@ public class Renderer implements GLSurfaceView.Renderer {
     public ConcurrentHashMap<String,Mesh> touchables = new ConcurrentHashMap<String,Mesh>();
 
     @Override
-    public void onDrawFrame(GL10 gl){
+    public void onDrawFrame(GL10 gl){ onDrawFrame(); }
+
+    synchronized private void onDrawFrame(){
         if(touchDetecting){
             currentGrey=0;
             touchables.clear();

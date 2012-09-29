@@ -466,23 +466,28 @@ public class OTS2GUI {
 
     public JSON scene2GUI(){
 
-        JSON viewjson=new JSON("{ \"is\": \"mesh\" }");
-        viewjson.stringPath("title",         user.content(           "private:viewing:title"));
-        viewjson.listPath(  "rotation",      user.contentList(       "private:viewing:rotation"));
-        viewjson.listPath(  "scale",         user.contentList(       "private:viewing:scale"));
-        viewjson.listPath(  "vertices",      user.contentList(       "private:viewing:vertices"));
-        viewjson.listPath(  "texturepoints", user.contentList(       "private:viewing:texturepoints"));
-        viewjson.listPath(  "normals",       user.contentList(       "private:viewing:normals"));
-        viewjson.listPath(  "faces",         user.contentList(       "private:viewing:faces"));
-        viewjson.listPath(  "textures",      user.contentList(       "private:viewing:textures"));
-        viewjson.listPath(  "vertexShader",  user.contentListMayJump("private:viewing:vertexShader"));
-        viewjson.listPath(  "fragmentShader",user.contentListMayJump("private:viewing:fragmentShader"));
+        LinkedHashMap objhash;
+        if(user.contentIsOrListContains("private:viewing:is","mesh")){
+            objhash=mesh2mesh("private:viewing:");
+        }
+        else
+        if(user.contentIsOrListContains("private:viewing:is","user")){
+            objhash=mesh2mesh("private:viewing:avatar:");
+        }
+        else
+        if(user.contentIsOrListContains("private:viewing:is","notice")){
+            objhash=notice2mesh("private:viewing:");
+        }
+        else return null;
 
-        mesh2uidPut(viewjson.hashPathN("#"),user.content("private:viewing"),user.content("private:viewing"));
+        mesh2uidPut(objhash, user.content("private:viewing"), user.content("private:viewing"));
 
         LinkedList subobs=new LinkedList();
-        viewjson.listPath("subObjects", subobs);
+        objhash.put("subObjects", subobs);
+
         addEditingToSubs(subobs);
+
+        JSON viewjson=new JSON(objhash);
 
         LinkedList subs=user.contentList("private:viewing:subObjects");
         if(subs==null) return viewjson;
@@ -508,7 +513,7 @@ public class OTS2GUI {
     }
 
     private void addObjectToSubs(String o, String p, LinkedList subobs, float tx, float ty, float tz){
-        LinkedHashMap objhash=object2mesh(p+":object");
+        LinkedHashMap objhash=object2mesh(p+":object:");
         if(objhash==null) return;
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("object",objhash);
@@ -533,36 +538,53 @@ public class OTS2GUI {
         subobs.add(hm);
     }
 
+    private LinkedHashMap mesh2mesh(String prefix){
+        LinkedHashMap objhash=new LinkedHashMap();
+        objhash.put("is", "mesh");
+        objhash.put("title",         user.content(           prefix+"title"));
+        objhash.put("rotation",      user.contentList(       prefix+"rotation"));
+        objhash.put("scale",         user.contentList(       prefix+"scale"));
+        objhash.put("vertices",      user.contentList(       prefix+"vertices"));
+        objhash.put("texturepoints", user.contentList(       prefix+"texturepoints"));
+        objhash.put("normals",       user.contentList(       prefix+"normals"));
+        objhash.put("faces",         user.contentList(       prefix+"faces"));
+        objhash.put("textures",      user.contentList(       prefix+"textures"));
+        objhash.put("vertexShader",  user.contentListMayJump(prefix+"vertexShader"));
+        objhash.put("fragmentShader",user.contentListMayJump(prefix+"fragmentShader"));
+        return objhash;
+    }
+
     private LinkedHashMap object2mesh(String p){
-        if(user.contentIsOrListContains(p+":is","mesh"))   return user.contentHash(p+":#");
-        if(user.contentIsOrListContains(p+":is","user"))   return user.contentHash(p+":avatar:#");
-        if(user.contentIsOrListContains(p+":is","notice")) return notice2mesh(p);
+        if(user.contentIsOrListContains(p+"is","mesh"))   return user.contentHash(p+"#");
+        if(user.contentIsOrListContains(p+"is","user"))   return user.contentHash(p+"avatar:#");
+        if(user.contentIsOrListContains(p+"is","notice")) return notice2mesh(p);
         return null;
     }
 
     private LinkedHashMap notice2mesh(String p){
-        JSON json=new JSON("{ \"is\": \"mesh\" }");
-        json.stringPath("title",         user.content(           p+":title"));
-        json.listPath(  "rotation",      user.contentList(       p+":rotation"));
-        json.listPath(  "scale",         user.contentList(       p+":scale"));
-        json.listPath(  "vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
-                                              list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
-        json.listPath(  "texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));
-        json.listPath(  "normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
-                                              list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
-                                              list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
-        json.listPath(  "faces",         list(list( "5/1/5","1/2/5","4/3/5" ), list( "5/1/5","4/3/5","8/4/5" ), list( "3/1/1","7/2/1","8/3/1" ),
-                                              list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
-                                              list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
-                                              list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
-        json.listPath(  "vertexShader",  user.contentListMayJump(p+":vertexShader"));
-        json.listPath(  "fragmentShader",user.contentListMayJump(p+":fragmentShader"));
+        LinkedHashMap objhash=new LinkedHashMap();
+        objhash.put("is", "mesh");
+        objhash.put("title",         user.content(    p+"title"));
+        objhash.put("rotation",      user.contentList(p+"rotation"));
+        objhash.put("scale",         user.contentList(p+"scale"));
+        objhash.put("vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
+                                          list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
+        objhash.put("texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));
+        objhash.put("normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
+                                          list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
+                                          list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
+        objhash.put("faces",         list(list( "5/1/5","1/2/5","4/3/5" ), list( "5/1/5","4/3/5","8/4/5" ), list( "3/1/1","7/2/1","8/3/1" ),
+                                          list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
+                                          list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
+                                          list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
+        objhash.put("vertexShader",  user.contentListMayJump(p+"vertexShader"));
+        objhash.put("fragmentShader",user.contentListMayJump(p+"fragmentShader"));
 
-        String text=user.content(p+":text");
+        String text=user.content(p+"text");
         text2Bitmap(text);
-        json.listPath("textures", list(text));
+        objhash.put("textures", list(text));
 
-        return json.hashPathN("#");
+        return objhash;
     }
 
     private LinkedHashMap object2edit(){

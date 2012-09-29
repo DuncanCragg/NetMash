@@ -606,7 +606,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 viewhash=contentHash("private:viewing:view");
             }
             else
-            if(contentListContainsAll("private:viewing:is", list("3d", "mesh"))){
+            if(contentListContainsAll("private:viewing:is", list("3d"))){
                 viewjson=ots2gui.scene2GUI();
             }
             else{
