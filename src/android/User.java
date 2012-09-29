@@ -620,6 +620,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             JSON uiJSON=null;
             if(viewhash!=null){
                 content("place","");
+                content("private:editing","");
                 uiJSON=new JSON("{ \"is\": \"gui\" }");
                 uiJSON.stringPath("title", title);
                 uiJSON.hashPath("view", viewhash);
@@ -628,8 +629,8 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 String viewing=content("private:viewing");
                 if(!contentIs("place",viewing)){
                     content(  "place",viewing);
-                    notifying(viewing);
                     content("private:editing","");
+                    notifying(viewing);
                 }
                 uiJSON=viewjson;
             }
