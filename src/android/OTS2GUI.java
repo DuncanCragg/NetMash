@@ -607,7 +607,7 @@ public class OTS2GUI {
     }
 
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
-        if(mesh!=null && uid!=null) user.mesh2uid.put(mesh,UID.normaliseUID(parentuid,uid));
+        if(mesh!=null && uid!=null) user.mesh2uid.put(System.identityHashCode(mesh),UID.normaliseUID(parentuid,uid));
     }
 
     // ---------------------------------------------------------------------------

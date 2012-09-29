@@ -26,10 +26,6 @@ import netmash.forest.*;
 import netmash.platform.Kernel;
 import static netmash.platform.Logging.*;
 
-class Sign extends Editable {
-    public Sign(String jsonstring){ super(jsonstring); }
-}
-
 /** User viewing the Object Web.
   */
 public class User extends WebObject {
@@ -62,7 +58,7 @@ public class User extends WebObject {
               "    \"list\": null \n"+
               "}");
 
-        Sign sign = new Sign(
+        Editable sign = new Editable(
               "{ \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Welcome Sign\", \n"+
               "  \"text\": \"Welcome to "+your+" Room\", \n"+
@@ -70,7 +66,7 @@ public class User extends WebObject {
               "  \"scale\": [ 1.0, 1.0, 1.0 ] \n"+
               "}");
 
-        User room = new User(
+        Editable room = new Editable(
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
               "    \"title\": \""+your+" Room\", \n"+
               "    \"subObjects\": [ \n"+
@@ -218,10 +214,10 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    public ConcurrentHashMap<LinkedHashMap,String> mesh2uid = new ConcurrentHashMap<LinkedHashMap,String>();
+    public ConcurrentHashMap<Integer,String> mesh2uid = new ConcurrentHashMap<Integer,String>();
 
     public void onObjectTouched(LinkedHashMap mesh, final boolean shift, final float dx, final float dy){
-        final String objectuid=mesh2uid.get(mesh);
+        final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
 log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+objectuid);
         if(objectuid==null) return;
         if(objectuid.equals("editing")){
