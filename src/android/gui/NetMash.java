@@ -106,22 +106,16 @@ public class NetMash extends MapActivity{
         return;
     }
 
-    private float px=0f;
-    private float py=0f;
-    private float tx=0f;
-    private float ty=0f;
-    private int   numTouch=0;
-
-    public void getKeys(){
-        onemeshview.postDelayed(new Runnable(){ public void run(){
-            ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(onemeshview, 0);
-        }},50);
+    public void getKeys(boolean show){
+log(show? "show keyboard": "hide keyboard");
+        InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(show) imm.showSoftInput(onemeshview, 0);
+        else     imm.hideSoftInputFromWindow(onemeshview.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
 /*
         onemeshview.setOnKeyListener(new OnKeyListener(){
-            public boolean onKey(View v, int keyCode, android.view.KeyEvent event){
+            public boolean onKey(View v, int keyCode, KeyEvent event){
                 if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
                     ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                    log(((EditText)v).getText().toString());
                     return true;
                 }
                 return false;
@@ -129,6 +123,12 @@ public class NetMash extends MapActivity{
         });
 */
     }
+
+    private float px=0f;
+    private float py=0f;
+    private float tx=0f;
+    private float ty=0f;
+    private int   numTouch=0;
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
@@ -567,7 +567,6 @@ public class NetMash extends MapActivity{
                 focused=f;
             }
         };
-        final Activity that=this;
         view.setOnKeyListener(new OnKeyListener(){
             public boolean onKey(View v, int keyCode, KeyEvent event){
                 if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){

@@ -222,12 +222,8 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         if(objectuid==null) return;
         if(objectuid.equals("editing")){
             String edituid=content("private:editing");
-            if(dy*dy>dx*dx/2){
-                currentForm(edituid).setEditVal(edituid,dy);
-            }
-            else{
-                if(NetMash.top!=null) NetMash.top.getKeys();
-            }
+            if(dy*dy>dx*dx/2) currentForm(edituid).setEditVal(edituid,dy);
+            else if(NetMash.top!=null) NetMash.top.getKeys(dx>0);
         }
         else new Evaluator(this){
             public void evaluate(){
