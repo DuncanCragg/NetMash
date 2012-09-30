@@ -81,10 +81,10 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     synchronized public void newMesh(LinkedHashMap hm){
-        this.mesh=meshes.get(hm);
+        this.mesh=meshes.get(System.identityHashCode(hm));
         if(this.mesh!=null) return;
         this.mesh=new Mesh(hm);
-        meshes.put(hm,this.mesh);
+        meshes.put(System.identityHashCode(hm),this.mesh);
     }
 
     @Override
@@ -176,7 +176,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     }catch(Throwable t){ }}
 
-    public ConcurrentHashMap<LinkedHashMap,Mesh> meshes = new ConcurrentHashMap<LinkedHashMap,Mesh>();
+    public ConcurrentHashMap<Integer,Mesh> meshes = new ConcurrentHashMap<Integer,Mesh>();
 
     private void drawMeshAndSubs(Mesh m){
 
@@ -186,9 +186,9 @@ public class Renderer implements GLSurfaceView.Renderer {
             LinkedHashMap subob=(LinkedHashMap)o;
             Object subobobj=subob.get("object");
             if(!(subobobj instanceof LinkedHashMap)) continue;
-            LinkedHashMap sm=(LinkedHashMap)subobobj;
-            Mesh ms=meshes.get(sm);
-            if(ms==null){ ms=new Mesh(sm); meshes.put(sm,ms); }
+            LinkedHashMap hm=(LinkedHashMap)subobobj;
+            Mesh ms=meshes.get(System.identityHashCode(hm));
+            if(ms==null){ ms=new Mesh(hm); meshes.put(System.identityHashCode(hm),ms); }
             Object subobcrd=subob.get("coords");
             if(subobcrd!=null) drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
             else               drawEditMesh(ms);
