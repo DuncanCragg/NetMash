@@ -112,6 +112,22 @@ public class NetMash extends MapActivity{
     private float ty=0f;
     private int   numTouch=0;
 
+    public void getKeys(){
+        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(onemeshview, 0);
+/*
+        onemeshview.setOnKeyListener(new OnKeyListener(){
+            public boolean onKey(View v, int keyCode, android.view.KeyEvent event){
+                if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
+                    ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                    log(((EditText)v).getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        });
+*/
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent e){
         if(onemeshview==null) return false;
@@ -745,6 +761,8 @@ public class NetMash extends MapActivity{
         boolean newview=(onemeshview==null);
         if(newview){
             onemeshview = new GLSurfaceView(this);
+            onemeshview.setFocusable(true);
+            onemeshview.setFocusableInTouchMode(true);
             onemeshview.setEGLContextClientVersion(2);
             onerenderer = new Renderer(this,mesh);
             onemeshview.setRenderer(onerenderer);

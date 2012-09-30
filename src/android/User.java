@@ -222,7 +222,12 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         if(objectuid==null) return;
         if(objectuid.equals("editing")){
             String edituid=content("private:editing");
-            currentForm(edituid).setEditVal(edituid,dx,dy);
+            if(dy*dy>dx*dx/2){
+                currentForm(edituid).setEditVal(edituid,dy);
+            }
+            else{
+                if(NetMash.top!=null) NetMash.top.getKeys();
+            }
         }
         else new Evaluator(this){
             public void evaluate(){
@@ -240,14 +245,14 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         };
     }
 
-    public void setEditVal(final String edituid, final float dx, final float dy){
+    public void setEditVal(final String edituid, final float d){
         new Evaluator(this){
             public void evaluate(){
                 if(contentListContainsAll("is", list("editable", "rule"))){
                     LinkedList oldscale=contentList("editable:scale");
-                    LinkedList newscale=list(Mesh.getFloatFromList(oldscale,0,1)*(1f+dx/10f),
-                                             Mesh.getFloatFromList(oldscale,1,1)*(1f+dy/10f),
-                                             Mesh.getFloatFromList(oldscale,2,1)*(1f+dy/10f));
+                    LinkedList newscale=list(Mesh.getFloatFromList(oldscale,0,1)*(1f+d/10f),
+                                             Mesh.getFloatFromList(oldscale,1,1)*(1f+d/10f),
+                                             Mesh.getFloatFromList(oldscale,2,1)*(1f+d/10f));
                     LinkedHashMap rule=makeEditRule("scale",newscale);
                     contentMerge(rule);
                     notifying(edituid);
@@ -306,7 +311,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
             float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
             if(d<10){
-                NetMash.top.onerenderer.resetCoordsAndView(dx,dy,dz);
+                if(NetMash.top!=null) NetMash.top.onerenderer.resetCoordsAndView(dx,dy,dz);
                 contentList("coords", list(dx,dy,dz));
                 return content(String.format("place:subObjects:%d:object",i));
             }
