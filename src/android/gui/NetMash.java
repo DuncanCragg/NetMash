@@ -113,7 +113,9 @@ public class NetMash extends MapActivity{
     private int   numTouch=0;
 
     public void getKeys(){
-        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(onemeshview, 0);
+        onemeshview.postDelayed(new Runnable(){ public void run(){
+            ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(onemeshview, 0);
+        }},50);
 /*
         onemeshview.setOnKeyListener(new OnKeyListener(){
             public boolean onKey(View v, int keyCode, android.view.KeyEvent event){

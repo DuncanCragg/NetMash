@@ -16,10 +16,6 @@ Current priority: in-world object network and object mash editing
  - done a bit of world creation, next big chunk needed
 
 --------------------------------------------------------
-Smallest subchunk:
-
- - allow top-level to be edited: view notice alone
-    - top level mesh not cached - no new VBO
  - down-swipe resizes, side-swipe edits title via pop-up kbd
     - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
     - http://forum.xda-developers.com/showthread.php?t=860488
@@ -30,13 +26,16 @@ Smallest subchunk:
  - all local but still needs to be fast
  - need to fix editing-rule stuff
 ---------------------------------------------------------
+ - top level mesh not cached - no new VBO
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same textures .. by URL
     - share same meshes? detect internal change
- - shaders: not being saved
  - light on Kis .. SomeObject/Avatar still?
  - memory usage: see video
+    - joining shaders is it
+ - shaders: not being saved
+    - jump link is also big cpu user
  - JSON view renders three times
     - use Etag, if no need to respond to incoming subs
 ---------------------------------------------------------
