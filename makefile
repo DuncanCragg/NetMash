@@ -9,17 +9,17 @@ LOCAL_IP=192.168.0.6
 #
 ################################################################################
 
-local: androidemu logcat
-
-lan: androidlanrel runlan lancat
+loc: androidemu        logcat
 
 emu: androidemu runemu logcat
 
+lan: androidlan runlan lancat
+
+rem: androidrem
+
 om: runom whappen
 
-static: androidemu runstaticserver logboth
-
-fjord: runcur whappen
+# -------------------------------------------------------------------
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
 
@@ -44,43 +44,36 @@ editlocaldbanddynamicfile:
 
 # -------------------------------------------------------------------
 
-androidemu: clean init setappemuconfig setdebugmapkey
+androidemu: clean init setappemuconfig setemumapkey
 	ant debug
 	adb -e uninstall android.gui
 	adb -e install bin/NetMash-debug.apk
 
-androidlanrel: clean init setapplanconfig setreleasemapkey
+androidlan: clean init setapplanconfig setremmapkey
 	ant release
 	adb -d uninstall android.gui
 	adb -d install bin/NetMash-release.apk
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
-androidremoterel: clean init setappremoteconfig setreleasemapkey
+androidrem: clean init setappremconfig setremmapkey
 	ant release
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
-reinstall:
-	adb uninstall android.gui
-	adb install bin/NetMash-release.apk || adb install bin/NetMash-debug.apk
+install:
+	adb -d install bin/NetMash-release.apk || adb -e install bin/NetMash-debug.apk
 
 uninstall:
 	adb uninstall android.gui
 
+reinstall: uninstall install
+
 # -------------------------------------------------------------------
 
-runtestserver: kill clean setvmemuconfig usetestdb run1
+runemu: kill clean netconfig setvm2emuconfig useworlddb run1n2
 
-runstaticserver: kill clean setvmemuconfig usestaticdb run1
+runlan: kill clean netconfig setvm2lanconfig useworlddb run1n2
 
-runquickserver: kill clean setvmemuconfig usequickdb run1
-
-runlocalserver: kill clean setvmemuconfig uselocaldb run1
-
-runremoteserver: kill clean setvmremoteconfig usestaticdb run1
-
-runone: kill clean           setvmtestconfig usetestdb run1
-
-runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
+runrem: kill clean netconfig setvm2remconfig useworlddb run1n2
 
 runom:  kill clean omconfig  setvm2tstconfig useomdb run2
 
@@ -88,9 +81,11 @@ runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
 runall: kill clean allconfig setvm2tstconfig usetestdb run1n2
 
-runlan: kill clean netconfig setvm2lanconfig useworlddb run1n2
+runone: kill clean           setvmtestconfig usetestdb run1
 
-runemu: kill clean netconfig setvm2emuconfig useworlddb run1n2
+runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
+
+# -------------------------------------------------------------------
 
 runon1:
 	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
@@ -116,15 +111,6 @@ run1n2: run1 run2
 
 # -------------------------------------------------------------------
 
-usestaticdb:
-	cp src/server/vm1/static.db src/server/vm1/netmash.db
-
-usequickdb:
-	cp src/server/vm1/quick.db src/server/vm1/netmash.db
-
-uselocaldb:
-	cp src/server/vm1/local.db src/server/vm1/netmash.db
-
 useomdb:
 	cp src/server/vm2/om.db src/server/vm2/netmash.db
 
@@ -136,10 +122,10 @@ useworlddb:
 	cp src/server/vm1/world.db src/server/vm1/netmash.db
 	cp src/server/vm2/world.db src/server/vm2/netmash.db
 
-setreleasemapkey:
+setremmapkey:
 	sed -i"" -e "s:03Hoq1TEN3zbZ9y69dEoFX0Tc20g14mWm-hImbQ:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/android/gui/NetMash.java
 
-setdebugmapkey:
+setemumapkey:
 	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zbZ9y69dEoFX0Tc20g14mWm-hImbQ:" src/android/gui/NetMash.java
 
 setappemuconfig:
@@ -158,17 +144,13 @@ setapplanconfig:
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):" res/raw/topdb.json
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):" src/android/User.java
 
-setappremoteconfig:
+setappremconfig:
 	sed -i"" -e    "s:10.0.2.2:netmash.net:" res/raw/netmashconfig.json
 	sed -i"" -e    "s:10.0.2.2:netmash.net:" res/raw/topdb.json
+	sed -i"" -e    "s:10.0.2.2:netmash.net:" src/android/User.java
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:" res/raw/netmashconfig.json
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:" res/raw/topdb.json
-
-setvmemuconfig:
-	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:" src/server/vm1/netmashconfig.json
-	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/world.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:" src/server/vm1/world.db
+	sed -i"" -e "s:$(LOCAL_IP):netmash.net:" src/android/User.java
 
 setvm2emuconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:" src/server/vm1/netmashconfig.json
@@ -190,18 +172,25 @@ setvm2lanconfig:
 	sed -i"" -e "s:localhost:$(LOCAL_IP):" src/server/vm2/world.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):" src/server/vm2/world.db
 
+setvm2tstconfig:
+	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:$(LOCAL_IP):localhost:" src/server/vm1/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm1/world.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:" src/server/vm1/world.db
+	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm2/netmashconfig.json
+	sed -i"" -e "s:$(LOCAL_IP):localhost:" src/server/vm2/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm2/world.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:" src/server/vm2/world.db
+
+setvm2remconfig:
+	sed -i"" -e  "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
+	sed -i"" -e  "s:10.0.2.2:netmash.net:" src/server/vm1/world.db
+	sed -i"" -e  "s:10.0.2.2:netmash.net:" src/server/vm2/netmashconfig.json
+	sed -i"" -e  "s:10.0.2.2:netmash.net:" src/server/vm2/world.db
+
 setvmtestconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
 	sed -i"" -e "s:$(LOCAL_IP):localhost:" src/server/vm1/netmashconfig.json
-
-setvm2tstconfig:
-	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm1/netmashconfig.json
-	sed -i"" -e    "s:10.0.2.2:localhost:" src/server/vm2/netmashconfig.json
-	sed -i"" -e "s:$(LOCAL_IP):localhost:" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:$(LOCAL_IP):localhost:" src/server/vm2/netmashconfig.json
-
-setvmremoteconfig:
-	sed -i"" -e "s:10.0.2.2:netmash.net:" src/server/vm1/netmashconfig.json
 
 netconfig:
 	cp src/server/vm2/netconfig.json src/server/vm2/netmashconfig.json
@@ -214,6 +203,8 @@ curconfig:
 
 allconfig:
 	cp src/server/vm2/allconfig.json src/server/vm2/netmashconfig.json
+
+# -------------------------------------------------------------------
 
 setup:
 	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test.db
@@ -298,7 +289,7 @@ clean:
 	rm -f  gen/android/gui/R.java
 	rm -f  ,*
 
-veryclean: kill clean setappemuconfig netconfig setvm2emuconfig setdebugmapkey
+veryclean: kill clean setappemuconfig netconfig setvm2emuconfig setemumapkey
 	rm -f  src/server/vm[12]/netmash.log
 	rm -f  src/server/vm[12]/netmash.db
 	rm -f  src/server/vm2/netmashconfig.json
