@@ -8,6 +8,7 @@ Prioritising
  - higher priority if addressing uncertainty of implementation
  - higher priority if showcasing high impact feature or USP
  - higher priority if next not-done in end-to-end slice
+ - higher priority if addressing robustness, performance, refactoring
 
 Current priority: in-world object network and object mash editing
 
@@ -15,36 +16,23 @@ Current priority: in-world object network and object mash editing
  - shows off user editing USP and ease of programming
  - done a bit of world creation, next big chunk needed
 
---------------------------------------------------------
- - down-swipe resizes, side-swipe edits title via pop-up kbd
-    - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
-    - http://forum.xda-developers.com/showthread.php?t=860488
-    - add title to notice text
 ---------------------------------------------------------
- - edit brings up single param panel at first: text mesh in HUD (tag:val text)
- - swipe it right to edit, then up/down to adjust
- - all local but still needs to be fast
- - need to fix editing-rule stuff
----------------------------------------------------------
+Performance, Bugs
+
  - top level mesh not cached - no new VBO
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same textures .. by URL
     - share same meshes? detect internal change
  - light on Kis .. SomeObject/Avatar still?
+ - all black on Nexus..
  - memory usage: see video
     - joining shaders is it
  - shaders: not being saved
     - jump link is also big cpu user
+    - vert and frag should come together, else use basic: why sept?
  - JSON view renders three times
     - use Etag, if no need to respond to incoming subs
----------------------------------------------------------
- - vert and frag should come together, else use basic: why sept?
- - set initial view right back/forward behind light
- - can edit notice by swiping
-    - default interaction for notice object is to just set text
-    - or scroll by swiping, edit someotherhow
- - convert sphere to mesh
 --------------------------------------------------------
 Explore, Interact
 
@@ -58,6 +46,8 @@ GL basics
 
 Scene Graph creation and navigation
 
+ - set initial view right back/forward behind light
+ - convert sphere to mesh
  - is: cube / sphere.obj - no mesh, simpler, easier, quicker
     - is:cube object generates that mesh
     - is:sphere object and mesh - Blender
@@ -69,15 +59,18 @@ Scene Graph creation and navigation
 
 Interactions
 
+ - can edit notice by swiping
+    - default interaction for notice object is to just set text
+    - or scroll by swiping, edit someotherhow
  - move from edge, interact from middle
- - interact using touch detection render trick
  - touch state linking to user. as you move, it updates.
    %alerted:
-   { is: stroke, user: .., target: .., stroke: [ 1.4, 4.3 ], direction: [ -0.1, 0.23 ] }
+   { is: swipe, user: .., target: .., swipe: [ 1.4, 4.3 ], direction: [ -0.1, 0.23 ] }
     .. accumulated distance / vector from start; current direction vector
-   userstrokes: +=> %alerted
-   [ [ + $:userstrokes:stroke:0 ] / [ count $:userstrokes ] ] is average of x
- - bumping into something can be an event too, just like stroking
+   userswipes: +=> %alerted
+   [ [ + $:userswipes:swipe:0 ] / [ count $:userswipes ] ] is average of x
+   [ [ average $:userswipes:swipe:0 ] ]
+ - bumping into something can be an event too, just like swiping
  - attaching accelerometer value to an object: %alerted, then watch user
 
 Physics
@@ -111,6 +104,18 @@ Edit
 
 2. IDE to edit worldlet Object Network and Object Mash: edit obnet/copy/link, edit obmash; two-pane edit
 
+--------------------------------------------------------
+ - down-swipe resizes, side-swipe edits title via pop-up kbd
+    - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
+    - http://forum.xda-developers.com/showthread.php?t=860488
+    - add title to notice text
+---------------------------------------------------------
+ - edit brings up single param panel at first: text mesh in HUD (tag:val text)
+ - swipe it right to edit, then up/down to adjust
+ - all local but still needs to be fast
+ - need to fix editing-rule stuff
+---------------------------------------------------------
+
 In-World Object/Net/Mash: the Object-Net/Mash Instant 3D IDE!
 
  - multitouch swipe to edit
@@ -132,7 +137,7 @@ IDE stuff
  - onboard and online objects for faster editing responses and rule exec, at least while building IDE
 
  - in-world clone, link, drop ..  see jxee/u-web std edit options
- - multitouch stroke for edit menu (clone/link - add to selection list, drop from sel list, delete back to sel list, edit obj, edit rules)
+ - multitouch swipe for edit menu (clone/link - add to selection list, drop from sel list, delete back to sel list, edit obj, edit rules)
 
  - it's an IDE. But the code is already structured.
     - it's graph/tree reduction/rewriting
