@@ -275,7 +275,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         float dx=x-px, dy=y-py, dz=z-pz;
         if(dx*dx+dy*dy+dz*dz<1.0) return;
         new Evaluator(this){
-            public void evaluate(){ if(false) logrule();
+            public void evaluate(){
                 contentList("coords", list(x,y,z));
                 px=x; py=y; pz=z;
                 String newplaceuid=findNewPlaceNearer();
