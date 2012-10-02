@@ -416,7 +416,7 @@ abstract class HTTPCommon {
 
     protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents){
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
-        sb.append("Content-Location: "); sb.append(UID.toURL(w.uid)); sb.append("\r\n");
+        sb.append("Content-Location: "); sb.append(w.url==null? UID.toURL(w.uid): w.url); sb.append("\r\n");
         sb.append("ETag: \""); sb.append(w.etag); sb.append("\"\r\n");
         if(w.maxAge>=0){
         sb.append("Cache-Control: max-age="); sb.append(w.maxAge); sb.append("\r\n");}
