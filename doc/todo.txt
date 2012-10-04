@@ -19,18 +19,20 @@ Current priority: in-world object network and object mash editing
 ---------------------------------------------------------
 Performance, Bugs
 
- - top level mesh not cached - no new VBO
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
-    - share same textures .. by URL
     - share same meshes? detect internal change
- - light on Kis .. SomeObject/Avatar still?
- - all black on Nexus..
- - memory usage: see video
-    - joining shaders is it
+    - share same textures .. by URL
  - shaders: not being saved
     - jump link is also big cpu user
     - vert and frag should come together, else use basic: why sept?
+ - memory usage: see video
+    - joining shaders is it
+ - derivative objects send multiple VBOs, of course
+ - top level mesh not cached - no new VBO
+--------------------------------------------------------
+ - light on Kis .. SomeObject/Avatar still?
+ - all black on Nexus..
  - JSON view renders three times
     - use Etag, if no need to respond to incoming subs
 --------------------------------------------------------
@@ -189,6 +191,7 @@ HTTP
  - poll while waiting - max-age
  - need to hang POST responses so not POST requests; should be 204
     - actually this is long-polling GET for C-N=object URL not cache
+ - detect POST subsumed by c-n - e.g. homeusers
 
 
 -------------------------------------------------------------------
