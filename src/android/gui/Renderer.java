@@ -116,7 +116,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
             Mesh m=touchables.get(""+touchedGrey);
-            if(m!=null) this.netmash.user.onObjectTouched(m.mesh,touchShift,touchDX,touchDY);
+            if(m!=null) netmash.user.onObjectTouched(m.mesh,touchShift,touchDX,touchDY);
             touchDetecting=false;
         }
         drawFrame();
@@ -345,7 +345,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         seeZ=eyeZ-4.5f*FloatMath.cos(direction);
         eyeX-=dy/7f*FloatMath.sin(direction);
         eyeZ-=dy/7f*FloatMath.cos(direction);
-        this.netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
+        netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
     }
 
     public void swipeOn(boolean shift, int x, int y, float dx, float dy){
@@ -411,8 +411,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
 
     private int getProgram(Mesh m) {
-        String vertshad=join(m.vertexShader," ");
-        String fragshad=join(m.fragmentShader," ");
+        String vertshad=join(netmash.user.shaders.get(m.vertexShader)," ");
+        String fragshad=join(netmash.user.shaders.get(m.fragmentShader)," ");
         if(vertshad.length()==0 || fragshad.length()==0){ vertshad=basicVertexShaderSource; fragshad=basicFragmentShaderSource; }
         return getProgram(vertshad, fragshad);
     }

@@ -15,8 +15,8 @@ public class Mesh {
     ShortBuffer ib;
     int         il;
     LinkedList  textures;
-    LinkedList  vertexShader;
-    LinkedList  fragmentShader;
+    String      vertexShader;
+    String      fragmentShader;
     LinkedList  subObjects;
     float       rotationX;
     float       rotationY;
@@ -97,10 +97,9 @@ public class Mesh {
             il=ia.length;
 
             textures       = getListFromHash(mesh,"textures");
-            vertexShader   = getListFromHash(mesh,"vertexShader");
-            fragmentShader = getListFromHash(mesh,"fragmentShader");
+            vertexShader   = getStringFromHash(mesh,"vertexShader","");
+            fragmentShader = getStringFromHash(mesh,"fragmentShader","");
             subObjects     = getListFromHash(mesh,"subObjects");
-
             rotationX      = getFloatFromList(getListFromHash(mesh,"rotation"), 0, 0f);
             rotationY      = getFloatFromList(getListFromHash(mesh,"rotation"), 1, 0f);
             rotationZ      = getFloatFromList(getListFromHash(mesh,"rotation"), 2, 0f);

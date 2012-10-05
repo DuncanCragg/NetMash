@@ -214,7 +214,13 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
+    public ConcurrentHashMap<String,Bitmap> textBitmaps = new ConcurrentHashMap<String,Bitmap>();
+
+    public ConcurrentHashMap<String,LinkedList> shaders = new ConcurrentHashMap<String,LinkedList>();
+
     public ConcurrentHashMap<Integer,String> mesh2uid = new ConcurrentHashMap<Integer,String>();
+
+    // ---------------------------------------------------------
 
     public void onObjectTouched(LinkedHashMap mesh, final boolean shift, final float dx, final float dy){
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
@@ -557,8 +563,6 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
             showWhatIAmViewingAsRawJSON();
         }
     }
-
-    public ConcurrentHashMap<String,Bitmap> textBitmaps = new ConcurrentHashMap<String,Bitmap>();
 
     private void showWhatIAmViewingAsGUI(){ if(false) logrule();
         if(contentSet("private:viewing:is")){

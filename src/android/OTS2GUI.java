@@ -466,20 +466,8 @@ public class OTS2GUI {
 
     public JSON scene2GUI(){
 
-        LinkedHashMap objhash;
-        if(user.contentIsOrListContains("private:viewing:is","mesh")){
-            objhash=mesh2mesh("private:viewing:", false);
-        }
-        else
-        if(user.contentIsOrListContains("private:viewing:is","user")){
-            objhash=mesh2mesh("private:viewing:avatar:", false);
-        }
-        else
-        if(user.contentIsOrListContains("private:viewing:is","notice")){
-            objhash=notice2mesh("private:viewing:");
-        }
-        else return null;
-
+        LinkedHashMap objhash=object2mesh("private:viewing:",false);
+        if(objhash==null) return null;
         mesh2uidPut(objhash, user.content("private:viewing"), user.content("private:viewing"));
 
         LinkedList subobs=new LinkedList();
@@ -513,11 +501,11 @@ public class OTS2GUI {
     }
 
     private void addObjectToSubs(String o, String p, LinkedList subobs, float tx, float ty, float tz){
-        LinkedHashMap objhash=object2mesh(p+":object:");
+        LinkedHashMap objhash=object2mesh(p+":object:", true);
         if(objhash==null) return;
+        mesh2uidPut(objhash, user.content(o), user.content(p+":object"));
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("object",objhash);
-        mesh2uidPut(objhash, user.content(o), user.content(p+":object"));
         LinkedList coords=new LinkedList();
         LinkedList subcoords=user.contentList(p+":coords");
         coords.add(tx+Mesh.getFloatFromList(subcoords,0,0));
@@ -536,35 +524,42 @@ public class OTS2GUI {
         subobs.add(hm);
     }
 
-    private LinkedHashMap object2mesh(String p){
-        if(user.contentIsOrListContains(p+"is","mesh"))   return mesh2mesh(p, true);
-        if(user.contentIsOrListContains(p+"is","user"))   return mesh2mesh(p+"avatar:", true);
+    private LinkedHashMap object2mesh(String p, boolean shallow){
+        if(user.contentIsOrListContains(p+"is","mesh"))   return mesh2mesh(p, shallow);
+        if(user.contentIsOrListContains(p+"is","user"))   return mesh2mesh(p+"avatar:", shallow);
         if(user.contentIsOrListContains(p+"is","notice")) return notice2mesh(p);
         return null;
     }
 
     private LinkedHashMap mesh2mesh(String p, boolean shallow){
-        if(shallow){
-            user.contentListMayJump(p+"vertexShader");
-            user.contentListMayJump(p+"fragmentShader");
-            return user.contentHash(p+"#");
-        }
+        String vs=user.content(p+"vertexShader");
+        String fs=user.content(p+"fragmentShader");
+        shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
+        shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
+
+        if(shallow) return user.contentHash(p+"#");
+
         LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
-        objhash.put("title",         user.content(           p+"title"));
-        objhash.put("rotation",      user.contentList(       p+"rotation"));
-        objhash.put("scale",         user.contentList(       p+"scale"));
-        objhash.put("vertices",      user.contentList(       p+"vertices"));
-        objhash.put("texturepoints", user.contentList(       p+"texturepoints"));
-        objhash.put("normals",       user.contentList(       p+"normals"));
-        objhash.put("faces",         user.contentList(       p+"faces"));
-        objhash.put("textures",      user.contentList(       p+"textures"));
-        objhash.put("vertexShader",  user.contentListMayJump(p+"vertexShader"));
-        objhash.put("fragmentShader",user.contentListMayJump(p+"fragmentShader"));
+        objhash.put("title",         user.content(    p+"title"));
+        objhash.put("rotation",      user.contentList(p+"rotation"));
+        objhash.put("scale",         user.contentList(p+"scale"));
+        objhash.put("vertices",      user.contentList(p+"vertices"));
+        objhash.put("texturepoints", user.contentList(p+"texturepoints"));
+        objhash.put("normals",       user.contentList(p+"normals"));
+        objhash.put("faces",         user.contentList(p+"faces"));
+        objhash.put("textures",      user.contentList(p+"textures"));
+        objhash.put("vertexShader",  vs);
+        objhash.put("fragmentShader",fs);
         return objhash;
     }
 
     private LinkedHashMap notice2mesh(String p){
+        String vs=user.content(p+"vertexShader");
+        String fs=user.content(p+"fragmentShader");
+        shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
+        shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
+
         LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
         objhash.put("title",         user.content(    p+"title"));
@@ -580,8 +575,8 @@ public class OTS2GUI {
                                           list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
                                           list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
-        objhash.put("vertexShader",  user.contentListMayJump(p+"vertexShader"));
-        objhash.put("fragmentShader",user.contentListMayJump(p+"fragmentShader"));
+        objhash.put("vertexShader",  vs);
+        objhash.put("fragmentShader",fs);
 
         String text=user.content(p+"text");
         text2Bitmap(text);
@@ -633,6 +628,10 @@ public class OTS2GUI {
 
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
         if(mesh!=null && uid!=null) user.mesh2uid.put(System.identityHashCode(mesh),UID.normaliseUID(parentuid,uid));
+    }
+ 
+    private void shadersPut(String url, LinkedList shader){
+        if(url!=null && shader!=null) user.shaders.put(url, shader);
     }
 
     // ---------------------------------------------------------------------------
