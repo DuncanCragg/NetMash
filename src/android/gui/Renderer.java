@@ -492,6 +492,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     // -------------------------------------------------------------
 
     private void throwAnyGLException(Object...strings) {
-        int e; while((e=GLES20.glGetError())!=GLES20.GL_NO_ERROR){ throw new RuntimeException(strings+": glError "+e); }
+        int e; while((e=GLES20.glGetError())!=GLES20.GL_NO_ERROR){ throw new RuntimeException(Arrays.asList(strings)+": glError "+e); }
     }
 }
