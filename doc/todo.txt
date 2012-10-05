@@ -27,12 +27,13 @@ Performance, Bugs
  - shaders: not being saved
     - jump link is also big cpu user
     - vert and frag should come together, else use basic: why sept?
- - memory usage: see video
-    - joining shaders is it
- - derivative objects send multiple VBOs, of course
- - top level mesh not cached - no new VBO
+ - no new VBOs!
+    - derivative objects resend VBOs
+    - top level mesh not cached
 --------------------------------------------------------
- - light on Kis .. SomeObject/Avatar still?
+ - memory usage: see video
+ - light on Kis
+ - SomeObject/Avatar still?
  - all black on Nexus..
  - JSON view renders three times
     - use Etag, if no need to respond to incoming subs

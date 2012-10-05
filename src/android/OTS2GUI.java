@@ -560,6 +560,11 @@ public class OTS2GUI {
         shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
         shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
 
+        String text=user.content(p+"text");
+        if(text==null) return null;
+
+        text2Bitmap(text);
+
         LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
         objhash.put("title",         user.content(    p+"title"));
@@ -577,9 +582,6 @@ public class OTS2GUI {
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
         objhash.put("vertexShader",  vs);
         objhash.put("fragmentShader",fs);
-
-        String text=user.content(p+"text");
-        text2Bitmap(text);
         objhash.put("textures", list(text));
 
         return objhash;
@@ -588,28 +590,30 @@ public class OTS2GUI {
     private LinkedHashMap object2edit(){
 
         if(!user.contentSet("private:editing")) return null;
+
         String text=user.content("private:editing:title");
         if(text==null) return null;
 
-        JSON json=new JSON("{ \"is\": \"mesh\" }");
-        json.stringPath("title", "object being edited");
-        json.listPath(  "vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
-                                              list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
-        json.listPath(  "texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));
-        json.listPath(  "normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
-                                              list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
-                                              list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
-        json.listPath(  "faces",         list(list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" )));
-
         text2Bitmap(text);
-        json.listPath("textures", list(text));
 
-        return json.hashPathN("#");
+        LinkedHashMap objhash=new LinkedHashMap();
+        objhash.put("is", "mesh");
+        objhash.put("title", "object being edited");
+        objhash.put("vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
+                                          list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
+        objhash.put("texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));
+        objhash.put("normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
+                                          list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
+                                          list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
+        objhash.put("faces",         list(list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" )));
+        objhash.put("textures", list(text));
+
+        return objhash;
     }
 
-    private Bitmap text2Bitmap(String text){
+    private void text2Bitmap(String text){
         Bitmap bitmap = user.textBitmaps.get(text);
-        if(bitmap!=null) return bitmap;
+        if(bitmap!=null) return;
         bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
         Canvas canvas = new Canvas(bitmap);
         if(NetMash.top!=null){
@@ -623,7 +627,6 @@ public class OTS2GUI {
         textPaint.setARGB(0xff, 0xff, 0xff, 0xff);
         canvas.drawText(text, 10,30, textPaint);
         user.textBitmaps.put(text, bitmap);
-        return bitmap;
     }
 
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
