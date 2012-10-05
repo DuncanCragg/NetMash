@@ -76,14 +76,14 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
-        this.mesh=new Mesh(hm);
+        this.mesh=new Mesh(hm,netmash.user);
         resetCoordsAndView(0,1.0f,-0.5f);
     }
 
     synchronized public void newMesh(LinkedHashMap hm){
         this.mesh=meshes.get(System.identityHashCode(hm));
         if(this.mesh!=null) return;
-        this.mesh=new Mesh(hm);
+        this.mesh=new Mesh(hm,netmash.user);
         meshes.put(System.identityHashCode(hm),this.mesh);
     }
 
@@ -188,7 +188,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(!(subobobj instanceof LinkedHashMap)) continue;
             LinkedHashMap hm=(LinkedHashMap)subobobj;
             Mesh ms=meshes.get(System.identityHashCode(hm));
-            if(ms==null){ ms=new Mesh(hm); meshes.put(System.identityHashCode(hm),ms); }
+            if(ms==null){ ms=new Mesh(hm,netmash.user); meshes.put(System.identityHashCode(hm),ms); }
             Object subobcrd=subob.get("coords");
             if(subobcrd!=null) drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
             else               drawEditMesh(ms);
@@ -411,8 +411,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
 
     private int getProgram(Mesh m) {
-        String vertshad=join(netmash.user.shaders.get(m.vertexShader)," ");
-        String fragshad=join(netmash.user.shaders.get(m.fragmentShader)," ");
+        String vertshad=m.vertexShader;
+        String fragshad=m.fragmentShader;
         if(vertshad.length()==0 || fragshad.length()==0){ vertshad=basicVertexShaderSource; fragshad=basicFragmentShaderSource; }
         return getProgram(vertshad, fragshad);
     }

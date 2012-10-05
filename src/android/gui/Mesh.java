@@ -5,10 +5,14 @@ import java.util.*;
 import java.nio.*;
 
 import android.util.Log;
+import android.User;
+
+import static netmash.lib.Utils.*;
 
 public class Mesh {
 
     LinkedHashMap mesh;
+    User user;
 
     String      title;
     FloatBuffer vb;
@@ -26,9 +30,10 @@ public class Mesh {
     float       scaleZ;
 
     @SuppressWarnings("unchecked")
-    public Mesh(LinkedHashMap mesh) {
+    public Mesh(LinkedHashMap mesh, User user) {
 
         this.mesh=mesh;
+        this.user=user;
 
         try {
             title = getStringFromHash(mesh,"title", "Some Object");
@@ -97,8 +102,8 @@ public class Mesh {
             il=ia.length;
 
             textures       = getListFromHash(mesh,"textures");
-            vertexShader   = getStringFromHash(mesh,"vertexShader","");
-            fragmentShader = getStringFromHash(mesh,"fragmentShader","");
+            vertexShader   = join(user.shaders.get(getStringFromHash(mesh,"vertexShader",""))," ");
+            fragmentShader = join(user.shaders.get(getStringFromHash(mesh,"fragmentShader",""))," ");
             subObjects     = getListFromHash(mesh,"subObjects");
             rotationX      = getFloatFromList(getListFromHash(mesh,"rotation"), 0, 0f);
             rotationY      = getFloatFromList(getListFromHash(mesh,"rotation"), 1, 0f);
