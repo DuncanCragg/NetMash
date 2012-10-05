@@ -403,12 +403,12 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
         if(i==0) GLES20.glUniform1i(texture0Loc, i);
         if(i==1) GLES20.glUniform1i(texture1Loc, i);
-        throwAnyGLException("bindTexture: "+texID+","+i);
+        throwAnyGLException("bindTexture: ",texID,",",i);
     }
 
     // -------------------------------------------------------------
 
-    public ConcurrentHashMap<String,Integer> shaders = new ConcurrentHashMap<String,Integer>();
+    public ConcurrentHashMap<Integer,Integer> shaders = new ConcurrentHashMap<Integer,Integer>();
 
     private int getProgram(Mesh m) {
         String vertshad=m.vertexShader;
@@ -421,7 +421,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         int program;
 
-        String shadkey=String.format("%d%d",vertshad.hashCode(),fragshad.hashCode());
+        int shadkey=vertshad.hashCode()+fragshad.hashCode();
         Integer prog=shaders.get(shadkey);
         if(prog!=null){
             program=prog.intValue();
@@ -439,11 +439,11 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         program = GLES20.glCreateProgram();
         if(program==0) throw new RuntimeException("Could not create program");
-        throwAnyGLException("glCreateProgram: "+program);
+        throwAnyGLException("glCreateProgram: ",program);
 
         GLES20.glAttachShader(program, vertexShader);
         GLES20.glAttachShader(program, fragmentShader);
-        throwAnyGLException("glAttachShader: "+program+"\n"+vertshad+"\n"+fragshad);
+        throwAnyGLException("glAttachShader: ",program,"\n",vertshad,"\n",fragshad);
 
         GLES20.glLinkProgram(program);
         int[] linkStatus = new int[1];
@@ -452,10 +452,10 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glDeleteProgram(program);
             throw new RuntimeException("Could not link program " + GLES20.glGetProgramInfoLog(program)+" "+program+"\n"+vertshad+"\n"+fragshad);
         }
-        throwAnyGLException("glLinkProgram: "+program+"\n"+vertshad+"\n"+fragshad);
+        throwAnyGLException("glLinkProgram: ",program,"\n",vertshad,"\n",fragshad);
 
         GLES20.glUseProgram(program);
-        throwAnyGLException("glUseProgram new: "+program+"\n"+vertshad+"\n"+fragshad);
+        throwAnyGLException("glUseProgram new: ",program,"\n",vertshad,"\n",fragshad);
         shaders.put(shadkey,program);
         return program;
     }
@@ -483,7 +483,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glCompileShader(shader);
         int[] compiled = new int[1];
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
-        throwAnyGLException("compileShader: "+shaderType+"\n"+source);
+        throwAnyGLException("compileShader: ",shaderType,"\n",source);
         if(compiled[0]!=0) return shader;
         GLES20.glDeleteShader(shader);
         throw new RuntimeException("Could not compile "+shaderType+" shader:\n"+source+"\n"+GLES20.glGetShaderInfoLog(shader));
@@ -491,7 +491,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     // -------------------------------------------------------------
 
-    private void throwAnyGLException(String fn) {
-        int e; while((e=GLES20.glGetError())!=GLES20.GL_NO_ERROR){ throw new RuntimeException(fn+": glError "+e); }
+    private void throwAnyGLException(Object...strings) {
+        int e; while((e=GLES20.glGetError())!=GLES20.GL_NO_ERROR){ throw new RuntimeException(strings+": glError "+e); }
     }
 }
