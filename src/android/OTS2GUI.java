@@ -464,7 +464,7 @@ public class OTS2GUI {
 
     // ---------------------------------------------------------------------------
 
-    public JSON scene2GUI(){
+    public LinkedHashMap scene2GUI(){
 
         LinkedHashMap objhash=object2mesh("private:viewing:",false);
         if(objhash==null) return null;
@@ -475,10 +475,8 @@ public class OTS2GUI {
 
         addEditingToSubs(subobs);
 
-        JSON viewjson=new JSON(objhash);
-
         LinkedList subs=user.contentList("private:viewing:subObjects");
-        if(subs==null) return viewjson;
+        if(subs==null) return objhash;
 
         for(int i=0; i< subs.size(); i++){
             String p=String.format("private:viewing:subObjects:%d",i);
@@ -497,7 +495,7 @@ public class OTS2GUI {
                 addObjectToSubs(o,q,subobs, tx,ty,tz);
             }
         }
-        return viewjson;
+        return objhash;
     }
 
     private void addObjectToSubs(String o, String p, LinkedList subobs, float tx, float ty, float tz){
