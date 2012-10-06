@@ -22,11 +22,11 @@ Current priority: (vim-edited for now) rules for puzzle room
  - make light objects in dark room
  - scatter lots of cubes and lights around room
  - light room for the puzzles
+ - stroke cubes up to fraction and they light up
+ - stroke 'done' cube and get reward
 ---------------------------------------------------------
 Performance, Bugs
 
- - fix rule fails since url sent not uid
- - ---------------------------------------------------
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same meshes? detect internal change
@@ -41,6 +41,7 @@ Performance, Bugs
  - shaders: vert and frag should come together, else use basic: why sept?
  - memory usage: see video http://www.youtube.com/watch?v=_CruQY55HOk
  - light on Kis - mystery
+ - fix vulnerability of faked POST to our object not theirs
 --------------------------------------------------------
 Explore, Interact
 

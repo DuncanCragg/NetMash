@@ -70,7 +70,7 @@ public class User extends WebObject {
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
               "    \"title\": \""+your+" Room\", \n"+
               "    \"subObjects\": [ \n"+
-              "        { \"object\": \""+sign.uid+"\", \"coords\": [  0,  0, 0 ] }, \n"+
+              "        { \"object\": \""+sign.uid+"\", \"coords\": [  0,  0, -9 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0, -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0, -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  4, -7 ] }, \n"+
