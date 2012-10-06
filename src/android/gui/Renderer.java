@@ -379,6 +379,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(bm!=textureBMs.get(url)){
                 int[] texID = new int[1];
                 GLES20.glGenTextures(1, texID, 0);
+                log("GPU: sending texture "+url+","+texID[0]+","+bm);
                 sendTexture(texID[0],bm);
                 textureBMs.put(url, bm);
                 textureIDs.put(url, texID[0]);
@@ -388,7 +389,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     private void sendTexture(int texID, Bitmap bm){
-        log("GPU: sending texture "+texID+","+bm);
         GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, texID);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);

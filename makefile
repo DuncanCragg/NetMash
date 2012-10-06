@@ -60,10 +60,12 @@ androidrem: clean init setappremconfig setremmapkey
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 install:
-	adb -d install bin/NetMash-release.apk || adb -e install bin/NetMash-debug.apk
+	adb -d install bin/NetMash-release.apk
+	adb -e install bin/NetMash-debug.apk
 
 uninstall:
-	adb -d uninstall android.gui || adb -e uninstall android.gui
+	adb -d uninstall android.gui
+	adb -e uninstall android.gui
 
 reinstall: uninstall install
 
