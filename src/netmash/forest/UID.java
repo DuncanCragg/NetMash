@@ -86,6 +86,12 @@ public class UID {
         return uid2url.startsWith(localpre)? toUID(uid2url): uid2url;
     }
 
+    static public String toUIDifLocal(String url2uid){
+        String localpre="http://"+Kernel.config.stringPathN("network:host")+":"+
+                                  Kernel.config.intPathN(   "network:port");
+        return url2uid.startsWith(localpre)? toUID(url2uid): url2uid;
+    }
+
     static public String toURLfromBaseURL(String baseurl, String uid2url){
         if(baseurl==null)                  return uid2url;
         if(!baseurl.startsWith("http://")) return uid2url;

@@ -97,6 +97,14 @@ public class FunctionalObserver implements Module {
         return w;
     }
 
+    void dumpCache(){
+        log("-------------- dump of cache ------------");
+        for(Map.Entry<String,WebObject> entry: cache.entrySet()){
+            log(entry.getKey()+"=>"+entry.getValue().uid);
+        }
+        log("-----------------------------------------");
+    }
+
     // -------------------------------
 
     void evaluatable(WebObject w){
@@ -248,8 +256,8 @@ public class FunctionalObserver implements Module {
     }
 
     // POST rq and GET rs
-    String httpNotify(WebObject w){   // must check it's not one of ours!
-        String location=null;
+    String httpNotify(WebObject w){   // must check it's not one of ours being forged!
+        String location=null;         // e.g. put flag on those given Location
         WebObject s=cacheGet(w.uid);  // must look in db
         if(!w.isVisibleRemote() && s.isShell()) location=UID.toURL(w.uid);
         if(w.etag>0 && !(w.etag>s.etag) && w.notify.isEmpty()){ log(":\n"+w+"\nnot newer than:\n"+s+"\n"); return location; }

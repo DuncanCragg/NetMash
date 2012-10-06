@@ -39,7 +39,7 @@ Performance, Bugs
  - JSON view renders three times
     - use Etag, if no need to respond to incoming subs
  - shaders: vert and frag should come together, else use basic: why sept?
- - memory usage: see video
+ - memory usage: see video http://www.youtube.com/watch?v=_CruQY55HOk
  - light on Kis - mystery
 --------------------------------------------------------
 Explore, Interact
@@ -113,7 +113,7 @@ Edit
 2. IDE to edit worldlet Object Network and Object Mash: edit obnet/copy/link, edit obmash; two-pane edit
 
 --------------------------------------------------------
- - down-swipe resizes, side-swipe edits title via pop-up kbd
+ - pop-up kbd
     - http://stackoverflow.com/questions/10432763/showing-software-keyboard-with-glsurfaceview-and-getting-input-from-it
     - http://forum.xda-developers.com/showthread.php?t=860488
     - add title to notice text
@@ -161,6 +161,7 @@ IDE stuff
     - this has to be really easy and nice to use
     - it's an IDE like Victor .. Light Table
     - visual instantiation of rules - step through, see each rule firing and rewriting
+    - Code Bubbles: http://www.youtube.com/watch?v=PsPX0nElJ0k
  - touch 3D object brings up menu with go to Object/Net/Mash views options
  - start with object itself as new rule
     - then autocomplete options

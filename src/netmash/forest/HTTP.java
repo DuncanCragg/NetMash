@@ -264,11 +264,22 @@ abstract class HTTPCommon {
         if(headers==null) return;
         CharBuffer headchars = ASCII.decode(headers);
         if(Kernel.config.boolPathN("network:log")) log("<---------------\n"+headchars);
+        clearFirstLine();
         getFirstLine(headchars);
         clearInterestingHeaders();
         getInterestingHeaders(headchars);
+        logFirstLineBriefly();
         fixKeepAlive();
         setDoingContent();
+    }
+
+    private void logFirstLineBriefly(){
+        if(Kernel.config.boolPathN("network:log")) return;
+        log((httpMethod!=null?          httpMethod:          "")+"|"+
+            (httpPath!=null?            httpPath:            "")+"|"+
+            (httpStatus!=null?          httpStatus:          "")+"|"+
+            (httpContentLocation!=null? httpContentLocation: "")+
+            "<--");
     }
 
     static public final String  HTTPRE = "\\A([A-Z]+)\\s+([^\\s]+)\\s+(HTTP/1\\.[0-1])$.*";
@@ -293,7 +304,6 @@ abstract class HTTPCommon {
             httpStatusText = m.group(3);
         }
         if(httpProtocol==null) throw new Exception("first line of request/response: \n"+headchars);
-        if(!Kernel.config.boolPathN("network:log")) log(httpMethod+" "+httpPath+"<--");
     }
 
     private void getInterestingHeaders(CharBuffer headchars) throws Exception{
@@ -343,6 +353,14 @@ abstract class HTTPCommon {
                 continue;
             }   
         }   
+    }
+
+    private void clearFirstLine(){
+        httpMethod=null;
+        httpPath=null;
+        httpProtocol=null;
+        httpStatus=null;
+        httpStatusText=null;
     }
 
     private void clearInterestingHeaders(){

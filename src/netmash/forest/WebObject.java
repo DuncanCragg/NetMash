@@ -78,6 +78,7 @@ public class WebObject {
         uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%url");     json.removePath("%url");
         uid     = (uid       !=null)? uid:        json.stringPathN("%uid");     json.removePath("%uid");
         uid     = (uid       !=null)? uid:        httpReqURL;
+        uid     = UID.toUIDifLocal(uid);
         etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "%max-age"); json.removePath("%max-age");
         listToSet(notify,                         json.listPathN(  "%notify")); json.removePath("%notify");
