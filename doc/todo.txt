@@ -5,38 +5,43 @@ To Do
 --------------------------------------------------------
 Prioritising
 
- - higher priority if addressing uncertainty of implementation
- - higher priority if showcasing high impact feature or USP
- - higher priority if next not-done in end-to-end slice
- - higher priority if addressing robustness, performance, refactoring
+ - higher priority if showcasing
+    - high impact feature or USP
+    - next not-done in end-to-end slice
+ - higher priority if addressing
+    - robustness, performance, refactoring
+    - code/implementation unknowns
 
-Current priority: in-world object network and object mash editing
+Current priority: (vim-edited for now) rules for puzzle room
 
- - new unknowns like text render and targetted swipes
- - shows off user editing USP and ease of programming
- - done a bit of world creation, next big chunk needed
+ - shows off USP of ease of programming, object interactivity and learning aspects
+ - done some refactoring, need to focus on visible value towards Xmas demo
 
+--------------------------------------------------------
+ - dark room and light room
+ - make light objects in dark room
+ - scatter lots of cubes and lights around room
+ - light room for the puzzles
 ---------------------------------------------------------
 Performance, Bugs
 
- - fix once-only rule eval since url sent not uid
+ - fix rule fails since url sent not uid
+ - all black on Nexus..
+ - ---------------------------------------------------
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same meshes? detect internal change
     - share same textures .. by URL
- - shaders: not being saved
-    - jump link is also big cpu user
-    - vert and frag should come together, else use basic: why sept?
  - no new VBOs!
     - derivative objects resend VBOs
     - top level mesh not cached
---------------------------------------------------------
- - memory usage: see video
- - light on Kis
+ - jump link, split path is big cpu user
  - SomeObject/Avatar still?
- - all black on Nexus..
  - JSON view renders three times
     - use Etag, if no need to respond to incoming subs
+ - shaders: vert and frag should come together, else use basic: why sept?
+ - memory usage: see video
+ - light on Kis - mystery
 --------------------------------------------------------
 Explore, Interact
 

@@ -381,7 +381,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 GLES20.glGenTextures(1, texID, 0);
                 sendTexture(texID[0],bm);
                 textureBMs.put(url, bm);
-                textureIDs.put(url, Integer.valueOf(texID[0]));
+                textureIDs.put(url, texID[0]);
             }
             bindTexture(textureIDs.get(url),i);
         }

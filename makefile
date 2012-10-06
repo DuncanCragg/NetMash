@@ -63,7 +63,7 @@ install:
 	adb -d install bin/NetMash-release.apk || adb -e install bin/NetMash-debug.apk
 
 uninstall:
-	adb uninstall android.gui
+	adb -d uninstall android.gui || adb -e uninstall android.gui
 
 reinstall: uninstall install
 

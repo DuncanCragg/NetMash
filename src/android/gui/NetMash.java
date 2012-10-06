@@ -869,14 +869,17 @@ log(show? "show keyboard": "hide keyboard");
 
     private Bitmap getImageBitmap(String url){
         Bitmap bm=null;
+        InputStream is=null;
+        BufferedInputStream bis=null;
         try{
             URLConnection conn = new URL(url).openConnection(); conn.connect();
-            InputStream is = conn.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(is, 8092);
+            is = conn.getInputStream();
+            bis = new BufferedInputStream(is, 8092);
             bm = BitmapFactory.decodeStream(bis);
-            if(bm!=null) imageCache.put(url,bm);
-            bis.close(); is.close();
-        } catch (Throwable t){ t.printStackTrace(); System.err.println("Couldn't load image at "+url+"\n"+t); }
+            if(bm==null) throw new Exception("couldn't decode bitmap stream");
+            imageCache.put(url,bm);
+        }catch(Throwable t){ t.printStackTrace(); System.err.println("Couldn't load image at "+url+"\n"+t);
+        }finally{ try{ is.close(); bis.close(); }catch(Throwable t){}}
         return bm;
     }
 /* For scalable non-compressed images in res:
