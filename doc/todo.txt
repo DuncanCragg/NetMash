@@ -26,7 +26,6 @@ Current priority: (vim-edited for now) rules for puzzle room
 Performance, Bugs
 
  - fix rule fails since url sent not uid
- - all black on Nexus..
  - ---------------------------------------------------
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
