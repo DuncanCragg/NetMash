@@ -191,7 +191,7 @@ log(show? "show keyboard": "hide keyboard");
         onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         new Thread(){ public void run(){ try{
             Kernel.sleep(2000);
-            //onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }catch(Throwable t){}}}.start();
     }
 

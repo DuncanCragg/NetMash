@@ -67,8 +67,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     private int     touchX,touchY;
     private float   touchDX,touchDY;
 
-    static String pointVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position = mvpm * pos; gl_PointSize = 4.0; }";
-    static String pointFragmentShaderSource     = "precision mediump float; void main(){ gl_FragColor = vec4(1.0, 1.0, 0.8, 1.0); }";
     static String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
     static String grayscaleFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
     static String basicVertexShaderSource       = "uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
@@ -130,7 +128,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private void drawFrame(){
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         drawCamera();
-        drawLight(true);
+        drawLight();
         drawMeshAndSubs(mesh);
     }
 
@@ -138,43 +136,18 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.setLookAtM(matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
     }
 
-    private void drawLight(boolean showPoint){
+    private void drawLight(){
 
         if(touchDetecting) return;
 
-        long time = SystemClock.uptimeMillis() % 10000L;
-        float angle = (360.0f / 10000.0f) * ((int) time);
-
         Matrix.setIdentityM(matrixLgt, 0);
         Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, -5.0f);
-        Matrix.rotateM(     matrixLgt, 0, angle, 0.0f, 1.0f, 0.0f);
+        Matrix.rotateM(     matrixLgt, 0, 270f, 0.0f, 1.0f, 0.0f);
         Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, 2.0f);
+
         Matrix.multiplyMV(lightPosInWorldSpace, 0, matrixLgt, 0, lightPosInModelSpace, 0);
         Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
-
-        if(showPoint) drawLightPoint();
     }
-
-    private void drawLightPoint(){try{
-
-        int program=getProgram(pointVertexShaderSource, pointFragmentShaderSource);
-        if(program==0) return;
-
-        mvpmLoc = GLES20.glGetUniformLocation(program, "mvpm");
-        posLoc =  GLES20.glGetAttribLocation( program, "pos");
-
-        GLES20.glVertexAttrib3f(posLoc, lightPosInModelSpace[0], lightPosInModelSpace[1], lightPosInModelSpace[2]);
-
-        Matrix.multiplyMM(matrixMVV, 0, matrixVVV, 0, matrixLgt, 0);
-        Matrix.multiplyMM(matrixMVP, 0, matrixPrj, 0, matrixMVV, 0);
-
-        GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
-
-        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
-
-        throwAnyGLException("glDrawArrays drawLightPoint");
-
-    }catch(Throwable t){ }}
 
     public ConcurrentHashMap<Integer,Mesh> meshes = new ConcurrentHashMap<Integer,Mesh>();
 
