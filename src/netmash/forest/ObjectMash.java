@@ -148,6 +148,10 @@ public class ObjectMash extends WebObject {
                     contentObject(path,ll.get(0));
                 }
                 else
+                if(ll.size()==3 && ll.get(1).equals("+")){
+                    contentDouble(path, findDouble(ll.get(0)) + findDouble(ll.get(2)));
+                }
+                else
                 if(ll.size()==3 && ll.get(1).equals("×")){
                     contentDouble(path, findDouble(ll.get(0)) * findDouble(ll.get(2)));
                 }

@@ -1,6 +1,6 @@
 { "%uid": "uid-39da-3645-4f58-50cb",
   "%class": "netmash.forest.ObjectMash",
-  "%rules": [ "uid-d3e7-6831-3804-7cbf", "uid-40fb-5964-b385-c922", "uid-d039-5967-f60c-70f7" ],
+  "%rules": [ "uid-d3e7-6831-3804-7cbf", "uid-e164-2547-46b0-f47e", "uid-40fb-5964-b385-c922", "uid-d039-5967-f60c-70f7" ],
   "is": [ "test" ],
   "title": "Test Running",
   "x": 2,
@@ -10,19 +10,25 @@
 { "%uid": "uid-d3e7-6831-3804-7cbf",
   "is": [ "test", "rule" ],
   "when": "Test multiply",
-  "y": [ "=>", "$:x", "×", 10 ]
+  "a": [ "=>", "$:x", "×", 10 ]
+}
+
+{ "%uid": "uid-e164-2547-46b0-f47e",
+  "is": [ "test", "rule" ],
+  "when": "Test addition",
+  "b": [ "=>", "$:a", "+", 10 ]
 }
 
 { "%uid": "uid-40fb-5964-b385-c922",
   "is": [ "test", "rule" ],
   "when": "Test nested list and star",
-  "z": [ "*","*", [ "=>", "$:y", "×", 10 ]]
+  "z": [ "*","*", [ "=>", "$:b", "×", 10 ]]
 }
 
 { "%uid": "uid-d039-5967-f60c-70f7",
   "is": [ "test", "rule" ],
   "when": "Test completion",
-  "z": [ 1, 2, 200 ],
+  "z": [ 1, 2, 300 ],
   "title": [ "=>", "Test Complete" ]
 }
 
