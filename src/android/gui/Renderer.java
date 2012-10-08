@@ -28,6 +28,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private int mvpmLoc;
     private int touchColLoc;
     private int lightPosLoc;
+    private int lightColLoc;
     private int posLoc;
     private int norLoc;
     private int texLoc;
@@ -49,8 +50,9 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixNor = new float[16];
 
     private float[] touchCol = new float[4];
-    private float[] lightPosInWorldSpace = new float[]{0f,0f,0f,1f};
+    private float[] lightPosWorld = new float[]{0f,0f,0f,1f};
     private float[] lightPos = new float[4];
+    private float[] lightCol = new float[]{1f,1f,1f,1f};
 
     private float eyeX;
     private float eyeY;
@@ -69,7 +71,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     static String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
     static String grayscaleFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
     static String basicVertexShaderSource       = "uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
-    static String basicFragmentShaderSource     = "precision mediump float; uniform vec3 lightPos; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(1.0,1.0,1.0,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
+    static String basicFragmentShaderSource     = "precision mediump float; uniform vec3 lightPos; uniform vec3 lightCol; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(lightCol,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
 
     public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
@@ -159,7 +161,10 @@ public class Renderer implements GLSurfaceView.Renderer {
             program=getProgram(m);
             getProgramLocs(program);
             setupTextures(m);
-            if(m.lightR+m.lightG+m.lightB>0){ lightPosInWorldSpace[0]=tx; lightPosInWorldSpace[1]=ty; lightPosInWorldSpace[2]=tz; }
+            if(m.lightR+m.lightG+m.lightB>0){
+                lightPosWorld[0]=tx; lightPosWorld[1]=ty; lightPosWorld[2]=tz;
+                lightCol[0]=m.lightR; lightCol[1]=m.lightG; lightCol[2]=m.lightB;
+            }
         }else{
             program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
             getProgramLocs(program);
@@ -217,8 +222,9 @@ public class Renderer implements GLSurfaceView.Renderer {
             touchables.put(""+currentGrey,m);
         }
         else{
-            Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
+            Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosWorld, 0);
             GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
+            GLES20.glUniform3f(lightColLoc, lightCol[0], lightCol[1], lightCol[2]);
         }
         throwAnyGLException("Setting variables");
     }
@@ -240,8 +246,10 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
             touchables.put(""+currentGrey,m);
         }
-        else
-        GLES20.glUniform3f(lightPosLoc, 0f, 1f, -2f);
+        else{
+            GLES20.glUniform3f(lightPosLoc, 0f, 1f, -2f);
+            GLES20.glUniform3f(lightColLoc, 1f, 1f, 1f);
+        }
 
         throwAnyGLException("Setting variables for edit");
     }
@@ -427,6 +435,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         texture1Loc = GLES20.glGetUniformLocation(program, "texture1");
         mvvmLoc =     GLES20.glGetUniformLocation(program, "mvvm");
         lightPosLoc = GLES20.glGetUniformLocation(program, "lightPos");
+        lightColLoc = GLES20.glGetUniformLocation(program, "lightCol");
         texLoc =      GLES20.glGetAttribLocation( program, "tex");
         norLoc =      GLES20.glGetAttribLocation( program, "nor");
         }
