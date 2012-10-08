@@ -163,7 +163,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             setupTextures(m);
             if(m.lightR+m.lightG+m.lightB>0){
                 lightPosWorld[0]=tx; lightPosWorld[1]=ty; lightPosWorld[2]=tz;
-                lightCol[0]=m.lightR; lightCol[1]=m.lightG; lightCol[2]=m.lightB;
+                lightCol[0]=clamp(m.lightR); lightCol[1]=clamp(m.lightG); lightCol[2]=clamp(m.lightB);
             }
         }else{
             program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
@@ -459,6 +459,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     // -------------------------------------------------------------
+
+    private float clamp(float x){ if(x>1.0) return 1; if(x<0) return 0; return x; }
 
     private void throwAnyGLException(Object...strings) {
         int e; while((e=GLES20.glGetError())!=GLES20.GL_NO_ERROR){ throw new RuntimeException(Arrays.asList(strings)+": glError "+e); }
