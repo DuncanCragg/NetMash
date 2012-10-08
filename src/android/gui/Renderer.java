@@ -49,8 +49,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixNor = new float[16];
 
     private float[] touchCol = new float[4];
-    private float[] lightPosInModelSpace = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
-    private float[] lightPosInWorldSpace = new float[4];
+    private float[] lightPosInWorldSpace = new float[]{0f,0f,0f,1f};
     private float[] lightPos = new float[4];
 
     private float eyeX;
@@ -128,25 +127,11 @@ public class Renderer implements GLSurfaceView.Renderer {
     private void drawFrame(){
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         drawCamera();
-        drawLight();
         drawMeshAndSubs(mesh);
     }
 
     private void drawCamera(){
         Matrix.setLookAtM(matrixVVV, 0, eyeX,eyeY,eyeZ, seeX,seeY,seeZ, 0f,1f,0f);
-    }
-
-    private void drawLight(){
-
-        if(touchDetecting) return;
-
-        Matrix.setIdentityM(matrixLgt, 0);
-        Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, -5.0f);
-        Matrix.rotateM(     matrixLgt, 0, 270f, 0.0f, 1.0f, 0.0f);
-        Matrix.translateM(  matrixLgt, 0, 0.0f, 0.0f, 2.0f);
-
-        Matrix.multiplyMV(lightPosInWorldSpace, 0, matrixLgt, 0, lightPosInModelSpace, 0);
-        Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
     }
 
     public ConcurrentHashMap<Integer,Mesh> meshes = new ConcurrentHashMap<Integer,Mesh>();
@@ -174,6 +159,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             program=getProgram(m);
             getProgramLocs(program);
             setupTextures(m);
+            if(m.lightR+m.lightG+m.lightB>0){ lightPosInWorldSpace[0]=tx; lightPosInWorldSpace[1]=ty; lightPosInWorldSpace[2]=tz; }
         }else{
             program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
             getProgramLocs(program);
@@ -230,9 +216,10 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
             touchables.put(""+currentGrey,m);
         }
-        else
-        GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
-
+        else{
+            Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosInWorldSpace, 0);
+            GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
+        }
         throwAnyGLException("Setting variables");
     }
 

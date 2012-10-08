@@ -542,6 +542,7 @@ public class OTS2GUI {
         objhash.put("title",         user.content(    p+"title"));
         objhash.put("rotation",      user.contentList(p+"rotation"));
         objhash.put("scale",         user.contentList(p+"scale"));
+        objhash.put("light",         user.contentList(p+"light"));
         objhash.put("vertices",      user.contentList(p+"vertices"));
         objhash.put("texturepoints", user.contentList(p+"texturepoints"));
         objhash.put("normals",       user.contentList(p+"normals"));
@@ -568,6 +569,7 @@ public class OTS2GUI {
         objhash.put("title",         user.content(    p+"title"));
         objhash.put("rotation",      user.contentList(p+"rotation"));
         objhash.put("scale",         user.contentList(p+"scale"));
+        objhash.put("light",         user.contentList(p+"light"));
         objhash.put("vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
                                           list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
         objhash.put("texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));

@@ -63,7 +63,8 @@ public class User extends WebObject {
               "  \"title\": \"Welcome Sign\", \n"+
               "  \"text\": \"Welcome to "+your+" Room\", \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
-              "  \"scale\": [ 1.0, 1.0, 1.0 ] \n"+
+              "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
+              "  \"light\": [ 0.0, 0.5, 1.0 ] \n"+
               "}");
 
         Editable room = new Editable(

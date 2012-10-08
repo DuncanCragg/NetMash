@@ -28,6 +28,9 @@ public class Mesh {
     float       scaleX;
     float       scaleY;
     float       scaleZ;
+    float       lightR;
+    float       lightG;
+    float       lightB;
 
     @SuppressWarnings("unchecked")
     public Mesh(LinkedHashMap mesh, User user) {
@@ -111,6 +114,9 @@ public class Mesh {
             scaleX         = getFloatFromList(getListFromHash(mesh,"scale"   ), 0, 1f);
             scaleY         = getFloatFromList(getListFromHash(mesh,"scale"   ), 1, 1f);
             scaleZ         = getFloatFromList(getListFromHash(mesh,"scale"   ), 2, 1f);
+            lightR         = getFloatFromList(getListFromHash(mesh,"light"   ), 0, 0f);
+            lightG         = getFloatFromList(getListFromHash(mesh,"light"   ), 1, 0f);
+            lightB         = getFloatFromList(getListFromHash(mesh,"light"   ), 2, 0f);
 
         } catch (Exception e) { e.printStackTrace(); Log.e("Mesh Constructor", e.getLocalizedMessage()); return; }
     }
