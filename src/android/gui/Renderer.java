@@ -107,17 +107,18 @@ public class Renderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl){ onDrawFrame(); }
 
     synchronized private void onDrawFrame(){
-        if(touchDetecting){
+        if(touchDetecting){try{
             currentGrey=0;
             touchables.clear();
             drawFrame();
+            touchDetecting=false;
             ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
+            throwAnyGLException("glReadPixels "+touchX+" "+touchY+" "+b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
             Mesh m=touchables.get(""+touchedGrey);
             if(m!=null) netmash.user.onObjectTouched(m.mesh,touchShift,touchDX,touchDY);
-            touchDetecting=false;
-        }
+        }catch(Throwable t){ log(t); }}
         drawFrame();
     }
 
