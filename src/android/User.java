@@ -163,10 +163,12 @@ public class User extends WebObject {
                         "}");
     }
 
-    static User newSwipe(String objectuid, String useruid){
+    static User newSwipe(String objectuid, String useruid, float dx, float dy){
         return new User("{ \"is\": \"swipe\", \n"+
                         "  \"object\": \""+objectuid+"\",\n"+
-                        "  \"user\": \""+useruid+"\"\n"+
+                        "  \"user\": \""+useruid+"\",\n"+
+                        "  \"dx\": \""+dx+"\",\n"+
+                        "  \"dy\": \""+dy+"\"\n"+
                         "}");
     }
 
@@ -234,14 +236,14 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         }
         else new Evaluator(this){
             public void evaluate(){
-                if(!shift){
-                    if(!contentSet("private:forms:"+UID.toUID(objectuid))) spawnResponse(objectuid);
+                if(shift){
+                    if(!contentSet("private:forms:"+UID.toUID(objectuid))) spawnResponse(objectuid, true, 0,0);
                     content("private:editing",objectuid);
                     showWhatIAmViewing();
                 }
-                else
-                if(!contentSet("private:forms:"+UID.toUID(objectuid))){
-                    content(   "private:forms:"+UID.toUID(objectuid), spawn(newSwipe(objectuid, uid)));
+                else{
+                    if(!contentSet("private:forms:"+UID.toUID(objectuid))) spawnResponse(objectuid, false, dx, dy);
+                    else currentForm(objectuid).setSwipeVal(dx, dy);
                 }
                 refreshObserves();
             }
@@ -265,13 +267,11 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         };
     }
 
-    // currentForm(objectuid).setSwipeVal(objectuid, dx, dy);
-    public void setSwipeVal(final String objectuid, final float dx, final float dy){
+    public void setSwipeVal(final float dx, final float dy){
         new Evaluator(this){
             public void evaluate(){
                 contentDouble("dx", dx);
                 contentDouble("dy", dy);
-                notifying(objectuid);
                 refreshObserves();
             }
         };
@@ -449,10 +449,17 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         return returninthack;
     }
 
-    private void spawnResponse(String guiuid){
-        User resp;
+    private void spawnResponse(String guiuid){ spawnResponse(guiuid, false, 0,0); }
+
+    private void spawnResponse(String guiuid, boolean editable, float dx, float dy){
+        User resp=null;
+        if(editable){
         if(contentIsOrListContains("private:viewing:is", "editable")){
             resp=newEditableRule(guiuid, uid);
+        }
+        }
+        else if(contentIsOrListContains("private:viewing:is", "3d")){
+            resp=newSwipe(guiuid, uid, dx, dy);
         }
         else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
             resp=newDocumentQuery(guiuid, uid);
@@ -460,8 +467,10 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
             resp=newRSVP(guiuid, uid);
         }
-        else resp=newForm(guiuid, uid);
-        content("private:forms:"+UID.toUID(guiuid), spawn(resp));
+        else if(contentIsOrListContains("private:viewing:is", "gui")){
+            resp=newForm(guiuid, uid);
+        }
+        if(resp!=null) content("private:forms:"+UID.toUID(guiuid), spawn(resp));
     }
 
     User currentForm(String guiuid){
