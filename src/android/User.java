@@ -62,7 +62,7 @@ public class User extends WebObject {
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"swiped, change light\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\" }, \n"+
-              "    \"light\": [ \"*\",\"*\", [ \"=>\", \"$:%alerted:dx\", \"×\", 2 ] ] \n"+
+              "    \"light\": [ \"*\", [ \"=>\", \"$:%alerted:dx\", \"×\", 2 ], [ \"=>\", \"$:%alerted:dy\", \"×\", 2 ] ] \n"+
               "}");
 
         Editable sign = new Editable(
@@ -251,7 +251,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
                 }
                 else{
                     if(!contentSet("private:forms:"+UID.toUID(objectuid))) spawnResponse(objectuid, false, dx, dy);
-                    else currentForm(objectuid).setSwipeVal(dx, dy);
+                    else currentForm(objectuid).setSwipeVal(objectuid, dx, dy);
                 }
                 refreshObserves();
             }
@@ -275,11 +275,12 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         };
     }
 
-    public void setSwipeVal(final float dx, final float dy){
+    public void setSwipeVal(final String objectuid, final float dx, final float dy){
         new Evaluator(this){
             public void evaluate(){
                 contentDouble("dx", dx);
                 contentDouble("dy", dy);
+                notifying(objectuid);
                 refreshObserves();
             }
         };
