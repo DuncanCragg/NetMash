@@ -58,8 +58,16 @@ public class User extends WebObject {
               "    \"list\": null \n"+
               "}");
 
+        Editable rule = new Editable(
+              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "    \"when\": \"swiped, change light\", \n"+
+              "    \"%alerted\": { \"is\": \"swipe\" }, \n"+
+              "    \"light\": [ \"*\",\"*\", [ \"=>\", \"$:%alerted:dx\", \"×\", 2 ] ] \n"+
+              "}");
+
         Editable sign = new Editable(
-              "{ \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
+              "{ \"%rules\": [ \""+rule.uid+"\" ], \n"+
+              "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Welcome Sign\", \n"+
               "  \"text\": \"Welcome to "+your+" Room\", \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
@@ -90,7 +98,6 @@ public class User extends WebObject {
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, contact.uid, links.uid, contacts.uid);
 
-        otslinks.addFirst(sign.uid);
         otslinks.addFirst(room.uid);
         otslinks.addFirst(me.uid);
 
@@ -98,6 +105,7 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(contact, true);
         me.funcobs.cacheSaveAndEvaluate(links);
         me.funcobs.cacheSaveAndEvaluate(contacts);
+        me.funcobs.cacheSaveAndEvaluate(rule);
         me.funcobs.cacheSaveAndEvaluate(sign);
         me.funcobs.cacheSaveAndEvaluate(room);
         me.funcobs.cacheSaveAndEvaluate(me, true);
