@@ -9,7 +9,6 @@ import android.gui.*;
 import android.os.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
-
 import android.content.*;
 import android.database.Cursor;
 import android.location.*;
@@ -17,7 +16,6 @@ import android.accounts.*;
 
 import static android.provider.ContactsContract.*;
 import static android.provider.ContactsContract.CommonDataKinds.*;
-
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
@@ -25,7 +23,7 @@ import netmash.lib.*;
 import netmash.forest.*;
 import netmash.platform.Kernel;
 
-import static netmash.forest.WebObject.*;
+import static netmash.lib.Utils.*;
 
 /** Convertors from std OTS JSON to common GUI OTS JSON.
   */
@@ -34,7 +32,7 @@ public class OTS2GUI {
     private User user;
     public OTS2GUI(User user){ this.user=user; }
 
-    public LinkedHashMap user2GUI(){ logrule();
+    public LinkedHashMap user2GUI(){
         String useruid = user.content("private:viewing");
 
         String fullname = user.content("private:viewing:contact:fullName");
@@ -61,7 +59,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedHashMap links2GUI(){ logrule();
+    public LinkedHashMap links2GUI(){
         String listuid = user.content("private:viewing");
         LinkedList<String> links = user.contentList("private:viewing:list");
         if(links==null) return null;
@@ -75,7 +73,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedHashMap contactList2GUI(String contactprefix){ logrule();
+    public LinkedHashMap contactList2GUI(String contactprefix){
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
         if(contacts==null) return null;
@@ -97,7 +95,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedHashMap documentList2GUI(){ logrule();
+    public LinkedHashMap documentList2GUI(){
         String listuid = user.content("private:viewing");
         LinkedList documents = user.contentList("private:viewing:list");
         LinkedList viewlist = new LinkedList();
@@ -143,7 +141,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedList contact2Map(String contactprefix){ logrule();
+    public LinkedList contact2Map(String contactprefix){
         String useruid = user.content("private:viewing");
         LinkedList maplist = new LinkedList();
         maplist.add("render:map");
@@ -161,7 +159,7 @@ public class OTS2GUI {
         return maplist;
     }
 
-    public LinkedList contactList2Map(String contactprefix){ logrule();
+    public LinkedList contactList2Map(String contactprefix){
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
         if(contacts==null) return null;
@@ -197,7 +195,7 @@ public class OTS2GUI {
         return point;
     }
 
-    public LinkedHashMap contact2GUI(boolean editable){ logrule();
+    public LinkedHashMap contact2GUI(boolean editable){
 
         LinkedList contactdetail = new LinkedList();
         contactdetail.add(style("direction","vertical"));
@@ -253,7 +251,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedHashMap event2GUI(){ logrule();
+    public LinkedHashMap event2GUI(){
         String eventuid = user.content("private:viewing");
         String locationuid = UID.normaliseUID(eventuid, user.content("private:viewing:location"));
         LinkedList event = list(style("colours","lightmauve"),
@@ -276,7 +274,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedHashMap article2GUI(){ logrule();
+    public LinkedHashMap article2GUI(){
 
         boolean article=user.contentIsOrListContains("private:viewing:is", "article");
         String title=user.content("private:viewing:title");
@@ -405,7 +403,7 @@ public class OTS2GUI {
         return streetb.toString().trim();
     }
 
-    public LinkedHashMap guifyHash(String path, LinkedHashMap<String,Object> hm, String objuid, boolean editable){ logrule();
+    public LinkedHashMap guifyHash(String path, LinkedHashMap<String,Object> hm, String objuid, boolean editable){
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
         hm2.put("style", style("direction", hm.size()<=1? "horizontal": "vertical"));
         for(String tag: hm.keySet()){
@@ -576,7 +574,7 @@ public class OTS2GUI {
                                           list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
                                           list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
-        objhash.put("textures", list("placeholder"));
+        objhash.put("textures",      user.contentList(p+"textures"));
         objhash.put("vertexShader",  vs);
         objhash.put("fragmentShader",fs);
 

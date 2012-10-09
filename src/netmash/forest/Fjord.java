@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 
+import static netmash.lib.Utils.*;
+
 /** Fjord Language.
   * .
   */

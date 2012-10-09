@@ -2,6 +2,7 @@ package server.types;
 
 import java.util.*;
 import netmash.forest.Editable;
+import static netmash.lib.Utils.*;
 
 /** Tracks Presence of Users viewing it.
   */

@@ -24,7 +24,7 @@ import static android.location.LocationManager.*;
 import netmash.lib.*;
 import netmash.forest.*;
 import netmash.platform.Kernel;
-import static netmash.platform.Logging.*;
+import static netmash.lib.Utils.*;
 
 /** User viewing the Object Web.
   */

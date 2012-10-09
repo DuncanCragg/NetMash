@@ -3,6 +3,8 @@ import java.util.*;
 import netmash.forest.WebObject;
 import netmash.forest.Fjord;
 
+import static netmash.lib.Utils.*;
+
 /** FX Dealer Object from Book Chapter example.
   * Run by Fjord rules, but have a pseudo-market ticker.
   */

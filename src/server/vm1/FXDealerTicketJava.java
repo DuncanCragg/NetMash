@@ -2,6 +2,8 @@
 import java.util.*;
 import netmash.forest.WebObject;
 
+import static netmash.lib.Utils.*;
+
 /** FX Dealer Object from Book Chapter example. Original Java version.
   * In NetMash, these WebObject classes are buckets for animation rules, as there isn't a
   * strict concept of class in FOREST. Here we bundle the rules for two 'classes' - dealers

@@ -1,5 +1,7 @@
 package netmash.forest;
 
+import static netmash.lib.Utils.*;
+
 public class Editable extends ObjectMash {
 
     public Editable(){}

@@ -104,7 +104,7 @@ public class Mesh {
 
             il=ia.length;
 
-            textures       = getListFromHash(mesh,"textures");
+            textures       = getListFromHash(mesh,"textures"); if(textures.size()==0) textures=list("placeholder");
             vertexShader   = join(user.shaders.get(getStringFromHash(mesh,"vertexShader",""))," ");
             fragmentShader = join(user.shaders.get(getStringFromHash(mesh,"fragmentShader",""))," ");
             subObjects     = getListFromHash(mesh,"subObjects");
