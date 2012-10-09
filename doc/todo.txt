@@ -18,16 +18,13 @@ Current priority: (vim-edited for now) rules for puzzle room
  - done some refactoring, need to focus on visible value towards Xmas demo
 
 --------------------------------------------------------
- - dark room and light room
- - make light objects in dark room
-    - scatter lots of cubes and lights around room
  - light room for the puzzles
     - swipe cubes up to fraction and they light up
     - swipe 'done' cube and get reward
+ - link to Rob Ott's place
 ---------------------------------------------------------
 Performance, Bugs
 
- - seems to drop notify even when alerted is drilled into
  - broken editing
     - need two forms if swiping and editing
  - touch detect:

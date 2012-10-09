@@ -65,13 +65,31 @@ public class User extends WebObject {
               "    \"light\": [ \"*\", [ \"=>\", \"$:light:1\", \"+\", \"$:%alerted:dx\"  ], [ \"=>\", \"$:light:2\", \"+\", \"$:%alerted:dy\" ] ] \n"+
               "}");
 
-        Editable lite = new Editable(
+        Editable lite1 = new Editable(
               "{ \"%rules\": [ \""+rule.uid+"\" ], \n"+
               "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
-              "  \"title\": \"Light\", \n"+
+              "  \"title\": \"Light 1\", \n"+
+              "  \"rotation\": [ 0, 0, 0 ], \n"+
+              "  \"scale\": [ 0.3, 0.3, 0.3 ], \n"+
+              "  \"light\": [ 0.0, 1.0, 1.0 ] \n"+
+              "}");
+
+        Editable lite2 = new Editable(
+              "{ \"%rules\": [ \""+rule.uid+"\" ], \n"+
+              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
+              "  \"title\": \"Light 2\", \n"+
               "  \"rotation\": [ 45, 45, 45 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
-              "  \"light\": [ 0.7, 0.7, 0.7 ] \n"+
+              "  \"light\": [ 1.0, 0.0, 1.0 ] \n"+
+              "}");
+
+        Editable lite3 = new Editable(
+              "{ \"%rules\": [ \""+rule.uid+"\" ], \n"+
+              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
+              "  \"title\": \"Light 3\", \n"+
+              "  \"rotation\": [ 0, 45, 0 ], \n"+
+              "  \"scale\": [ 0.1, 0.1, 0.1 ], \n"+
+              "  \"light\": [ 1.0, 1.0, 0.0 ] \n"+
               "}");
 
         Editable sign = new Editable(
@@ -86,12 +104,13 @@ public class User extends WebObject {
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
               "    \"title\": \""+your+" Room\", \n"+
               "    \"subObjects\": [ \n"+
-              "        { \"object\": \""+lite.uid+"\", \"coords\": [  0,  0, -7 ] }, \n"+
-              "        { \"object\": \""+sign.uid+"\", \"coords\": [  0,  0, -10 ] }, \n"+
+              "        { \"object\": \""+lite3.uid+"\", \"coords\": [ -4,  0, -10 ] }, \n"+
+              "        { \"object\": \""+lite2.uid+"\", \"coords\": [  4,  0, -10 ] }, \n"+
+              "        { \"object\": \""+lite1.uid+"\", \"coords\": [  0,  0,  -7 ] }, \n"+
+              "        { \"object\": \""+sign.uid+"\",  \"coords\": [  0,  0, -10 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0, -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0, -7 ] }, \n"+
-              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  4, -7 ] }, \n"+
-              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0, -4, -7 ] } \n"+
+              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  4, -7 ] } \n"+
               "    ], \n"+
               "    \"vertices\": [ [  20.0,  -1.0, -20.0 ], [  20.0,  -1.0,  20.0 ], [ -20.0,  -1.0,  20.0 ], [ -20.0,  -1.0, -20.0 ], [  20.0,  20.0, -20.0 ], [  20.0,  20.0,  20.0 ], [ -20.0,  20.0,  20.0 ], [ -20.0,  20.0, -20.0 ] ], \n"+
               "    \"texturepoints\": [ [ 0.0, 0.0 ], [ 5.0, 0.0 ], [ 5.0, 5.0 ], [ 0.0, 5.0 ] ], \n"+
@@ -113,7 +132,9 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(links);
         me.funcobs.cacheSaveAndEvaluate(contacts);
         me.funcobs.cacheSaveAndEvaluate(rule);
-        me.funcobs.cacheSaveAndEvaluate(lite);
+        me.funcobs.cacheSaveAndEvaluate(lite1);
+        me.funcobs.cacheSaveAndEvaluate(lite2);
+        me.funcobs.cacheSaveAndEvaluate(lite3);
         me.funcobs.cacheSaveAndEvaluate(sign);
         me.funcobs.cacheSaveAndEvaluate(room);
         me.funcobs.cacheSaveAndEvaluate(me, true);
