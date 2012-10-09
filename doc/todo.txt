@@ -21,7 +21,6 @@ Current priority: (vim-edited for now) rules for puzzle room
  - light room for the puzzles
     - swipe cubes up to fraction and they light up
     - swipe 'done' cube and get reward
- - link to Rob Ott's place
 ---------------------------------------------------------
 Performance, Bugs
 
