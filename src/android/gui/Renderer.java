@@ -116,7 +116,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             touchDetecting=false;
             ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
-            throwAnyGLException("glReadPixels "+touchX+" "+touchY+" "+b);
+            throwAnyGLException("glReadPixels ",touchX,touchY,b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
             Mesh m=touchables.get(""+touchedGrey);
             if(m!=null) netmash.user.onObjectTouched(m.mesh,touchShift,touchDX,touchDY);
@@ -275,18 +275,17 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, meshIDs.get(m));
 
         GLES20.glVertexAttribPointer(posLoc, 3, GLES20.GL_FLOAT, false, 32, 0);
-        GLES20.glEnableVertexAttribArray(posLoc);
+        GLES20.glEnableVertexAttribArray(posLoc); throwAnyGLException("VBOs pos",posLoc,m);
         if(!touchDetecting){
         GLES20.glVertexAttribPointer(norLoc, 3, GLES20.GL_FLOAT, false, 32, 12);
-        GLES20.glEnableVertexAttribArray(norLoc);
+        GLES20.glEnableVertexAttribArray(norLoc); throwAnyGLException("VBOs nor",norLoc,m);
 
         GLES20.glVertexAttribPointer(texLoc, 2, GLES20.GL_FLOAT, false, 32, 24);
-        GLES20.glEnableVertexAttribArray(texLoc);
+        GLES20.glEnableVertexAttribArray(texLoc); throwAnyGLException("VBOs tex",texLoc,m);
         }
 
-        throwAnyGLException("VBOs");
-
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, m.il, GLES20.GL_UNSIGNED_SHORT, m.ib);
+        throwAnyGLException("glDrawElements");
 
         GLES20.glDisableVertexAttribArray(posLoc);
         GLES20.glDisableVertexAttribArray(norLoc);
@@ -294,7 +293,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
-        throwAnyGLException("glDrawElements");
+        throwAnyGLException("drawMesh disable/unbind");
     }
 
     // -------------------------------------------------------------
