@@ -525,6 +525,7 @@ public class OTS2GUI {
     private LinkedHashMap object2mesh(String p, boolean shallow){
         if(user.contentIsOrListContains(p+"is","mesh"))   return mesh2mesh(p, shallow);
         if(user.contentIsOrListContains(p+"is","user"))   return mesh2mesh(p+"avatar:", shallow);
+        if(user.contentIsOrListContains(p+"is","cuboid")) return cuboid2mesh(p);
         if(user.contentIsOrListContains(p+"is","notice")) return notice2mesh(p);
         return null;
     }
@@ -550,6 +551,34 @@ public class OTS2GUI {
         objhash.put("textures",      user.contentList(p+"textures"));
         objhash.put("vertexShader",  vs);
         objhash.put("fragmentShader",fs);
+        return objhash;
+    }
+
+    private LinkedHashMap cuboid2mesh(String p){
+        String vs=user.content(p+"vertexShader");
+        String fs=user.content(p+"fragmentShader");
+        shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
+        shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
+
+        LinkedHashMap objhash=new LinkedHashMap();
+        objhash.put("is", "mesh");
+        objhash.put("title",         user.content(    p+"title"));
+        objhash.put("rotation",      user.contentList(p+"rotation"));
+        objhash.put("scale",         user.contentList(p+"scale"));
+        objhash.put("light",         user.contentList(p+"light"));
+        objhash.put("vertices",      list(list(  1.0, -1.0, -1.0 ), list(  1.0, -1.0,  1.0 ), list( -1.0, -1.0,  1.0 ), list( -1.0, -1.0, -1.0 ),
+                                          list(  1.0,  1.0, -1.0 ), list(  1.0,  1.0,  1.0 ), list( -1.0,  1.0,  1.0 ), list( -1.0,  1.0, -1.0 )));
+        objhash.put("texturepoints", list(list( 1.0, 1.0 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 1.0 ) ));
+        objhash.put("normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
+                                          list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
+                                          list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
+        objhash.put("faces",         list(list( "5/1/5","1/2/5","4/3/5" ), list( "5/1/5","4/3/5","8/4/5" ), list( "3/1/1","7/2/1","8/3/1" ),
+                                          list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
+                                          list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
+                                          list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
+        objhash.put("vertexShader",  vs);
+        objhash.put("fragmentShader",fs);
+
         return objhash;
     }
 

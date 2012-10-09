@@ -20,7 +20,6 @@ Current priority: (vim-edited for now) rules for puzzle room
 --------------------------------------------------------
  - dark room and light room
  - make light objects in dark room
-    - swipe lights makes them dim/change colour, etc
     - scatter lots of cubes and lights around room
  - light room for the puzzles
     - swipe cubes up to fraction and they light up

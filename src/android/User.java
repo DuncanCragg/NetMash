@@ -65,26 +65,33 @@ public class User extends WebObject {
               "    \"light\": [ \"*\", [ \"=>\", \"$:light:1\", \"+\", \"$:%alerted:dx\"  ], [ \"=>\", \"$:light:2\", \"+\", \"$:%alerted:dy\" ] ] \n"+
               "}");
 
-        Editable sign = new Editable(
+        Editable lite = new Editable(
               "{ \"%rules\": [ \""+rule.uid+"\" ], \n"+
-              "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
+              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
+              "  \"title\": \"Light\", \n"+
+              "  \"rotation\": [ 45, 45, 45 ], \n"+
+              "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
+              "  \"light\": [ 0.7, 0.7, 0.7 ] \n"+
+              "}");
+
+        Editable sign = new Editable(
+              "{ \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Welcome Sign\", \n"+
               "  \"text\": \"Welcome to "+your+" Room\", \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
-              "  \"light\": [ 0.3, 0.7, 1.0 ] \n"+
               "}");
 
         Editable room = new Editable(
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
               "    \"title\": \""+your+" Room\", \n"+
               "    \"subObjects\": [ \n"+
-              "        { \"object\": \""+sign.uid+"\", \"coords\": [  0,  0, -9 ] }, \n"+
+              "        { \"object\": \""+lite.uid+"\", \"coords\": [  0,  0, -7 ] }, \n"+
+              "        { \"object\": \""+sign.uid+"\", \"coords\": [  0,  0, -10 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0, -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0, -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  4, -7 ] }, \n"+
-              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0, -4, -7 ] }, \n"+
-              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  0, -5 ] } \n"+
+              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0, -4, -7 ] } \n"+
               "    ], \n"+
               "    \"vertices\": [ [  20.0,  -1.0, -20.0 ], [  20.0,  -1.0,  20.0 ], [ -20.0,  -1.0,  20.0 ], [ -20.0,  -1.0, -20.0 ], [  20.0,  20.0, -20.0 ], [  20.0,  20.0,  20.0 ], [ -20.0,  20.0,  20.0 ], [ -20.0,  20.0, -20.0 ] ], \n"+
               "    \"texturepoints\": [ [ 0.0, 0.0 ], [ 5.0, 0.0 ], [ 5.0, 5.0 ], [ 0.0, 5.0 ] ], \n"+
@@ -106,6 +113,7 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(links);
         me.funcobs.cacheSaveAndEvaluate(contacts);
         me.funcobs.cacheSaveAndEvaluate(rule);
+        me.funcobs.cacheSaveAndEvaluate(lite);
         me.funcobs.cacheSaveAndEvaluate(sign);
         me.funcobs.cacheSaveAndEvaluate(room);
         me.funcobs.cacheSaveAndEvaluate(me, true);
