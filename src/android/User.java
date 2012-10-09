@@ -71,7 +71,7 @@ public class User extends WebObject {
               "  \"title\": \"Light\", \n"+
               "  \"rotation\": [ 0, 45, 0 ], \n"+
               "  \"scale\": [ 0.3, 0.5, 0.3 ], \n"+
-              "  \"light\": [ 0.0, 0.5, 1.0 ] \n"+
+              "  \"light\": [ 0.5, 0.5, 1.0 ] \n"+
               "}");
 
         Editable gamerule = new Editable(
@@ -101,8 +101,8 @@ public class User extends WebObject {
 
         Editable sign = new Editable(
               "{ \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
-              "  \"title\": \"Welcome Sign\", \n"+
-              "  \"text\": \"Welcome to "+your+" Room\", \n"+
+              "  \"title\": \"Game Sign\", \n"+
+              "  \"text\": \"Maths Game\", \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
               "}");
@@ -111,10 +111,10 @@ public class User extends WebObject {
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
               "    \"title\": \""+your+" Room\", \n"+
               "    \"subObjects\": [ \n"+
-              "        { \"object\": \""+game1.uid+"\", \"coords\": [  5,  0,  -2 ] }, \n"+
-              "        { \"object\": \""+game2.uid+"\", \"coords\": [  5,  0,  -1 ] }, \n"+
-              "        { \"object\": \""+light.uid+"\", \"coords\": [  0,  0,  -7 ] }, \n"+
-              "        { \"object\": \""+sign.uid+"\",  \"coords\": [  0,  0, -10 ] }, \n"+
+              "        { \"object\": \""+sign.uid+"\",  \"coords\": [  0,    1,  -10 ] }, \n"+
+              "        { \"object\": \""+game1.uid+"\", \"coords\": [ -0.55, 0,  -10 ] }, \n"+
+              "        { \"object\": \""+game2.uid+"\", \"coords\": [  0.55, 0,  -10 ] }, \n"+
+              "        { \"object\": \""+light.uid+"\", \"coords\": [  0,    0,   -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0,  -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0,  -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  4,  -7 ] }, \n"+
