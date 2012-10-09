@@ -28,6 +28,9 @@ Current priority: (vim-edited for now) rules for puzzle room
 ---------------------------------------------------------
 Performance, Bugs
 
+ - seems to drop notify even when alerted is drilled into
+ - broken editing
+    - need two forms if swiping and editing
  - touch detect:
     - 0,480 bug on ZTE
     - inefficient re-detect when moving - object is the same
