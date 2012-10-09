@@ -576,6 +576,7 @@ public class OTS2GUI {
                                           list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
                                           list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
+        objhash.put("textures", list("placeholder"));
         objhash.put("vertexShader",  vs);
         objhash.put("fragmentShader",fs);
 
@@ -609,9 +610,9 @@ public class OTS2GUI {
                                           list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
                                           list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
+        objhash.put("textures", list(text));
         objhash.put("vertexShader",  vs);
         objhash.put("fragmentShader",fs);
-        objhash.put("textures", list(text));
 
         return objhash;
     }

@@ -345,8 +345,10 @@ public class Renderer implements GLSurfaceView.Renderer {
     private void setupTextures(Mesh m){
         for(int i=0; i< m.textures.size(); i++) {
             String url=m.textures.get(i).toString();
-            Bitmap       bm=netmash.user.textBitmaps.get(url);
-            if(bm==null) bm=netmash.getBitmap(url);
+            Bitmap       bm=null;
+            if(url.equals("placeholder")) bm=netmash.getPlaceHolderBitmap();
+            if(bm==null)                  bm=netmash.user.textBitmaps.get(url);
+            if(bm==null)                  bm=netmash.getBitmap(url);
             if(bm==null) continue;
             if(bm!=textureBMs.get(url)){
                 int[] texID = new int[1];
