@@ -587,14 +587,15 @@ public class OTS2GUI {
         shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
         shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
 
-        String text=user.content(p+"text");
-        if(text==null) return null;
-
-        text2Bitmap(text);
+        String title=user.content(p+"title");
+        String text =user.content(p+"text");
+        if(title==null) title="No Title";
+        if(text ==null) text ="No Text";
+        String key=text2Bitmap(title,text);
 
         LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
-        objhash.put("title",         user.content(    p+"title"));
+        objhash.put("title",         title);
         objhash.put("rotation",      user.contentList(p+"rotation"));
         objhash.put("scale",         user.contentList(p+"scale"));
         objhash.put("light",         user.contentList(p+"light"));
@@ -608,7 +609,7 @@ public class OTS2GUI {
                                           list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
                                           list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
-        objhash.put("textures", list(text));
+        objhash.put("textures", list(key));
         objhash.put("vertexShader",  vs);
         objhash.put("fragmentShader",fs);
 
@@ -617,16 +618,16 @@ public class OTS2GUI {
 
     private LinkedHashMap object2edit(){
 
-        if(!user.contentSet("private:editing")) return null;
+        if(!user.contentSet("private:editing") || user.contentIs("private:editing","")) return null;
 
+        String title="Edit Panel";
         String text=user.content("private:editing:title");
-        if(text==null) return null;
-
-        text2Bitmap(text);
+        if(text==null) text="No Title";
+        String key=text2Bitmap(title,text);
 
         LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
-        objhash.put("title", "object being edited");
+        objhash.put("title", title);
         objhash.put("vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
                                           list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
         objhash.put("texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));
@@ -634,14 +635,15 @@ public class OTS2GUI {
                                           list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
                                           list(  0.0,  0.0, -1.0 ), list( 0.0, 0.0, 1.0 )));
         objhash.put("faces",         list(list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" )));
-        objhash.put("textures", list(text));
+        objhash.put("textures", list(key));
 
         return objhash;
     }
 
-    private void text2Bitmap(String text){
-        Bitmap bitmap = user.textBitmaps.get(text);
-        if(bitmap!=null) return;
+    private String text2Bitmap(String title, String text){
+        String key=title+text;
+        Bitmap bitmap = user.textBitmaps.get(key);
+        if(bitmap!=null) return key;
         bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
         Canvas canvas = new Canvas(bitmap);
         if(NetMash.top!=null){
@@ -650,11 +652,14 @@ public class OTS2GUI {
             background.draw(canvas);
         }
         Paint textPaint = new Paint();
-        textPaint.setTextSize(24);
         textPaint.setAntiAlias(true);
         textPaint.setARGB(0xff, 0xff, 0xff, 0xff);
-        canvas.drawText(text, 10,30, textPaint);
-        user.textBitmaps.put(text, bitmap);
+        textPaint.setTextSize(24);
+        canvas.drawText(title, 10,30, textPaint);
+        textPaint.setTextSize(20);
+        canvas.drawText(text,  10,70, textPaint);
+        user.textBitmaps.put(key, bitmap);
+        return key;
     }
 
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){

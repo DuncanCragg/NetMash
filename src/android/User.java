@@ -101,8 +101,8 @@ public class User extends WebObject {
 
         Editable sign = new Editable(
               "{ \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
-              "  \"title\": \"Game Sign\", \n"+
-              "  \"text\": \"Maths Game\", \n"+
+              "  \"title\": \"Maths Game\", \n"+
+              "  \"text\": \"Light up 1/2 cubes\", \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
               "}");
