@@ -74,37 +74,49 @@ public class User extends WebObject {
               "  \"light\": [ 0.5, 0.5, 1.0 ] \n"+
               "}");
 
-        Editable gamerule = new Editable(
+        Editable gamerule1 = new Editable(
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"swiped, turn on light\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\" }, \n"+
-              "    \"light\": [ \"*\", [ \"=>\", 0.5  ], [ \"=>\", 1 ] ] \n"+
+              "    \"light\": [ \"*\", [ \"=>\", 1  ], [ \"=>\", 1 ] ] \n"+
+              "}");
+
+        Editable gamerule2 = new Editable(
+              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "    \"when\": \"xx\", \n"+
+              "    \"subObjects\": [ { \"object\": { \"light\": [ \"*\", 1, 1 ] } }, { \"object\": { \"light\": [ \"*\", 1, 1 ] } } ], \n"+
+              "    \"text\": [ \"=>\", \"Yay\" ] \n"+
               "}");
 
         Editable game1 = new Editable(
-              "{ \"%rules\": [ \""+gamerule.uid+"\" ], \n"+
+              "{ \"%rules\": [ \""+gamerule1.uid+"\" ], \n"+
               "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
               "  \"title\": \"Game Cube 1\", \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
-              "  \"light\": [ 0.0, 0.0, 0.5 ] \n"+
+              "  \"light\": [ 0.5, 0.5, 0.5 ] \n"+
               "}");
 
         Editable game2 = new Editable(
-              "{ \"%rules\": [ \""+gamerule.uid+"\" ], \n"+
+              "{ \"%rules\": [ \""+gamerule1.uid+"\" ], \n"+
               "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
               "  \"title\": \"Game Cube 2\", \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
-              "  \"light\": [ 0.0, 0.0, 0.5 ] \n"+
+              "  \"light\": [ 0.5, 0.5, 0.5 ] \n"+
               "}");
 
         Editable sign = new Editable(
-              "{ \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
+              "{ \"%rules\": [ \""+gamerule2.uid+"\" ], \n"+
+              "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Maths Game\", \n"+
               "  \"text\": \"Light up 1/2 cubes\", \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
+              "  \"subObjects\": [ \n"+
+              "        { \"object\": \""+game1.uid+"\", \"coords\": [ -0.55, -1,  0 ] }, \n"+
+              "        { \"object\": \""+game2.uid+"\", \"coords\": [  0.55, -1,  0 ] }, \n"+
+              "   ] \n"+
               "}");
 
         Editable room = new Editable(
@@ -112,8 +124,6 @@ public class User extends WebObject {
               "    \"title\": \""+your+" Room\", \n"+
               "    \"subObjects\": [ \n"+
               "        { \"object\": \""+sign.uid+"\",  \"coords\": [  0,    1,  -10 ] }, \n"+
-              "        { \"object\": \""+game1.uid+"\", \"coords\": [ -0.55, 0,  -10 ] }, \n"+
-              "        { \"object\": \""+game2.uid+"\", \"coords\": [  0.55, 0,  -10 ] }, \n"+
               "        { \"object\": \""+light.uid+"\", \"coords\": [  0,    0,   -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0,  -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0,  -7 ] }, \n"+
@@ -126,7 +136,7 @@ public class User extends WebObject {
               "    \"faces\": [ [ \"5/1/5\",\"4/3/5\",\"1/2/5\" ], [ \"5/1/5\",\"8/4/5\",\"4/3/5\" ], [ \"3/1/1\",\"8/3/1\",\"7/2/1\" ], [ \"3/1/1\",\"4/4/1\",\"8/3/1\" ], [ \"2/1/6\",\"3/4/6\",\"6/2/6\" ], [ \"6/2/6\",\"3/4/6\",\"7/3/6\" ], [ \"1/1/2\",\"2/4/2\",\"5/2/2\" ], [ \"5/2/2\",\"2/4/2\",\"6/3/2\" ], [ \"5/1/4\",\"6/4/4\",\"8/2/4\" ], [ \"8/2/4\",\"6/4/4\",\"7/3/4\" ], [ \"1/1/3\",\"3/3/3\",\"2/2/3\" ], [ \"1/1/3\",\"4/4/3\",\"3/3/3\" ] ], \n"+
               "    \"textures\": [ \"http://www.textures123.com/free-texture/sand/sand-texture4.jpg\" ], \n"+
               "    \"vertexShader\": \"http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json\", \n"+
-              "    \"fragmentShader\": \"http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json\", \n"+
+              "    \"fragmentShader\": \"http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json\" \n"+
               "}");
 
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
@@ -140,8 +150,9 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(links);
         me.funcobs.cacheSaveAndEvaluate(contacts);
         me.funcobs.cacheSaveAndEvaluate(lightrule);
-        me.funcobs.cacheSaveAndEvaluate(gamerule);
         me.funcobs.cacheSaveAndEvaluate(light);
+        me.funcobs.cacheSaveAndEvaluate(gamerule1);
+        me.funcobs.cacheSaveAndEvaluate(gamerule2);
         me.funcobs.cacheSaveAndEvaluate(game1);
         me.funcobs.cacheSaveAndEvaluate(game2);
         me.funcobs.cacheSaveAndEvaluate(sign);
