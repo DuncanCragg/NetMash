@@ -17,7 +17,7 @@ lan: androidlan runlan lancat
 
 rem: androidrem
 
-om: runom whappen
+om: runom showtestresults
 
 # -------------------------------------------------------------------
 
@@ -216,6 +216,10 @@ allconfig:
 
 setup:
 	vim -o -N res/raw/netmashconfig.json res/raw/topdb.json src/server/vm1/netmashconfig.json src/server/vm1/test.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test.db
+
+showtestresults:
+	sleep 2
+	egrep -i 'running rule|scan' src/server/vm2/netmash.log
 
 whappen:
 	vim -o -N src/server/vm1/netmash.log src/server/vm2/netmash.log src/server/vm1/netmash.db src/server/vm2/netmash.db

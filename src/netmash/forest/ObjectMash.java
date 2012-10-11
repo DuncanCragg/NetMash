@@ -96,11 +96,11 @@ public class ObjectMash extends WebObject {
     @SuppressWarnings("unchecked")
     private boolean scanRuleList(LinkedList list, String path, LinkedHashMap<String,Object> rewrites){
         if(list.size() == 2 && list.get(0).equals("<")){
-            double v=findNumberIn(list.get(1));
+            double v=findDouble(list.get(1));
             return contentDouble(path) < v;
         }
         if(list.size() == 2 && list.get(0).equals(">")){
-            double v=findNumberIn(list.get(1));
+            double v=findDouble(list.get(1));
             return contentDouble(path) > v;
         }
         if(list.size() >= 2 && list.get(0).equals("=>")){
@@ -171,15 +171,10 @@ public class ObjectMash extends WebObject {
         }
     }
 
-    static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
     private double findDouble(Object o){
         if(o==null) return 0;
-        String s=o.toString();
-        if(s.startsWith("$:")) return contentDouble(s.substring(2));
-        Date d = dateFormat.parse(s, new ParsePosition(0));
-        if(d!=null) return d.getTime();
-        return tryDouble(s,0);
+        if(o instanceof String && ((String)o).startsWith("$:")) return contentDouble(((String)o).substring(2));
+        return findNumberIn(o);
     }
 
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }

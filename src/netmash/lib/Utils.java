@@ -103,6 +103,7 @@ public class Utils{
     }
 
     static public double tryDouble(Object o, double d){
+        if(o instanceof Number) return ((Number)o).doubleValue();
         try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return d; }
     }
 
