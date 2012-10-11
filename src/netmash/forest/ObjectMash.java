@@ -152,7 +152,7 @@ public class ObjectMash extends WebObject {
             if(v instanceof LinkedList){
                 LinkedList ll=(LinkedList)v;
                 if(ll.size()==1){
-                    contentObject(path,ll.get(0));
+                    contentObject(path,findObject(ll.get(0)));
                 }
                 else
                 if(ll.size()==3 && ll.get(1).equals("+")){
@@ -166,6 +166,12 @@ public class ObjectMash extends WebObject {
             }
             else contentObject(path,v);
         }
+    }
+
+    private Object findObject(Object o){
+        if(o==null) return null;
+        if(o instanceof String && ((String)o).startsWith("$:")) return contentObject(((String)o).substring(2));
+        return o;
     }
 
     private double findDouble(Object o){

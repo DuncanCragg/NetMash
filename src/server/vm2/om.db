@@ -10,7 +10,8 @@
 
 { "%uid": "uid-e164-2547-46b0-f47e",
   "is": [ "test", "rule" ],
-  "when": "Test addition",
+  "when": "Test fetching var and addition",
+  "a": [ "=>", "$:x" ],
   "b": [ "=>", "$:x", "+", 10 ]
 }
 
@@ -24,13 +25,14 @@
   "is": [ "test", "rule" ],
   "when": "Test list element match 1",
   "z": [ 2, [ ">", 299 ] ],
+  "o": [ { "a": 1 }, { "a": 3 } ],
   "l1": [ "=>", "ok" ]
 }
 
 { "%uid": "uid-d3e7-6831-3804-7cbf",
   "is": [ "test", "rule" ],
   "when": "Test list element match 2",
-  "o": [ { "a": 1 }, { "a": 3 } ],
+  "o": [ { "a": 2 } ],
   "l2": [ "=>", "ok" ]
 }
 
@@ -38,6 +40,8 @@
   "is": [ "test", "rule" ],
   "when": "Test completion",
   "z": [ 1, 2, 300 ],
+  "a": 20,
+  "b": 30,
   "l1": "ok",
   "l2": "ok",
   "title": [ "=>", "Test Complete" ]
