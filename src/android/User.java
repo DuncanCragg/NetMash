@@ -96,7 +96,7 @@ public class User extends WebObject {
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"checking, set to initial zero\", \n"+
               "    \"lit\": [ \"=>\", 0 ], \n"+
-              "    \"text\": [ \"*\", \"*\", [ \"=>\", \"no\" ] ] \n"+
+              "    \"text\": [ \"*\", [ \"=>\", \"$:numerator\" ], [ \"=>\", \"no\" ] ] \n"+
               "}");
 
         Editable gamerule1 = new Editable(
@@ -109,7 +109,7 @@ public class User extends WebObject {
         Editable gamerule2 = new Editable(
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"checking, if correct, set text\", \n"+
-              "    \"lit\": 1, \n"+
+              "    \"lit\": \"$:numerator\", \n"+
               "    \"text\": [ \"*\", \"*\", [ \"=>\", \"yes\" ] ] \n"+
               "}");
 
@@ -117,14 +117,15 @@ public class User extends WebObject {
               "{ \"%rules\": [ \""+gamerule0.uid+"\", \""+gamerule1.uid+"\", \""+gamerule2.uid+"\" ], \n"+
               "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Maths Game\", \n"+
-              "  \"text\": [ \"Light up\", \"1/2\", \"0\" ], \n"+
+              "  \"text\": [ \"Light up\", \"-\", \"-\" ], \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
               "  \"subObjects\": [ \n"+
               "        { \"object\": \""+gamelight1.uid+"\", \"coords\": [ -0.55, -1,  0 ] }, \n"+
               "        { \"object\": \""+gamelight2.uid+"\", \"coords\": [  0.55, -1,  0 ] }, \n"+
               "  ], \n"+
-              "  \"lit\": 0 \n"+
+              "  \"lit\": 0, \n"+
+              "  \"numerator\": 1 \n"+
               "}");
 
         Editable lightrule = new Editable(
