@@ -109,31 +109,25 @@ public class ObjectMash extends WebObject {
             return true;
         }
         int i=0;
+        int j=0;
         for(Object v: list){
-            String pk=String.format("%s:%d",path,i);
-            if(v instanceof String){
-                if(!scanString((String)v, pk)) return false;
-            }
-            else
-            if(v instanceof Number){
-                if(!scanNumber((Number)v, pk)) return false;
-            }
-            else
-            if(v instanceof Boolean){
-                if(!scanBoolean((Boolean)v, pk)) return false;
-            }
-            else
-            if(v instanceof LinkedHashMap){
-                if(!scanRuleHash((LinkedHashMap<String,Object>)v, pk+":", rewrites)) return false;
-            }
-            else
-            if(v instanceof LinkedList){
-                if(!scanRuleList((LinkedList)v, pk+":", rewrites)) return false;
-            }
-            else{ log("oh noes "+v); return false; }
+            String pk=String.format("%s:%d",path,j);
+            if(!scanType(v,pk,rewrites)) return false;
             i++;
+            j++;
         }
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean scanType(Object v, String pk, LinkedHashMap<String,Object> rewrites){
+        if(v instanceof String)        return scanString((String)v, pk);
+        if(v instanceof Number)        return scanNumber((Number)v, pk);
+        if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
+        if(v instanceof LinkedHashMap) return scanRuleHash((LinkedHashMap<String,Object>)v, pk+":", rewrites);
+        if(v instanceof LinkedList)    return scanRuleList((LinkedList)v, pk+":", rewrites);
+        log("oh noes "+v);
+        return false;
     }
 
     private boolean scanString(String vs, String pk){

@@ -1,34 +1,45 @@
 { "%uid": "uid-39da-3645-4f58-50cb",
   "%class": "netmash.forest.ObjectMash",
-  "%rules": [ "uid-d3e7-6831-3804-7cbf", "uid-e164-2547-46b0-f47e", "uid-40fb-5964-b385-c922", "uid-d039-5967-f60c-70f7" ],
+  "%rules": [ "uid-e164-2547-46b0-f47e", "uid-40fb-5964-b385-c922", "uid-1de5-4d69-667a-56e4", "uid-d3e7-6831-3804-7cbf", "uid-d039-5967-f60c-70f7" ],
   "is": [ "test" ],
   "title": "Test Running",
-  "x": 2,
-  "z": [ 1, 2, 3 ]
-}
-
-{ "%uid": "uid-d3e7-6831-3804-7cbf",
-  "is": [ "test", "rule" ],
-  "when": "Test multiply",
-  "a": [ "=>", "$:x", "×", 10 ]
+  "x": 20,
+  "z": [ 1, 2, 3 ],
+  "o": [ { "a": 1 }, { "a": 2 }, { "a": 1 }, { "a": 2 }, { "a": 3 } ]
 }
 
 { "%uid": "uid-e164-2547-46b0-f47e",
   "is": [ "test", "rule" ],
   "when": "Test addition",
-  "b": [ "=>", "$:a", "+", 10 ]
+  "b": [ "=>", "$:x", "+", 10 ]
 }
 
 { "%uid": "uid-40fb-5964-b385-c922",
   "is": [ "test", "rule" ],
-  "when": "Test nested list and star",
+  "when": "Test nested list, less/greater than, and multiply",
   "z": [ [ "<", 2 ], [ ">", 1 ], [ "=>", "$:b", "×", 10 ]]
+}
+
+{ "%uid": "uid-1de5-4d69-667a-56e4",
+  "is": [ "test", "rule" ],
+  "when": "Test list element match",
+  "z": [ 1, 2, 300 ],
+  "l1": [ "=>", "ok" ]
+}
+
+{ "%uid": "uid-d3e7-6831-3804-7cbf",
+  "is": [ "test", "rule" ],
+  "when": "Test list element match",
+  "o": [ { "a": 1 }, { "a": 2 } ],
+  "l2": [ "=>", "ok" ]
 }
 
 { "%uid": "uid-d039-5967-f60c-70f7",
   "is": [ "test", "rule" ],
   "when": "Test completion",
   "z": [ 1, 2, 300 ],
+  "l1": "ok",
+  "l2": "ok",
   "title": [ "=>", "Test Complete" ]
 }
 
