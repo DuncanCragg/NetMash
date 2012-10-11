@@ -174,11 +174,6 @@ public class ObjectMash extends WebObject {
         return o;
     }
 
-    private Object eitherBindingOrContentObject(String path){
-        if(path.startsWith(":")) return bindings.get(path.substring(1));
-        else return contentObject(path);
-    }
-
     private double findDouble(Object o){
         if(o==null) return 0;
         if(o instanceof String && ((String)o).startsWith("$:")) return contentDouble(((String)o).substring(2));
@@ -188,8 +183,18 @@ public class ObjectMash extends WebObject {
     private LinkedList findList(Object o){
         if(o==null) return null;
         if(o instanceof LinkedList) return (LinkedList)o;
-        if(o instanceof String && ((String)o).startsWith("$:")) return contentList(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentList(((String)o).substring(2));
         return null;
+    }
+
+    private Object eitherBindingOrContentObject(String path){
+        if(path.startsWith(":")) return bindings.get(path.substring(1));
+        else return contentObject(path);
+    }
+
+    private LinkedList eitherBindingOrContentList(String path){
+        if(path.startsWith(":")) return bindings.get(path.substring(1));
+        else return contentList(path);
     }
 
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
