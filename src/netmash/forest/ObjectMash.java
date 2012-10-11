@@ -130,7 +130,17 @@ public class ObjectMash extends WebObject {
     }
 
     private boolean scanString(String vs, String pk){
-        return vs.equals("*") || contentIsOrListContains(pk,vs);
+        return vs.equals("*") || contentIsOrListContains(pk,vs) || foundObjectSame(pk,vs);
+    }
+
+    private boolean foundObjectSame(String pk, String vs){
+        Object pko=contentObject(pk);
+        Object vso=findObject(vs);
+        if(vso.equals(pko)) return true;
+        if(pko instanceof Number && vso instanceof Number){
+            return ((Number)pko).doubleValue()==((Number)vso).doubleValue();
+        }
+        return false;
     }
 
     private boolean scanNumber(Number vb, String pk){
