@@ -77,8 +77,8 @@ public class User extends WebObject {
         Editable gamerule1 = new Editable(
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"xx\", \n"+
-              "    \"subObjects\": [ { \"object\": { \"light\": [ \"*\", 1, 1 ] } }, { \"object\": { \"light\": [ \"*\", 1, 1 ] } } ], \n"+
-              "    \"text\": [ \"=>\", \"Yay\" ] \n"+
+              "    \"subObjects\": [ { \"object\": { \"light\": [ \"*\", 1, 1 ] } } ], \n"+
+              "    \"text\": [ \"=>\", \"count\", \"$::subObjects\" ] \n"+
               "}");
 
         Editable gamelight1 = new Editable(
