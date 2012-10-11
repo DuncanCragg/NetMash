@@ -97,17 +97,19 @@ public class ObjectMash extends WebObject {
             rewrites.put(path,rhs);
             return true;
         }
+        LinkedList bl=new LinkedList();
         LinkedList ll=contentList(path);
         if(ll==null) return false;
         int i=0;
         for(Object v: list){
             for(; i<ll.size(); i++){
                 String pk=String.format("%s:%d",path,i);
-                if(scanType(v,pk,false)) break;
+                if(scanType(v,pk,false)){ bl.add(contentObject(pk)); break; }
             }
             if(i==ll.size()) return false;
             i++;
         }
+        bindings.put(path,bl);
         return true;
     }
 
@@ -163,8 +165,13 @@ public class ObjectMash extends WebObject {
 
     private Object findObject(Object o){
         if(o==null) return null;
-        if(o instanceof String && ((String)o).startsWith("$:")) return contentObject(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentObject(((String)o).substring(2));
         return o;
+    }
+
+    private Object eitherBindingOrContentObject(String path){
+        if(path.startsWith(":")) return bindings.get(path.substring(1));
+        else return contentObject(path);
     }
 
     private double findDouble(Object o){
