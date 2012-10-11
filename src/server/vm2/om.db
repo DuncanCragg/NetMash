@@ -33,7 +33,8 @@
   "is": [ "test", "rule" ],
   "when": "Test list element match 2",
   "o": [ { "a": 2 } ],
-  "l2": [ "=>", "count", "$:o" ]
+  "l2": [ "=>", "count", "$:o" ],
+  "l3": [ "=>", "$:o" ]
 }
 
 { "%uid": "uid-d039-5967-f60c-70f7",
@@ -44,6 +45,7 @@
   "b": 30,
   "l1": "ok",
   "l2": 5,
+  "l3": [ "list-count", 5 ],
   "title": [ "=>", "Test Complete" ]
 }
 

@@ -95,13 +95,17 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanRuleList(LinkedList list, String path, LinkedHashMap<String,Object> rewrites){
-        if(list.size() == 2 && list.get(0).equals("<")){
-            double v=findDouble(list.get(1));
-            return contentDouble(path) < v;
+        if(list.size()==2 && list.get(0).equals("<")){
+            double d=findDouble(list.get(1));
+            return contentDouble(path) < d;
         }
-        if(list.size() == 2 && list.get(0).equals(">")){
-            double v=findDouble(list.get(1));
-            return contentDouble(path) > v;
+        if(list.size()==2 && list.get(0).equals(">")){
+            double d=findDouble(list.get(1));
+            return contentDouble(path) > d;
+        }
+        if(list.size()==2 && list.get(0).equals("list-count")){
+            double d=findDouble(list.get(1));
+            return contentList(path).size()==(int)d;
         }
         if(list.size() >= 2 && list.get(0).equals("=>")){
             LinkedList rhs=new LinkedList(list.subList(1,list.size()));
