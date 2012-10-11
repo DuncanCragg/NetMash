@@ -77,7 +77,7 @@ public class User extends WebObject {
         Editable gamerule1 = new Editable(
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"swiped, turn on light\", \n"+
-              "    \"%alerted\": { \"is\": \"swipe\" }, \n"+
+              "    \"%alerted\": { \"is\": \"swipe\", \"dy\": [ \"<\", 0 ] }, \n"+
               "    \"light\": [ \"*\", [ \"=>\", 1  ], [ \"=>\", 1 ] ] \n"+
               "}");
 
