@@ -538,7 +538,7 @@ public class OTS2GUI {
 
         LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
-        objhash.put("title",         user.content(    p+"title"));
+        objhash.put("title",         user.contentString(p+"title"));
         objhash.put("rotation",      user.contentList(p+"rotation"));
         objhash.put("scale",         user.contentList(p+"scale"));
         objhash.put("light",         user.contentList(p+"light"));
@@ -560,7 +560,7 @@ public class OTS2GUI {
 
         LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
-        objhash.put("title",         user.content(    p+"title"));
+        objhash.put("title",         user.contentString(p+"title"));
         objhash.put("rotation",      user.contentList(p+"rotation"));
         objhash.put("scale",         user.contentList(p+"scale"));
         objhash.put("light",         user.contentList(p+"light"));
@@ -587,8 +587,8 @@ public class OTS2GUI {
         shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
         shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
 
-        String title=user.content(p+"title");
-        String text =user.content(p+"text");
+        String title=user.contentString(p+"title");
+        String text =user.contentString(p+"text");
         if(title==null) title="No Title";
         if(text ==null) text ="No Text";
         String key=text2Bitmap(title,text);
@@ -621,7 +621,7 @@ public class OTS2GUI {
         if(!user.contentSet("private:editing") || user.contentIs("private:editing","")) return null;
 
         String title="Edit Panel";
-        String text=user.content("private:editing:title");
+        String text=user.contentString("private:editing:title");
         if(text==null) text="No Title";
         String key=text2Bitmap(title,text);
 
