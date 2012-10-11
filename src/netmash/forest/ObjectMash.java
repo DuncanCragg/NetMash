@@ -43,21 +43,24 @@ public class ObjectMash extends WebObject {
         else for(String alerted: alerted()) runRule(r,alerted);
     }
 
+    LinkedHashMap<String,Object>     rewrites=new LinkedHashMap<String,Object>();
+    LinkedHashMap<String,LinkedList> bindings=new LinkedHashMap<String,LinkedList>();
+
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
         if(extralogging) log("Running rule \""+contentOr(String.format("%%rules:%d:when", r),"")+"\"");
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
         contentTemp("%alerted", alerted);
-        LinkedHashMap<String,Object> rewrites=new LinkedHashMap<String,Object>();
-        boolean ok=scanRuleHash(rule, "", rewrites);
-        if(ok) doRewrites(rewrites);
+        rewrites.clear(); bindings.clear();
+        boolean ok=scanRuleHash(rule, "");
+        if(ok) doRewrites();
         if(ok) log("Rule fired: \""+contentOr(String.format("%%rules:%d:when", r),"")+"\"");
         if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"\n===========");
         contentTemp("%alerted", null);
     }
 
     @SuppressWarnings("unchecked")
-    private boolean scanRuleHash(LinkedHashMap<String,Object> hash, String path, LinkedHashMap<String,Object> rewrites){
+    private boolean scanRuleHash(LinkedHashMap<String,Object> hash, String path){
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=path+entry.getKey();
             if(path.equals("")){
@@ -69,13 +72,13 @@ public class ObjectMash extends WebObject {
                 if(pk.equals("user")) continue;
             }
             Object v=entry.getValue();
-            if(!scanType(v,pk,rewrites,true)) return false;
+            if(!scanType(v,pk,true)) return false;
         }
         return true;
     }
 
     @SuppressWarnings("unchecked")
-    private boolean scanRuleList(LinkedList list, String path, LinkedHashMap<String,Object> rewrites){
+    private boolean scanRuleList(LinkedList list, String path){
         if(list.size()==2 && list.get(0).equals("<")){
             double d=findDouble(list.get(1));
             return contentDouble(path) < d;
@@ -100,7 +103,7 @@ public class ObjectMash extends WebObject {
         for(Object v: list){
             for(; i<ll.size(); i++){
                 String pk=String.format("%s:%d",path,i);
-                if(scanType(v,pk,rewrites,false)) break;
+                if(scanType(v,pk,false)) break;
             }
             if(i==ll.size()) return false;
             i++;
@@ -109,12 +112,12 @@ public class ObjectMash extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean scanType(Object v, String pk, LinkedHashMap<String,Object> rewrites, boolean hmmm){
+    private boolean scanType(Object v, String pk, boolean hmmm){
         if(v instanceof String)        return scanString((String)v, pk);
         if(v instanceof Number)        return scanNumber((Number)v, pk);
         if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
-        if(v instanceof LinkedHashMap) return scanRuleHash((LinkedHashMap<String,Object>)v, pk+":", rewrites);
-        if(v instanceof LinkedList)    return scanRuleList((LinkedList)v, pk+(hmmm? "": ":"), rewrites);
+        if(v instanceof LinkedHashMap) return scanRuleHash((LinkedHashMap<String,Object>)v, pk+":");
+        if(v instanceof LinkedList)    return scanRuleList((LinkedList)v, pk+(hmmm? "": ":"));
         log("oh noes "+v);
         return false;
     }
@@ -131,7 +134,7 @@ public class ObjectMash extends WebObject {
         return contentBool(pk)==vb;
     }
 
-    private void doRewrites(LinkedHashMap<String,Object> rewrites){
+    private void doRewrites(){
         for(Map.Entry<String,Object> entry: rewrites.entrySet()){
             String path=entry.getKey();
             Object v=entry.getValue();
