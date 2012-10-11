@@ -79,6 +79,7 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanRuleList(LinkedList list, String path){
+        if(list.size()==0) return true;
         if(list.size()==2 && list.get(0).equals("<")){
             double d=findDouble(list.get(1));
             return contentDouble(path) < d;
@@ -101,13 +102,17 @@ public class ObjectMash extends WebObject {
         LinkedList ll=contentList(path);
         if(ll==null) return false;
         int i=0;
+        boolean matchEach=list.size()!=1;
         for(Object v: list){
             for(; i<ll.size(); i++){
                 String pk=String.format("%s:%d",path,i);
-                if(scanType(v,pk,false)){ bl.add(contentObject(pk)); break; }
+                if(scanType(v,pk,false)){ bl.add(contentObject(pk)); if(matchEach) break; }
             }
-            if(i==ll.size()) return false;
-            i++;
+            if(matchEach){
+                if(i==ll.size()) return false;
+                i++;
+            }
+            else if(bl.size()==0) return false;
         }
         bindings.put(path,bl);
         return true;

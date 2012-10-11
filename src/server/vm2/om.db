@@ -45,7 +45,7 @@
   "b": 30,
   "l1": "ok",
   "l2": 5,
-  "l3": [ "list-count", 1 ],
+  "l3": [ "list-count", 3 ],
   "title": [ "=>", "Test Complete" ]
 }
 
