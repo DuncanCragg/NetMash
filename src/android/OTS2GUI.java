@@ -587,10 +587,11 @@ public class OTS2GUI {
         shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
         shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
 
-        String title=user.contentString(p+"title");
-        String text =user.contentString(p+"text");
+        String    title=user.contentString(p+"title");
+        LinkedList text=user.contentList(  p+"text");
         if(title==null) title="No Title";
-        if(text ==null) text ="No Text";
+        if(text ==null){ String t=user.contentString(p+"text"); if(t!=null) text=list(t); }
+        if(text ==null) text =list("No Text");
         String key=text2Bitmap(title,text);
 
         LinkedHashMap objhash=new LinkedHashMap();
@@ -623,7 +624,7 @@ public class OTS2GUI {
         String title="Edit Panel";
         String text=user.contentString("private:editing:title");
         if(text==null) text="No Title";
-        String key=text2Bitmap(title,text);
+        String key=text2Bitmap(title,list(text));
 
         LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
@@ -640,7 +641,7 @@ public class OTS2GUI {
         return objhash;
     }
 
-    private String text2Bitmap(String title, String text){
+    private String text2Bitmap(String title, LinkedList text){
         String key=title+text;
         Bitmap bitmap = user.textBitmaps.get(key);
         if(bitmap!=null) return key;
@@ -654,10 +655,16 @@ public class OTS2GUI {
         Paint textPaint = new Paint();
         textPaint.setAntiAlias(true);
         textPaint.setARGB(0xff, 0xff, 0xff, 0xff);
+
         textPaint.setTextSize(24);
         canvas.drawText(title, 10,30, textPaint);
+
         textPaint.setTextSize(20);
-        canvas.drawText(text,  10,70, textPaint);
+        int y=50;
+        for(Object o: text){
+            canvas.drawText(o.toString(), 10,y, textPaint);
+            y+=20;
+        }
         user.textBitmaps.put(key, bitmap);
         return key;
     }
