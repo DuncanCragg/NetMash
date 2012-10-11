@@ -162,6 +162,10 @@ public class ObjectMash extends WebObject {
                 if(ll.size()==3 && ll.get(1).equals("×")){
                     contentDouble(path, findDouble(ll.get(0)) * findDouble(ll.get(2)));
                 }
+                else
+                if(ll.size()==2 && ll.get(0).equals("count")){
+                    contentDouble(path, findList(ll.get(1)).size());
+                }
                 else contentObject(path,ll);
             }
             else contentObject(path,v);
@@ -178,6 +182,13 @@ public class ObjectMash extends WebObject {
         if(o==null) return 0;
         if(o instanceof String && ((String)o).startsWith("$:")) return contentDouble(((String)o).substring(2));
         return findNumberIn(o);
+    }
+
+    private LinkedList findList(Object o){
+        if(o==null) return null;
+        if(o instanceof LinkedList) return (LinkedList)o;
+        if(o instanceof String && ((String)o).startsWith("$:")) return contentList(((String)o).substring(2));
+        return null;
     }
 
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
