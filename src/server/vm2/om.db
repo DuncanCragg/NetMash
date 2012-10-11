@@ -22,15 +22,15 @@
 
 { "%uid": "uid-1de5-4d69-667a-56e4",
   "is": [ "test", "rule" ],
-  "when": "Test list element match",
-  "z": [ 1, 2, 300 ],
+  "when": "Test list element match 1",
+  "z": [ 2, [ ">", 299 ] ],
   "l1": [ "=>", "ok" ]
 }
 
 { "%uid": "uid-d3e7-6831-3804-7cbf",
   "is": [ "test", "rule" ],
-  "when": "Test list element match",
-  "o": [ { "a": 1 }, { "a": 2 } ],
+  "when": "Test list element match 2",
+  "o": [ { "a": 1 }, { "a": 3 } ],
   "l2": [ "=>", "ok" ]
 }
 

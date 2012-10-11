@@ -83,7 +83,7 @@ runlan: kill clean netconfig setvm2lanconfig useworlddb run1n2
 
 runrem: kill clean netconfig setvm2remconfig useworlddb run1n2
 
-runom:  kill clean omconfig  setvm2tstconfig useomdb run2
+runom:  kill       omconfig  setvm2tstconfig useomdb run2
 
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 

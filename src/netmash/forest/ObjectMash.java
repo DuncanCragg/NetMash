@@ -108,13 +108,16 @@ public class ObjectMash extends WebObject {
             rewrites.put(path,rhs);
             return true;
         }
+        LinkedList ll=contentList(path);
+        if(ll==null) return false;
         int i=0;
-        int j=0;
         for(Object v: list){
-            String pk=String.format("%s:%d",path,j);
-            if(!scanType(v,pk,rewrites)) return false;
+            for(; i<ll.size(); i++){
+                String pk=String.format("%s:%d",path,i);
+                if(scanType(v,pk,rewrites)) break;
+            }
+            if(i==ll.size()) return false;
             i++;
-            j++;
         }
         return true;
     }
