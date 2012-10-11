@@ -95,6 +95,10 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanRuleList(LinkedList list, String path, LinkedHashMap<String,Object> rewrites){
+        if(list.size() == 2 && list.get(0).equals("<")){
+            double v=findNumberIn(list.get(1));
+            return contentDouble(path) < v;
+        }
         if(list.size() >= 2 && list.get(0).equals("=>")){
             LinkedList rhs=new LinkedList(list.subList(1,list.size()));
             rewrites.put(path,rhs);

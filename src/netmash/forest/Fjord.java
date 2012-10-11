@@ -304,35 +304,6 @@ public class Fjord extends WebObject {
         else{ content(pk,function); return true; }
     }
 
-    private String minFromString(String a, String b){
-        if(a==null || a.length()==0) return b;
-        if(b==null || b.length()==0) return a;
-        return findNumberIn(a) < findNumberIn(b)? a: b;
-    }
-
-    private String maxFromString(String a, String b){
-        if(a==null || a.length()==0) return b;
-        if(b==null || b.length()==0) return a;
-        return findNumberIn(a) > findNumberIn(b)? a: b;
-    }
-
-    static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
-    private double findNumberIn(String s){
-        Date d = dateFormat.parse(s, new ParsePosition(0));
-        if(d!=null) return d.getTime();
-        else return tryDouble(s,0);
-    }
-
-    private Object makeBestObject(String s){
-        try{ return Double.parseDouble(s); } catch(NumberFormatException e){}
-        if(s.toLowerCase().equals("true" )) return Boolean.valueOf(true);
-        if(s.toLowerCase().equals("false")) return Boolean.valueOf(false);
-        return s;
-    }
-
-    public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
-
     // ----------------------------------------------------
 }
 

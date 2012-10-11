@@ -2,6 +2,8 @@
 package netmash.lib;
 
 import java.util.*;
+import java.util.regex.*;
+import java.text.*;
 
 import netmash.platform.*;
 
@@ -78,9 +80,40 @@ public class Utils{
         return r;
     }
 
+    static public String minFromString(String a, String b){
+        if(a==null || a.length()==0) return b;
+        if(b==null || b.length()==0) return a;
+        return findNumberIn(a) < findNumberIn(b)? a: b;
+    }
+
+    static public String maxFromString(String a, String b){
+        if(a==null || a.length()==0) return b;
+        if(b==null || b.length()==0) return a;
+        return findNumberIn(a) > findNumberIn(b)? a: b;
+    }
+
+    static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    static public double findNumberIn(Object o){
+        if(o instanceof String){
+            Date d = dateFormat.parse((String)o, new ParsePosition(0));
+            if(d!=null) return d.getTime();
+        }
+        return tryDouble(o,0);
+    }
+
     static public double tryDouble(Object o, double d){
         try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return d; }
     }
+
+    static public Object makeBestObject(String s){
+        try{ return Double.parseDouble(s); } catch(NumberFormatException e){}
+        if(s.toLowerCase().equals("true" )) return Boolean.valueOf(true);
+        if(s.toLowerCase().equals("false")) return Boolean.valueOf(false);
+        return s;
+    }
+
+    public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
 }
 
 

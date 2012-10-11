@@ -4,7 +4,7 @@
 #
 RELEASE_TARGET=../net/netmash.net/NetMash.apk
 LOCAL_IP=192.168.42.210
-LOCAL_IP=192.168.16.68
+LOCAL_IP=192.168.16.204
 LOCAL_IP=192.168.0.6
 #
 ################################################################################
@@ -59,15 +59,21 @@ androidrem: clean init setappremconfig setremmapkey
 	ant release
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
-install:
+installemu:
 	adb -e install bin/NetMash-debug.apk
+
+installlan:
 	adb -d install bin/NetMash-release.apk
 
-uninstall:
+uninstallemu:
 	adb -e uninstall android.gui
+
+uninstalllan:
 	adb -d uninstall android.gui
 
-reinstall: uninstall install
+reinstallemu: uninstallemu installemu
+
+reinstalllan: uninstalllan installlan
 
 # -------------------------------------------------------------------
 
