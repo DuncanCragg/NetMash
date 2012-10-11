@@ -58,6 +58,60 @@ public class User extends WebObject {
               "    \"list\": null \n"+
               "}");
 
+        // -----------------------------------------------------
+
+        Editable lightrule1 = new Editable(
+              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "    \"when\": \"swiped down, turn on light\", \n"+
+              "    \"%alerted\": { \"is\": \"swipe\", \"dy\": [ \">\", 0 ] }, \n"+
+              "    \"light\": [ \"*\", [ \"=>\", 1  ], [ \"=>\", 1 ] ] \n"+
+              "}");
+
+        Editable lightrule2 = new Editable(
+              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "    \"when\": \"swiped up, turn off light\", \n"+
+              "    \"%alerted\": { \"is\": \"swipe\", \"dy\": [ \"<\", 0 ] }, \n"+
+              "    \"light\": [ \"*\", [ \"=>\", 0.5  ], [ \"=>\", 0.5 ] ] \n"+
+              "}");
+
+        Editable gamerule1 = new Editable(
+              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "    \"when\": \"xx\", \n"+
+              "    \"subObjects\": [ { \"object\": { \"light\": [ \"*\", 1, 1 ] } }, { \"object\": { \"light\": [ \"*\", 1, 1 ] } } ], \n"+
+              "    \"text\": [ \"=>\", \"Yay\" ] \n"+
+              "}");
+
+        Editable gamelight1 = new Editable(
+              "{ \"%rules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
+              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
+              "  \"title\": \"Game Cube 1\", \n"+
+              "  \"rotation\": [ 0, 0, 0 ], \n"+
+              "  \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
+              "  \"light\": [ 0.5, 0.5, 0.5 ] \n"+
+              "}");
+
+        Editable gamelight2 = new Editable(
+              "{ \"%rules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
+              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
+              "  \"title\": \"Game Cube 2\", \n"+
+              "  \"rotation\": [ 0, 0, 0 ], \n"+
+              "  \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
+              "  \"light\": [ 0.5, 0.5, 0.5 ] \n"+
+              "}");
+
+        Editable gamesign = new Editable(
+              "{ \"%rules\": [ \""+gamerule1.uid+"\" ], \n"+
+              "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
+              "  \"title\": \"Maths Game\", \n"+
+              "  \"text\": \"Light up 1/2 cubes\", \n"+
+              "  \"rotation\": [ 0, 0, 0 ], \n"+
+              "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
+              "  \"subObjects\": [ \n"+
+              "        { \"object\": \""+gamelight1.uid+"\", \"coords\": [ -0.55, -1,  0 ] }, \n"+
+              "        { \"object\": \""+gamelight2.uid+"\", \"coords\": [  0.55, -1,  0 ] }, \n"+
+              "   ] \n"+
+              "}");
+
         Editable lightrule = new Editable(
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"swiped, change light\", \n"+
@@ -74,56 +128,11 @@ public class User extends WebObject {
               "  \"light\": [ 0.5, 0.5, 1.0 ] \n"+
               "}");
 
-        Editable gamerule1 = new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
-              "    \"when\": \"swiped, turn on light\", \n"+
-              "    \"%alerted\": { \"is\": \"swipe\", \"dy\": [ \"<\", 0 ] }, \n"+
-              "    \"light\": [ \"*\", [ \"=>\", 1  ], [ \"=>\", 1 ] ] \n"+
-              "}");
-
-        Editable gamerule2 = new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
-              "    \"when\": \"xx\", \n"+
-              "    \"subObjects\": [ { \"object\": { \"light\": [ \"*\", 1, 1 ] } }, { \"object\": { \"light\": [ \"*\", 1, 1 ] } } ], \n"+
-              "    \"text\": [ \"=>\", \"Yay\" ] \n"+
-              "}");
-
-        Editable game1 = new Editable(
-              "{ \"%rules\": [ \""+gamerule1.uid+"\" ], \n"+
-              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
-              "  \"title\": \"Game Cube 1\", \n"+
-              "  \"rotation\": [ 0, 0, 0 ], \n"+
-              "  \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
-              "  \"light\": [ 0.5, 0.5, 0.5 ] \n"+
-              "}");
-
-        Editable game2 = new Editable(
-              "{ \"%rules\": [ \""+gamerule1.uid+"\" ], \n"+
-              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
-              "  \"title\": \"Game Cube 2\", \n"+
-              "  \"rotation\": [ 0, 0, 0 ], \n"+
-              "  \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
-              "  \"light\": [ 0.5, 0.5, 0.5 ] \n"+
-              "}");
-
-        Editable sign = new Editable(
-              "{ \"%rules\": [ \""+gamerule2.uid+"\" ], \n"+
-              "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
-              "  \"title\": \"Maths Game\", \n"+
-              "  \"text\": \"Light up 1/2 cubes\", \n"+
-              "  \"rotation\": [ 0, 0, 0 ], \n"+
-              "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
-              "  \"subObjects\": [ \n"+
-              "        { \"object\": \""+game1.uid+"\", \"coords\": [ -0.55, -1,  0 ] }, \n"+
-              "        { \"object\": \""+game2.uid+"\", \"coords\": [  0.55, -1,  0 ] }, \n"+
-              "   ] \n"+
-              "}");
-
         Editable room = new Editable(
               "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
               "    \"title\": \""+your+" Room\", \n"+
               "    \"subObjects\": [ \n"+
-              "        { \"object\": \""+sign.uid+"\",  \"coords\": [  0,    1,  -10 ] }, \n"+
+              "        { \"object\": \""+gamesign.uid+"\",  \"coords\": [  0,    1,  -10 ] }, \n"+
               "        { \"object\": \""+light.uid+"\", \"coords\": [  0,    0,   -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0,  -7 ] }, \n"+
               "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0,  -7 ] }, \n"+
@@ -139,6 +148,8 @@ public class User extends WebObject {
               "    \"fragmentShader\": \"http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json\" \n"+
               "}");
 
+        // -----------------------------------------------------
+
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, contact.uid, links.uid, contacts.uid);
 
@@ -151,11 +162,12 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(contacts);
         me.funcobs.cacheSaveAndEvaluate(lightrule);
         me.funcobs.cacheSaveAndEvaluate(light);
+        me.funcobs.cacheSaveAndEvaluate(lightrule1);
+        me.funcobs.cacheSaveAndEvaluate(lightrule2);
         me.funcobs.cacheSaveAndEvaluate(gamerule1);
-        me.funcobs.cacheSaveAndEvaluate(gamerule2);
-        me.funcobs.cacheSaveAndEvaluate(game1);
-        me.funcobs.cacheSaveAndEvaluate(game2);
-        me.funcobs.cacheSaveAndEvaluate(sign);
+        me.funcobs.cacheSaveAndEvaluate(gamelight1);
+        me.funcobs.cacheSaveAndEvaluate(gamelight2);
+        me.funcobs.cacheSaveAndEvaluate(gamesign);
         me.funcobs.cacheSaveAndEvaluate(room);
         me.funcobs.cacheSaveAndEvaluate(me, true);
 
