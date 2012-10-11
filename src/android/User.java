@@ -74,11 +74,17 @@ public class User extends WebObject {
               "    \"light\": [ \"*\", [ \"=>\", 0.5  ], [ \"=>\", 0.5 ] ] \n"+
               "}");
 
+        Editable gamerule0 = new Editable(
+              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "    \"when\": \"checking, set to initial zero\", \n"+
+              "    \"text\": [ \"*\", \"*\", [ \"=>\", 0 ] ] \n"+
+              "}");
+
         Editable gamerule1 = new Editable(
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
-              "    \"when\": \"xx\", \n"+
+              "    \"when\": \"checking, count lit up lights\", \n"+
               "    \"subObjects\": [ { \"object\": { \"light\": [ \"*\", 1, 1 ] } } ], \n"+
-              "    \"text\": [ \"=>\", \"count\", \"$::subObjects\" ] \n"+
+              "    \"text\": [ \"*\", \"*\", [ \"=>\", \"count\", \"$::subObjects\" ] ] \n"+
               "}");
 
         Editable gamelight1 = new Editable(
@@ -100,10 +106,10 @@ public class User extends WebObject {
               "}");
 
         Editable gamesign = new Editable(
-              "{ \"%rules\": [ \""+gamerule1.uid+"\" ], \n"+
+              "{ \"%rules\": [ \""+gamerule0.uid+"\", \""+gamerule1.uid+"\" ], \n"+
               "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Maths Game\", \n"+
-              "  \"text\": \"Light up 1/2 cubes\", \n"+
+              "  \"text\": [ \"Light up\", \"1/2\", \"0\" ], \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
               "  \"subObjects\": [ \n"+
@@ -164,6 +170,7 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(light);
         me.funcobs.cacheSaveAndEvaluate(lightrule1);
         me.funcobs.cacheSaveAndEvaluate(lightrule2);
+        me.funcobs.cacheSaveAndEvaluate(gamerule0);
         me.funcobs.cacheSaveAndEvaluate(gamerule1);
         me.funcobs.cacheSaveAndEvaluate(gamelight1);
         me.funcobs.cacheSaveAndEvaluate(gamelight2);
