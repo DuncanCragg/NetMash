@@ -69,26 +69,7 @@ public class ObjectMash extends WebObject {
                 if(pk.equals("user")) continue;
             }
             Object v=entry.getValue();
-            if(v instanceof String){
-                if(!scanString((String)v, pk)) return false;
-            }
-            else
-            if(v instanceof Number){
-                if(!scanNumber((Number)v, pk)) return false;
-            }
-            else
-            if(v instanceof Boolean){
-                if(!scanBoolean((Boolean)v, pk)) return false;
-            }
-            else
-            if(v instanceof LinkedHashMap){
-                if(!scanRuleHash((LinkedHashMap<String,Object>)v, pk+":", rewrites)) return false;
-            }
-            else
-            if(v instanceof LinkedList){
-                if(!scanRuleList((LinkedList)v, pk, rewrites)) return false;
-            }
-            else{ log("oh noes "+v); return false; }
+            if(!scanType(v,pk,rewrites,true)) return false;
         }
         return true;
     }
@@ -105,7 +86,8 @@ public class ObjectMash extends WebObject {
         }
         if(list.size()==2 && list.get(0).equals("list-count")){
             double d=findDouble(list.get(1));
-            return contentList(path).size()==(int)d;
+            LinkedList ll=contentList(path);
+            return ll!=null && ll.size()==(int)d;
         }
         if(list.size() >= 2 && list.get(0).equals("=>")){
             LinkedList rhs=new LinkedList(list.subList(1,list.size()));
@@ -118,7 +100,7 @@ public class ObjectMash extends WebObject {
         for(Object v: list){
             for(; i<ll.size(); i++){
                 String pk=String.format("%s:%d",path,i);
-                if(scanType(v,pk,rewrites)) break;
+                if(scanType(v,pk,rewrites,false)) break;
             }
             if(i==ll.size()) return false;
             i++;
@@ -127,12 +109,12 @@ public class ObjectMash extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean scanType(Object v, String pk, LinkedHashMap<String,Object> rewrites){
+    private boolean scanType(Object v, String pk, LinkedHashMap<String,Object> rewrites, boolean hmmm){
         if(v instanceof String)        return scanString((String)v, pk);
         if(v instanceof Number)        return scanNumber((Number)v, pk);
         if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
         if(v instanceof LinkedHashMap) return scanRuleHash((LinkedHashMap<String,Object>)v, pk+":", rewrites);
-        if(v instanceof LinkedList)    return scanRuleList((LinkedList)v, pk+":", rewrites);
+        if(v instanceof LinkedList)    return scanRuleList((LinkedList)v, pk+(hmmm? "": ":"), rewrites);
         log("oh noes "+v);
         return false;
     }
