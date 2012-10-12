@@ -35,6 +35,7 @@ public class User extends WebObject {
     static public User me=null;
 
     static public void createUserAndDevice(){
+
         String fullName=UserContacts.getUsersFullName();
         String your=fullName.equals("You")? "Your": fullName+"'s";
 
@@ -67,29 +68,29 @@ public class User extends WebObject {
               "    \"light\": [ \"*\", [ \"=>\", 1  ], [ \"=>\", 1 ] ] \n"+
               "}");
 
-        Editable lightrule2 = new Editable(
+        Editable lightrule2= new Editable(
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"swiped up, turn off light\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\", \"dy\": [ \"<\", 0 ] }, \n"+
               "    \"light\": [ \"*\", [ \"=>\", 0.5  ], [ \"=>\", 0.5 ] ] \n"+
               "}");
 
-        Editable gamelight1 = new Editable(
-              "{ \"%rules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
-              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
-              "  \"title\": \"Game Cube 1\", \n"+
-              "  \"rotation\": [ 0, 0, 0 ], \n"+
-              "  \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
-              "  \"light\": [ 0.5, 0.5, 0.5 ] \n"+
-              "}");
-
-        Editable gamelight2 = new Editable(
-              "{ \"%rules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
-              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
-              "  \"title\": \"Game Cube 2\", \n"+
-              "  \"rotation\": [ 0, 0, 0 ], \n"+
-              "  \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
-              "  \"light\": [ 0.5, 0.5, 0.5 ] \n"+
+        Editable gameruleC = new Editable(
+              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "    \"when\": \"starting, create lights\", \n"+
+              "    \"subObjects\": [ [ \"number\", \"=>\",\n"+
+              "        { \"object\": \n"+
+              "            { \"%uid\": \"new\", \n"+
+              "              \"%rules\": \"$:gamerules\", \n"+
+              "              \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
+              "              \"title\": \"Game Cube\", \n"+
+              "              \"rotation\": [ 0, 0, 0 ], \n"+
+              "              \"scale\": [ 0.5, 0.5, 0.5 ], \n"+
+              "              \"light\": [ 0.7, 0.7, 0.5 ] \n"+
+              "            }, \n"+
+              "          \"coords\": [ \"$:!\", -1,  0 ] \n"+
+              "        } \n"+
+              "    ] ] \n"+
               "}");
 
         Editable gamerule0 = new Editable(
@@ -114,16 +115,14 @@ public class User extends WebObject {
               "}");
 
         Editable gamesign = new Editable(
-              "{ \"%rules\": [ \""+gamerule0.uid+"\", \""+gamerule1.uid+"\", \""+gamerule2.uid+"\" ], \n"+
+              "{ \"%rules\": [ \""+gameruleC.uid+"\", \""+gamerule0.uid+"\", \""+gamerule1.uid+"\", \""+gamerule2.uid+"\" ], \n"+
               "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Maths Game\", \n"+
               "  \"text\": [ \"Light up\", \"-\", \"-\" ], \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
-              "  \"subObjects\": [ \n"+
-              "        { \"object\": \""+gamelight1.uid+"\", \"coords\": [ -0.55, -1,  0 ] }, \n"+
-              "        { \"object\": \""+gamelight2.uid+"\", \"coords\": [  0.55, -1,  0 ] }, \n"+
-              "  ], \n"+
+              "  \"subObjects\": [ -1.65, -0.55, 0.55, 1.65 ], \n"+
+              "  \"gamerules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
               "  \"lit\": 0, \n"+
               "  \"numerator\": 1 \n"+
               "}");
@@ -176,16 +175,15 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(contact, true);
         me.funcobs.cacheSaveAndEvaluate(links);
         me.funcobs.cacheSaveAndEvaluate(contacts);
-        me.funcobs.cacheSaveAndEvaluate(lightrule);
-        me.funcobs.cacheSaveAndEvaluate(light);
         me.funcobs.cacheSaveAndEvaluate(lightrule1);
         me.funcobs.cacheSaveAndEvaluate(lightrule2);
+        me.funcobs.cacheSaveAndEvaluate(gameruleC);
         me.funcobs.cacheSaveAndEvaluate(gamerule0);
         me.funcobs.cacheSaveAndEvaluate(gamerule1);
         me.funcobs.cacheSaveAndEvaluate(gamerule2);
-        me.funcobs.cacheSaveAndEvaluate(gamelight1);
-        me.funcobs.cacheSaveAndEvaluate(gamelight2);
         me.funcobs.cacheSaveAndEvaluate(gamesign);
+        me.funcobs.cacheSaveAndEvaluate(lightrule);
+        me.funcobs.cacheSaveAndEvaluate(light);
         me.funcobs.cacheSaveAndEvaluate(room);
         me.funcobs.cacheSaveAndEvaluate(me, true);
 
