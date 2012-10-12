@@ -163,26 +163,22 @@ public class ObjectMash extends WebObject {
         for(Map.Entry<String,Object> entry: rewrites.entrySet()){
             String path=entry.getKey();
             Object v=entry.getValue();
-            if(v instanceof LinkedList){
-                LinkedList ll=(LinkedList)v;
-                if(ll.size()==1){
-                    contentObject(path,findObject(ll.get(0)));
-                }
-                else
-                if(ll.size()==3 && ll.get(1).equals("+")){
-                    contentDouble(path, findDouble(ll.get(0)) + findDouble(ll.get(2)));
-                }
-                else
-                if(ll.size()==3 && ll.get(1).equals("×")){
-                    contentDouble(path, findDouble(ll.get(0)) * findDouble(ll.get(2)));
-                }
-                else
-                if(ll.size()==2 && ll.get(0).equals("count")){
-                    contentDouble(path, findList(ll.get(1)).size());
-                }
-                else contentObject(path,ll);
+            LinkedList ll=(LinkedList)v;
+            if(ll.size()==1){
+                contentObject(path, copyObject(ll.get(0)));
             }
-            else contentObject(path,v);
+            else
+            if(ll.size()==3 && ll.get(1).equals("+")){
+                contentDouble(path, findDouble(ll.get(0)) + findDouble(ll.get(2)));
+            }
+            else
+            if(ll.size()==3 && ll.get(1).equals("×")){
+                contentDouble(path, findDouble(ll.get(0)) * findDouble(ll.get(2)));
+            }
+            else
+            if(ll.size()==2 && ll.get(0).equals("count")){
+                contentDouble(path, findList(ll.get(1)).size());
+            }
         }
     }
 
@@ -218,6 +214,36 @@ public class ObjectMash extends WebObject {
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
 
     // ----------------------------------------------------
+
+    @SuppressWarnings("unchecked")
+    public Object copyObject(Object o){
+        if(o instanceof String)  return findObject(o);
+        if(o instanceof Number)  return o;
+        if(o instanceof Boolean) return o;
+        if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o));
+        if(o instanceof LinkedList)    return copyList(((LinkedList)o));
+        return o;
+    }
+
+    @SuppressWarnings("unchecked")
+    public LinkedHashMap copyHash(LinkedHashMap<String,Object> hm){
+        LinkedHashMap r=new LinkedHashMap();
+        for(Map.Entry<String,Object> entry: hm.entrySet()){
+            String k=entry.getKey();
+            Object o=entry.getValue();
+            r.put(k,copyObject(o));
+        }
+        return r;
+    }
+
+    @SuppressWarnings("unchecked")
+    public LinkedList copyList(LinkedList ll){
+        LinkedList r=new LinkedList();
+        for(Object o: ll){
+            r.add(copyObject(o));
+        }
+        return r;
+    }
 }
 
 

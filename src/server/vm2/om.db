@@ -38,7 +38,7 @@
 { "%uid": "uid-61d6-65c9-2931-505b",
   "is": [ "test", "rule" ],
   "when": "Test Constructors",
-  "z": [ "*", [ 2, "=>", { "%uid": "new" } ] ]
+  "z": [ "*", [ 2, "=>", { "%uid": "new", "a": "$:a" } ] ]
 }
 
 { "%uid": "uid-d3e7-6831-3804-7cbf",
@@ -52,7 +52,7 @@
 { "%uid": "uid-d039-5967-f60c-70f7",
   "is": [ "test", "rule" ],
   "when": "Test completion",
-  "z": [ 1, { "%uid": "new" }, 300 ],
+  "z": [ 1, { "a": 20 }, 300 ],
   "a": 20,
   "b": 30,
   "l1": "ok",
