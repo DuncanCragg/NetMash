@@ -163,25 +163,27 @@ public class ObjectMash extends WebObject {
         return contentBool(pk)==vb;
     }
 
+    String currentRewritePath=null;
+
     private void doRewrites(){
         for(Map.Entry<String,Object> entry: rewrites.entrySet()){
-            String path=entry.getKey();
+            currentRewritePath=entry.getKey();
             Object v=entry.getValue();
             LinkedList ll=(LinkedList)v;
             if(ll.size()==1){
-                contentObject(path, copyObject(ll.get(0)));
+                contentObject(currentRewritePath, copyObject(ll.get(0)));
             }
             else
             if(ll.size()==3 && ll.get(1).equals("+")){
-                contentDouble(path, findDouble(ll.get(0)) + findDouble(ll.get(2)));
+                contentDouble(currentRewritePath, findDouble(ll.get(0)) + findDouble(ll.get(2)));
             }
             else
             if(ll.size()==3 && ll.get(1).equals("×")){
-                contentDouble(path, findDouble(ll.get(0)) * findDouble(ll.get(2)));
+                contentDouble(currentRewritePath, findDouble(ll.get(0)) * findDouble(ll.get(2)));
             }
             else
             if(ll.size()==2 && ll.get(0).equals("count")){
-                contentDouble(path, findList(ll.get(1)).size());
+                contentDouble(currentRewritePath, findList(ll.get(1)).size());
             }
         }
     }
@@ -194,7 +196,7 @@ public class ObjectMash extends WebObject {
 
     private double findDouble(Object o){
         if(o==null) return 0;
-        if(o instanceof String && ((String)o).startsWith("$:")) return contentDouble(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentDouble(((String)o).substring(2));
         return findNumberIn(o);
     }
 
@@ -207,12 +209,19 @@ public class ObjectMash extends WebObject {
 
     private Object eitherBindingOrContentObject(String path){
         if(path.startsWith(":")) return getBinding(path.substring(1));
-        else return contentObject(path);
+        if(path.startsWith("!")) return contentObject(currentRewritePath);
+        return contentObject(path);
+    }
+
+    private double eitherBindingOrContentDouble(String path){
+        if(path.startsWith("!")) return contentDouble(currentRewritePath);
+        return contentDouble(path);
     }
 
     private LinkedList eitherBindingOrContentList(String path){
         if(path.startsWith(":")) return bindings.get(path.substring(1));
-        else return contentList(path);
+        if(path.startsWith("!")) return contentList(currentRewritePath);
+        return contentList(path);
     }
 
     private Object getBinding(String path){
