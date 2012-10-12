@@ -226,13 +226,16 @@ public class ObjectMash extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    public LinkedHashMap copyHash(LinkedHashMap<String,Object> hm){
+    public Object copyHash(LinkedHashMap<String,Object> hm){
+        boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String k=entry.getKey();
             Object o=entry.getValue();
-            r.put(k,copyObject(o));
+            if(k.equals("%uid")){ if(o.equals("new")){ spawned=true; }}
+            else r.put(k,copyObject(o));
         }
+        if(spawned) try{ return spawn(getClass().newInstance().construct(r)); } catch(Throwable t){ t.printStackTrace(); }
         return r;
     }
 
