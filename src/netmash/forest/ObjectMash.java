@@ -93,10 +93,18 @@ public class ObjectMash extends WebObject {
             LinkedList ll=contentList(path);
             return ll!=null && ll.size()==(int)d;
         }
-        if(list.size() >= 2 && list.get(0).equals("=>")){
-            LinkedList rhs=new LinkedList(list.subList(1,list.size()));
-            rewrites.put(path,rhs);
-            return true;
+        if(list.size() >= 2 && (list.get(0).equals("=>") || list.get(1).equals("=>"))){
+            if(list.get(1).equals("=>")){
+                LinkedList rhs=new LinkedList(list.subList(2,list.size()));
+                boolean ok=scanType(list.get(0),path,false);
+                if(ok) rewrites.put(path,rhs);
+                return ok;
+            }
+            else{
+                LinkedList rhs=new LinkedList(list.subList(1,list.size()));
+                rewrites.put(path,rhs);
+                return true;
+            }
         }
         LinkedList bl=new LinkedList();
         LinkedList ll=contentList(path);
