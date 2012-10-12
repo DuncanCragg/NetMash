@@ -138,7 +138,11 @@ public class ObjectMash extends WebObject {
     }
 
     private boolean scanString(String vs, String pk){
-        return vs.equals("*") || contentIsOrListContains(pk,vs) || foundObjectSame(pk,vs);
+        if(vs.equals("*")) return true;
+        if(contentIsOrListContains(pk,vs)) return true;
+        if(foundObjectSame(pk,vs)) return true;
+        if(vs.equals("number") && contentObject(pk) instanceof Number) return true;
+        return false;
     }
 
     private boolean foundObjectSame(String pk, String vs){
@@ -202,13 +206,21 @@ public class ObjectMash extends WebObject {
     }
 
     private Object eitherBindingOrContentObject(String path){
-        if(path.startsWith(":")) return bindings.get(path.substring(1));
+        if(path.startsWith(":")) return getBinding(path.substring(1));
         else return contentObject(path);
     }
 
     private LinkedList eitherBindingOrContentList(String path){
         if(path.startsWith(":")) return bindings.get(path.substring(1));
         else return contentList(path);
+    }
+
+    private Object getBinding(String path){
+        String[] bits=path.split(":");
+        if(bits.length>2) return null;
+        if(bits.length==1) return bindings.get(path);
+        LinkedList ll=bindings.get(bits[0]);
+        return ll.get(Integer.parseInt(bits[1]));
     }
 
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
