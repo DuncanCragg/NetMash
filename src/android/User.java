@@ -72,7 +72,7 @@ public class User extends WebObject {
               "{   \"is\": [ \"3d\", \"rule\" ], \n"+
               "    \"when\": \"swiped up, turn off light\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\", \"dy\": [ \"<\", 0 ] }, \n"+
-              "    \"light\": [ \"*\", [ \"=>\", 0.5  ], [ \"=>\", 0.5 ] ] \n"+
+              "    \"light\": [ \"*\", [ \"=>\", 0.7  ], [ \"=>\", 0.5 ] ] \n"+
               "}");
 
         Editable gameruleC = new Editable(
@@ -121,10 +121,10 @@ public class User extends WebObject {
               "  \"text\": [ \"Light up\", \"-\", \"-\" ], \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
-              "  \"subObjects\": [ -1.65, -0.55, 0.55, 1.65 ], \n"+
+              "  \"subObjects\": [ -2.75, -1.65, -0.55, 0.55, 1.65, 2.75 ], \n"+
               "  \"gamerules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
               "  \"lit\": 0, \n"+
-              "  \"numerator\": 1 \n"+
+              "  \"numerator\": 4 \n"+
               "}");
 
         Editable lightrule = new Editable(
