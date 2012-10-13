@@ -63,7 +63,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float direction=0;
 
     private boolean touchDetecting=false;
-    private boolean touchShift=false;
+    private boolean touchEdit=false;
     private int     touchX,touchY;
     private float   touchDX,touchDY;
     private boolean lightObject=false;
@@ -121,7 +121,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             throwAnyGLException("glReadPixels ",touchX,touchY,b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
             Mesh m=touchables.get(""+touchedGrey);
-            if(m!=null) netmash.user.onObjectTouched(m.mesh,touchShift,touchDX,touchDY);
+            if(m!=null) netmash.user.onObjectTouched(m.mesh,touchEdit,touchDX,touchDY);
         }catch(Throwable t){ log(t); }}
         drawFrame();
     }
@@ -338,7 +338,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         }else{
             if(touchDetecting) return;
             touchDetecting=true;
-            touchShift=shift;
+            touchEdit=false;
             touchX=x; touchY=y;
             touchDX=dx; touchDY=dy;
         }

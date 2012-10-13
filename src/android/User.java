@@ -310,9 +310,9 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    public void onObjectTouched(LinkedHashMap mesh, final boolean shift, final float dx, final float dy){
+    public void onObjectTouched(LinkedHashMap mesh, final boolean edit, final float dx, final float dy){
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
-log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+objectuid);
+log("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"+objectuid);
         if(objectuid==null) return;
         if(objectuid.equals("editing")){
             String edituid=content("private:editing");
@@ -321,7 +321,7 @@ log("touched object: "+mesh.get("title")+", "+(shift? "edit": "send")+" uid:"+ob
         }
         else new Evaluator(this){
             public void evaluate(){
-                if(shift){
+                if(edit){
                     if(!contentSet("private:forms:"+UID.toUID(objectuid))) spawnResponse(objectuid, true, 0,0);
                     content("private:editing",objectuid);
                     showWhatIAmViewing();

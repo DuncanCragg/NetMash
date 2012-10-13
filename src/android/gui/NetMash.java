@@ -129,6 +129,7 @@ log(show? "show keyboard": "hide keyboard");
     private float tx=0f;
     private float ty=0f;
     private int   numTouch=0;
+    private long  time=0;
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
@@ -138,6 +139,7 @@ log(show? "show keyboard": "hide keyboard");
                 tx=e.getX(0); ty=e.getY(0);
                 px=tx; py=ty;
                 numTouch=1;
+                time=System.currentTimeMillis();
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 tx=e.getX(1); ty=e.getY(1);
@@ -145,9 +147,16 @@ log(show? "show keyboard": "hide keyboard");
                 numTouch=2;
                 break;
             case MotionEvent.ACTION_MOVE:
+                if(numTouch==0) break;
+                if(time>0){
+                    long t=System.currentTimeMillis();
+                    if(t-time>500) numTouch=3;
+                    time=0;
+                }
                 float cx=0,cy=0;
                 if(numTouch==1){ cx=e.getX(0); cy=e.getY(0); }
                 if(numTouch==2){ cx=e.getX(1); cy=e.getY(1); }
+                if(numTouch==3){ cx=e.getX(0); cy=e.getY(0); }
                 float mx=cx-px, my=cy-py;
                 if(mx*mx+my*my<0.1) return true;
                 px=cx; py=cy;
