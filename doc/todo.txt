@@ -18,17 +18,10 @@ Current priority: (vim-edited for now) rules for puzzle room
  - done some refactoring, need to focus on visible value towards Xmas demo
 
 --------------------------------------------------------
- - light room for the puzzles
-    - swipe cubes up to fraction and they light up
-    - swipe 'done' cube and get reward
+ - up to fraction; swipe 'done' cube and get reward and next puzzle
 ---------------------------------------------------------
 Performance, Bugs
 
- - broken editing
-    - need two forms if swiping and editing
- - touch detect:
-    - 0,480 bug on ZTE
-    - inefficient re-detect when moving - object is the same
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same meshes? detect internal change
@@ -36,14 +29,23 @@ Performance, Bugs
  - no new VBOs!
     - derivative objects resend VBOs
     - top level mesh not cached
+ - redundant rendering/refresh when nothing changed
+    - use Etag, if no need to respond to incoming subs
+---------------------------------------------------------
+ - broken editing
+    - need two forms if swiping and editing
+    - get old editing working again
+ - touch detect:
+    - still moves @ end of swipe
+    - 0,480 bug on ZTE
+    - inefficient re-detect when moving - object is the same
+---------------------------------------------------------
  - jump link, split path is big cpu user
  - SomeObject/Avatar still?
- - JSON view renders three times
-    - use Etag, if no need to respond to incoming subs
  - shaders: vert and frag should come together, else use basic: why sept?
  - memory usage: see video http://www.youtube.com/watch?v=_CruQY55HOk
- - light on Kis - mystery
  - fix vulnerability of faked POST to our object not theirs
+ - light on Kis - mystery
 --------------------------------------------------------
 Explore, Interact
 
