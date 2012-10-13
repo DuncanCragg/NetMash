@@ -153,22 +153,10 @@ log(show? "show keyboard": "hide keyboard");
                 px=cx; py=cy;
                 final float dx=100*mx/screenWidth;
                 final float dy=100*my/screenHeight;
-                if(numTouch==1){
-                    if(fromEdge(tx,ty)){
-                        onemeshview.queueEvent(new Runnable(){ public void run(){
-                            if(onerenderer!=null) onerenderer.swipeIn(dx, dy);
-                        }});
-                    }else{
-                        onemeshview.queueEvent(new Runnable(){ public void run(){
-                            if(onerenderer!=null) onerenderer.swipeOn(false, (int)tx,screenHeight-(int)ty, dx, dy);
-                        }});
-                    }
-                }
-                if(numTouch==2){
-                    onemeshview.queueEvent(new Runnable(){ public void run(){
-                        if(onerenderer!=null) onerenderer.swipeOn(true, (int)tx,screenHeight-(int)ty, dx, dy);
-                    }});
-                }
+                onemeshview.queueEvent(new Runnable(){ public void run(){
+                    if(onerenderer==null) return;
+                    onerenderer.swipe(numTouch>1, fromEdge(tx,ty), (int)tx,screenHeight-(int)ty, dx, dy);
+                }});
                 break;
             default:
                 tx=0; ty=0;
@@ -180,10 +168,13 @@ log(show? "show keyboard": "hide keyboard");
         return true;
     }
 
-    private boolean fromEdge(float tx,float ty){
-        int borderWidth=60;
-        return tx<borderWidth   || tx>screenWidth -borderWidth ||
-               ty<borderWidth*2 || ty>screenHeight-borderWidth;
+    private int fromEdge(float tx,float ty){
+        int borderWidth=40;
+        if(ty<borderWidth*2)            return 1; // top strip
+        if(ty>screenHeight-borderWidth) return 2; // bottom strip
+        if(tx<borderWidth)              return 3; // left strip
+        if(tx>screenWidth -borderWidth) return 4; // right strip
+        return 0;
     }
 
     private void triggerRenderingBurst(){

@@ -316,23 +316,32 @@ public class Renderer implements GLSurfaceView.Renderer {
         seeZ=eyeZ-4.5f;
     }
 
-    public void swipeIn(float dx, float dy){
-        direction += dx/50f;
-        if(direction> 2*Math.PI) direction-=2*Math.PI;
-        if(direction<-2*Math.PI) direction+=2*Math.PI;
-        seeX=eyeX-4.5f*FloatMath.sin(direction);
-        seeZ=eyeZ-4.5f*FloatMath.cos(direction);
-        eyeX-=dy/7f*FloatMath.sin(direction);
-        eyeZ-=dy/7f*FloatMath.cos(direction);
-        netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
-    }
-
-    public void swipeOn(boolean shift, int x, int y, float dx, float dy){
-        if(touchDetecting) return;
-        touchDetecting=true;
-        touchShift=shift;
-        touchX=x; touchY=y;
-        touchDX=dx; touchDY=dy;
+    public void swipe(boolean shift, int edge, int x, int y, float dx, float dy){
+        if(!shift){
+            if(edge!=2){
+                direction += dx/50f;
+                if(direction> 2*Math.PI) direction-=2*Math.PI;
+                if(direction<-2*Math.PI) direction+=2*Math.PI;
+                seeX=eyeX-4.5f*FloatMath.sin(direction);
+                seeZ=eyeZ-4.5f*FloatMath.cos(direction);
+                eyeX-=dy/7f*FloatMath.sin(direction);
+                eyeZ-=dy/7f*FloatMath.cos(direction);
+                netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
+            }
+            else{
+                eyeX-=dx/7f*FloatMath.cos(direction)+dy/7f*FloatMath.sin(direction);
+                eyeZ+=dx/7f*FloatMath.sin(direction)-dy/7f*FloatMath.cos(direction);
+                seeX=eyeX-4.5f*FloatMath.sin(direction);
+                seeZ=eyeZ-4.5f*FloatMath.cos(direction);
+                netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
+            }
+        }else{
+            if(touchDetecting) return;
+            touchDetecting=true;
+            touchShift=shift;
+            touchX=x; touchY=y;
+            touchDX=dx; touchDY=dy;
+        }
     }
 
     // -------------------------------------------------------------
