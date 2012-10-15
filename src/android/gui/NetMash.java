@@ -162,11 +162,13 @@ log(show? "show keyboard": "hide keyboard");
                 float mx=cx-px, my=cy-py;
                 if(mx*mx+my*my<0.1) return true;
                 px=cx; py=cy;
+                final int   nt=numTouch;
+                final float xx=tx,yy=ty;
                 final float dx=100*mx/screenWidth;
                 final float dy=100*my/screenHeight;
                 onemeshview.queueEvent(new Runnable(){ public void run(){
                     if(onerenderer==null) return;
-                    onerenderer.swipe(numTouch>1, fromEdge(tx,ty), (int)tx,screenHeight-(int)ty, dx, dy);
+                    onerenderer.swipe(nt>1, fromEdge(xx,yy), (int)xx,screenHeight-(int)yy, dx,dy);
                 }});
                 break;
             default:
