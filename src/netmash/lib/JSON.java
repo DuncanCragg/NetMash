@@ -2,6 +2,7 @@
 package netmash.lib;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.math.*;
 import java.text.*;
 import java.util.regex.*;
@@ -804,7 +805,7 @@ public class JSON {
         path=path.trim();
         if(path.length()==0) return null;
         if(path.charAt(0)==':') path=path.substring(1);
-        String[] parts=path.split(":");
+        String[] parts=splitPath(path);
         LinkedHashMap<String,Object> hm=hashmap;
         for(int i=0; i<parts.length; i++){
             Object o=null;
@@ -989,7 +990,7 @@ public class JSON {
         boolean changed = false;
         if(path.length()==0) return changed;
         if(path.charAt(0)==':') path=path.substring(1);
-        String[] parts=path.split(":");
+        String[] parts=splitPath(path);
         LinkedHashMap<String,Object> hm=hashmap;
         for(int i=0; i<parts.length; i++){
             Object o=null;
@@ -1217,6 +1218,14 @@ public class JSON {
                 .replace("\r", "\\r")
                 .replace("\t", "\\t")
                 .replace("\"", "\\\"");
+    }
+
+    static private ConcurrentHashMap<String,String[]> splitCache=new ConcurrentHashMap<String,String[]>();
+
+    static private String[] splitPath(String path){
+        String[] r=splitCache.get(path);
+        if(r==null){ r=path.split(":"); splitCache.put(path,r); }
+        return r;
     }
 
     /* ---------------------------------------------------- */
