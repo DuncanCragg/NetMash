@@ -469,12 +469,12 @@ public class OTS2GUI {
         mesh2uidPut(objhash, user.content("private:viewing"), user.content("private:viewing"));
 
         LinkedList subobs=new LinkedList();
-        objhash.put("subObjects", subobs);
 
         addEditingToSubs(subobs);
 
         LinkedList subs=user.contentList("private:viewing:subObjects");
-        if(subs==null) return objhash;
+
+        if(subs==null){ objhash.put("subObjects", subobs); return objhash; }
 
         for(int i=0; i< subs.size(); i++){
             String p=String.format("private:viewing:subObjects:%d",i);
@@ -493,6 +493,7 @@ public class OTS2GUI {
                 addObjectToSubs(o,q,subobs, tx,ty,tz);
             }
         }
+        objhash.put("subObjects", subobs);
         return objhash;
     }
 
@@ -536,7 +537,9 @@ public class OTS2GUI {
 
         if(shallow) return user.contentHash(p+"#");
 
-        LinkedHashMap objhash=new LinkedHashMap();
+        LinkedHashMap objhash=oldHashIfEtagSame(p);
+        if(!objhash.isEmpty()) return objhash;
+
         objhash.put("is", "mesh");
         objhash.put("title",         user.contentString(p+"title"));
         objhash.put("rotation",      user.contentList(p+"rotation"));
@@ -558,7 +561,9 @@ public class OTS2GUI {
         shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
         shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
 
-        LinkedHashMap objhash=new LinkedHashMap();
+        LinkedHashMap objhash=oldHashIfEtagSame(p);
+        if(!objhash.isEmpty()) return objhash;
+
         objhash.put("is", "mesh");
         objhash.put("title",         user.contentString(p+"title"));
         objhash.put("rotation",      user.contentList(p+"rotation"));
@@ -587,14 +592,16 @@ public class OTS2GUI {
         shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
         shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
 
+        LinkedHashMap objhash=oldHashIfEtagSame(p);
+        if(!objhash.isEmpty()) return objhash;
+
         String    title=user.contentString(p+"title");
         LinkedList text=user.contentList(  p+"text");
         if(title==null) title="No Title";
         if(text ==null){ String t=user.contentString(p+"text"); if(t!=null) text=list(t); }
-        if(text ==null) text =list("No Text");
+        if(text ==null) text=list("No Text");
         String key=text2Bitmap(title,text);
 
-        LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
         objhash.put("title",         title);
         objhash.put("rotation",      user.contentList(p+"rotation"));
@@ -621,12 +628,14 @@ public class OTS2GUI {
 
         if(!user.contentSet("private:editing") || user.contentIs("private:editing","")) return null;
 
+        LinkedHashMap objhash=oldHashIfEtagSame("private:editing");
+        if(!objhash.isEmpty()) return objhash;
+
         String title="Edit Panel";
         String text=user.contentString("private:editing:title");
         if(text==null) text="No Title";
         String key=text2Bitmap(title,list(text));
 
-        LinkedHashMap objhash=new LinkedHashMap();
         objhash.put("is", "mesh");
         objhash.put("title", title);
         objhash.put("vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
@@ -672,9 +681,23 @@ public class OTS2GUI {
     private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
         if(mesh!=null && uid!=null) user.mesh2uid.put(System.identityHashCode(mesh),UID.normaliseUID(parentuid,uid));
     }
- 
+
     private void shadersPut(String url, LinkedList shader){
         if(url!=null && shader!=null) user.shaders.put(url, shader);
+    }
+
+    public ConcurrentHashMap<String,Integer>       etags  = new ConcurrentHashMap<String,Integer>();
+    public ConcurrentHashMap<String,LinkedHashMap> meshes = new ConcurrentHashMap<String,LinkedHashMap>();
+
+    private LinkedHashMap oldHashIfEtagSame(String p){
+        String uid=user.content(p);
+        int newetag=user.contentInt(p+"%etag");
+        Integer oldetag=etags.get(uid);
+        if(oldetag!=null && oldetag.intValue()==newetag) return meshes.get(uid);
+        etags.put(uid, newetag);
+        LinkedHashMap objhash=new LinkedHashMap();
+        meshes.put(uid, objhash);
+        return objhash;
     }
 
     // ---------------------------------------------------------------------------

@@ -321,14 +321,17 @@ public class WebObject {
     /** Get int at this path in the JSON content. */
     public int contentInt(String path){
         int i=0;
-        try{ i = updatingState.intPath(path);
+        try{ if(path.equals("%etag")) i=etag;
+             else i = updatingState.intPath(path);
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
                 if(!(po.leaf instanceof String)) break;
                 WebObject w = observing(parentuid, (String)po.leaf, path);
                 if(w==null)break;
-                try{ i = w.publicState.intPath(po.path); break;
+                try{ if(po.path.equals("%etag")) i=w.etag;
+                     else i = w.publicState.intPath(po.path);
+                     break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }

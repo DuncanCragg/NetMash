@@ -84,8 +84,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     synchronized public void newMesh(LinkedHashMap hm){
-        this.mesh=meshes.get(System.identityHashCode(hm));
-        if(this.mesh!=null) return;
         this.mesh=new Mesh(hm,netmash.user);
         meshes.put(System.identityHashCode(hm),this.mesh);
     }
