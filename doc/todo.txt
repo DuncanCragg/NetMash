@@ -23,10 +23,8 @@ Current priority: (vim-edited for now) rules for puzzle room
 Performance, Bugs
 ---------------------------------------------------------
  - touch detect:
-    - still moves @ end of swipe
     - doesn't always register
     - 0,480 bug on ZTE
-    - inefficient re-detect when moving - object is the same
  - broken editing
     - need two forms if swiping and editing
     - get old editing working again

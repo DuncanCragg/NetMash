@@ -65,9 +65,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float direction=0;
 
     private boolean touchDetecting=false;
-    private boolean touchEdit=false;
+    private Mesh    touchedObject=null;
     private int     touchX,touchY;
-    private float   touchDX,touchDY;
     private boolean lightObject=false;
     // touchDetecting => mvpm; pos; touchCol
     // lightObject    => mvpm; pos; tex; lightCol; texture0
@@ -115,14 +114,13 @@ public class Renderer implements GLSurfaceView.Renderer {
             currentGrey=0;
             touchables.clear();
             drawFrame();
-            touchDetecting=false;
             ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
             if(debugGL) throwAnyGLException("glReadPixels ",touchX,touchY,b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
-            Mesh m=touchables.get(""+touchedGrey);
-            if(m!=null) netmash.user.onObjectTouched(m.mesh,touchEdit,touchDX,touchDY);
-        }catch(Throwable t){ log(t); }}
+            touchedObject=touchables.get(""+touchedGrey);
+            touchDetecting=false;
+        }catch(Throwable t){ log(t); touchDetecting=false; touchedObject=null; }}
         drawFrame();
         if(!debugGL) throwAnyGLException("Something went wrong somewhere in drawing frame: switch on 'debugGL'");
     }
@@ -327,21 +325,25 @@ public class Renderer implements GLSurfaceView.Renderer {
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
                 eyeX-=dy/7f*FloatMath.sin(direction);
                 eyeZ-=dy/7f*FloatMath.cos(direction);
-                netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
             }
             else{
                 eyeX-=dx/7f*FloatMath.cos(direction)+dy/7f*FloatMath.sin(direction);
                 eyeZ+=dx/7f*FloatMath.sin(direction)-dy/7f*FloatMath.cos(direction);
                 seeX=eyeX-4.5f*FloatMath.sin(direction);
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
-                netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
             }
+            netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
         }else{
             if(touchDetecting) return;
-            touchDetecting=true;
-            touchEdit=false;
-            touchX=x; touchY=y;
-            touchDX=dx; touchDY=dy;
+            if(x!=touchX || y!=touchY) touchedObject=null;
+            if(touchedObject==null){
+                touchDetecting=true;
+                touchX=x; touchY=y;
+            }
+            else{
+                boolean touchEdit=false;
+                netmash.user.onObjectTouched(touchedObject.mesh,touchEdit,dx,dy);
+            }
         }
     }
 
