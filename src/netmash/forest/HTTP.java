@@ -15,6 +15,8 @@ import netmash.Version;
 import netmash.lib.*;
 import netmash.platform.*;
 
+import static netmash.lib.Utils.*;
+
 /** HTTP and REST: the Object Web.
   */
 public class HTTP implements ChannelUser {
@@ -197,8 +199,6 @@ public class HTTP implements ChannelUser {
         try{ epath=URLEncoder.encode(path,"UTF-8"); }catch(Exception e){}
         return epath;
     }
-
-    public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
@@ -415,7 +415,7 @@ abstract class HTTPCommon {
 
     protected void topRequestHeaders(StringBuilder sb, String method, String host, int port, String path, int etag){
         sb.append(method); sb.append(path); sb.append(" HTTP/1.1\r\n");
-        if(!Kernel.config.boolPathN("network:log")) log(sb+"-->");
+        if(!Kernel.config.boolPathN("network:log")) log(sb);
         sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
         sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
         sb.append("Cache-Notify: "); sb.append(UID.toURL(CacheNotify())); sb.append("\r\n");
@@ -434,7 +434,9 @@ abstract class HTTPCommon {
 
     protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents){
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
-        sb.append("Content-Location: "); sb.append(w.url==null? UID.toURL(w.uid): w.url); sb.append("\r\n");
+        String cl=(w.url==null? UID.toURL(w.uid): w.url);
+        sb.append("Content-Location: "); sb.append(cl); sb.append("\r\n");
+        if(!Kernel.config.boolPathN("network:log")) log(cl);
         sb.append("ETag: \""); sb.append(w.etag); sb.append("\"\r\n");
         if(w.maxAge>=0){
         sb.append("Cache-Control: max-age="); sb.append(w.maxAge); sb.append("\r\n");}
@@ -506,8 +508,6 @@ abstract class HTTPCommon {
         if(e!=null) e.printStackTrace();
         Kernel.close(channel);
     }
-
-    public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 
@@ -651,8 +651,6 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb); else log(responseCode+"-->");
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
-
-    public void log(Object s){ FunctionalObserver.log(s); }
 }
 
 

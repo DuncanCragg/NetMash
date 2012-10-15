@@ -14,6 +14,8 @@ import netmash.platform.Kernel;
 import netmash.lib.*;
 import netmash.forest.FunctionalObserver;
 
+import static netmash.lib.Utils.*;
+
 enum ShellState { FOUND, FINDING, TRYREMOTE, NOTFOUND }
 
 /** WebObject: holds a JSON object and an evaluate() call.
@@ -687,7 +689,7 @@ public class WebObject {
     public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheGet(uid); }
 
     /** Simple logger for ya. */
-    static public void log(Object o){ FunctionalObserver.log(o); }
+    static public void log(Object o){ Utils.log(o); }
 
     /** Log which rule you're in. */
     static public void logrule(){

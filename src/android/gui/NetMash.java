@@ -30,6 +30,8 @@ import netmash.platform.Kernel;
 import netmash.lib.JSON;
 import netmash.forest.FunctionalObserver;
 
+import static netmash.lib.Utils.*;
+
 import android.User;
 
 /**  NetMash main.
@@ -956,11 +958,6 @@ log(show? "show keyboard": "hide keyboard");
         /* http://code.google.com/p/android/issues/detail?id=9431 */
         java.lang.System.setProperty("java.net.preferIPv4Stack",     "true");
         java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
-    }
-
-    public void log(Object o){
-        String thread=Thread.currentThread().toString();
-        System.out.println("---"+thread+"-----------\n"+o);
     }
 
 class BorderedTextView extends TextView {

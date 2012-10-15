@@ -10,15 +10,21 @@ import netmash.platform.*;
 public class Utils{
 
     static public final boolean enableLogging=true;
+    static private long firstStamp=0;
+    static private long lastStamp=0;
 
-    static public void log(Object o){
-        log(enableLogging, o);
-    }
+    static public void log(Object o){ log(enableLogging, o); }
+
+    static public void logZero(Object o){ firstStamp=System.currentTimeMillis(); lastStamp=firstStamp; log(enableLogging, o); }
 
     static public void log(boolean doit, Object o){
         if(!doit) return;
+        if(firstStamp==0){ firstStamp=System.currentTimeMillis(); lastStamp=firstStamp; }
+        long stamp=System.currentTimeMillis();
         String thread=Thread.currentThread().toString();
-        System.out.println("---"+Kernel.config.stringPathN("name")+"---"+thread+"-----------\n"+o);
+        String name=Kernel.config==null? "": Kernel.config.stringPathN("name");
+        System.out.println("---"+name+"---"+thread+"--- "+(stamp-firstStamp)+","+(stamp-lastStamp)+"\n"+o);
+        lastStamp=stamp;
     }
 
     static public void whereAmI(Object message){
