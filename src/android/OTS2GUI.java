@@ -462,7 +462,7 @@ public class OTS2GUI {
 
     // ---------------------------------------------------------------------------
 
-    public LinkedHashMap scene2GUI(){
+    public LinkedHashMap scene2GUI(){ log("scene2GUI");
 
         LinkedHashMap objhash=object2mesh("private:viewing:",false);
         if(objhash==null) return null;
@@ -522,18 +522,20 @@ public class OTS2GUI {
     }
 
     private LinkedHashMap object2mesh(String p, boolean shallow){
-        if(user.contentIsOrListContains(p+"is","mesh"))   return mesh2mesh(p, shallow);
-        if(user.contentIsOrListContains(p+"is","user"))   return mesh2mesh(p+"avatar:", shallow);
-        if(user.contentIsOrListContains(p+"is","cuboid")) return cuboid2mesh(p);
-        if(user.contentIsOrListContains(p+"is","notice")) return notice2mesh(p);
+        LinkedList is=user.contentList(p+"is");
+        if(is==null) return null;
+        if(is.contains("mesh"))   return mesh2mesh(p, shallow);
+        if(is.contains("user"))   return mesh2mesh(p+"avatar:", shallow);
+        if(is.contains("cuboid")) return cuboid2mesh(p);
+        if(is.contains("notice")) return notice2mesh(p);
         return null;
     }
 
     private LinkedHashMap mesh2mesh(String p, boolean shallow){
         String vs=user.content(p+"vertexShader");
         String fs=user.content(p+"fragmentShader");
-        shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
-        shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
+        shadersPut(vs, p+"vertexShader");
+        shadersPut(fs, p+"fragmentShader");
 
         if(shallow) return user.contentHash(p+"#");
 
@@ -558,8 +560,8 @@ public class OTS2GUI {
     private LinkedHashMap cuboid2mesh(String p){
         String vs=user.content(p+"vertexShader");
         String fs=user.content(p+"fragmentShader");
-        shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
-        shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
+        shadersPut(vs, p+"vertexShader");
+        shadersPut(fs, p+"fragmentShader");
 
         LinkedHashMap objhash=oldHashIfEtagSame(p);
         if(!objhash.isEmpty()) return objhash;
@@ -589,8 +591,8 @@ public class OTS2GUI {
     private LinkedHashMap notice2mesh(String p){
         String vs=user.content(p+"vertexShader");
         String fs=user.content(p+"fragmentShader");
-        shadersPut(vs,user.contentListMayJump(p+"vertexShader"));
-        shadersPut(fs,user.contentListMayJump(p+"fragmentShader"));
+        shadersPut(vs, p+"vertexShader");
+        shadersPut(fs, p+"fragmentShader");
 
         LinkedHashMap objhash=oldHashIfEtagSame(p);
         if(!objhash.isEmpty()) return objhash;
@@ -682,8 +684,12 @@ public class OTS2GUI {
         if(mesh!=null && uid!=null) user.mesh2uid.put(System.identityHashCode(mesh),UID.normaliseUID(parentuid,uid));
     }
 
-    private void shadersPut(String url, LinkedList shader){
-        if(url!=null && shader!=null) user.shaders.put(url, shader);
+    private void shadersPut(String url, String path){
+        if(url==null) return;
+        if(user.shaders.get(url)!=null) return;
+        LinkedList shader=user.contentListMayJump(path);
+        if(shader==null) return;
+        user.shaders.put(url, shader);
     }
 
     public ConcurrentHashMap<String,Integer>       etags  = new ConcurrentHashMap<String,Integer>();
