@@ -19,6 +19,8 @@ import static netmash.lib.Utils.*;
 
 public class Renderer implements GLSurfaceView.Renderer {
 
+    public static boolean debugGL=false;
+
     private NetMash netmash;
     private Mesh mesh;
 
@@ -116,12 +118,13 @@ public class Renderer implements GLSurfaceView.Renderer {
             touchDetecting=false;
             ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
-            throwAnyGLException("glReadPixels ",touchX,touchY,b);
+            if(debugGL) throwAnyGLException("glReadPixels ",touchX,touchY,b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
             Mesh m=touchables.get(""+touchedGrey);
             if(m!=null) netmash.user.onObjectTouched(m.mesh,touchEdit,touchDX,touchDY);
         }catch(Throwable t){ log(t); }}
         drawFrame();
+        if(!debugGL) throwAnyGLException("Something went wrong somewhere in drawing frame: switch on 'debugGL'");
     }
 
     private int flipAndRound(int n){
@@ -233,7 +236,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             }
             GLES20.glUniform3f(lightColLoc, lightCol[0], lightCol[1], lightCol[2]);
         }
-        throwAnyGLException("Setting variables");
+        if(debugGL) throwAnyGLException("Setting variables");
     }
 
     private void setVariablesForEdit(Mesh m){
@@ -258,7 +261,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glUniform3f(lightColLoc, 1f, 1f, 1f);
         }
 
-        throwAnyGLException("Setting variables for edit");
+        if(debugGL) throwAnyGLException("Setting variables for edit");
     }
 
     public ConcurrentHashMap<Mesh,Integer> meshIDs = new ConcurrentHashMap<Mesh,Integer>();
@@ -278,17 +281,17 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, meshIDs.get(m));
 
         GLES20.glVertexAttribPointer(posLoc, 3, GLES20.GL_FLOAT, false, 32, 0);
-        GLES20.glEnableVertexAttribArray(posLoc); throwAnyGLException("VBOs pos",posLoc,m);
+        GLES20.glEnableVertexAttribArray(posLoc); if(debugGL) throwAnyGLException("VBOs pos",posLoc,m);
         if(!touchDetecting){ if(!lightObject){
         GLES20.glVertexAttribPointer(norLoc, 3, GLES20.GL_FLOAT, false, 32, 12);
-        GLES20.glEnableVertexAttribArray(norLoc); throwAnyGLException("VBOs nor",norLoc,m);
+        GLES20.glEnableVertexAttribArray(norLoc); if(debugGL) throwAnyGLException("VBOs nor",norLoc,m);
         }
         GLES20.glVertexAttribPointer(texLoc, 2, GLES20.GL_FLOAT, false, 32, 24);
-        GLES20.glEnableVertexAttribArray(texLoc); throwAnyGLException("VBOs tex",texLoc,m);
+        GLES20.glEnableVertexAttribArray(texLoc); if(debugGL) throwAnyGLException("VBOs tex",texLoc,m);
         }
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, m.il, GLES20.GL_UNSIGNED_SHORT, m.ib);
-        throwAnyGLException("glDrawElements");
+        if(debugGL) throwAnyGLException("glDrawElements");
 
         GLES20.glDisableVertexAttribArray(posLoc);
         if(!touchDetecting){ if(!lightObject){
@@ -299,7 +302,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
-        throwAnyGLException("drawMesh disable/unbind",posLoc,norLoc,texLoc,m);
+        if(debugGL) throwAnyGLException("drawMesh disable/unbind",posLoc,norLoc,texLoc,m);
     }
 
     // -------------------------------------------------------------
@@ -383,14 +386,14 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,     GLES20.GL_REPEAT);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,     GLES20.GL_REPEAT);
         GLUtils.texImage2D(    GLES20.GL_TEXTURE_2D, 0, bm, 0);
-        throwAnyGLException("sendTexture");
+        if(debugGL) throwAnyGLException("sendTexture");
     }
 
     private void bindTexture(int texID, int i){
         GLES20.glBindTexture(  GLES20.GL_TEXTURE_2D, texID);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
         if(i==0) GLES20.glUniform1i(texture0Loc, i);
-        throwAnyGLException("bindTexture: ",texID,",",i);
+        if(debugGL) throwAnyGLException("bindTexture: ",texID,",",i);
     }
 
     // -------------------------------------------------------------
@@ -413,7 +416,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         if(prog!=null){
             program=prog.intValue();
             GLES20.glUseProgram(program);
-            throwAnyGLException("glUseProgram existing");
+            if(debugGL) throwAnyGLException("glUseProgram existing");
             return program;
         }
         log("GPU: sending program \n"+vertshad+"\n"+fragshad);
@@ -426,11 +429,11 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         program = GLES20.glCreateProgram();
         if(program==0) throw new RuntimeException("Could not create program");
-        throwAnyGLException("glCreateProgram: ",program);
+        if(debugGL) throwAnyGLException("glCreateProgram: ",program);
 
         GLES20.glAttachShader(program, vertexShader);
         GLES20.glAttachShader(program, fragmentShader);
-        throwAnyGLException("glAttachShader: ",program,"\n",vertshad,"\n",fragshad);
+        if(debugGL) throwAnyGLException("glAttachShader: ",program,"\n",vertshad,"\n",fragshad);
 
         GLES20.glLinkProgram(program);
         int[] linkStatus = new int[1];
@@ -439,10 +442,10 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glDeleteProgram(program);
             throw new RuntimeException("Could not link program " + GLES20.glGetProgramInfoLog(program)+" "+program+"\n"+vertshad+"\n"+fragshad);
         }
-        throwAnyGLException("glLinkProgram: ",program,"\n",vertshad,"\n",fragshad);
+        if(debugGL) throwAnyGLException("glLinkProgram: ",program,"\n",vertshad,"\n",fragshad);
 
         GLES20.glUseProgram(program);
-        throwAnyGLException("glUseProgram new: ",program,"\n",vertshad,"\n",fragshad);
+        if(debugGL) throwAnyGLException("glUseProgram new: ",program,"\n",vertshad,"\n",fragshad);
         shaders.put(shadkey,program);
         return program;
     }
@@ -471,7 +474,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glCompileShader(shader);
         int[] compiled = new int[1];
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
-        throwAnyGLException("compileShader: ",shaderType,"\n",source);
+        if(debugGL) throwAnyGLException("compileShader: ",shaderType,"\n",source);
         if(compiled[0]!=0) return shader;
         GLES20.glDeleteShader(shader);
         throw new RuntimeException("Could not compile "+shaderType+" shader:\n"+source+"\n"+GLES20.glGetShaderInfoLog(shader));
