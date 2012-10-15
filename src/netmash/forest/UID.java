@@ -63,11 +63,9 @@ public class UID {
 
     static public String toURL(String uid2url){
         if(uid2url.startsWith("http://")) return uid2url;
-        if(!Kernel.config.isAtPathN("network:host")) return uid2url;
+        if(notVisible()) return uid2url;
         boolean dotJSON=uid2url.startsWith("uid-");
-        return "http://"+Kernel.config.stringPathN("network:host")+":"+
-                         Kernel.config.intPathN(   "network:port")+
-                         Kernel.config.stringPathN("network:pathprefix")+uid2url+(dotJSON? ".json": "");
+        return localPre()+Kernel.config.stringPathN("network:pathprefix")+uid2url+(dotJSON? ".json": "");
     }
 
     static public String toUID(String url2uid){
@@ -79,17 +77,14 @@ public class UID {
 
     static public String normaliseUID(String baseurl, String uid2url){
         if(uid2url==null) return null;
-        if(!Kernel.config.isAtPathN("network:host")) return toURLfromBaseURL(baseurl, uid2url);
-        String localpre="http://"+Kernel.config.stringPathN("network:host")+":"+
-                                  Kernel.config.intPathN(   "network:port");
-        if(baseurl!=null && !baseurl.startsWith(localpre)) uid2url=toURLfromBaseURL(baseurl, uid2url);
-        return uid2url.startsWith(localpre)? toUID(uid2url): uid2url;
+        if(notVisible()) return toURLfromBaseURL(baseurl, uid2url);
+        if(baseurl!=null && !baseurl.startsWith(localPre())) uid2url=toURLfromBaseURL(baseurl, uid2url);
+        return uid2url.startsWith(localPre())? toUID(uid2url): uid2url;
     }
 
     static public String toUIDifLocal(String url2uid){
-        String localpre="http://"+Kernel.config.stringPathN("network:host")+":"+
-                                  Kernel.config.intPathN(   "network:port");
-        return url2uid.startsWith(localpre)? toUID(url2uid): url2uid;
+        if(notVisible()) return url2uid;
+        return url2uid.startsWith(localPre())? toUID(url2uid): url2uid;
     }
 
     static public String toURLfromBaseURL(String baseurl, String uid2url){
@@ -98,6 +93,24 @@ public class UID {
         if(!uid2url.startsWith("uid-"))    return uid2url;
         int s=baseurl.indexOf("uid-");
         return baseurl.substring(0,s)+uid2url+".json";
+    }
+
+    static private String localpre=null;
+    static Boolean notvisible=null;
+
+    static public String localPre(){
+        if(localpre==null){
+            localpre="http://"+Kernel.config.stringPathN("network:host")+":"+
+                               Kernel.config.intPathN(   "network:port");
+        }
+        return localpre;
+    }
+
+    static boolean notVisible(){
+        if(notvisible==null){
+            notvisible=!Kernel.config.isAtPathN("network:host");
+        }
+        return notvisible;
     }
 
     // ----------------------------------------
