@@ -419,7 +419,7 @@ public class OTS2GUI {
 
     public LinkedHashMap guifyList(String path, LinkedList ll, String objuid, boolean editable){
         LinkedHashMap hm3 = new LinkedHashMap();
-        hm3.put("style", style("direction", ll.size()<=1? "horizontal": "vertical"));
+        hm3.put("style", style("direction", ll.size()<=5? "horizontal": "vertical"));
         int i=0;
         for(Object o: ll){ addToHash(hm3,path+i,o,objuid,editable); i++; }
         if(editable) hm3.put(".addnew","?[New Item /string/]?");

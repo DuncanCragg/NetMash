@@ -62,21 +62,21 @@ public class User extends WebObject {
         // -----------------------------------------------------
 
         Editable lightrule1 = new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"swiped down, turn on light\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\", \"dy\": [ \">\", 0 ] }, \n"+
               "    \"light\": [ \"*\", [ \"=>\", 1  ], [ \"=>\", 1 ] ] \n"+
               "}");
 
         Editable lightrule2= new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"swiped up, turn off light\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\", \"dy\": [ \"<\", 0 ] }, \n"+
               "    \"light\": [ \"*\", [ \"=>\", 0.7  ], [ \"=>\", 0.5 ] ] \n"+
               "}");
 
         Editable gameruleC = new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"starting, create lights\", \n"+
               "    \"subObjects\": [ [ \"number\", \"=>\",\n"+
               "        { \"object\": \n"+
@@ -94,21 +94,21 @@ public class User extends WebObject {
               "}");
 
         Editable gamerule0 = new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, set to initial zero\", \n"+
               "    \"lit\": [ \"=>\", 0 ], \n"+
               "    \"text\": [ \"*\", [ \"=>\", \"$:numerator\" ], [ \"=>\", \"no\" ] ] \n"+
               "}");
 
         Editable gamerule1 = new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, count lit up lights\", \n"+
               "    \"subObjects\": [ { \"object\": { \"light\": [ \"*\", 1, 1 ] } } ], \n"+
               "    \"lit\": [ \"=>\", \"count\", \"$::subObjects\" ] \n"+
               "}");
 
         Editable gamerule2 = new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, if correct, set text\", \n"+
               "    \"lit\": \"$:numerator\", \n"+
               "    \"text\": [ \"*\", \"*\", [ \"=>\", \"yes\" ] ] \n"+
@@ -128,7 +128,7 @@ public class User extends WebObject {
               "}");
 
         Editable lightrule = new Editable(
-              "{   \"is\": [ \"3d\", \"rule\" ], \n"+
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"swiped, change light\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\" }, \n"+
               "    \"light\": [ \"*\", [ \"=>\", \"$:light:1\", \"+\", \"$:%alerted:dx\"  ], [ \"=>\", \"$:light:2\", \"+\", \"$:%alerted:dy\" ] ] \n"+
@@ -168,6 +168,7 @@ public class User extends WebObject {
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, contact.uid, links.uid, contacts.uid);
 
+        otslinks.addFirst(gamerule0.uid);
         otslinks.addFirst(room.uid);
         otslinks.addFirst(me.uid);
 
@@ -539,6 +540,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
 
     private void spawnResponse(String guiuid, boolean editable, float dx, float dy){
         User resp=null;
+        editable=editable || contentIs("private:viewas","raw");
         if(editable){
         if(contentIsOrListContains("private:viewing:is", "editable")){
             resp=newEditableRule(guiuid, uid);
@@ -711,8 +713,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 meshhash=ots2gui.scene2GUI();
             }
             else{
-                viewhash=ots2gui.guifyHash("",contentHash("private:viewing:#"), content("private:viewing"), editable);
-                viewhash.put("#uid", "uid: "+content("private:viewing"));
+                content("private:viewas","raw");
+                showWhatIAmViewingAsRawJSON();
+                return;
             }
             JSON uiJSON=null;
             if(viewhash!=null){
@@ -772,10 +775,14 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
 
     private void showWhatIAmViewingAsRawJSON(){ logrule();
         if(contentSet("private:viewing:is")){
+            String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
             LinkedHashMap viewhash=ots2gui.guifyHash("", contentHash("private:viewing:#"), content("private:viewing"), editable);
             viewhash.put("#uid", "uid: "+content("private:viewing"));
+            content("place","");
+            content("private:editing","");
             JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
+            uiJSON.stringPath("title", title);
             uiJSON.hashPath("view", viewhash);
             if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }

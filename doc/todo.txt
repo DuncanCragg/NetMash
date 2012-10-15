@@ -22,12 +22,12 @@ Current priority: (vim-edited for now) rules for puzzle room
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------
- - touch detect:
-    - doesn't always register
-    - 0,480 bug on ZTE
  - broken editing
     - need two forms if swiping and editing
     - get old editing working again
+ - touch detect:
+    - doesn't always register
+    - 0,480 bug on ZTE
 ---------------------------------------------------------
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid

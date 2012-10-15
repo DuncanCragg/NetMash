@@ -152,7 +152,7 @@ log(show? "show keyboard": "hide keyboard");
                 if(numTouch==0) break;
                 if(time>0){
                     long t=System.currentTimeMillis();
-                    if(t-time>500) numTouch=3;
+                    if(t-time>400) numTouch=3;
                     time=0;
                 }
                 float cx=0,cy=0;
