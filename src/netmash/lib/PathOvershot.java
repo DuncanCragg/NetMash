@@ -3,16 +3,25 @@ package netmash.lib;
 
 public class PathOvershot extends Exception{
 
-    public Object leaf;
-    public String path;
+    private Object leaf;
+    private String[] parts;
+    private int i;
+    private String path=null;
 
-    PathOvershot(Object leaf, String path){
+    PathOvershot(Object leaf, String[] parts, int i){
         this.leaf = leaf;
-        this.path = path;
+        this.parts = parts;
+        this.i = i;
     }
 
-    public String toString(){
-        return leaf+" / "+path;
+    public Object leaf(){ return leaf; }
+
+    public String path(){
+        if(path==null){
+            path = parts[++i];
+            for(i++ ; i<parts.length; i++) path+=":"+parts[i];
+        }
+        return path;
     }
 }
 

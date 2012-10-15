@@ -835,28 +835,22 @@ public class JSON {
                     hm=(LinkedHashMap)o;
                     continue;
                 }
-                throwPathOvershot(o, parts, i);
+                throw new PathOvershot(o, parts, i);
             }
             if(o instanceof String){
                 if(i==parts.length-1) return o;
-                throwPathOvershot(o, parts, i);
+                throw new PathOvershot(o, parts, i);
             }
             if(o instanceof Number){
                 if(i==parts.length-1) return o;
-                throwPathOvershot(o, parts, i);
+                throw new PathOvershot(o, parts, i);
             }
             if(o instanceof Boolean){
                 if(i==parts.length-1) return o;
-                throwPathOvershot(o, parts, i);
+                throw new PathOvershot(o, parts, i);
             }
         }
         return null;
-    }
-
-    static private void throwPathOvershot(Object o, String[] parts, int i) throws PathOvershot{
-        String path = parts[++i];
-        for(i++ ; i<parts.length; i++) path+=":"+parts[i];
-        throw new PathOvershot(o, path);
     }
 
     static private Object getSingleEntry(LinkedHashMap<String,Object> hm){

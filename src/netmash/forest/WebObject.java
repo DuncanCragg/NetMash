@@ -179,10 +179,10 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ s = w.publicState.stringPath(po.path); break;
+                try{ s = w.publicState.stringPath(po.path()); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
@@ -202,10 +202,10 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ o = w.publicState.objectPath(po.path); break;
+                try{ o = w.publicState.objectPath(po.path()); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
@@ -219,10 +219,10 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ s = w.publicState.asStringPath(po.path); break;
+                try{ s = w.publicState.asStringPath(po.path()); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
@@ -236,10 +236,10 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ s = w.publicState.isAtPath(po.path); break;
+                try{ s = w.publicState.isAtPath(po.path()); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
@@ -328,11 +328,11 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ if(po.path.equals("%etag")) i=w.etag;
-                     else i = w.publicState.intPath(po.path);
+                try{ if(po.path().equals("%etag")) i=w.etag;
+                     else i = w.publicState.intPath(po.path());
                      break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
@@ -365,10 +365,10 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ d = w.publicState.doublePath(po.path); break;
+                try{ d = w.publicState.doublePath(po.path()); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
@@ -421,10 +421,10 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ b = w.publicState.boolPath(po.path); break;
+                try{ b = w.publicState.boolPath(po.path()); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
@@ -451,10 +451,10 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ l = w.publicState.listPath(po.path); break;
+                try{ l = w.publicState.listPath(po.path()); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
@@ -568,10 +568,10 @@ public class WebObject {
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf, path);
+                if(!(po.leaf() instanceof String)) break;
+                WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null)break;
-                try{ h = w.publicState.hashPath(po.path); break;
+                try{ h = w.publicState.hashPath(po.path()); break;
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
