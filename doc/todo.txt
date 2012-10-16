@@ -20,8 +20,6 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 --------------------------------------------------------
 Fun Stuff
 --------------------------------------------------------
- - checking
-    - swipe sign right = light change
  - fraction not number
     - random refactoring of number
     - vary denominator with fixed total lights - hide them
