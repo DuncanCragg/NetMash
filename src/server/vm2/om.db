@@ -23,8 +23,9 @@
 
 { "%uid": "uid-40fb-5964-b385-c922",
   "is": [ "test", "rule" ],
-  "when": "Test nested list, less/greater than, and multiply",
+  "when": "Test var match, no-match, nested list, less/greater than, and multiply",
   "a": "$:x",
+  "b": "!$:x",
   "z": [ [ "<", 2 ], [ ">", 1 ], [ [ "<", 4 ], "=>", "$:b", "×", 10 ]]
 }
 

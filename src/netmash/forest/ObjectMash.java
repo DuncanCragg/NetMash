@@ -140,17 +140,22 @@ public class ObjectMash extends WebObject {
     private boolean scanString(String vs, String pk){
         if(vs.equals("*")) return true;
         if(contentIsOrListContains(pk,vs)) return true;
-        if(foundObjectSame(pk,vs)) return true;
+        if(foundObjectSameOrNot(pk,vs)) return true;
         if(vs.equals("number") && contentObject(pk) instanceof Number) return true;
         return false;
     }
 
-    private boolean foundObjectSame(String pk, String vs){
+    private boolean foundObjectSameOrNot(String pk, String vs){
+        boolean var=vs.startsWith("$:");
+        boolean nov=vs.startsWith("!$:");
+        if(!var && !nov) return false;
         Object pko=contentObject(pk);
-        Object vso=findObject(vs);
-        if(vso.equals(pko)) return true;
+        Object vso;
+        if(var) vso=findObject(vs);
+        else    vso=findObject(vs.substring(1));
+        if(vso.equals(pko)) return var;
         if(pko instanceof Number && vso instanceof Number){
-            return ((Number)pko).doubleValue()==((Number)vso).doubleValue();
+            return (((Number)pko).doubleValue()==((Number)vso).doubleValue())? var: nov;
         }
         return false;
     }
