@@ -111,6 +111,7 @@ public class User extends WebObject {
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"waiting, set text to challenge\", \n"+
               "    \"status\": \"waiting\", \n"+
+              "    \"numerator\": [ \"=>\", \"random\", 0, 6 ], \n"+
               "    \"text\": [ \"*\", [ \"=>\", \"$:numerator\" ], [ \"=>\", \"Swipe right when done ->\" ] ] \n"+
               "}");
 
@@ -155,7 +156,7 @@ public class User extends WebObject {
               "  \"light\": [ 1.0, 1.0, 1.0 ], \n"+
               "  \"subObjects\": [ -2.75, -1.65, -0.55, 0.55, 1.65, 2.75 ], \n"+
               "  \"gamerules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
-              "  \"numerator\": 4, \n"+
+              "  \"numerator\": 0, \n"+
               "  \"status\": \"waiting\", \n"+
               "  \"lit\": 0 \n"+
               "}");
