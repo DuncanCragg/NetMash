@@ -147,6 +147,7 @@ log(show? "show keyboard": "hide keyboard");
                 tx=e.getX(1); ty=e.getY(1);
                 px=tx; py=ty;
                 numTouch=2;
+                time=0;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(numTouch==0) break;
@@ -175,6 +176,7 @@ log(show? "show keyboard": "hide keyboard");
                 tx=0; ty=0;
                 px=0; py=0;
                 numTouch=0;
+                time=0;
                 break;
         }
         triggerRenderingBurst();

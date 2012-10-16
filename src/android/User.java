@@ -323,13 +323,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else new Evaluator(this){
             public void evaluate(){
                 if(edit){
-                    if(!contentSet("private:forms:"+UID.toUID(objectuid))) spawnResponse(objectuid, true, 0,0);
+                    spawnResponse(objectuid, true, 0,0);
                     content("private:editing",objectuid);
                     showWhatIAmViewing();
                 }
                 else{
-                    if(!contentSet("private:forms:"+UID.toUID(objectuid))) spawnResponse(objectuid, false, dx/10, dy/10);
-                    else currentForm(objectuid).setSwipeVal(objectuid, dx/10, dy/10);
+                    if(!spawnResponse(objectuid, false, dx/10, dy/10)) currentForm(objectuid).setSwipeVal(objectuid, dx/10, dy/10);
                 }
                 refreshObserves();
             }
@@ -502,8 +501,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         new Evaluator(this){
             public void evaluate(){
                 returnstringhack=null;
-                if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
-                else returnstringhack=content("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                if(!spawnResponse(guiuid)) returnstringhack=content("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 refreshObserves();
             }
         };
@@ -515,8 +513,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         new Evaluator(this){
             public void evaluate(){
                 returnboolhack=false;
-                if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
-                else returnboolhack=contentBool("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                if(!spawnResponse(guiuid)) returnboolhack=contentBool("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 refreshObserves();
             }
         };
@@ -528,17 +525,17 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         new Evaluator(this){
             public void evaluate(){
                 returninthack=0;
-                if(!contentSet("private:forms:"+UID.toUID(guiuid))) spawnResponse(guiuid);
-                else returninthack=contentInt("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                if(!spawnResponse(guiuid)) returninthack=contentInt("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 refreshObserves();
             }
         };
         return returninthack;
     }
 
-    private void spawnResponse(String guiuid){ spawnResponse(guiuid, false, 0,0); }
+    private boolean spawnResponse(String guiuid){ return spawnResponse(guiuid, false, 0,0); }
 
-    private void spawnResponse(String guiuid, boolean editable, float dx, float dy){
+    private boolean spawnResponse(String guiuid, boolean editable, float dx, float dy){
+        if(contentSet("private:forms:"+UID.toUID(guiuid))) return false;
         User resp=null;
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
@@ -559,6 +556,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             resp=newForm(guiuid, uid);
         }
         if(resp!=null) content("private:forms:"+UID.toUID(guiuid), spawn(resp));
+        return true;
     }
 
     User currentForm(String guiuid){
