@@ -16,9 +16,10 @@
 
 { "%uid": "uid-e164-2547-46b0-f47e",
   "is": [ "test", "rule" ],
-  "when": "Test fetching var and addition",
+  "when": "Test fetching var and addition and random",
   "a": [ "=>", "$:x" ],
-  "b": [ "=>", "$:x", "+", 10 ]
+  "b": [ "=>", "$:x", "+", 10 ],
+  "c": [ "=>", "random", 2, 5 ]
 }
 
 { "%uid": "uid-40fb-5964-b385-c922",
@@ -26,6 +27,7 @@
   "when": "Test var match, no-match, nested list, less/greater than, and multiply",
   "a": "$:x",
   "b": "!$:x",
+  "c": [ ">", 2 ],
   "z": [ [ "<", 2 ], [ ">", 1 ], [ [ "<", 4 ], "=>", "$:b", "×", 10 ]]
 }
 

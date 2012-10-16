@@ -190,6 +190,10 @@ public class ObjectMash extends WebObject {
             if(ll.size()==2 && ll.get(0).equals("count")){
                 contentDouble(currentRewritePath, findList(ll.get(1)).size());
             }
+            else
+            if(ll.size()==3 && ll.get(0).equals("random")){
+                contentDouble(currentRewritePath, random(findDouble(ll.get(1)), findDouble(ll.get(2))));
+            }
         }
     }
 
@@ -235,6 +239,11 @@ public class ObjectMash extends WebObject {
         if(bits.length==1) return bindings.get(path);
         LinkedList ll=bindings.get(bits[0]);
         return ll.get(Integer.parseInt(bits[1]));
+    }
+
+    private double random(double lo, double hi){
+        double x=Math.random();
+        return (int)(lo+x*(hi+0.5-lo));
     }
 
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
