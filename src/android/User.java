@@ -111,7 +111,7 @@ public class User extends WebObject {
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"waiting, set text to challenge\", \n"+
               "    \"status\": \"waiting\", \n"+
-              "    \"text\": [ \"*\", [ \"=>\", \"$:numerator\" ], [ \"=>\", \"Then swipe right ->\" ] ] \n"+
+              "    \"text\": [ \"*\", [ \"=>\", \"$:numerator\" ], [ \"=>\", \"Swipe right when done ->\" ] ] \n"+
               "}");
 
         Editable gamerule0 = new Editable(
@@ -132,7 +132,7 @@ public class User extends WebObject {
         Editable gamerulen = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, if incorrect, set text\", \n"+
-              "    \"status\": \"checking\", \n"+
+              "    \"status\": [ \"checking\", \"=>\", \"results\" ], \n"+
               "    \"lit\": \"!$:numerator\", \n"+
               "    \"text\": [ \"*\", \"*\", [ \"=>\", \"Sorry.. Swipe left <-\" ] ] \n"+
               "}");
@@ -140,7 +140,7 @@ public class User extends WebObject {
         Editable gameruley = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, if correct, set text\", \n"+
-              "    \"status\": \"checking\", \n"+
+              "    \"status\": [ \"checking\", \"=>\", \"results\" ], \n"+
               "    \"lit\": \"$:numerator\", \n"+
               "    \"text\": [ \"*\", \"*\", [ \"=>\", \"Good! Swipe left <-\" ] ] \n"+
               "}");
