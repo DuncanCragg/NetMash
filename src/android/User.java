@@ -75,7 +75,7 @@ public class User extends WebObject {
               "    \"light\": [ \"*\", [ \"=>\", 0.4  ], [ \"=>\", 0.7 ] ] \n"+
               "}");
 
-        Editable gameruleC = new Editable(
+        Editable gamerulec = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"starting, create lights\", \n"+
               "    \"subObjects\": [ [ \"number\", \"=>\",\n"+
@@ -93,39 +93,71 @@ public class User extends WebObject {
               "    ] ] \n"+
               "}");
 
+        Editable gameruler = new Editable(
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
+              "    \"when\": \"swiped right, set to checking\", \n"+
+              "    \"%alerted\": { \"is\": \"swipe\", \"dx\": [ \">\", 0 ] }, \n"+
+              "    \"status\": [ \"=>\", \"checking\" ] \n"+
+              "}");
+
+        Editable gamerulel = new Editable(
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
+              "    \"when\": \"swiped left, set to waiting\", \n"+
+              "    \"%alerted\": { \"is\": \"swipe\", \"dx\": [ \"<\", 0 ] }, \n"+
+              "    \"status\": [ \"=>\", \"waiting\" ] \n"+
+              "}");
+
+        Editable gamerulew = new Editable(
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
+              "    \"when\": \"waiting, set text to challenge\", \n"+
+              "    \"status\": \"waiting\", \n"+
+              "    \"text\": [ \"*\", [ \"=>\", \"$:numerator\" ], [ \"=>\", \"Then swipe right ->\" ] ] \n"+
+              "}");
+
         Editable gamerule0 = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, set to initial zero\", \n"+
-              "    \"lit\": [ \"=>\", 0 ], \n"+
-              "    \"text\": [ \"*\", [ \"=>\", \"$:numerator\" ], [ \"=>\", \"no\" ] ] \n"+
+              "    \"status\": \"checking\", \n"+
+              "    \"lit\": [ \"=>\", 0 ] \n"+
               "}");
 
         Editable gamerule1 = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, count lit up lights\", \n"+
+              "    \"status\": \"checking\", \n"+
               "    \"subObjects\": [ { \"object\": { \"light\": [ \"*\", 1, 1 ] } } ], \n"+
               "    \"lit\": [ \"=>\", \"count\", \"$::subObjects\" ] \n"+
               "}");
 
-        Editable gamerule2 = new Editable(
+        Editable gamerulen = new Editable(
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
+              "    \"when\": \"checking, if incorrect, set text\", \n"+
+              "    \"status\": \"checking\", \n"+
+              "    \"lit\": \"!$:numerator\", \n"+
+              "    \"text\": [ \"*\", \"*\", [ \"=>\", \"Sorry.. Swipe left <-\" ] ] \n"+
+              "}");
+
+        Editable gameruley = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, if correct, set text\", \n"+
+              "    \"status\": \"checking\", \n"+
               "    \"lit\": \"$:numerator\", \n"+
-              "    \"text\": [ \"*\", \"*\", [ \"=>\", \"yes\" ] ] \n"+
+              "    \"text\": [ \"*\", \"*\", [ \"=>\", \"Good! Swipe left <-\" ] ] \n"+
               "}");
 
         Editable gamesign = new Editable(
-              "{ \"%rules\": [ \""+gameruleC.uid+"\", \""+gamerule0.uid+"\", \""+gamerule1.uid+"\", \""+gamerule2.uid+"\" ], \n"+
+              "{ \"%rules\": [ \""+gamerulec.uid+"\", \""+gameruler.uid+"\", \""+gamerulel.uid+"\", \""+gamerulew.uid+"\", \""+gamerule0.uid+"\", \""+gamerule1.uid+"\", \""+gamerulen.uid+"\", \""+gameruley.uid+"\" ], \n"+
               "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Maths Game\", \n"+
-              "  \"text\": [ \"Light up\", \"-\", \"-\" ], \n"+
+              "  \"text\": [ \"Light up this fraction:\", \"-\", \"-\" ], \n"+
               "  \"rotation\": [ 0, 0, 0 ], \n"+
               "  \"scale\": [ 1.0, 1.0, 1.0 ], \n"+
               "  \"light\": [ 1.0, 1.0, 1.0 ], \n"+
               "  \"subObjects\": [ -2.75, -1.65, -0.55, 0.55, 1.65, 2.75 ], \n"+
               "  \"gamerules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
-              "  \"lit\": 0, \n"+
-              "  \"numerator\": 4 \n"+
+              "  \"numerator\": 4, \n"+
+              "  \"status\": \"waiting\", \n"+
+              "  \"lit\": 0 \n"+
               "}");
 
         Editable lightrule = new Editable(
@@ -169,7 +201,6 @@ public class User extends WebObject {
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, contact.uid, links.uid, contacts.uid);
 
-        otslinks.addFirst(gamerule0.uid);
         otslinks.addFirst(room.uid);
         otslinks.addFirst(me.uid);
 
@@ -179,10 +210,14 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(contacts);
         me.funcobs.cacheSaveAndEvaluate(lightrule1);
         me.funcobs.cacheSaveAndEvaluate(lightrule2);
-        me.funcobs.cacheSaveAndEvaluate(gameruleC);
+        me.funcobs.cacheSaveAndEvaluate(gamerulec);
+        me.funcobs.cacheSaveAndEvaluate(gameruler);
+        me.funcobs.cacheSaveAndEvaluate(gamerulel);
+        me.funcobs.cacheSaveAndEvaluate(gamerulew);
         me.funcobs.cacheSaveAndEvaluate(gamerule0);
         me.funcobs.cacheSaveAndEvaluate(gamerule1);
-        me.funcobs.cacheSaveAndEvaluate(gamerule2);
+        me.funcobs.cacheSaveAndEvaluate(gamerulen);
+        me.funcobs.cacheSaveAndEvaluate(gameruley);
         me.funcobs.cacheSaveAndEvaluate(gamesign);
         me.funcobs.cacheSaveAndEvaluate(lightrule);
         me.funcobs.cacheSaveAndEvaluate(light);
