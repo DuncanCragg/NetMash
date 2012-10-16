@@ -212,7 +212,7 @@ public class User extends WebObject {
               "        \"links\": \""+linksuid+"\", \n"+
               "        \"history\": null, \n"+
               "        \"contacts\":  \""+contactsuid+"\", \n"+
-              "        \"forms\": { } \n"+
+              "        \"responses\": { } \n"+
               "    }\n"+
               "}");
     }
@@ -317,18 +317,18 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(objectuid==null) return;
         if(objectuid.equals("editing")){
             String edituid=content("private:editing");
-            if(dy*dy>dx*dx/2) currentForm(edituid).setEditVal(edituid,dy);
+            if(dy*dy>dx*dx/2) getResponse(edituid, true).setEditVal(edituid,dy);
             else if(NetMash.top!=null) NetMash.top.getKeys(dx>0);
         }
         else new Evaluator(this){
             public void evaluate(){
                 if(edit){
-                    spawnResponse(objectuid, true, 0,0);
+                    setResponse(objectuid, true, 0,0);
                     content("private:editing",objectuid);
                     showWhatIAmViewing();
                 }
                 else{
-                    if(!spawnResponse(objectuid, false, dx/10, dy/10)) currentForm(objectuid).setSwipeVal(objectuid, dx/10, dy/10);
+                    if(!setResponse(objectuid, false, dx/10, dy/10)) getResponse(objectuid).setSwipeVal(objectuid, dx/10, dy/10);
                 }
                 refreshObserves();
             }
@@ -496,49 +496,88 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         return true;
     }
 
+    // ---------------------------------------------------------
+
     public void prepareResponse(final String guiuid){
         new Evaluator(this){
             public void evaluate(){
-                spawnResponse(guiuid);
+                setResponse(guiuid);
                 refreshObserves();
             }
         };
     }
 
-    private boolean spawnResponse(String guiuid){ return spawnResponse(guiuid, false, 0,0); }
+    private boolean setResponse(String guiuid){ return setResponse(guiuid, false, 0,0); }
 
-    private boolean spawnResponse(String guiuid, boolean editable, float dx, float dy){
-        if(contentSet("private:forms:"+UID.toUID(guiuid))) return false;
+    private boolean setResponse(String guiuid, boolean editable, float dx, float dy){
         User resp=null;
+        String path=null;
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
         if(contentIsOrListContains("private:viewing:is", "editable")){
+            path="private:responses:editable:"+UID.toUID(guiuid);
+            if(contentSet(path)) return false;
+            if(!contentSet("private:responses:editable")) contentHash("private:responses:editable", hash());
             resp=newEditableRule(guiuid, uid);
         }
         }
         else if(contentIsOrListContains("private:viewing:is", "3d")){
+            path="private:responses:swipe:"+UID.toUID(guiuid);
+            if(contentSet(path)) return false;
+            if(!contentSet("private:responses:swipe")) contentHash("private:responses:swipe", hash());
             resp=newSwipe(guiuid, uid, dx, dy);
         }
         else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
+            path="private:responses:query:"+UID.toUID(guiuid);
+            if(contentSet(path)) return false;
+            if(!contentSet("private:responses:query")) contentHash("private:responses:query", hash());
             resp=newDocumentQuery(guiuid, uid);
         }
         else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
+            path="private:responses:rsvp:"+UID.toUID(guiuid);
+            if(contentSet(path)) return false;
+            if(!contentSet("private:responses:rsvp")) contentHash("private:responses:rsvp", hash());
             resp=newRSVP(guiuid, uid);
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
+            path="private:responses:form:"+UID.toUID(guiuid);
+            if(contentSet(path)) return false;
+            if(!contentSet("private:responses:form")) contentHash("private:responses:form", hash());
             resp=newForm(guiuid, uid);
         }
-        if(resp!=null) content("private:forms:"+UID.toUID(guiuid), spawn(resp));
+        if(resp!=null) content(path, spawn(resp));
         return true;
     }
 
-    User currentForm(String guiuid){
-        String formuid = content("private:forms:"+UID.toUID(guiuid));
+    private User getResponse(String guiuid){ return getResponse(guiuid, false); }
+
+    private User getResponse(String guiuid, boolean editable){
+        String path=null;
+        editable=editable || contentIs("private:viewas","raw");
+        if(editable){
+        if(contentIsOrListContains("private:viewing:is", "editable")){
+            path="private:responses:editable:"+UID.toUID(guiuid);
+        }
+        }
+        else if(contentIsOrListContains("private:viewing:is", "3d")){
+            path="private:responses:swipe:"+UID.toUID(guiuid);
+        }
+        else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
+            path="private:responses:query:"+UID.toUID(guiuid);
+        }
+        else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
+            path="private:responses:rsvp:"+UID.toUID(guiuid);
+        }
+        else if(contentIsOrListContains("private:viewing:is", "gui")){
+            path="private:responses:form:"+UID.toUID(guiuid);
+        }
+        if(path==null) return null;
+        String formuid = content(path);
         return (User)onlyUseThisToHandControlOfThreadToDependent(formuid);
     }
 
     public void setFormVal(final String guiuid, final String tag, final String val){
-        if(this==me) currentForm(guiuid).setFormVal(guiuid, tag, val);
+        if(this==me) getResponse(guiuid).setFormVal(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentListContainsAll("is", list("editable", "rule"))){
@@ -549,7 +588,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentListContainsAll("is", list("document", "query"))){
                     content("content", String.format("<hasWords(%s)>",val));
                 }
-                else content("form:"+dehash(tag), val);
+                else
+                if(contentIsOrListContains("is", "form")){
+                    content("form:"+dehash(tag), val);
+                }
                 notifying(guiuid);
                 refreshObserves();
             }
@@ -557,13 +599,16 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     public void setFormVal(final String guiuid, final String tag, final boolean val){
-        if(this==me) currentForm(guiuid).setFormVal(guiuid, tag, val);
+        if(this==me) getResponse(guiuid).setFormVal(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "rsvp")){
                     content("attending", val? "yes": "no");
                 }
-                else contentBool("form:"+dehash(tag), val);
+                else
+                if(contentIsOrListContains("is", "form")){
+                    contentBool("form:"+dehash(tag), val);
+                }
                 notifying(guiuid);
                 refreshObserves();
             }
@@ -571,10 +616,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     public void setFormVal(final String guiuid, final String tag, final int val){
-        if(this==me) currentForm(guiuid).setFormVal(guiuid, tag, val);
+        if(this==me) getResponse(guiuid).setFormVal(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
-                contentInt("form:"+dehash(tag), val);
+                if(contentIsOrListContains("is", "form")){
+                    contentInt("form:"+dehash(tag), val);
+                }
                 notifying(guiuid);
                 refreshObserves();
             }
