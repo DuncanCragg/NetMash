@@ -100,18 +100,25 @@ public class User extends WebObject {
               "    \"status\": [ \"=>\", \"checking\" ] \n"+
               "}");
 
-        Editable gamerulel = new Editable(
+        Editable gamerules = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
-              "    \"when\": \"swiped left, set to waiting\", \n"+
+              "    \"when\": \"swiped left after sorry, set to waiting with old challenge\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\", \"dx\": [ \"<\", 0 ] }, \n"+
-              "    \"status\": [ \"=>\", \"waiting\" ] \n"+
+              "    \"status\": [ \"sorry\", \"=>\", \"waiting\" ] \n"+
+              "}");
+
+        Editable gameruleg = new Editable(
+              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
+              "    \"when\": \"swiped left after good, set to waiting plus new challenge\", \n"+
+              "    \"%alerted\": { \"is\": \"swipe\", \"dx\": [ \"<\", 0 ] }, \n"+
+              "    \"status\": [ \"good\", \"=>\", \"waiting\" ], \n"+
+              "    \"numerator\": [ \"=>\", \"random\", 0, 6 ] \n"+
               "}");
 
         Editable gamerulew = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"waiting, set text to challenge\", \n"+
               "    \"status\": \"waiting\", \n"+
-              "    \"numerator\": [ \"=>\", \"random\", 0, 6 ], \n"+
               "    \"text\": [ \"*\", [ \"=>\", \"$:numerator\" ], [ \"=>\", \"Swipe right when done ->\" ] ] \n"+
               "}");
 
@@ -133,7 +140,7 @@ public class User extends WebObject {
         Editable gamerulen = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, if incorrect, set text\", \n"+
-              "    \"status\": [ \"checking\", \"=>\", \"results\" ], \n"+
+              "    \"status\": [ \"checking\", \"=>\", \"sorry\" ], \n"+
               "    \"lit\": \"!$:numerator\", \n"+
               "    \"text\": [ \"*\", \"*\", [ \"=>\", \"Sorry.. Swipe left <-\" ] ] \n"+
               "}");
@@ -141,13 +148,13 @@ public class User extends WebObject {
         Editable gameruley = new Editable(
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"checking, if correct, set text\", \n"+
-              "    \"status\": [ \"checking\", \"=>\", \"results\" ], \n"+
+              "    \"status\": [ \"checking\", \"=>\", \"good\" ], \n"+
               "    \"lit\": \"$:numerator\", \n"+
               "    \"text\": [ \"*\", \"*\", [ \"=>\", \"Good! Swipe left <-\" ] ] \n"+
               "}");
 
         Editable gamesign = new Editable(
-              "{ \"%rules\": [ \""+gamerulec.uid+"\", \""+gameruler.uid+"\", \""+gamerulel.uid+"\", \""+gamerulew.uid+"\", \""+gamerule0.uid+"\", \""+gamerule1.uid+"\", \""+gamerulen.uid+"\", \""+gameruley.uid+"\" ], \n"+
+              "{ \"%rules\": [ \""+gamerulec.uid+"\", \""+gameruler.uid+"\", \""+gamerules.uid+"\", \""+gameruleg.uid+"\", \""+gamerulew.uid+"\", \""+gamerule0.uid+"\", \""+gamerule1.uid+"\", \""+gamerulen.uid+"\", \""+gameruley.uid+"\" ], \n"+
               "  \"is\": [ \"3d\", \"notice\", \"editable\" ], \n"+
               "  \"title\": \"Maths Game\", \n"+
               "  \"text\": [ \"Light up this fraction:\", \"-\", \"-\" ], \n"+
@@ -156,7 +163,7 @@ public class User extends WebObject {
               "  \"light\": [ 1.0, 1.0, 1.0 ], \n"+
               "  \"subObjects\": [ -2.75, -1.65, -0.55, 0.55, 1.65, 2.75 ], \n"+
               "  \"gamerules\": [ \""+lightrule1.uid+"\", \""+lightrule2.uid+"\" ], \n"+
-              "  \"numerator\": 0, \n"+
+              "  \"numerator\": 3, \n"+
               "  \"status\": \"waiting\", \n"+
               "  \"lit\": 0 \n"+
               "}");
@@ -213,7 +220,8 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(lightrule2);
         me.funcobs.cacheSaveAndEvaluate(gamerulec);
         me.funcobs.cacheSaveAndEvaluate(gameruler);
-        me.funcobs.cacheSaveAndEvaluate(gamerulel);
+        me.funcobs.cacheSaveAndEvaluate(gamerules);
+        me.funcobs.cacheSaveAndEvaluate(gameruleg);
         me.funcobs.cacheSaveAndEvaluate(gamerulew);
         me.funcobs.cacheSaveAndEvaluate(gamerule0);
         me.funcobs.cacheSaveAndEvaluate(gamerule1);
