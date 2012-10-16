@@ -12,21 +12,30 @@ Prioritising
     - robustness, performance, refactoring
     - code/implementation unknowns
 
-Current priority: (vim-edited for now) rules for puzzle room
+Current priority: (vim/raw-edited for now) rules for puzzle room
 
  - shows off USP of ease of programming, object interactivity and learning aspects
  - done some refactoring, need to focus on visible value towards Xmas demo
 
 --------------------------------------------------------
- - up to fraction; swipe 'done' cube and get reward and next puzzle
+Fun Stuff
+--------------------------------------------------------
+ - checking
+    - swipe sign right to check: sorry/well done; light change
+    - swipe sign left to try again or generate next
+ - fraction not number
+    - same denominator, random numerator
+    - random refactoring of number
+    - vary denominator with fixed total lights - hide them
+ - clamp light
+ - light up the bloody sign and all signs
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------
- - broken editing
-    - need two forms if swiping and editing
-    - get old editing working again
  - touch detect:
     - doesn't always register
+    - hold shift, touch several..
+    - light lags massively
     - 0,480 bug on ZTE
 ---------------------------------------------------------
  - cache, and detect changes in components of view - how?
@@ -38,7 +47,6 @@ Performance, Bugs
     - top level mesh not cached
  - redundant rendering/refresh when nothing changed
     - use Etag, if no need to respond to incoming subs
----------------------------------------------------------
  - jump link, split path is big cpu user
  - SomeObject/Avatar still?
  - shaders: vert and frag should come together, else use basic: why sept?
