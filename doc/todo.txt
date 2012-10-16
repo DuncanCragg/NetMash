@@ -21,14 +21,11 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 Fun Stuff
 --------------------------------------------------------
  - checking
-    - swipe sign right to check: sorry/well done; light change
-    - swipe sign left to try again or generate next
+    - swipe sign right = light change
  - fraction not number
-    - same denominator, random numerator
     - random refactoring of number
     - vary denominator with fixed total lights - hide them
  - clamp light
- - light up the bloody sign and all signs
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------

@@ -95,6 +95,7 @@
   "title": "Important Notice",
   "text": "Welcome to Ann Droid's Place!",
   "rotation": [ 10, 10, 10 ],
-  "scale": [ 1.0, 1.0, 1.0 ]
+  "scale": [ 1.0, 1.0, 1.0 ],
+  "light": [ 0.5, 1.0, 1.0 ]
 }
 
