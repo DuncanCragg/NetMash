@@ -496,40 +496,13 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         return true;
     }
 
-    private String returnstringhack; // so fix it
-    public String getFormStringVal(final String guiuid, final String tag){
+    public void prepareResponse(final String guiuid){
         new Evaluator(this){
             public void evaluate(){
-                returnstringhack=null;
-                if(!spawnResponse(guiuid)) returnstringhack=content("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                spawnResponse(guiuid);
                 refreshObserves();
             }
         };
-        return returnstringhack;
-    }
-
-    private boolean returnboolhack; // so fix it
-    public boolean getFormBoolVal(final String guiuid, final String tag){
-        new Evaluator(this){
-            public void evaluate(){
-                returnboolhack=false;
-                if(!spawnResponse(guiuid)) returnboolhack=contentBool("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
-                refreshObserves();
-            }
-        };
-        return returnboolhack;
-    }
-
-    private int returninthack; // so fix it
-    public int getFormIntVal(final String guiuid, final String tag){
-        new Evaluator(this){
-            public void evaluate(){
-                returninthack=0;
-                if(!spawnResponse(guiuid)) returninthack=contentInt("private:forms:"+UID.toUID(guiuid)+":form:"+dehash(tag));
-                refreshObserves();
-            }
-        };
-        return returninthack;
     }
 
     private boolean spawnResponse(String guiuid){ return spawnResponse(guiuid, false, 0,0); }

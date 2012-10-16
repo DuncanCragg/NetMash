@@ -584,9 +584,8 @@ log(show? "show keyboard": "hide keyboard");
             }
         });
         view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
-        String val=user.getFormStringVal(viewUID, tag);
-        if(val!=null) view.setText(val);
-        else          view.setText(label);
+        user.prepareResponse(viewUID);
+        view.setText(label);
         view.selectAll();
         view.setTextSize(20);
         view.setTextColor(0xff000000);
@@ -595,7 +594,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private View createFormRadioView(final String tag, String label, String[] choices){
-        String val=user.getFormStringVal(viewUID, tag);
+        user.prepareResponse(viewUID);
         RadioGroup view = new RadioGroup(this);
         for(String choice: choices){
             if(choice.length()==0) continue;
@@ -606,8 +605,8 @@ log(show? "show keyboard": "hide keyboard");
             v.setText(choice);
             v.setTextSize(20);
             v.setTextColor(0xff000000);
+         // v.setChecked(false);
             view.addView(v);
-            if(choice.equals(val)) v.setChecked(true);
         }
         return view;
     }
@@ -623,8 +622,7 @@ log(show? "show keyboard": "hide keyboard");
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, choices);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         view.setAdapter(adapter);
-        String val=user.getFormStringVal(viewUID, tag);
-        if(val!=null) view.setSelection(indexOf(val, choices));
+        user.prepareResponse(viewUID);
         view.setPrompt(label);
         return view;
     }
@@ -639,8 +637,8 @@ log(show? "show keyboard": "hide keyboard");
         view.setOnClickListener(new OnClickListener(){
             public void onClick(View v){ user.setFormVal(viewUID, tag, ((CheckBox)v).isChecked()); }
         });
-        boolean val=user.getFormBoolVal(viewUID, tag);
-        view.setChecked(val);
+        user.prepareResponse(viewUID);
+        view.setChecked(false);
         view.setText(label);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
@@ -653,9 +651,9 @@ log(show? "show keyboard": "hide keyboard");
         view.setOnClickListener(new OnClickListener(){
             public void onClick(View v){ user.setFormVal(viewUID, tag, ((ToggleButton)v).isChecked()); }
         });
-        boolean val=user.getFormBoolVal(viewUID, tag);
-        view.setChecked(val);
-        view.setText(choices[val? 1:0]);
+        user.prepareResponse(viewUID);
+        view.setChecked(false);
+        view.setText(choices[0]);
         view.setTextOff(choices[0]);
         view.setTextOn(choices[1]);
         view.setTextSize(20);
@@ -672,10 +670,10 @@ log(show? "show keyboard": "hide keyboard");
         if(choices!=null && choices.length!=0){
             try{ numchoices=Integer.parseInt(choices[choices.length-1]); }catch(Exception e){}
         }
-        int val=user.getFormIntVal(viewUID, tag);
+        user.prepareResponse(viewUID);
         view.setStepSize(1.0f);
         view.setNumStars(numchoices);
-        view.setRating((float)val);
+        view.setRating(0.0f);
         return view;
     }
 
