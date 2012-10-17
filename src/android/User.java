@@ -175,7 +175,7 @@ public class User extends WebObject {
               "{   \"is\": [ \"editable\", \"rule\" ], \n"+
               "    \"when\": \"swiped, change light\", \n"+
               "    \"%alerted\": { \"is\": \"swipe\" }, \n"+
-              "    \"light\": [ \"*\", [ \"=>\", \"$:light:1\", \"+\", \"$:%alerted:dx\"  ], [ \"=>\", \"$:light:2\", \"+\", \"$:%alerted:dy\" ] ] \n"+
+              "    \"light\": [ \"*\", [ \"=>\", \"clamp\", 0, 1, [ \"$:light:1\", \"+\", \"$:%alerted:dx\" ] ], [ \"=>\", \"clamp\", 0, 1, [ \"$:light:2\", \"+\", \"$:%alerted:dy\" ] ] ] \n"+
               "}");
 
         Editable light = new Editable(
