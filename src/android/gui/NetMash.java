@@ -126,10 +126,14 @@ log(show? "show keyboard": "hide keyboard");
 */
     }
 
+    private float ox=0f;
+    private float oy=0f;
     private float px=0f;
     private float py=0f;
     private float tx=0f;
     private float ty=0f;
+    private float qx=0f;
+    private float qy=0f;
     private int   numTouch=0;
     private long  time=0;
 
@@ -138,16 +142,19 @@ log(show? "show keyboard": "hide keyboard");
         if(onemeshview==null) return false;
         switch(e.getActionMasked()){
             case MotionEvent.ACTION_DOWN:
-                tx=e.getX(0); ty=e.getY(0);
-                px=tx; py=ty;
+                ox=e.getX(0); oy=e.getY(0);
+                px=ox; py=oy;
                 numTouch=1;
                 time=System.currentTimeMillis();
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 tx=e.getX(1); ty=e.getY(1);
-                px=tx; py=ty;
+                qx=tx; qy=ty;
                 numTouch=2;
                 time=0;
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                numTouch=1;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(numTouch==0) break;
@@ -160,21 +167,32 @@ log(show? "show keyboard": "hide keyboard");
                 if(numTouch==1){ cx=e.getX(0); cy=e.getY(0); }
                 if(numTouch==2){ cx=e.getX(1); cy=e.getY(1); }
                 if(numTouch==3){ cx=e.getX(0); cy=e.getY(0); }
-                float mx=cx-px, my=cy-py;
-                if(mx*mx+my*my<0.1) return true;
-                px=cx; py=cy;
-                final int   nt=numTouch;
-                final float xx=tx,yy=ty;
+                final boolean mt=numTouch>1;
+                float mx,my;
+                final float xx,yy;
+                if(!mt){
+                    mx=cx-px; my=cy-py;
+                    if(mx*mx+my*my<0.1) return true;
+                    px=cx; py=cy;
+                    xx=ox; yy=oy;
+                }else{
+                    mx=cx-qx; my=cy-qy;
+                    if(mx*mx+my*my<0.1) return true;
+                    qx=cx; qy=cy;
+                    xx=tx; yy=ty;
+                }
                 final float dx=100*mx/screenWidth;
                 final float dy=100*my/screenHeight;
                 onemeshview.queueEvent(new Runnable(){ public void run(){
                     if(onerenderer==null) return;
-                    onerenderer.swipe(nt>1, fromEdge(xx,yy), (int)xx,screenHeight-(int)yy, dx,dy);
+                    onerenderer.swipe(mt, fromEdge(xx,yy), (int)xx,screenHeight-(int)yy, dx,dy);
                 }});
                 break;
             default:
-                tx=0; ty=0;
+                ox=0; oy=0;
                 px=0; py=0;
+                tx=0; ty=0;
+                qx=0; qy=0;
                 numTouch=0;
                 time=0;
                 break;
