@@ -20,7 +20,6 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 --------------------------------------------------------
 Fun Stuff
 --------------------------------------------------------
- - clamp light
  - fraction not number
     - random refactoring of number
     - vary denominator with fixed total lights - hide them

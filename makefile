@@ -51,8 +51,7 @@ androidemu: clean init setappemuconfig setemumapkey
 
 androidlan: clean init setapplanconfig setremmapkey
 	ant release
-	adb -d uninstall android.gui
-	adb -d install bin/NetMash-release.apk
+	( adb -d uninstall android.gui && adb -d install bin/NetMash-release.apk ) &
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 androidrem: clean init setappremconfig setremmapkey
