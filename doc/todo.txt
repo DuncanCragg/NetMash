@@ -21,11 +21,13 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 Fun Stuff
 --------------------------------------------------------
  - fraction not number
+    - 3 x 4 grid smaller lights
     - random refactoring of number
     - vary denominator with fixed total lights - hide them
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------
+ - wrong object detected on tablet
  - light lags massively
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid

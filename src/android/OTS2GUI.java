@@ -522,13 +522,19 @@ public class OTS2GUI {
     }
 
     private LinkedHashMap object2mesh(String p, boolean shallow){
-        LinkedList is=user.contentList(p+"is");
-        if(is==null) return null;
-        if(is.contains("mesh"))   return mesh2mesh(p, shallow);
-        if(is.contains("user"))   return mesh2mesh(p+"avatar:", shallow);
-        if(is.contains("cuboid")) return cuboid2mesh(p);
-        if(is.contains("notice")) return notice2mesh(p);
-        return null;
+        do{
+            LinkedList is=user.contentList(p+"is");
+            if(is==null) break;
+            if(is.contains("mesh"))   return mesh2mesh(p, shallow);
+            if(is.contains("cuboid")) return cuboid2mesh(p);
+            if(is.contains("notice")) return notice2mesh(p);
+            return null;
+        }while(false);{
+            String is=user.content(p+"is");
+            if(is==null) return null;
+            if(is.equals("user"))     return mesh2mesh(p+"avatar:", shallow);
+            return null;
+        }
     }
 
     private LinkedHashMap mesh2mesh(String p, boolean shallow){

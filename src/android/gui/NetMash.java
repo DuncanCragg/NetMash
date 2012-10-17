@@ -192,11 +192,13 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private int fromEdge(float tx,float ty){
-        int borderWidth=40;
-        if(ty<borderWidth*2)            return 1; // top strip
-        if(ty>screenHeight-borderWidth) return 2; // bottom strip
-        if(tx<borderWidth)              return 3; // left strip
-        if(tx>screenWidth -borderWidth) return 4; // right strip
+        float borderPercent=15.0f/100.0f;
+        float xBorderWidth=screenWidth *borderPercent;
+        float yBorderWidth=screenHeight*borderPercent;
+        if(ty<yBorderWidth+20)           return 1; // top strip
+        if(ty>screenHeight-yBorderWidth) return 2; // bottom strip
+        if(tx<xBorderWidth)              return 3; // left strip
+        if(tx>screenWidth -xBorderWidth) return 4; // right strip
         return 0;
     }
 
