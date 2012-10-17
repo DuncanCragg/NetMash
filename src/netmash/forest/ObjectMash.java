@@ -52,15 +52,17 @@ public class ObjectMash extends WebObject {
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
         contentTemp("%alerted", alerted);
         rewrites.clear(); bindings.clear();
-        boolean ok=scanRuleHash(rule, "");
+        boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
         if(ok) log("Rule fired: \""+contentOr(String.format("%%rules:%d:when", r),"")+"\"");
         if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"\n===========");
         contentTemp("%alerted", null);
     }
 
+    // ----------------------------------------------------
+
     @SuppressWarnings("unchecked")
-    private boolean scanRuleHash(LinkedHashMap<String,Object> hash, String path){
+    private boolean scanHash(LinkedHashMap<String,Object> hash, String path){
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=path+entry.getKey();
             if(path.equals("")){
@@ -78,7 +80,7 @@ public class ObjectMash extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean scanRuleList(LinkedList list, String path){
+    private boolean scanList(LinkedList list, String path){
         if(list.size()==0) return true;
         if(list.size()==2 && list.get(0).equals("<")){
             double d=findDouble(list.get(1));
@@ -131,8 +133,8 @@ public class ObjectMash extends WebObject {
         if(v instanceof String)        return scanString((String)v, pk);
         if(v instanceof Number)        return scanNumber((Number)v, pk);
         if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
-        if(v instanceof LinkedHashMap) return scanRuleHash((LinkedHashMap<String,Object>)v, pk+":");
-        if(v instanceof LinkedList)    return scanRuleList((LinkedList)v, pk+(hmmm? "": ":"));
+        if(v instanceof LinkedHashMap) return scanHash((LinkedHashMap<String,Object>)v, pk+":");
+        if(v instanceof LinkedList)    return scanList((LinkedList)v, pk+(hmmm? "": ":"));
         log("oh noes "+v);
         return false;
     }
@@ -143,6 +145,14 @@ public class ObjectMash extends WebObject {
         if(foundObjectSameOrNot(pk,vs)) return true;
         if(vs.equals("number") && contentObject(pk) instanceof Number) return true;
         return false;
+    }
+
+    private boolean scanNumber(Number vb, String pk){
+        return contentDouble(pk)==vb.doubleValue();
+    }
+
+    private boolean scanBoolean(Boolean vb, String pk){
+        return contentBool(pk)==vb;
     }
 
     private boolean foundObjectSameOrNot(String pk, String vs){
@@ -160,42 +170,40 @@ public class ObjectMash extends WebObject {
         return false;
     }
 
-    private boolean scanNumber(Number vb, String pk){
-        return contentDouble(pk)==vb.doubleValue();
-    }
-
-    private boolean scanBoolean(Boolean vb, String pk){
-        return contentBool(pk)==vb;
-    }
+    // ----------------------------------------------------
 
     String currentRewritePath=null;
 
     private void doRewrites(){
         for(Map.Entry<String,Object> entry: rewrites.entrySet()){
             currentRewritePath=entry.getKey();
-            Object v=entry.getValue();
-            LinkedList ll=(LinkedList)v;
-            if(ll.size()==1){
-                contentObject(currentRewritePath, copyObject(ll.get(0)));
-            }
-            else
-            if(ll.size()==3 && ll.get(1).equals("+")){
-                contentDouble(currentRewritePath, findDouble(ll.get(0)) + findDouble(ll.get(2)));
-            }
-            else
-            if(ll.size()==3 && ll.get(1).equals("×")){
-                contentDouble(currentRewritePath, findDouble(ll.get(0)) * findDouble(ll.get(2)));
-            }
-            else
-            if(ll.size()==2 && ll.get(0).equals("count")){
-                contentDouble(currentRewritePath, findList(ll.get(1)).size());
-            }
-            else
-            if(ll.size()==3 && ll.get(0).equals("random")){
-                contentDouble(currentRewritePath, random(findDouble(ll.get(1)), findDouble(ll.get(2))));
-            }
+            Object e=eval((LinkedList)entry.getValue());
+            if(e!=null) contentObject(currentRewritePath, e);
         }
     }
+
+    private Object eval(LinkedList ll){
+        if(ll.size()==1) return copyObject(ll.get(0));
+        if(ll.size()==3 && ll.get(1).equals("+"))     return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
+        if(ll.size()==3 && ll.get(1).equals("×"))     return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
+        if(ll.size()==2 && ll.get(0).equals("count")) return Double.valueOf(findList(ll.get(1)).size());
+        if(ll.size()==3 && ll.get(0).equals("random"))return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
+        if(ll.size()==4 && ll.get(0).equals("clamp")) return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
+        return null;
+    }
+
+    private double random(double lo, double hi){
+        double x=Math.random();
+        return (int)(lo+x*(hi+0.5-lo));
+    }
+
+    private double clamp(double lo, double hi, double x){
+        if(x>hi) return hi;
+        if(x<lo) return lo;
+        return x;
+    }
+
+    // ----------------------------------------------------
 
     private Object findObject(Object o){
         if(o==null) return null;
@@ -206,6 +214,7 @@ public class ObjectMash extends WebObject {
     private double findDouble(Object o){
         if(o==null) return 0;
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentDouble(((String)o).substring(2));
+        if(o instanceof LinkedList){ Object e=eval((LinkedList)o); return (e instanceof Number)? ((Number)e).doubleValue(): 0; }
         return findNumberIn(o);
     }
 
@@ -239,11 +248,6 @@ public class ObjectMash extends WebObject {
         if(bits.length==1) return bindings.get(path);
         LinkedList ll=bindings.get(bits[0]);
         return ll.get(Integer.parseInt(bits[1]));
-    }
-
-    private double random(double lo, double hi){
-        double x=Math.random();
-        return (int)(lo+x*(hi+0.5-lo));
     }
 
     public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
@@ -282,6 +286,8 @@ public class ObjectMash extends WebObject {
         }
         return r;
     }
+
+    // ----------------------------------------------------
 }
 
 
