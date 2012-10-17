@@ -15,6 +15,8 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.*;
 
+import netmash.platform.*;
+
 import static netmash.lib.Utils.*;
 
 public class Renderer implements GLSurfaceView.Renderer {
@@ -318,7 +320,10 @@ public class Renderer implements GLSurfaceView.Renderer {
         seeZ=eyeZ-4.5f;
     }
 
+    private boolean emulator(){ return Kernel.config.stringPathN("network:home-cache-notify").indexOf("10.0.2.2")!= -1; }
+
     public void swipe(boolean shift, int edge, int x, int y, float dx, float dy){
+        if(emulator()) shift=(edge!=3 && edge!=4);
         if(!shift){
             if(edge!=2){
                 direction += dx/50f;
