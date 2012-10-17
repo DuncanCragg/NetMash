@@ -65,8 +65,10 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float direction=0;
 
     private boolean touchDetecting=false;
-    private Mesh    touchedObject=null;
     private int     touchX,touchY;
+    private Mesh    touchedObject=null;
+    private boolean touchEdit=false;
+    private float   touchDX,touchDY;
     private boolean lightObject=false;
     // touchDetecting => mvpm; pos; touchCol
     // lightObject    => mvpm; pos; tex; lightCol; texture0
@@ -119,8 +121,9 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(debugGL) throwAnyGLException("glReadPixels ",touchX,touchY,b);
             int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
             touchedObject=touchables.get(""+touchedGrey);
+            if(touchedObject!=null) netmash.user.onObjectTouched(touchedObject.mesh,touchEdit,touchDX,touchDY);
             touchDetecting=false;
-        }catch(Throwable t){ log(t); touchDetecting=false; touchedObject=null; }}
+        }catch(Throwable t){ t.printStackTrace(); touchDetecting=false; touchedObject=null; }}
         drawFrame();
         if(!debugGL) throwAnyGLException("Something went wrong somewhere in drawing frame: switch on 'debugGL'");
     }
@@ -334,14 +337,15 @@ public class Renderer implements GLSurfaceView.Renderer {
             }
             netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
         }else{
-            if(touchDetecting) return;
+            if(touchDetecting){ touchDX+=dx; touchDY+=dy; return; }
             if(x!=touchX || y!=touchY) touchedObject=null;
             if(touchedObject==null){
                 touchDetecting=true;
                 touchX=x; touchY=y;
+                touchEdit=false;
+                touchDX=dx; touchDY=dy;
             }
             else{
-                boolean touchEdit=false;
                 netmash.user.onObjectTouched(touchedObject.mesh,touchEdit,dx,dy);
             }
         }
