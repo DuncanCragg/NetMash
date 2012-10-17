@@ -123,9 +123,9 @@ public class Renderer implements GLSurfaceView.Renderer {
             touchedObject=touchables.get(""+touchedGrey);
             if(touchedObject!=null) netmash.user.onObjectTouched(touchedObject.mesh,touchEdit,touchDX,touchDY);
             touchDetecting=false;
-        }catch(Throwable t){ t.printStackTrace(); touchDetecting=false; touchedObject=null; }}
+        }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
         drawFrame();
-        if(!debugGL) throwAnyGLException("Something went wrong somewhere in drawing frame: switch on 'debugGL'");
+        if(!debugGL) throwAnyGLException("Something went wrong in GL: switch on 'debugGL' ",touchX,"/",touchY);
     }
 
     private int flipAndRound(int n){

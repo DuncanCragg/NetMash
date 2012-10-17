@@ -20,19 +20,14 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 --------------------------------------------------------
 Fun Stuff
 --------------------------------------------------------
+ - clamp light
  - fraction not number
     - random refactoring of number
     - vary denominator with fixed total lights - hide them
- - clamp light
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------
- - touch detect:
-    - doesn't always register
-    - hold shift, touch several..
-    - light lags massively
-    - 0,480 bug on ZTE
----------------------------------------------------------
+ - light lags massively
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same meshes? detect internal change

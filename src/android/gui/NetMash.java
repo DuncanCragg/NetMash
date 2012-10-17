@@ -135,7 +135,6 @@ log(show? "show keyboard": "hide keyboard");
     private float qx=0f;
     private float qy=0f;
     private int   numTouch=0;
-    private long  time=0;
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
@@ -145,28 +144,20 @@ log(show? "show keyboard": "hide keyboard");
                 ox=e.getX(0); oy=e.getY(0);
                 px=ox; py=oy;
                 numTouch=1;
-                time=System.currentTimeMillis();
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 tx=e.getX(1); ty=e.getY(1);
                 qx=tx; qy=ty;
                 numTouch=2;
-                time=0;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 numTouch=1;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(numTouch==0) break;
-                if(time>0){
-                    long t=System.currentTimeMillis();
-                    if(t-time>400) numTouch=3;
-                    time=0;
-                }
                 float cx=0,cy=0;
                 if(numTouch==1){ cx=e.getX(0); cy=e.getY(0); }
                 if(numTouch==2){ cx=e.getX(1); cy=e.getY(1); }
-                if(numTouch==3){ cx=e.getX(0); cy=e.getY(0); }
                 final boolean mt=numTouch>1;
                 float mx,my;
                 final float xx,yy;
@@ -194,7 +185,6 @@ log(show? "show keyboard": "hide keyboard");
                 tx=0; ty=0;
                 qx=0; qy=0;
                 numTouch=0;
-                time=0;
                 break;
         }
         triggerRenderingBurst();
