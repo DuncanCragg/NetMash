@@ -105,7 +105,6 @@ public class Persistence implements FileUser {
                 w=(WebObject)Class.forName(classname).newInstance();
             } else w=new WebObject();
             w.construct(json);
-            funcobs.cachePut(w);
             return w;
         }catch(Exception e){
             FunctionalObserver.log("Persistence: Could not build an instance of WebObject ("+uid+" classname="+classname+"):\n"+json);

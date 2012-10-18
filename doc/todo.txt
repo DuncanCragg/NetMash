@@ -20,10 +20,10 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 --------------------------------------------------------
 Fun Stuff
 --------------------------------------------------------
+ - 3 x 4 grid, smaller lights
  - fraction not number
-    - 3 x 4 grid smaller lights
-    - random refactoring of number
-    - vary denominator with fixed total lights - hide them
+ - random refactoring of number
+ - vary denominator with fixed total lights - hide them
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------

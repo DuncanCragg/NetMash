@@ -170,16 +170,10 @@ public class FunctionalObserver implements Module {
         http.setCacheNotify(netmashconfig.stringPathN("network:cache-notify"));
     }
 
-    void cacheAndSaveSpawned(WebObject w){
-        for(WebObject n: w.spawned){
-            cachePut(n);
-            persistence.save(n);
-        }
-    }
-
-    void evalSpawned(WebObject w){
+    void evalAndPersistSpawned(WebObject w){
         for(WebObject n: w.spawned){
             evaluatable(n);
+            persistence.save(n);
         }
     }
 
@@ -290,6 +284,7 @@ public class FunctionalObserver implements Module {
     private boolean inPersistence(WebObject s){
         WebObject w=persistence.cache(s.uid);
         if(w==null) return false;
+        cachePut(w);
         transferNotifyAndAlerted(s,w);
         saveAndNotifyUpdated(w, false);
         if(w.isLocal()){

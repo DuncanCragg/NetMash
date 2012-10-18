@@ -115,7 +115,7 @@ public class WebObject {
         updatingState = publicState;
     }
 
-    /** For spawning from Fjord. */
+    /** For spawning. */
     public WebObject(LinkedHashMap hm){
         funcobs = FunctionalObserver.funcobs;
         uid = UID.generateUID();
@@ -124,6 +124,7 @@ public class WebObject {
         updatingState = publicState;
     }
 
+    /** For spawning. */
     public WebObject construct(LinkedHashMap hm){
         funcobs = FunctionalObserver.funcobs;
         uid = UID.generateUID();
@@ -640,10 +641,11 @@ public class WebObject {
         return alerted;
     }
 
-    /** Wrap new WebObject in this to return its UID and set
-      * it up for later evaluation. */
+    /** Wrap new WebObject in this to cache it, set it up
+      * for later evaluation and return its UID. */
     public String spawn(WebObject w){
         obsalmod = true;
+        funcobs.cachePut(w);
         spawned.add(w);
         return w.uid;
     }
@@ -764,7 +766,6 @@ public class WebObject {
         notify.addAll(newalert);
         funcobs.dropNotifies(this);
         funcobs.setCurrentNotifyAndObserve(this);
-        funcobs.cacheAndSaveSpawned(this);
         if(statemod){
             makeNewStatePublicRightNowShouldBeAllAtomicButIsnt();
             funcobs.saveAndNotifyUpdated(this, true);
@@ -772,7 +773,7 @@ public class WebObject {
         else{
             if(obsalmod) funcobs.saveAndAlertFirstTime(this);
         }
-        funcobs.evalSpawned(this);
+        funcobs.evalAndPersistSpawned(this);
     }
 
     void makeNewStatePublicRightNowShouldBeAllAtomicButIsnt(){
