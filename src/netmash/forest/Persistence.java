@@ -10,6 +10,8 @@ import java.util.regex.*;
 import netmash.platform.*;
 import netmash.lib.JSON;
 
+import static netmash.lib.Utils.*;
+
 /** Persistence of WebObjects.
   * A NoSQL JSON in-memory Database!
   */
@@ -84,8 +86,7 @@ public class Persistence implements FileUser {
 
     void preload(LinkedList preloadlist){
         if(preloadlist==null) return;
-        Iterator i = preloadlist.iterator();
-        while(i.hasNext()) cache((String)i.next());
+        for(Object o: preloadlist) funcobs.cachePut(cache(o.toString()));
     }
 
     public void writable(ByteBuffer bytebuffer, int len){

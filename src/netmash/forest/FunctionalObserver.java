@@ -93,6 +93,7 @@ public class FunctionalObserver implements Module {
     }
 
     WebObject cachePut(WebObject w){
+        if(w==null) return null;
         cache.put(w.uid, w);
         return w;
     }

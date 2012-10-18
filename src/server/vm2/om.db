@@ -45,7 +45,7 @@
 
 { "%uid": "uid-61d6-65c9-2931-505b",
   "is": [ "test", "rule" ],
-  "when": "Test Constructors",
+  "when": "Test constructors",
   "z": [ "number", [ "number", "=>", { "%uid": "new", "a": "$:a" } ], "number" ],
   "m": [ [ "number", "=>", { "n": "$:!" } ] ]
 }
