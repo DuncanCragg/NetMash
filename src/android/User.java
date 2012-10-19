@@ -171,48 +171,11 @@ public class User extends WebObject {
               "  \"lit\": 0 \n"+
               "}");
 
-        Editable lightrule = new Editable(
-              "{   \"is\": [ \"editable\", \"rule\" ], \n"+
-              "    \"when\": \"swiped, change light\", \n"+
-              "    \"%alerted\": { \"is\": \"swipe\" }, \n"+
-              "    \"light\": [ \"*\", [ \"=>\", \"clamp\", 0, 1, [ \"$:light:1\", \"+\", \"$:%alerted:dx\" ] ], [ \"=>\", \"clamp\", 0, 1, [ \"$:light:2\", \"+\", \"$:%alerted:dy\" ] ] ] \n"+
-              "}");
-
-        Editable light = new Editable(
-              "{ \"%rules\": [ \""+lightrule.uid+"\" ], \n"+
-              "  \"is\": [ \"3d\", \"cuboid\", \"editable\" ], \n"+
-              "  \"title\": \"Light\", \n"+
-              "  \"rotation\": [ 0, 45, 0 ], \n"+
-              "  \"scale\": [ 0.3, 0.5, 0.3 ], \n"+
-              "  \"light\": [ 0.5, 0.5, 1.0 ] \n"+
-              "}");
-
-        Editable room = new Editable(
-              "{   \"is\": [ \"place\", \"3d\", \"mesh\", \"editable\" ], \n"+
-              "    \"title\": \""+your+" Room\", \n"+
-              "    \"subObjects\": [ \n"+
-              "        { \"object\": \""+gamesign.uid+"\",  \"coords\": [  0,    1,  -10 ] }, \n"+
-              "        { \"object\": \""+light.uid+"\", \"coords\": [  0,    0,   -7 ] }, \n"+
-              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  4,  0,  -7 ] }, \n"+
-              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [ -4,  0,  -7 ] }, \n"+
-              "        { \"object\": \"http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json\", \"coords\": [  0,  4,  -7 ] }, \n"+
-              "        { \"object\": \"http://10.0.2.2:8081/o/uid-1e51-f298-5f55-6caa.json\", \"coords\": [  0,  0, -30 ] } \n"+
-              "    ], \n"+
-              "    \"vertices\": [ [  20.0,  -1.0, -20.0 ], [  20.0,  -1.0,  20.0 ], [ -20.0,  -1.0,  20.0 ], [ -20.0,  -1.0, -20.0 ], [  20.0,  20.0, -20.0 ], [  20.0,  20.0,  20.0 ], [ -20.0,  20.0,  20.0 ], [ -20.0,  20.0, -20.0 ] ], \n"+
-              "    \"texturepoints\": [ [ 0.0, 0.0 ], [ 5.0, 0.0 ], [ 5.0, 5.0 ], [ 0.0, 5.0 ] ], \n"+
-              "    \"normals\": [ [ 1.0, 0.0, 0.0 ], [ -1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, -1.0, 0.0 ], [ 0.0, 0.0, 1.0 ], [ 0.0, 0.0, -1.0 ] ], \n"+
-              "    \"faces\": [ [ \"5/1/5\",\"4/3/5\",\"1/2/5\" ], [ \"5/1/5\",\"8/4/5\",\"4/3/5\" ], [ \"3/1/1\",\"8/3/1\",\"7/2/1\" ], [ \"3/1/1\",\"4/4/1\",\"8/3/1\" ], [ \"2/1/6\",\"3/4/6\",\"6/2/6\" ], [ \"6/2/6\",\"3/4/6\",\"7/3/6\" ], [ \"1/1/2\",\"2/4/2\",\"5/2/2\" ], [ \"5/2/2\",\"2/4/2\",\"6/3/2\" ], [ \"5/1/4\",\"6/4/4\",\"8/2/4\" ], [ \"8/2/4\",\"6/4/4\",\"7/3/4\" ], [ \"1/1/3\",\"3/3/3\",\"2/2/3\" ], [ \"1/1/3\",\"4/4/3\",\"3/3/3\" ] ], \n"+
-              "    \"textures\": [ \"http://www.textures123.com/free-texture/sand/sand-texture4.jpg\" ], \n"+
-              "    \"vertexShader\": \"http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json\", \n"+
-              "    \"fragmentShader\": \"http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json\" \n"+
-              "}");
-
         // -----------------------------------------------------
 
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
         me = new User(homeusers, contact.uid, links.uid, contacts.uid);
 
-        otslinks.addFirst(room.uid);
         otslinks.addFirst(me.uid);
 
         me.funcobs.setCacheNotifyAndSaveConfig(me);
@@ -231,9 +194,6 @@ public class User extends WebObject {
         me.funcobs.cacheSaveAndEvaluate(gamerulen);
         me.funcobs.cacheSaveAndEvaluate(gameruley);
         me.funcobs.cacheSaveAndEvaluate(gamesign);
-        me.funcobs.cacheSaveAndEvaluate(lightrule);
-        me.funcobs.cacheSaveAndEvaluate(light);
-        me.funcobs.cacheSaveAndEvaluate(room);
         me.funcobs.cacheSaveAndEvaluate(me, true);
 
         if(homeusers!=null) me.notifying(list(homeusers));
