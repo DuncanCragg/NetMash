@@ -3,7 +3,7 @@
   "is": [ "place", "3d", "mesh", "editable" ],
   "title": "Your Room",
   "subObjects": [
-    { "object": "gamesign.uid",  "coords": [  0,    1,  -10 ] },
+    { "object": "uid-f6c8-2d51-8060-a52a", "coords": [  0,    1,  -10 ] },
     { "object": "uid-20ce-d0b1-c717-3dbb", "coords": [  0,    0,   -7 ] },
     { "object": "http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json", "coords": [  4,  0,  -7 ] },
     { "object": "http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json", "coords": [ -4,  0,  -7 ] },
@@ -34,6 +34,117 @@
   "when": "swiped, change light",
   "%alerted": { "is": "swipe" },
   "light": [ "*", [ "=>", "clamp", 0, 1, [ "$:light:1", "+", "$:%alerted:dx" ] ], [ "=>", "clamp", 0, 1, [ "$:light:2", "+", "$:%alerted:dy" ] ] ]
+}
+
+{ "%uid": "uid-f6c8-2d51-8060-a52a",
+  "%class": "netmash.forest.ObjectMash",
+  "%rules": [ "uid-8f4e-551c-858b-d345", "uid-fb3e-02d3-70bb-916f", "uid-536b-de0b-41db-41d1", "uid-fbd9-4a4d-c3c7-c31f", "uid-a9ff-4a17-9772-3859", "uid-aad5-7236-b521-4780", "uid-0b6a-659e-3561-05b2", "uid-4899-0de2-1bb5-58ba", "uid-3558-f24b-c0c4-d32b" ],
+  "is": [ "3d", "notice", "editable" ],
+  "title": "Maths Game",
+  "text": [ "Light up this fraction:", "-", "-" ],
+  "rotation": [ 0, 0, 0 ],
+  "scale": [ 1.0, 1.0, 1.0 ],
+  "light": [ 0.5, 0.5, 1.0 ],
+  "subObjects": [ -2.75, -1.65, -0.55, 0.55, 1.65, 2.75 ],
+  "gamerules": [ "uid-1b54-d28a-71dc-5827", "uid-7b1a-4b1d-1424-2818" ],
+  "numerator": 3,
+  "status": "waiting",
+  "lit": 0
+}
+
+{ "%uid": "uid-8f4e-551c-858b-d345",
+  "is": [ "editable", "rule" ],
+  "when": "starting, create lights",
+  "subObjects": [ [ "number", "=>",
+      { "object":
+          { "%uid": "new",
+            "%rules": "$:gamerules",
+            "is": [ "3d", "cuboid", "editable" ],
+            "title": "Game Cube",
+            "rotation": [ 0, 0, 0 ],
+            "scale": [ 0.5, 0.5, 0.5 ],
+            "light": [ 0.0, 0.4, 0.7 ]
+          },
+        "coords": [ "$:!", -1,  0 ]
+      }
+  ] ]
+}
+
+{ "%uid": "uid-fb3e-02d3-70bb-916f",
+  "is": [ "editable", "rule" ],
+  "when": "swiped right, set to checking",
+  "%alerted": { "is": "swipe", "dx": [ ">", 0 ] },
+  "status": [ "=>", "checking" ]
+}
+
+{ "%uid": "uid-536b-de0b-41db-41d1",
+  "is": [ "editable", "rule" ],
+  "when": "swiped left after sorry, set to waiting with old challenge",
+  "%alerted": { "is": "swipe", "dx": [ "<", 0 ] },
+  "status": [ "sorry", "=>", "waiting" ]
+}
+
+{ "%uid": "uid-fbd9-4a4d-c3c7-c31f",
+  "is": [ "editable", "rule" ],
+  "when": "swiped left after good, set to waiting plus new challenge",
+  "%alerted": { "is": "swipe", "dx": [ "<", 0 ] },
+  "status": [ "good", "=>", "waiting" ],
+  "numerator": [ "=>", "random", 0, 6 ]
+}
+
+{ "%uid": "uid-a9ff-4a17-9772-3859",
+  "is": [ "editable", "rule" ],
+  "when": "waiting, set text to challenge",
+  "status": "waiting",
+  "text": [ "*", [ "=>", "$:numerator" ], [ "=>", "Swipe right when done ->" ] ],
+  "light": [ [ "=>", 0.5  ], [ "=>", 0.5 ], [ "=>", 1.0 ] ]
+}
+
+{ "%uid": "uid-aad5-7236-b521-4780",
+  "is": [ "editable", "rule" ],
+  "when": "checking, set to initial zero",
+  "status": "checking",
+  "lit": [ "=>", 0 ]
+}
+
+{ "%uid": "uid-0b6a-659e-3561-05b2",
+  "is": [ "editable", "rule" ],
+  "when": "checking, count lit up lights",
+  "status": "checking",
+  "subObjects": [ { "object": { "light": [ "*", 1, 1 ] } } ],
+  "lit": [ "=>", "count", "$::subObjects" ]
+}
+
+{ "%uid": "uid-4899-0de2-1bb5-58ba",
+  "is": [ "editable", "rule" ],
+  "when": "checking, if incorrect, set text",
+  "status": [ "checking", "=>", "sorry" ],
+  "lit": "!$:numerator",
+  "text": [ "*", "*", [ "=>", "Sorry.. Swipe left <-" ] ],
+  "light": [ [ "=>", 1.0  ], [ "=>", 0.5 ], [ "=>", 0.5 ] ]
+}
+
+{ "%uid": "uid-3558-f24b-c0c4-d32b",
+  "is": [ "editable", "rule" ],
+  "when": "checking, if correct, set text",
+  "status": [ "checking", "=>", "good" ],
+  "lit": "$:numerator",
+  "text": [ "*", "*", [ "=>", "Good! Swipe left <-" ] ],
+  "light": [ [ "=>", 0.5  ], [ "=>", 1.0 ], [ "=>", 0.5 ] ]
+}
+
+{ "%uid": "uid-1b54-d28a-71dc-5827",
+  "is": [ "editable", "rule" ],
+  "when": "swiped down, turn on light",
+  "%alerted": { "is": "swipe", "dy": [ ">", 0 ] },
+  "light": [ "*", [ "=>", 1  ], [ "=>", 1 ] ]
+}
+
+{ "%uid": "uid-7b1a-4b1d-1424-2818",
+  "is": [ "editable", "rule" ],
+  "when": "swiped up, turn off light",
+  "%alerted": { "is": "swipe", "dy": [ "<", 0 ] },
+  "light": [ "*", [ "=>", 0.4  ], [ "=>", 0.7 ] ]
 }
 
 { "%uid": "uid-d9e4-4f7c-d9fe-9e7c",
