@@ -18,9 +18,14 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
  - done some refactoring, need to focus on visible value towards Xmas demo
 
 --------------------------------------------------------
-Fun Stuff
+Stuff
 --------------------------------------------------------
- - 3 x 4 grid, smaller lights
+ - move room out from User.java into topdb.json
+ - get GUIs working, starting with on-board calculator
+    - remember form values
+    - ensure gui format is all good
+---------------------------------------------------------
+ - 3x4 grid, smaller lights
  - fraction not number
  - random refactoring of number
  - vary denominator with fixed total lights - hide them

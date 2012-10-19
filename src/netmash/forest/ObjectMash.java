@@ -182,15 +182,18 @@ public class ObjectMash extends WebObject {
         }
     }
 
-    private Object eval(LinkedList ll){
+    private Object eval(LinkedList ll){ try{
         if(ll.size()==1) return copyObject(ll.get(0));
+        if(ll.size()==3 && ll.get(1).equals("-"))     return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
         if(ll.size()==3 && ll.get(1).equals("+"))     return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
         if(ll.size()==3 && ll.get(1).equals("×"))     return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
+        if(ll.size()==3 && ll.get(1).equals("*"))     return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
+        if(ll.size()==3 && ll.get(1).equals("/"))     return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
         if(ll.size()==2 && ll.get(0).equals("count")) return Double.valueOf(findList(ll.get(1)).size());
         if(ll.size()==3 && ll.get(0).equals("random"))return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
         if(ll.size()==4 && ll.get(0).equals("clamp")) return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
         return null;
-    }
+    }catch(Throwable t){ return null; } }
 
     private double random(double lo, double hi){
         double x=Math.random();
