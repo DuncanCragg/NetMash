@@ -27,8 +27,8 @@ import static android.view.ViewGroup.LayoutParams.*;
 import com.google.android.maps.*;
 
 import netmash.platform.Kernel;
-import netmash.lib.JSON;
-import netmash.forest.FunctionalObserver;
+import netmash.lib.*;
+import netmash.forest.*;
 
 import static netmash.lib.Utils.*;
 
@@ -594,8 +594,8 @@ log(show? "show keyboard": "hide keyboard");
             }
         });
         view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
-        user.prepareResponse(viewUID);
-        view.setText(label);
+        String val=user.getFormStringVal(viewUID, tag);
+        view.setText(val!=null? val: label);
         view.selectAll();
         view.setTextSize(20);
         view.setTextColor(0xff000000);
@@ -661,9 +661,9 @@ log(show? "show keyboard": "hide keyboard");
         view.setOnClickListener(new OnClickListener(){
             public void onClick(View v){ user.setFormVal(viewUID, tag, ((ToggleButton)v).isChecked()); }
         });
-        user.prepareResponse(viewUID);
-        view.setChecked(false);
-        view.setText(choices[0]);
+        Boolean val=user.getFormBooleanVal(viewUID, tag);
+        view.setChecked(val);
+        view.setText(choices[val? 1:0]);
         view.setTextOff(choices[0]);
         view.setTextOn(choices[1]);
         view.setTextSize(20);

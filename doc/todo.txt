@@ -20,10 +20,12 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 --------------------------------------------------------
 Stuff
 --------------------------------------------------------
- - move room out from User.java into topdb.json
- - get GUIs working, starting with on-board calculator
-    - remember form values
+ - get GUIs working
+    - fill in form values
     - ensure gui format is all good
+    - use for RPA demo: just guis and rules to start, then maps
+    - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples
+ - local uids in topdb.json
 ---------------------------------------------------------
  - 3x4 grid, smaller lights
  - fraction not number
