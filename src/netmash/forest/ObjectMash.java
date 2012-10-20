@@ -194,17 +194,18 @@ public class ObjectMash extends WebObject {
 
     private Object eval(LinkedList ll){ try{
         if(ll.size()==1) return copyObject(ll.get(0));
-        if(ll.size()==3 && ll.get(1).equals("-"))     return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
-        if(ll.size()==3 && ll.get(1).equals("+"))     return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
-        if(ll.size()==3 && ll.get(1).equals("×"))     return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
-        if(ll.size()==3 && ll.get(1).equals("*"))     return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
-        if(ll.size()==3 && ll.get(1).equals("/"))     return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
-        if(ll.size()==2 && ll.get(0).equals("count")) return Double.valueOf(findList(ll.get(1)).size());
-        if(ll.size()==3 && ll.get(0).equals("random"))return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
-        if(ll.size()==4 && ll.get(0).equals("clamp")) return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
-        if(ll.size()==3 && ll.get(0).equals("format"))return String.format(findObject(ll.get(1)).toString(), ll.get(2));
-        return null;
-    }catch(Throwable t){ return null; } }
+        if(ll.size()==3 && ll.get(1).equals("-"))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
+        if(ll.size()==3 && ll.get(1).equals("+"))       return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
+        if(ll.size()==3 && ll.get(1).equals("×"))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
+        if(ll.size()==3 && ll.get(1).equals("*"))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
+        if(ll.size()==3 && ll.get(1).equals("/"))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
+        if(ll.size()==2 && ll.get(0).equals("count"))   return Double.valueOf(findList(ll.get(1)).size());
+        if(ll.size()==3 && ll.get(0).equals("random"))  return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
+        if(ll.size()==4 && ll.get(0).equals("clamp"))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
+        if(ll.size()==3 && ll.get(0).equals("format"))  return String.format(findObject(ll.get(1)).toString(), ll.get(2));
+        if(ll.size()==4 && ll.get(1).equals("chooses")) return findBoolean(ll.get(0))? findObject(ll.get(2)): findObject(ll.get(3));
+        return ll;
+    }catch(Throwable t){ return ll; } }
 
     private double random(double lo, double hi){
         double x=Math.random();
@@ -233,6 +234,14 @@ public class ObjectMash extends WebObject {
         return findNumberIn(o);
     }
 
+    private boolean findBoolean(Object o){
+        if(o==null) return false;
+        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentBool(((String)o).substring(2));
+        if(o instanceof Boolean) return (Boolean)o;
+        if(o instanceof String)  return o.toString()=="true";
+        return false;
+    }
+
     private LinkedList findList(Object o){
         if(o==null) return null;
         if(o instanceof LinkedList) return (LinkedList)o;
@@ -249,6 +258,11 @@ public class ObjectMash extends WebObject {
     private double eitherBindingOrContentDouble(String path){
         if(path.startsWith("!")) return contentDouble(currentRewritePath);
         return contentDouble(path);
+    }
+
+    private boolean eitherBindingOrContentBool(String path){
+        if(path.startsWith("!")) return contentBool(currentRewritePath);
+        return contentBool(path);
     }
 
     private LinkedList eitherBindingOrContentList(String path){
