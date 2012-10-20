@@ -196,18 +196,18 @@ public class ObjectMash extends WebObject {
         if(ll.size()==1) return copyObject(ll.get(0));
         String ll0=findString(ll.get(0));
         String ll1=findString(ll.get(1));
-        if(ll.size()==3 && ll1.equals("-"))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
-        if(ll.size()==3 && ll1.equals("+"))       return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
-        if(ll.size()==3 && ll1.equals("×"))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
-        if(ll.size()==3 && ll1.equals("*"))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
-        if(ll.size()==3 && ll1.equals("/"))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
-        if(ll.size()==2 && ll0.equals("count"))   return Double.valueOf(findList(ll.get(1)).size());
-        if(ll.size()==3 && ll0.equals("random"))  return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
-        if(ll.size()==4 && ll0.equals("clamp"))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
-        if(ll.size()==3 && ll0.equals("format"))  return String.format(findObject(ll.get(1)).toString(), ll.get(2));
-        if(ll.size()==4 && ll1.equals("chooses")) return findBoolean(ll.get(0))? findObject(ll.get(2)): findObject(ll.get(3));
+        if(ll.size()==3 && "-".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
+        if(ll.size()==3 && "+".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
+        if(ll.size()==3 && "×".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
+        if(ll.size()==3 && "*".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
+        if(ll.size()==3 && "/".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
+        if(ll.size()==2 && "count".equals(ll0))   return Double.valueOf(findList(ll.get(1)).size());
+        if(ll.size()==3 && "random".equals(ll0))  return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
+        if(ll.size()==4 && "clamp".equals(ll0))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
+        if(ll.size()==3 && "format".equals(ll0))  return String.format(findObject(ll.get(1)).toString(), findObject(ll.get(2)));
+        if(ll.size()==4 && "chooses".equals(ll1)) return findBoolean(ll.get(0))? findObject(ll.get(2)): findObject(ll.get(3));
         return ll;
-    }catch(Throwable t){ return ll; } }
+    }catch(Throwable t){ t.printStackTrace(); return ll; } }
 
     private double random(double lo, double hi){
         double x=Math.random();
