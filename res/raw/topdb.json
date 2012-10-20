@@ -149,15 +149,14 @@
 
 { "%uid": "uid-d9e4-4f7c-d9fe-9e7c",
   "%class": "netmash.forest.ObjectMash",
-  "%rules":[ "uid-58cb-cc31-1769-c2c4",
-             "uid-dd6e-1014-fec7-fd87" ],
+  "%rules":[ "uid-58cb-cc31-1769-c2c4" ],
   "is": [ "gui" ],
   "title": "Local Calculator GUI",
   "view": {
       "#panel": [
-        { "#sum": "?[ /boolean;product|sum/ ]?" },
-        { "#a": "?[0 /string/]?" },
-        { "#b": "?[0 /string/]?" },
+        { "#sum": "?[false /boolean;product|sum/ ]?" },
+        { "#a":   "?[0 /string/]?" },
+        { "#b":   "?[0 /string/]?" },
       ],
       "#result": { "#r": "0" }
   }
@@ -165,15 +164,14 @@
 
 { "%uid": "uid-58cb-cc31-1769-c2c4",
   "is": [ "gui", "rule" ],
-  "when": "form changes, do sum",
-  "%alerted": { "is": "form", "form": { "sum": true } },
-  "view": { "#result": { "#r": [ "=>", "$:%alerted:form:a","+","$:%alerted:form:b" ] } }
-}
-
-{ "%uid": "uid-dd6e-1014-fec7-fd87",
-  "is": [ "gui", "rule" ],
-  "when": "form changes, do product",
-  "%alerted": { "is": "form", "form": { "sum": false } },
-  "view": { "#result": { "#r": [ "=>", "$:%alerted:form:a","*","$:%alerted:form:b" ] } }
+  "when": "form changes, do sum or product",
+  "%alerted": { "is": "form" },
+  "view": {
+      "#panel": [
+        { "#sum": [ "=>", "format", "?[%s /boolean;product|sum/ ]?", "$:%alerted:form:sum" ] },
+        { "#a":   [ "=>", "format", "?[%s /string/]?",               "$:%alerted:form:a" ] },
+        { "#b":   [ "=>", "format", "?[%s /string/]?",               "$:%alerted:form:b" ] },
+      ],
+      "#result": { "#r": [ "=>", "$:%alerted:form:a", [ "$:%alerted:form:sum", "chooses", "+", "*" ], "$:%alerted:form:b" ] } }
 }
 

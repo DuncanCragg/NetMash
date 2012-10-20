@@ -24,7 +24,7 @@ Stuff
     - fill in form values
     - ensure gui format is all good
     - use for RPA demo: just guis and rules to start, then maps
-    - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples
+    - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
  - local uids in topdb.json
 ---------------------------------------------------------
  - 3x4 grid, smaller lights

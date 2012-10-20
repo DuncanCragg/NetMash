@@ -661,9 +661,10 @@ log(show? "show keyboard": "hide keyboard");
         view.setOnClickListener(new OnClickListener(){
             public void onClick(View v){ user.setFormVal(viewUID, tag, ((ToggleButton)v).isChecked()); }
         });
+        boolean on="true".equals(label);
         user.prepareResponse(viewUID);
-        view.setChecked(false);
-        view.setText(choices[0]);
+        view.setChecked(on);
+        view.setText(choices[on? 1:0]);
         view.setTextOff(choices[0]);
         view.setTextOn(choices[1]);
         view.setTextSize(20);
