@@ -40,6 +40,7 @@
   "when": "Test list element match 1",
   "z": [ 2, [ ">", 289 ] ],
   "o": [ { "a": [ 1 ] }, { "a": [ 4 ] } ],
+  "m": [ "=>", "has", "lo" ],
   "l1": [ "=>", "ok" ]
 }
 
@@ -53,6 +54,7 @@
 { "%uid": "uid-d3e7-6831-3804-7cbf",
   "is": [ "test", "rule" ],
   "when": "Test list element match 2",
+  "m": [ true, { "n": 4 }, { "n": 5 }, "hi", "lo" ],
   "o": [ { "a": [ 3 ] } ],
   "l2": [ "=>", "count", "$::o" ],
   "e":  [ "=>", "$::o:1" ],
@@ -63,7 +65,6 @@
   "is": [ "test", "rule" ],
   "when": "Test completion",
   "z": [ 1, { "a": 20 }, 290 ],
-  "m": [ true, { "n": 4 }, { "n": 5 }, "hi" ],
   "a": 20,
   "b": 29,
   "l1": "ok",

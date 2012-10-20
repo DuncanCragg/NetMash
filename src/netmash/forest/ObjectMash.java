@@ -177,8 +177,17 @@ public class ObjectMash extends WebObject {
     private void doRewrites(){
         for(Map.Entry<String,Object> entry: rewrites.entrySet()){
             currentRewritePath=entry.getKey();
-            Object e=eval((LinkedList)entry.getValue());
-            if(e!=null) contentObject(currentRewritePath, e);
+            LinkedList ll=(LinkedList)entry.getValue();
+            if(ll.size()==2 && ll.get(0).equals("has")){
+                Object e=copyObject(ll.get(1));
+                if(e==null) continue;
+                contentSetAdd(currentRewritePath, e);
+            }
+            else{
+                Object e=eval(ll);
+                if(e==null) continue;
+                contentObject(currentRewritePath, e);
+            }
         }
     }
 
