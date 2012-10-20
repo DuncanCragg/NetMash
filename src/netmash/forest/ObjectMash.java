@@ -179,7 +179,7 @@ public class ObjectMash extends WebObject {
             currentRewritePath=entry.getKey();
             LinkedList ll=(LinkedList)entry.getValue();
             if(ll.size()==2 && ll.get(0).equals("has")){
-                Object e=copyObject(ll.get(1));
+                Object e=findObject(ll.get(1));
                 if(e==null) continue;
                 if(currentRewritePath.equals("%notifying")) notifying(e.toString());
                 else contentSetAdd(currentRewritePath, e);
@@ -202,6 +202,7 @@ public class ObjectMash extends WebObject {
         if(ll.size()==2 && ll.get(0).equals("count")) return Double.valueOf(findList(ll.get(1)).size());
         if(ll.size()==3 && ll.get(0).equals("random"))return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
         if(ll.size()==4 && ll.get(0).equals("clamp")) return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
+        if(ll.size()==3 && ll.get(0).equals("format"))return String.format(findObject(ll.get(1)).toString(), ll.get(2));
         return null;
     }catch(Throwable t){ return null; } }
 
@@ -221,6 +222,7 @@ public class ObjectMash extends WebObject {
     private Object findObject(Object o){
         if(o==null) return null;
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentObject(((String)o).substring(2));
+        if(o instanceof LinkedList) return eval((LinkedList)o);
         return o;
     }
 
