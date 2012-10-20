@@ -121,6 +121,17 @@ public class Utils{
     }
 
     static public <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
+
+    static public double random(double lo, double hi){
+        double x=Math.random();
+        return (int)(lo+x*(hi+0.5-lo));
+    }
+
+    static public double clamp(double lo, double hi, double x){
+        if(x>hi) return hi;
+        if(x<lo) return lo;
+        return x;
+    }
 }
 
 

@@ -193,7 +193,7 @@ public class ObjectMash extends WebObject {
     }
 
     private Object eval(LinkedList ll){ try{
-        if(ll.size()==1) return copyObject(ll.get(0));
+        if(ll.size()==1) return copyObject(ll.get(0)); // !!
         String ll0=findString(ll.get(0));
         String ll1=findString(ll.get(1));
         if(ll.size()==3 && "-".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
@@ -208,17 +208,6 @@ public class ObjectMash extends WebObject {
         if(ll.size()==4 && "chooses".equals(ll1)) return findBoolean(ll.get(0))? findObject(ll.get(2)): findObject(ll.get(3));
         return ll;
     }catch(Throwable t){ t.printStackTrace(); return ll; } }
-
-    private double random(double lo, double hi){
-        double x=Math.random();
-        return (int)(lo+x*(hi+0.5-lo));
-    }
-
-    private double clamp(double lo, double hi, double x){
-        if(x>hi) return hi;
-        if(x<lo) return lo;
-        return x;
-    }
 
     // ----------------------------------------------------
 
@@ -294,13 +283,11 @@ public class ObjectMash extends WebObject {
         return ll.get(Integer.parseInt(bits[1]));
     }
 
-    public static <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
-
     // ----------------------------------------------------
 
     @SuppressWarnings("unchecked")
     public Object copyObject(Object o){
-        if(o instanceof String)  return findObject(o);
+        if(o instanceof String)  return findObject(o); // !!
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o));
