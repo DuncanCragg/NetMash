@@ -19,6 +19,8 @@ rem: androidrem
 
 om: runom showtestresults
 
+cap: androidemu runcap logcat
+
 # -------------------------------------------------------------------
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
@@ -84,6 +86,8 @@ runrem: kill clean netconfig setvm2remconfig useworlddb run1n2
 
 runom:  kill       omconfig  setvm2tstconfig useomdb run2
 
+runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
+
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
 runall: kill clean allconfig setvm2tstconfig usetestdb run1n2
@@ -118,16 +122,20 @@ run1n2: run1 run2
 
 # -------------------------------------------------------------------
 
+useworlddb:
+	cp src/server/vm1/world.db src/server/vm1/netmash.db
+	cp src/server/vm2/world.db src/server/vm2/netmash.db
+
 useomdb:
 	cp src/server/vm2/om.db src/server/vm2/netmash.db
+
+usecapdb:
+	cp src/server/vm1/cap.db src/server/vm1/netmash.db
+	cp src/server/vm2/cap.db src/server/vm2/netmash.db
 
 usetestdb:
 	cp src/server/vm1/test.db src/server/vm1/netmash.db
 	cp src/server/vm2/test.db src/server/vm2/netmash.db
-
-useworlddb:
-	cp src/server/vm1/world.db src/server/vm1/netmash.db
-	cp src/server/vm2/world.db src/server/vm2/netmash.db
 
 setremmapkey:
 	sed -i"" -e "s:03Hoq1TEN3zbZ9y69dEoFX0Tc20g14mWm-hImbQ:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/android/gui/NetMash.java
