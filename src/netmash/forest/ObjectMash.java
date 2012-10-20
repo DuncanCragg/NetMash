@@ -181,7 +181,8 @@ public class ObjectMash extends WebObject {
             if(ll.size()==2 && ll.get(0).equals("has")){
                 Object e=copyObject(ll.get(1));
                 if(e==null) continue;
-                contentSetAdd(currentRewritePath, e);
+                if(currentRewritePath.equals("%notifying")) notifying(e.toString());
+                else contentSetAdd(currentRewritePath, e);
             }
             else{
                 Object e=eval(ll);
