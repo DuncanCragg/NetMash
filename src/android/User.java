@@ -574,6 +574,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else
         if(contentIs("is", "form")){
+            for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
         }
         else log("no evaluate: "+this);
     }

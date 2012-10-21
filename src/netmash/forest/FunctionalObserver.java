@@ -195,10 +195,7 @@ public class FunctionalObserver implements Module {
             if(!notified.observe.contains(notifier.uid)){
                 notified.alertedin.add(notifier.uid);
             }
-            if(notified.isLocal())           {                evaluatable(notified);   } else
-            if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); } else
-            if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); }
-            else                             { if(realupdate) http.push(notified);     }
+            evaluatableOrPush(notified, realupdate);
         }
     }
 
@@ -218,10 +215,16 @@ public class FunctionalObserver implements Module {
             WebObject alerted = cacheGet(alertuid);
             if(!alerted.observe.contains(notifier.uid)){
                 alerted.alertedin.add(notifier.uid);
-                if(alerted.isLocal()) evaluatable(alerted);
-                else http.push(alerted);
+                evaluatableOrPush(alerted, true);
             }
         }
+    }
+
+    private void evaluatableOrPush(WebObject notified, boolean realupdate){
+        if(notified.isLocal())           {                evaluatable(notified);   } else
+        if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); } else
+        if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); }
+        else                             { if(realupdate) http.push(notified);     }
     }
 
     WebObject observing(WebObject observer, String observeduid, boolean tempObserve){

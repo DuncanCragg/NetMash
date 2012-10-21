@@ -1,0 +1,31 @@
+{ "%uid": "uid-c102-dd84-8284-c360",
+  "%class": "netmash.forest.ObjectMash",
+  "%rules": [ "uid-c265-091b-418c-c329" ],
+  "is": [ "gui" ],
+  "title": "CAP Payments Demo",
+  "view": { "#start": "?[Create a CAP application /boolean/]?" } }
+}
+
+{ "%uid": "uid-c265-091b-418c-c329",
+  "is": [ "gui", "rule" ],
+  "when": "form submitted, create application",
+  "%alerted": { "is": "form" },
+  "temp": [ "=>",
+    { "%uid": "new",
+      "%rules": [ "uid-f265-941d-a0b8-ca5d" ],
+      "is": [ "gui" ],
+      "title": "CAP application",
+      "form": "$:%alerted",
+      "view": {
+        "#title": "CAP Application",
+      }
+    }
+  ]
+}
+
+{ "%uid": "uid-f265-941d-a0b8-ca5d",
+  "is": [ "gui", "rule" ],
+  "when": "created",
+  "%notifying": [ "=>", "has", "$:form" ]
+}
+
