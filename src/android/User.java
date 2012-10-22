@@ -126,11 +126,15 @@ public class User extends WebObject {
                         "}");
     }
 
-    static User newLand(String landlistuid, String useruid){
-        return new User("{ \"is\": [ \"land\" ],\n"+
+
+    static User newLand(String landlistuid, String useruid, LinkedHashMap location){
+        User land=new User(
+                        "{ \"is\": [ \"land\" ],\n"+
                         "  \"place\": \""+landlistuid+"\",\n"+
                         "  \"user\": \""+useruid+"\"\n"+
                         "}");
+        land.publicState.hashPath("location", location);
+        return land;
     }
 
     static User newRSVP(String eventuid, String useruid){
@@ -438,7 +442,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             path="private:responses:land:"+UID.toUID(guiuid);
             if(contentSet(path) && !contentSet(path+":title")) return false;
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
-            resp=newLand(guiuid, uid);
+            resp=newLand(guiuid, uid, contentHashClone("location"));
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
             path="private:responses:form:"+UID.toUID(guiuid);
@@ -526,8 +530,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 }
                 else
                 if(contentIsOrListContains("is", "land")){
-                    content("title", val);
-                    contentHash("location", contentHashClone("user:location"));
+                    if(tag.equals("#new")) content("title",val);
+                    else                   content(dehash(tag), val);
                 }
                 else
                 if(contentIsOrListContains("is", "form")){

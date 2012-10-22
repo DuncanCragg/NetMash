@@ -119,8 +119,8 @@ public class OTS2GUI {
                 published=inl.get("published");
             }
             if(documentuid==null) documentuid=listuid;
-            String          title=user.content("private:viewing:list:"+i+":title");
-            if(title==null) title=user.content("private:viewing:list:"+i+":is");
+            String          title=user.contentString("private:viewing:list:"+i+":title");
+            if(title==null) title=user.contentString("private:viewing:list:"+i+":is");
             if(title==null) viewlist.add("Loading..");
             else {
                 String colour=contentType.equals("article")? "lightblue": "lightmauve";
@@ -151,8 +151,8 @@ public class OTS2GUI {
             String landuid=null;
             if(o instanceof String) landuid = (String)o;
             if(landuid==null) landuid=listuid;
-            String          title=user.content("private:viewing:list:"+i+":title");
-            if(title==null) title=user.content("private:viewing:list:"+i+":is");
+            String          title=user.contentString("private:viewing:list:"+i+":title");
+            if(title==null) title=user.contentString("private:viewing:list:"+i+":is");
             if(title==null) viewlist.add("Loading..");
             else            viewlist.add(list(style("direction","horizontal", "colours","lightblue", "proportions","75%"), title, landuid));
         }
@@ -161,7 +161,7 @@ public class OTS2GUI {
         viewhash.put("style", style("direction","vertical", "colours","lightblue"));
         viewhash.put("#title", title!=null? title: "Land List");
         if(user.contentIsOrListContains("private:viewing:is", "updatable"))
-        viewhash.put("#new", "?[New /string/]?");
+        viewhash.put("#new", "?[New Area Name /string/]?");
         viewhash.put("#landlist", viewlist);
         return viewhash;
     }
