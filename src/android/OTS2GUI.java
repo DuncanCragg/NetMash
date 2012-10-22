@@ -377,19 +377,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, boolean editable){
-        String value=user.content("private:viewing:"+tag);
-        if(value==null && !editable) return;
-        value=editable? String.format("?[%s /string/]?", value!=null? value: ""): value;
-        list.add(hash("style",style("direction","horizontal", "proportions",isLink? "75%": "50%"), "label",label, "#"+tag,value));
-    }
-
-    private void addListIfPresent(LinkedList viewlist, String tag, String label){
-        String listuid = user.content("private:viewing");
-        String prefix="private:viewing:"+tag;
-        LinkedList<String> links = (LinkedList<String>)user.contentList(prefix);
-        if(links!=null && links.size()!=0) linksList2GUI(links, viewlist, prefix, listuid, label);
-    }
+    // --------------------------------------------------
 
     public void linksList2GUI(LinkedList<String> links, LinkedList viewlist, String prefix, String listuid, String label){
         if(label!=null && label.length()!=0) viewlist.add(label);
@@ -407,6 +395,20 @@ public class OTS2GUI {
             String bmuid = UID.normaliseUID(listuid, uid); // remove normaliseUID
             viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), bmtext, bmuid));
         }
+    }
+
+    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, boolean editable){
+        String value=user.content("private:viewing:"+tag);
+        if(value==null && !editable) return;
+        value=editable? String.format("?[%s /string/]?", value!=null? value: ""): value;
+        list.add(hash("style",style("direction","horizontal", "proportions",isLink? "75%": "50%"), "label",label, "#"+tag,value));
+    }
+
+    private void addListIfPresent(LinkedList viewlist, String tag, String label){
+        String listuid = user.content("private:viewing");
+        String prefix="private:viewing:"+tag;
+        LinkedList<String> links = (LinkedList<String>)user.contentList(prefix);
+        if(links!=null && links.size()!=0) linksList2GUI(links, viewlist, prefix, listuid, label);
     }
 
     public LinkedList<String> getAddressesAsString(String path, boolean geo){
