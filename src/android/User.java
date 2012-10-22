@@ -436,7 +436,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else if(contentListContainsAll("private:viewing:is", list("editable", "land", "list"))){
             path="private:responses:land:"+UID.toUID(guiuid);
-            if(contentSet(path)) return false;
+            if(contentSet(path) && !contentSet(path+":title")) return false;
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
             resp=newLand(guiuid, uid);
         }
