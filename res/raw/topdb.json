@@ -1,6 +1,6 @@
 { "%uid": "uid-f862-56af-d46d-c440",
   "%class": "netmash.forest.ObjectMash",
-  "is": [ "place", "3d", "mesh", "editable" ],
+  "is": [ "place", "3d", "mesh" ],
   "title": "Your Room",
   "subObjects": [
     { "object": "uid-f6c8-2d51-8060-a52a", "coords": [  0,    1,  -10 ] },
@@ -22,7 +22,7 @@
 { "%uid": "uid-20ce-d0b1-c717-3dbb",
   "%class": "netmash.forest.ObjectMash",
   "%rules": [ "uid-e6e9-df58-ddab-6eb9" ],
-  "is": [ "3d", "cuboid", "editable" ],
+  "is": [ "3d", "cuboid" ],
   "title": "Light",
   "rotation": [ 0, 45, 0 ],
   "scale": [ 0.3, 0.5, 0.3 ],
@@ -30,7 +30,7 @@
 }
 
 { "%uid": "uid-e6e9-df58-ddab-6eb9",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "swiped, change light",
   "%alerted": { "is": "swipe" },
   "light": [ "*", [ "=>", "clamp", 0, 1, [ "$:light:1", "+", "$:%alerted:dx" ] ], [ "=>", "clamp", 0, 1, [ "$:light:2", "+", "$:%alerted:dy" ] ] ]
@@ -39,7 +39,7 @@
 { "%uid": "uid-f6c8-2d51-8060-a52a",
   "%class": "netmash.forest.ObjectMash",
   "%rules": [ "uid-8f4e-551c-858b-d345", "uid-fb3e-02d3-70bb-916f", "uid-536b-de0b-41db-41d1", "uid-fbd9-4a4d-c3c7-c31f", "uid-a9ff-4a17-9772-3859", "uid-aad5-7236-b521-4780", "uid-0b6a-659e-3561-05b2", "uid-4899-0de2-1bb5-58ba", "uid-3558-f24b-c0c4-d32b" ],
-  "is": [ "3d", "notice", "editable" ],
+  "is": [ "3d", "notice" ],
   "title": "Maths Game",
   "text": [ "Light up this fraction:", "-", "-" ],
   "rotation": [ 0, 0, 0 ],
@@ -53,13 +53,13 @@
 }
 
 { "%uid": "uid-8f4e-551c-858b-d345",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "starting, create lights",
   "subObjects": [ [ "number", "=>",
       { "object":
           { "%uid": "new",
             "%rules": "$:gamerules",
-            "is": [ "3d", "cuboid", "editable" ],
+            "is": [ "3d", "cuboid" ],
             "title": "Game Cube",
             "rotation": [ 0, 0, 0 ],
             "scale": [ 0.5, 0.5, 0.5 ],
@@ -71,21 +71,21 @@
 }
 
 { "%uid": "uid-fb3e-02d3-70bb-916f",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "swiped right, set to checking",
   "%alerted": { "is": "swipe", "dx": [ ">", 0 ] },
   "status": [ "=>", "checking" ]
 }
 
 { "%uid": "uid-536b-de0b-41db-41d1",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "swiped left after sorry, set to waiting with old challenge",
   "%alerted": { "is": "swipe", "dx": [ "<", 0 ] },
   "status": [ "sorry", "=>", "waiting" ]
 }
 
 { "%uid": "uid-fbd9-4a4d-c3c7-c31f",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "swiped left after good, set to waiting plus new challenge",
   "%alerted": { "is": "swipe", "dx": [ "<", 0 ] },
   "status": [ "good", "=>", "waiting" ],
@@ -93,7 +93,7 @@
 }
 
 { "%uid": "uid-a9ff-4a17-9772-3859",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "waiting, set text to challenge",
   "status": "waiting",
   "text": [ "*", [ "=>", "$:numerator" ], [ "=>", "Swipe right when done ->" ] ],
@@ -101,14 +101,14 @@
 }
 
 { "%uid": "uid-aad5-7236-b521-4780",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "checking, set to initial zero",
   "status": "checking",
   "lit": [ "=>", 0 ]
 }
 
 { "%uid": "uid-0b6a-659e-3561-05b2",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "checking, count lit up lights",
   "status": "checking",
   "subObjects": [ { "object": { "light": [ "*", 1, 1 ] } } ],
@@ -116,7 +116,7 @@
 }
 
 { "%uid": "uid-4899-0de2-1bb5-58ba",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "checking, if incorrect, set text",
   "status": [ "checking", "=>", "sorry" ],
   "lit": "!$:numerator",
@@ -125,7 +125,7 @@
 }
 
 { "%uid": "uid-3558-f24b-c0c4-d32b",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "checking, if correct, set text",
   "status": [ "checking", "=>", "good" ],
   "lit": "$:numerator",
@@ -134,14 +134,14 @@
 }
 
 { "%uid": "uid-1b54-d28a-71dc-5827",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "swiped down, turn on light",
   "%alerted": { "is": "swipe", "dy": [ ">", 0 ] },
   "light": [ "*", [ "=>", 1  ], [ "=>", 1 ] ]
 }
 
 { "%uid": "uid-7b1a-4b1d-1424-2818",
-  "is": [ "editable", "rule" ],
+  "is": [ "3d", "rule" ],
   "when": "swiped up, turn off light",
   "%alerted": { "is": "swipe", "dy": [ "<", 0 ] },
   "light": [ "*", [ "=>", 0.4  ], [ "=>", 0.7 ] ]

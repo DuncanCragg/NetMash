@@ -208,7 +208,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(objectuid==null) return;
         if(objectuid.equals("editing")){
             String edituid=content("private:editing");
-            if(dy*dy>dx*dx/2) getResponse(edituid, true).setEditVal(edituid,dy);
+            if(dy*dy>dx*dx/2) getObjectUpdating(edituid, true).setEditVal(edituid,dy);
             else if(NetMash.top!=null) NetMash.top.getKeys(dx>0);
         }
         else new Evaluator(this){
@@ -219,7 +219,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     showWhatIAmViewing();
                 }
                 else{
-                    if(!setResponse(objectuid, false, dx/10, dy/10)) getResponse(objectuid).setSwipeVal(objectuid, dx/10, dy/10);
+                    if(!setResponse(objectuid, false, dx/10, dy/10)) getObjectUpdating(objectuid).setSwipeVal(objectuid, dx/10, dy/10);
                 }
                 refreshObserves();
             }
@@ -450,9 +450,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         return true;
     }
 
-    private User getResponse(String guiuid){ return getResponse(guiuid, false); }
+    private User getObjectUpdating(String guiuid){ return getObjectUpdating(guiuid, false); }
 
-    private User getResponse(String guiuid, boolean editable){
+    private User getObjectUpdating(String guiuid, boolean editable){
         String formuid=null;
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
@@ -513,7 +513,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     public void setFormVal(final String guiuid, final String tag, final String val){
-        if(this==me) getResponse(guiuid).setFormVal(guiuid, tag, val);
+        if(this==me) getObjectUpdating(guiuid).setFormVal(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentListContainsAll("is", list("editable", "rule"))){
@@ -540,7 +540,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     public void setFormVal(final String guiuid, final String tag, final boolean val){
-        if(this==me) getResponse(guiuid).setFormVal(guiuid, tag, val);
+        if(this==me) getObjectUpdating(guiuid).setFormVal(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "rsvp")){
@@ -557,7 +557,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     public void setFormVal(final String guiuid, final String tag, final int val){
-        if(this==me) getResponse(guiuid).setFormVal(guiuid, tag, val);
+        if(this==me) getObjectUpdating(guiuid).setFormVal(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "form")){
