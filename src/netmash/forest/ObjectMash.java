@@ -179,7 +179,7 @@ public class ObjectMash extends WebObject {
             currentRewritePath=entry.getKey();
             LinkedList ll=(LinkedList)entry.getValue();
             if(ll.size()==2 && ll.get(0).equals("has")){
-                Object e=findObject(ll.get(1));
+                Object e=copyFindObject(ll.get(1));
                 if(e==null) continue;
                 if(currentRewritePath.equals("%notifying")) notifying(e.toString());
                 else contentSetAdd(currentRewritePath, e);
@@ -205,12 +205,16 @@ public class ObjectMash extends WebObject {
         if(ll.size()==2 && "count".equals(ll0))   return Double.valueOf(findList(ll.get(1)).size());
         if(ll.size()==3 && "random".equals(ll0))  return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
         if(ll.size()==4 && "clamp".equals(ll0))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
-        if(ll.size()==3 && "format".equals(ll0))  return String.format(findObject(ll.get(1)).toString(), findObject(ll.get(2)));
-        if(ll.size()==4 && "chooses".equals(ll1)) return findBoolean(ll.get(0))? findObject(ll.get(2)): findObject(ll.get(3));
+        if(ll.size()==3 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findObject(ll.get(2)));
+        if(ll.size()==4 && "chooses".equals(ll1)) return findBoolean(ll.get(0))? copyFindObject(ll.get(2)): copyFindObject(ll.get(3));
         return copyObject(ll);
     }catch(Throwable t){ t.printStackTrace(); return ll; } }
 
     // ----------------------------------------------------
+
+    private Object copyFindObject(Object o){
+        return copyObject(findObject(o));
+    }
 
     private Object findObject(Object o){
         if(o==null) return null;
