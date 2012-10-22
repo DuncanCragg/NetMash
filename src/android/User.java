@@ -671,7 +671,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 viewhash=contentHash("private:viewing:view");
             }
             else
-            if(contentListContainsAll("private:viewing:is", list("3d"))){
+            if(contentIsOrListContains("private:viewing:is", "3d")){
                 meshhash=ots2gui.scene2GUI();
             }
             else{
@@ -703,30 +703,31 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     private void showWhatIAmViewingOnMap(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedList viewlist=null;
-            if(contentIsOrListContains("private:viewing:is", "user")&&
-               contentIsOrListContains("private:viewing:is", "list")  ){
-
+            if(contentListContainsAll("private:viewing:is", list("user","list"))){
                 viewlist=ots2gui.contactList2Map("contact:");
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "contact")&&
-               contentIsOrListContains("private:viewing:is", "list"   )   ){
-
+            if(contentListContainsAll("private:viewing:is", list("contact","list"))){
                 viewlist=ots2gui.contactList2Map("");
             }
             else
+            if(contentListContainsAll("private:viewing:is", list("land","list"))){
+                viewlist=ots2gui.landList2Map();
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "user")){
-
                 viewlist=ots2gui.contact2Map("contact:");
             }
             else
             if(contentIsOrListContains("private:viewing:is", "contact")){
-
                 viewlist=ots2gui.contact2Map("");
+            }
+            else
+            if(contentIsOrListContains("private:viewing:is", "land")){
+                viewlist=ots2gui.land2Map();
             }
             else{
             }
-
             if(viewlist!=null){
                 JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
                 uiJSON.listPath("view", viewlist);

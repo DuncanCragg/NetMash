@@ -184,6 +184,16 @@ public class OTS2GUI {
         return maplist;
     }
 
+    public LinkedList land2Map(){
+        String landuid = user.content("private:viewing");
+        LinkedList maplist = new LinkedList();
+        maplist.add("render:map");
+        maplist.add("layerkey:"+landuid);
+        LinkedHashMap location=user.contentHash("private:viewing:location");
+        if(location!=null) maplist.add(point("", "Location", location, landuid));
+        return maplist;
+    }
+
     public LinkedList contactList2Map(String contactprefix){
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
@@ -206,6 +216,22 @@ public class OTS2GUI {
                 if(location==null) continue;
                 maplist.add(point("list:"+c+":"+contactprefix, address, location, contactuid));
             }
+        }
+        return maplist;
+    }
+
+    public LinkedList landList2Map(){
+        String listuid = user.content("private:viewing");
+        LinkedList<String> lands = user.contentList("private:viewing:list");
+        if(lands==null) return null;
+        LinkedList maplist = new LinkedList();
+        maplist.add("render:map");
+        maplist.add("layerkey:"+listuid);
+        int c= -1;
+        for(String uid: lands){ c++;
+            String landuid = UID.normaliseUID(listuid, uid);
+            LinkedHashMap<String,Double> location=user.contentHash("private:viewing:list:"+c+":location");
+            if(location!=null) maplist.add(point("list:"+c+":", "Location", location, landuid));
         }
         return maplist;
     }
