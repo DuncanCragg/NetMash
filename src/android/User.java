@@ -153,7 +153,7 @@ public class User extends WebObject {
 
     OTS2GUI ots2gui;
     CurrentLocation currentlocation=null;
-    boolean trackGPS=false;
+    boolean trackGPS=true;
 
     public void onTopCreate(String url){
         if(trackGPS) currentlocation = new CurrentLocation(this);
@@ -525,6 +525,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 else
                 if(contentIsOrListContains("is", "land")){
                     content("title", val);
+                    contentHash("location", contentHashClone("user:location"));
                 }
                 else
                 if(contentIsOrListContains("is", "form")){
