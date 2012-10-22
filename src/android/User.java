@@ -325,10 +325,14 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     private History history = new History(this);
 
     public void jumpToUID(final String uid){
+        jumpToUID(uid, false);
+    }
+
+    public void jumpToUID(final String uid, final boolean relativeToViewing){
         new Evaluator(this){
             public void evaluate(){ if(false) logrule();
                 history.forward();
-                content("private:viewing", uid);
+                content("private:viewing", relativeToViewing? UID.normaliseUID(content("private:viewing"),uid): uid);
                 content("private:viewas", "gui");
                 showWhatIAmViewing();
                 refreshObserves();

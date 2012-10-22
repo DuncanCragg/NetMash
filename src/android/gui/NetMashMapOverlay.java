@@ -65,7 +65,7 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
 
         @Override
         public void onClick(DialogInterface dialog, int choice){
-            if(choice==1) netmash.jumpToUID(jumpUID);
+            if(choice==1) netmash.user.jumpToUID(jumpUID);
         }
 
         @Override

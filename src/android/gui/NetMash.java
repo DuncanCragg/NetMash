@@ -517,7 +517,7 @@ log(show? "show keyboard": "hide keyboard");
         final TextView view=new BoxTextView(this,R.drawable.box);
         view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
             view.setTextColor(0xffff9900);
-            user.jumpToUID(uid);
+            user.jumpToUID(uid,true);
         }});
         view.setText(" >>");
         view.setTextSize(34);
@@ -797,10 +797,6 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     // ---------------------------------------------------------------------
-
-    public void jumpToUID(String s){
-        user.jumpToUID(s);
-    }
 
     private boolean isHorizontal(Object o){
         if(o instanceof LinkedHashMap){

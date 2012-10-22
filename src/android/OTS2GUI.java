@@ -38,11 +38,11 @@ public class OTS2GUI {
         String fullname = user.content("private:viewing:contact:fullName");
         if(fullname==null) fullname="Waiting for contact details "+user.content("private:viewing:contact");
 
-        String contactuid = UID.normaliseUID(useruid, user.content("private:viewing:contact"));
+        String contactuid = UID.normaliseUID(useruid, user.content("private:viewing:contact")); // remove normaliseUID
         LinkedList contact=null;
         if(contactuid!=null) contact = list(style("direction","horizontal", "options","jump", "proportions","75%"), "Contact Info:", contactuid);
 
-        String contactsuid = UID.normaliseUID(useruid, user.content("private:viewing:private:contacts"));
+        String contactsuid = UID.normaliseUID(useruid, user.content("private:viewing:private:contacts")); // remove normaliseUID
         LinkedList contacts=null;
         if(contactsuid!=null) contacts = list(style("direction","horizontal", "options","jump", "proportions","75%"),"Phone Contacts:", contactsuid);
 
@@ -81,7 +81,7 @@ public class OTS2GUI {
         viewlist.add(style("direction","vertical"));
         int i= -1;
         for(String uid: contacts){ i++;
-            String contactuid = UID.normaliseUID(listuid, uid);
+            String contactuid = UID.normaliseUID(listuid, uid); // remove normaliseUID
             String fullname=            user.content("private:viewing:list:"+i+":"+contactprefix+"fullName");
             if(fullname==null) fullname=user.content("private:viewing:list:"+i+":is");
             if(fullname==null) viewlist.add("Loading..");
@@ -108,12 +108,12 @@ public class OTS2GUI {
             String published=null;
             if(inlineoruid instanceof String){
                 String uid = (String)inlineoruid;
-                documentuid = UID.normaliseUID(listuid, uid);
+                documentuid = UID.normaliseUID(listuid, uid); // remove normaliseUID
             }
             else
             if(inlineoruid instanceof LinkedHashMap){
                 LinkedHashMap<String,String> inl = (LinkedHashMap<String,String>)inlineoruid;
-                documentuid = UID.normaliseUID(listuid, inl.get("%more"));
+                documentuid = UID.normaliseUID(listuid, inl.get("%more")); // remove normaliseUID
                 contentType=inl.get("is");
                 htmlurl = inl.get("webView");
                 published=inl.get("published");
@@ -253,7 +253,7 @@ public class OTS2GUI {
 
     public LinkedHashMap event2GUI(){
         String eventuid = user.content("private:viewing");
-        String locationuid = UID.normaliseUID(eventuid, user.content("private:viewing:location"));
+        String locationuid = UID.normaliseUID(eventuid, user.content("private:viewing:location")); // remove normaliseUID
         LinkedList event = list(style("colours","lightmauve"),
                                 user.content("private:viewing:content"),
                                 list(style("direction","horizontal", "proportions","30%"), "Start:", user.content("private:viewing:start")),
@@ -336,7 +336,7 @@ public class OTS2GUI {
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":tags");
             }
             if(bmtext==null) bmtext="Loading..";
-            String bmuid = UID.normaliseUID(listuid, uid);
+            String bmuid = UID.normaliseUID(listuid, uid); // remove normaliseUID
             viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), bmtext, bmuid));
         }
     }
