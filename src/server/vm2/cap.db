@@ -28,7 +28,7 @@
 
 { "%uid": "uid-f265-941d-a0b8-ca5d",
   "is": [ "gui", "rule" ],
-  "when": "created",
+  "when": "application created, create land list",
   "%notifying": [ "=>", "has", "$:form" ],
   "view": {
     "#land": [ "=>", { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
@@ -36,6 +36,11 @@
       { "%uid": "new",
         "%rules": [ "uid-0215-038b-7558-041a" ],
         "is": [ "updatable", "land", "list" ],
+        "template": { "is": "land",
+                      "usage": "?[%s /string;Arable|Grazing|Coppicing/ ]?",
+                      "entitlement": "?[%s /string/ ]?",
+                      "active": "?[%s /boolean/ ]?"
+                    },
         "list": []
       }
     ]

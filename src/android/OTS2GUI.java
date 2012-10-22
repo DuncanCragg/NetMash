@@ -334,16 +334,16 @@ public class OTS2GUI {
 
         LinkedList citationcol = new LinkedList();
         citationcol.add(style("direction","vertical"));
-        addIfPresent(citationcol, "webView", "View on Web:", true, false);
-        addIfPresent(citationcol, "published", "Published:", false, false);
-        addIfPresent(citationcol, "publisher", "Publisher:", false, false);
-        addIfPresent(citationcol, "journaltitle", "Journal:", false, false);
-        addIfPresent(citationcol, "booktitle", "From:", false, false);
-        addIfPresent(citationcol, "pages", "Pages:", false, false);
-        addIfPresent(citationcol, "volume", "Volume:", false, false);
-        addIfPresent(citationcol, "issue", "Issue:", false, false);
-        addIfPresent(citationcol, "doi", "DOI:", false, false);
-        addIfPresent(citationcol, "dxDoi", "View via dx.doi:", true, false);
+        addIfPresent(citationcol, "webView", "View on Web:", true, null);
+        addIfPresent(citationcol, "published", "Published:", false, null);
+        addIfPresent(citationcol, "publisher", "Publisher:", false, null);
+        addIfPresent(citationcol, "journaltitle", "Journal:", false, null);
+        addIfPresent(citationcol, "booktitle", "From:", false, null);
+        addIfPresent(citationcol, "pages", "Pages:", false, null);
+        addIfPresent(citationcol, "volume", "Volume:", false, null);
+        addIfPresent(citationcol, "issue", "Issue:", false, null);
+        addIfPresent(citationcol, "doi", "DOI:", false, null);
+        addIfPresent(citationcol, "dxDoi", "View via dx.doi:", true, null);
 
         LinkedList authorsandrefscol = new LinkedList();
         authorsandrefscol.add(style("direction","vertical"));
@@ -364,12 +364,21 @@ public class OTS2GUI {
         return viewhash;
     }
 
+    @SuppressWarnings("unchecked")
     public LinkedHashMap land2GUI(){
+        String title=user.content("private:viewing:title");
         LinkedList valuescol = new LinkedList();
         valuescol.add(style("direction","vertical"));
-        addIfPresent(valuescol, "area", "Area:", false, true);
-
-        String title=user.content("private:viewing:title");
+        addIfPresent(valuescol, "area", "Area:", false, "?[%s /string/]?");
+        LinkedHashMap<String,Object> template=user.contentHash("private:viewing:place:template");
+        if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
+            String tag=entry.getKey();
+            if(tag.equals("is")) continue;
+            Object o=entry.getValue();
+            if(!(o instanceof String)) continue;
+            String type=(String)o;
+            addIfPresent(valuescol, tag, tag+":", false, type);
+        }
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
         viewhash.put("#title", String.format("?[%s /string/]?", title!=null? title: "Land"));
@@ -397,10 +406,10 @@ public class OTS2GUI {
         }
     }
 
-    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, boolean editable){
+    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, String type){
         String value=user.content("private:viewing:"+tag);
-        if(value==null && !editable) return;
-        value=editable? String.format("?[%s /string/]?", value!=null? value: ""): value;
+        if(value==null && type==null) return;
+        value=type!=null? String.format(type, value!=null? value: ""): value;
         list.add(hash("style",style("direction","horizontal", "proportions",isLink? "75%": "50%"), "label",label, "#"+tag,value));
     }
 
