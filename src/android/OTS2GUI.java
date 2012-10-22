@@ -190,7 +190,8 @@ public class OTS2GUI {
         maplist.add("render:map");
         maplist.add("layerkey:"+landuid);
         LinkedHashMap location=user.contentHash("private:viewing:location");
-        if(location!=null) maplist.add(point("", "Location", location, landuid));
+        String title=user.content("private:viewing:title");
+        if(location!=null) maplist.add(point("", title!=null? title: "Land", location, landuid));
         return maplist;
     }
 
@@ -231,7 +232,8 @@ public class OTS2GUI {
         for(String uid: lands){ c++;
             String landuid = UID.normaliseUID(listuid, uid);
             LinkedHashMap<String,Double> location=user.contentHash("private:viewing:list:"+c+":location");
-            if(location!=null) maplist.add(point("list:"+c+":", "Location", location, landuid));
+            String title=user.content("private:viewing:list:"+c+":title");
+            if(location!=null) maplist.add(point("list:"+c+":", title!=null? title: "Land", location, landuid));
         }
         return maplist;
     }
@@ -359,6 +361,14 @@ public class OTS2GUI {
         viewhash.put("#citation", citationcol);
         viewhash.put("#authorsandrefs", authorsandrefscol);
         viewhash.put("#content", contentcol);
+        return viewhash;
+    }
+
+    public LinkedHashMap land2GUI(){
+        String title=user.content("private:viewing:title");
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
+        viewhash.put("#title", title!=null? title: "Land");
         return viewhash;
     }
 

@@ -663,6 +663,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 viewhash=ots2gui.article2GUI();
             }
             else
+            if(contentIsOrListContains("private:viewing:is", "land")){
+                viewhash=ots2gui.land2GUI();
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "links")){
                 viewhash=ots2gui.links2GUI();
             }
