@@ -34,6 +34,7 @@ Stuff
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------
+ - don't need editable/rule if it's your own object!
  - wrong object detected on tablet
  - light lags massively
  - cache, and detect changes in components of view - how?

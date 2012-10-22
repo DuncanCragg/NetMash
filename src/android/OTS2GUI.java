@@ -141,7 +141,7 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedHashMap landList2GUI(boolean editable){
+    public LinkedHashMap landList2GUI(){
         String listuid = user.content("private:viewing");
         LinkedList lands = user.contentList("private:viewing:list");
         LinkedList viewlist = new LinkedList();
@@ -160,7 +160,7 @@ public class OTS2GUI {
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours","lightblue"));
         viewhash.put("#title", title!=null? title: "Land List");
-        if(editable)
+        if(user.contentIsOrListContains("private:viewing:is", "updatable"))
         viewhash.put("#new", "?[New /string/]?");
         viewhash.put("#landlist", viewlist);
         return viewhash;

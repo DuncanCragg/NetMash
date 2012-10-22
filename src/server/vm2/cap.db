@@ -35,7 +35,7 @@
       "Your Land:",
       { "%uid": "new",
         "%rules": [ "uid-0215-038b-7558-041a" ],
-        "is": [ "editable", "land", "list" ],
+        "is": [ "updatable", "land", "list" ],
         "list": []
       }
     ]

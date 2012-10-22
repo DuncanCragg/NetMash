@@ -434,7 +434,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(!contentSet("private:responses:rsvp")) contentHash("private:responses:rsvp", hash());
             resp=newRSVP(guiuid, uid);
         }
-        else if(contentListContainsAll("private:viewing:is", list("editable", "land", "list"))){
+        else if(contentListContainsAll("private:viewing:is", list("updatable", "land", "list"))){
             path="private:responses:land:"+UID.toUID(guiuid);
             if(contentSet(path) && !contentSet(path+":title")) return false;
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
@@ -469,7 +469,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
             path="private:responses:rsvp:"+UID.toUID(guiuid);
         }
-        else if(contentListContainsAll("private:viewing:is", list("editable", "land", "list"))){
+        else if(contentListContainsAll("private:viewing:is", list("updatable", "land", "list"))){
             path="private:responses:land:"+UID.toUID(guiuid);
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
@@ -643,7 +643,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             }
             else
             if(contentListContainsAll("private:viewing:is", list("land", "list"))){
-                viewhash=ots2gui.landList2GUI(editable);
+                viewhash=ots2gui.landList2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "user")){
