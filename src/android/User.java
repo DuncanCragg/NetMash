@@ -606,19 +606,20 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
             if(contentListContainsAll("private:viewing:is", list("user", "list"))){
-
                 viewhash=ots2gui.contactList2GUI("contact:");
             }
             else
             if(contentListContainsAll("private:viewing:is", list("contact", "list"))){
-
                 viewhash=ots2gui.contactList2GUI("");
             }
             else
             if(contentListContainsAll("private:viewing:is", list("document", "list"))||
                contentListContainsAll("private:viewing:is", list("article",  "list"))  ){
-
                 viewhash=ots2gui.documentList2GUI();
+            }
+            else
+            if(contentListContainsAll("private:viewing:is", list("land", "list"))){
+                viewhash=ots2gui.landList2GUI(editable);
             }
             else
             if(contentIsOrListContains("private:viewing:is", "user")){

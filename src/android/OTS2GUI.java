@@ -141,6 +141,31 @@ public class OTS2GUI {
         return viewhash;
     }
 
+    public LinkedHashMap landList2GUI(boolean editable){
+        String listuid = user.content("private:viewing");
+        LinkedList lands = user.contentList("private:viewing:list");
+        LinkedList viewlist = new LinkedList();
+        viewlist.add(style("direction","vertical"));
+        int i= -1;
+        if(lands!=null) for(Object o: lands){ i++;
+            String landuid=null;
+            if(o instanceof String) landuid = (String)o;
+            if(landuid==null) landuid=listuid;
+            String          title=user.content("private:viewing:list:"+i+":title");
+            if(title==null) title=user.content("private:viewing:list:"+i+":is");
+            if(title==null) viewlist.add("Loading..");
+            else            viewlist.add(list(style("direction","horizontal", "colours","lightblue", "proportions","75%"), title, landuid));
+        }
+        String title = user.content("private:viewing:title");
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightblue"));
+        viewhash.put("#title", title!=null? title: "Land List");
+        if(editable)
+        viewhash.put("#new", "?[New /string/]?");
+        viewhash.put("#landlist", viewlist);
+        return viewhash;
+    }
+
     public LinkedList contact2Map(String contactprefix){
         String useruid = user.content("private:viewing");
         LinkedList maplist = new LinkedList();

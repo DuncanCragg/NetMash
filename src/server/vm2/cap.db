@@ -34,7 +34,7 @@
     "#land": [ "=>", { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
       "Your Land:",
       { "%uid": "new",
-        "is": [ "land", "list" ],
+        "is": [ "editable", "land", "list" ],
         "list": []
       }
     ]
