@@ -206,7 +206,7 @@ public class ObjectMash extends WebObject {
         if(ll.size()==4 && "clamp".equals(ll0))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
         if(ll.size()==3 && "format".equals(ll0))  return String.format(findObject(ll.get(1)).toString(), findObject(ll.get(2)));
         if(ll.size()==4 && "chooses".equals(ll1)) return findBoolean(ll.get(0))? findObject(ll.get(2)): findObject(ll.get(3));
-        return ll;
+        return copyObject(ll);
     }catch(Throwable t){ t.printStackTrace(); return ll; } }
 
     // ----------------------------------------------------
