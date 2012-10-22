@@ -200,6 +200,7 @@ public class ObjectMash extends WebObject {
         if(ll.size()==3 && "+".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
         if(ll.size()==3 && "×".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
         if(ll.size()==3 && "*".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
+        if(ll.size()==3 && "÷".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
         if(ll.size()==3 && "/".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
         if(ll.size()==2 && "count".equals(ll0))   return Double.valueOf(findList(ll.get(1)).size());
         if(ll.size()==3 && "random".equals(ll0))  return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
