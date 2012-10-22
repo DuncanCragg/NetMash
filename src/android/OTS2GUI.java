@@ -334,16 +334,16 @@ public class OTS2GUI {
 
         LinkedList citationcol = new LinkedList();
         citationcol.add(style("direction","vertical"));
-        addIfPresent(citationcol, "webView", "View on Web:", true);
-        addIfPresent(citationcol, "published", "Published:", false);
-        addIfPresent(citationcol, "publisher", "Publisher:", false);
-        addIfPresent(citationcol, "journaltitle", "Journal:", false);
-        addIfPresent(citationcol, "booktitle", "From:", false);
-        addIfPresent(citationcol, "pages", "Pages:", false);
-        addIfPresent(citationcol, "volume", "Volume:", false);
-        addIfPresent(citationcol, "issue", "Issue:", false);
-        addIfPresent(citationcol, "doi", "DOI:", false);
-        addIfPresent(citationcol, "dxDoi", "View via dx.doi:", true);
+        addIfPresent(citationcol, "webView", "View on Web:", true, false);
+        addIfPresent(citationcol, "published", "Published:", false, false);
+        addIfPresent(citationcol, "publisher", "Publisher:", false, false);
+        addIfPresent(citationcol, "journaltitle", "Journal:", false, false);
+        addIfPresent(citationcol, "booktitle", "From:", false, false);
+        addIfPresent(citationcol, "pages", "Pages:", false, false);
+        addIfPresent(citationcol, "volume", "Volume:", false, false);
+        addIfPresent(citationcol, "issue", "Issue:", false, false);
+        addIfPresent(citationcol, "doi", "DOI:", false, false);
+        addIfPresent(citationcol, "dxDoi", "View via dx.doi:", true, false);
 
         LinkedList authorsandrefscol = new LinkedList();
         authorsandrefscol.add(style("direction","vertical"));
@@ -365,16 +365,23 @@ public class OTS2GUI {
     }
 
     public LinkedHashMap land2GUI(){
+        LinkedList valuescol = new LinkedList();
+        valuescol.add(style("direction","vertical"));
+        addIfPresent(valuescol, "area", "Area:", false, true);
+
         String title=user.content("private:viewing:title");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
         viewhash.put("#title", String.format("?[%s /string/]?", title!=null? title: "Land"));
+        viewhash.put("#values", valuescol);
         return viewhash;
     }
 
-    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink){
+    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, boolean editable){
         String value=user.content("private:viewing:"+tag);
-        if(value!=null) list.add(list(style("direction","horizontal", "proportions",isLink? "75%": "50%"), label, value));
+        if(value==null && !editable) return;
+        value=editable? String.format("?[%s /string/]?", value!=null? value: ""): value;
+        list.add(hash("style",style("direction","horizontal", "proportions",isLink? "75%": "50%"), "label",label, "#"+tag,value));
     }
 
     private void addListIfPresent(LinkedList viewlist, String tag, String label){
