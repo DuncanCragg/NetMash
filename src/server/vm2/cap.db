@@ -34,10 +34,18 @@
     "#land": [ "=>", { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
       "Your Land:",
       { "%uid": "new",
+        "%rules": [ "uid-0215-038b-7558-041a" ],
         "is": [ "editable", "land", "list" ],
         "list": []
       }
     ]
   }
+}
+
+{ "%uid": "uid-0215-038b-7558-041a",
+  "is": [ "land", "list", "rule" ],
+  "when": "land object notified, add to list",
+  "%alerted": { "is": "land", "place": "*" },
+  "list": [ "=>", "has", "$:%alerted" ]
 }
 

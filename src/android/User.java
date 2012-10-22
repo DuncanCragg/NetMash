@@ -126,6 +126,13 @@ public class User extends WebObject {
                         "}");
     }
 
+    static User newLand(String landlistuid, String useruid){
+        return new User("{ \"is\": [ \"editable\", \"land\" ],\n"+
+                        "  \"place\": \""+landlistuid+"\",\n"+
+                        "  \"user\": \""+useruid+"\"\n"+
+                        "}");
+    }
+
     static User newRSVP(String eventuid, String useruid){
         return new User("{ \"is\": \"rsvp\", \n"+
                         "  \"event\": \""+eventuid+"\",\n"+
@@ -427,6 +434,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(!contentSet("private:responses:rsvp")) contentHash("private:responses:rsvp", hash());
             resp=newRSVP(guiuid, uid);
         }
+        else if(contentListContainsAll("private:viewing:is", list("editable", "land", "list"))){
+            path="private:responses:land:"+UID.toUID(guiuid);
+            if(contentSet(path)) return false;
+            if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
+            resp=newLand(guiuid, uid);
+        }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
             path="private:responses:form:"+UID.toUID(guiuid);
             if(contentSet(path)) return false;
@@ -455,6 +468,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
             path="private:responses:rsvp:"+UID.toUID(guiuid);
+        }
+        else if(contentListContainsAll("private:viewing:is", list("editable", "land", "list"))){
+            path="private:responses:land:"+UID.toUID(guiuid);
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
             path="private:responses:form:"+UID.toUID(guiuid);
@@ -505,6 +521,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 else
                 if(contentListContainsAll("is", list("document", "query"))){
                     content("content", String.format("<hasWords(%s)>",val));
+                }
+                else
+                if(contentIsOrListContains("is", "land")){
+                    content("title", val);
                 }
                 else
                 if(contentIsOrListContains("is", "form")){
@@ -568,6 +588,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else
         if(contentListContainsAll("is", list("document", "query"))){
             for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
+        }
+        else
+        if(contentIsOrListContains("is", "land")){
         }
         else
         if(contentIsOrListContains("is", "rsvp")){
