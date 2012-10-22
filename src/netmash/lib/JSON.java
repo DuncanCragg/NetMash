@@ -815,38 +815,38 @@ public class JSON {
             if(part.equals("#")) o=hm;
             else                 o=hm.get(part);
             if(o==null) return null;
+            if(i==parts.length-1) return o;
             if(o instanceof LinkedHashMap){
-                if(i==parts.length-1) return o;
                 hm=(LinkedHashMap)o;
                 continue;
             }
             if(o instanceof LinkedList){
-                if(i==parts.length-1) return o;
-                String sx=parts[i+1];
-                int x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){}
-                if(!(sx.equals("0") || x>0)) return null;
-                LinkedList ll = (LinkedList)o;
-                if(x>=ll.size()) return null;
-                i++;
-                o = ll.get(x);
-                if(o==null) return null;
-                if(i==parts.length-1) return o;
-                if(o instanceof LinkedHashMap){
-                    hm=(LinkedHashMap)o;
-                    continue;
+                LinkedList ll=(LinkedList)o;
+                while(true){
+                    i++;
+                    String sx=parts[i];
+                    int x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){}
+                    if(!(sx.equals("0") || x>0)) return null;
+                    if(x>=ll.size()) return null;
+                    o = ll.get(x);
+                    if(o==null) return null;
+                    if(i==parts.length-1) return o;
+                    if(o instanceof LinkedList){ ll=(LinkedList)o; continue; }
+                    if(o instanceof LinkedHashMap){
+                        hm=(LinkedHashMap)o;
+                        break;
+                    }
+                    throw new PathOvershot(o, parts, i);
                 }
-                throw new PathOvershot(o, parts, i);
+                continue;
             }
             if(o instanceof String){
-                if(i==parts.length-1) return o;
                 throw new PathOvershot(o, parts, i);
             }
             if(o instanceof Number){
-                if(i==parts.length-1) return o;
                 throw new PathOvershot(o, parts, i);
             }
             if(o instanceof Boolean){
-                if(i==parts.length-1) return o;
                 throw new PathOvershot(o, parts, i);
             }
         }

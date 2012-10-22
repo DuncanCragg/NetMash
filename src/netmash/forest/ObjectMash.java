@@ -74,7 +74,7 @@ public class ObjectMash extends WebObject {
                 if(pk.equals("user")) continue;
             }
             Object v=entry.getValue();
-            if(!scanType(v,pk,true)) return false;
+            if(!scanType(v,pk)) return false;
         }
         return true;
     }
@@ -98,7 +98,7 @@ public class ObjectMash extends WebObject {
         if(list.size() >= 2 && (list.get(0).equals("=>") || list.get(1).equals("=>"))){
             if(list.get(1).equals("=>")){
                 LinkedList rhs=new LinkedList(list.subList(2,list.size()));
-                boolean ok=scanType(list.get(0),path,false);
+                boolean ok=scanType(list.get(0),path);
                 if(ok) rewrites.put(path,rhs);
                 return ok;
             }
@@ -116,7 +116,7 @@ public class ObjectMash extends WebObject {
         for(Object v: list){
             for(; i<ll.size(); i++){
                 String pk=String.format("%s:%d",path,i);
-                if(scanType(v,pk,false)){ bl.add(contentObject(pk)); if(matchEach) break; }
+                if(scanType(v,pk)){ bl.add(contentObject(pk)); if(matchEach) break; }
             }
             if(matchEach){
                 if(i==ll.size()) return false;
@@ -128,13 +128,19 @@ public class ObjectMash extends WebObject {
         return true;
     }
 
+    private boolean scanType(Object v, String pk){
+        boolean r=doScanType(v,pk);
+        if(!r && extralogging) log("Failed to match "+v+"\nat: "+pk);
+        return r;
+    }
+
     @SuppressWarnings("unchecked")
-    private boolean scanType(Object v, String pk, boolean hmmm){
+    private boolean doScanType(Object v, String pk){
         if(v instanceof String)        return scanString((String)v, pk);
         if(v instanceof Number)        return scanNumber((Number)v, pk);
         if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
         if(v instanceof LinkedHashMap) return scanHash((LinkedHashMap<String,Object>)v, pk+":");
-        if(v instanceof LinkedList)    return scanList((LinkedList)v, pk+(hmmm? "": ":"));
+        if(v instanceof LinkedList)    return scanList((LinkedList)v, pk);
         log("oh noes "+v);
         return false;
     }
