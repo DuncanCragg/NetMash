@@ -21,6 +21,8 @@ om: runom showtestresults
 
 cap: androidemu runcap logcat
 
+lap: androidlan runlap lancat
+
 # -------------------------------------------------------------------
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
@@ -87,6 +89,8 @@ runrem: kill clean netconfig setvm2remconfig useworlddb run1n2
 runom:  kill       omconfig  setvm2tstconfig useomdb run2
 
 runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
+
+runlap: kill clean netconfig setvm2lanconfig usecapdb  run1n2
 
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
