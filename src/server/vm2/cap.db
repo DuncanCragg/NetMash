@@ -18,6 +18,9 @@
       "form": "$:%alerted",
       "view": {
         "#title": "CAP Application",
+        "#user": [ { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
+          "You:", "$:%alerted:user"
+        ]
       }
     }
   ]
@@ -26,6 +29,15 @@
 { "%uid": "uid-f265-941d-a0b8-ca5d",
   "is": [ "gui", "rule" ],
   "when": "created",
-  "%notifying": [ "=>", "has", "$:form" ]
+  "%notifying": [ "=>", "has", "$:form" ],
+  "view": {
+    "#land": [ "=>", { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
+      "Your Land:",
+      { "%uid": "new",
+        "is": [ "land", "list" ],
+        "list": []
+      }
+    ]
+  }
 }
 
