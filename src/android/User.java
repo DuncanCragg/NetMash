@@ -127,7 +127,7 @@ public class User extends WebObject {
     }
 
     static User newLand(String landlistuid, String useruid){
-        return new User("{ \"is\": [ \"editable\", \"land\" ],\n"+
+        return new User("{ \"is\": [ \"land\" ],\n"+
                         "  \"place\": \""+landlistuid+"\",\n"+
                         "  \"user\": \""+useruid+"\"\n"+
                         "}");
@@ -453,30 +453,32 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     private User getResponse(String guiuid){ return getResponse(guiuid, false); }
 
     private User getResponse(String guiuid, boolean editable){
-        String path=null;
+        String formuid=null;
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
         if(contentIsOrListContains("private:viewing:is", "editable")){
-            path="private:responses:editable:"+UID.toUID(guiuid);
+            formuid=content("private:responses:editable:"+UID.toUID(guiuid));
         }
         }
         else if(contentIsOrListContains("private:viewing:is", "3d")){
-            path="private:responses:swipe:"+UID.toUID(guiuid);
+            formuid=content("private:responses:swipe:"+UID.toUID(guiuid));
         }
         else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
-            path="private:responses:query:"+UID.toUID(guiuid);
+            formuid=content("private:responses:query:"+UID.toUID(guiuid));
         }
         else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
-            path="private:responses:rsvp:"+UID.toUID(guiuid);
+            formuid=content("private:responses:rsvp:"+UID.toUID(guiuid));
         }
         else if(contentListContainsAll("private:viewing:is", list("updatable", "land", "list"))){
-            path="private:responses:land:"+UID.toUID(guiuid);
+            formuid=content("private:responses:land:"+UID.toUID(guiuid));
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
-            path="private:responses:form:"+UID.toUID(guiuid);
+            formuid=content("private:responses:form:"+UID.toUID(guiuid));
         }
-        if(path==null) return null;
-        String formuid = content(path);
+        else if(contentIsOrListContains("private:viewing:is", "land")){
+            formuid=UID.toUID(guiuid);
+        }
+        if(formuid==null) return null;
         return (User)onlyUseThisToHandControlOfThreadToDependent(formuid);
     }
 

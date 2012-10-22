@@ -368,7 +368,7 @@ public class OTS2GUI {
         String title=user.content("private:viewing:title");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
-        viewhash.put("#title", title!=null? title: "Land");
+        viewhash.put("#title", String.format("?[%s /string/]?", title!=null? title: "Land"));
         return viewhash;
     }
 
