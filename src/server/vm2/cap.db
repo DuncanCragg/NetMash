@@ -3,7 +3,7 @@
   "%rules": [ "uid-c265-091b-418c-c329" ],
   "is": [ "gui" ],
   "title": "CAP Payments Demo",
-  "view": { "#start": "?[Create a CAP application /boolean/]?" }
+  "view": { "#start": { "input": "button", "label": "Apply for farming support" }}
 }
 
 { "%uid": "uid-c265-091b-418c-c329",
@@ -37,9 +37,9 @@
         "%rules": [ "uid-0215-038b-7558-041a" ],
         "is": [ "updatable", "land", "list" ],
         "template": { "is": "land",
-                      "usage": "?[%s /string;Arable|Grazing|Coppicing/ ]?",
-                      "entitlement": "?[%s /string/ ]?",
-                      "active": "?[%s /boolean/ ]?"
+                      "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [ "Arable", "Grazing", "Coppicing" ], "value": 0 },
+                      "entitlement": { "input": "textfield", "label": "Entitlement Ref:" },
+                      "active":      { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
                     },
         "list": []
       }

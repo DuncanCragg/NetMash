@@ -132,6 +132,12 @@ public class Utils{
         if(x<lo) return lo;
         return x;
     }
+
+    static public String getStringFrom(LinkedHashMap hm, String tag){
+        Object o=hm.get(tag);
+        if(o==null) return null;
+        return o.toString();
+    }
 }
 
 

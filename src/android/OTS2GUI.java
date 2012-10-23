@@ -136,7 +136,7 @@ public class OTS2GUI {
         viewhash.put("#logo", user.content("private:viewing:logo"));
         viewhash.put("#counts", user.contentString("private:viewing:contentCount"));
         if(user.contentIsOrListContains("private:viewing:is", "searchable"))
-        viewhash.put("#query", "?[Search terms /string/]?");
+        viewhash.put("#query", hash("input","textfield", "label","Search terms"));
         viewhash.put("#documentlist", viewlist);
         return viewhash;
     }
@@ -161,7 +161,7 @@ public class OTS2GUI {
         viewhash.put("style", style("direction","vertical", "colours","lightblue"));
         viewhash.put("#title", title!=null? title: "Land List");
         if(user.contentIsOrListContains("private:viewing:is", "updatable"))
-        viewhash.put("#new", "?[New Area Name /string/]?");
+        viewhash.put("#new", hash("input","textfield", "label","New Area Name"));
         viewhash.put("#landlist", viewlist);
         return viewhash;
     }
@@ -295,7 +295,7 @@ public class OTS2GUI {
         LinkedHashMap<String,Object> titlehash=new LinkedHashMap<String,Object>();
         titlehash.put("style", style("direction","horizontal", "proportions","25%", "colours","lightpink*"));
         titlehash.put("#photo", photourl);
-        titlehash.put("#val-fullName", editable? "?["+fullname+" /string/]?": fullname);
+        titlehash.put("#val-fullName", editable? hash("input","textfield", "value",fullname): fullname);
 
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical"));
@@ -323,7 +323,7 @@ public class OTS2GUI {
         viewhash.put("#event", event);
         viewhash.put("#attendees", attendees);
         if(user.contentIsOrListContains("private:viewing:is", "attendable"))
-        viewhash.put("#rsvp", "?[Attending /boolean/]?");
+        viewhash.put("#rsvp", hash("input","checkbox", "label","Attending"));
         return viewhash;
     }
 
@@ -369,24 +369,40 @@ public class OTS2GUI {
         String title=user.content("private:viewing:title");
         LinkedList valuescol = new LinkedList();
         valuescol.add(style("direction","vertical"));
-        addIfPresent(valuescol, "area", "Area:", false, "?[%s /string/]?");
+        addIfPresent(valuescol, "area", null, false, hash("input","textfield", "title","Area:"));
         LinkedHashMap<String,Object> template=user.contentHash("private:viewing:place:template");
         if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
-            String tag=entry.getKey();
-            if(tag.equals("is")) continue;
             Object o=entry.getValue();
-            if(!(o instanceof String)) continue;
-            String type=(String)o;
-            addIfPresent(valuescol, tag, tag+":", false, type);
+            if(!(o instanceof LinkedHashMap)) continue;
+            addIfPresent(valuescol, entry.getKey(), null, false, (LinkedHashMap)((LinkedHashMap)o).clone());
         }
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
-        viewhash.put("#title", String.format("?[%s /string/]?", title!=null? title: "Land"));
+        viewhash.put("#title", hash("input","textfield", "value",title!=null? title: "Land"));
         viewhash.put("#values", valuescol);
         return viewhash;
     }
 
     // --------------------------------------------------
+
+    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, LinkedHashMap widget){
+        String currentvalue=user.content("private:viewing:"+tag);
+        if(label!=null){
+            if(currentvalue==null) return;
+            list.add(hash("style",style("direction","horizontal", "proportions",isLink? "75%": "50%"), "label",label, "#"+tag,currentvalue));
+        }
+        else{
+            if(currentvalue!=null) widget.put("value",currentvalue);
+            list.add(hash("style",style("direction","horizontal", "proportions", "99%"), "#"+tag,widget));
+        }
+    }
+
+    private void addListIfPresent(LinkedList viewlist, String tag, String label){
+        String listuid = user.content("private:viewing");
+        String prefix="private:viewing:"+tag;
+        LinkedList<String> links = (LinkedList<String>)user.contentList(prefix);
+        if(links!=null && links.size()!=0) linksList2GUI(links, viewlist, prefix, listuid, label);
+    }
 
     public void linksList2GUI(LinkedList<String> links, LinkedList viewlist, String prefix, String listuid, String label){
         if(label!=null && label.length()!=0) viewlist.add(label);
@@ -404,20 +420,6 @@ public class OTS2GUI {
             String bmuid = UID.normaliseUID(listuid, uid); // remove normaliseUID
             viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), bmtext, bmuid));
         }
-    }
-
-    private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, String type){
-        String value=user.content("private:viewing:"+tag);
-        if(value==null && type==null) return;
-        value=type!=null? String.format(type, value!=null? value: ""): value;
-        list.add(hash("style",style("direction","horizontal", "proportions",isLink? "75%": "50%"), "label",label, "#"+tag,value));
-    }
-
-    private void addListIfPresent(LinkedList viewlist, String tag, String label){
-        String listuid = user.content("private:viewing");
-        String prefix="private:viewing:"+tag;
-        LinkedList<String> links = (LinkedList<String>)user.contentList(prefix);
-        if(links!=null && links.size()!=0) linksList2GUI(links, viewlist, prefix, listuid, label);
     }
 
     public LinkedList<String> getAddressesAsString(String path, boolean geo){
@@ -488,11 +490,11 @@ public class OTS2GUI {
         for(String tag: hm.keySet()){
             LinkedHashMap hm3 = new LinkedHashMap();
             hm3.put("style", style("direction", "horizontal"));
-            hm3.put("#tag-"+path+tag, editable? "?["+tag+": /string/]?": tag+":");
+            hm3.put("#tag-"+path+tag, editable? hash("input","textfield", "value",tag+":"): tag+":");
             addToHash(hm3,path+tag,hm.get(tag),objuid,editable);
             hm2.put("#"+tag,hm3);
         }
-        if(editable) hm2.put(".addnew","?[New Entry /string/]?");
+        if(editable) hm2.put(".addnew",hash("input","button", "label","New Entry"));
         return hm2;
     }
 
@@ -501,7 +503,7 @@ public class OTS2GUI {
         hm3.put("style", style("direction", ll.size()<=5? "horizontal": "vertical"));
         int i=0;
         for(Object o: ll){ addToHash(hm3,path+i,o,objuid,editable); i++; }
-        if(editable) hm3.put(".addnew","?[New Item /string/]?");
+        if(editable) hm3.put(".addnew",hash("input","button", "label","New Entry"));
         return hm3;
     }
 
@@ -511,7 +513,7 @@ public class OTS2GUI {
         if(o instanceof LinkedList)    hm.put(path,guifyList(path+":", (LinkedList)o, objuid, editable));
         else
         if(UID.isUID(o))               hm.put(path,UID.normaliseUID(objuid, (String)o));
-        else           { if(!editable) hm.put(path,""+o); else hm.put("#val-"+path,"?["+o+" /string/]?"); }
+        else           { if(!editable) hm.put(path,o.toString()); else hm.put("#val-"+path,hash("input","textfield", "value",o)); }
     }
 
     // ---------------------------------------------------------------------------

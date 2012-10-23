@@ -465,6 +465,9 @@ log(show? "show keyboard": "hide keyboard");
         else
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
+            boolean isFormField = hm.get("input")!=null;
+            if(isFormField)      addAView(          layout, createFormView(tag, hm, colour), prop, height, width);
+            else
             if(isHorizontal(hm)) addHorizontalStrip(layout, createHorizontalStrip(hm), colour, prop, height, width);
             else                 addVerticalStrip(  layout, createVerticalStrip(hm), colour, prop, height, width);
         }
@@ -480,12 +483,10 @@ log(show? "show keyboard": "hide keyboard");
             boolean isUID       = s.startsWith("uid-") || (s.startsWith("http://") && s.endsWith(".json"));
             boolean isImage     = s.startsWith("http://") && ( s.endsWith(".jpg") || s.endsWith(".gif") || s.endsWith(".png") || s.endsWith(".ico"));
             boolean isWebURL    = s.startsWith("http://");
-            boolean isFormField = s.startsWith("?[") && s.endsWith("]?");
             View v= isUID?       createUIDView(s):
                    (isImage?     createImageView(s):
                    (isWebURL?    createWebLinkView(s):
-                   (isFormField? createFormView(tag, s, colour):
-                                 createTextView(s, colour))));
+                                 createTextView(s, colour)));
             addAView(layout, v, prop, height, width);
         }
     }
@@ -548,35 +549,41 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormView(String tag, String s, int colour){
-        int b=s.indexOf("/");
-        int e=s.lastIndexOf("/");
-        if(b== -1 || e== -1 || b==e) return createTextView(s,colour);
-        String   label=s.substring(2,b).trim();
-        String[] types=s.substring(b+1,e).split(";");
-        if(types.length==0) return createTextView(s,colour);
+    private View createFormView(String tag, LinkedHashMap hm, int colour){
+        String type =getStringFrom(hm,"input");
+        String label=getStringFrom(hm,"label");
+        Object range=hm.get("range");
+        Object value=hm.get("value");
         View view=null;
-        if(types[0].equals("string")){
-            if(types.length==1) view=createFormTextView(tag, label);
-            else
-            if(types[1].charAt(0)=='|') view=createFormRadioView(  tag, label, types[1].split("\\|", -1));
-            else                        view=createFormSpinnerView(tag, label, types[1].split("\\|", -1));
-        }
+        if("button".equals(type))    view=createFormButtonView(tag, label);
         else
-        if(types[0].equals("boolean")){
-            if(types.length==1) view=createFormCheckView( tag, label);
-            else                view=createFormToggleView(tag, label, types[1].split("\\|", -1));
-        }
+        if("checkbox".equals(type))  view=createFormCheckView(tag, label, value);
         else
-        if(types[0].equals("integer")){
-            if(types.length==1) view=createFormRatingView(tag, label, null);
-            else                view=createFormRatingView(tag, label, types[1].split("\\|", -1));
-        }
-        if(view==null) return createTextView(s,colour);
+        if("textfield".equals(type)) view=createFormTextView(tag, label, value);
+        else
+        if("chooser".equals(type))   view=createFormSpinnerView(tag, label, range, value);
+        else
+                                     view=createTextView(label+": "+value,colour);
+        return view;
+     //         view=createFormRadioView( tag, label, types[1].split("\\|", -1));
+     //         view=createFormToggleView(tag, label, types[1].split("\\|", -1));
+     //         view=createFormRatingView(tag, label, null);
+     //         view=createFormRatingView(tag, label, types[1].split("\\|", -1));
+    }
+
+    private View createFormButtonView(final String tag, String label){
+        Button view=new Button(this);
+        view.setOnClickListener(new OnClickListener(){
+            public void onClick(View v){ user.setFormVal(viewUID, tag, true); }
+        });
+        user.prepareResponse(viewUID);
+        view.setText(label);
+        view.setTextSize(20);
+        view.setTextColor(0xff000000);
         return view;
     }
 
-    private View createFormTextView(final String tag, String label){
+    private View createFormTextView(final String tag, String label, Object value){
         EditText view=new EditText(this){
             protected void onFocusChanged(boolean f, int d, Rect p){
                 super.onFocusChanged(f, d, p);
@@ -595,7 +602,7 @@ log(show? "show keyboard": "hide keyboard");
         });
         view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         user.prepareResponse(viewUID);
-        view.setText(label);
+        view.setText(value!=null? value.toString(): label);
         view.selectAll();
         view.setTextSize(20);
         view.setTextColor(0xff000000);
@@ -621,7 +628,9 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormSpinnerView(final String tag, String label, String[] choices){
+    private View createFormSpinnerView(final String tag, String label, Object choices, Object value){
+        if(choices==null || !(choices instanceof LinkedList)) return createTextView(label+": "+value,0);
+        String[] choicesarray=((LinkedList<String>)choices).toArray(new String[0]);
         Spinner view = new Spinner(this);
         view.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
@@ -629,7 +638,7 @@ log(show? "show keyboard": "hide keyboard");
             }
             public void onNothingSelected(AdapterView parent){}
         });
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, choices);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, choicesarray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         view.setAdapter(adapter);
         user.prepareResponse(viewUID);
@@ -642,13 +651,13 @@ log(show? "show keyboard": "hide keyboard");
         return 0;
     }
 
-    private View createFormCheckView(final String tag, String label){
+    private View createFormCheckView(final String tag, String label, Object value){
         CheckBox view = new CheckBox(this);
         view.setOnClickListener(new OnClickListener(){
             public void onClick(View v){ user.setFormVal(viewUID, tag, ((CheckBox)v).isChecked()); }
         });
         user.prepareResponse(viewUID);
-        view.setChecked(false);
+        view.setChecked(value!=null && (value instanceof Boolean) && ((Boolean)value));
         view.setText(label);
         view.setTextSize(20);
         view.setTextColor(0xff000000);

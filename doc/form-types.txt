@@ -1,0 +1,5 @@
+{ "input": "button",    "label": "Label" }
+{ "input": "checkbox",  "label": "Label",                                          "value": false }
+{ "input": "textfield", "label": "Label",                                          "value": "starting text" }
+{ "input": "textfield", "label": "Label", "range": "postcode",                     "value": "KT1" }
+{ "input": "chooser",   "label": "Label", "range": [ "Option 1", "Option 2", .. ], "value": 0 }
