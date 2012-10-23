@@ -80,6 +80,8 @@ public class Utils{
         return hm;
     }
 
+    static public LinkedHashMap style(Object...args){ return hash(hash("is","style"), args); }
+
     static public Object[] copyOfRange(Object[] a, int start, int end){
         Object[] r = new Object[end-start];
         System.arraycopy(a, start, r, 0, end-start);

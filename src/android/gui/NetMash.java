@@ -465,8 +465,18 @@ log(show? "show keyboard": "hide keyboard");
         else
         if(o instanceof LinkedHashMap){
             LinkedHashMap<String,Object> hm=(LinkedHashMap<String,Object>)o;
-            boolean isFormField = hm.get("input")!=null;
-            if(isFormField)      addAView(          layout, createFormView(tag, hm, colour), prop, height, width);
+            String type=getStringFrom(hm,"input");
+            boolean isFormField = type!=null;
+            if(isFormField){
+                boolean needsLabel = hm.get("label")!=null && ("checkbox".equals(type)||"textfield".equals(type));
+                if(needsLabel){  LinkedHashMap widget=(LinkedHashMap)hm.clone();
+                                 Object label=widget.remove("label");
+                                 String proportions="checkbox".equals(type)? "85%":"40%";
+                                 LinkedHashMap hs=hash("style",style("direction","horizontal","proportions",proportions), "label",label, tag,widget);
+                                 addHorizontalStrip(layout, createHorizontalStrip(hs), colour, prop, height, width);
+                }
+                else             addAView(          layout, createFormView(tag, hm, colour), prop, height, width);
+            }
             else
             if(isHorizontal(hm)) addHorizontalStrip(layout, createHorizontalStrip(hm), colour, prop, height, width);
             else                 addVerticalStrip(  layout, createVerticalStrip(hm), colour, prop, height, width);
@@ -557,9 +567,9 @@ log(show? "show keyboard": "hide keyboard");
         View view=null;
         if("button".equals(type))    view=createFormButtonView(tag, label);
         else
-        if("checkbox".equals(type))  view=createFormCheckView(tag, label, value);
+        if("checkbox".equals(type))  view=createFormCheckView(tag, value);
         else
-        if("textfield".equals(type)) view=createFormTextView(tag, label, value);
+        if("textfield".equals(type)) view=createFormTextView(tag, value);
         else
         if("chooser".equals(type))   view=createFormSpinnerView(tag, label, range, value);
         else
@@ -583,7 +593,7 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormTextView(final String tag, String label, Object value){
+    private View createFormTextView(final String tag, Object value){
         EditText view=new EditText(this){
             protected void onFocusChanged(boolean f, int d, Rect p){
                 super.onFocusChanged(f, d, p);
@@ -602,7 +612,7 @@ log(show? "show keyboard": "hide keyboard");
         });
         view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         user.prepareResponse(viewUID);
-        view.setText(value!=null? value.toString(): label);
+        view.setText(value!=null? value.toString(): "");
         view.selectAll();
         view.setTextSize(20);
         view.setTextColor(0xff000000);
@@ -610,7 +620,7 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormRadioView(final String tag, String label, String[] choices){
+    private View createFormRadioView(final String tag, String[] choices){
         user.prepareResponse(viewUID);
         RadioGroup view = new RadioGroup(this);
         for(String choice: choices){
@@ -651,14 +661,13 @@ log(show? "show keyboard": "hide keyboard");
         return 0;
     }
 
-    private View createFormCheckView(final String tag, String label, Object value){
+    private View createFormCheckView(final String tag, Object value){
         CheckBox view = new CheckBox(this);
         view.setOnClickListener(new OnClickListener(){
             public void onClick(View v){ user.setFormVal(viewUID, tag, ((CheckBox)v).isChecked()); }
         });
         user.prepareResponse(viewUID);
         view.setChecked(value!=null && (value instanceof Boolean) && ((Boolean)value));
-        view.setText(label);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
         return view;
