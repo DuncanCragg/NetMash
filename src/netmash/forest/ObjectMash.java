@@ -95,6 +95,10 @@ public class ObjectMash extends WebObject {
             LinkedList ll=contentList(path);
             return ll!=null && ll.size()==(int)d;
         }
+        if(list.size()==2 && list.get(0).equals("has-no")){
+            Object o=findObject(list.get(1));
+            return !contentListContains(path,o);
+        }
         if(list.size() >= 2 && (list.get(0).equals("=>") || list.get(1).equals("=>"))){
             if(list.get(1).equals("=>")){
                 LinkedList rhs=new LinkedList(list.subList(2,list.size()));
