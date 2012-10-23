@@ -13,11 +13,12 @@
   "%alerted": { "is": "form" },
   "list": [ "=>", "has",
     { "%uid": "new",
-      "%rules": [ "uid-f265-941d-a0b8-ca5d" ],
+      "%rules": [ "uid-f265-941d-a0b8-ca5d", "uid-1cc7-4c21-9036-4e01" ],
       "is": [ "gui" ],
       "title": "CAP application",
       "form": "$:%alerted",
       "view": {
+        "style": { "is": "style", "colours":"lightgreen" },
         "#title": "CAP Application",
         "#user": [ { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
           "You:", "$:%alerted:user"
@@ -32,7 +33,7 @@
   "when": "application created, create land list",
   "%notifying": [ "=>", "has", "$:form" ],
   "view": {
-    "#land": [ "=>", { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
+    "#land": [ "#", "=>", { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
       "Your Land:",
       { "%uid": "new",
         "%rules": [ "uid-0215-038b-7558-041a" ],
@@ -44,6 +45,9 @@
                     },
         "list": []
       }
+    ],
+    "#payment": [ "#", "=>", { "is":"style", "direction":"horizontal", "colours":"lightblue", "proportions": "50%" },
+      "Total Area:", 0
     ]
   }
 }
@@ -52,6 +56,16 @@
   "is": [ "land", "list", "rule" ],
   "when": "land object notified, add to list",
   "%alerted": { "is": "land", "place": "*" },
-  "list": [ "=>", "has", "$:%alerted" ]
+  "list": [ [ "has-no", "$:%alerted" ], "=>", "has", "$:%alerted" ]
+}
+
+
+{ "%uid": "uid-1cc7-4c21-9036-4e01",
+  "is": [ "gui", "rule" ],
+  "when": "land updated with area(s), calculate total area claimable",
+  "view": {
+    "#land": [ { "list": [ { "area": "*" } ] } ],
+    "#payment": [ "*", "*", [ "*", "=>", "sum", "$:view:#land:2:list:area" ] ]
+  }
 }
 
