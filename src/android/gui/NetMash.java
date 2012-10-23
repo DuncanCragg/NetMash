@@ -638,20 +638,29 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormSpinnerView(final String tag, String label, Object choices, Object value){
+    private View createFormSpinnerView(final String tag, final String label, Object choices, Object value){
         if(choices==null || !(choices instanceof LinkedList)) return createTextView(label+": "+value,0);
-        String[] choicesarray=((LinkedList<String>)choices).toArray(new String[0]);
+        LinkedList<String> choiceslist;
+        if(value==null){
+            choiceslist=(LinkedList<String>)((LinkedList<String>)choices).clone();
+            choiceslist.push(label);
+        }
+        else choiceslist=(LinkedList<String>)choices;
+        String[] choicesarray=choiceslist.toArray(new String[0]);
         Spinner view = new Spinner(this);
         view.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-                user.setFormVal(viewUID, tag, parent.getItemAtPosition(pos).toString());
+                String val=parent.getItemAtPosition(pos).toString();
+                if(!val.equals(label)) user.setFormVal(viewUID, tag, val);
             }
             public void onNothingSelected(AdapterView parent){}
         });
+        user.prepareResponse(viewUID);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, choicesarray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         view.setAdapter(adapter);
-        user.prepareResponse(viewUID);
+        if(value!=null)
+        view.setSelection(adapter.getPosition(value.toString()));
         view.setPrompt(label);
         return view;
     }
