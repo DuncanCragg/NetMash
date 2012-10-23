@@ -400,7 +400,7 @@ public class WebObject {
                     o=contentObject(ss.replaceFirst(":::",String.format(":%d",i)));
                     if(o!=null) l.add(o);
                 }
-                break;
+                if(!l.isEmpty()) break;
             }
         }
         return l.isEmpty()? null: l;
