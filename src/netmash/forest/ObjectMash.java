@@ -147,6 +147,7 @@ public class ObjectMash extends WebObject {
 
     private boolean scanString(String vs, String pk){
         if(vs.equals("*")) return true;
+        if(vs.equals("#")) return !contentSet(pk);
         if(contentIsOrListContains(pk,vs)) return true;
         if(foundObjectSameOrNot(pk,vs)) return true;
         if(vs.equals("number") && contentObject(pk) instanceof Number) return true;
@@ -192,7 +193,7 @@ public class ObjectMash extends WebObject {
             }
             else{
                 Object e=eval(ll);
-                if(e==null) continue;
+                if(e==null){ log("failed to rewrite "+currentRewritePath); continue; }
                 contentObject(currentRewritePath, e);
             }
         }
