@@ -261,7 +261,9 @@ public class ObjectMash extends WebObject {
     private Object eitherBindingOrContentObject(String path){
         if(path.startsWith(":")) return getBinding(path.substring(1));
         if(path.startsWith("!")) return contentObject(currentRewritePath);
-        return contentObject(path);
+        Object o=contentObject(path);
+        if(o!=null) return o;
+        return contentAll(path);
     }
 
     private String eitherBindingOrContentString(String path){

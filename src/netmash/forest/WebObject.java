@@ -382,14 +382,14 @@ public class WebObject {
         statemod = updatingState.doublePath(path, val) || statemod;
     }
 
-    /** Get list of String forms at path, iterating one intervening list if any. */
+    /** Get list of Objects at path, iterating one intervening list if any. */
     @SuppressWarnings("unchecked")
     public LinkedList contentAll(String path){
         LinkedList l=contentList(path);
         if(l!=null){ return l.isEmpty()? null: l; }
-        String s=contentString(path);
+        Object o=contentObject(path);
         l=new LinkedList();
-        if(s!=null){ l.add(s); return l; }
+        if(o!=null){ l.add(o); return l; }
         String[] parts=path.split(":");
         for(int x=1; x<=parts.length; x++){
             String ss=pathWithIndexIndicator(parts,x);
@@ -397,8 +397,8 @@ public class WebObject {
             LinkedList li=contentList(listpath);
             if(li!=null){
                 for(int i=0; i<li.size(); i++){
-                    s=contentString(ss.replaceFirst(":::",String.format(":%d",i)));
-                    if(s!=null) l.add(s);
+                    o=contentObject(ss.replaceFirst(":::",String.format(":%d",i)));
+                    if(o!=null) l.add(o);
                 }
                 break;
             }
