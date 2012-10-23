@@ -341,7 +341,7 @@ public class JSON {
     }
 
     /** Remove from list at the given path. */
-    public boolean listPathRemove(String path, String value){
+    public boolean listPathRemove(String path, Object value){
         ensureContent();
         return removeListPath(tophash, path, value);
     }
@@ -941,7 +941,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean removeListPath(LinkedHashMap hashmap, String path, String value){
+    private boolean removeListPath(LinkedHashMap hashmap, String path, Object value){
         LinkedList list=null;
         try{ list = getListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }

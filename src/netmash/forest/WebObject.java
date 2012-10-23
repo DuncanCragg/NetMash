@@ -545,7 +545,7 @@ public class WebObject {
     }
 
     /** Remove the given value in the list at the path. */
-    public void contentListRemove(String path, String val){
+    public void contentListRemove(String path, Object val){
         doCopyOnWrite(path);
         statemod = updatingState.listPathRemove(path, val) || statemod;
     }

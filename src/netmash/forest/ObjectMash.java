@@ -150,7 +150,7 @@ public class ObjectMash extends WebObject {
     }
 
     private boolean scanString(String vs, String pk){
-        if(vs.equals("*")) return true;
+        if(vs.equals("*")) return  contentSet(pk);
         if(vs.equals("#")) return !contentSet(pk);
         if(contentIsOrListContains(pk,vs)) return true;
         if(foundObjectSameOrNot(pk,vs)) return true;
@@ -194,6 +194,13 @@ public class ObjectMash extends WebObject {
                 if(e==null) continue;
                 if(currentRewritePath.equals("%notifying")) notifying(e.toString());
                 else contentSetAdd(currentRewritePath, e);
+            }
+            else
+            if(ll.size()==2 && ll.get(0).equals("has-no")){
+                Object e=findObject(ll.get(1));
+                if(e==null) continue;
+                if(currentRewritePath.equals("%notifying")) unnotifying(e.toString());
+                else contentListRemove(currentRewritePath, e);
             }
             else{
                 Object e=eval(ll);
