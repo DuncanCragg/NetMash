@@ -551,6 +551,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     content("attending", val? "yes": "no");
                 }
                 else
+                if(contentIsOrListContains("is", "land")){
+                    contentBool(dehash(tag), val);
+                }
+                else
                 if(contentIsOrListContains("is", "form")){
                     contentBool("form:"+dehash(tag), val);
                 }
@@ -564,6 +568,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(this==me) setFormValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
+                if(contentIsOrListContains("is", "land")){
+                    contentInt(dehash(tag), val);
+                }
+                else
                 if(contentIsOrListContains("is", "form")){
                     contentInt("form:"+dehash(tag), val);
                 }

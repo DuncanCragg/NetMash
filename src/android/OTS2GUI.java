@@ -386,7 +386,7 @@ public class OTS2GUI {
     // --------------------------------------------------
 
     private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, LinkedHashMap widget){
-        String currentvalue=user.content("private:viewing:"+tag);
+        Object currentvalue=user.contentObject("private:viewing:"+tag);
         if(label!=null){
             if(currentvalue==null) return;
             list.add(hash("style",style("direction","horizontal", "proportions",isLink? "75%": "50%"), "label",label, "#"+tag,currentvalue));
