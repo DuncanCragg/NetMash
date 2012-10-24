@@ -87,7 +87,7 @@ public class User extends WebObject {
               "    \"place\": null, \n"+
               "    \"coords\": [ 0.0, 1.5, 0.0 ], \n"+
               "    \"avatar\": \"http://10.0.2.2:8082/o/uid-7794-3aa8-2192-7a60.json\", \n"+
-              "    \"location\": { \"lat\": 0, \"lon\": 0 }, \n"+
+              "    \"location\": { \"lat\": 54.106037, \"lon\": -1.579163 }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
               "    \"private\": { \n"+
               "        \"viewing\": null, \n"+
