@@ -102,7 +102,14 @@ public class Utils{
 
     static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+    static public String findStringIn(Object o){
+        if(o==null) return null;
+        if(o instanceof String) return (String)o;
+        return o.toString();
+    }
+
     static public boolean findBooleanIn(Object o){
+        if(o==null) return false;
         if(o instanceof Boolean) return (Boolean)o;
         if(o instanceof String){
             String s=(String)o;
@@ -113,6 +120,7 @@ public class Utils{
     }
 
     static public double findNumberIn(Object o){
+        if(o==null) return 0;
         if(o instanceof String){
             Date d = dateFormat.parse((String)o, new ParsePosition(0));
             if(d!=null) return d.getTime();
@@ -121,11 +129,13 @@ public class Utils{
     }
 
     static public double tryDouble(Object o, double d){
+        if(o==null) return d;
         if(o instanceof Number) return ((Number)o).doubleValue();
         try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return d; }
     }
 
     static public Object makeBestObject(String s){
+        if(s==null) return null;
         try{ return Double.parseDouble(s); } catch(NumberFormatException e){}
         if(s.toLowerCase().equals("true" )) return Boolean.valueOf(true);
         if(s.toLowerCase().equals("false")) return Boolean.valueOf(false);
@@ -146,6 +156,7 @@ public class Utils{
     }
 
     static public double sumAll(LinkedList ll){
+        if(ll==null || ll.isEmpty()) return 0;
         double d=0;
         for(Object o: ll) d+=tryDouble(o,0);
         return d;
