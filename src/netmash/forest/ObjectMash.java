@@ -302,7 +302,7 @@ public class ObjectMash extends WebObject {
     }
 
     private LinkedList eitherBindingOrContentList(String path){
-        if(path.startsWith(":")) return bindings.get(path.substring(1));
+        if(path.startsWith(":")) return findListIn(getBinding(path.substring(1)));
         if(path.startsWith("!")) return contentList(currentRewritePath);
         LinkedList ll=contentList(path);
         if(ll!=null) return ll;

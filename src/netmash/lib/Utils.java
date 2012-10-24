@@ -102,6 +102,12 @@ public class Utils{
 
     static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+    static public LinkedList findListIn(Object o){
+        if(o==null) return null;
+        if(o instanceof LinkedList) return (LinkedList)o;
+        return list(o);
+    }
+
     static public String findStringIn(Object o){
         if(o==null) return null;
         if(o instanceof String) return (String)o;
