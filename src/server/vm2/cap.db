@@ -61,7 +61,8 @@
       { "%uid": "new",
         "%rules": [ "uid-e683-5ee2-a986-b93b" ],
         "is": [ "payment" ],
-        "land": "$:view:#land:2"
+        "land": "$:view:#land:2",
+        "payperhectare": 100
       }
   ]
 }
@@ -77,7 +78,7 @@
   "is": [ "payment", "rule" ],
   "when": "land updated with area(s), calculate total area claimable",
   "land": { "list": [ { "area": "*", "usage": "*", "entitlement": "*", "active": true } ] },
-  "payment": [ "=>", "+", "$::land:list:area" ]
+  "payment": [ "=>", [ "+", "$::land:list:area" ], "*", "$:payperhectare" ]
 }
 
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
