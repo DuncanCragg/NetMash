@@ -45,8 +45,8 @@ public class ObjectMash extends WebObject {
         else for(String alerted: alerted()) runRule(r,alerted);
     }
 
-    LinkedHashMap<String,Object>     rewrites=new LinkedHashMap<String,Object>();
-    LinkedHashMap<String,LinkedList> bindings=new LinkedHashMap<String,LinkedList>();
+    LinkedHashMap<String,Object>             rewrites=new LinkedHashMap<String,Object>();
+    LinkedHashMap<String,LinkedList<String>> bindings=new LinkedHashMap<String,LinkedList<String>>();
 
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
@@ -116,7 +116,7 @@ public class ObjectMash extends WebObject {
             if(!ok) rewrites.put(path,rhs);
             return !ok;
         }
-        LinkedList bl=new LinkedList();
+        LinkedList<String> bl=new LinkedList<String>();
         LinkedList ll=contentList(path);
         if(ll==null) return false;
         int i=0;
@@ -124,7 +124,7 @@ public class ObjectMash extends WebObject {
         for(Object v: list){
             for(; i<ll.size(); i++){
                 String pk=String.format("%s:%d",path,i);
-                if(scanType(v,pk)){ bl.add(contentObject(pk)); if(matchEach) break; }
+                if(scanType(v,pk)){ bl.add(pk); if(matchEach) break; }
             }
             if(matchEach){
                 if(i==ll.size()) return false;
@@ -312,8 +312,8 @@ public class ObjectMash extends WebObject {
     @SuppressWarnings("unchecked")
     private Object getBinding(String path){
         String pk=path;
-        LinkedList ll=bindings.get(pk);
-        if(ll!=null) return ll;
+        LinkedList<String> ll=bindings.get(pk);
+        if(ll!=null) return objectsAt(ll,null);
         do{
             int e=pk.lastIndexOf(":");
             if(e== -1) return null;
@@ -321,18 +321,24 @@ public class ObjectMash extends WebObject {
             pk=pk.substring(0,e);
             ll=bindings.get(pk);
             if(ll==null) continue;
+
             int i= -1;
             try{ i=Integer.parseInt(p); }catch(Throwable t){}
-            if(i>=0) return ll.get(i);
-            LinkedList r=new LinkedList();
-            for(Object o: ll){
-                if(o instanceof LinkedHashMap){
-                    Object q=new JSON((LinkedHashMap)o).objectPathN(p);
-                    if(q!=null) r.add(q);
-                }
-            }
-            return r.isEmpty()? null: r;
+            if(i>=0) return contentObject(ll.get(i));
+
+            return objectsAt(ll,p);
+
         }while(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedList objectsAt(LinkedList<String> ll, String p){
+        LinkedList r=new LinkedList();
+        for(String s: ll){
+            Object o=contentObject(s+(p==null? "": ":"+p));
+            if(o!=null) r.add(o);
+        }
+        return r.isEmpty()? null: r;
     }
 
     // ----------------------------------------------------
