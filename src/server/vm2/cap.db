@@ -11,7 +11,7 @@
   "is": [ "gui", "rule" ],
   "when": "form submitted, create application",
   "%alerted": { "is": "form" },
-  "list": [ "=>", "has",
+  "applications": [ [ { "form": "$:%alerted" } ], "!=>", "has",
     { "%uid": "new",
       "%rules": [ "uid-f265-941d-a0b8-ca5d", "uid-1cc7-4c21-9036-4e01" ],
       "is": [ "gui" ],
@@ -56,9 +56,8 @@
   "is": [ "land", "list", "rule" ],
   "when": "land object notified, add to list",
   "%alerted": { "is": "land", "place": "*" },
-  "list": [ [ "has-no", "$:%alerted" ], "=>", "has", "$:%alerted" ]
+  "list": [ [ "$:%alerted" ], "!=>", "has", "$:%alerted" ]
 }
-
 
 { "%uid": "uid-1cc7-4c21-9036-4e01",
   "is": [ "gui", "rule" ],
