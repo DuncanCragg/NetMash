@@ -45,9 +45,21 @@
                     },
         "list": []
       }
-    ],
+    ]
+  }
+}
+
+{ "%uid": "uid-1cc7-4c21-9036-4e01",
+  "is": [ "gui", "rule" ],
+  "when": "application created, create payment object",
+  "view": {
     "#payment": [ "#", "=>", { "is":"style", "direction":"horizontal", "colours":"lightblue", "proportions": "50%" },
-      "Total Area:", 0
+      "Your Payment:",
+      { "%uid": "new",
+        "%rules": [ "uid-e683-5ee2-a986-b93b" ],
+        "is": [ "payment" ],
+        "land": "$:view:#land:2"
+      }
     ]
   }
 }
@@ -59,12 +71,10 @@
   "list": [ [ "$:%alerted" ], "!=>", "has", "$:%alerted" ]
 }
 
-{ "%uid": "uid-1cc7-4c21-9036-4e01",
-  "is": [ "gui", "rule" ],
+{ "%uid": "uid-e683-5ee2-a986-b93b",
+  "is": [ "payment", "rule" ],
   "when": "land updated with area(s), calculate total area claimable",
-  "view": {
-    "#land": [ { "list": [ { "area": "*" } ] } ],
-    "#payment": [ "*", "*", [ "*", "=>", "+", "$:view:#land:2:list:area" ] ]
-  }
+  "land": { "list": [ { "area": "*", "usage": "*", "entitlement": "*", "active": true } ] },
+  "payment": [ "=>", "+", "$:land:list:area" ]
 }
 
