@@ -95,10 +95,6 @@ public class ObjectMash extends WebObject {
             LinkedList ll=contentList(path);
             return ll!=null && ll.size()==(int)d;
         }
-        if(list.size()==2 && list.get(0).equals("has-no")){
-            Object o=findObject(list.get(1));
-            return !contentListContains(path,o);
-        }
         if(list.size() >= 2 && (list.get(0).equals("=>") || list.get(1).equals("=>"))){
             if(list.get(1).equals("=>")){
                 LinkedList rhs=new LinkedList(list.subList(2,list.size()));
@@ -111,6 +107,12 @@ public class ObjectMash extends WebObject {
                 rewrites.put(path,rhs);
                 return true;
             }
+        }
+        if(list.size() >= 3 && list.get(1).equals("!=>")){
+            LinkedList rhs=new LinkedList(list.subList(2,list.size()));
+            boolean ok=scanType(list.get(0),path);
+            if(!ok) rewrites.put(path,rhs);
+            return !ok;
         }
         LinkedList bl=new LinkedList();
         LinkedList ll=contentList(path);
@@ -134,7 +136,7 @@ public class ObjectMash extends WebObject {
 
     private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
-        if(!r && extralogging) log("Failed to match "+v+"\nat: "+pk);
+        if(!r && extralogging) log("Failed to match "+v+" at: "+pk);
         return r;
     }
 
@@ -159,7 +161,7 @@ public class ObjectMash extends WebObject {
     }
 
     private boolean scanNumber(Number vb, String pk){
-        return contentDouble(pk)==vb.doubleValue();
+        return contentDouble(pk)==vb.doubleValue() || contentListContains(pk, vb);
     }
 
     private boolean scanBoolean(Boolean vb, String pk){
