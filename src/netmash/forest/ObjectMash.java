@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 
+import netmash.lib.JSON;
+
 import static netmash.lib.Utils.*;
 
 /** Object Mash Language.
@@ -288,11 +290,13 @@ public class ObjectMash extends WebObject {
     }
 
     private double eitherBindingOrContentDouble(String path){
+        if(path.startsWith(":")) return findNumberIn(getBinding(path.substring(1)));
         if(path.startsWith("!")) return contentDouble(currentRewritePath);
         return contentDouble(path);
     }
 
     private boolean eitherBindingOrContentBool(String path){
+        if(path.startsWith(":")) return findBooleanIn(getBinding(path.substring(1)));
         if(path.startsWith("!")) return contentBool(currentRewritePath);
         return contentBool(path);
     }
@@ -305,12 +309,30 @@ public class ObjectMash extends WebObject {
         return contentAll(path);
     }
 
+    @SuppressWarnings("unchecked")
     private Object getBinding(String path){
-        String[] bits=path.split(":");
-        if(bits.length>2) return null;
-        if(bits.length==1) return bindings.get(path);
-        LinkedList ll=bindings.get(bits[0]);
-        return ll.get(Integer.parseInt(bits[1]));
+        String pk=path;
+        LinkedList ll=bindings.get(pk);
+        if(ll!=null) return ll;
+        do{
+            int e=pk.lastIndexOf(":");
+            if(e== -1) return null;
+            String p=pk.substring(e+1);
+            pk=pk.substring(0,e);
+            ll=bindings.get(pk);
+            if(ll==null) continue;
+            int i= -1;
+            try{ i=Integer.parseInt(p); }catch(Throwable t){}
+            if(i>=0) return ll.get(i);
+            LinkedList r=new LinkedList();
+            for(Object o: ll){
+                if(o instanceof LinkedHashMap){
+                    Object q=new JSON((LinkedHashMap)o).objectPathN(p);
+                    if(q!=null) r.add(q);
+                }
+            }
+            return r.isEmpty()? null: r;
+        }while(true);
     }
 
     // ----------------------------------------------------

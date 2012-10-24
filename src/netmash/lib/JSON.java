@@ -266,6 +266,11 @@ public class JSON {
         return getObjectPath(tophash, path);
     }
 
+    /** Get Object at the given path. No PathOvershot. */
+    public Object objectPathN(String path){
+        try{ return objectPath(path); }catch(PathOvershot po){ return null; }
+    }
+
     /** Set Object at the given path. */
     public boolean objectPath(String path, Object val){
         ensureContent();

@@ -102,6 +102,16 @@ public class Utils{
 
     static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+    static public boolean findBooleanIn(Object o){
+        if(o instanceof Boolean) return (Boolean)o;
+        if(o instanceof String){
+            String s=(String)o;
+            if(s.toLowerCase().equals("true" )) return Boolean.valueOf(true);
+            if(s.toLowerCase().equals("false")) return Boolean.valueOf(false);
+        }
+        return false;
+    }
+
     static public double findNumberIn(Object o){
         if(o instanceof String){
             Date d = dateFormat.parse((String)o, new ParsePosition(0));
