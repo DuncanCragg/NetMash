@@ -135,6 +135,12 @@ public class Utils{
         return x;
     }
 
+    static public double sumAll(LinkedList ll){
+        double d=0;
+        for(Object o: ll) d+=tryDouble(o,0);
+        return d;
+    }
+
     static public String getStringFrom(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);
         if(o==null) return null;

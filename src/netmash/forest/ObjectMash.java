@@ -218,6 +218,7 @@ public class ObjectMash extends WebObject {
         String ll1=findString(ll.get(1));
         if(ll.size()==3 && "-".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
         if(ll.size()==3 && "+".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
+        if(ll.size()==2 && "+".equals(ll0))       return Double.valueOf(sumAll(findList(ll.get(1))));
         if(ll.size()==3 && "×".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
         if(ll.size()==3 && "*".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
         if(ll.size()==3 && "÷".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
@@ -299,7 +300,9 @@ public class ObjectMash extends WebObject {
     private LinkedList eitherBindingOrContentList(String path){
         if(path.startsWith(":")) return bindings.get(path.substring(1));
         if(path.startsWith("!")) return contentList(currentRewritePath);
-        return contentList(path);
+        LinkedList ll=contentList(path);
+        if(ll!=null) return ll;
+        return contentAll(path);
     }
 
     private Object getBinding(String path){
