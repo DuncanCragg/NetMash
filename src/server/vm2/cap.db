@@ -64,7 +64,7 @@
   "when": "land updated with area(s), calculate total area claimable",
   "view": {
     "#land": [ { "list": [ { "area": "*" } ] } ],
-    "#payment": [ "*", "*", [ "*", "=>", "sum", "$:view:#land:2:list:area" ] ]
+    "#payment": [ "*", "*", [ "*", "=>", "+", "$:view:#land:2:list:area" ] ]
   }
 }
 
