@@ -32,7 +32,7 @@ public class User extends WebObject {
 
     // ---------------------------------------------------------
 
-    static public User me=null;
+    static public User currentUser=null;
 
     static public void createUserAndDevice(){
 
@@ -62,18 +62,18 @@ public class User extends WebObject {
         // -----------------------------------------------------
 
         String homeusers=Kernel.config.stringPathN("ots:homeusers");
-        me = new User(homeusers, contact.uid, links.uid, contacts.uid);
+        currentUser = new User(homeusers, contact.uid, links.uid, contacts.uid);
 
-        otslinks.addFirst(me.uid);
+        otslinks.addFirst(currentUser.uid);
 
-        me.funcobs.setCacheNotifyAndSaveConfig(me);
-        me.funcobs.cacheSaveAndEvaluate(contact, true);
-        me.funcobs.cacheSaveAndEvaluate(links);
-        me.funcobs.cacheSaveAndEvaluate(contacts);
-        me.funcobs.cacheSaveAndEvaluate(me, true);
+        currentUser.funcobs.setCacheNotifyAndSaveConfig(currentUser);
+        currentUser.funcobs.cacheSaveAndEvaluate(contact, true);
+        currentUser.funcobs.cacheSaveAndEvaluate(links);
+        currentUser.funcobs.cacheSaveAndEvaluate(contacts);
+        currentUser.funcobs.cacheSaveAndEvaluate(currentUser, true);
 
-        if(homeusers!=null) me.notifying(list(homeusers));
-        NetMash.top.onUserReady(me);
+        if(homeusers!=null) currentUser.notifying(list(homeusers));
+        NetMash.top.onUserReady(currentUser);
     }
 
     public User(String jsonstring){ super(jsonstring); }
@@ -101,7 +101,7 @@ public class User extends WebObject {
               "}");
     }
 
-    public User(){ if(me==null){ me=this; if(NetMash.top!=null) NetMash.top.onUserReady(me); } }
+    public User(){ if(currentUser==null){ currentUser=this; if(NetMash.top!=null) NetMash.top.onUserReady(currentUser); } }
 
     static User newForm(String guiuid, String useruid){
         return new User("{ \"is\": \"form\",\n"+
@@ -517,7 +517,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     public void setFormVal(final String guiuid, final String tag, final String val){
-        if(this==me) setFormValOnObjectUpdating(guiuid, tag, val);
+        if(this==currentUser) setFormValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentListContainsAll("is", list("editable", "rule"))){
@@ -544,7 +544,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     public void setFormVal(final String guiuid, final String tag, final boolean val){
-        if(this==me) setFormValOnObjectUpdating(guiuid, tag, val);
+        if(this==currentUser) setFormValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "rsvp")){
@@ -565,7 +565,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     public void setFormVal(final String guiuid, final String tag, final int val){
-        if(this==me) setFormValOnObjectUpdating(guiuid, tag, val);
+        if(this==currentUser) setFormValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "land")){
@@ -608,7 +608,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     // ---------------------------------------------------------
 
     public void evaluate(){
-        if(contentIs("is", "user") && this==me){
+        if(contentIs("is", "user") && this==currentUser){
             showWhatIAmViewing();
         }
         else
@@ -620,7 +620,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else
         if(contentListContainsAll("is", list("document", "query"))){
-            for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
+            firstAlertedResponseSubscribeForUserFIXMEAndJumpUser();
         }
         else
         if(contentIsOrListContains("is", "land")){
@@ -634,9 +634,17 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else
         if(contentIs("is", "form")){
-            for(String alertedUid: alerted()){ me.jumpToUID(alertedUid); return; }
+            firstAlertedResponseSubscribeForUserFIXMEAndJumpUser();
         }
         else log("no evaluate: "+this);
+    }
+
+    private void firstAlertedResponseSubscribeForUserFIXMEAndJumpUser(){
+        for(String alertedUid: alerted()){
+            content("response",alertedUid);
+            if(contentSet("response:is")) currentUser.jumpToUID(alertedUid);
+        }
+        refreshObserves();
     }
 
     private void showWhatIAmViewing(){
