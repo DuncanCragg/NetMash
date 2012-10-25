@@ -1159,6 +1159,7 @@ public class JSON {
     private String listToString(LinkedList ll, int indent, int maxlength, boolean sonn){
         if(ll==null)  return "null";
         if(ll.size()==0) return "[ ]";
+        if(ll.size()==1 && sonn) return objectToString(ll.get(0), indent, maxlength, sonn);
         boolean structured=false;
         if(maxlength==0){
             int i=0;

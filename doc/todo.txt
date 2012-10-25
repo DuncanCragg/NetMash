@@ -37,6 +37,7 @@ Performance, Bugs
  - can't allow edit of remote land
  - don't fetch remote if it's yours anyway
  - don't need editable/rule if it's your own object!
+ - check JSON structure/string cacheing/rebuilding
 ---------------------------------------------------------
  - wrong object detected on tablet
  - light lags massively
