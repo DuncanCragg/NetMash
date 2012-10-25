@@ -3,7 +3,7 @@
   "%rules": [ "uid-c265-091b-418c-c329" ],
   "is": [ "gui" ],
   "title": "CAP Payments Demo",
-  "view": { "#start": { "input": "button", "label": "Apply for farming support" }
+  "view": { "start": { "input": "button", "label": "Apply for farming support" }
   }
 }
 
@@ -18,8 +18,8 @@
       "title": "CAP application",
       "form": "$:%alerted",
       "view": {
-        "#title": "CAP Application",
-        "#user": [ "style", "You:", "$:%alerted:user" ]
+        "title": "CAP Application",
+        "user": [ "style", "You:", "$:%alerted:user" ]
       }
     }
   ]
@@ -30,7 +30,7 @@
   "when": "application created, create land list",
   "%notifying": [ "=>", "has", "$:form" ],
   "view": {
-    "#land": [ "#", "=>", "style", "Your Land:",
+    "land": [ "#", "=>", "style", "Your Land:",
       { "%uid": "new",
         "%rules": [ "uid-0215-038b-7558-041a" ],
         "is": [ "updatable", "land", "list" ],
@@ -54,13 +54,13 @@
   "is": [ "gui", "rule" ],
   "when": "application created, create payment object",
   "view": {
-    "#cash": [ "#", "=>", "style", "Your Estimated Payment:", 0 ]
+    "cash": [ "#", "=>", "style", "Your Estimated Payment:", 0 ]
   },
   "payment": [ "#", "=>",
       { "%uid": "new",
         "%rules": [ "uid-e683-5ee2-a986-b93b", "uid-d958-bf42-c730-8406", "uid-73ec-5ea1-9cf0-dfa5" ],
         "is": [ "payment" ],
-        "land": "$:view:#land:2",
+        "land": "$:view:land:2",
         "payment-per-ha": 100,
         "minimum-payout": 200,
         "maximum-payout": 300000
@@ -72,9 +72,9 @@
   "is": [ "gui", "rule" ],
   "when": "gui built, set up its styles",
   "view": { "style": [ "#", "=>", { "is": "style", "colours":"lightgreen" } ],
-            "#user": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%", "options":"jump" } ] ],
-            "#land": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%", "options":"jump" } ] ],
-            "#cash": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ]
+            "user": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%", "options":"jump" } ] ],
+            "land": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%", "options":"jump" } ] ],
+            "cash": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ]
   }
 }
 
@@ -107,6 +107,6 @@
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
   "is": [ "gui", "rule" ],
   "when": "payment updates, show it",
-  "view": { "#cash": [ "*", "*", [ "=>", "$:payment:payment" ] ] }
+  "view": { "cash": [ "*", "*", [ "=>", "$:payment:payment" ] ] }
 }
 
