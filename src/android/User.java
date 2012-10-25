@@ -669,6 +669,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             LinkedHashMap meshhash=null;
             String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
+            if(contentIsOrListContains("private:viewing:is", "rule")){
+                content("private:viewas","raw");
+                showWhatIAmViewingAsRawJSON();
+                return;
+            }
+            else
             if(contentListContainsAll("private:viewing:is", list("user", "list"))){
                 viewhash=ots2gui.contactList2GUI("contact:");
             }
