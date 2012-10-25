@@ -154,9 +154,9 @@
   "title": "Local Calculator GUI",
   "view": {
       "#panel": [
-        { "#sum": "?[false /boolean;product|sum/ ]?" },
-        { "#a":   "?[0 /string/]?" },
-        { "#b":   "?[0 /string/]?" },
+        { "#f": { "input": "chooser",   "label": "Function", "range": [ "product", "sum", "diff", "division" ] } },
+        { "#a": { "input": "textfield", "label": "A", "value": "0" } },
+        { "#b": { "input": "textfield", "label": "B", "value": "0" } },
       ],
       "#result": { "#r": "0" }
   }
@@ -164,14 +164,19 @@
 
 { "%uid": "uid-58cb-cc31-1769-c2c4",
   "is": [ "gui", "rule" ],
-  "when": "form changes, do sum or product",
+  "when": "form changes, do calculation",
   "%alerted": { "is": "form" },
+  "form": [ "=>", "$:%alerted" ],
   "view": {
       "#panel": [
-        { "#sum": [ "=>", "format", "?[%s /boolean;product|sum/ ]?", "$:%alerted:form:sum" ] },
-        { "#a":   [ "=>", "format", "?[%s /string/]?",               "$:%alerted:form:a" ] },
-        { "#b":   [ "=>", "format", "?[%s /string/]?",               "$:%alerted:form:b" ] },
+        { "#f": { "value": [ "=>", "$:%alerted:form:f" ] } },
+        { "#a": { "value": [ "=>", "$:%alerted:form:a" ] } },
+        { "#b": { "value": [ "=>", "$:%alerted:form:b" ] } },
       ],
-      "#result": { "#r": [ "=>", "$:%alerted:form:a", [ "$:%alerted:form:sum", "chooses", "+", "*" ], "$:%alerted:form:b" ] } }
+      "#result":{ "#r":[ "=>", "$:%alerted:form:a",
+                             [ "$:%alerted:form:f", "chooses", { "product":"*", "sum":"+", "diff":"-", "division":"/" } ],
+                               "$:%alerted:form:b" ]
+      }
+  }
 }
 

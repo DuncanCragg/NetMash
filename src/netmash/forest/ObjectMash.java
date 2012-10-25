@@ -230,6 +230,7 @@ public class ObjectMash extends WebObject {
         if(ll.size()==4 && "clamp".equals(ll0))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
         if(ll.size()==3 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findObject(ll.get(2)));
         if(ll.size()==4 && "chooses".equals(ll1)) return findBoolean(ll.get(0))? copyFindObject(ll.get(2)): copyFindObject(ll.get(3));
+        if(ll.size()==3 && "chooses".equals(ll1)) return copyFindObject(findHash(ll.get(2)).get(findObject(ll.get(0))));
         return copyObject(ll);
     }catch(Throwable t){ t.printStackTrace(); return ll; } }
 
@@ -247,9 +248,9 @@ public class ObjectMash extends WebObject {
     }
 
     private String findString(Object o){
-        if(o==null) return null;
+        if(o==null) return "";
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentString(((String)o).substring(2));
-        if(o instanceof LinkedList) return eval((LinkedList)o).toString();
+        if(o instanceof LinkedList){ Object r=eval((LinkedList)o); return r==null? "": r.toString(); }
         return o.toString();
     }
 
@@ -268,11 +269,17 @@ public class ObjectMash extends WebObject {
         return false;
     }
 
+    private LinkedHashMap findHash(Object o){
+        if(o==null) return new LinkedHashMap();
+        if(o instanceof LinkedHashMap) return (LinkedHashMap)o;
+        return new LinkedHashMap();
+    }
+
     private LinkedList findList(Object o){
-        if(o==null) return null;
+        if(o==null) return new LinkedList();
         if(o instanceof LinkedList) return (LinkedList)o;
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentList(((String)o).substring(2));
-        return null;
+        return new LinkedList();
     }
 
     private Object eitherBindingOrContentObject(String path){
@@ -345,6 +352,7 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     public Object copyObject(Object o){
+        if(o==null) return null;
         if(o instanceof String)  return findObject(o); // !!
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
