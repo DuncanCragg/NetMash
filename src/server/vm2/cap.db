@@ -13,16 +13,13 @@
   "%alerted": { "is": "form" },
   "applications": [ [ { "form": "$:%alerted" } ], "!=>", "has",
     { "%uid": "new",
-      "%rules": [ "uid-f265-941d-a0b8-ca5d", "uid-1cc7-4c21-9036-4e01", "uid-9ce9-1bdd-ec05-c8fa" ],
+      "%rules": [ "uid-f265-941d-a0b8-ca5d", "uid-1cc7-4c21-9036-4e01", "uid-872c-b29e-03a1-7b61", "uid-9ce9-1bdd-ec05-c8fa" ],
       "is": [ "gui" ],
       "title": "CAP application",
       "form": "$:%alerted",
       "view": {
-        "style": { "is": "style", "colours":"lightgreen" },
         "#title": "CAP Application",
-        "#user": [ { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
-          "You:", "$:%alerted:user"
-        ]
+        "#user": [ "style", "You:", "$:%alerted:user" ]
       }
     }
   ]
@@ -33,14 +30,13 @@
   "when": "application created, create land list",
   "%notifying": [ "=>", "has", "$:form" ],
   "view": {
-    "#land": [ "#", "=>", { "is": "style", "direction": "horizontal", "options": "jump", "proportions": "75%" },
-      "Your Land:",
+    "#land": [ "#", "=>", "style", "Your Land:",
       { "%uid": "new",
         "%rules": [ "uid-0215-038b-7558-041a" ],
         "is": [ "updatable", "land", "list" ],
         "template": { "is": "land",
                       "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
-                                            "Annex I Products (CN-Coded / CN-chapter 22)",
+                                            "Annex I Products",
                                             "Maintaining for grazing/cultivation",
                                             "Permanent Grassland", "Permanent Crops",
                                             "Nurseries", "Short-Rotation Coppice", "Fallow"
@@ -58,9 +54,7 @@
   "is": [ "gui", "rule" ],
   "when": "application created, create payment object",
   "view": {
-    "#payment": [ "#", "=>", { "is":"style", "direction":"horizontal", "colours":"lightblue", "proportions": "50%" },
-      "Your Estimated Payment:", 0
-    ]
+    "#cash": [ "#", "=>", "style", "Your Estimated Payment:", 0 ]
   },
   "payment": [ "#", "=>",
       { "%uid": "new",
@@ -72,6 +66,16 @@
         "maximum-payout": 300000
       }
   ]
+}
+
+{ "%uid": "uid-872c-b29e-03a1-7b61",
+  "is": [ "gui", "rule" ],
+  "when": "gui built, set up its styles",
+  "view": { "style": [ "#", "=>", { "is": "style", "colours":"lightgreen" } ],
+            "#user": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%", "options":"jump" } ] ],
+            "#land": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%", "options":"jump" } ] ],
+            "#cash": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ]
+  }
 }
 
 { "%uid": "uid-0215-038b-7558-041a",
@@ -103,6 +107,6 @@
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
   "is": [ "gui", "rule" ],
   "when": "payment updates, show it",
-  "view": { "#payment": [ "*", "*", [ "=>", "$:payment:payment" ] ] }
+  "view": { "#cash": [ "*", "*", [ "=>", "$:payment:payment" ] ] }
 }
 
