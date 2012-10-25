@@ -488,8 +488,26 @@ public class OTS2GUI {
 
     public LinkedHashMap guifyHash(String path, LinkedHashMap<String,Object> hm, String objuid, boolean editable){
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
-        hm2.put("json", new JSON(hm).toString(true));
+        hm2.put("json", toStrings(new JSON(hm)));
         return hm2;
+    }
+
+    @SuppressWarnings("unchecked")
+    public LinkedList toStrings(JSON json){
+        String[] lines=json.toString(true).split("\n");
+        LinkedList r=new LinkedList();
+        r.add(style("direction","vertical", "colours","lightyellow*", "borders","none"));
+        for(String line: lines){
+            if(line.indexOf(" uid-")== -1 && line.indexOf(" http://")== -1) r.add(line);
+            else{
+                LinkedList h=new LinkedList();
+                h.add(style("direction","horizontal", "colours","lightyellow*", "borders","none"));
+                String[] bits=line.replaceAll(" ((uid-|http://)[^ ]+)"," \n$1\n").split("\n");
+                for(String bit: bits) h.add(bit);
+                r.add(h);
+            }
+        }
+        return r;
     }
 
     public LinkedHashMap guifyHash2(String path, LinkedHashMap<String,Object> hm, String objuid, boolean editable){

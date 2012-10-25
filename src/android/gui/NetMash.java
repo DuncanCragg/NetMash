@@ -226,7 +226,7 @@ log(show? "show keyboard": "hide keyboard");
 
         setContentView(R.layout.main);
         layout = (RelativeLayout)findViewById(R.id.Layout);
-        layout.setBackgroundColor(0xffffffdd);
+        layout.setBackgroundColor(0xffffffee);
     }
 
     //---------------------------------------------------------
@@ -385,6 +385,7 @@ log(show? "show keyboard": "hide keyboard");
         float dimn=0;
         float height=0;
         float width=0;
+        boolean borderless=false;
         int i=0;
         for(String tag: hm.keySet()){ Object o=hm.get(tag);
             if(o instanceof LinkedHashMap && "style".equals(((LinkedHashMap)o).get("is"))){
@@ -397,6 +398,8 @@ log(show? "show keyboard": "hide keyboard");
                     if(styletag.equals("width")) width=parseFirstInt(style.get(styletag));
                     else
                     if(styletag.equals("proportions")) dim0=parseFirstInt(style.get(styletag));
+                    else
+                    if(styletag.equals("borders")) borderless=style.get(styletag).equals("none");
                 }
                 continue;
             }
@@ -410,7 +413,7 @@ log(show? "show keyboard": "hide keyboard");
             if(o instanceof LinkedHashMap && "style".equals(((LinkedHashMap)o).get("is"))) continue;
             if(tag.equals("render")) continue;
             if(tag.equals("options")) continue;
-            addToLayout(layout, tag, o, selectColour(colours,i), i==0? dim0: dimn, width, height);
+            addToLayout(layout, tag, o, selectColour(colours,i), borderless, i==0? dim0: dimn, width, height);
             i++;
         }
     }
@@ -421,6 +424,7 @@ log(show? "show keyboard": "hide keyboard");
         float dimn=0;
         float height=0;
         float width=0;
+        boolean borderless=false;
         int i=0;
         for(Object o: ll){
             if(o instanceof LinkedHashMap && "style".equals(((LinkedHashMap)o).get("is"))){
@@ -433,6 +437,8 @@ log(show? "show keyboard": "hide keyboard");
                     if(styletag.equals("width")) width=parseFirstInt(style.get(styletag));
                     else
                     if(styletag.equals("proportions")) dim0=parseFirstInt(style.get(styletag));
+                    else
+                    if(styletag.equals("borders")) borderless=style.get(styletag).equals("none");
                 }
                 continue;
             }
@@ -452,12 +458,12 @@ log(show? "show keyboard": "hide keyboard");
                 if(s.startsWith("render:")) continue;
                 if(s.startsWith("options:")) continue;
             }
-            addToLayout(layout, null, o, selectColour(colours,i), i==0? dim0: dimn, height, width);
+            addToLayout(layout, null, o, selectColour(colours,i), borderless, i==0? dim0: dimn, height, width);
             i++;
         }
     }
 
-    private void addToLayout(LinearLayout layout, String tag, Object o, int colour, float prop, float height, float width){
+    private void addToLayout(LinearLayout layout, String tag, Object o, int colour, boolean borderless, float prop, float height, float width){
         if(o==null) return;
         if(isMapList(o)){
             addAView(layout, createMapView(o), prop, height, width);
@@ -496,7 +502,7 @@ log(show? "show keyboard": "hide keyboard");
             View v= isUID?       createUIDView(s):
                    (isImage?     createImageView(s):
                    (isWebURL?    createWebLinkView(s):
-                                 createTextView(s, colour)));
+                                 createTextView(s, colour, borderless)));
             addAView(layout, v, prop, height, width);
         }
     }
@@ -573,7 +579,7 @@ log(show? "show keyboard": "hide keyboard");
         else
         if("chooser".equals(type))   view=createFormSpinnerView(tag, label, range, value);
         else
-                                     view=createTextView(label+": "+value,colour);
+                                     view=createTextView(label+": "+value,colour,false);
         return view;
      //         view=createFormRadioView( tag, label, types[1].split("\\|", -1));
      //         view=createFormToggleView(tag, label, types[1].split("\\|", -1));
@@ -639,7 +645,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private View createFormSpinnerView(final String tag, final String label, Object choices, Object value){
-        if(choices==null || !(choices instanceof LinkedList)) return createTextView(label+": "+value,0);
+        if(choices==null || !(choices instanceof LinkedList)) return createTextView(label+": "+value,0,false);
         LinkedList<String> choiceslist;
         if(value==null){
             choiceslist=(LinkedList<String>)((LinkedList<String>)choices).clone();
@@ -715,10 +721,11 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private TextView createTextView(String s, int colour){
+    private TextView createTextView(String s, int colour, boolean borderless){
         final TextView view;
-        if(colour!=0){ view=new BorderedTextView(this, colour); }
-        else{          view=new BoxTextView(this,R.drawable.box); }
+        if(colour!=0){ if(borderless) view=new BorderlessTextView(this, colour);
+                       else           view=new BorderedTextView(this, colour);
+        } else                        view=new BoxTextView(this,R.drawable.box);
         if(s.startsWith("![") && s.endsWith("]!")){
             view.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
             s=s.substring(2,s.length()-2);
@@ -943,6 +950,7 @@ log(show? "show keyboard": "hide keyboard");
         m.put("lightyellow",   0xffffffee); m.put("lightyellow*",   0xffffffee);
         m.put("lightmauve",    0xffffeeff); m.put("lightmauve*",    0xffffeeff);
         m.put("lightturquoise",0xffeeffff); m.put("lightturquoise*",0xffeeffff);
+        m.put("androidorange", 0xffff9900); m.put("androidorange*", 0xffff9900);
         COLOURMAP=Collections.unmodifiableMap(m);
     }
     private int selectColour(String[] colours, int i){
@@ -995,6 +1003,14 @@ log(show? "show keyboard": "hide keyboard");
         java.lang.System.setProperty("java.net.preferIPv4Stack",     "true");
         java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
     }
+
+class BorderlessTextView extends TextView {
+    public BorderlessTextView(Context context, int colour){
+        super(context);
+        setBackgroundColor(colour);
+        setPadding(0,0,0,0);
+    }
+}
 
 class BorderedTextView extends TextView {
     Paint paint = new Paint();

@@ -425,7 +425,7 @@ public class JSON {
     /** Format this JSON: in Simple Object Network Notation (SONN/sonn). */
     public String toString(boolean b){
         ensureContent();
-        return hashToString(tophash,2,0,true);
+        return hashToString(tophash,4,0,true);
     }
 
     //----------------------------------

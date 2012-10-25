@@ -34,6 +34,7 @@
       { "%uid": "new",
         "%rules": [ "uid-0215-038b-7558-041a" ],
         "is": [ "updatable", "land", "list" ],
+        "list": [],
         "template": { "is": "land",
                       "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
                                             "Annex I Products",
@@ -43,8 +44,7 @@
                       ] },
                       "entitlement": { "input": "textfield", "label": "Entitlement Ref:" },
                       "active":      { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
-                    },
-        "list": []
+                    }
       }
     ]
   }
