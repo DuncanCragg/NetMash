@@ -23,6 +23,7 @@ public class TestJSON {
         {
 
         String funkychars = JSON.replaceEscapableChars("\"quote\" 'quote' ")+"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3";
+        String funkycharsout="\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3";
 
         JSON m=new JSON(
             " \t\n \n { \"kernel\": { \"modules\": {              \"cache\": \"netmash.cache.JSONCache\",\n"+
@@ -30,7 +31,7 @@ public class TestJSON {
             "                                            \"logic\": \"netmash.drivers.TestDriver\" } },\n"+
             "                   \"modules\":  { \"cache\": { \"funky\": \""+funkychars+"\"},\n"+
             "                                 \"http\": { \"port\": 8080 },\n"+
-            "                                 \"logic\": [ true, false, null, true, false, null ],\n"+
+            "                                 \"logic\": [ true, false, null, true, false, null, \"stringnospaces\", \" string with  spaces \" ],\n"+
             "                                 \"more\": [ true, 35392743408672770, -2147483649, 2147483648, -2147483648, 2147483647, null, true, false, null ] \n"+
             "                   }\n"+
             "      }\n");
@@ -41,9 +42,10 @@ public class TestJSON {
         m=new JSON(m.toString("\"extra\": 33, "));
         System.out.println(m);
         System.out.println(m.toString(33));
+        System.out.println(m.toString(true));
 
         String funky = m.stringPath("modules:cache:funky");
-        assert funky.equals("\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3"): "funky should be [\"quote\" 'quote' \\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
+        assert funky.equals(funkycharsout): "funky should be [\"quote\" 'quote' \\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
 
         String portstr = m.stringPath("modules:http:port");
         assert portstr==null: "port should be null, but it's "+portstr;
@@ -69,7 +71,7 @@ public class TestJSON {
         assert port==8081: "port should be 8081, but it's "+port;
 
         boolean log = m.boolPath("network:log");
-        assert log: "log should be true, but it's false";
+        assert !log: "log should be true, but it's false";
 
         int threadpool = m.intPath("kernel:threadpool");
         assert threadpool == 33: "kernel:threadpool should be 33, but it's "+ threadpool;

@@ -422,6 +422,12 @@ public class JSON {
         return "{ "+prepend.trim()+" "+new String(chars).substring(2);
     }
 
+    /** Format this JSON: in Simple Object Network Notation (SONN/sonn). */
+    public String toString(boolean b){
+        ensureContent();
+        return hashToString(tophash,2,0,true);
+    }
+
     //----------------------------------
     //----------------------------------
 
@@ -1108,23 +1114,30 @@ public class JSON {
     private void ensureChars(int maxlength){
         StringBuilder buf = new StringBuilder();
         if(tophash!=null){
-            buf.append(hashToString(tophash,2,maxlength));
+            buf.append(hashToString(tophash,2,maxlength,false));
         }
         chars = new String(buf).toCharArray();
         chp=0;
     }
 
-    private String objectToString(Object o, int indent, int maxlength){
+    private String objectToString(Object o, int indent, int maxlength, boolean sonn){
         if(o==null) return "null";
-        if(o instanceof String)        return "\""+replaceEscapableChars((String)o)+"\"";
-        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength);
-        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength);
+        if(o instanceof String)        return stringToString((String)o, sonn);
+        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength, sonn);
+        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength, sonn);
         return o.toString();
     }
 
-    private String hashToString(LinkedHashMap hm, int indent, int maxlength){
+    private String stringToString(String s, boolean sonn){
+        String r=replaceEscapableChars(s);
+        if(!sonn || r.indexOf(" ")!= -1) return "\""+r+"\"";
+        else return r;
+    }
+
+    private String hashToString(LinkedHashMap hm, int indent, int maxlength, boolean sonn){
         if(hm==null) return "null";
         if(hm.size()==0) return "{ }";
+        String quote=(sonn?"":"\"");
         boolean structured=(maxlength==0);
         StringBuilder buf=new StringBuilder();
         buf.append(structured? "{\n": "{ ");
@@ -1133,17 +1146,17 @@ public class JSON {
             String tag = (String)it.next();
             Object val = hm.get(tag);
             if(structured){
-                if(i==0) buf.append(      indentation(indent));
-                else     buf.append(",\n"+indentation(indent));
-            } else buf.append(i==0? " ": ", ");
-            buf.append("\""+tag+"\": "+objectToString(val, indent, maxlength));
+                if(i==0) buf.append(                  indentation(indent));
+                else     buf.append((sonn?"\n":",\n")+indentation(indent));
+            } else buf.append(i==0||sonn? " ": ", ");
+            buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, sonn));
         }
         if(structured) buf.append("\n"+indentation(indent-2)+"}");
         else           buf.append("}");
         return buf.toString();
     }
 
-    private String listToString(LinkedList ll, int indent, int maxlength){
+    private String listToString(LinkedList ll, int indent, int maxlength, boolean sonn){
         if(ll==null)  return "null";
         if(ll.size()==0) return "[ ]";
         boolean structured=false;
@@ -1164,16 +1177,18 @@ public class JSON {
         int i=0;
         for(Object val: ll){
             if(structured){
-                if(i==0) buf.append(      indentation(indent));
-                else     buf.append(",\n"+indentation(indent));
-            } else buf.append(i==0? " ": ", ");
-            buf.append(objectToString(val, indent, maxlength));
+                if(i==0) buf.append(                  indentation(indent));
+                else     buf.append((sonn?"\n":",\n")+indentation(indent));
+            } else buf.append((i==0||sonn)? " ": ", ");
+            buf.append(objectToString(val, indent, maxlength, sonn));
             i++;
         }
         if(structured) buf.append("\n"+indentation(indent-2)+" ]");
         else           buf.append(" ]");
         return buf.toString();
     }
+
+    // -----------------------------
 
     static private Number toNumber(Object o){
         if(o instanceof Number) return (Number)o;
