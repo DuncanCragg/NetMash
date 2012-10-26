@@ -20,8 +20,8 @@ import static netmash.lib.Utils.*;
 
 public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterface.OnClickListener {
 
+        private String mapUID=null;
         private String jumpUID;
-        private boolean updatable=false;
 
         static public class Item extends OverlayItem{
             String jumpUID;
@@ -34,11 +34,11 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
         private ArrayList<Item> overlayitems = new ArrayList<Item>();
         private NetMash netmash;
 
-        public NetMashMapOverlay(Drawable defaultMarker, NetMash netmash, boolean updatable){
+        public NetMashMapOverlay(Drawable defaultMarker, NetMash netmash, String mapUID){
             super(boundCenterBottom(defaultMarker));
             populate();
             this.netmash = netmash;
-            this.updatable = updatable;
+            this.mapUID = mapUID;
         }
 
         public void addItem(Item item){
@@ -73,7 +73,7 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
         public boolean onTap(GeoPoint p, MapView map){
             if(super.onTap(p,map)) return true;
             if(multimove) return false;
-            if(p!=null){ if(updatable) netmash.user.onMoved(p); return true; }
+            if(p!=null){ if(mapUID!=null) netmash.user.setUpdateVal(mapUID, p); return true; }
             return false;
         }
 

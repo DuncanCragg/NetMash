@@ -590,7 +590,7 @@ log(show? "show keyboard": "hide keyboard");
     private View createFormButtonView(final String tag, String label){
         Button view=new Button(this);
         view.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){ user.setFormVal(viewUID, tag, true); }
+            public void onClick(View v){ user.setUpdateVal(viewUID, tag, true); }
         });
         user.prepareResponse(viewUID);
         view.setText(label);
@@ -610,7 +610,7 @@ log(show? "show keyboard": "hide keyboard");
             public boolean onKey(View v, int keyCode, KeyEvent event){
                 if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
                     ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                    user.setFormVal(viewUID, tag, ((EditText)v).getText().toString());
+                    user.setUpdateVal(viewUID, tag, ((EditText)v).getText().toString());
                     return true;
                 }
                 return false;
@@ -633,7 +633,7 @@ log(show? "show keyboard": "hide keyboard");
             if(choice.length()==0) continue;
             RadioButton v = new RadioButton(this);
             v.setOnClickListener(new OnClickListener(){
-                public void onClick(View v){ user.setFormVal(viewUID, tag, ((RadioButton)v).getText().toString()); }
+                public void onClick(View v){ user.setUpdateVal(viewUID, tag, ((RadioButton)v).getText().toString()); }
             });
             v.setText(choice);
             v.setTextSize(20);
@@ -657,7 +657,7 @@ log(show? "show keyboard": "hide keyboard");
         view.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
                 String val=parent.getItemAtPosition(pos).toString();
-                if(!val.equals(label)) user.setFormVal(viewUID, tag, val);
+                if(!val.equals(label)) user.setUpdateVal(viewUID, tag, val);
             }
             public void onNothingSelected(AdapterView parent){}
         });
@@ -679,7 +679,7 @@ log(show? "show keyboard": "hide keyboard");
     private View createFormCheckView(final String tag, Object value){
         CheckBox view = new CheckBox(this);
         view.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){ user.setFormVal(viewUID, tag, ((CheckBox)v).isChecked()); }
+            public void onClick(View v){ user.setUpdateVal(viewUID, tag, ((CheckBox)v).isChecked()); }
         });
         user.prepareResponse(viewUID);
         view.setChecked(value!=null && (value instanceof Boolean) && ((Boolean)value));
@@ -692,7 +692,7 @@ log(show? "show keyboard": "hide keyboard");
         if(choices.length!=2) return null;
         ToggleButton view = new ToggleButton(this);
         view.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){ user.setFormVal(viewUID, tag, ((ToggleButton)v).isChecked()); }
+            public void onClick(View v){ user.setUpdateVal(viewUID, tag, ((ToggleButton)v).isChecked()); }
         });
         boolean on="true".equals(label);
         user.prepareResponse(viewUID);
@@ -708,7 +708,7 @@ log(show? "show keyboard": "hide keyboard");
     private View createFormRatingView(final String tag, String label, String[] choices){
         RatingBar view = new RatingBar(this);
         view.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
-            public void onRatingChanged(RatingBar b, float r, boolean f){ user.setFormVal(viewUID, tag, (int)r); }
+            public void onRatingChanged(RatingBar b, float r, boolean f){ user.setUpdateVal(viewUID, tag, (int)r); }
         });
         int numchoices=5;
         if(choices!=null && choices.length!=0){
@@ -760,6 +760,7 @@ log(show? "show keyboard": "hide keyboard");
             mapview.setClickable(true);
             mapview.setBuiltInZoomControls(true);
             mapview.displayZoomControls(true);
+            mapview.getZoomButtonsController().setAutoDismissed(false);
         }
         Drawable drawable = getResources().getDrawable(R.drawable.mappinlogo);
         NetMashMapOverlay itemizedoverlay=null;
@@ -774,13 +775,13 @@ log(show? "show keyboard": "hide keyboard");
             if(s.startsWith("layerkey:")){
                 itemizedoverlay = layers.get(s);
                 if(itemizedoverlay==null){
-                    itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable);
+                    itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable? viewUID: null);
                     layers.put(s, itemizedoverlay);
                 }
                 continue;
             }
         }
-        if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable);
+        if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable? viewUID: null);
         itemizedoverlay.clear();
         int minlat=Integer.MAX_VALUE, maxlat=Integer.MIN_VALUE;
         int minlon=Integer.MAX_VALUE, maxlon=Integer.MIN_VALUE;

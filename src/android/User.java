@@ -260,8 +260,6 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    public void onMoved(GeoPoint p){ log("xxxxxxxxx "+p); } // 54107945,-1583797 / 1e6
-
     private float px=0,py=0,pz=0;
     public void onNewCoords(final float x, final float y, final float z){
         float dx=x-px, dy=y-py, dz=z-pz;
@@ -583,6 +581,26 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 refreshObserves();
             }
         };
+    }
+
+    public void setUpdateVal(final String guiuid, final GeoPoint val){
+        if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, val);
+        else new Evaluator(this){
+            public void evaluate(){ logrule();
+                if(contentIsOrListContains("is", "land")){
+                    contentDouble("location:lat", val.getLatitudeE6()/1e6);
+                    contentDouble("location:lon", val.getLongitudeE6()/1e6);
+                }
+                notifying(guiuid);
+                refreshObserves();
+            }
+        };
+    }
+
+    private void setUpdateValOnObjectUpdating(String guiuid, GeoPoint val){
+        User o=getObjectUpdating(guiuid);
+        if(o==null) return;
+        o.setUpdateVal(guiuid,val);
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, String val){
