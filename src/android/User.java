@@ -485,7 +485,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             formuid=UID.toUID(guiuid);
         }
         if(formuid==null) return null;
-        return (User)onlyUseThisToHandControlOfThreadToDependent(formuid);
+        Object o=onlyUseThisToHandControlOfThreadToDependent(formuid);
+        if(o instanceof User) return (User)o;
+        log("Not a User: "+formuid+" "+o);
+        return null;
     }
 
     public String getFormStringVal(final String guiuid, final String tag){
