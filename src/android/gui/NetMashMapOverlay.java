@@ -16,9 +16,12 @@ import android.widget.*;
 
 import com.google.android.maps.*;
 
+import static netmash.lib.Utils.*;
+
 public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterface.OnClickListener {
 
         private String jumpUID;
+        private boolean updatable=false;
 
         static public class Item extends OverlayItem{
             String jumpUID;
@@ -31,10 +34,11 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
         private ArrayList<Item> overlayitems = new ArrayList<Item>();
         private NetMash netmash;
 
-        public NetMashMapOverlay(Drawable defaultMarker, NetMash netmash){
+        public NetMashMapOverlay(Drawable defaultMarker, NetMash netmash, boolean updatable){
             super(boundCenterBottom(defaultMarker));
             populate();
             this.netmash = netmash;
+            this.updatable = updatable;
         }
 
         public void addItem(Item item){
@@ -48,7 +52,7 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
         }
 
         @Override
-        protected boolean onTap(int index) {
+        protected boolean onTap(int index){
             Item item = overlayitems.get(index);
             jumpUID=item.jumpUID;
             AlertDialog.Builder dialog = new AlertDialog.Builder(netmash);
@@ -61,6 +65,24 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
             dialog.setItems(choices, this);
             dialog.show();
             return true;
+        }
+
+        private boolean multimove=false;
+
+        @Override
+        public boolean onTap(GeoPoint p, MapView map){
+            if(super.onTap(p,map)) return true;
+            if(multimove) return false;
+            if(p!=null){ if(updatable) netmash.user.onMoved(p); return true; }
+            return false;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent e, MapView mapView){
+            if(e.getAction()==MotionEvent.ACTION_DOWN) multimove=false;
+            else
+            if(e.getAction()==MotionEvent.ACTION_MOVE && e.getPointerCount()==2) multimove=true;
+            return super.onTouchEvent(e, mapView);
         }
 
         @Override

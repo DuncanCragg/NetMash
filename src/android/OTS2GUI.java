@@ -188,10 +188,10 @@ public class OTS2GUI {
         String landuid = user.content("private:viewing");
         LinkedList maplist = new LinkedList();
         maplist.add("render:map");
+        if(user.contentIsOrListContains("private:viewing:is", "updatable")) maplist.add("updatable");
         maplist.add("layerkey:"+landuid);
         LinkedHashMap location=user.contentHash("private:viewing:location");
-        String title=user.content("private:viewing:title");
-        if(location!=null) maplist.add(point("", title!=null? title: "Land", location, landuid));
+        if(location!=null) maplist.add(point("", "Land area", location, landuid));
         return maplist;
     }
 
@@ -232,17 +232,17 @@ public class OTS2GUI {
         for(String uid: lands){ c++;
             String landuid = UID.normaliseUID(listuid, uid);
             LinkedHashMap<String,Double> location=user.contentHash("private:viewing:list:"+c+":location");
-            String title=user.content("private:viewing:list:"+c+":title");
-            if(location!=null) maplist.add(point("list:"+c+":", title!=null? title: "Land", location, landuid));
+            if(location!=null) maplist.add(point("list:"+c+":", "Land area", location, landuid));
         }
         return maplist;
     }
 
-    private LinkedHashMap point(String contactprefix, String address, LinkedHashMap location, String uid){
+    private LinkedHashMap point(String prefix, String sublabel, LinkedHashMap location, String uid){
         LinkedHashMap point = new LinkedHashMap();
-        String fullname=user.content("private:viewing:"+contactprefix+"fullName");
-        point.put("label",    fullname!=null? fullname: "");
-        point.put("sublabel", address!=null? address: "");
+        String          label=user.content("private:viewing:"+prefix+"fullName");
+        if(label==null) label=user.content("private:viewing:"+prefix+"title");
+        point.put("label",    label!=null? label: "");
+        point.put("sublabel", sublabel!=null? sublabel: "");
         point.put("location", location);
         point.put("jump", uid);
         return point;

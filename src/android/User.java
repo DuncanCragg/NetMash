@@ -15,6 +15,8 @@ import android.database.Cursor;
 import android.location.*;
 import android.accounts.*;
 
+import com.google.android.maps.*;
+
 import static android.provider.ContactsContract.*;
 import static android.provider.ContactsContract.CommonDataKinds.*;
 
@@ -129,7 +131,7 @@ public class User extends WebObject {
 
     static User newLand(String landlistuid, String useruid, LinkedHashMap location){
         User land=new User(
-                        "{ \"is\": [ \"land\" ],\n"+
+                        "{ \"is\": [ \"updatable\", \"land\" ],\n"+
                         "  \"place\": \""+landlistuid+"\",\n"+
                         "  \"user\": \""+useruid+"\"\n"+
                         "}");
@@ -257,6 +259,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             }
         };
     }
+
+    public void onMoved(GeoPoint p){ log("xxxxxxxxx "+p); } // 54107945,-1583797 / 1e6
 
     private float px=0,py=0,pz=0;
     public void onNewCoords(final float x, final float y, final float z){

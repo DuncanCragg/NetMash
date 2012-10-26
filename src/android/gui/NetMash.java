@@ -763,18 +763,24 @@ log(show? "show keyboard": "hide keyboard");
         }
         Drawable drawable = getResources().getDrawable(R.drawable.mappinlogo);
         NetMashMapOverlay itemizedoverlay=null;
+        boolean updatable=false;
         for(Object o: ll){
-            if((o instanceof String) && o.toString().startsWith("layerkey:")){
-                itemizedoverlay = layers.get(o.toString());
-                if(itemizedoverlay==null){
-                    itemizedoverlay = new NetMashMapOverlay(drawable, this);
-                    layers.put(o.toString(), itemizedoverlay);
-                }
-                break;
+            if(!(o instanceof String)) break;
+            String s=(String)o;
+            if(s.equals("updatable")){
+                updatable=true;
+                continue;
             }
-            if((o instanceof LinkedHashMap)) break;
+            if(s.startsWith("layerkey:")){
+                itemizedoverlay = layers.get(s);
+                if(itemizedoverlay==null){
+                    itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable);
+                    layers.put(s, itemizedoverlay);
+                }
+                continue;
+            }
         }
-        if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this);
+        if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable);
         itemizedoverlay.clear();
         int minlat=Integer.MAX_VALUE, maxlat=Integer.MIN_VALUE;
         int minlon=Integer.MAX_VALUE, maxlon=Integer.MIN_VALUE;
