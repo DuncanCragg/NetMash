@@ -520,8 +520,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         return val[0];
     }
 
-    public void setFormVal(final String guiuid, final String tag, final String val){
-        if(this==currentUser) setFormValOnObjectUpdating(guiuid, tag, val);
+    public void setUpdateVal(final String guiuid, final String tag, final String val){
+        if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentListContainsAll("is", list("editable", "rule"))){
@@ -547,8 +547,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    public void setFormVal(final String guiuid, final String tag, final boolean val){
-        if(this==currentUser) setFormValOnObjectUpdating(guiuid, tag, val);
+    public void setUpdateVal(final String guiuid, final String tag, final boolean val){
+        if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "rsvp")){
@@ -568,8 +568,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    public void setFormVal(final String guiuid, final String tag, final int val){
-        if(this==currentUser) setFormValOnObjectUpdating(guiuid, tag, val);
+    public void setUpdateVal(final String guiuid, final String tag, final int val){
+        if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "land")){
@@ -585,22 +585,22 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    private void setFormValOnObjectUpdating(String guiuid, String tag, String val){
+    private void setUpdateValOnObjectUpdating(String guiuid, String tag, String val){
         User o=getObjectUpdating(guiuid);
         if(o==null) return;
-        o.setFormVal(guiuid,tag,val);
+        o.setUpdateVal(guiuid,tag,val);
     }
 
-    private void setFormValOnObjectUpdating(String guiuid, String tag, boolean val){
+    private void setUpdateValOnObjectUpdating(String guiuid, String tag, boolean val){
         User o=getObjectUpdating(guiuid);
         if(o==null) return;
-        o.setFormVal(guiuid,tag,val);
+        o.setUpdateVal(guiuid,tag,val);
     }
 
-    private void setFormValOnObjectUpdating(String guiuid, String tag, int val){
+    private void setUpdateValOnObjectUpdating(String guiuid, String tag, int val){
         User o=getObjectUpdating(guiuid);
         if(o==null) return;
-        o.setFormVal(guiuid,tag,val);
+        o.setUpdateVal(guiuid,tag,val);
     }
 
     private LinkedHashMap makeEditRule(String path, Object val){
