@@ -369,7 +369,7 @@ public class OTS2GUI {
         String title=user.content("private:viewing:title");
         LinkedList valuescol = new LinkedList();
         valuescol.add(style("direction","vertical"));
-        addIfPresent(valuescol, "area", null, false, hash("input","textfield", "label","Area:"));
+        addIfPresent(valuescol, "area", null, false, hash("input","textfield", "label","Area (ha):"));
         LinkedHashMap<String,Object> template=user.contentHash("private:viewing:place:template");
         if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
             Object o=entry.getValue();
