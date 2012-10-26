@@ -161,7 +161,7 @@ public class OTS2GUI {
         viewhash.put("style", style("direction","vertical", "colours","lightblue"));
         viewhash.put("#title", title!=null? title: "Land List");
         if(user.contentIsOrListContains("private:viewing:is", "updatable"))
-        viewhash.put("#new", hash("input","textfield", "label","New Area Name"));
+        viewhash.put("#new", hash("input","textfield", "label","Name of new land entry"));
         viewhash.put("#landlist", viewlist);
         return viewhash;
     }
