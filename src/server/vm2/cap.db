@@ -5,7 +5,7 @@
   "title": "CAP Payments Demo",
   "view": { "start": { "input": "button", "label": "Apply for farming support" },
             "info": [ { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                      "CAP info:", "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" ]
+                      "CAP Info:", "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" ]
   }
 }
 
