@@ -498,7 +498,7 @@ public class OTS2GUI {
         LinkedList r=new LinkedList();
         r.add(style("direction","vertical", "colours","lightyellow*", "borders","none"));
         for(String line: lines){
-            if(line.indexOf(" uid-")== -1 && line.indexOf(" http://")== -1) r.add(line);
+            if(line.indexOf(" uid-")== -1 && line.indexOf(" http://")== -1 && line.length()< 25) r.add(line);
             else{
                 LinkedList h=new LinkedList();
                 h.add(style("direction","horizontal", "colours","lightyellow*", "borders","none"));
