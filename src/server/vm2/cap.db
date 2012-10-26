@@ -46,6 +46,8 @@
                       ] },
                       "entitlement": { "input": "textfield", "label": "Entitlement Ref:" },
                       "active":      { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
+                      "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+                                       "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" }
                     }
       }
     ]
