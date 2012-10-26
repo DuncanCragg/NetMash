@@ -809,7 +809,9 @@ log(show? "show keyboard": "hide keyboard");
             mapcontrol.zoomToSpan(latspan, lonspan);
         }
         List overlays = mapview.getOverlays();
-        if(!overlays.contains(itemizedoverlay)) overlays.add(itemizedoverlay);
+    //  overlays.remove(itemizedoverlay);
+        overlays.clear();
+        overlays.add(itemizedoverlay);
         mapview.postInvalidate();
         return mapview;
     }
