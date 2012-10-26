@@ -3,7 +3,9 @@
   "%rules": [ "uid-c265-091b-418c-c329" ],
   "is": [ "gui" ],
   "title": "CAP Payments Demo",
-  "view": { "start": { "input": "button", "label": "Apply for farming support" }
+  "view": { "start": { "input": "button", "label": "Apply for farming support" },
+            "info": [ { "is":"style", "direction":"horizontal", "proportions":"75%" },
+                      "CAP info:", "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" ]
   }
 }
 
@@ -72,8 +74,8 @@
   "is": [ "gui", "rule" ],
   "when": "gui built, set up its styles",
   "view": { "style": [ "#", "=>", { "is": "style", "colours":"lightgreen" } ],
-            "user": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%", "options":"jump" } ] ],
-            "land": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%", "options":"jump" } ] ],
+            "user": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%" } ] ],
+            "land": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%" } ] ],
             "cash": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ]
   }
 }
