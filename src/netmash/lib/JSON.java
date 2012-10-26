@@ -1169,7 +1169,7 @@ public class JSON {
             buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, sonn));
         }
         if(structured) buf.append("\n"+indentation(indent-2)+"}");
-        else           buf.append("}");
+        else           buf.append(" }");
         return buf.toString();
     }
 
