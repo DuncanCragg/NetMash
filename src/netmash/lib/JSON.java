@@ -1138,7 +1138,24 @@ public class JSON {
         if(hm==null) return "null";
         if(hm.size()==0) return "{ }";
         String quote=(sonn?"":"\"");
-        boolean structured=(maxlength==0);
+        boolean structured=false;
+        if(maxlength==0){
+            int i=0;
+            int w=0;
+            for(Iterator it=hm.keySet().iterator(); it.hasNext(); i++){
+                String tag = (String)it.next();
+                Object val = hm.get(tag);
+                if(val instanceof LinkedHashMap){ structured=true; break; }
+                if(val instanceof LinkedList){ structured=true; break; }
+                if(val instanceof String){
+                    String s=(String)val;
+                    w+=tag.length()+3+s.length();
+                }
+                else w+=tag.length()+3+5;
+                if(w>80){ structured=true; break; }
+                if(i>10){ structured=true; break; }
+            }
+        }
         StringBuilder buf=new StringBuilder();
         buf.append(structured? "{\n": "{ ");
         int i=0;
@@ -1165,12 +1182,24 @@ public class JSON {
             int i=0;
             int w=0;
             for(Object val: ll){
-                if(val instanceof LinkedHashMap || val instanceof LinkedList){ structured=true; break; }
-                if(val instanceof String){
-                    w+=((String)val).length();
-                    if(w>50){ structured=true; break; }
+                if(val instanceof LinkedHashMap){ structured=true; break; }
+                if(val instanceof LinkedList){
+                    LinkedList l=((LinkedList)val);
+                    if(l.size()==1 && (l.get(0) instanceof String)) w+=((String)(l.get(0))).length();
+                    else
+                    if(l.size()==2 && (l.get(0) instanceof String) && (l.get(1) instanceof String)) w+=((String)(l.get(0))).length()+((String)(l.get(1))).length();
+                    else
+                    if(l.size() >0){ structured=true; break; }
                 }
-                i++; if(i>10) break;
+                else
+                if(val instanceof String){
+                    String s=(String)val;
+                    w+=s.length();
+                }
+                else w+=5;
+                if(w>80){ structured=true; break; }
+                if(i>10){ structured=true; break; }
+                i++;
             }
         }
         StringBuilder buf=new StringBuilder();
