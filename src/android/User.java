@@ -417,26 +417,26 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(editable){
         if(contentIsOrListContains("private:viewing:is", "editable")){
             path="private:responses:editable:"+UID.toUID(guiuid);
-            if(contentSet(path)) return false;
+            if(contentSet(path)){ ensureInCacheEventuallyButMayStillRace(path); return false; }
             if(!contentSet("private:responses:editable")) contentHash("private:responses:editable", hash());
             resp=newEditableRule(guiuid, uid);
         }
         }
         else if(contentIsOrListContains("private:viewing:is", "3d")){
             path="private:responses:swipe:"+UID.toUID(guiuid);
-            if(contentSet(path)) return false;
+            if(contentSet(path)){ ensureInCacheEventuallyButMayStillRace(path); return false; }
             if(!contentSet("private:responses:swipe")) contentHash("private:responses:swipe", hash());
             resp=newSwipe(guiuid, uid, dx, dy);
         }
         else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
             path="private:responses:query:"+UID.toUID(guiuid);
-            if(contentSet(path)) return false;
+            if(contentSet(path)){ ensureInCacheEventuallyButMayStillRace(path); return false; }
             if(!contentSet("private:responses:query")) contentHash("private:responses:query", hash());
             resp=newDocumentQuery(guiuid, uid);
         }
         else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
             path="private:responses:rsvp:"+UID.toUID(guiuid);
-            if(contentSet(path)) return false;
+            if(contentSet(path)){ ensureInCacheEventuallyButMayStillRace(path); return false; }
             if(!contentSet("private:responses:rsvp")) contentHash("private:responses:rsvp", hash());
             resp=newRSVP(guiuid, uid);
         }
@@ -448,13 +448,15 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
             path="private:responses:form:"+UID.toUID(guiuid);
-            if(contentSet(path)) return false;
+            if(contentSet(path)){ ensureInCacheEventuallyButMayStillRace(path); return false; }
             if(!contentSet("private:responses:form")) contentHash("private:responses:form", hash());
             resp=newForm(guiuid, uid);
         }
         if(resp!=null) content(path, spawn(resp));
         return true;
     }
+
+    private void ensureInCacheEventuallyButMayStillRace(String path){ if(!contentSet(path+":is")) log("Starting race.."); }
 
     private User getObjectUpdating(String guiuid){ return getObjectUpdating(guiuid, false); }
 
@@ -485,9 +487,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             formuid=UID.toUID(guiuid);
         }
         if(formuid==null) return null;
-        Object o=onlyUseThisToHandControlOfThreadToDependent(formuid);
+        Object o=onlyUseThisToHandControlOfThreadToDependentAndMakeSureItsInTheCache(formuid);
         if(o instanceof User) return (User)o;
-        log("Not a User: "+formuid+" "+o);
+        log("Race lost; not a User: "+formuid+" "+o);
         return null;
     }
 

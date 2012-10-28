@@ -688,7 +688,7 @@ public class WebObject {
     }
 
     /** Don't use this unless you're handing the thread over to the right object. */
-    public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheGet(uid); }
+    public WebObject onlyUseThisToHandControlOfThreadToDependentAndMakeSureItsInTheCache(String uid){ return funcobs.cacheGet(uid); }
 
     /** Simple logger for ya. */
     static public void log(Object o){ Utils.log(o); }
