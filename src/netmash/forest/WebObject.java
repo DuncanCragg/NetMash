@@ -687,8 +687,8 @@ public class WebObject {
         newobserve.clear();
     }
 
-    /** Don't use this unless you're handing the thread over to the right object. */
-    public WebObject onlyUseThisToHandControlOfThreadToDependentAndMakeSureItsInTheCache(String uid){ return funcobs.cacheGet(uid); }
+    /** Don't use this unless you're handing the thread over to an object that's responsible and local. */
+    public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheOrPersistenceGet(uid); }
 
     /** Simple logger for ya. */
     static public void log(Object o){ Utils.log(o); }

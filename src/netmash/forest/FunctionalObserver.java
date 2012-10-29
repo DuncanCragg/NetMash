@@ -98,6 +98,16 @@ public class FunctionalObserver implements Module {
         return w;
     }
 
+    WebObject cacheOrPersistenceGet(String uid){
+        synchronized(cache){
+            WebObject w=cache.get(uid);
+            if(w!=null) return w;
+            w=persistence.cache(uid);
+            if(w!=null) cache.put(uid, w);
+            return w;
+        }
+    }
+
     void dumpCache(){
         log("-------------- dump of cache ------------");
         for(Map.Entry<String,WebObject> entry: cache.entrySet()){
