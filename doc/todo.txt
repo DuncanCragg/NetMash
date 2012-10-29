@@ -21,11 +21,10 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 Stuff
 --------------------------------------------------------
  - get GUIs working
-    - fill in form values
-    - ensure gui format is all good
-    - use for RPA demo: just guis and rules to start, then maps
+    - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
- - local uids in topdb.json
+    - fill in form values
+ - local uids in topdb.json converted to generated uids
 ---------------------------------------------------------
  - 3x4 grid, smaller lights
  - fraction not number
@@ -34,8 +33,8 @@ Stuff
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------
- - can't allow edit of remote land
  - don't fetch remote if it's yours anyway
+ - can't allow edit of remote land
  - don't need editable/rule if it's your own object!
  - check JSON structure/string cacheing/rebuilding
 ---------------------------------------------------------
