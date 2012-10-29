@@ -65,7 +65,7 @@ public class UID {
         if(uid2url.startsWith("http://")) return uid2url;
         if(notVisible()) return uid2url;
         boolean dotJSON=uid2url.startsWith("uid-");
-        return localPre()+Kernel.config.stringPathN("network:pathprefix")+uid2url+(dotJSON? ".json": "");
+        return localPrePath()+uid2url+(dotJSON? ".json": "");
     }
 
     static public String toUID(String url2uid){
@@ -96,6 +96,7 @@ public class UID {
     }
 
     static private String localpre=null;
+    static private String localpath=null;
     static Boolean notvisible=null;
 
     static public String localPre(){
@@ -104,6 +105,13 @@ public class UID {
                                Kernel.config.intPathN(   "network:port");
         }
         return localpre;
+    }
+
+    static public String localPrePath(){
+        if(localpath==null){
+            localpath=localPre()+Kernel.config.stringPathN("network:pathprefix");
+        }
+        return localpath;
     }
 
     static boolean notVisible(){

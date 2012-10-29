@@ -242,6 +242,7 @@ abstract class HTTPCommon {
     protected String httpContentType=null;
     protected String httpContentLength=null;
     protected String httpTransferEncoding=null;
+    protected String httpUserAgent=null;
 
     public void readable(SocketChannel channel, ByteBuffer bytebuffer, int len){
         boolean sof = (len==  0);
@@ -375,6 +376,7 @@ abstract class HTTPCommon {
         httpContentType=null;
         httpContentLength=null;
         httpTransferEncoding=null;
+        httpUserAgent=null;
     }
 
     private void fishOutInterestingHeaders(String tag, String val){
@@ -389,6 +391,7 @@ abstract class HTTPCommon {
         if(tag.equals("content-type")){      httpContentType=val; return; }
         if(tag.equals("content-length")){    httpContentLength=val; return; }
         if(tag.equals("transfer-encoding")){ httpTransferEncoding=val; return; }
+        if(tag.equals("user-agent")){        httpUserAgent=val; return; }
     }
 
     public void fixKeepAlive(){
@@ -444,9 +447,16 @@ abstract class HTTPCommon {
         sb.append("Access-Control-Allow-Origin: *\r\n");
         sb.append("Access-Control-Allow-Headers: X-Requested-With\r\n");
 
-        String content=w.toString(percents);
+        String content=rewriteUIDsToURLsIfNotServingNetMash(w.toString(percents));
         sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n\r\n");
         sb.append(content);
+    }
+
+    private String rewriteUIDsToURLsIfNotServingNetMash(String s){
+        if(httpUserAgent==null ||
+           httpUserAgent.indexOf("NetMash")!= -1 ||
+           UID.notVisible()) return s;
+        return s.replaceAll("\"(uid-[^\"]+)\"", "\""+UID.localPrePath()+"$1.json\"").replaceAll("10.0.2.2","localhost");
     }
 
     protected PostResponse readWebObject(ByteBuffer bytebuffer, int contentLength, String httpNotify, String httpReqURL, WebObject webobject, String param){
