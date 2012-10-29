@@ -452,11 +452,16 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(!contentSet("private:responses:form")) contentHash("private:responses:form", hash());
             resp=newForm(guiuid, uid);
         }
+        else if(contentIsOrListContains("private:viewing:is", "land")){
+            content("private:local-version",UID.toUID(guiuid));
+            ensureInCacheEventuallyButMayStillRace("private:local-version");
+            content("private:local-version",null);
+        }
         if(resp!=null) content(path, spawn(resp));
         return true;
     }
 
-    private void ensureInCacheEventuallyButMayStillRace(String path){ if(!contentSet(path+":is")) log("Starting race.."); }
+    private void ensureInCacheEventuallyButMayStillRace(String path){ if(!contentSet(path+":is")) log("Cacheing "+path); }
 
     private User getObjectUpdating(String guiuid){ return getObjectUpdating(guiuid, false); }
 
@@ -489,7 +494,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(formuid==null) return null;
         Object o=onlyUseThisToHandControlOfThreadToDependentAndMakeSureItsInTheCache(formuid);
         if(o instanceof User) return (User)o;
-        log("Race lost; not a User: "+formuid+" "+o);
+        log("Not a User: "+formuid+" "+o);
         return null;
     }
 
