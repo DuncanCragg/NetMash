@@ -207,7 +207,7 @@ public class ObjectMash extends WebObject {
                 else contentListRemove(currentRewritePath, e);
             }
             else{
-                Object e=eval(ll);
+                Object e=(ll.size()==1)? copyFindObject(ll.get(0)): eval(ll);
                 if(e==null){ log("failed to rewrite "+currentRewritePath); continue; }
                 contentObject(currentRewritePath, e);
             }
@@ -215,7 +215,8 @@ public class ObjectMash extends WebObject {
     }
 
     private Object eval(LinkedList ll){ try{
-        if(ll.size()==1) return copyObject(ll.get(0)); // !!
+        if(ll.size()==0) return null;
+   //   if(ll.size()==1) return copyFindObject(ll.get(0));
         String ll0=findString(ll.get(0));
         String ll1=findString(ll.get(1));
         if(ll.size()==3 && "-".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
@@ -230,57 +231,72 @@ public class ObjectMash extends WebObject {
         if(ll.size()==4 && "clamp".equals(ll0))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
         if(ll.size()==3 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findObject(ll.get(2)));
         if(ll.size()==4 && "chooses".equals(ll1)) return findBoolean(ll.get(0))? copyFindObject(ll.get(2)): copyFindObject(ll.get(3));
-        if(ll.size()==3 && "chooses".equals(ll1)) return copyFindObject(findHash(ll.get(2)).get(findObject(ll.get(0))));
-        return copyObject(ll);
-    }catch(Throwable t){ t.printStackTrace(); return ll; } }
+        if(ll.size()==3 && "chooses".equals(ll1)) return copyFindObject(findHashOrListAndGet(ll.get(2),ll.get(0)));
+        return copyFindEach(ll);
+    }catch(Throwable t){ t.printStackTrace(); log(ll); return ll; } }
+
+    @SuppressWarnings("unchecked")
+    private Object copyFindEach(LinkedList ll){
+        LinkedList r=new LinkedList();
+        for(Object o: ll) r.add(copyFindObject(o));
+        return r;
+    }
 
     // ----------------------------------------------------
-
-    private Object copyFindObject(Object o){
-        return copyObject(findObject(o));
-    }
 
     private Object findObject(Object o){
         if(o==null) return null;
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentObject(((String)o).substring(2));
-        if(o instanceof LinkedList) return eval((LinkedList)o);
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
         return o;
     }
 
     private String findString(Object o){
         if(o==null) return "";
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentString(((String)o).substring(2));
-        if(o instanceof LinkedList){ Object r=eval((LinkedList)o); return r==null? "": r.toString(); }
+        if(o instanceof LinkedList){ o=eval((LinkedList)o); if(o==null) return null; }
         return o.toString();
     }
 
     private double findDouble(Object o){
         if(o==null) return 0;
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentDouble(((String)o).substring(2));
-        if(o instanceof LinkedList){ Object e=eval((LinkedList)o); return (e instanceof Number)? ((Number)e).doubleValue(): 0; }
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findNumberIn(o);
     }
 
     private boolean findBoolean(Object o){
         if(o==null) return false;
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentBool(((String)o).substring(2));
-        if(o instanceof Boolean) return (Boolean)o;
-        if(o instanceof String)  return o.toString()=="true";
-        return false;
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
+        return findBooleanIn(o);
     }
 
     private LinkedHashMap findHash(Object o){
         if(o==null) return new LinkedHashMap();
-        if(o instanceof LinkedHashMap) return (LinkedHashMap)o;
-        return new LinkedHashMap();
+        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentHash(((String)o).substring(2));
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
+        return findHashIn(o);
     }
 
     private LinkedList findList(Object o){
         if(o==null) return new LinkedList();
-        if(o instanceof LinkedList) return (LinkedList)o;
         if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentList(((String)o).substring(2));
-        return new LinkedList();
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
+        return findListIn(o);
     }
+
+    private Object findHashOrListAndGet(Object collection, Object index){
+        if(collection==null || index==null) return null;
+        LinkedHashMap hm=findHash(collection);
+        if(hm!=null && hm.size() >0) return hm.get(findObject(index));
+        LinkedList    ll=findList(collection);
+        int i=(int)findDouble(index);
+        if(ll!=null && ll.size() >i) return ll.get(i);
+        return null;
+    }
+
+    // ----------------------------------------------------
 
     private Object eitherBindingOrContentObject(String path){
         if(path.startsWith(":")) return getBinding(path.substring(1));
@@ -316,6 +332,14 @@ public class ObjectMash extends WebObject {
         return contentAll(path);
     }
 
+    private LinkedHashMap eitherBindingOrContentHash(String path){
+        if(path.startsWith(":")) return findHashIn(getBinding(path.substring(1)));
+        if(path.startsWith("!")) return contentHash(currentRewritePath);
+        return contentHash(path);
+    }
+
+    // ----------------------------------------------------
+
     @SuppressWarnings("unchecked")
     private Object getBinding(String path){
         String pk=path;
@@ -350,10 +374,14 @@ public class ObjectMash extends WebObject {
 
     // ----------------------------------------------------
 
+    private Object copyFindObject(Object o){
+        return copyObject(findObject(o));
+    }
+
     @SuppressWarnings("unchecked")
     public Object copyObject(Object o){
         if(o==null) return null;
-        if(o instanceof String)  return findObject(o); // !!
+        if(o instanceof String)  return o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o));
@@ -369,7 +397,7 @@ public class ObjectMash extends WebObject {
             String k=entry.getKey();
             Object o=entry.getValue();
             if(k.equals("%uid")){ if(o.equals("new")){ spawned=true; }}
-            else r.put(k,copyObject(o));
+            else r.put(k,copyFindObject(o));
         }
         if(spawned) try{ return spawn(getClass().newInstance().construct(r)); } catch(Throwable t){ t.printStackTrace(); }
         return r;
@@ -378,9 +406,7 @@ public class ObjectMash extends WebObject {
     @SuppressWarnings("unchecked")
     public LinkedList copyList(LinkedList ll){
         LinkedList r=new LinkedList();
-        for(Object o: ll){
-            r.add(copyObject(o));
-        }
+        for(Object o: ll) r.add(copyFindObject(o));
         return r;
     }
 

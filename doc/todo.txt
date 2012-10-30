@@ -33,7 +33,7 @@ Stuff
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------
- - don't fetch remote if it's yours anyway
+ - don't fetch remote if it's yours anyway (?)
  - can't allow edit of remote land
  - don't need editable/rule if it's your own object!
  - check JSON structure/string cacheing/rebuilding

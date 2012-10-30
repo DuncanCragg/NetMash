@@ -108,6 +108,12 @@ public class Utils{
         return list(o);
     }
 
+    static public LinkedHashMap findHashIn(Object o){
+        if(o==null) return null;
+        if(o instanceof LinkedHashMap) return (LinkedHashMap)o;
+        return null;
+    }
+
     static public String findStringIn(Object o){
         if(o==null) return null;
         if(o instanceof String) return (String)o;

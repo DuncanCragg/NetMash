@@ -24,12 +24,14 @@
   "c": [ "#", "=>", "clamp", 2, 7, [ "random", 1, 8 ] ],
   "m": [ "yo", "!=>", "has", "yo" ],
   "s": [ "#", "=>", "+", "$:o:a:1" ],
-  "o": [ [ { "a": 5 } ], "!=>", "has", { "a": [ 1, 5 ] } ]
+  "o": [ [ { "a": 5 } ], "!=>", "has", { "a": [ 1, 5 ] } ],
+  "la": [ "=>", [ "$:z:2", "chooses", "$:m" ], [ "$:z:1", "chooses", "$:m" ], [ "$:z:0", "chooses", "$:m" ] ]
 }
 
 { "%uid": "uid-40fb-5964-b385-c922",
   "is": [ "test", "rule" ],
   "when": "Test var match, no-match, nested list, less/greater than, and multiply",
+  "la": [ 5, false, 4 ],
   "a": "$:x",
   "d": 19,
   "f": 21,
@@ -60,6 +62,7 @@
   "when": "Test list element match 2",
   "m": [ true, { "n": 4 }, { "n": 5 }, "hi", "yo", "lo" ],
   "o": [ { "a": [ 3 ] } ],
+  "z": [ [ [ "number", "*" ], "=>", [ 1, "chooses", "$:!" ], [ 0, "chooses", "$:!" ] ] ],
   "l2": [ "=>", "count", "$::o" ],
   "l0": [ "=>", "$::o:1" ],
   "l7": [ "=>", "$:o:a" ],
@@ -74,7 +77,7 @@
 { "%uid": "uid-d039-5967-f60c-70f7",
   "is": [ "test", "rule" ],
   "when": "Test completion",
-  "z": [ 1, [ 111, { "a": 20 } ], 290 ],
+  "z": [ 1, [ { "a": 20 }, 111 ], 290 ],
   "a": 20,
   "b": 29,
   "l1": "ok",
