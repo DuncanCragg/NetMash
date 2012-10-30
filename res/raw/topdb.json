@@ -38,7 +38,7 @@
 
 { "%uid": "uid-f6c8-2d51-8060-a52a",
   "%class": "netmash.forest.ObjectMash",
-  "%rules": [ "uid-8f4e-551c-858b-d345", "uid-fb3e-02d3-70bb-916f", "uid-536b-de0b-41db-41d1", "uid-fbd9-4a4d-c3c7-c31f", "uid-a9ff-4a17-9772-3859", "uid-aad5-7236-b521-4780", "uid-0b6a-659e-3561-05b2", "uid-4899-0de2-1bb5-58ba", "uid-3558-f24b-c0c4-d32b" ],
+  "%rules": [ "uid-8f4e-551c-858b-d345", "uid-fb3e-02d3-70bb-916f", "uid-536b-de0b-41db-41d1", "uid-fbd9-4a4d-c3c7-c31f", "uid-ab7f-889e-edb9-6bab", "uid-a9ff-4a17-9772-3859", "uid-aad5-7236-b521-4780", "uid-0b6a-659e-3561-05b2", "uid-4899-0de2-1bb5-58ba", "uid-3558-f24b-c0c4-d32b" ],
   "is": [ "3d", "notice" ],
   "title": "Maths Game",
   "text": [ "Light up this fraction:", "-", "-" ],
@@ -90,17 +90,24 @@
 
 { "%uid": "uid-fbd9-4a4d-c3c7-c31f",
   "is": [ "3d", "rule" ],
-  "when": "swiped left after good, set to waiting plus new challenge",
+  "when": "swiped left after good, set to waiting and create random numerator",
   "%alerted": { "is": "swipe", "dx": [ "<", 0 ] },
   "status": [ "good", "=>", "waiting" ],
   "numerator": [ "=>", "random", 0, "$:denominator" ]
+}
+
+{ "%uid": "uid-ab7f-889e-edb9-6bab",
+  "is": [ "3d", "rule" ],
+  "when": "waiting, create challenge text",
+  "status": "waiting",
+  "challenge-text": [ "=>", [ "format", "%s/%s", "$:numerator", "$:denominator" ] ]
 }
 
 { "%uid": "uid-a9ff-4a17-9772-3859",
   "is": [ "3d", "rule" ],
   "when": "waiting, set text to challenge",
   "status": "waiting",
-  "text": [ "*", [ "=>", [ "format", "%s/%s", "$:numerator", "$:denominator" ] ], [ "=>", "Swipe right when done ->" ] ],
+  "text": [ "*", [ "=>", "$:challenge-text" ], [ "=>", "Swipe right when done ->" ] ],
   "light": [ [ "=>", 0.5  ], [ "=>", 0.5 ], [ "=>", 1.0 ] ]
 }
 
