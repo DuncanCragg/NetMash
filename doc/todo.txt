@@ -26,7 +26,6 @@ Stuff
     - fill in form values
  - local uids in topdb.json converted to generated uids
 ---------------------------------------------------------
- - fraction not number
  - random refactoring of number
  - vary denominator with fixed total lights - hide them
 ---------------------------------------------------------

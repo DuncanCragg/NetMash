@@ -154,6 +154,12 @@ public class Utils{
         return s;
     }
 
+    static public String getStringFrom(LinkedHashMap hm, String tag){
+        Object o=hm.get(tag);
+        if(o==null) return null;
+        return o.toString();
+    }
+
     static public <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
 
     static public double random(double lo, double hi){
@@ -172,12 +178,6 @@ public class Utils{
         double d=0;
         for(Object o: ll) d+=tryDouble(o,0);
         return d;
-    }
-
-    static public String getStringFrom(LinkedHashMap hm, String tag){
-        Object o=hm.get(tag);
-        if(o==null) return null;
-        return o.toString();
     }
 }
 

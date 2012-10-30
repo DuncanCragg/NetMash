@@ -100,7 +100,7 @@
   "is": [ "3d", "rule" ],
   "when": "waiting, set text to challenge",
   "status": "waiting",
-  "text": [ "*", [ "=>", [ "format", "%s/xx", "$:numerator" ] ], [ "=>", "Swipe right when done ->" ] ],
+  "text": [ "*", [ "=>", [ "format", "%s/%s", "$:numerator", "$:denominator" ] ], [ "=>", "Swipe right when done ->" ] ],
   "light": [ [ "=>", 0.5  ], [ "=>", 0.5 ], [ "=>", 1.0 ] ]
 }
 
