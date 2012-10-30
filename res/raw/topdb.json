@@ -3,8 +3,8 @@
   "is": [ "place", "3d", "mesh" ],
   "title": "Your Room",
   "subObjects": [
-    { "object": "uid-f6c8-2d51-8060-a52a", "coords": [  0,    1,  -10 ] },
-    { "object": "uid-20ce-d0b1-c717-3dbb", "coords": [  0,    0,   -7 ] },
+    { "object": "uid-f6c8-2d51-8060-a52a", "coords": [  0,    1,  -11 ] },
+    { "object": "uid-20ce-d0b1-c717-3dbb", "coords": [  0,    0,   -6 ] },
     { "object": "http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json", "coords": [  4,  0,  -7 ] },
     { "object": "http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json", "coords": [ -4,  0,  -7 ] },
     { "object": "http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json", "coords": [  0,  4,  -7 ] },
@@ -45,27 +45,30 @@
   "rotation": [ 0, 0, 0 ],
   "scale": [ 1.0, 1.0, 1.0 ],
   "light": [ 0.5, 0.5, 1.0 ],
-  "subObjects": [ -2.75, -1.65, -0.55, 0.55, 1.65, 2.75 ],
+  "subObjects": [ [ -1.20, -1.8 ], [ -0.40, -1.8 ], [ 0.40, -1.8 ], [ 1.20, -1.8 ],
+                  [ -1.20, -1.0 ], [ -0.40, -1.0 ], [ 0.40, -1.0 ], [ 1.20, -1.0 ],
+                  [ -1.20, -0.2 ], [ -0.40, -0.2 ], [ 0.40, -0.2 ], [ 1.20, -0.2 ] ],
   "gamerules": [ "uid-1b54-d28a-71dc-5827", "uid-7b1a-4b1d-1424-2818" ],
   "numerator": 3,
-  "status": "waiting",
+  "status": "creating",
   "lit": 0
 }
 
 { "%uid": "uid-8f4e-551c-858b-d345",
   "is": [ "3d", "rule" ],
   "when": "starting, create lights",
-  "subObjects": [ [ "number", "=>",
+  "status": [ "creating", "=>", "waiting" ],
+  "subObjects": [ [ [ "number", "number" ], "=>",
       { "object":
           { "%uid": "new",
             "%rules": "$:gamerules",
             "is": [ "3d", "cuboid" ],
             "title": "Game Cube",
             "rotation": [ 0, 0, 0 ],
-            "scale": [ 0.5, 0.5, 0.5 ],
+            "scale": [ 0.36, 0.36, 0.36 ],
             "light": [ 0.0, 0.4, 0.7 ]
           },
-        "coords": [ "$:!", -1,  0 ]
+        "coords": [ [ 0, "chooses", "$:!"], [ 1, "chooses", "$:!"],  -0.5 ]
       }
   ] ]
 }
