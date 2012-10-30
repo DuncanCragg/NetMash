@@ -70,7 +70,8 @@
           },
         "coords": [ [ 0, "chooses", "$:!"], [ 1, "chooses", "$:!"],  -0.5 ]
       }
-  ] ]
+  ] ],
+  "denominator": [ "=>", [ "count", "$:subObjects" ] ]
 }
 
 { "%uid": "uid-fb3e-02d3-70bb-916f",
@@ -92,14 +93,14 @@
   "when": "swiped left after good, set to waiting plus new challenge",
   "%alerted": { "is": "swipe", "dx": [ "<", 0 ] },
   "status": [ "good", "=>", "waiting" ],
-  "numerator": [ "=>", "random", 0, 6 ]
+  "numerator": [ "=>", "random", 0, "$:denominator" ]
 }
 
 { "%uid": "uid-a9ff-4a17-9772-3859",
   "is": [ "3d", "rule" ],
   "when": "waiting, set text to challenge",
   "status": "waiting",
-  "text": [ "*", [ "=>", "$:numerator" ], [ "=>", "Swipe right when done ->" ] ],
+  "text": [ "*", [ "=>", [ "format", "%s/xx", "$:numerator" ] ], [ "=>", "Swipe right when done ->" ] ],
   "light": [ [ "=>", 0.5  ], [ "=>", 0.5 ], [ "=>", 1.0 ] ]
 }
 
