@@ -46,7 +46,7 @@
   "when": "Test list element match 1",
   "z": [ 2, [ ">", 289 ] ],
   "o": [ { "a": [ 1 ] }, { "a": [ 4 ] } ],
-  "m": [ "=>", "has", [ "format", "l%s", "o" ] ],
+  "m": [ "=>", "has", [ "format", "%s%s", "l", "o" ] ],
   "l1": [ "=>", "ok" ]
 }
 

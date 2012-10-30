@@ -230,6 +230,8 @@ public class ObjectMash extends WebObject {
         if(ll.size()==3 && "random".equals(ll0))  return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
         if(ll.size()==4 && "clamp".equals(ll0))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
         if(ll.size()==3 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findObject(ll.get(2)));
+        if(ll.size()==4 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findObject(ll.get(2)), findObject(ll.get(3)));
+        if(ll.size()==5 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findObject(ll.get(2)), findObject(ll.get(3)), findObject(ll.get(4)));
         if(ll.size()==4 && "chooses".equals(ll1)) return findBoolean(ll.get(0))? copyFindObject(ll.get(2)): copyFindObject(ll.get(3));
         if(ll.size()==3 && "chooses".equals(ll1)) return copyFindObject(findHashOrListAndGet(ll.get(2),ll.get(0)));
         return copyFindEach(ll);
