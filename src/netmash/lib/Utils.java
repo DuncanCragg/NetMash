@@ -187,6 +187,16 @@ public class Utils{
         for(Object o: ll) d+=tryDouble(o,0);
         return d;
     }
+
+    static public String capitaliseAndSpace(String s){
+        String[] chunks=s.split("-");
+        String r="";
+        for(int i=0; i<chunks.length; i++){
+            String chunk=chunks[i];
+            r+=(i==0? "":" ")+Character.toUpperCase(chunk.charAt(0))+chunk.substring(1);
+        }
+        return r;
+    }
 }
 
 

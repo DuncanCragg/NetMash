@@ -73,6 +73,22 @@ public class OTS2GUI {
         return viewhash;
     }
 
+    public LinkedHashMap lookup2GUI(){
+        LinkedList viewlist = new LinkedList();
+        viewlist.add(style("colours","lightgreen"));
+        String title = user.content("private:viewing:title");
+        viewlist.add((title!=null && title.length()!=0)? title: "Look-up Table");
+        LinkedHashMap<String,Object> entries=user.contentHash("private:viewing:#");
+        for(Map.Entry<String,Object> entry: entries.entrySet()){
+            String key=entry.getKey();
+            if(key.equals("is") || key.equals("title")) continue;
+            viewlist.add(list(style("direction","horizontal", "proportions","50%"), capitaliseAndSpace(key), entry.getValue()));
+        }
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("#items", viewlist);
+        return viewhash;
+    }
+
     public LinkedHashMap contactList2GUI(String contactprefix){
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
