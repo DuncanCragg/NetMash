@@ -11,26 +11,19 @@ Prioritising
  - higher priority if addressing
     - robustness, performance, refactoring
     - code/implementation unknowns
-
+---------------------------------------------------------
 Current priority: (vim/raw-edited for now) rules for puzzle room
 
  - shows off USP of ease of programming, object interactivity and learning aspects
  - done some refactoring, need to focus on visible value towards Xmas demo
 
---------------------------------------------------------
-Functionality
---------------------------------------------------------
- - use local uids in topdb.json and convert to generated uids
 ---------------------------------------------------------
-Performance, Bugs
+Performance
 ---------------------------------------------------------
- - don't fetch remote if it's yours anyway (?)
- - can't allow edit of remote land
- - don't need editable/rule if it's your own object!
- - check JSON structure/string cacheing/rebuilding
- - fix vulnerability of faked POST to our object not theirs
----------------------------------------------------------
- - wrong object detected on tablet - should be fixed
+ - don't need to save to persistence if not changed, and not so often either
+ - don't need to spend so much time scanning the scenegraph when only one change
+ - redundant rendering/refresh when nothing changed
+    - use Etag, if no need to respond to incoming subs
  - light lags massively
  - slightly crap touch response in game
  - cache, and detect changes in components of view - how?
@@ -40,13 +33,21 @@ Performance, Bugs
  - no new VBOs!
     - derivative objects resend VBOs
     - top level mesh not cached
- - redundant rendering/refresh when nothing changed
-    - use Etag, if no need to respond to incoming subs
- - jump link, split path is big cpu user
- - SomeObject/Avatar still?
- - shaders: vert and frag should come together, else use basic: why sept?
  - memory usage: see video http://www.youtube.com/watch?v=_CruQY55HOk
+ - check JSON structure/string cacheing/rebuilding
+---------------------------------------------------------
+Bugs, Refactoring
+---------------------------------------------------------
+ - wrong object detected on tablet - should be fixed
+ - can't allow edit of remote land
+ - don't need editable/rule if it's your own object!
+ - fix vulnerability of faked POST to our object not theirs
+ - shaders: vert and frag should come together, else use basic: why sept?
+ - don't fetch remote if it's yours anyway (?)
 --------------------------------------------------------
+Stuff
+
+ - use local uids in topdb.json and convert to generated uids
  - get GUIs working
     - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
@@ -132,7 +133,8 @@ Edit
  - edit brings up single param panel at first: text mesh in HUD (tag:val text)
  - swipe it right to edit, then up/down to adjust
  - all local but still needs to be fast
- - need to fix editing-rule stuff
+ - either change directly if own/local, or send rule if remote
+ - need to fix editing-rule stuff: use etag, etc
 ---------------------------------------------------------
 
 In-World Object/Net/Mash: the Object-Net/Mash Instant 3D IDE!
@@ -167,6 +169,7 @@ IDE stuff
  - render a rule nicely: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
     - render rules specially as recognised type
     - render JSON as recognised ObNet type: %rules, %more, is, etc known
+    - colour syntax highlighting
  - show how lists and singles are treated the same somehow
  - split-screen and/or easy-flip: Object, Object Net, Object Mash
     - this has to be really easy and nice to use
@@ -202,6 +205,7 @@ Speed, Bugfixes, Robustness, Clean formats
  - avatar POSTs rotations
 
 HTTP
+ - FX loop; lost notifications detected
  - match to uid not URL - e.g when fetch 192.168.. and C-L set to 10.0.2.2
  - still two network conns on main thread: at start and images
  - 201 Created may be missed
@@ -210,6 +214,8 @@ HTTP
  - need to hang POST responses so not POST requests; should be 204
     - actually this is long-polling GET for C-N=object URL not cache
  - detect POST subsumed by c-n - e.g. homeusers
+ - POST response is event targetted at POST request body object
+    - or do you put %notify in - not mentioned in FX paper
 
 
 -------------------------------------------------------------------
