@@ -3,7 +3,9 @@
   "%rules": [ "uid-c265-091b-418c-c329" ],
   "is": [ "gui" ],
   "title": "CAP Payments Demo",
-  "view": { "start": { "input": "button", "label": "Apply for farming support" },
+  "view": { "logo": "http://www.shaunthesheep.be/shaunthesheep/foto/500/thefarmer-1.jpg",
+            "text": "Welcome to the Farmer Support Agency!",
+            "start": { "input": "button", "label": "Apply for farming support" },
             "info": [ { "is":"style", "direction":"horizontal", "proportions":"75%" },
                       "CAP Info:", "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" ]
   }
