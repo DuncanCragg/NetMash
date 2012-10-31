@@ -92,6 +92,11 @@ public class ObjectMash extends WebObject {
             double d=findDouble(list.get(1));
             return contentDouble(path) > d;
         }
+        if(list.size()==2 && list.get(0).equals("divisible-by")){
+            int i=(int)findDouble(list.get(1));
+            int j=(int)contentDouble(path);
+            return (j % i)==0;
+        }
         if(list.size()==2 && list.get(0).equals("list-count")){
             double d=findDouble(list.get(1));
             LinkedList ll=contentList(path);

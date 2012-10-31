@@ -31,7 +31,7 @@
 { "%uid": "uid-40fb-5964-b385-c922",
   "is": [ "test", "rule" ],
   "when": "Test var match, no-match, nested list, less/greater than, and multiply",
-  "la": [ 5, false, 4 ],
+  "la": [ [ "divisible-by", 5 ], false, [ "divisible-by", 2] ],
   "a": "$:x",
   "d": 19,
   "f": 21,
