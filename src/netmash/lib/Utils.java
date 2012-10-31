@@ -117,6 +117,7 @@ public class Utils{
     static public String findStringIn(Object o){
         if(o==null) return null;
         if(o instanceof String) return (String)o;
+        if(o instanceof Number) return toNicerString((Number)o);
         return o.toString();
     }
 
@@ -163,6 +164,7 @@ public class Utils{
     static public String getStringFrom(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);
         if(o==null) return null;
+        if(o instanceof Number) return toNicerString((Number)o);
         return o.toString();
     }
 

@@ -12,6 +12,8 @@ import java.nio.channels.*;
 import java.nio.charset.*;
 import java.net.*;
 
+import static netmash.lib.Utils.*;
+
 /** JSON objects.
   */
 public class JSON {
@@ -776,7 +778,7 @@ public class JSON {
         Object o=getObject(content, path);
         if(o==null) return null;
         if(o instanceof String)  return o.toString();
-        if(o instanceof Number)  return o.toString();
+        if(o instanceof Number)  return toNicerString((Number)o);
         if(o instanceof Boolean) return o.toString();
         if(o instanceof LinkedHashMap){
             LinkedHashMap hm=(LinkedHashMap)o;
@@ -1122,6 +1124,7 @@ public class JSON {
 
     private String objectToString(Object o, int indent, int maxlength, boolean sonn){
         if(o==null) return "null";
+        if(o instanceof Number)        return toNicerString((Number)o);
         if(o instanceof String)        return stringToString((String)o, sonn);
         if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength, sonn);
         if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength, sonn);
