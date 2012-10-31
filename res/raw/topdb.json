@@ -38,7 +38,7 @@
 
 { "%uid": "uid-f6c8-2d51-8060-a52a",
   "%class": "netmash.forest.ObjectMash",
-  "%rules": [ "uid-8f4e-551c-858b-d345", "uid-fb3e-02d3-70bb-916f", "uid-536b-de0b-41db-41d1", "uid-fbd9-4a4d-c3c7-c31f", "uid-ab7f-889e-edb9-6bab", "uid-a9ff-4a17-9772-3859", "uid-aad5-7236-b521-4780", "uid-0b6a-659e-3561-05b2", "uid-4899-0de2-1bb5-58ba", "uid-3558-f24b-c0c4-d32b" ],
+  "%rules": [ "uid-8f4e-551c-858b-d345", "uid-fb3e-02d3-70bb-916f", "uid-536b-de0b-41db-41d1", "uid-fbd9-4a4d-c3c7-c31f", "uid-acc3-1f94-1458-ab18", "uid-ab7f-889e-edb9-6bab", "uid-a9ff-4a17-9772-3859", "uid-aad5-7236-b521-4780", "uid-0b6a-659e-3561-05b2", "uid-4899-0de2-1bb5-58ba", "uid-3558-f24b-c0c4-d32b" ],
   "is": [ "3d", "notice" ],
   "title": "Maths Game",
   "text": [ "Light up this fraction:", "-", "-" ],
@@ -49,7 +49,7 @@
                   [ -1.20, -1.0 ], [ -0.40, -1.0 ], [ 0.40, -1.0 ], [ 1.20, -1.0 ],
                   [ -1.20, -0.2 ], [ -0.40, -0.2 ], [ 0.40, -0.2 ], [ 1.20, -0.2 ] ],
   "gamerules": [ "uid-1b54-d28a-71dc-5827", "uid-7b1a-4b1d-1424-2818" ],
-  "numerator": 3,
+  "numerator": 2,
   "status": "creating",
   "lit": 0
 }
@@ -96,26 +96,37 @@
   "numerator": [ "=>", "random", 0, "$:denominator" ]
 }
 
+{ "%uid": "uid-acc3-1f94-1458-ab18",
+  "is": [ "3d", "rule" ],
+  "when": "waiting, halve fraction if possible",
+  "status": "waiting",
+  "numerator":   [ [ "divisible-by", 2, ], "=>", "$:!", "/", 2 ],
+  "denominator": [ [ "divisible-by", 2, ], "=>", "$:!", "/", 2 ]
+}
+
 { "%uid": "uid-ab7f-889e-edb9-6bab",
   "is": [ "3d", "rule" ],
-  "when": "waiting, create challenge text",
+  "when": "waiting, third fraction if possible",
   "status": "waiting",
-  "challenge-text": [ "=>", [ "format", "%s/%s", "$:numerator", "$:denominator" ] ]
+  "numerator":   [ [ "divisible-by", 3, ], "=>", "$:!", "/", 3 ],
+  "denominator": [ [ "divisible-by", 3, ], "=>", "$:!", "/", 3 ]
 }
 
 { "%uid": "uid-a9ff-4a17-9772-3859",
   "is": [ "3d", "rule" ],
   "when": "waiting, set text to challenge",
   "status": "waiting",
-  "text": [ "*", [ "=>", "$:challenge-text" ], [ "=>", "Swipe right when done ->" ] ],
+  "text": [ "*", [ "=>", [ "format", "%s/%s", "$:numerator", "$:denominator" ] ], [ "=>", "Swipe right when done ->" ] ],
   "light": [ [ "=>", 0.5  ], [ "=>", 0.5 ], [ "=>", 1.0 ] ]
 }
 
 { "%uid": "uid-aad5-7236-b521-4780",
   "is": [ "3d", "rule" ],
-  "when": "checking, set to initial zero",
+  "when": "checking, set to initial zero and recalc numerator and denominator",
   "status": "checking",
-  "lit": [ "=>", 0 ]
+  "lit": [ "=>", 0 ],
+  "numerator": [ "=>", [ [ "$:numerator", "/", "$:denominator" ], "*", [ "count", "$:subObjects" ] ] ],
+  "denominator": [ "=>", [ "count", "$:subObjects" ] ]
 }
 
 { "%uid": "uid-0b6a-659e-3561-05b2",
