@@ -12,7 +12,7 @@ import static netmash.lib.Utils.*;
   */
 public class ObjectMash extends WebObject {
 
-    private boolean extralogging = true;
+    private boolean extralogging = false;
 
     public ObjectMash(){}
 

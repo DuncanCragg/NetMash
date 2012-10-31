@@ -107,7 +107,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         Matrix.frustumM(matrixPrj, 0, -r, r, -1.0f, 1.0f, 1.0f, 100.0f);
     }
 
-    int currentGrey;
+    int touchR, touchG, touchB;
     public ConcurrentHashMap<String,Mesh> touchables = new ConcurrentHashMap<String,Mesh>();
 
     @Override
@@ -115,14 +115,16 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     synchronized private void onDrawFrame(){
         if(touchDetecting){try{
-            currentGrey=0;
+            touchR=0; touchG=0; touchB=0;
             touchables.clear();
             drawFrame();
             ByteBuffer b=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder());
             GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
             if(debugGL) throwAnyGLException("glReadPixels ",touchX,touchY,b);
-            int touchedGrey=flipAndRound(((int)b.get(0)+b.get(1)+b.get(2))/3);
-            touchedObject=touchables.get(""+touchedGrey);
+            int touchedR=flipAndRound((int)b.get(0));
+            int touchedG=flipAndRound((int)b.get(1));
+            int touchedB=flipAndRound((int)b.get(2));
+            touchedObject=touchables.get(String.format("%d:%d:%d",touchedR,touchedG,touchedB));
             if(touchedObject!=null) netmash.user.onObjectTouched(touchedObject.mesh,touchEdit,touchDX,touchDY);
             touchDetecting=false;
         }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
@@ -225,12 +227,12 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
         if(touchDetecting){
-            currentGrey+=16;
-            touchCol[0]=currentGrey/256.0f;
-            touchCol[1]=currentGrey/256.0f;
-            touchCol[2]=currentGrey/256.0f;
+            incrementTouchColour();
+            touchCol[0]=touchR/256.0f;
+            touchCol[1]=touchG/256.0f;
+            touchCol[2]=touchB/256.0f;
             GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
-            touchables.put(""+currentGrey,m);
+            touchables.put(String.format("%d:%d:%d",touchR,touchG,touchB),m);
         }
         else{
             if(!lightObject){
@@ -252,12 +254,12 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
         if(touchDetecting){
-            currentGrey+=16;
-            touchCol[0]=currentGrey/256.0f;
-            touchCol[1]=currentGrey/256.0f;
-            touchCol[2]=currentGrey/256.0f;
+            incrementTouchColour();
+            touchCol[0]=touchR/256.0f;
+            touchCol[1]=touchG/256.0f;
+            touchCol[2]=touchB/256.0f;
             GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
-            touchables.put(""+currentGrey,m);
+            touchables.put(String.format("%d:%d:%d",touchR,touchG,touchB),m);
         }
         else{
             GLES20.glUniform3f(lightPosLoc, 0f, 1f, -2f);
@@ -265,6 +267,13 @@ public class Renderer implements GLSurfaceView.Renderer {
         }
 
         if(debugGL) throwAnyGLException("Setting variables for edit");
+    }
+
+    private void incrementTouchColour(){
+        touchB+=16;
+        if(touchB==256){ touchB=0; touchG+=16; }
+        if(touchG==256){ touchG=0; touchR+=16; }
+        if(touchR==256){ touchR=0; log("run out of touch detect colours!"); }
     }
 
     public ConcurrentHashMap<Mesh,Integer> meshIDs = new ConcurrentHashMap<Mesh,Integer>();
