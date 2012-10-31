@@ -67,11 +67,17 @@
         "%rules": [ "uid-e683-5ee2-a986-b93b", "uid-d958-bf42-c730-8406", "uid-73ec-5ea1-9cf0-dfa5" ],
         "is": [ "payment" ],
         "land": "$:view:land:2",
-        "payment-per-ha": 100,
-        "minimum-payout": 200,
-        "maximum-payout": 300000
+        "constants": "uid-2433-fd91-25ad-2e9b"
       }
   ]
+}
+
+{ "%uid": "uid-2433-fd91-25ad-2e9b",
+  "is": [ "look-up" ],
+  "title": "CAP Payments Constants",
+  "payment-per-ha": 100,
+  "minimum-payout": 200,
+  "maximum-payout": 300000
 }
 
 { "%uid": "uid-872c-b29e-03a1-7b61",
@@ -95,19 +101,19 @@
   "is": [ "payment", "rule" ],
   "when": "eligible land seen, calculate claimable area and multiply by payment per hectare",
   "land": { "list": [ { "area": "*", "usage": "*", "entitlement": "*", "active": true } ] },
-  "payment": [ "=>", [ "+", "$::land:list:area" ], "*", "$:payment-per-ha" ]
+  "payment": [ "=>", [ "+", "$::land:list:area" ], "*", "$:constants:payment-per-ha" ]
 }
 
 { "%uid": "uid-d958-bf42-c730-8406",
   "is": [ "payment", "rule" ],
   "when": "basic payment calculated, if less than min, set to zero",
-  "payment": [ [ "<", "$:minimum-payout" ], "=>", 0 ]
+  "payment": [ [ "<", "$:constants:minimum-payout" ], "=>", 0 ]
 }
 
 { "%uid": "uid-73ec-5ea1-9cf0-dfa5",
   "is": [ "payment", "rule" ],
   "when": "basic payment calculated, set maximum (not the complete progression)",
-  "payment": [ [ ">", "$:maximum-payout" ], "=>", "$:maximum-payout" ]
+  "payment": [ [ ">", "$:constants:maximum-payout" ], "=>", "$:constants:maximum-payout" ]
 }
 
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
