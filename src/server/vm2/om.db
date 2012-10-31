@@ -31,7 +31,7 @@
 { "%uid": "uid-40fb-5964-b385-c922",
   "is": [ "test", "rule" ],
   "when": "Test var match, no-match, nested list, less/greater than, and multiply",
-  "la": [ [ "divisible-by", 5 ], false, [ "divisible-by", 2] ],
+  "la": [ [ "divisible-by", 5 ], false, [ "divisible-by", 2 ] ],
   "a": "$:x",
   "d": 19,
   "f": 21,
@@ -46,7 +46,7 @@
   "when": "Test list element match 1",
   "z": [ 2, [ ">", 289 ] ],
   "o": [ { "a": [ 1 ] }, { "a": [ 4 ] } ],
-  "m": [ "=>", "has", [ "format", "%s%s", "l", "o" ] ],
+  "m": [ "=>", "has", [ "format", "%s%s", 0.1, 1.0 ] ],
   "l1": [ "=>", "ok" ]
 }
 
@@ -60,7 +60,7 @@
 { "%uid": "uid-d3e7-6831-3804-7cbf",
   "is": [ "test", "rule" ],
   "when": "Test list element match 2",
-  "m": [ true, { "n": 4 }, { "n": 5 }, "hi", "yo", "lo" ],
+  "m": [ true, { "n": 4 }, { "n": 5 }, "hi", "yo", "0.11" ],
   "o": [ { "a": [ 3 ] } ],
   "z": [ [ [ "number", "*" ], "=>", [ 1, "chooses", "$:!" ], [ 0, "chooses", "$:!" ] ] ],
   "l2": [ "=>", "count", "$::o" ],

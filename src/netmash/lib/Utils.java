@@ -154,6 +154,12 @@ public class Utils{
         return s;
     }
 
+    static public String toNicerString(Number n){
+        String r=n.toString();
+        if(r.endsWith(".0")) return r.substring(0,r.length()-2);
+        return r;
+    }
+
     static public String getStringFrom(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);
         if(o==null) return null;
