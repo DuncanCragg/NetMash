@@ -18,16 +18,9 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
  - done some refactoring, need to focus on visible value towards Xmas demo
 
 --------------------------------------------------------
-Stuff
+Functionality
 --------------------------------------------------------
- - get GUIs working
-    - gui format
-    - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
-    - fill in form values
- - local uids in topdb.json converted to generated uids
----------------------------------------------------------
- - random refactoring of number
- - vary denominator with fixed total lights - hide them
+ - use local uids in topdb.json and convert to generated uids
 ---------------------------------------------------------
 Performance, Bugs
 ---------------------------------------------------------
@@ -35,9 +28,11 @@ Performance, Bugs
  - can't allow edit of remote land
  - don't need editable/rule if it's your own object!
  - check JSON structure/string cacheing/rebuilding
+ - fix vulnerability of faked POST to our object not theirs
 ---------------------------------------------------------
- - wrong object detected on tablet
+ - wrong object detected on tablet - should be fixed
  - light lags massively
+ - slightly crap touch response in game
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same meshes? detect internal change
@@ -51,8 +46,12 @@ Performance, Bugs
  - SomeObject/Avatar still?
  - shaders: vert and frag should come together, else use basic: why sept?
  - memory usage: see video http://www.youtube.com/watch?v=_CruQY55HOk
- - fix vulnerability of faked POST to our object not theirs
- - light on Kis - mystery
+--------------------------------------------------------
+ - get GUIs working
+    - gui format
+    - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
+    - fill in form values
+ - vary denominator with fixed total lights - hide them
 --------------------------------------------------------
 Explore, Interact
 

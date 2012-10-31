@@ -690,7 +690,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
     }
 
-    private void showWhatIAmViewingAsGUI(){ if(false) logrule();
+    private void showWhatIAmViewingAsGUI(){
         if(contentSet("private:viewing:is")){
             LinkedHashMap viewhash=null;
             LinkedHashMap meshhash=null;
