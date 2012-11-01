@@ -527,8 +527,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentIsOrListContains("is", "form")){
                     content("form:"+dehash(tag), val);
                 }
-                String notifyuid=(userObjectIfAny(guiuid)!=null)? UID.toUID(guiuid): guiuid;
-                notifying(notifyuid);
+                if(userObjectIfAny(guiuid)!=null) notifying(UID.toUID(guiuid));
+                notifying(guiuid);
                 refreshObserves();
             }
         };
