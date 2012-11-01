@@ -159,7 +159,6 @@ public class OTS2GUI {
 
     @SuppressWarnings("unchecked")
     public LinkedHashMap land2GUI(){
-        String title=user.content("private:viewing:title");
         LinkedList valuescol = new LinkedList();
         valuescol.add(style("direction","vertical"));
         addIfPresent(valuescol, "area", null, false, hash("input","textfield", "label","Area (ha):"));
@@ -169,15 +168,33 @@ public class OTS2GUI {
             if(!(o instanceof LinkedHashMap)) continue;
             addIfPresent(valuescol, entry.getKey(), null, false, (LinkedHashMap)((LinkedHashMap)o).clone());
         }
+        String listuid = user.content("private:viewing");
+        LinkedList viewlist=landList2Col(listuid);
+        String title=user.content("private:viewing:title");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
         viewhash.put("#title", hash("input","textfield", "value",title!=null? title: "Land"));
         viewhash.put("#values", valuescol);
+        if(user.contentIsOrListContains("private:viewing:is", "updatable"))
+        viewhash.put("#new", hash("input","textfield", "label","Name of new sub-land entry"));
+        viewhash.put("#landlist", viewlist);
         return viewhash;
     }
 
     public LinkedHashMap landList2GUI(){
         String listuid = user.content("private:viewing");
+        LinkedList viewlist=landList2Col(listuid);
+        String title = user.content("private:viewing:title");
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightblue"));
+        viewhash.put("#title", title!=null? title: "Land List");
+        if(user.contentIsOrListContains("private:viewing:is", "updatable"))
+        viewhash.put("#new", hash("input","textfield", "label","Name of new land entry"));
+        viewhash.put("#landlist", viewlist);
+        return viewhash;
+    }
+
+    private LinkedList landList2Col(String listuid){
         LinkedList lands = user.contentList("private:viewing:list");
         LinkedList viewlist = new LinkedList();
         viewlist.add(style("direction","vertical"));
@@ -191,14 +208,7 @@ public class OTS2GUI {
             if(title==null) viewlist.add("Loading..");
             else            viewlist.add(list(style("direction","horizontal", "colours","lightblue", "proportions","75%"), title, landuid));
         }
-        String title = user.content("private:viewing:title");
-        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
-        viewhash.put("style", style("direction","vertical", "colours","lightblue"));
-        viewhash.put("#title", title!=null? title: "Land List");
-        if(user.contentIsOrListContains("private:viewing:is", "updatable"))
-        viewhash.put("#new", hash("input","textfield", "label","Name of new land entry"));
-        viewhash.put("#landlist", viewlist);
-        return viewhash;
+        return viewlist;
     }
 
     public LinkedList contact2Map(String contactprefix){

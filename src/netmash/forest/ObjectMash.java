@@ -222,6 +222,7 @@ public class ObjectMash extends WebObject {
     private Object eval(LinkedList ll){ try{
         if(ll.size()==0) return null;
    //   if(ll.size()==1) return copyFindObject(ll.get(0));
+        if(ll.size()==1) return ll;
         String ll0=findString(ll.get(0));
         String ll1=findString(ll.get(1));
         if(ll.size()==3 && "-".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
