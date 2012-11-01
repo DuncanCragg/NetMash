@@ -46,7 +46,7 @@
 }
 
 { "%uid": "uid-5c78-11ee-a3c7-ba89",
-  "is": "land",
+  "is": [ "updatable", "land" ],
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
     "Annex I Products", "Maintaining for grazing/cultivation",
     "Permanent Grassland", "Permanent Crops",
@@ -54,6 +54,19 @@
   },
   "entitlement": { "input": "textfield", "label": "Entitlement Ref:" },
   "active":      { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
+  "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+                   "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
+  "list": [],
+  "template": "uid-9da2-71f4-4a2f-f389"
+}
+
+{ "%uid": "uid-9da2-71f4-4a2f-f389",
+  "is": "land",
+  "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
+    "Permanent (e.g. farmhouse)", "River",
+    "Woodland" ]
+  },
+  "ineligible":  { "input": "checkbox",  "label": "Ineligible Feature", "value": false },
   "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
                    "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" }
 }
