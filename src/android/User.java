@@ -132,7 +132,8 @@ public class User extends ObjectMash {
         User land=new User(
                         "{ "+
             (rules!=null? "\"%rules\": "+setToListString(rules)+",\n  ": "")+
-                          "\"is\": [ \"updatable\", \"land\" ],\n"+
+            (rules!=null? "\"is\": [ \"updatable\", \"land\" ],\n":
+                          "\"is\": [ \"land\" ],\n")+
                         "  \"place\": \""+landlistuid+"\",\n"+
                         "  \"user\": \""+useruid+"\",\n"+
     (templateuid!=null? "  \"template\": \""+templateuid+"\"\n": "")+
