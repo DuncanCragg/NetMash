@@ -665,7 +665,9 @@ public class WebObject {
 
     /** Use this when running from an interface or I/O callback. */
     public class Evaluator{
+        public WebObject w;
         public Evaluator(WebObject w){
+            this.w=w;
             synchronized(w){
                 w.evalPre();
                 evaluate();
@@ -673,6 +675,7 @@ public class WebObject {
             }
         }
         public void evaluate(){}
+        public String toString(){ return w.toString(); }
     }
 
     /** Initiate an HTTP fetch of JSON data and callback on httpNotifyJSON(). */

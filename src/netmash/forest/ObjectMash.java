@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 
+import netmash.platform.Kernel;
 import netmash.lib.JSON;
 
 import static netmash.lib.Utils.*;
@@ -14,11 +15,13 @@ public class ObjectMash extends WebObject {
 
     private boolean extralogging = false;
 
-    public ObjectMash(){}
+    public ObjectMash(){ extralogging = Kernel.config.boolPathN("rules:log"); }
 
-    public ObjectMash(String s){ super(s); }
+    public ObjectMash(String s){ super(s); extralogging = Kernel.config.boolPathN("rules:log"); }
 
-    public ObjectMash(LinkedHashMap hm){ super(hm); }
+    public ObjectMash(LinkedHashMap hm){ super(hm); extralogging = Kernel.config.boolPathN("rules:log"); }
+
+    public ObjectMash(JSON json){ super(json); extralogging = Kernel.config.boolPathN("rules:log"); }
 
     public void evaluate(){
         if(extralogging) log("Running ObjectMash on "+contentHash("#"));
@@ -28,11 +31,12 @@ public class ObjectMash extends WebObject {
         int r=0;
         for(Object o: rules){
             LinkedList ruleis=contentList(String.format("%%rules:%d:is", r));
+            if(extralogging) log("Rule "+r+" is="+ruleis);
             if(ruleis==null) return;
             boolean ok=true;
             for(Object is: ruleis){
                 if("rule".equals(is)) continue;
-                if(!contentIsOrListContains("is", is.toString())){ ok=false; break; }
+                if(!contentIsOrListContains("is", is.toString())){ ok=false; if(extralogging) log("Rule doesn't apply to this object"); break; }
             }
             if(ok) runRule(r);
             r++;

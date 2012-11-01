@@ -106,7 +106,7 @@
 }
 
 { "%uid": "uid-0215-038b-7558-041a",
-  "is": [ "land", "list", "rule" ],
+  "is": [ "land", "rule" ],
   "when": "land object notified, add to list",
   "%alerted": { "is": "land", "place": "*" },
   "list": [ [ "$:%alerted" ], "!=>", "has", "$:%alerted" ]
