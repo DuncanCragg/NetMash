@@ -30,7 +30,7 @@ import static netmash.lib.Utils.*;
 
 /** User viewing the Object Web.
   */
-public class User extends WebObject {
+public class User extends ObjectMash {
 
     // ---------------------------------------------------------
 
@@ -127,7 +127,6 @@ public class User extends WebObject {
                         "  \"user\": \""+useruid+"\"\n"+
                         "}");
     }
-
 
     static User newLand(LinkedList rules, String landlistuid, String useruid, LinkedHashMap location, String templateuid){
         User land=new User(
@@ -502,13 +501,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else if(contentIsOrListContains("private:viewing:is", "land")){
             if(dehash(tag).equals("new")) formuid=content("private:responses:land:"+UID.toUID(guiuid));
-            else                          formuid=UID.toUID(guiuid);
+            else                          formuid=guiuid;
         }
-        if(formuid==null) return null;
-        Object o=onlyUseThisToHandControlOfThreadToDependent(formuid);
-        if(o instanceof User) return (User)o;
-        log("Not a User: "+formuid+" "+o);
-        return null;
+        return userObjectIfAny(formuid);
     }
 
     public void setUpdateVal(final String guiuid, final String tag, final String val){
@@ -525,14 +520,15 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 }
                 else
                 if(contentIsOrListContains("is", "land")){
-                    if(tag.equals("#new")) content("title",val);
-                    else                   content(dehash(tag), val);
+                    if(dehash(tag).equals("new")) content("title",val);
+                    else                          content(dehash(tag), val);
                 }
                 else
                 if(contentIsOrListContains("is", "form")){
                     content("form:"+dehash(tag), val);
                 }
-                notifying(guiuid);
+                String notifyuid=(userObjectIfAny(guiuid)!=null)? UID.toUID(guiuid): guiuid;
+                notifying(notifyuid);
                 refreshObserves();
             }
         };
@@ -618,6 +614,14 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         return deephash(list("=>",val), path);
     }
 
+    private User userObjectIfAny(String uid){
+        if(uid==null) return null;
+        Object o=onlyUseThisToHandControlOfThreadToDependent(UID.toUID(uid));
+        if(o instanceof User) return (User)o;
+        log("Not a User: "+uid+" "+o);
+        return null;
+    }
+
     private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }
 
     // ---------------------------------------------------------
@@ -639,6 +643,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else
         if(contentIsOrListContains("is", "land")){
+            super.evaluate();
         }
         else
         if(contentIsOrListContains("is", "rsvp")){
