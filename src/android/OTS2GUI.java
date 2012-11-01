@@ -157,6 +157,25 @@ public class OTS2GUI {
         return viewhash;
     }
 
+    @SuppressWarnings("unchecked")
+    public LinkedHashMap land2GUI(){
+        String title=user.content("private:viewing:title");
+        LinkedList valuescol = new LinkedList();
+        valuescol.add(style("direction","vertical"));
+        addIfPresent(valuescol, "area", null, false, hash("input","textfield", "label","Area (ha):"));
+        LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:place:template");
+        if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
+            Object o=entry.getValue();
+            if(!(o instanceof LinkedHashMap)) continue;
+            addIfPresent(valuescol, entry.getKey(), null, false, (LinkedHashMap)((LinkedHashMap)o).clone());
+        }
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
+        viewhash.put("#title", hash("input","textfield", "value",title!=null? title: "Land"));
+        viewhash.put("#values", valuescol);
+        return viewhash;
+    }
+
     public LinkedHashMap landList2GUI(){
         String listuid = user.content("private:viewing");
         LinkedList lands = user.contentList("private:viewing:list");
@@ -200,17 +219,6 @@ public class OTS2GUI {
         return maplist;
     }
 
-    public LinkedList land2Map(){
-        String landuid = user.content("private:viewing");
-        LinkedList maplist = new LinkedList();
-        maplist.add("render:map");
-        if(user.contentIsOrListContains("private:viewing:is", "updatable")) maplist.add("updatable");
-        maplist.add("layerkey:"+landuid);
-        LinkedHashMap location=user.contentHash("private:viewing:location");
-        if(location!=null) maplist.add(point("", "Land area", location, landuid));
-        return maplist;
-    }
-
     public LinkedList contactList2Map(String contactprefix){
         String listuid = user.content("private:viewing");
         LinkedList<String> contacts = user.contentList("private:viewing:list");
@@ -234,6 +242,17 @@ public class OTS2GUI {
                 maplist.add(point("list:"+c+":"+contactprefix, address, location, contactuid));
             }
         }
+        return maplist;
+    }
+
+    public LinkedList land2Map(){
+        String landuid = user.content("private:viewing");
+        LinkedList maplist = new LinkedList();
+        maplist.add("render:map");
+        if(user.contentIsOrListContains("private:viewing:is", "updatable")) maplist.add("updatable");
+        maplist.add("layerkey:"+landuid);
+        LinkedHashMap location=user.contentHash("private:viewing:location");
+        if(location!=null) maplist.add(point("", "Land area", location, landuid));
         return maplist;
     }
 
@@ -377,25 +396,6 @@ public class OTS2GUI {
         viewhash.put("#citation", citationcol);
         viewhash.put("#authorsandrefs", authorsandrefscol);
         viewhash.put("#content", contentcol);
-        return viewhash;
-    }
-
-    @SuppressWarnings("unchecked")
-    public LinkedHashMap land2GUI(){
-        String title=user.content("private:viewing:title");
-        LinkedList valuescol = new LinkedList();
-        valuescol.add(style("direction","vertical"));
-        addIfPresent(valuescol, "area", null, false, hash("input","textfield", "label","Area (ha):"));
-        LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:place:template");
-        if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
-            Object o=entry.getValue();
-            if(!(o instanceof LinkedHashMap)) continue;
-            addIfPresent(valuescol, entry.getKey(), null, false, (LinkedHashMap)((LinkedHashMap)o).clone());
-        }
-        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
-        viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
-        viewhash.put("#title", hash("input","textfield", "value",title!=null? title: "Land"));
-        viewhash.put("#values", valuescol);
         return viewhash;
     }
 

@@ -719,6 +719,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 viewhash=ots2gui.landList2GUI();
             }
             else
+            if(contentIsOrListContains("private:viewing:is", "land")){
+                viewhash=ots2gui.land2GUI();
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "user")){
                 viewhash=ots2gui.user2GUI();
             }
@@ -734,10 +738,6 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(contentIsOrListContains("private:viewing:is", "article") ||
                contentIsOrListContains("private:viewing:is", "chapter")   ){
                 viewhash=ots2gui.article2GUI();
-            }
-            else
-            if(contentIsOrListContains("private:viewing:is", "land")){
-                viewhash=ots2gui.land2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "links")){
@@ -796,16 +796,16 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 viewlist=ots2gui.landList2Map();
             }
             else
+            if(contentIsOrListContains("private:viewing:is", "land")){
+                viewlist=ots2gui.land2Map();
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "user")){
                 viewlist=ots2gui.contact2Map("contact:");
             }
             else
             if(contentIsOrListContains("private:viewing:is", "contact")){
                 viewlist=ots2gui.contact2Map("");
-            }
-            else
-            if(contentIsOrListContains("private:viewing:is", "land")){
-                viewlist=ots2gui.land2Map();
             }
             else{
             }
