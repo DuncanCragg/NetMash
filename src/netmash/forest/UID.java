@@ -82,6 +82,14 @@ public class UID {
         return uid2url.startsWith(localPre())? toUID(uid2url): uid2url;
     }
 
+    @SuppressWarnings("unchecked")
+    static public LinkedList normaliseUIDs(String baseurl, LinkedList<String> uid2urls){
+        if(uid2urls==null) return null;
+        LinkedList ll=new LinkedList();
+        for(String uid2url: uid2urls) ll.add(normaliseUID(baseurl,uid2url));
+        return ll;
+    }
+
     static public String toUIDifLocal(String url2uid){
         if(notVisible()) return url2uid;
         return url2uid.startsWith(localPre())? toUID(url2uid): url2uid;

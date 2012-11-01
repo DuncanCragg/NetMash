@@ -447,8 +447,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             path="private:responses:land:"+UID.toUID(guiuid);
             if(contentSet(path) && !contentSet(path+":title")) return false;
             if(contentSet("private:viewing:template") && !contentSet("private:viewing:template:is")) return false;
-            LinkedList rules=contentList("private:viewing:template:%rules");
-            String template=content("private:viewing:template:template");
+            String templateuid =UID.normaliseUID(content("private:viewing"), content("private:viewing:template"));
+            LinkedList rules   =UID.normaliseUIDs(templateuid, contentList("private:viewing:template:%rules"));
+            String     template=UID.normaliseUID( templateuid, content(    "private:viewing:template:template"));
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
             resp=newLand(rules, guiuid, uid, contentHashClone("location"), template);
         }
@@ -462,8 +463,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             path="private:responses:land:"+UID.toUID(guiuid);
             if(contentSet(path) && !contentSet(path+":title")) return false;
             if(contentSet("private:viewing:template") && !contentSet("private:viewing:template:is")) return false;
-            LinkedList rules=contentList("private:viewing:template:%rules");
-            String template=content("private:viewing:template:template");
+            String templateuid =UID.normaliseUID(content("private:viewing"), content("private:viewing:template"));
+            LinkedList rules   =UID.normaliseUIDs(templateuid, contentList("private:viewing:template:%rules"));
+            String     template=UID.normaliseUID( templateuid, content(    "private:viewing:template:template"));
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
             resp=newLand(rules, guiuid, uid, contentHashClone("location"), template);
         }
