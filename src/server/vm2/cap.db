@@ -39,21 +39,23 @@
         "%rules": [ "uid-0215-038b-7558-041a" ],
         "is": [ "updatable", "land", "list" ],
         "list": [],
-        "template": { "is": "land",
-                      "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
-                                            "Annex I Products",
-                                            "Maintaining for grazing/cultivation",
-                                            "Permanent Grassland", "Permanent Crops",
-                                            "Nurseries", "Short-Rotation Coppice", "Fallow"
-                      ] },
-                      "entitlement": { "input": "textfield", "label": "Entitlement Ref:" },
-                      "active":      { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
-                      "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                                       "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" }
-                    }
+        "template": "uid-5c78-11ee-a3c7-ba89"
       }
     ]
   }
+}
+
+{ "%uid": "uid-5c78-11ee-a3c7-ba89",
+  "is": "land",
+  "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
+    "Annex I Products", "Maintaining for grazing/cultivation",
+    "Permanent Grassland", "Permanent Crops",
+    "Nurseries", "Short-Rotation Coppice", "Fallow" ]
+  },
+  "entitlement": { "input": "textfield", "label": "Entitlement Ref:" },
+  "active":      { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
+  "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+                   "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" }
 }
 
 { "%uid": "uid-1cc7-4c21-9036-4e01",
