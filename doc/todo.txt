@@ -51,7 +51,7 @@ Stuff
  - get GUIs working
     - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
-    - fill in form values
+    - fill in form values: doc/local/getFormXVal.java
  - vary denominator with fixed total lights - hide them
 --------------------------------------------------------
 Explore, Interact

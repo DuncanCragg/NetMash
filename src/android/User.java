@@ -511,36 +511,6 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         return null;
     }
 
-    public String getFormStringVal(final String guiuid, final String tag){
-        final String[] val=new String[1];
-        new Evaluator(this){
-            public void evaluate(){
-                setResponse(guiuid);
-                if(contentIsOrListContains("private:viewing:is", "gui")){
-                    val[0]=content("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
-                }
-                else val[0]=null;
-                refreshObserves();
-            }
-        };
-        return val[0];
-    }
-
-    public Boolean getFormBooleanVal(final String guiuid, final String tag){
-        final Boolean[] val=new Boolean[1];
-        new Evaluator(this){
-            public void evaluate(){
-                setResponse(guiuid);
-                if(contentIsOrListContains("private:viewing:is", "gui")){
-                    val[0]=contentBool("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
-                }
-                else val[0]=null;
-                refreshObserves();
-            }
-        };
-        return val[0];
-    }
-
     public void setUpdateVal(final String guiuid, final String tag, final String val){
         if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
