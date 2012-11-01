@@ -214,7 +214,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(objectuid==null) return;
         if(objectuid.equals("editing")){
             String edituid=content("private:editing");
-            if(dy*dy>dx*dx/2) getObjectUpdating(edituid, true).setEditVal(edituid,dy);
+            if(dy*dy>dx*dx/2) getObjectUpdating(edituid, "", true).setEditVal(edituid,dy);
             else if(NetMash.top!=null) NetMash.top.getKeys(dx>0);
         }
         else new Evaluator(this){
@@ -453,14 +453,20 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             resp=newForm(guiuid, uid);
         }
         else if(contentIsOrListContains("private:viewing:is", "land")){
+            path="private:responses:land:"+UID.toUID(guiuid);
+            if(contentSet(path) && !contentSet(path+":title")) return false;
+            if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
+            resp=newLand(guiuid, uid, contentHashClone("location"));
         }
         if(resp!=null) content(path, spawn(resp));
         return true;
     }
 
-    private User getObjectUpdating(String guiuid){ return getObjectUpdating(guiuid, false); }
+    private User getObjectUpdating(String guiuid){ return getObjectUpdating(guiuid, "", false); }
 
-    private User getObjectUpdating(String guiuid, boolean editable){
+    private User getObjectUpdating(String guiuid, String tag){ return getObjectUpdating(guiuid, tag, false); }
+
+    private User getObjectUpdating(String guiuid, String tag, boolean editable){
         String formuid=null;
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
@@ -484,7 +490,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             formuid=content("private:responses:form:"+UID.toUID(guiuid));
         }
         else if(contentIsOrListContains("private:viewing:is", "land")){
-            formuid=UID.toUID(guiuid);
+            if(dehash(tag).equals("new")) formuid=content("private:responses:land:"+UID.toUID(guiuid));
+            else                          formuid=UID.toUID(guiuid);
         }
         if(formuid==null) return null;
         Object o=onlyUseThisToHandControlOfThreadToDependent(formuid);
@@ -609,19 +616,19 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, String val){
-        User o=getObjectUpdating(guiuid);
+        User o=getObjectUpdating(guiuid, tag);
         if(o==null) return;
         o.setUpdateVal(guiuid,tag,val);
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, boolean val){
-        User o=getObjectUpdating(guiuid);
+        User o=getObjectUpdating(guiuid, tag);
         if(o==null) return;
         o.setUpdateVal(guiuid,tag,val);
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, int val){
-        User o=getObjectUpdating(guiuid);
+        User o=getObjectUpdating(guiuid, tag);
         if(o==null) return;
         o.setUpdateVal(guiuid,tag,val);
     }
