@@ -161,6 +161,16 @@ public class Utils{
         return r;
     }
 
+    static public String setToListString(Iterable<String> set){
+        Iterator<String> i = set.iterator();
+        if(!i.hasNext()) return "[]";
+        String r = "[";
+        do{ r+=" \""+i.next()+"\","; }while(i.hasNext());
+        r=r.substring(0, r.length()-1);
+        r+=" ]";
+        return r;
+    }
+
     static public String getStringFrom(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);
         if(o==null) return null;

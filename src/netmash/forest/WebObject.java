@@ -838,16 +838,6 @@ public class WebObject {
         return r;
     }
 
-    private String setToListString(Iterable<String> set){
-        Iterator<String> i = set.iterator();
-        if(!i.hasNext()) return "[]";
-        String r = "[";
-        do{ r+=" \""+i.next()+"\","; }while(i.hasNext());
-        r=r.substring(0, r.length()-1);
-        r+=" ]";
-        return r;
-    }
-
     private void listToSet(AbstractSet<String> set, List list){
         if(list==null) return;
         Iterator i = list.iterator();

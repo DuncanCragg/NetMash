@@ -129,11 +129,14 @@ public class User extends WebObject {
     }
 
 
-    static User newLand(String landlistuid, String useruid, LinkedHashMap location){
+    static User newLand(LinkedList rules, String landlistuid, String useruid, LinkedHashMap location, String templateuid){
         User land=new User(
-                        "{ \"is\": [ \"updatable\", \"land\" ],\n"+
+                        "{ "+
+            (rules!=null? "\"%rules\": "+setToListString(rules)+",\n  ": "")+
+                          "\"is\": [ \"updatable\", \"land\" ],\n"+
                         "  \"place\": \""+landlistuid+"\",\n"+
-                        "  \"user\": \""+useruid+"\"\n"+
+                        "  \"user\": \""+useruid+"\",\n"+
+    (templateuid!=null? "  \"template\": \""+templateuid+"\"\n": "")+
                         "}");
         land.publicState.hashPath("location", location);
         return land;
@@ -443,8 +446,11 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else if(contentListContainsAll("private:viewing:is", list("updatable", "land", "list"))){
             path="private:responses:land:"+UID.toUID(guiuid);
             if(contentSet(path) && !contentSet(path+":title")) return false;
+            if(contentSet("private:viewing:template") && !contentSet("private:viewing:template:is")) return false;
+            LinkedList rules=contentList("private:viewing:template:%rules");
+            String template=content("private:viewing:template:template");
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
-            resp=newLand(guiuid, uid, contentHashClone("location"));
+            resp=newLand(rules, guiuid, uid, contentHashClone("location"), template);
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
             path="private:responses:form:"+UID.toUID(guiuid);
@@ -455,8 +461,11 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else if(contentIsOrListContains("private:viewing:is", "land")){
             path="private:responses:land:"+UID.toUID(guiuid);
             if(contentSet(path) && !contentSet(path+":title")) return false;
+            if(contentSet("private:viewing:template") && !contentSet("private:viewing:template:is")) return false;
+            LinkedList rules=contentList("private:viewing:template:%rules");
+            String template=content("private:viewing:template:template");
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
-            resp=newLand(guiuid, uid, contentHashClone("location"));
+            resp=newLand(rules, guiuid, uid, contentHashClone("location"), template);
         }
         if(resp!=null) content(path, spawn(resp));
         return true;

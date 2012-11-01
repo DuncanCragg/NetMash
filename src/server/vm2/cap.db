@@ -64,7 +64,7 @@
   "is": "land",
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
     "Permanent (e.g. farmhouse)", "River",
-    "Woodland" ]
+    "Woodland", "Polytunnel on Concrete" ]
   },
   "ineligible":  { "input": "checkbox",  "label": "Ineligible Feature", "value": false },
   "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
