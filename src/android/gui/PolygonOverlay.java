@@ -19,27 +19,52 @@ import static netmash.lib.Utils.*;
 
 public class PolygonOverlay extends Overlay {
 
-    static public class PolyItem extends OverlayItem {
+    static public class PolyItem {
+        GeoPoint centre; String label; String sublabel;
         List<GeoPoint> poly;
         Paint paint;
-        public PolyItem(GeoPoint point, String label, String sublabel, List<GeoPoint> poly, Paint paint){
-            super(point, label, sublabel);
+        public PolyItem(GeoPoint centre, String label, String sublabel, List<GeoPoint> poly, Paint paint){
+            this.centre=centre; this.label=label; this.sublabel=sublabel;
             this.poly=poly;
             this.paint=paint;
         }
     }
 
-    private ArrayList<PolyItem> overlayitems = new ArrayList<PolyItem>();
+    private ArrayList<PolyItem> polyitems = new ArrayList<PolyItem>();
 
     public PolygonOverlay(){
     }
 
     public void addItem(PolyItem item){
-        overlayitems.add(item);
+        polyitems.add(item);
     }
 
     public void clear(){
-        overlayitems.clear();
+        polyitems.clear();
+    }
+
+    public void draw(Canvas canvas, MapView mapview, boolean shadow){
+        super.draw(canvas, mapview, shadow);
+        Projection projection = mapview.getProjection();
+        Point p1 = new Point();
+        Point p2 = new Point();
+        for(PolyItem poly: polyitems){
+            Path path = new Path();
+            GeoPoint st=null, px=null;
+            for(GeoPoint py: poly.poly){
+                if(st==null){ st=py; px=py; continue; }
+                projection.toPixels(px, p1);
+                projection.toPixels(py, p2);
+                path.moveTo(p1.x, p1.y);
+                path.lineTo(p2.x, p2.y);
+                px=py;
+            }
+            projection.toPixels(px, p1);
+            projection.toPixels(st, p2);
+            path.moveTo(p1.x, p1.y);
+            path.lineTo(p2.x, p2.y);
+            canvas.drawPath(path, poly.paint);
+        }
     }
 }
 
