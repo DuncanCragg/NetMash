@@ -129,11 +129,11 @@ public class User extends ObjectMash {
                         "}");
     }
 
-    static User newLand(LinkedList rules, String landlistuid, String useruid, LinkedHashMap location, String templateuid){
+    static User newLand(LinkedList rules, boolean updatable, String landlistuid, String useruid, LinkedHashMap location, String templateuid){
         User land=new User(
                         "{ "+
             (rules!=null? "\"%rules\": "+setToListString(rules)+",\n  ": "")+
-            (rules!=null? "\"is\": [ \"updatable\", \"land\" ],\n":
+              (updatable? "\"is\": [ \"updatable\", \"land\" ],\n":
                           "\"is\": [ \"land\" ],\n")+
                         "  \"place\": \""+landlistuid+"\",\n"+
                         "  \"user\": \""+useruid+"\",\n"+
@@ -461,9 +461,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(contentSet("private:viewing:template") && !contentSet("private:viewing:template:is")) return false;
             String templateuid =UID.normaliseUID(content("private:viewing"), content("private:viewing:template"));
             LinkedList rules   =UID.normaliseUIDs(templateuid, contentList("private:viewing:template:%rules"));
+            boolean updatable  =contentListContains(                       "private:viewing:template:is", "updatable");
             String     template=UID.normaliseUID( templateuid, content(    "private:viewing:template:template"));
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
-            resp=newLand(rules, guiuid, uid, contentHashClone("location"), template);
+            resp=newLand(rules, updatable, guiuid, uid, contentHashClone("location"), template);
         }
         if(resp!=null) content(path, spawn(resp));
         return true;

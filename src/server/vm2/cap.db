@@ -61,10 +61,10 @@
 }
 
 { "%uid": "uid-9da2-71f4-4a2f-f389",
-  "is": "land",
+  "is": [ "updatable", "land" ],
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
-    "Permanent (e.g. farmhouse)", "River",
-    "Woodland", "Polytunnel on Concrete" ]
+    "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)", "River",
+    "Stone Wall", "Woodland", "Polytunnel on Soil", "Polytunnel on Concrete" ]
   },
   "ineligible":  { "input": "checkbox",  "label": "Ineligible Feature", "value": false },
   "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
