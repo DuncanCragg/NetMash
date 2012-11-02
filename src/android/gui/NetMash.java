@@ -792,7 +792,7 @@ log(show? "show keyboard": "hide keyboard");
             LinkedHashMap point = (LinkedHashMap)o;
             String label=(String)point.get("label");
             String sublabel=(String)point.get("sublabel");
-            int size=(Integer)point.get("size");
+            double area=(Double)point.get("area");
             LinkedHashMap<String,Number> location=(LinkedHashMap<String,Number>)point.get("location");
             if(location==null) continue;
             String jumpUID=(String)point.get("jump");
@@ -803,7 +803,7 @@ log(show? "show keyboard": "hide keyboard");
             centre=new GeoPoint(lat,lon);
             NetMashMapOverlay.Item overlayitem = new NetMashMapOverlay.Item(centre, label, sublabel, jumpUID);
             itemizedoverlay.addItem(overlayitem);
-            PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(squareAround(centre,size), getPolyPaint());
+            PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(squareAround(centre,area), getPolyPaint());
             polygonoverlay.addItem(polyitem);
         }
         if(minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
@@ -838,12 +838,14 @@ log(show? "show keyboard": "hide keyboard");
         return paint;
     }
 
-    private List<GeoPoint> squareAround(GeoPoint p, int size){
+    private List<GeoPoint> squareAround(GeoPoint p, double area){
+        int latsize=(int)(area*600);
+        int lonsize=(int)(area*1000);
         List<GeoPoint> poly = new ArrayList<GeoPoint>();
-        poly.add(new GeoPoint(p.getLatitudeE6()+size, p.getLongitudeE6()+size));
-        poly.add(new GeoPoint(p.getLatitudeE6()+size, p.getLongitudeE6()-size));
-        poly.add(new GeoPoint(p.getLatitudeE6()-size, p.getLongitudeE6()-size));
-        poly.add(new GeoPoint(p.getLatitudeE6()-size, p.getLongitudeE6()+size));
+        poly.add(new GeoPoint(p.getLatitudeE6()+latsize, p.getLongitudeE6()+lonsize));
+        poly.add(new GeoPoint(p.getLatitudeE6()+latsize, p.getLongitudeE6()-lonsize));
+        poly.add(new GeoPoint(p.getLatitudeE6()-latsize, p.getLongitudeE6()-lonsize));
+        poly.add(new GeoPoint(p.getLatitudeE6()-latsize, p.getLongitudeE6()+lonsize));
         return poly;
     }
 
