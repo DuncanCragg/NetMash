@@ -344,11 +344,16 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         jumpToUID(uid, false);
     }
 
-    public void jumpToUID(final String uid, final boolean relativeToViewing){
+    public void jumpToUID(String uid, final boolean relativeToViewing){
+        final String jumpuid;
+        boolean useLocal=userObjectIfAny(uid)!=null;
+        if(useLocal)          jumpuid=UID.toUID(uid); else
+        if(relativeToViewing) jumpuid=UID.normaliseUID(content("private:viewing"),uid);
+        else                  jumpuid=uid;
         new Evaluator(this){
-            public void evaluate(){ if(false) logrule();
+            public void evaluate(){
                 history.forward();
-                content("private:viewing", relativeToViewing? UID.normaliseUID(content("private:viewing"),uid): uid);
+                content("private:viewing", jumpuid);
                 content("private:viewas", "gui");
                 showWhatIAmViewing();
                 refreshObserves();
@@ -521,14 +526,17 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 }
                 else
                 if(contentIsOrListContains("is", "land")){
-                    if(dehash(tag).equals("new")) content("title",val);
-                    else                          content(dehash(tag), val);
+                    if(!dehash(tag).equals("new")){
+                        content(dehash(tag), val);
+                        refreshObserves();
+                        return;
+                    }
+                    content("title",val);
                 }
                 else
                 if(contentIsOrListContains("is", "form")){
                     content("form:"+dehash(tag), val);
                 }
-                if(userObjectIfAny(guiuid)!=null) notifying(UID.toUID(guiuid));
                 notifying(guiuid);
                 refreshObserves();
             }
@@ -545,6 +553,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 else
                 if(contentIsOrListContains("is", "land")){
                     contentBool(dehash(tag), val);
+                    refreshObserves();
+                    return;
                 }
                 else
                 if(contentIsOrListContains("is", "form")){
@@ -562,6 +572,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "land")){
                     contentInt(dehash(tag), val);
+                    refreshObserves();
+                    return;
                 }
                 else
                 if(contentIsOrListContains("is", "form")){
@@ -580,6 +592,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentIsOrListContains("is", "land")){
                     contentDouble("location:lat", val.getLatitudeE6()/1e6);
                     contentDouble("location:lon", val.getLongitudeE6()/1e6);
+                    refreshObserves();
+                    return;
                 }
                 notifying(guiuid);
                 refreshObserves();
