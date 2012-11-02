@@ -69,6 +69,7 @@ public class User extends ObjectMash {
         otslinks.addFirst(currentUser.uid);
 
         currentUser.funcobs.setCacheNotifyAndSaveConfig(currentUser);
+
         currentUser.funcobs.cacheSaveAndEvaluate(contact, true);
         currentUser.funcobs.cacheSaveAndEvaluate(links);
         currentUser.funcobs.cacheSaveAndEvaluate(contacts);
@@ -532,6 +533,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                         return;
                     }
                     content("title",val);
+                    notifyingCN();
                 }
                 else
                 if(contentIsOrListContains("is", "form")){

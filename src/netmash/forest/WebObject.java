@@ -678,6 +678,11 @@ public class WebObject {
         public String toString(){ return w.toString(); }
     }
 
+    /** Make sure this object reports back to base - sends updates to network:home-cache-notify. */
+    public void notifyingCN(){
+        funcobs.http.setHomeCN(this);
+    }
+
     /** Initiate an HTTP fetch of JSON data and callback on httpNotifyJSON(). */
     public void httpGETJSON(String url, String param){
         funcobs.http.getJSON(url, this, param);

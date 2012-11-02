@@ -321,39 +321,36 @@ abstract class HTTPCommon {
                 if(chars[chp]==':'){
                     docol=true;
                     continue;
-                }   
+                }
                 if(chars[chp]>' '){
                     tagbuf.append(chars[chp]);
                     continue;
-                }   
+                }
                 parseError(':', chp, chars);
-            }   
-        
+            }
             if(!doval){
                 if(chars[chp]==' ') continue;
                 doval=true;
-            }   
-        
+            }
             if(!donln){
                 if(chars[chp]>=' '){
                     valbuf.append(chars[chp]);
                     if(chp!=chars.length-1) continue;
-                }   
+                }
                 donln=true;
                 String tag = new String(tagbuf); tagbuf = new StringBuilder();
                 String val = new String(valbuf); valbuf = new StringBuilder();
                 fishOutInterestingHeaders(tag.toLowerCase(), val);
                 continue;
-            }   
-            
+            }
             if(chars[chp]>' '){
                 docol=false;
                 doval=false;
                 donln=false;
                 chp--;
                 continue;
-            }   
-        }   
+            }
+        }
     }
 
     private void clearFirstLine(){
@@ -408,11 +405,11 @@ abstract class HTTPCommon {
     private void parseError(char ch, int chp, char[] chars) throws Exception{
         throw new Exception("Syntax error in headers: odd char before '"+ch+"': "+
                             "["+JSON.showContext(chp, chars)+"] at "+chp+ " in\n"+new String(chars));
-    }       
-                
+    }
+
     protected abstract void earlyEOF();
     protected abstract void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception;
-    
+
     static public final DateFormat RFC1123 = new java.text.SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
     static { RFC1123.setTimeZone(TimeZone.getTimeZone("GMT")); }
 
@@ -857,7 +854,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
 
     protected void stop(){ running=false; close(null,null); }
 
-    class Request { 
+    class Request {
         String type, path, uid; int etag; WebObject webobject; String param, notifieruid;
         Request(String t, String p, String u, int e, WebObject o, String m, String n){
             type=t; path=p; uid=u; etag=e; webobject=o; param=m; notifieruid=n;
