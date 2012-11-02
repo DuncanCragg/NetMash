@@ -181,19 +181,6 @@ public class OTS2GUI {
         return viewhash;
     }
 
-    public LinkedHashMap landList2GUI(){
-        String listuid = user.content("private:viewing");
-        LinkedList viewlist=landList2Col(listuid);
-        String title = user.content("private:viewing:title");
-        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
-        viewhash.put("style", style("direction","vertical", "colours","lightblue"));
-        viewhash.put("#title", title!=null? title: "Land List");
-        if(user.contentIsOrListContains("private:viewing:is", "updatable"))
-        viewhash.put("#new", hash("input","textfield", "label","Name of new land entry"));
-        viewhash.put("#landlist", viewlist);
-        return viewhash;
-    }
-
     private LinkedList landList2Col(String listuid){
         LinkedList lands = user.contentList("private:viewing:list");
         LinkedList viewlist = new LinkedList();
@@ -261,23 +248,15 @@ public class OTS2GUI {
         maplist.add("render:map");
         if(user.contentIsOrListContains("private:viewing:is", "updatable")) maplist.add("updatable");
         maplist.add("layerkey:"+landuid);
-        LinkedHashMap location=user.contentHash("private:viewing:location");
+        LinkedHashMap<String,Double> location=user.contentHash("private:viewing:location");
         if(location!=null) maplist.add(point("", "Land area", location, landuid));
-        return maplist;
-    }
-
-    public LinkedList landList2Map(){
-        String listuid = user.content("private:viewing");
-        LinkedList<String> lands = user.contentList("private:viewing:list");
-        if(lands==null) return null;
-        LinkedList maplist = new LinkedList();
-        maplist.add("render:map");
-        maplist.add("layerkey:"+listuid);
-        int c= -1;
-        for(String uid: lands){ c++;
-            String landuid = UID.normaliseUID(listuid, uid);
-            LinkedHashMap<String,Double> location=user.contentHash("private:viewing:list:"+c+":location");
-            if(location!=null) maplist.add(point("list:"+c+":", "Land area", location, landuid));
+        LinkedList<String> sublands = user.contentList("private:viewing:list");
+        if(sublands!=null){
+            int c= -1; for(String uid: sublands){ c++;
+                String sublanduid = UID.normaliseUID(landuid, uid);
+                location=user.contentHash("private:viewing:list:"+c+":location");
+                if(location!=null) maplist.add(point("list:"+c+":", "Land area", location, sublanduid));
+            }
         }
         return maplist;
     }
