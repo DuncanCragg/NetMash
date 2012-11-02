@@ -782,6 +782,7 @@ log(show? "show keyboard": "hide keyboard");
             }
         }
         if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable? viewUID: null);
+        PolygonOverlay polygonoverlay=new PolygonOverlay();
         itemizedoverlay.clear();
         GeoPoint centre=null;
         int minlat=Integer.MAX_VALUE, maxlat=Integer.MIN_VALUE;
@@ -791,6 +792,7 @@ log(show? "show keyboard": "hide keyboard");
             LinkedHashMap point = (LinkedHashMap)o;
             String label=(String)point.get("label");
             String sublabel=(String)point.get("sublabel");
+            int size=(Integer)point.get("size");
             LinkedHashMap<String,Number> location=(LinkedHashMap<String,Number>)point.get("location");
             if(location==null) continue;
             String jumpUID=(String)point.get("jump");
@@ -801,6 +803,8 @@ log(show? "show keyboard": "hide keyboard");
             centre=new GeoPoint(lat,lon);
             NetMashMapOverlay.Item overlayitem = new NetMashMapOverlay.Item(centre, label, sublabel, jumpUID);
             itemizedoverlay.addItem(overlayitem);
+            PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(squareAround(centre,size), getPolyPaint());
+            polygonoverlay.addItem(polyitem);
         }
         if(minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
             MapController mapcontrol = mapview.getController();
@@ -814,8 +818,16 @@ log(show? "show keyboard": "hide keyboard");
     //  overlays.remove(itemizedoverlay);
         overlays.clear();
         overlays.add(itemizedoverlay);
+        overlays.add(polygonoverlay);
+        mapview.postInvalidate();
+        return mapview;
+    }
 
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    Paint paint=null;
+
+    private Paint getPolyPaint(){
+        if(paint!=null) return paint;
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setAlpha(50);
@@ -823,14 +835,7 @@ log(show? "show keyboard": "hide keyboard");
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStrokeWidth(3);
-
-        PolygonOverlay polygonoverlay=new PolygonOverlay();
-        PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(centre, "field", "beet", squareAround(centre,1000), paint);
-        polygonoverlay.addItem(polyitem);
-        overlays.add(polygonoverlay);
-
-        mapview.postInvalidate();
-        return mapview;
+        return paint;
     }
 
     private List<GeoPoint> squareAround(GeoPoint p, int size){

@@ -20,11 +20,9 @@ import static netmash.lib.Utils.*;
 public class PolygonOverlay extends Overlay {
 
     static public class PolyItem {
-        GeoPoint centre; String label; String sublabel;
         List<GeoPoint> poly;
         Paint paint;
-        public PolyItem(GeoPoint centre, String label, String sublabel, List<GeoPoint> poly, Paint paint){
-            this.centre=centre; this.label=label; this.sublabel=sublabel;
+        public PolyItem(List<GeoPoint> poly, Paint paint){
             this.poly=poly;
             this.paint=paint;
         }
@@ -32,15 +30,10 @@ public class PolygonOverlay extends Overlay {
 
     private ArrayList<PolyItem> polyitems = new ArrayList<PolyItem>();
 
-    public PolygonOverlay(){
-    }
+    public PolygonOverlay(){ }
 
     public void addItem(PolyItem item){
         polyitems.add(item);
-    }
-
-    public void clear(){
-        polyitems.clear();
     }
 
     public void draw(Canvas canvas, MapView mapview, boolean shadow){

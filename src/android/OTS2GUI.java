@@ -204,14 +204,14 @@ public class OTS2GUI {
         maplist.add("render:map");
         maplist.add("layerkey:"+useruid);
         LinkedHashMap location=user.contentHash("private:viewing:location");
-        if(location!=null) maplist.add(point(contactprefix, "Location", location, useruid));
+        if(location!=null) maplist.add(point(contactprefix, "Location", 0, location, useruid));
         LinkedList<String> addressStrings=getAddressesAsString("private:viewing:"+contactprefix+"address", false);
         LinkedList<String> geoAddrStrings=getAddressesAsString("private:viewing:"+contactprefix+"address", true);
         int i= -1;
         for(String address: addressStrings){ i++;
             location=geoCode(geoAddrStrings.get(i));
             if(location==null) continue;
-            maplist.add(point(contactprefix, address, location, useruid));
+            maplist.add(point(contactprefix, address, 0, location, useruid));
         }
         return maplist;
     }
@@ -229,14 +229,14 @@ public class OTS2GUI {
             LinkedHashMap<String,Double> location=null;
             if(!contactprefix.equals("")) location=user.contentHash("private:viewing:list:"+c+":location");
             if(location==null)            location=user.contentHash("private:viewing:list:"+c+":"+contactprefix+"location");
-            if(location!=null) maplist.add(point("list:"+c+":"+contactprefix, "Location", location, contactuid));
+            if(location!=null) maplist.add(point("list:"+c+":"+contactprefix, "Location", 0, location, contactuid));
             LinkedList<String> addressStrings=getAddressesAsString("private:viewing:list:"+c+":"+contactprefix+"address", false);
             LinkedList<String> geoAddrStrings=getAddressesAsString("private:viewing:list:"+c+":"+contactprefix+"address", true);
             int i= -1;
             for(String address: addressStrings){ i++;
                 location=geoCode(geoAddrStrings.get(i));
                 if(location==null) continue;
-                maplist.add(point("list:"+c+":"+contactprefix, address, location, contactuid));
+                maplist.add(point("list:"+c+":"+contactprefix, address, 0, location, contactuid));
             }
         }
         return maplist;
@@ -249,24 +249,25 @@ public class OTS2GUI {
         if(user.contentIsOrListContains("private:viewing:is", "updatable")) maplist.add("updatable");
         maplist.add("layerkey:"+landuid);
         LinkedHashMap<String,Double> location=user.contentHash("private:viewing:location");
-        if(location!=null) maplist.add(point("", "Land area", location, landuid));
+        if(location!=null) maplist.add(point("", "Land area", 1000, location, landuid));
         LinkedList<String> sublands = user.contentList("private:viewing:list");
         if(sublands!=null){
             int c= -1; for(String uid: sublands){ c++;
                 String sublanduid = UID.normaliseUID(landuid, uid);
                 location=user.contentHash("private:viewing:list:"+c+":location");
-                if(location!=null) maplist.add(point("list:"+c+":", "Land area", location, sublanduid));
+                if(location!=null) maplist.add(point("list:"+c+":", "Land area", 300, location, sublanduid));
             }
         }
         return maplist;
     }
 
-    private LinkedHashMap point(String prefix, String sublabel, LinkedHashMap location, String uid){
+    private LinkedHashMap point(String prefix, String sublabel, int size, LinkedHashMap location, String uid){
         LinkedHashMap point = new LinkedHashMap();
         String          label=user.content("private:viewing:"+prefix+"fullName");
         if(label==null) label=user.content("private:viewing:"+prefix+"title");
         point.put("label",    label!=null? label: "");
         point.put("sublabel", sublabel!=null? sublabel: "");
+        point.put("size", Integer.valueOf(size));
         point.put("location", location);
         point.put("jump", uid);
         return point;
