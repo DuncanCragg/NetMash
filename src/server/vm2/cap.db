@@ -31,14 +31,13 @@
 
 { "%uid": "uid-f265-941d-a0b8-ca5d",
   "is": [ "gui", "rule" ],
-  "when": "application created, create land list",
+  "when": "application created, create land object",
   "%notifying": [ "=>", "has", "$:form" ],
   "view": {
     "land": [ "#", "=>", "style", "Your Land:",
       { "%uid": "new",
-        "%rules": [ "uid-0215-038b-7558-041a" ],
-        "is": [ "updatable", "land", "list" ],
-        "list": [],
+        "%rules": [ "uid-0215-038b-7558-041a", "uid-51b1-5d09-ed2f-519c" ],
+        "is": [ "updatable", "land" ],
         "template": "uid-5c78-11ee-a3c7-ba89"
       }
     ]
@@ -104,6 +103,12 @@
             "land": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%" } ] ],
             "cash": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ]
   }
+}
+
+{ "%uid": "uid-51b1-5d09-ed2f-519c",
+  "is": [ "land", "rule" ],
+  "when": "land area changes, update total",
+  "area": [ "=>", "+", "$:list:area" ]
 }
 
 { "%uid": "uid-0215-038b-7558-041a",
