@@ -20,81 +20,81 @@ import static netmash.lib.Utils.*;
 
 public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterface.OnClickListener {
 
-        private String mapUID=null;
-        private String jumpUID;
+    private String mapUID=null;
+    private String jumpUID;
 
-        static public class Item extends OverlayItem{
-            String jumpUID;
-            public Item(GeoPoint point, String label, String sublabel, String jumpUID){
-                super(point, label, sublabel);
-                this.jumpUID=jumpUID;
-            }
+    static public class Item extends OverlayItem{
+        String jumpUID;
+        public Item(GeoPoint point, String label, String sublabel, String jumpUID){
+            super(point, label, sublabel);
+            this.jumpUID=jumpUID;
         }
+    }
 
-        private ArrayList<Item> overlayitems = new ArrayList<Item>();
-        private NetMash netmash;
+    private ArrayList<Item> overlayitems = new ArrayList<Item>();
+    private NetMash netmash;
 
-        public NetMashMapOverlay(Drawable defaultMarker, NetMash netmash, String mapUID){
-            super(boundCenterBottom(defaultMarker));
-            populate();
-            this.netmash = netmash;
-            this.mapUID = mapUID;
-        }
+    public NetMashMapOverlay(Drawable defaultMarker, NetMash netmash, String mapUID){
+        super(boundCenterBottom(defaultMarker));
+        populate();
+        this.netmash = netmash;
+        this.mapUID = mapUID;
+    }
 
-        public void addItem(Item item){
-            overlayitems.add(item);
-            populate();
-        }
+    public void addItem(Item item){
+        overlayitems.add(item);
+        populate();
+    }
 
-        public void clear(){
-            overlayitems.clear();
-            populate();
-        }
+    public void clear(){
+        overlayitems.clear();
+        populate();
+    }
 
-        @Override
-        protected boolean onTap(int index){
-            Item item = overlayitems.get(index);
-            jumpUID=item.jumpUID;
-            AlertDialog.Builder dialog = new AlertDialog.Builder(netmash);
-            dialog.setTitle(item.getTitle());
-            dialog.setIcon(netmash.getResources().getDrawable(R.drawable.mappinlogo));
-            String[] choices = new String[3];
-            choices[0]=item.getSnippet().replace("\n",", ");
-            choices[1]="See this Object";
-            choices[2]="Back to Map";
-            dialog.setItems(choices, this);
-            dialog.show();
-            return true;
-        }
+    @Override
+    protected boolean onTap(int index){
+        Item item = overlayitems.get(index);
+        jumpUID=item.jumpUID;
+        AlertDialog.Builder dialog = new AlertDialog.Builder(netmash);
+        dialog.setTitle(item.getTitle());
+        dialog.setIcon(netmash.getResources().getDrawable(R.drawable.mappinlogo));
+        String[] choices = new String[3];
+        choices[0]=item.getSnippet().replace("\n",", ");
+        choices[1]="See this Object";
+        choices[2]="Back to Map";
+        dialog.setItems(choices, this);
+        dialog.show();
+        return true;
+    }
 
-        private boolean multimove=false;
+    private boolean multimove=false;
 
-        @Override
-        public boolean onTap(GeoPoint p, MapView map){
-            if(super.onTap(p,map)) return true;
-            if(multimove) return false;
-            if(p!=null){ if(mapUID!=null) netmash.user.setUpdateVal(mapUID, p); return true; }
-            return false;
-        }
+    @Override
+    public boolean onTap(GeoPoint p, MapView map){
+        if(super.onTap(p,map)) return true;
+        if(multimove) return false;
+        if(p!=null){ if(mapUID!=null) netmash.user.setUpdateVal(mapUID, p); return true; }
+        return false;
+    }
 
-        @Override
-        public boolean onTouchEvent(MotionEvent e, MapView mapView){
-            if(e.getAction()==MotionEvent.ACTION_DOWN) multimove=false;
-            else
-            if(e.getAction()==MotionEvent.ACTION_MOVE && e.getPointerCount()==2) multimove=true;
-            return super.onTouchEvent(e, mapView);
-        }
+    @Override
+    public boolean onTouchEvent(MotionEvent e, MapView mapView){
+        if(e.getAction()==MotionEvent.ACTION_DOWN) multimove=false;
+        else
+        if(e.getAction()==MotionEvent.ACTION_MOVE && e.getPointerCount()==2) multimove=true;
+        return super.onTouchEvent(e, mapView);
+    }
 
-        @Override
-        public void onClick(DialogInterface dialog, int choice){
-            if(choice==1) netmash.user.jumpToUID(jumpUID);
-        }
+    @Override
+    public void onClick(DialogInterface dialog, int choice){
+        if(choice==1) netmash.user.jumpToUID(jumpUID);
+    }
 
-        @Override
-        protected Item createItem(int i){ return overlayitems.get(i); }
+    @Override
+    protected Item createItem(int i){ return overlayitems.get(i); }
 
-        @Override
-        public int size(){ return overlayitems.size(); }
+    @Override
+    public int size(){ return overlayitems.size(); }
 }
 
 

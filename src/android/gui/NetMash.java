@@ -812,9 +812,28 @@ log(show? "show keyboard": "hide keyboard");
     //  overlays.remove(itemizedoverlay);
         overlays.clear();
         overlays.add(itemizedoverlay);
+
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.BLUE);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setAlpha(40);
+
+        List<GeoPoint> poly = new ArrayList<GeoPoint>();
+        poly.add(new GeoPoint(54106037, -1579163));
+        poly.add(new GeoPoint(54106037, -8579163));
+        poly.add(new GeoPoint(50106037, -8579163));
+        poly.add(new GeoPoint(50106037, -1579163));
+        GeoPoint centre=new GeoPoint(52106037, -5079163);
+
+        PolygonOverlay polygonoverlay=new PolygonOverlay();
+        PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(centre, "field", "beet", poly, paint);
+        polygonoverlay.addItem(polyitem);
+        overlays.add(polygonoverlay);
+
         mapview.postInvalidate();
         return mapview;
     }
+
 
     private boolean createMeshView(LinkedHashMap mesh){
         boolean newview=(onemeshview==null);
