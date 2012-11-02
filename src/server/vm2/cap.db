@@ -46,17 +46,18 @@
 }
 
 { "%uid": "uid-5c78-11ee-a3c7-ba89",
-  "%rules": [ "uid-0215-038b-7558-041a" ],
+  "%rules": [ "uid-0215-038b-7558-041a", "uid-5f28-9174-b47d-2a74" ],
   "is": [ "updatable", "land" ],
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
     "Annex I Products", "Maintaining for grazing/cultivation",
     "Permanent Grassland", "Permanent Crops",
     "Nurseries", "Short-Rotation Coppice", "Fallow" ]
   },
-  "entitlement": { "input": "textfield", "label": "Entitlement Ref:" },
-  "active":      { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
-  "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                   "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
+  "entitlement":     { "input": "textfield", "label": "Entitlement Ref:" },
+  "active":          { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
+  "ineligible-area": { "input": "textfield", "label": "Ineligable Area:", "value": 0 },
+  "cap-info":        { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+                       "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
   "template": "uid-9da2-71f4-4a2f-f389"
 }
 
@@ -112,11 +113,18 @@
   "list": [ [ "$:%alerted" ], "!=>", "has", "$:%alerted" ]
 }
 
+{ "%uid": "uid-5f28-9174-b47d-2a74",
+  "is": [ "land", "rule" ],
+  "when": "ineligible land seen, calculate unclaimable area",
+  "list": [ { "area": "*", "ineligible": true } ],
+  "ineligible-area": [ "=>", [ "+", "$::list:area" ] ]
+}
+
 { "%uid": "uid-e683-5ee2-a986-b93b",
   "is": [ "payment", "rule" ],
   "when": "eligible land seen, calculate claimable area and multiply by payment per hectare",
   "land": { "list": [ { "area": "*", "usage": "*", "entitlement": "*", "active": true } ] },
-  "payment": [ "=>", [ "+", "$::land:list:area" ], "*", "$:constants:payment-per-ha" ]
+  "payment": [ "=>", [ [ "+", "$::land:list:area" ], "-", [ "+", "$::land:list:ineligible-area" ] ], "*", "$:constants:payment-per-ha" ]
 }
 
 { "%uid": "uid-d958-bf42-c730-8406",
