@@ -38,14 +38,33 @@ Performance
 ---------------------------------------------------------
 Bugs, Refactoring
 ---------------------------------------------------------
- - wrong object detected on tablet - should be fixed
+ - sort out editable vs updatable:
+    - editable means accepts edit rules
+    - updateable means accepts other suggestions, such as new list members
+    - neither mean that you can change land GPS
+    - or are the way to indicate editability of your own objects
+    - all your own objects are always directly editable
+    - don't need editable/rule if it's your own object!
  - can't allow edit of remote land
- - don't need editable/rule if it's your own object!
  - fix vulnerability of faked POST to our object not theirs
  - shaders: vert and frag should come together, else use basic: why sept?
  - don't fetch remote if it's yours anyway (?)
+ - wrong object detected on tablet - should be fixed
 --------------------------------------------------------
 Stuff
+
+ - GIS:
+    - remember map zoom
+    - init sub-land with parent GPS
+    - don't allow outside of parent area
+ - CAP:
+    - zeroing rules
+    - two other schemes; summary - automatically show what they can get; check over stories.
+
+ - on-device programming VW/GUI
+    - edit text in raw
+    - uid is only trick
+    - make a robot in the room
 
  - use local uids in topdb.json and convert to generated uids
  - get GUIs working
