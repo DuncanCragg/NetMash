@@ -54,21 +54,23 @@ Bugs, Refactoring
 Stuff
 
  - GIS:
-    - setting points of polygon
-    - calculate area from polygon
-    - more info in map popup
+    * setting points of polygon
+    * calculate area from polygon
     - delete land
+    - more info in map popup
     - scale bar
     - don't allow outside of parent area
+
  - CAP:
-    - zeroing rules
-    - EWGS/HLS schemes: new usages, summary - automatically show what they can get
+    * EWGS/HLS schemes: new land usages
+    * summary - automatically show what they can get
+    * HLS calc points total
     - EWGS params: species, % cover, planting date
-    - HLS calc points total
-    - real data
-    - tree density param
-    - comment text param
+    - tree density param may select scheme
+    - zeroing BPS rules
     - feature overlap rules
+    - comment text param
+    - real data
 
  - on-device programming VW/GUI
     - edit text in raw
@@ -76,10 +78,11 @@ Stuff
     - make a robot in the room
 
  - use local uids in topdb.json and convert to generated uids
- - get GUIs working
+ - GUIs
     - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
     - fill in form values: doc/local/getFormXVal.java
+
  - vary denominator with fixed total lights - hide them
 --------------------------------------------------------
 Explore, Interact
