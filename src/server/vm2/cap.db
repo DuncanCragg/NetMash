@@ -73,9 +73,11 @@
 
 { "%uid": "uid-1cc7-4c21-9036-4e01",
   "is": [ "gui", "rule" ],
-  "when": "application created, create payment object",
+  "when": "application created, create payment summaries and object",
   "view": {
-    "cash": [ "#", "=>", "style", "Your Estimated Payment:", 0 ]
+    "BPS": [ "#", "=>", "style", "Your Estimated BPS Payment:", 0 ],
+    "FC":  [ "#", "=>", "style", "Your Estimated Woodland Payment:", 0 ],
+    "NE":  [ "#", "=>", "style", "Your Estimated Stewardship Payment:", 0 ]
   },
   "payment": [ "#", "=>",
       { "%uid": "new",
@@ -89,7 +91,7 @@
 
 { "%uid": "uid-2433-fd91-25ad-2e9b",
   "is": [ "look-up" ],
-  "title": "CAP Payments Constants",
+  "title": "Payments Look-up",
   "payment-per-ha": 100,
   "minimum-payout": 200,
   "maximum-payout": 300000
@@ -101,7 +103,9 @@
   "view": { "style": [ "#", "=>", { "is": "style", "colours":"lightgreen" } ],
             "user": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%" } ] ],
             "land": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"75%" } ] ],
-            "cash": [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ]
+            "BPS":  [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ],
+            "FC":   [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ],
+            "NE":   [ [ "style", "=>", { "is":"style", "direction":"horizontal", "proportions":"50%", "colours":"lightblue" } ] ]
   }
 }
 
@@ -129,24 +133,26 @@
   "is": [ "payment", "rule" ],
   "when": "eligible land seen, calculate claimable area and multiply by payment per hectare",
   "land": { "list": [ { "area": "*", "usage": "*", "entitlement": "*", "active": true } ] },
-  "payment": [ "=>", [ [ "+", "$::land:list:area" ], "-", [ "+", "$::land:list:ineligible-area" ] ], "*", "$:constants:payment-per-ha" ]
+  "bps-total": [ "=>", [ [ "+", "$::land:list:area" ], "-", [ "+", "$::land:list:ineligible-area" ] ], "*", "$:constants:payment-per-ha" ]
 }
 
 { "%uid": "uid-d958-bf42-c730-8406",
   "is": [ "payment", "rule" ],
   "when": "basic payment calculated, if less than min, set to zero",
-  "payment": [ [ "<", "$:constants:minimum-payout" ], "=>", 0 ]
+  "bps-total": [ [ "<", "$:constants:minimum-payout" ], "=>", 0 ]
 }
 
 { "%uid": "uid-73ec-5ea1-9cf0-dfa5",
   "is": [ "payment", "rule" ],
   "when": "basic payment calculated, set maximum (not the complete progression)",
-  "payment": [ [ ">", "$:constants:maximum-payout" ], "=>", "$:constants:maximum-payout" ]
+  "bps-total": [ [ ">", "$:constants:maximum-payout" ], "=>", "$:constants:maximum-payout" ]
 }
 
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
   "is": [ "gui", "rule" ],
   "when": "payment updates, show it",
-  "view": { "cash": [ "*", "*", [ "=>", "$:payment:payment" ] ] }
+  "view": { "BPS": [ "*", "*", [ "=>", "$:payment:bps-total" ] ],
+            "FC":  [ "*", "*", [ "=>", "$:payment:fc-total" ] ],
+            "NE":  [ "*", "*", [ "=>", "$:payment:ne-total" ] ] }
 }
 
