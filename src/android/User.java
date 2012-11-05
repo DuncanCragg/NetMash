@@ -130,7 +130,7 @@ public class User extends ObjectMash {
                         "}");
     }
 
-    static User newLand(LinkedList rules, boolean updatable, String landlistuid, String useruid, LinkedHashMap location, String templateuid){
+    static User newLand(LinkedList rules, boolean updatable, String landlistuid, String useruid, String templateuid){
         User land=new User(
                         "{ "+
             (rules!=null? "\"%rules\": "+setToListString(rules)+",\n  ": "")+
@@ -140,7 +140,6 @@ public class User extends ObjectMash {
                         "  \"user\": \""+useruid+"\",\n"+
     (templateuid!=null? "  \"template\": \""+templateuid+"\"\n": "")+
                         "}");
-        land.publicState.hashPath("location", location);
         return land;
     }
 
@@ -460,12 +459,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             path="private:responses:land:"+UID.toUID(guiuid);
             if(contentSet(path) && !contentSet(path+":title")) return false;
             if(contentSet("private:viewing:template") && !contentSet("private:viewing:template:is")) return false;
-            String templateuid =UID.normaliseUID(content("private:viewing"), content("private:viewing:template"));
+            String templateuid =UID.normaliseUID(guiuid, content(          "private:viewing:template"));
             LinkedList rules   =UID.normaliseUIDs(templateuid, contentList("private:viewing:template:%rules"));
             boolean updatable  =contentListContains(                       "private:viewing:template:is", "updatable");
             String     template=UID.normaliseUID( templateuid, content(    "private:viewing:template:template"));
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
-            resp=newLand(rules, updatable, guiuid, uid, contentHashClone("location"), template);
+            resp=newLand(rules, updatable, guiuid, uid, template);
         }
         if(resp!=null) content(path, spawn(resp));
         return true;
@@ -522,6 +521,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                         return;
                     }
                     content("title",val);
+                    LinkedHashMap      location=contentHashClone("place:location");
+                    if(location==null) location=contentHashClone("user:location");
+                    contentHash("location", location);
                     notifyingCN();
                 }
                 else
