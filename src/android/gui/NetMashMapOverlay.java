@@ -95,6 +95,12 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
 
     @Override
     public int size(){ return overlayitems.size(); }
+
+    @Override
+    public void draw(Canvas canvas, MapView mapview, boolean shadow){
+        netmash.saveZoom(mapview.getZoomLevel());
+        super.draw(canvas, mapview, shadow);
+    }
 }
 
 

@@ -56,10 +56,22 @@ Stuff
  - GIS:
     - remember map zoom
     - init sub-land with parent GPS
+    - setting points of polygon
+    - calculate area from polygon
     - don't allow outside of parent area
+    - satellite view
+    - scale bar
+    - more info in map popup
+    - delete land
  - CAP:
     - zeroing rules
-    - two other schemes; summary - automatically show what they can get; check over stories.
+    - EWGS/HLS schemes: new usages, summary - automatically show what they can get
+    - EWGS params: species, % cover, planting date
+    - HLS calc points total
+    - real data
+    - tree density param
+    - comment text param
+    - feature overlap rules
 
  - on-device programming VW/GUI
     - edit text in raw

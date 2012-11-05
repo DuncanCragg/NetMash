@@ -806,7 +806,7 @@ log(show? "show keyboard": "hide keyboard");
             PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(squareAround(centre,area), getPolyPaint());
             polygonoverlay.addItem(polyitem);
         }
-        if(minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
+        if(zoomlevel== -1 && minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
             MapController mapcontrol = mapview.getController();
             mapcontrol.animateTo(new GeoPoint((maxlat+minlat)/2, (maxlon+minlon)/2));
             int minspan=40000;
@@ -820,7 +820,13 @@ log(show? "show keyboard": "hide keyboard");
         overlays.add(itemizedoverlay);
         overlays.add(polygonoverlay);
         mapview.postInvalidate();
+        saveZoom(mapview.getZoomLevel());
         return mapview;
+    }
+
+    int zoomlevel= -1;
+    void saveZoom(int zoom){
+        zoomlevel=zoom;
     }
 
     Paint paint=null;
