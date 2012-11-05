@@ -803,7 +803,7 @@ log(show? "show keyboard": "hide keyboard");
             centre=new GeoPoint(lat,lon);
             NetMashMapOverlay.Item overlayitem = new NetMashMapOverlay.Item(centre, label, sublabel, jumpUID);
             itemizedoverlay.addItem(overlayitem);
-            PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(squareAround(centre,area), getPolyPaint());
+            PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(polyAround(centre,area), getPolyPaint());
             polygonoverlay.addItem(polyitem);
         }
         if(zoomlevel== -1 && minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
@@ -844,14 +844,15 @@ log(show? "show keyboard": "hide keyboard");
         return paint;
     }
 
-    private List<GeoPoint> squareAround(GeoPoint p, double area){
+    private List<GeoPoint> polyAround(GeoPoint p, double area){
         int latsize=(int)(area*600);
         int lonsize=(int)(area*1000);
+        int wobbley=(int)(area*150);
         List<GeoPoint> poly = new ArrayList<GeoPoint>();
-        poly.add(new GeoPoint(p.getLatitudeE6()+latsize, p.getLongitudeE6()+lonsize));
-        poly.add(new GeoPoint(p.getLatitudeE6()+latsize, p.getLongitudeE6()-lonsize));
-        poly.add(new GeoPoint(p.getLatitudeE6()-latsize, p.getLongitudeE6()-lonsize));
-        poly.add(new GeoPoint(p.getLatitudeE6()-latsize, p.getLongitudeE6()+lonsize));
+        poly.add(new GeoPoint(p.getLatitudeE6()+latsize-wobbley, p.getLongitudeE6()+lonsize+wobbley));
+        poly.add(new GeoPoint(p.getLatitudeE6()+latsize+wobbley, p.getLongitudeE6()-lonsize-wobbley));
+        poly.add(new GeoPoint(p.getLatitudeE6()-latsize+wobbley, p.getLongitudeE6()-lonsize+wobbley));
+        poly.add(new GeoPoint(p.getLatitudeE6()-latsize-wobbley, p.getLongitudeE6()+lonsize-wobbley));
         return poly;
     }
 

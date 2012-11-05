@@ -36,6 +36,7 @@ public class PolygonOverlay extends Overlay {
         polyitems.add(item);
     }
 
+    @Override
     public void draw(Canvas canvas, MapView mapview, boolean shadow){
         super.draw(canvas, mapview, shadow);
         Projection projection = mapview.getProjection();
