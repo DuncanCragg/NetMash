@@ -45,7 +45,7 @@
 }
 
 { "%uid": "uid-5c78-11ee-a3c7-ba89",
-  "%rules": [ "uid-0215-038b-7558-041a", "uid-5f28-9174-b47d-2a74" ],
+  "%rules": [ "uid-0215-038b-7558-041a", "uid-5f28-9174-b47d-2a74", "uid-613e-a528-8ae2-d3fb", "uid-0eba-2da8-e7ef-a1b6" ],
   "is": [ "updatable", "land" ],
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
     "Annex I Products", "Maintaining for grazing/cultivation",
@@ -55,6 +55,8 @@
   "entitlement":     { "input": "textfield", "label": "Entitlement Ref:" },
   "active":          { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
   "ineligible-area": { "input": "textfield", "label": "Ineligable Area:", "value": 0 },
+  "fc-area":         { "input": "textfield", "label": "Woodland Area:", "value": 0 },
+  "ne-area":         { "input": "textfield", "label": "Stewardship Area:", "value": 0 },
   "cap-info":        { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
                        "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
   "template": "uid-9da2-71f4-4a2f-f389"
@@ -66,7 +68,9 @@
     "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)", "River",
     "Stone Wall", "Woodland", "Polytunnel on Soil", "Polytunnel on Concrete" ]
   },
-  "ineligible":  { "input": "checkbox",  "label": "Ineligible Feature", "value": false },
+  "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible", "value": false },
+  "woodland":    { "input": "checkbox",  "label": "Woodland", "value": false },
+  "stewardship": { "input": "checkbox",  "label": "Stewardship", "value": false },
   "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
                    "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" }
 }
@@ -131,6 +135,20 @@
   "ineligible-area": [ "=>", [ "+", "$::list:area" ] ]
 }
 
+{ "%uid": "uid-613e-a528-8ae2-d3fb",
+  "is": [ "land", "rule" ],
+  "when": "woodland seen, calculate claimable area",
+  "list": [ { "area": "*", "woodland": true } ],
+  "fc-area": [ "=>", [ "+", "$::list:area" ] ]
+}
+
+{ "%uid": "uid-0eba-2da8-e7ef-a1b6",
+  "is": [ "land", "rule" ],
+  "when": "stewardship seen, calculate claimable area",
+  "list": [ { "area": "*", "stewardship": true } ],
+  "ne-area": [ "=>", [ "+", "$::list:area" ] ]
+}
+
 { "%uid": "uid-e683-5ee2-a986-b93b",
   "is": [ "payment", "rule" ],
   "when": "eligible BP land seen, calculate claimable area and multiply by payment per hectare",
@@ -146,22 +164,22 @@
 
 { "%uid": "uid-73ec-5ea1-9cf0-dfa5",
   "is": [ "payment", "rule" ],
-  "when": "basic payment calculated, set maximum (not the complete progression)",
+  "when": "basic payment calculated, set maximum",
   "bp-total": [ [ ">", "$:constants:bp-maximum-payout" ], "=>", "$:constants:bp-maximum-payout" ]
 }
 
 { "%uid": "uid-8bbc-4ffc-dc43-5903",
   "is": [ "payment", "rule" ],
   "when": "eligible FC land seen, calculate claimable area and multiply by payment per hectare",
-  "land": { "list": [ { "fc-area": "*", "usage": "*" } ] },
-  "fc-total": [ "=>", [ [ "+", "$::land:list:fc-area" ] ], "*", "$:constants:fc-payment-per-ha" ]
+  "land": { "list": [ { "fc-area": "*" } ] },
+  "fc-total": [ "=>", [ "+", "$::land:list:fc-area" ], "*", "$:constants:fc-payment-per-ha" ]
 }
 
 { "%uid": "uid-6d46-73a1-05c4-1703",
   "is": [ "payment", "rule" ],
   "when": "eligible NE land seen, calculate claimable area and multiply by payment per hectare",
-  "land": { "list": [ { "ne-area": "*", "usage": "*" } ] },
-  "ne-total": [ "=>", [ [ "+", "$::land:list:ne-area" ] ], "*", "$:constants:ne-payment-per-ha" ]
+  "land": { "list": [ { "ne-area": "*" } ] },
+  "ne-total": [ "=>", [ "+", "$::land:list:ne-area" ], "*", "$:constants:ne-payment-per-ha" ]
 }
 
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
