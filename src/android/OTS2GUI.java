@@ -246,7 +246,9 @@ public class OTS2GUI {
         String landuid = user.content("private:viewing");
         LinkedList maplist = new LinkedList();
         maplist.add("render:map");
-        if(user.contentIsOrListContains("private:viewing:is", "updatable")) maplist.add("updatable");
+        if(user.contentIsOrListContains("private:viewing:is", "updatable"))
+        maplist.add("updatable");
+        maplist.add("satellite");
         maplist.add("layerkey:"+landuid);
         LinkedHashMap<String,Double> location=user.contentHash("private:viewing:location");
         double area=user.contentDouble("private:viewing:area");

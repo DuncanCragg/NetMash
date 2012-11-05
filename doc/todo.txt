@@ -54,15 +54,12 @@ Bugs, Refactoring
 Stuff
 
  - GIS:
-    - remember map zoom
-    - init sub-land with parent GPS
     - setting points of polygon
     - calculate area from polygon
-    - don't allow outside of parent area
-    - satellite view
-    - scale bar
     - more info in map popup
     - delete land
+    - scale bar
+    - don't allow outside of parent area
  - CAP:
     - zeroing rules
     - EWGS/HLS schemes: new usages, summary - automatically show what they can get

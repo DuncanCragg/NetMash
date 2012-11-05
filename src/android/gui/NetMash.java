@@ -762,6 +762,7 @@ log(show? "show keyboard": "hide keyboard");
             mapview.displayZoomControls(true);
             mapview.getZoomButtonsController().setAutoDismissed(false);
         }
+        mapview.setSatellite(false);
         Drawable drawable = getResources().getDrawable(R.drawable.mappinlogo);
         NetMashMapOverlay itemizedoverlay=null;
         boolean updatable=false;
@@ -770,6 +771,10 @@ log(show? "show keyboard": "hide keyboard");
             String s=(String)o;
             if(s.equals("updatable")){
                 updatable=true;
+                continue;
+            }
+            if(s.equals("satellite")){
+                mapview.setSatellite(true);
                 continue;
             }
             if(s.startsWith("layerkey:")){
