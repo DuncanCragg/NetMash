@@ -743,27 +743,20 @@ public class JSON {
 
     private String getStringPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
-        if(o instanceof String){
-            return (String)o;
-        }
+        if(o instanceof String){ return (String)o; }
         return null;
     }
 
     private int getIntPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
-        if(o instanceof Number){
-            Number n=(Number)o;
-            return n.intValue();
-        }
+        if(o instanceof Number){ Number n=(Number)o; return n.intValue(); }
+        if(o instanceof String) try{ return Integer.parseInt((String)o); } catch(NumberFormatException e){}
         return 0;
     }
 
     private boolean getBoolPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
-        if(o instanceof Boolean){
-            Boolean b=(Boolean)o;
-            return b.booleanValue();
-        }
+        if(o instanceof Boolean){ Boolean b=(Boolean)o; return b.booleanValue(); }
         return false;
     }
 
@@ -795,17 +788,13 @@ public class JSON {
 
     private LinkedHashMap getHashPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
-        if(o instanceof LinkedHashMap){
-            return (LinkedHashMap)o;
-        }
+        if(o instanceof LinkedHashMap){ return (LinkedHashMap)o; }
         return null;
     }
 
     private LinkedList getListPath(LinkedHashMap content, String path) throws PathOvershot{
         Object o=getObject(content, path);
-        if(o instanceof LinkedList){
-            return (LinkedList)o;
-        }
+        if(o instanceof LinkedList){ return (LinkedList)o; }
         return null;
     }
 

@@ -141,6 +141,12 @@ public class Utils{
         return tryDouble(o,0);
     }
 
+    static public boolean isNumber(Object o){
+        if(o instanceof Number) return true;
+        try{ Double.parseDouble((String)o); } catch(Throwable t){ return false; }
+        return true;
+    }
+
     static public double tryDouble(Object o, double d){
         if(o==null) return d;
         if(o instanceof Number) return ((Number)o).doubleValue();

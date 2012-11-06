@@ -24,7 +24,7 @@ public class ObjectMash extends WebObject {
     public ObjectMash(JSON json){ super(json); extralogging = Kernel.config.boolPathN("rules:log"); }
 
     public void evaluate(){
-        if(extralogging) log("Running ObjectMash on "+contentHash("#"));
+        if(extralogging) log("Running ObjectMash on "+uid+": "+contentHash("#"));
         LinkedList rules=contentList("%rules");
         if(extralogging) log("Rules: "+rules);
         if(rules==null) return;
@@ -167,7 +167,7 @@ public class ObjectMash extends WebObject {
         if(vs.equals("#")) return !contentSet(pk);
         if(contentIsOrListContains(pk,vs)) return true;
         if(foundObjectSameOrNot(pk,vs)) return true;
-        if(vs.equals("number") && contentObject(pk) instanceof Number) return true;
+        if(vs.equals("number") && isNumber(contentObject(pk))) return true;
         return false;
     }
 
@@ -348,7 +348,7 @@ public class ObjectMash extends WebObject {
     private LinkedHashMap eitherBindingOrContentHash(String path){
         if(path.startsWith(":")) return findHashIn(getBinding(path.substring(1)));
         if(path.startsWith("!")) return contentHash(currentRewritePath);
-        return contentHash(path);
+        return contentHashMayJump(path);
     }
 
     // ----------------------------------------------------
