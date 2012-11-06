@@ -32,7 +32,6 @@ public class FXDealerTicket extends Fjord {
     }
 
     private void marketMoved(final double price){
-        final WebObject self=this;
         new Evaluator(this){
             public void evaluate(){ logrule();
                 contentDouble("ask", price);

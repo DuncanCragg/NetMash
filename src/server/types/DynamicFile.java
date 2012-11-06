@@ -29,7 +29,6 @@ public class DynamicFile extends Fjord {
     }
 
     private void tick(final String watching){
-        final WebObject self=this;
         new Evaluator(this){
             public void evaluate(){
                 try{

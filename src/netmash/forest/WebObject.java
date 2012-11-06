@@ -155,7 +155,6 @@ public class WebObject {
     }
 
     public void setURL(final String url){
-        final WebObject self=this;
         new Evaluator(this){
             public void evaluate(){
                 self.url=url;
@@ -665,9 +664,9 @@ public class WebObject {
 
     /** Use this when running from an interface or I/O callback. */
     public class Evaluator{
-        public WebObject w;
+        public WebObject self;
         public Evaluator(WebObject w){
-            this.w=w;
+            this.self=w;
             synchronized(w){
                 w.evalPre();
                 evaluate();
@@ -675,7 +674,7 @@ public class WebObject {
             }
         }
         public void evaluate(){}
-        public String toString(){ return w.toString(); }
+        public String toString(){ return self.toString(); }
     }
 
     /** Make sure this object reports back to base - sends updates to network:home-cache-notify. */

@@ -518,6 +518,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     if(!dehash(tag).equals("new")){
                         content(dehash(tag), val);
                         refreshObserves();
+                        self.evaluate();
                         return;
                     }
                     content("title",val);
@@ -547,6 +548,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentIsOrListContains("is", "land")){
                     contentBool(dehash(tag), val);
                     refreshObserves();
+                    self.evaluate();
                     return;
                 }
                 else
@@ -566,6 +568,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentIsOrListContains("is", "land")){
                     contentInt(dehash(tag), val);
                     refreshObserves();
+                    self.evaluate();
                     return;
                 }
                 else
@@ -586,6 +589,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     contentDouble("location:lat", val.getLatitudeE6()/1e6);
                     contentDouble("location:lon", val.getLongitudeE6()/1e6);
                     refreshObserves();
+                    self.evaluate();
                     return;
                 }
                 notifying(guiuid);
@@ -626,7 +630,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(uid==null) return null;
         Object o=onlyUseThisToHandControlOfThreadToDependent(UID.toUID(uid));
         if(o instanceof User) return (User)o;
-        log("Not a User: "+uid+" "+o);
+        log(uid+" not a User: "+o);
         return null;
     }
 
