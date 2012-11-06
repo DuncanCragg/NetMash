@@ -38,14 +38,15 @@
       { "%uid": "new",
         "%rules": [ "uid-0215-038b-7558-041a", "uid-51b1-5d09-ed2f-519c" ],
         "is": [ "updatable", "land" ],
-        "template": "uid-5c78-11ee-a3c7-ba89"
+        "template": "uid-5c78-11ee-a3c7-ba89",
+        "constants": "uid-2433-fd91-25ad-2e9b"
       }
     ]
   }
 }
 
 { "%uid": "uid-5c78-11ee-a3c7-ba89",
-  "%rules": [ "uid-0215-038b-7558-041a", "uid-5f28-9174-b47d-2a74", "uid-613e-a528-8ae2-d3fb", "uid-0eba-2da8-e7ef-a1b6" ],
+  "%rules": [ "uid-0215-038b-7558-041a", "uid-5f28-9174-b47d-2a74", "uid-4a47-2cb6-8e99-a178" ],
   "is": [ "updatable", "land" ],
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
     "Annex I Products", "Maintaining for grazing/cultivation",
@@ -54,25 +55,38 @@
   },
   "entitlement":     { "input": "textfield", "label": "Entitlement Ref:" },
   "active":          { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
-  "ineligible-area": { "input": "textfield", "label": "Ineligable Area:", "value": 0 },
-  "fc-area":         { "input": "textfield", "label": "Woodland Area:", "value": 0 },
-  "ne-area":         { "input": "textfield", "label": "Stewardship Area:", "value": 0 },
+  "ineligible-area": { "input": "textfield", "label": "Ineligable Area (ha):", "value": 0 },
+  "p2-total":        { "input": "textfield", "label": "P2 Total (£):", "value": 0 },
   "cap-info":        { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
                        "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
   "template": "uid-9da2-71f4-4a2f-f389"
 }
 
 { "%uid": "uid-9da2-71f4-4a2f-f389",
+  "%rules": [ "uid-6d46-73a1-05c4-1703" ],
   "is": [ "updatable", "land" ],
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
-    "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)", "River",
-    "Stone Wall", "Woodland", "Polytunnel on Soil", "Polytunnel on Concrete" ]
+    "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)",
+    "River", "Pond", "Polytunnel on Concrete",
+    "Woodland not eligible for other scheme",
+    "Stone Wall",
+    "HD11 Restoration of traditional water meadows",
+    "HO1 Maintenance of lowland heathland",
+    "HK15 Maintenance of grassland for target features",
+    "HE10 Floristically enhanced grass buffer strips (non-rotational)",
+    "New woodland delivering key priorities (broadleaf)",
+    "New woodland delivering key priorities (conifer)",
+    "New woodland delivering other priorities (broadleaf)",
+    "New woodland delivering other priorities (conifer)"
+    ]
   },
   "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible", "value": false },
-  "woodland":    { "input": "checkbox",  "label": "Woodland", "value": false },
-  "stewardship": { "input": "checkbox",  "label": "Stewardship", "value": false },
-  "cap-info":    { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                   "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" }
+  "bp-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+                   "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
+  "fc-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+                   "text": "Forestry Info:", "link": "" },
+  "ne-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+                   "text": "Stewardship Info:", "link": "" }
 }
 
 { "%uid": "uid-1cc7-4c21-9036-4e01",
@@ -85,10 +99,9 @@
   },
   "payment": [ "#", "=>",
       { "%uid": "new",
-        "%rules": [ "uid-e683-5ee2-a986-b93b", "uid-d958-bf42-c730-8406", "uid-73ec-5ea1-9cf0-dfa5", "uid-8bbc-4ffc-dc43-5903", "uid-6d46-73a1-05c4-1703" ],
+        "%rules": [ "uid-e683-5ee2-a986-b93b", "uid-d958-bf42-c730-8406", "uid-73ec-5ea1-9cf0-dfa5", "uid-8bbc-4ffc-dc43-5903" ],
         "is": [ "payment" ],
-        "land": "$:view:land:2",
-        "constants": "uid-2433-fd91-25ad-2e9b"
+        "land": "$:view:land:2"
       }
   ]
 }
@@ -99,8 +112,14 @@
   "bp-payment-per-ha": 100,
   "bp-minimum-payout": 200,
   "bp-maximum-payout": 300000,
-  "fc-payment-per-ha": 100,
-  "ne-payment-per-ha": 100
+  "HD11 Restoration of traditional water meadows": 350,
+  "HO1 Maintenance of lowland heathland": 200,
+  "HK15 Maintenance of grassland for target features": 130,
+  "HE10 Floristically enhanced grass buffer strips (non-rotational)": 485,
+  "New woodland delivering key priorities (broadleaf)": 4800,
+  "New woodland delivering key priorities (conifer)": 4200,
+  "New woodland delivering other priorities (broadleaf)": 3800,
+  "New woodland delivering other priorities (conifer)": 3200
 }
 
 { "%uid": "uid-872c-b29e-03a1-7b61",
@@ -135,58 +154,51 @@
   "ineligible-area": [ "=>", [ "+", "$::list:area" ] ]
 }
 
-{ "%uid": "uid-613e-a528-8ae2-d3fb",
-  "is": [ "land", "rule" ],
-  "when": "woodland seen, calculate claimable area",
-  "list": [ { "area": "*", "woodland": true } ],
-  "fc-area": [ "=>", [ "+", "$::list:area" ] ]
-}
-
-{ "%uid": "uid-0eba-2da8-e7ef-a1b6",
-  "is": [ "land", "rule" ],
-  "when": "stewardship seen, calculate claimable area",
-  "list": [ { "area": "*", "stewardship": true } ],
-  "ne-area": [ "=>", [ "+", "$::list:area" ] ]
-}
-
 { "%uid": "uid-e683-5ee2-a986-b93b",
   "is": [ "payment", "rule" ],
   "when": "eligible BP land seen, calculate claimable area and multiply by payment per hectare",
   "land": { "list": [ { "area": "*", "usage": "*", "entitlement": "*", "active": true } ] },
-  "bp-total": [ "=>", [ [ "+", "$::land:list:area" ], "-", [ "+", "$::land:list:ineligible-area" ] ], "*", "$:constants:bp-payment-per-ha" ]
+  "bp-total": [ "=>", [ [ "+", "$::land:list:area" ], "-", [ "+", "$::land:list:ineligible-area" ] ], "*", "$:land:constants:bp-payment-per-ha" ]
 }
 
 { "%uid": "uid-d958-bf42-c730-8406",
   "is": [ "payment", "rule" ],
   "when": "basic payment calculated, if less than min, set to zero",
-  "bp-total": [ [ "<", "$:constants:bp-minimum-payout" ], "=>", 0 ]
+  "bp-total": [ [ "<", "$:land:constants:bp-minimum-payout" ], "=>", 0 ]
 }
 
 { "%uid": "uid-73ec-5ea1-9cf0-dfa5",
   "is": [ "payment", "rule" ],
   "when": "basic payment calculated, set maximum",
-  "bp-total": [ [ ">", "$:constants:bp-maximum-payout" ], "=>", "$:constants:bp-maximum-payout" ]
+  "bp-total": [ [ ">", "$:land:constants:bp-maximum-payout" ], "=>", "$:land:constants:bp-maximum-payout" ]
+}
+
+{ "%uid": "uid-6d46-73a1-05c4-1703",
+  "is": [ "land", "rule" ],
+  "when": "eligible land seen, multiply area by payment per hectare for usage",
+  "area": "number", "usage": "*",
+  "p2-total": [ "=>", [ "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ] ]
+}
+
+{ "%uid": "uid-4a47-2cb6-8e99-a178",
+  "is": [ "land", "rule" ],
+  "when": "totals available, calculate land total",
+  "list": [ { "p2-total": "*" } ],
+  "p2-total": [ "=>", [ "+", "$::list:p2-total" ] ]
 }
 
 { "%uid": "uid-8bbc-4ffc-dc43-5903",
   "is": [ "payment", "rule" ],
-  "when": "eligible FC land seen, calculate claimable area and multiply by payment per hectare",
-  "land": { "list": [ { "fc-area": "*" } ] },
-  "fc-total": [ "=>", [ "+", "$::land:list:fc-area" ], "*", "$:constants:fc-payment-per-ha" ]
-}
-
-{ "%uid": "uid-6d46-73a1-05c4-1703",
-  "is": [ "payment", "rule" ],
-  "when": "eligible NE land seen, calculate claimable area and multiply by payment per hectare",
-  "land": { "list": [ { "ne-area": "*" } ] },
-  "ne-total": [ "=>", [ "+", "$::land:list:ne-area" ], "*", "$:constants:ne-payment-per-ha" ]
+  "when": "totals available, calculate grand total",
+  "land": { "list": [ { "p2-total": "*" } ] },
+  "p2-total": [ "=>", [ "+", "$::land:list:p2-total" ] ]
 }
 
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
   "is": [ "gui", "rule" ],
   "when": "payment updates, show it",
   "view": { "BP": [ "*", "*", [ "=>", "$:payment:bp-total" ] ],
-            "FC": [ "*", "*", [ "=>", "$:payment:fc-total" ] ],
+            "FC": [ "*", "*", [ "=>", "$:payment:p2-total" ] ],
             "NE": [ "*", "*", [ "=>", "$:payment:ne-total" ] ] }
 }
 
