@@ -526,6 +526,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     LinkedHashMap      location=contentHashClone("place:location");
                     if(location==null) location=contentHashClone("user:location");
                     contentHash("location", location);
+                    contentList("shape", shapeAround(location));
                     notifyingCN();
                 }
                 else
@@ -536,6 +537,21 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 refreshObserves();
             }
         };
+    }
+
+    private LinkedList shapeAround(LinkedHashMap<String,Number> p){
+        int lat=(int)(p.get("lat").doubleValue()*1e6);
+        int lon=(int)(p.get("lon").doubleValue()*1e6);
+        int area=1;
+        int latsize=(int)(area*600);
+        int lonsize=(int)(area*1000);
+        int wobbley=(int)(area*150);
+        LinkedList shape = new LinkedList();
+        shape.add(hash("lat",(lat+latsize-wobbley)/1e6, "lon",(lon+lonsize+wobbley)/1e6));
+        shape.add(hash("lat",(lat+latsize+wobbley)/1e6, "lon",(lon-lonsize-wobbley)/1e6));
+        shape.add(hash("lat",(lat-latsize+wobbley)/1e6, "lon",(lon-lonsize+wobbley)/1e6));
+        shape.add(hash("lat",(lat-latsize-wobbley)/1e6, "lon",(lon+lonsize-wobbley)/1e6));
+        return shape;
     }
 
     public void setUpdateVal(final String guiuid, final String tag, final boolean val){

@@ -277,20 +277,20 @@ log(show? "show keyboard": "hide keyboard");
         if(isMapList(o)){
             view = createMapView(o);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-            lp.setMargins(0,5,5,0);
+            lp.setMargins(0,0,0,0);
             view.setLayoutParams(lp);
         }
         else
         if(isHorizontal(o)){
             view=createHorizontalStrip(o);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-            lp.setMargins(0,5,5,0);
+            lp.setMargins(0,0,0,0);
             view.setLayoutParams(lp);
         }
         else{
             view=createVerticalStrip(o);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-            lp.setMargins(0,5,5,0);
+            lp.setMargins(0,0,0,0);
             view.setLayoutParams(lp);
         }
         View v=layout.getChildAt(0);
@@ -797,9 +797,9 @@ log(show? "show keyboard": "hide keyboard");
             LinkedHashMap point = (LinkedHashMap)o;
             String label=(String)point.get("label");
             String sublabel=(String)point.get("sublabel");
-            double area=(Double)point.get("area");
             LinkedHashMap<String,Number> location=(LinkedHashMap<String,Number>)point.get("location");
             if(location==null) continue;
+            List<GeoPoint> shape=listLocation2listPoints((LinkedList)point.get("shape"));
             String jumpUID=(String)point.get("jump");
             int lat=(int)(location.get("lat").doubleValue()*1e6);
             int lon=(int)(location.get("lon").doubleValue()*1e6);
@@ -808,7 +808,8 @@ log(show? "show keyboard": "hide keyboard");
             centre=new GeoPoint(lat,lon);
             NetMashMapOverlay.Item overlayitem = new NetMashMapOverlay.Item(centre, label, sublabel, jumpUID);
             itemizedoverlay.addItem(overlayitem);
-            PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(polyAround(centre,area), getPolyPaint());
+            if(shape==null) continue;
+            PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(shape, getPolyPaint());
             polygonoverlay.addItem(polyitem);
         }
         if(zoomlevel== -1 && minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
@@ -849,16 +850,15 @@ log(show? "show keyboard": "hide keyboard");
         return paint;
     }
 
-    private List<GeoPoint> polyAround(GeoPoint p, double area){
-        int latsize=(int)(area*600);
-        int lonsize=(int)(area*1000);
-        int wobbley=(int)(area*150);
-        List<GeoPoint> poly = new ArrayList<GeoPoint>();
-        poly.add(new GeoPoint(p.getLatitudeE6()+latsize-wobbley, p.getLongitudeE6()+lonsize+wobbley));
-        poly.add(new GeoPoint(p.getLatitudeE6()+latsize+wobbley, p.getLongitudeE6()-lonsize-wobbley));
-        poly.add(new GeoPoint(p.getLatitudeE6()-latsize+wobbley, p.getLongitudeE6()-lonsize+wobbley));
-        poly.add(new GeoPoint(p.getLatitudeE6()-latsize-wobbley, p.getLongitudeE6()+lonsize-wobbley));
-        return poly;
+    private List<GeoPoint> listLocation2listPoints(LinkedList locations){
+        List<GeoPoint> listPoints = new ArrayList<GeoPoint>();
+        for(Object o: locations){
+            LinkedHashMap<String,Number> location=(LinkedHashMap<String,Number>)o;
+            int lat=(int)(location.get("lat").doubleValue()*1e6);
+            int lon=(int)(location.get("lon").doubleValue()*1e6);
+            listPoints.add(new GeoPoint(lat,lon));
+        }
+        return listPoints;
     }
 
     private boolean createMeshView(LinkedHashMap mesh){
