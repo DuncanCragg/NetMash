@@ -62,9 +62,7 @@ Stuff
     - don't allow outside of parent area
 
  - CAP:
-    * EWGS/HLS schemes: new land usages
-    * summary - automatically show what they can get
-    * HLS calc points total
+    - ELS; calc points total
     - EWGS params: species, % cover, planting date
     - tree density param may select scheme
     - zeroing BPS rules
