@@ -526,7 +526,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     LinkedHashMap      location=contentHashClone("place:location");
                     if(location==null) location=contentHashClone("user:location");
                     contentHash("location", location);
-                    contentList("shape", shapeAround(location));
+                    int area=1;
+                    contentList("shape", shapeAround(location, area));
+                    contentDouble("area", area);
                     notifyingCN();
                 }
                 else
@@ -539,13 +541,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    private LinkedList shapeAround(LinkedHashMap<String,Number> p){
+    private LinkedList shapeAround(LinkedHashMap<String,Number> p, int area){
         int lat=(int)(p.get("lat").doubleValue()*1e6);
         int lon=(int)(p.get("lon").doubleValue()*1e6);
-        int area=1;
-        int latsize=(int)(area*600);
-        int lonsize=(int)(area*1000);
-        int wobbley=(int)(area*150);
+        int latsize=area*600;
+        int lonsize=area*1000;
+        int wobbley=area*150;
         LinkedList shape = new LinkedList();
         shape.add(hash("lat",(lat+latsize-wobbley)/1e6, "lon",(lon+lonsize+wobbley)/1e6));
         shape.add(hash("lat",(lat+latsize+wobbley)/1e6, "lon",(lon-lonsize-wobbley)/1e6));
@@ -632,7 +633,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             ctlat+=pplat; ctlon+=pplon;
             i++;
         }
-        if(j>-1){
+        double area=contentDouble("area");
+        if(j>-1 && dist(nplat,nplon, nrlat,nrlon) < Math.sqrt(area)/1200){
             String path=String.format("shape:%d:",j);
             contentDouble(path+"lat", nplat);
             contentDouble(path+"lon", nplon);
