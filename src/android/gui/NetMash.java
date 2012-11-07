@@ -851,6 +851,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private List<GeoPoint> listLocation2listPoints(LinkedList locations){
+        if(locations==null) return null;
         List<GeoPoint> listPoints = new ArrayList<GeoPoint>();
         for(Object o: locations){
             LinkedHashMap<String,Number> location=(LinkedHashMap<String,Number>)o;

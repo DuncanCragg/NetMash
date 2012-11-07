@@ -638,6 +638,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             contentDouble(path+"lon", nplon);
             contentDouble("location:lat", ctlat/i);
             contentDouble("location:lon", ctlon/i);
+            contentDouble("area", areaInShape(contentList("shape")));
         }
         else{
             contentDouble("location:lat", nplat);
@@ -646,9 +647,36 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     private boolean closer(double nplat,double nplon, double pplat,double pplon, double nrlat,double nrlon){
-        double distnp2pp=Math.sqrt((nplat-pplat)*(nplat-pplat)+(nplon-pplon)*(nplon-pplon));
-        double distnp2nr=Math.sqrt((nplat-nrlat)*(nplat-nrlat)+(nplon-nrlon)*(nplon-nrlon));
-        return distnp2pp<distnp2nr;
+        return dist(nplat,nplon, pplat,pplon) < dist(nplat,nplon, nrlat,nrlon);
+    }
+
+    private double areaInShape(LinkedList shape){
+        int lplat=Integer.MAX_VALUE;
+        int lplon=Integer.MAX_VALUE;
+        int fplat=Integer.MAX_VALUE;
+        int fplon=Integer.MAX_VALUE;
+        double estimateval=0;
+        int i=0;
+        for(Object o: shape){
+            LinkedHashMap<String,Number> pp=(LinkedHashMap<String,Number>)o;
+            int pplat=(int)(pp.get("lat").doubleValue()*1e6);
+            int pplon=(int)(pp.get("lon").doubleValue()*1e6);
+            if(lplat!=Integer.MAX_VALUE){
+                estimateval+=dist(pplat,pplon, lplat,lplon)/1100;
+                i++;
+            }
+            else{ fplat=pplat; fplon=pplon; }
+            lplat=pplat; lplon=pplon;
+        }
+        if(fplat!=Integer.MAX_VALUE){
+            estimateval+=dist(fplat,fplon, lplat,lplon)/1100;
+            i++;
+        }
+        return (estimateval/i)*(estimateval/i);
+    }
+
+    private double dist(double x, double y, double a, double b){
+        return Math.sqrt((x-a)*(x-a)+(y-b)*(y-b));
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, String val){
