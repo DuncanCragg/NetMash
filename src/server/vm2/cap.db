@@ -56,7 +56,8 @@
   "entitlement":     { "input": "textfield", "label": "Entitlement Ref:" },
   "active":          { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
   "ineligible-area": { "input": "textfield", "label": "Ineligable Area (ha):", "value": 0 },
-  "p2-total":        { "input": "textfield", "label": "P2 Total (£):", "value": 0 },
+  "fc-total":        { "input": "textfield", "label": "Woodland Total (£):", "value": 0 },
+  "ne-total":        { "input": "textfield", "label": "Stewardship Total (£):", "value": 0 },
   "cap-info":        { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
                        "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
   "template": "uid-9da2-71f4-4a2f-f389"
@@ -66,27 +67,27 @@
   "%rules": [ "uid-6d46-73a1-05c4-1703" ],
   "is": [ "updatable", "land" ],
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
-    "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)",
-    "River", "Pond", "Polytunnel on Concrete",
-    "Woodland not eligible for other scheme",
-    "Stone Wall",
-    "HD11 Restoration of traditional water meadows",
-    "HO1 Maintenance of lowland heathland",
-    "HK15 Maintenance of grassland for target features",
-    "HE10 Floristically enhanced grass buffer strips (non-rotational)",
-    "New woodland delivering key priorities (broadleaf)",
-    "New woodland delivering key priorities (conifer)",
-    "New woodland delivering other priorities (broadleaf)",
-    "New woodland delivering other priorities (conifer)"
+      "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)",
+      "River", "Pond", "Polytunnel on Concrete",
+      "Woodland not eligible for other scheme",
+      "Stone Wall",
+      "HLS: HD11 Restoration of traditional water meadows",
+      "HLS: HO1 Maintenance of lowland heathland",
+      "HLS: HK15 Maintenance of grassland for target features",
+      "HLS: HE10 Floristically enhanced grass buffer strips",
+      "WCG: Delivering key priorities (broadleaf)",
+      "WCG: Delivering key priorities (conifer)",
+      "WCG: Delivering other priorities (broadleaf)",
+      "WCG: Delivering other priorities (conifer)"
     ]
   },
   "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible", "value": false },
   "bp-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
                    "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
   "fc-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                   "text": "Forestry Info:", "link": "" },
+                   "text": "Forestry Info:", "link": "http://www.forestry.gov.uk/forestry/infd-6dcegu" },
   "ne-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                   "text": "Stewardship Info:", "link": "" }
+                   "text": "Stewardship Info:", "link": "http://www.naturalengland.gov.uk/ourwork/farming/funding/es/default.aspx" }
 }
 
 { "%uid": "uid-1cc7-4c21-9036-4e01",
@@ -112,14 +113,14 @@
   "bp-payment-per-ha": 100,
   "bp-minimum-payout": 200,
   "bp-maximum-payout": 300000,
-  "HD11 Restoration of traditional water meadows": 350,
-  "HO1 Maintenance of lowland heathland": 200,
-  "HK15 Maintenance of grassland for target features": 130,
-  "HE10 Floristically enhanced grass buffer strips (non-rotational)": 485,
-  "New woodland delivering key priorities (broadleaf)": 4800,
-  "New woodland delivering key priorities (conifer)": 4200,
-  "New woodland delivering other priorities (broadleaf)": 3800,
-  "New woodland delivering other priorities (conifer)": 3200
+  "HLS: HD11 Restoration of traditional water meadows": 350,
+  "HLS: HO1 Maintenance of lowland heathland": 200,
+  "HLS: HK15 Maintenance of grassland for target features": 130,
+  "HLS: HE10 Floristically enhanced grass buffer strips": 485,
+  "WCG: Delivering key priorities (broadleaf)": 4800,
+  "WCG: Delivering key priorities (conifer)": 4200,
+  "WCG: Delivering other priorities (broadleaf)": 3800,
+  "WCG: Delivering other priorities (conifer)": 3200
 }
 
 { "%uid": "uid-872c-b29e-03a1-7b61",
@@ -175,30 +176,30 @@
 
 { "%uid": "uid-6d46-73a1-05c4-1703",
   "is": [ "land", "rule" ],
-  "when": "eligible land seen, multiply area by payment per hectare for usage",
-  "area": "number", "usage": "*",
-  "p2-total": [ "=>", [ "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ] ]
+  "when": "area used for woodland creation, multiply area by payment per hectare for usage",
+  "area": "number", "usage": "/WCG: /",
+  "fc-total": [ "=>", [ "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ] ]
 }
 
 { "%uid": "uid-4a47-2cb6-8e99-a178",
   "is": [ "land", "rule" ],
   "when": "totals available, calculate land total",
-  "list": [ { "p2-total": "*" } ],
-  "p2-total": [ "=>", [ "+", "$::list:p2-total" ] ]
+  "list": [ { "fc-total": "*" } ],
+  "fc-total": [ "=>", [ "+", "$::list:fc-total" ] ]
 }
 
 { "%uid": "uid-8bbc-4ffc-dc43-5903",
   "is": [ "payment", "rule" ],
   "when": "totals available, calculate grand total",
-  "land": { "list": [ { "p2-total": "*" } ] },
-  "p2-total": [ "=>", [ "+", "$::land:list:p2-total" ] ]
+  "land": { "list": [ { "fc-total": "*" } ] },
+  "fc-total": [ "=>", [ "+", "$::land:list:fc-total" ] ]
 }
 
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
   "is": [ "gui", "rule" ],
   "when": "payment updates, show it",
   "view": { "BP": [ "*", "*", [ "=>", "$:payment:bp-total" ] ],
-            "FC": [ "*", "*", [ "=>", "$:payment:p2-total" ] ],
+            "FC": [ "*", "*", [ "=>", "$:payment:fc-total" ] ],
             "NE": [ "*", "*", [ "=>", "$:payment:ne-total" ] ] }
 }
 
