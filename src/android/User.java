@@ -167,7 +167,7 @@ public class User extends ObjectMash {
 
     public void onTopCreate(String url){
         if(trackGPS) currentlocation = new CurrentLocation(this);
-        if(url!=null) jumpToUID(url);
+        if(url!=null) jumpToUID(url,"gui",false);
     }
 
     public void onTopResume(){
@@ -342,10 +342,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     private History history = new History(this);
 
     public void jumpToUID(final String uid){
-        jumpToUID(uid, false);
+        jumpToUID(uid, null, false);
     }
 
-    public void jumpToUID(String uid, final boolean relativeToViewing){
+    public void jumpToUID(String uid, final String mode, final boolean relativeToViewing){
         final String jumpuid;
         boolean useLocal=userObjectIfAny(uid)!=null;
         if(useLocal)          jumpuid=UID.toUID(uid); else
@@ -355,7 +355,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             public void evaluate(){
                 history.forward();
                 content("private:viewing", jumpuid);
-                content("private:viewas", "gui");
+                if(mode!=null)
+                content("private:viewas", mode);
                 showWhatIAmViewing();
                 refreshObserves();
             }
@@ -674,7 +675,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     private void firstAlertedResponseSubscribeForUserFIXMEAndJumpUser(){
         for(String alertedUid: alerted()){
             content("response",alertedUid);
-            if(contentSet("response:is")) currentUser.jumpToUID(alertedUid);
+            if(contentSet("response:is")) currentUser.jumpToUID(alertedUid,"gui",false);
         }
         refreshObserves();
     }

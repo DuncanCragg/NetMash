@@ -534,7 +534,7 @@ log(show? "show keyboard": "hide keyboard");
         final TextView view=new BoxTextView(this,R.drawable.box);
         view.setOnClickListener(new OnClickListener(){ public void onClick(View v){
             view.setTextColor(0xffff9900);
-            user.jumpToUID(uid,true);
+            user.jumpToUID(uid,null,true);
         }});
         view.setText(" >>");
         view.setTextSize(34);
