@@ -55,7 +55,6 @@ Stuff
 
  - GIS:
     - setting points of polygon
-       - when touched, move nearest point
        - if touched more than 2x size away, move whole thing
     - show place/sub land in different colours
     - calculate area from polygon .. roughly..

@@ -620,6 +620,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         LinkedList shape=contentList("shape");
         int i=0,j= -1;
         double nrlat=Integer.MAX_VALUE/1e6, nrlon=Integer.MAX_VALUE/1e6;
+        double ctlat=0, ctlon=0;
         for(Object o: shape){
             LinkedHashMap<String,Number> pp=(LinkedHashMap<String,Number>)o;
             double pplat=pp.get("lat").doubleValue();
@@ -628,12 +629,15 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 nrlat=pplat; nrlon=pplon;
                 j=i;
             }
+            ctlat+=pplat; ctlon+=pplon;
             i++;
         }
-        if(true){
+        if(j>-1){
             String path=String.format("shape:%d:",j);
             contentDouble(path+"lat", nplat);
             contentDouble(path+"lon", nplon);
+            contentDouble("location:lat", ctlat/i);
+            contentDouble("location:lon", ctlon/i);
         }
         else{
             contentDouble("location:lat", nplat);
