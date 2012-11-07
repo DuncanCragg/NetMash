@@ -212,6 +212,13 @@ public class JSON {
         return setIntPath(tophash, path, i+1);
     }
 
+    /** Increment double value by given delta. */
+    public boolean incPath(String path, double delta){
+        ensureContent();
+        double d; try{ d=getDoublePath(tophash, path); }catch(PathOvershot po){ return false; }
+        return setDoublePath(tophash, path, d+delta);
+    }
+
     /** Decrement int value. */
     public boolean decPath(String path){
         ensureContent();

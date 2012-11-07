@@ -346,10 +346,16 @@ public class WebObject {
         statemod = updatingState.intPath(path, val) || statemod;
     }
 
-    /** Increment the number at this path. */
+    /** Increment the number at this path by one. */
     public void contentInc(String path){
         doCopyOnWrite(path);
         statemod = updatingState.incPath(path) || statemod;
+    }
+
+    /** Increment the number at this path by given delta. */
+    public void contentInc(String path, double delta){
+        doCopyOnWrite(path);
+        statemod = updatingState.incPath(path,delta) || statemod;
     }
 
     /** Decrement the number at this path. */
