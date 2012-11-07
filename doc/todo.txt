@@ -55,7 +55,6 @@ Stuff
 
  - GIS:
     - setting points of polygon
-       - set points on land object to initial shape
        - when touched, move nearest point
        - if touched more than 2x size away, move whole thing
     - show place/sub land in different colours
