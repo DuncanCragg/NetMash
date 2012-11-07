@@ -603,8 +603,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentIsOrListContains("is", "land")){
-                    contentDouble("location:lat", val.getLatitudeE6()/1e6);
-                    contentDouble("location:lon", val.getLongitudeE6()/1e6);
+                    setNearestShapePointTo(val);
                     refreshObserves();
                     self.evaluate();
                     return;
@@ -615,10 +614,9 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    private void setUpdateValOnObjectUpdating(String guiuid, GeoPoint val){
-        User o=getObjectUpdating(guiuid);
-        if(o==null) return;
-        o.setUpdateVal(guiuid,val);
+    private void setNearestShapePointTo(GeoPoint p){
+        contentDouble("location:lat", p.getLatitudeE6()/1e6);
+        contentDouble("location:lon", p.getLongitudeE6()/1e6);
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, String val){
@@ -637,6 +635,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         User o=getObjectUpdating(guiuid, tag);
         if(o==null) return;
         o.setUpdateVal(guiuid,tag,val);
+    }
+
+    private void setUpdateValOnObjectUpdating(String guiuid, GeoPoint val){
+        User o=getObjectUpdating(guiuid);
+        if(o==null) return;
+        o.setUpdateVal(guiuid,val);
     }
 
     private LinkedHashMap makeEditRule(String path, Object val){
