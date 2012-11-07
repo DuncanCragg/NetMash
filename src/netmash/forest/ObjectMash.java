@@ -165,6 +165,7 @@ public class ObjectMash extends WebObject {
     private boolean scanString(String vs, String pk){
         if(vs.equals("*")) return  contentSet(pk);
         if(vs.equals("#")) return !contentSet(pk);
+        if(vs.startsWith("/") && vs.endsWith("/")) return regexMatch(vs.substring(1,vs.length()-1),pk);
         if(contentIsOrListContains(pk,vs)) return true;
         if(foundObjectSameOrNot(pk,vs)) return true;
         if(vs.equals("number") && isNumber(contentObject(pk))) return true;
@@ -177,6 +178,14 @@ public class ObjectMash extends WebObject {
 
     private boolean scanBoolean(Boolean vb, String pk){
         return contentBool(pk)==vb;
+    }
+
+    private boolean regexMatch(String regex, String pk){
+        String s=content(pk);
+        if(s==null) return false;
+        Pattern p=Pattern.compile(regex);
+        Matcher m=p.matcher(s);
+        return m.find();
     }
 
     private boolean foundObjectSameOrNot(String pk, String vs){

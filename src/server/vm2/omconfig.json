@@ -14,5 +14,6 @@
                "port": 8082,
                "pathprefix": "/o/",
                "cache-notify": "c-n-0a3a-8cd3-d5c3-ed1c",
-               "log": true }
+               "log": true },
+  "rules": { "log": true }
 }
