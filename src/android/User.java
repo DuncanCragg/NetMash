@@ -643,6 +643,13 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             contentDouble("area", areaInShape(contentList("shape")));
         }
         else{
+            double dlat=nplat-contentDouble("location:lat");
+            double dlon=nplon-contentDouble("location:lon");
+            for(int k=0; k<i; k++){
+                String path=String.format("shape:%d:",k);
+                contentInc(path+"lat", dlat);
+                contentInc(path+"lon", dlon);
+            }
             contentDouble("location:lat", nplat);
             contentDouble("location:lon", nplon);
         }
@@ -664,16 +671,17 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             int pplat=(int)(pp.get("lat").doubleValue()*1e6);
             int pplon=(int)(pp.get("lon").doubleValue()*1e6);
             if(lplat!=Integer.MAX_VALUE){
-                estimateval+=dist(pplat,pplon, lplat,lplon)/1100;
+                estimateval+=dist(pplat,pplon, lplat,lplon);
                 i++;
             }
             else{ fplat=pplat; fplon=pplon; }
             lplat=pplat; lplon=pplon;
         }
         if(fplat!=Integer.MAX_VALUE){
-            estimateval+=dist(fplat,fplon, lplat,lplon)/1100;
+            estimateval+=dist(fplat,fplon, lplat,lplon);
             i++;
         }
+        estimateval /= 1300;
         return (estimateval/i)*(estimateval/i);
     }
 
