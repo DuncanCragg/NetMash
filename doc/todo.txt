@@ -54,8 +54,6 @@ Bugs, Refactoring
 Stuff
 
  - GIS:
-    - setting points of polygon
-       - if touched more than 2x size away, move whole thing
     - show place/sub land in different colours
     - delete land
     - more info in map popup
