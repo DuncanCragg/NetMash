@@ -614,9 +614,37 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    private void setNearestShapePointTo(GeoPoint p){
-        contentDouble("location:lat", p.getLatitudeE6()/1e6);
-        contentDouble("location:lon", p.getLongitudeE6()/1e6);
+    private void setNearestShapePointTo(GeoPoint np){
+        double nplat=np.getLatitudeE6()/1e6;
+        double nplon=np.getLongitudeE6()/1e6;
+        LinkedList shape=contentList("shape");
+        int i=0,j= -1;
+        double nrlat=Integer.MAX_VALUE/1e6, nrlon=Integer.MAX_VALUE/1e6;
+        for(Object o: shape){
+            LinkedHashMap<String,Number> pp=(LinkedHashMap<String,Number>)o;
+            double pplat=pp.get("lat").doubleValue();
+            double pplon=pp.get("lon").doubleValue();
+            if(closer(nplat,nplon, pplat,pplon, nrlat,nrlon)){
+                nrlat=pplat; nrlon=pplon;
+                j=i;
+            }
+            i++;
+        }
+        if(true){
+            String path=String.format("shape:%d:",j);
+            contentDouble(path+"lat", nplat);
+            contentDouble(path+"lon", nplon);
+        }
+        else{
+            contentDouble("location:lat", nplat);
+            contentDouble("location:lon", nplon);
+        }
+    }
+
+    private boolean closer(double nplat,double nplon, double pplat,double pplon, double nrlat,double nrlon){
+        double distnp2pp=Math.sqrt((nplat-pplat)*(nplat-pplat)+(nplon-pplon)*(nplon-pplon));
+        double distnp2nr=Math.sqrt((nplat-nrlat)*(nplat-nrlat)+(nplon-nrlon)*(nplon-nrlon));
+        return distnp2pp<distnp2nr;
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, String val){
