@@ -753,7 +753,7 @@ log(show? "show keyboard": "hide keyboard");
         return null;
     }
 
-    private static int MINSPAN=40000;
+    private static int MINSPAN=4000;
 
     private MapView createMapView(LinkedList ll){
         if(mapview==null){
@@ -791,7 +791,6 @@ log(show? "show keyboard": "hide keyboard");
         if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable? viewUID: null);
         PolygonOverlay polygonoverlay=new PolygonOverlay();
         itemizedoverlay.clear();
-        GeoPoint centre=null;
         int minlat=Integer.MAX_VALUE, maxlat=Integer.MIN_VALUE;
         int minlon=Integer.MAX_VALUE, maxlon=Integer.MIN_VALUE;
         for(Object o: ll){
@@ -807,8 +806,7 @@ log(show? "show keyboard": "hide keyboard");
             int lon=(int)(location.get("lon").doubleValue()*1e6);
             minlat=Math.min(lat,minlat); maxlat=Math.max(lat,maxlat);
             minlon=Math.min(lon,minlon); maxlon=Math.max(lon,maxlon);
-            centre=new GeoPoint(lat,lon);
-            NetMashMapOverlay.Item overlayitem = new NetMashMapOverlay.Item(centre, label, sublabel, jumpUID);
+            NetMashMapOverlay.Item overlayitem = new NetMashMapOverlay.Item(new GeoPoint(lat,lon), label, sublabel, jumpUID);
             itemizedoverlay.addItem(overlayitem);
             if(shape==null) continue;
             PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(shape, getPolyPaint());
@@ -816,16 +814,21 @@ log(show? "show keyboard": "hide keyboard");
         }
         if(minlat!=Integer.MAX_VALUE){
             Projection projection = mapview.getProjection();
-            GeoPoint c=new GeoPoint((maxlat+minlat)/2, (maxlon+minlon)/2);
-            Point p = new Point();
-            projection.toPixels(c,p);
+            GeoPoint middle=new GeoPoint((maxlat+minlat)/2, (maxlon+minlon)/2);
+            GeoPoint toplef=new GeoPoint(maxlat,minlon);
+            GeoPoint botrit=new GeoPoint(minlat,maxlon);
+            Point middlep = new Point(); projection.toPixels(middle,middlep);
+            Point toplefp = new Point(); projection.toPixels(toplef,toplefp);
+            Point botritp = new Point(); projection.toPixels(botrit,botritp);
             MapController mapcontrol = mapview.getController();
-            if(p.x<0 || p.y<0 || p.x>screenWidth || p.y>screenHeight){
-                mapcontrol.animateTo(c);
+            if(offScreen(middlep)){
+                mapcontrol.animateTo(middle);
             }
-            if(zoomlevel== -1){ // following fails for cluster over +-180' lon
+            if(zoomlevel== -1 || offScreen(toplefp) || offScreen(botritp)){
+                // following fails for cluster over +-180' lon
                 int latspan=(maxlat-minlat); if(latspan<MINSPAN) latspan=MINSPAN;
                 int lonspan=(maxlon-minlon); if(lonspan<MINSPAN) lonspan=MINSPAN;
+                mapcontrol.animateTo(middle);
                 mapcontrol.zoomToSpan(latspan, lonspan);
             }
         }
@@ -838,6 +841,8 @@ log(show? "show keyboard": "hide keyboard");
         saveZoom(mapview.getZoomLevel());
         return mapview;
     }
+
+    boolean offScreen(Point p){ return p.x<=0 || p.y<=0 || p.x>=screenWidth || p.y>=screenHeight; }
 
     int zoomlevel= -1;
     void saveZoom(int zoom){
