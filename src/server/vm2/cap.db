@@ -159,7 +159,7 @@
   "when": "area used for woodland creation, multiply area by payment per hectare for usage",
   "area": "number", "usage": "/WCG: /",
   "ne-total": [ "=>", 0 ],
-  "fc-total": [ "=>", "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ]
+  "fc-total": [ "=>", "$:area", "*", [ "$:usage", "selects", "$:place:place:constants" ] ]
 }
 
 { "%uid": "uid-c619-afdd-0d5d-1a5d",
@@ -167,7 +167,7 @@
   "when": "area used for stewardship, multiply area by payment per hectare for usage",
   "area": "number", "usage": "/HLS: /",
   "fc-total": [ "=>", 0 ],
-  "ne-total": [ "=>", "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ]
+  "ne-total": [ "=>", "$:area", "*", [ "$:usage", "selects", "$:place:place:constants" ] ]
 }
 
 { "%uid": "uid-4a47-2cb6-8e99-a178",

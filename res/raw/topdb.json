@@ -68,7 +68,7 @@
             "scale": [ 0.36, 0.36, 0.36 ],
             "light": [ 0.0, 0.4, 0.7 ]
           },
-        "coords": [ [ 0, "chooses", "$:!"], [ 1, "chooses", "$:!"],  -0.5 ]
+        "coords": [ [ 0, "selects", "$:!"], [ 1, "selects", "$:!"],  -0.5 ]
       }
   ] ],
   "denominator": [ "=>", [ "count", "$:subObjects" ] ]
@@ -196,7 +196,7 @@
         { "#b": { "value": [ "=>", "$:%alerted:form:b" ] } },
       ],
       "#result":{ "#r":[ "=>", "$:%alerted:form:a",
-                             [ "$:%alerted:form:f", "chooses", { "product":"*", "sum":"+", "diff":"-", "division":"/" } ],
+                             [ "$:%alerted:form:f", "selects", { "product":"*", "sum":"+", "diff":"-", "division":"/" } ],
                                "$:%alerted:form:b" ]
       }
   }
