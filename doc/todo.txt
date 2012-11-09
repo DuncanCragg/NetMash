@@ -20,12 +20,13 @@ Current priority: (vim/raw-edited for now) rules for puzzle room
 ---------------------------------------------------------
 Performance
 ---------------------------------------------------------
+ - light lags massively
+ - stroke light toggles on/off; or left/right?
+ - slightly crap touch response in game
  - don't need to save to persistence if not changed, and not so often either
  - don't need to spend so much time scanning the scenegraph when only one change
  - redundant rendering/refresh when nothing changed
     - use Etag, if no need to respond to incoming subs
- - light lags massively
- - slightly crap touch response in game
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same meshes? detect internal change
@@ -45,27 +46,26 @@ Bugs, Refactoring
     - or are the way to indicate editability of your own objects
     - all your own objects are always directly editable
     - don't need editable/rule if it's your own object!
- - can't allow edit of remote land
+    - can't allow edit of remote land
  - fix vulnerability of faked POST to our object not theirs
  - shaders: vert and frag should come together, else use basic: why sept?
  - don't fetch remote if it's yours anyway (?)
- - wrong object detected on tablet - should be fixed
 --------------------------------------------------------
 Stuff
 
  - GIS:
     - show place/sub land in different colours
+    - don't allow outside of parent area
     - delete land
     - more info in map popup
     - scale bar
-    - don't allow outside of parent area
 
- - CAP:
+ - schemes:
+    - zeroing BPS rules
+    - feature overlap rules
     - ELS; calc points total
     - EWGS params: species, % cover, planting date
     - tree density param may select scheme
-    - zeroing BPS rules
-    - feature overlap rules
     - comment text param
     - real data
 
@@ -75,6 +75,7 @@ Stuff
     - make a robot in the room
 
  - use local uids in topdb.json and convert to generated uids
+
  - GUIs
     - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
