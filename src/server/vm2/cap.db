@@ -53,7 +53,7 @@
     "Nurseries", "Short-Rotation Coppice", "Fallow" ]
   },
   "entitlement":     { "input": "textfield", "label": "Entitlement Ref:" },
-  "active":          { "input": "checkbox",  "label": "Confirm Actively Farmed", "value": false },
+  "active":          { "input": "checkbox",  "label": "Confirm Actively Farmed" },
   "ineligible-area": { "input": "textfield", "label": "Ineligable Area (ha):", "value": 0 },
   "fc-total":        { "input": "textfield", "label": "Woodland Total (£):", "value": 0 },
   "ne-total":        { "input": "textfield", "label": "Stewardship Total (£):", "value": 0 },
@@ -77,7 +77,7 @@
       "Other Woodland", "Other Wall"
     ]
   },
-  "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible", "value": true },
+  "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible" },
 }
 
 { "%uid": "uid-fc2b-1ecb-5e7f-99c5",
