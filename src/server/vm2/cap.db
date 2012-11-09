@@ -63,10 +63,6 @@
   "%rules": [ "uid-6d46-73a1-05c4-1703", "uid-c619-afdd-0d5d-1a5d" ],
   "is": [ "updatable", "land" ],
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
-      "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)",
-      "River", "Pond", "Polytunnel on Concrete",
-      "Woodland not eligible for other scheme",
-      "Stone Wall",
       "WCG: Delivering key priorities (broadleaf)",
       "WCG: Delivering key priorities (conifer)",
       "WCG: Delivering other priorities (broadleaf)",
@@ -74,10 +70,13 @@
       "HLS: HD11 Restoration of traditional water meadows",
       "HLS: HO1 Maintenance of lowland heathland",
       "HLS: HK15 Maintenance of grassland for target features",
-      "HLS: HE10 Floristically enhanced grass buffer strips"
+      "HLS: HE10 Floristically enhanced grass buffer strips",
+      "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)",
+      "River", "Pond", "Polytunnel on Concrete",
+      "Other Woodland", "Other Wall"
     ]
   },
-  "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible", "value": false },
+  "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible", "value": true },
 }
 
 { "%uid": "uid-fc2b-1ecb-5e7f-99c5",
@@ -93,9 +92,9 @@
   "is": [ "gui", "rule" ],
   "when": "application created, create payment summaries and object",
   "view": {
-    "BP": [ "#", "=>", "style", "Estimated Basic Payment (£):", 0 ],
-    "FC": [ "#", "=>", "style", "Estimated Woodland Payment (£):", 0 ],
-    "NE": [ "#", "=>", "style", "Estimated Stewardship Payment (£):", 0 ]
+    "BP": [ "#", "=>", "style", "Basic Payment (£):", 0 ],
+    "FC": [ "#", "=>", "style", "Woodland Payment (£):", 0 ],
+    "NE": [ "#", "=>", "style", "Stewardship Payment (£):", 0 ]
   },
   "payment": [ "#", "=>",
       { "%uid": "new",
@@ -151,7 +150,7 @@
   "is": [ "land", "rule" ],
   "when": "ineligible land seen, calculate unclaimable area",
   "list": [ { "area": "*", "ineligible": true } ],
-  "ineligible-area": [ "=>", [ "+", "$::list:area" ] ]
+  "ineligible-area": [ "=>", "+", "$::list:area" ]
 }
 
 { "%uid": "uid-6d46-73a1-05c4-1703",
@@ -159,7 +158,7 @@
   "when": "area used for woodland creation, multiply area by payment per hectare for usage",
   "area": "number", "usage": "/WCG: /",
   "ne-total": [ "=>", 0 ],
-  "fc-total": [ "=>", [ "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ] ]
+  "fc-total": [ "=>", "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ]
 }
 
 { "%uid": "uid-c619-afdd-0d5d-1a5d",
@@ -167,7 +166,7 @@
   "when": "area used for stewardship, multiply area by payment per hectare for usage",
   "area": "number", "usage": "/HLS: /",
   "fc-total": [ "=>", 0 ],
-  "ne-total": [ "=>", [ "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ] ]
+  "ne-total": [ "=>", "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ]
 }
 
 { "%uid": "uid-4a47-2cb6-8e99-a178",
@@ -207,14 +206,14 @@
   "is": [ "payment", "rule" ],
   "when": "totals available, calculate grand total",
   "land": { "list": [ { "fc-total": "*" } ] },
-  "fc-total": [ "=>", [ "+", "$::land:list:fc-total" ] ]
+  "fc-total": [ "=>", "+", "$::land:list:fc-total" ]
 }
 
 { "%uid": "uid-a2c3-59ac-d898-0fc5",
   "is": [ "payment", "rule" ],
   "when": "totals available, calculate grand total",
   "land": { "list": [ { "ne-total": "*" } ] },
-  "ne-total": [ "=>", [ "+", "$::land:list:ne-total" ] ]
+  "ne-total": [ "=>", "+", "$::land:list:ne-total" ]
 }
 
 { "%uid": "uid-9ce9-1bdd-ec05-c8fa",
