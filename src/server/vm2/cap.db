@@ -5,9 +5,7 @@
   "title": "CAP Payments Demo",
   "view": { "logo": "http://www.shaunthesheep.be/shaunthesheep/foto/500/thefarmer-1.jpg",
             "text": "Welcome to the Farmer Support Agency!",
-            "start": { "input": "button", "label": "Apply for farming support" },
-            "info": [ { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                      "CAP Info:", "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" ]
+            "start": { "input": "button", "label": "Apply for farming support" }
   }
 }
 
@@ -58,8 +56,6 @@
   "ineligible-area": { "input": "textfield", "label": "Ineligable Area (ha):", "value": 0 },
   "fc-total":        { "input": "textfield", "label": "Woodland Total (£):", "value": 0 },
   "ne-total":        { "input": "textfield", "label": "Stewardship Total (£):", "value": 0 },
-  "cap-info":        { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                       "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
   "template": "uid-9da2-71f4-4a2f-f389"
 }
 
@@ -82,21 +78,24 @@
     ]
   },
   "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible", "value": false },
-  "bp-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                   "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
-  "fc-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                   "text": "Forestry Info:", "link": "http://www.forestry.gov.uk/forestry/infd-6dcegu" },
-  "ne-info":     { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
-                   "text": "Stewardship Info:", "link": "http://www.naturalengland.gov.uk/ourwork/farming/funding/es/default.aspx" }
+}
+
+{ "%uid": "uid-fc2b-1ecb-5e7f-99c5",
+  "bp-info": { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+               "text": "CAP Info:", "link": "http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm" },
+  "fc-info": { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+               "text": "Forestry Info:", "link": "http://www.forestry.gov.uk/forestry/infd-6dcegu" },
+  "ne-info": { "style": { "is":"style", "direction":"horizontal", "proportions":"75%" },
+               "text": "Stewardship Info:", "link": "http://www.naturalengland.gov.uk/ourwork/farming/funding/es/default.aspx" }
 }
 
 { "%uid": "uid-1cc7-4c21-9036-4e01",
   "is": [ "gui", "rule" ],
   "when": "application created, create payment summaries and object",
   "view": {
-    "BP": [ "#", "=>", "style", "Your Estimated Basic Payment:", 0 ],
-    "FC": [ "#", "=>", "style", "Your Estimated Woodland Payment:", 0 ],
-    "NE": [ "#", "=>", "style", "Your Estimated Stewardship Payment:", 0 ]
+    "BP": [ "#", "=>", "style", "Estimated Basic Payment (£):", 0 ],
+    "FC": [ "#", "=>", "style", "Estimated Woodland Payment (£):", 0 ],
+    "NE": [ "#", "=>", "style", "Estimated Stewardship Payment (£):", 0 ]
   },
   "payment": [ "#", "=>",
       { "%uid": "new",
@@ -159,6 +158,7 @@
   "is": [ "land", "rule" ],
   "when": "area used for woodland creation, multiply area by payment per hectare for usage",
   "area": "number", "usage": "/WCG: /",
+  "ne-total": [ "=>", 0 ],
   "fc-total": [ "=>", [ "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ] ]
 }
 
@@ -166,6 +166,7 @@
   "is": [ "land", "rule" ],
   "when": "area used for stewardship, multiply area by payment per hectare for usage",
   "area": "number", "usage": "/HLS: /",
+  "fc-total": [ "=>", 0 ],
   "ne-total": [ "=>", [ "$:area", "*", [ "$:usage", "chooses", "$:place:place:constants" ] ] ]
 }
 
@@ -173,21 +174,21 @@
   "is": [ "land", "rule" ],
   "when": "totals available, calculate land total",
   "list": [ { "fc-total": "*" } ],
-  "fc-total": [ "=>", [ "+", "$::list:fc-total" ] ]
+  "fc-total": [ "=>", "integer", [ "+", "$::list:fc-total" ] ]
 }
 
 { "%uid": "uid-6419-0368-25da-f91e",
   "is": [ "land", "rule" ],
   "when": "totals available, calculate land total",
   "list": [ { "ne-total": "*" } ],
-  "ne-total": [ "=>", [ "+", "$::list:ne-total" ] ]
+  "ne-total": [ "=>", "integer", [ "+", "$::list:ne-total" ] ]
 }
 
 { "%uid": "uid-e683-5ee2-a986-b93b",
   "is": [ "payment", "rule" ],
   "when": "eligible BP land seen, calculate claimable area and multiply by payment per hectare",
   "land": { "list": [ { "area": "*", "usage": "*", "entitlement": "*", "active": true } ] },
-  "bp-total": [ "=>", [ [ "+", "$::land:list:area" ], "-", [ "+", "$::land:list:ineligible-area" ] ], "*", "$:land:constants:bp-payment-per-ha" ]
+  "bp-total": [ "=>", "integer", [ [ [ "+", "$::land:list:area" ], "-", [ "+", "$::land:list:ineligible-area" ] ], "*", "$:land:constants:bp-payment-per-ha" ] ]
 }
 
 { "%uid": "uid-d958-bf42-c730-8406",
