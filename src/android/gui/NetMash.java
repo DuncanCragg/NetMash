@@ -815,8 +815,14 @@ log(show? "show keyboard": "hide keyboard");
             polygonoverlay.addItem(polyitem);
         }
         if(minlat!=Integer.MAX_VALUE){
+            Projection projection = mapview.getProjection();
+            GeoPoint c=new GeoPoint((maxlat+minlat)/2, (maxlon+minlon)/2);
+            Point p = new Point();
+            projection.toPixels(c,p);
             MapController mapcontrol = mapview.getController();
-            mapcontrol.animateTo(new GeoPoint((maxlat+minlat)/2, (maxlon+minlon)/2));
+            if(p.x<0 || p.y<0 || p.x>screenWidth || p.y>screenHeight){
+                mapcontrol.animateTo(c);
+            }
             if(zoomlevel== -1){ // following fails for cluster over +-180' lon
                 int latspan=(maxlat-minlat); if(latspan<MINSPAN) latspan=MINSPAN;
                 int lonspan=(maxlon-minlon); if(lonspan<MINSPAN) lonspan=MINSPAN;
