@@ -36,6 +36,7 @@
       { "%uid": "new",
         "%rules": [ "uid-0215-038b-7558-041a", "uid-51b1-5d09-ed2f-519c" ],
         "is": [ "updatable", "land" ],
+        "title": "Holding",
         "template": "uid-5c78-11ee-a3c7-ba89",
         "constants": "uid-2433-fd91-25ad-2e9b"
       }

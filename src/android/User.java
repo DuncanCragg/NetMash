@@ -876,6 +876,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     private void showWhatIAmViewingOnMap(){ logrule();
         if(contentSet("private:viewing:is")){
             LinkedList viewlist=null;
+            String title=content("private:viewing:title");
             if(contentListContainsAll("private:viewing:is", list("user","list"))){
                 viewlist=ots2gui.contactList2Map("contact:");
             }
@@ -899,6 +900,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             }
             if(viewlist!=null){
                 JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
+                uiJSON.stringPath("title", title);
                 uiJSON.listPath("view", viewlist);
                 if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
             }
