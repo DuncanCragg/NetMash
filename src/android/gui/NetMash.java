@@ -753,6 +753,8 @@ log(show? "show keyboard": "hide keyboard");
         return null;
     }
 
+    private static int MINSPAN=40000;
+
     private MapView createMapView(LinkedList ll){
         if(mapview==null){
             mapview = new MapView(this, "03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw");
@@ -812,13 +814,14 @@ log(show? "show keyboard": "hide keyboard");
             PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(shape, getPolyPaint());
             polygonoverlay.addItem(polyitem);
         }
-        if(zoomlevel== -1 && minlat!=Integer.MAX_VALUE){ // following fails for cluster over +-180' lon
+        if(minlat!=Integer.MAX_VALUE){
             MapController mapcontrol = mapview.getController();
             mapcontrol.animateTo(new GeoPoint((maxlat+minlat)/2, (maxlon+minlon)/2));
-            int minspan=40000;
-            int latspan=(maxlat-minlat); if(latspan<minspan) latspan=minspan;
-            int lonspan=(maxlon-minlon); if(lonspan<minspan) lonspan=minspan;
-            mapcontrol.zoomToSpan(latspan, lonspan);
+            if(zoomlevel== -1){ // following fails for cluster over +-180' lon
+                int latspan=(maxlat-minlat); if(latspan<MINSPAN) latspan=MINSPAN;
+                int lonspan=(maxlon-minlon); if(lonspan<MINSPAN) lonspan=MINSPAN;
+                mapcontrol.zoomToSpan(latspan, lonspan);
+            }
         }
         List overlays = mapview.getOverlays();
     //  overlays.remove(itemizedoverlay);
