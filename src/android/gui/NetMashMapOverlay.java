@@ -60,8 +60,8 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
         dialog.setIcon(netmash.getResources().getDrawable(R.drawable.mappinlogo));
         String[] choices = new String[3];
         choices[0]=item.getSnippet().replace("\n",", ");
-        choices[1]="See this Object";
-        choices[2]="Back to Map";
+        choices[1]="Jump here";
+        choices[2]="View item";
         dialog.setItems(choices, this);
         dialog.show();
         return true;
@@ -88,6 +88,7 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
     @Override
     public void onClick(DialogInterface dialog, int choice){
         if(choice==1) netmash.user.jumpToUID(jumpUID);
+        if(choice==2) netmash.user.jumpToUID(jumpUID,"gui",false);
     }
 
     @Override
