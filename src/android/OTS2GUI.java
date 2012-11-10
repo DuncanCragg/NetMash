@@ -498,22 +498,25 @@ public class OTS2GUI {
 
     public LinkedHashMap guifyHash(String path, LinkedHashMap<String,Object> hm, String objuid, boolean editable){
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
-        hm2.put("json", toStrings(new JSON(hm)));
+        hm2.put("json", toStrings(new JSON(hm), editable));
         return hm2;
     }
 
     @SuppressWarnings("unchecked")
-    public LinkedList toStrings(JSON json){
+    public LinkedList toStrings(JSON json, boolean editable){
         String[] lines=json.toString(true).split("\n");
         LinkedList r=new LinkedList();
         r.add(style("direction","vertical", "colours","lightyellow*", "borders","none"));
         for(String line: lines){
-            if(line.indexOf(" uid-")== -1 && line.indexOf(" http://")== -1 && line.length()< 25) r.add(line);
-            else{
+            if(!editable && line.indexOf(" uid-")== -1 && line.indexOf(" http://")== -1 && line.length()< 25) r.add(line);
+            else {
                 LinkedList h=new LinkedList();
                 h.add(style("direction","horizontal", "colours","lightyellow*", "borders","none"));
                 String[] bits=line.replaceAll(" ((uid-|http://)[^ ]+)"," \n$1\n").split("\n");
-                for(String bit: bits) h.add(bit);
+                for(String bit: bits){
+                    boolean uid=bit.startsWith("uid-")||bit.startsWith("http://");
+                    h.add(editable && !uid? hash("input","textfield", "value",bit): bit);
+                }
                 r.add(h);
             }
         }

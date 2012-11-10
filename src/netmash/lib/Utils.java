@@ -15,6 +15,8 @@ public class Utils{
 
     static public void log(Object o){ log(enableLogging, o); }
 
+    static public void logXX(Object o){ log(enableLogging, "xxxxxxx "+o); }
+
     static public void logZero(Object o){ firstStamp=System.currentTimeMillis(); lastStamp=firstStamp; log(enableLogging, o); }
 
     static public void log(boolean doit, Object o){
