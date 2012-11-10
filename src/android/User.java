@@ -347,8 +347,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
 
     public void jumpToUID(String uid, final String mode, final boolean relativeToViewing){
         final String jumpuid;
-        boolean useLocal=userObjectIfAny(uid)!=null;
-        if(useLocal)          jumpuid=UID.toUID(uid); else
+        if(oneOfOurs(uid))    jumpuid=UID.toUID(uid); else
         if(relativeToViewing) jumpuid=UID.normaliseUID(content("private:viewing"),uid);
         else                  jumpuid=uid;
         new Evaluator(this){
@@ -426,10 +425,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
         if(contentIsOrListContains("private:viewing:is", "editable")){
-            path="private:responses:editable:"+UID.toUID(guiuid);
-            if(contentSet(path)) return false;
-            if(!contentSet("private:responses:editable")) contentHash("private:responses:editable", hash());
-            resp=newEditableRule(guiuid, uid);
+            if(!oneOfOurs(guiuid)){
+                path="private:responses:editable:"+UID.toUID(guiuid);
+                if(contentSet(path)) return false;
+                if(!contentSet("private:responses:editable")) contentHash("private:responses:editable", hash());
+                resp=newEditableRule(guiuid, uid);
+            }
         }
         }
         else if(contentIsOrListContains("private:viewing:is", "3d")){
@@ -471,16 +472,19 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         return true;
     }
 
-    private User getObjectUpdating(String guiuid){ return getObjectUpdating(guiuid, "", false); }
+    private User getObjectUpdating(String guiuid){ return (User)getWebObjectUpdating(guiuid, "", false); }
 
-    private User getObjectUpdating(String guiuid, String tag){ return getObjectUpdating(guiuid, tag, false); }
+    private User getObjectUpdating(String guiuid, String tag){ return (User)getWebObjectUpdating(guiuid, tag, false); }
 
-    private User getObjectUpdating(String guiuid, String tag, boolean editable){
+    private User getObjectUpdating(String guiuid, String tag, boolean editable){ return (User)getWebObjectUpdating(guiuid, tag, editable); }
+
+    private WebObject getWebObjectUpdating(String guiuid, String tag, boolean editable){
         String formuid=null;
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
         if(contentIsOrListContains("private:viewing:is", "editable")){
-            formuid=content("private:responses:editable:"+UID.toUID(guiuid));
+            if(!oneOfOurs(guiuid)) formuid=content("private:responses:editable:"+UID.toUID(guiuid));
+            else                   formuid=guiuid;
         }
         }
         else if(contentIsOrListContains("private:viewing:is", "3d")){
@@ -499,7 +503,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(dehash(tag).equals("new")) formuid=content("private:responses:land:"+UID.toUID(guiuid));
             else                          formuid=guiuid;
         }
-        return userObjectIfAny(formuid);
+        if(formuid==null) return null;
+        return onlyUseThisToHandControlOfThreadToDependent(formuid);
     }
 
     public void setUpdateVal(final String guiuid, final String tag, final String val){
@@ -690,9 +695,13 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, String val){
-        User o=getObjectUpdating(guiuid, tag);
+        WebObject o=getWebObjectUpdating(guiuid, tag, false);
         if(o==null) return;
-        o.setUpdateVal(guiuid,tag,val);
+        if(o instanceof User) ((User)o).setUpdateVal(guiuid,tag,val);
+        else
+        if(o.contentIsOrListContains("is", "editable")){
+logXX(val);
+        }
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, boolean val){
@@ -715,14 +724,6 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
 
     private LinkedHashMap makeEditRule(String path, Object val){
         return deephash(list("=>",val), path);
-    }
-
-    private User userObjectIfAny(String uid){
-        if(uid==null) return null;
-        Object o=onlyUseThisToHandControlOfThreadToDependent(UID.toUID(uid));
-        if(o instanceof User) return (User)o;
-        log(uid+" not a User: "+o);
-        return null;
     }
 
     private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }

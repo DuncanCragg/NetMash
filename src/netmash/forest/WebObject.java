@@ -707,8 +707,11 @@ public class WebObject {
         newobserve.clear();
     }
 
+    /** See if it's one of ours, even if it's got a full URL. */
+    public boolean oneOfOurs(String uid){ return funcobs.cacheOrPersistenceGet(UID.toUID(uid))!=null; }
+
     /** Don't use this unless you're handing the thread over to an object that's responsible and local. */
-    public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheOrPersistenceGet(uid); }
+    public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheOrPersistenceGet(UID.toUID(uid)); }
 
     /** Simple logger for ya. */
     static public void log(Object o){ Utils.log(o); }
