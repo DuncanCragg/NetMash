@@ -638,8 +638,11 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             ctlat+=pplat; ctlon+=pplon;
             i++;
         }
+        if(j== -1) return;
         double area=contentDouble("area");
-        if(j>-1 && dist(nplat,nplon, nrlat,nrlon) < Math.sqrt(area)/1200){
+        double dist=dist(nplat,nplon, nrlat,nrlon);
+        double size=Math.sqrt(area)/1000;
+        if(dist < size/2){
             String path=String.format("shape:%d:",j);
             contentDouble(path+"lat", nplat);
             contentDouble(path+"lon", nplon);
@@ -647,7 +650,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             contentDouble("location:lon", ctlon/i);
             contentDouble("area", areaInShape(contentList("shape")));
         }
-        else{
+        else
+        if(dist > size*2){
             double dlat=nplat-contentDouble("location:lat");
             double dlon=nplon-contentDouble("location:lon");
             for(int k=0; k<i; k++){
