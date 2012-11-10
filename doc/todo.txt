@@ -12,10 +12,12 @@ Prioritising
     - robustness, performance, refactoring
     - code/implementation unknowns
 ---------------------------------------------------------
-Current priority: (vim/raw-edited for now) rules for puzzle room
+Current priority:
+
+   Onboard editing - rules of game, create robot, etc
 
  - shows off USP of ease of programming, object interactivity and learning aspects
- - done some refactoring, need to focus on visible value towards Xmas demo
+ - focus on visible value towards Xmas demo
 
 ---------------------------------------------------------
 Performance
@@ -82,10 +84,17 @@ Stuff
     - fill in form values: doc/local/getFormXVal.java
 
  - vary denominator with fixed total lights - hide them
+    - or light up denominator from 18/24 total lights
 --------------------------------------------------------
 Explore, Interact
 
-1. Initial on-device worldlet to explore and interact with: Open GL ES 2.0: driving GPU, lighting, JSON scene graph, move -vs- interact, collisions, physics
+1. Initial on-device worldlet to explore and interact with:
+   - Open GL ES 2.0: driving GPU
+   - lighting
+   - JSON scene graph
+   - move -vs- interact
+   - collisions
+   - physics
 
 GL basics
 
