@@ -708,7 +708,10 @@ public class WebObject {
     }
 
     /** See if it's one of ours, even if it's got a full URL. */
-    public boolean oneOfOurs(String uid){ return funcobs.cacheOrPersistenceGet(UID.toUID(uid))!=null; }
+    public boolean oneOfOurs(String uid){
+        WebObject w=funcobs.cacheOrPersistenceGet(UID.toUID(uid));
+        return w!=null && !w.isShell();
+    }
 
     /** Don't use this unless you're handing the thread over to an object that's responsible and local. */
     public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheOrPersistenceGet(UID.toUID(uid)); }
