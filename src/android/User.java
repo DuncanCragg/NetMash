@@ -523,7 +523,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentIsOrListContains("is", "land")){
                     if(!dehash(tag).equals("new")){
                         content(dehash(tag), val);
-                        refreshObserves();
+                        refreshObserves(); // ?
                         self.evaluate();
                         return;
                     }
@@ -703,9 +703,15 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(o==null) return;
         if(o instanceof User) ((User)o).setUpdateVal(guiuid,tag,val);
         else
-        if(o.contentIsOrListContains("is", "editable")){
-logXX(val);
-        }
+            new Evaluator(o){ public void evaluate(){ try{
+                if(!self.contentIsOrListContains("is", "editable")) return;
+                if(NetMash.top==null) return;
+                String source=NetMash.top.getRawSource();
+                JSON json=new JSON(source);
+                json.stringPath("is");
+                self.contentReplace(json);
+                self.evaluate();
+            }catch(Exception e){ log(e); refreshObserves(); }}};
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, boolean val){

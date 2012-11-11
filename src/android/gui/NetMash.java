@@ -271,8 +271,11 @@ log(show? "show keyboard": "hide keyboard");
         }
     }
 
+    private LinkedList<TextView> textViewsForRaw;
+
     private void addGUI(Object o){
         disposeOfMeshView();
+        textViewsForRaw=new LinkedList<TextView>();
         ViewGroup view;
         if(isMapList(o)){
             view = createMapView(o);
@@ -503,6 +506,10 @@ log(show? "show keyboard": "hide keyboard");
                    (isImage?     createImageView(s):
                    (isWebURL?    createWebLinkView(s):
                                  createTextView(s, colour, borderless)));
+            if(isUID || isImage || isWebURL){
+                TextView tv=new TextView(this); tv.setText(s);
+                textViewsForRaw.add(tv);
+            }
             addAView(layout, v, prop, height, width);
         }
     }
@@ -623,7 +630,14 @@ log(show? "show keyboard": "hide keyboard");
         view.setTextSize(20);
         view.setTextColor(0xff000000);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        textViewsForRaw.add(view);
         return view;
+    }
+
+    public String getRawSource(){
+        String source="";
+        for(TextView v: textViewsForRaw) source+=v.getText().toString();
+        return source;
     }
 
     private View createFormRadioView(final String tag, String[] choices){

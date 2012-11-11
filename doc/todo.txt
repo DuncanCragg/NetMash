@@ -52,6 +52,7 @@ Bugs, Refactoring
  - fix vulnerability of faked POST to our object not theirs
  - shaders: vert and frag should come together, else use basic: why sept?
  - don't fetch remote if it's yours anyway (?)
+ - throw if calling certain methods outside of evaluator
 --------------------------------------------------------
 Stuff
 
