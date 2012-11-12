@@ -618,12 +618,15 @@ log(show? "show keyboard": "hide keyboard");
         else            view.setBackgroundDrawable(getResources().getDrawable(R.drawable.borderlessinputbox));
         view.setOnKeyListener(new OnKeyListener(){
             public boolean onKey(View v, int keyCode, KeyEvent event){
+                EditText etv=(EditText)v;
+                String currentText=etv.getText().toString();
                 if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
                     InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                    user.setUpdateVal(viewUID, tag, ((EditText)v).getText().toString());
+                    user.setUpdateVal(viewUID, tag, currentText);
                     return true;
                 }
+                etv.setMinEms(currentText.length()*2/3);
                 return false;
             }
         });
