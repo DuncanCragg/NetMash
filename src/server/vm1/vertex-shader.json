@@ -1,4 +1,4 @@
-{ "is": [ "3d", "vertex", "shader", "string", "list" ],
+{ "is": [ "3d", "vertex", "shader", "string", "list", "editable" ],
   "title": "Dynamic Phong Vertex Shader",
   "list": [
     "uniform mat4 mvpm, mvvm;",

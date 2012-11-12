@@ -1,4 +1,4 @@
-{ "is": [ "3d", "fragment", "shader", "string", "list" ],
+{ "is": [ "3d", "fragment", "shader", "string", "list", "editable" ],
   "title": "Dynamic Phong Fragment Shader",
   "list": [
     "precision mediump float;",

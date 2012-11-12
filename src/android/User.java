@@ -512,7 +512,13 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentListContainsAll("is", list("editable", "rule"))){
-                    LinkedHashMap rule=makeEditRule(tag.substring("#val-".length()),val);
+                    LinkedHashMap rule;
+                    if(tag!=null){
+                        rule=makeEditRule(tag.substring("#val-".length()),val);
+                    }
+                    else{
+                        rule=makeEditRule("xyxyx",val);
+                    }
                     contentMerge(rule);
                 }
                 else
