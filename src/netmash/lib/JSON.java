@@ -925,8 +925,7 @@ public class JSON {
     @SuppressWarnings("unchecked")
     static private Object getObject(LinkedHashMap hashmap, String path) throws PathOvershot{
         path=path.trim();
-        if(path.length()==0) return null;
-        if(path.charAt(0)==':') path=path.substring(1);
+        if(path.length() >0 && path.charAt(0)==':') path=path.substring(1);
         String[] parts=splitPath(path);
         LinkedHashMap<String,Object> hm=hashmap;
         for(int i=0; i<parts.length; i++){
@@ -1104,8 +1103,7 @@ public class JSON {
     static private boolean setObject(LinkedHashMap hashmap, String path, Object value){
         path=path.trim();
         boolean changed = false;
-        if(path.length()==0) return changed;
-        if(path.charAt(0)==':') path=path.substring(1);
+        if(path.length() >0 && path.charAt(0)==':') path=path.substring(1);
         String[] parts=splitPath(path);
         LinkedHashMap<String,Object> hm=hashmap;
         for(int i=0; i<parts.length; i++){
