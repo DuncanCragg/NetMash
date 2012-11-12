@@ -593,6 +593,7 @@ public class JSON {
     }
 
     private String readSumerString() throws Exception{
+        if(chars[chp]=='"') return readString();
         StringBuilder buf = new StringBuilder();
         for(; chp<chars.length; chp++){
             if(chars[chp]<=' '){

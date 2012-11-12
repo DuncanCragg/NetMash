@@ -100,14 +100,14 @@ public class TestJSON {
 
         {
 
-        String funkychars = JSON.replaceEscapableChars("\"quote\"'quote'")+"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3";
-        String funkycharsout="\"quote\"'quote'\"/\b\f\n\r\t\\\"\u00a3\u00a3";
+        String funkychars = JSON.replaceEscapableChars("\"quote\" 'quote' ")+"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3";
+        String funkycharsout="\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3";
 
         JSON m=new JSON(
             " \t\n \n { kernel: { modules: {  cache: netmash.cache.JSONCache\n"+
             "                                 http: netmash.drivers.HTTP\n"+
             "                                 logic: netmash.drivers.TestDriver } }\n"+
-            "                   modules:  { cache: { funky: "+funkychars+" }\n"+
+            "                   modules:  { cache: { funky: \""+funkychars+"\" }\n"+
             "                               http: { port: 8080 }\n"+
             "                               logic: [ true false null true false null stringnospaces \"string with  spaces\"  ]\n"+
             "                               more: [ true 35392743408672770 -2147483649 2147483648 -2147483648 2147483647 null true false null ] \n"+
@@ -123,7 +123,7 @@ public class TestJSON {
         System.out.println(m.toString(true));
 
         String funky = m.stringPath("modules:cache:funky");
-        assert funky.equals(funkycharsout): "funky should be [\"quote\"'quote'\\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
+        assert funky.equals(funkycharsout): "funky should be [\"quote\" 'quote' \\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
 
         String portstr = m.stringPath("modules:http:port");
         assert portstr==null: "port should be null, but it's "+portstr;
