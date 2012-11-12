@@ -437,7 +437,7 @@ public class JSON {
         return "{ "+prepend.trim()+" "+new String(chars).substring(2);
     }
 
-    /** Format this JSON: in Simple Object Network Notation (SONN/sonn). */
+    /** Format this JSON: in Sumer notation. */
     public String toString(boolean b){
         ensureContent();
         return hashToString(tophash,4,0,true);
@@ -1234,25 +1234,25 @@ public class JSON {
         chp=0;
     }
 
-    private String objectToString(Object o, int indent, int maxlength, boolean sonn){
+    private String objectToString(Object o, int indent, int maxlength, boolean sumer){
         if(o==null) return "null";
         if(o instanceof Number)        return toNicerString((Number)o);
-        if(o instanceof String)        return stringToString((String)o, sonn);
-        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength, sonn);
-        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength, sonn);
+        if(o instanceof String)        return stringToString((String)o, sumer);
+        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength, sumer);
+        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength, sumer);
         return o.toString();
     }
 
-    private String stringToString(String s, boolean sonn){
+    private String stringToString(String s, boolean sumer){
         String r=replaceEscapableChars(s);
-        if(!sonn || r.indexOf(" ")!= -1) return "\""+r+"\"";
+        if(!sumer || r.indexOf(" ")!= -1) return "\""+r+"\"";
         else return r;
     }
 
-    private String hashToString(LinkedHashMap hm, int indent, int maxlength, boolean sonn){
+    private String hashToString(LinkedHashMap hm, int indent, int maxlength, boolean sumer){
         if(hm==null) return "null";
         if(hm.size()==0) return "{ }";
-        String quote=(sonn?"":"\"");
+        String quote=(sumer?"":"\"");
         boolean structured=false;
         if(maxlength==0){
             int i=0;
@@ -1279,19 +1279,19 @@ public class JSON {
             Object val = hm.get(tag);
             if(structured){
                 if(i==0) buf.append(                  indentation(indent));
-                else     buf.append((sonn?"\n":",\n")+indentation(indent));
-            } else buf.append(i==0||sonn? " ": ", ");
-            buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, sonn));
+                else     buf.append((sumer?"\n":",\n")+indentation(indent));
+            } else buf.append(i==0||sumer? " ": ", ");
+            buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, sumer));
         }
         if(structured) buf.append("\n"+indentation(indent-2)+"}");
         else           buf.append(" }");
         return buf.toString();
     }
 
-    private String listToString(LinkedList ll, int indent, int maxlength, boolean sonn){
+    private String listToString(LinkedList ll, int indent, int maxlength, boolean sumer){
         if(ll==null)  return "null";
         if(ll.size()==0) return "[ ]";
-        if(ll.size()==1 && sonn) return objectToString(ll.get(0), indent, maxlength, sonn);
+        if(ll.size()==1 && sumer) return objectToString(ll.get(0), indent, maxlength, sumer);
         boolean structured=false;
         if(maxlength==0){
             int i=0;
@@ -1323,9 +1323,9 @@ public class JSON {
         for(Object val: ll){
             if(structured){
                 if(i==0) buf.append(                  indentation(indent));
-                else     buf.append((sonn?"\n":",\n")+indentation(indent));
-            } else buf.append((i==0||sonn)? " ": ", ");
-            buf.append(objectToString(val, indent, maxlength, sonn));
+                else     buf.append((sumer?"\n":",\n")+indentation(indent));
+            } else buf.append((i==0||sumer)? " ": ", ");
+            buf.append(objectToString(val, indent, maxlength, sumer));
             i++;
         }
         if(structured) buf.append("\n"+indentation(indent-2)+" ]");
