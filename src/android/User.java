@@ -706,18 +706,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             new Evaluator(o){ public void evaluate(){ try{
                 if(!self.contentIsOrListContains("is", "editable")) return;
                 if(NetMash.top==null) return;
-                String source=NetMash.top.getRawSource();
-                JSON json=new JSON(source,true);
-                json.stringPath("is");
-                self.contentReplace(json);
+                self.contentReplace(new JSON(NetMash.top.getRawSource(),true));
+                self.contentSetAdd("is", "editable");
                 self.evaluate();
-            }catch(JSON.Syntax js){
-                NetMash.top.toast(js.toString().split("\n")[1]);
-            }catch(Exception e){
-                e.printStackTrace();
-            }finally{
-                refreshObserves();
-            }}};
+            }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]);
+            }catch(Exception e){ e.printStackTrace();
+            }finally{ refreshObserves(); }}};
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, boolean val){

@@ -79,7 +79,6 @@ Stuff
     - make a robot in the room
     - if clear, return to original
     - if space, leave as
-    - can't remove 'editable' or 'is'
 
  - use local uids in topdb.json and convert to generated uids
 
