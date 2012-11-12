@@ -74,8 +74,10 @@ Stuff
     - real data
 
  - on-device programming VW/GUI
-    - edit text in raw
-    - uid is only trick
+    - editable rule for remote
+    - uid:
+       - create new object and link to it 'uid-new'
+       - link to existing object - chooser? links?
     - make a robot in the room
     - if clear, return to original
     - if space, leave as

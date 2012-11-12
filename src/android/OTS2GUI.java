@@ -514,8 +514,11 @@ public class OTS2GUI {
                 h.add(style("direction","horizontal", "colours","lightyellow*", "borders","none"));
                 String[] bits=line.replaceAll(" ((uid-|http://)[^ ]+)"," \n$1\n").split("\n");
                 for(String bit: bits){
-                    boolean uid=bit.startsWith("uid-")||bit.startsWith("http://");
-                    h.add(editable && !uid? hash("input","textfield", "value",bit): bit);
+                    if(!editable) h.add(bit);
+                    else{
+                        h.add(hash("input","textfield", "value",bit));
+                        if(bit.startsWith("uid-")||bit.startsWith("http://")) h.add(bit);
+                    }
                 }
                 r.add(h);
             }

@@ -507,10 +507,6 @@ log(show? "show keyboard": "hide keyboard");
                    (isImage?     createImageView(s):
                    (isWebURL?    createWebLinkView(s):
                                  createTextView(s, colour, borderless)));
-            if(isUID || isImage || isWebURL){
-                TextView tv=new TextView(this); tv.setText(s);
-                textViewsForRaw.add(tv);
-            }
             addAView(layout, v, prop, height, width);
         }
     }
