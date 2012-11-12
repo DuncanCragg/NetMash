@@ -69,6 +69,7 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanHash(LinkedHashMap<String,Object> hash, String path){
+        if(hash.isEmpty()) return contentHash(path)!=null;
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=path+entry.getKey();
             if(path.equals("")){
@@ -227,7 +228,11 @@ public class ObjectMash extends WebObject {
             else{
                 Object e=(ll.size()==1)? copyFindObject(ll.get(0)): eval(ll);
                 if(e==null){ log("failed to rewrite "+currentRewritePath); continue; }
-                contentObject(currentRewritePath, e);
+                if(currentRewritePath.equals("")){
+                    if(!(e instanceof LinkedHashMap)){ log("failed to rewrite entire object: "+e); continue; }
+                    contentReplace(new JSON((LinkedHashMap)e));
+                }
+                else contentObject(currentRewritePath, e);
             }
         }
     }
