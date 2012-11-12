@@ -614,6 +614,8 @@ log(show? "show keyboard": "hide keyboard");
                 focused=f;
             }
         };
+        if(!borderless) view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
+        else            view.setBackgroundDrawable(getResources().getDrawable(R.drawable.borderlessinputbox));
         view.setOnKeyListener(new OnKeyListener(){
             public boolean onKey(View v, int keyCode, KeyEvent event){
                 if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
@@ -625,7 +627,6 @@ log(show? "show keyboard": "hide keyboard");
                 return false;
             }
         });
-        view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         user.prepareResponse(viewUID);
         view.setText(value!=null? value.toString(): "");
         view.selectAll();
@@ -1122,7 +1123,10 @@ class BorderedTextView extends TextView {
 }
 
 class BoxTextView extends TextView{
-    public BoxTextView(Context context, int drawable){ super(context); setBackgroundDrawable(getResources().getDrawable(drawable)); }
+    public BoxTextView(Context context, int drawable){
+        super(context);
+        setBackgroundDrawable(getResources().getDrawable(drawable));
+    }
 }
 
 }
