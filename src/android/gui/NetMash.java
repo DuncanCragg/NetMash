@@ -485,7 +485,7 @@ log(show? "show keyboard": "hide keyboard");
                                  LinkedHashMap hs=hash("style",style("direction","horizontal","proportions",proportions), "label",label, tag,widget);
                                  addHorizontalStrip(layout, createHorizontalStrip(hs), colour, prop, height, width);
                 }
-                else             addAView(          layout, createFormView(tag, hm, colour), prop, height, width);
+                else             addAView(          layout, createFormView(tag, hm, colour, borderless), prop, height, width);
             }
             else
             if(isHorizontal(hm)) addHorizontalStrip(layout, createHorizontalStrip(hm), colour, prop, height, width);
@@ -573,7 +573,7 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormView(String tag, LinkedHashMap hm, int colour){
+    private View createFormView(String tag, LinkedHashMap hm, int colour, boolean borderless){
         String type =getStringFrom(hm,"input");
         String label=getStringFrom(hm,"label");
         Object range=hm.get("range");
@@ -583,11 +583,11 @@ log(show? "show keyboard": "hide keyboard");
         else
         if("checkbox".equals(type))  view=createFormCheckView(tag, value);
         else
-        if("textfield".equals(type)) view=createFormTextView(tag, value);
+        if("textfield".equals(type)) view=createFormTextView(tag, value, borderless);
         else
         if("chooser".equals(type))   view=createFormSpinnerView(tag, label, range, value);
         else
-                                     view=createTextView(label+": "+value,colour,false);
+                                     view=createTextView(label+": "+value,colour,borderless);
         return view;
      //         view=createFormRadioView( tag, label, types[1].split("\\|", -1));
      //         view=createFormToggleView(tag, label, types[1].split("\\|", -1));
@@ -607,7 +607,7 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormTextView(final String tag, Object value){
+    private View createFormTextView(final String tag, Object value, boolean borderless){
         EditText view=new EditText(this){
             protected void onFocusChanged(boolean f, int d, Rect p){
                 super.onFocusChanged(f, d, p);
@@ -1059,6 +1059,10 @@ log(show? "show keyboard": "hide keyboard");
         int r = Integer.parseInt(m.group(1));
         return r;
     }
+
+    //---------------------------------------------------------
+
+    public void toast(String s){ Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
 
     //---------------------------------------------------------
 

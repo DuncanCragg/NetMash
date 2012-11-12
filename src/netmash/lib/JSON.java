@@ -21,13 +21,13 @@ public class JSON {
     //----------------------------------
 
     /** Make from a JSON InputStream. */
-    public JSON(InputStream is) throws Exception{
+    public JSON(InputStream is) throws UnsupportedEncodingException, IOException{
         chars = getStringFromIS(is).toCharArray();
         chp=0;
     }
 
     /** Make from a JSON file. */
-    public JSON(File file) throws Exception{
+    public JSON(File file) throws FileNotFoundException, IOException{
         chars = getStringFromFile(file).array();
         chp=0;
     }
@@ -97,7 +97,7 @@ public class JSON {
     }
 
     /** Set content text */
-    public void content(String json) throws Exception{
+    public void content(String json){
         chars=json.toCharArray();
         chp=0;
         setTopHash(readHashMap());
@@ -456,7 +456,7 @@ public class JSON {
     static public final Charset UTF8 = Charset.forName("UTF-8");
     static public final int FILEREADBUFFERSIZE = 4096;
 
-    private String getStringFromIS(InputStream is) throws Exception{
+    private String getStringFromIS(InputStream is) throws UnsupportedEncodingException, IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"), FILEREADBUFFERSIZE);
         StringBuilder sb = new StringBuilder();
         char[] buffer = new char[FILEREADBUFFERSIZE];
@@ -464,12 +464,12 @@ public class JSON {
         return sb.toString();
     }
 
-    private CharBuffer getStringFromFile(File file) throws Exception{
+    private CharBuffer getStringFromFile(File file) throws FileNotFoundException, IOException{
 
         String path = file.getPath();
 
-        if(!path.endsWith(".json"))            throw new Exception("JSON file name should end in '.json': "+path);
-        if(!(file.exists() && file.canRead())) throw new Exception("File not readable: "+path);
+        if(!path.endsWith(".json"))            throw new FileNotFoundException("JSON file name should end in '.json': "+path);
+        if(!(file.exists() && file.canRead())) throw new FileNotFoundException("File not readable: "+path);
 
         FileChannel channel    = new FileInputStream(file).getChannel();
         ByteBuffer  bytebuffer = ByteBuffer.allocate((int)file.length());
@@ -484,10 +484,6 @@ public class JSON {
     //----------------------------------
 
     private void ensureContent(){
-        try{ ensureContentX(); } catch(Exception e){ e.printStackTrace(); }
-    }
-
-    private void ensureContentX() throws Exception{
         if(tophash!=null) return;
         if(chars==null) return;
         setTopHash(!sumer? readHashMap(): readSumerHash());
@@ -501,7 +497,7 @@ public class JSON {
 
     //----------------------------------
 
-    private Object readSumerObject() throws Exception{
+    private Object readSumerObject(){
         if(chars[chp]=='{'){
             return readSumerHash();
         }
@@ -516,7 +512,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedHashMap readSumerHash() throws Exception{
+    private LinkedHashMap readSumerHash(){
         for(; chp<chars.length; chp++) if(chars[chp]>' '){ if(chars[chp]=='{') break; else parseError('{'); }
         chp++;
         LinkedHashMap hm = new LinkedHashMap();
@@ -550,7 +546,7 @@ public class JSON {
                     else buf.append(chars[chp]);
                     continue;
                 }
-                parseError(' ');
+                parseError(':');
             }
 
             if(!doobj){
@@ -576,7 +572,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedList readSumerList() throws Exception{
+    private LinkedList readSumerList(){
         chp++;
         LinkedList ll = new LinkedList();
         boolean docom=false;
@@ -592,7 +588,7 @@ public class JSON {
         return ll;
     }
 
-    private String readSumerString() throws Exception{
+    private String readSumerString(){
         if(chars[chp]=='"') return readString();
         StringBuilder buf = new StringBuilder();
         for(; chp<chars.length; chp++){
@@ -610,7 +606,7 @@ public class JSON {
 
     //----------------------------------
 
-    private Object readObject() throws Exception{
+    private Object readObject(){
         if(chars[chp]=='"'){
             return readString();
         }
@@ -634,7 +630,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedHashMap readHashMap() throws Exception{
+    private LinkedHashMap readHashMap(){
         for(; chp<chars.length; chp++) if(chars[chp]>' '){ if(chars[chp]=='{') break; else parseError('{'); }
         chp++;
         LinkedHashMap hm = new LinkedHashMap();
@@ -709,7 +705,7 @@ public class JSON {
         return hm;
     }
 
-    private String readString() throws Exception{
+    private String readString(){
         chp++;
         StringBuilder buf = new StringBuilder();
         for(; chp<chars.length; chp++){
@@ -723,14 +719,14 @@ public class JSON {
                 else buf.append(chars[chp]);
                 continue;
             }
-            parseError(' ');
+            parseError('"');
         }
         parseError('"');
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedList readList() throws Exception{
+    private LinkedList readList(){
         chp++;
         LinkedList ll = new LinkedList();
         boolean docom=false;
@@ -761,7 +757,7 @@ public class JSON {
         return ll;
     }
 
-    private Number readNumber() throws Exception{
+    private Number readNumber(){
         StringBuilder buf = new StringBuilder();
         for(; chp<chars.length; chp++){
             if(chars[chp]<=' ' || chars[chp]==',' || chars[chp]=='}' || chars[chp]==']'){
@@ -785,7 +781,7 @@ public class JSON {
         return null;
     }
 
-    private Boolean readBoolean() throws Exception{
+    private Boolean readBoolean(){
         if(chp+3<chars.length &&
            chars[chp+0]=='t' &&
            chars[chp+1]=='r' &&
@@ -807,7 +803,7 @@ public class JSON {
         return null;
     }
 
-    private Object readNull() throws Exception{
+    private Object readNull(){
         if(chp+3<chars.length &&
            chars[chp+0]=='n' &&
            chars[chp+1]=='u' &&
@@ -842,9 +838,10 @@ public class JSON {
         return (char)Integer.parseInt(hex.toString(),16);
     }
 
-    private void parseError(char ch) throws Exception{
-        throw new Exception("Syntax error in JSON: odd char before '"+ch+"': "+
-                            "["+showContext(chp, chars)+"] at "+chp+ " in\n"+new String(chars));
+    public class Syntax extends RuntimeException{ public Syntax(String s){ super(s); } }
+
+    private void parseError(char ch){
+        throw new Syntax("\nExpecting '"+ch+"': ["+showContext(chp, chars)+"]\nat char "+chp+ " in\n"+new String(chars));
     }
 
     static public String showContext(int chp, char[] chars){

@@ -711,7 +711,13 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 json.stringPath("is");
                 self.contentReplace(json);
                 self.evaluate();
-            }catch(Exception e){ log(e); refreshObserves(); }}};
+            }catch(JSON.Syntax js){
+                NetMash.top.toast(js.toString().split("\n")[1]);
+            }catch(Exception e){
+                e.printStackTrace();
+            }finally{
+                refreshObserves();
+            }}};
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, boolean val){
