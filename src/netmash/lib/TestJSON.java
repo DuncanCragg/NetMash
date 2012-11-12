@@ -91,8 +91,50 @@ public class TestJSON {
         System.out.println(n);
         m.mergeWith(n);
 
-        String expected = "{  \"a\": \"b\", \"l\": \"n\", \"x\": [ \"y\", \"z\" ], \"c\": \"d\", \"o\": [ \"p\", \"q\" ]}";
+        String expected = "{  \"a\": \"b\", \"l\": \"n\", \"x\": [ \"y\", \"z\" ], \"c\": \"d\", \"o\": [ \"p\", \"q\" ] }";
         assert m.toString(100).equals(expected): "merge failed: \n"+m.toString(100)+" not \n"+expected;
+
+        }
+
+        System.out.println("---Test-1-(Sumer)----------");
+
+        {
+
+        String funkychars = JSON.replaceEscapableChars("\"quote\"'quote'")+"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3";
+        String funkycharsout="\"quote\"'quote'\"/\b\f\n\r\t\\\"\u00a3\u00a3";
+
+        JSON m=new JSON(
+            " \t\n \n { kernel: { modules: {  cache: netmash.cache.JSONCache\n"+
+            "                                 http: netmash.drivers.HTTP\n"+
+            "                                 logic: netmash.drivers.TestDriver } }\n"+
+            "                   modules:  { cache: { funky: "+funkychars+" }\n"+
+            "                               http: { port: 8080 }\n"+
+            "                               logic: [ true false null true false null stringnospaces \"string with  spaces\"  ]\n"+
+            "                               more: [ true 35392743408672770 -2147483649 2147483648 -2147483648 2147483647 null true false null ] \n"+
+            "                   }\n"+
+            "      }\n", true);
+
+        System.out.println(m);
+        m=new JSON(m.toString());
+        System.out.println(m);
+        m=new JSON(m.toString("\"extra\": 33, "));
+        System.out.println(m);
+        System.out.println(m.toString(33));
+        System.out.println(m.toString(true));
+
+        String funky = m.stringPath("modules:cache:funky");
+        assert funky.equals(funkycharsout): "funky should be [\"quote\"'quote'\\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
+
+        String portstr = m.stringPath("modules:http:port");
+        assert portstr==null: "port should be null, but it's "+portstr;
+
+        int port = m.intPath("modules:http:port");
+        assert port==8080: "port should be 8080, but it's "+port;
+
+        LinkedHashMap<String,String> modulenames = m.hashPath("kernel:modules");
+        assert "netmash.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be netmash.cache.JSONCache, but it's "+
+                                                                                                modulenames.get("cache");
+        assert modulenames instanceof LinkedHashMap: "kernel:modules should be ordered hash";
 
         }
 

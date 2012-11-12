@@ -48,6 +48,12 @@ public class JSON {
         chp=0;
     }
 
+    public JSON(String str, boolean sumer){
+        this.sumer=sumer;
+        chars = str.toCharArray();
+        chp=0;
+    }
+
     /** Make from a JSON CharBuffer. */
     public JSON(CharBuffer charbuffer){
         int hi=indexOf(charbuffer, '{');
@@ -443,6 +449,7 @@ public class JSON {
     private char[]        chars;
     private int           chp;
     private LinkedHashMap tophash = null;
+    private boolean       sumer=false;
 
     //----------------------------------
 
@@ -483,13 +490,121 @@ public class JSON {
     private void ensureContentX() throws Exception{
         if(tophash!=null) return;
         if(chars==null) return;
-        setTopHash(readHashMap());
+        setTopHash(!sumer? readHashMap(): readSumerHash());
     }
 
     private void setTopHash(LinkedHashMap hm){
         tophash = hm;
         chars=null;
         chp=0;
+    }
+
+    //----------------------------------
+
+    private Object readSumerObject() throws Exception{
+        if(chars[chp]=='{'){
+            return readSumerHash();
+        }
+        if(chars[chp]=='['){
+            return readSumerList();
+        }
+        int chpsave=chp;
+        try{ return readBoolean(); }catch(Exception e){ chp=chpsave; }
+        try{ return readNumber();  }catch(Exception e){ chp=chpsave; }
+        try{ return readNull();    }catch(Exception e){ chp=chpsave; }
+        return readSumerString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedHashMap readSumerHash() throws Exception{
+        for(; chp<chars.length; chp++) if(chars[chp]>' '){ if(chars[chp]=='{') break; else parseError('{'); }
+        chp++;
+        LinkedHashMap hm = new LinkedHashMap();
+        boolean dotag=false;
+        boolean doval=false;
+        boolean doobj=false;
+        StringBuilder buf=new StringBuilder();
+        String tag="";
+        for(; chp<chars.length; chp++){
+
+            if(!dotag){
+                if(chars[chp]=='}'){
+                    break;
+                }
+                if(chars[chp]>' '){
+                    dotag=true;
+                }
+                else continue;
+            }
+
+            if(!doval){
+                if(chars[chp]==':'){
+                    tag = new String(buf); buf = new StringBuilder();
+                    doval=true;
+                    continue;
+                }
+                if(chars[chp]>' '){
+                    if(chars[chp]=='\\'){
+                        appendEscapedChar(buf);
+                    }
+                    else buf.append(chars[chp]);
+                    continue;
+                }
+                parseError(' ');
+            }
+
+            if(!doobj){
+                if(chars[chp]>' '){
+                    hm.put(tag, readSumerObject());
+                    doobj=true;
+                }
+                continue;
+            }
+
+            if(chars[chp]==' '){
+                dotag=false;
+                doval=false;
+                doobj=false;
+                continue;
+            }
+
+            if(chars[chp]=='}'){
+                break;
+            }
+        }
+        return hm;
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedList readSumerList() throws Exception{
+        chp++;
+        LinkedList ll = new LinkedList();
+        boolean docom=false;
+        for(; chp<chars.length; chp++){
+            if(chars[chp]==']'){
+                break;
+            }
+            if(chars[chp]>' '){
+                ll.add(readSumerObject());
+                continue;
+            }
+        }
+        return ll;
+    }
+
+    private String readSumerString() throws Exception{
+        StringBuilder buf = new StringBuilder();
+        for(; chp<chars.length; chp++){
+            if(chars[chp]<=' '){
+                chp--;
+                return new String(buf);
+            }
+            if(chars[chp]=='\\'){
+                appendEscapedChar(buf);
+            }
+            else buf.append(chars[chp]);
+        }
+        return null;
     }
 
     //----------------------------------

@@ -707,7 +707,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(!self.contentIsOrListContains("is", "editable")) return;
                 if(NetMash.top==null) return;
                 String source=NetMash.top.getRawSource();
-                JSON json=new JSON(source);
+                JSON json=new JSON(source,true);
                 json.stringPath("is");
                 self.contentReplace(json);
                 self.evaluate();
