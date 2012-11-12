@@ -512,14 +512,18 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else new Evaluator(this){
             public void evaluate(){ logrule();
                 if(contentListContainsAll("is", list("editable", "rule"))){
-                    LinkedHashMap rule;
+                    LinkedHashMap rule=null;
                     if(tag!=null){
                         rule=makeEditRule(tag.substring("#val-".length()),val);
                     }
                     else{
-                        rule=makeEditRule("xyxyx",val);
+                        try{
+                            JSON json=new JSON(NetMash.top.getRawSource(),true);
+                            json.setPathAdd("is", "editable");
+                            rule=makeEditRule("",json);
+                        }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]); }
                     }
-                    contentMerge(rule);
+                    if(rule!=null) contentMerge(rule);
                 }
                 else
                 if(contentListContainsAll("is", list("document", "query"))){
