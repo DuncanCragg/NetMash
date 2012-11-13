@@ -259,6 +259,7 @@ public class ObjectMash extends WebObject {
         if(ll.size()==5 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)), findString(ll.get(3)), findString(ll.get(4)));
         if(ll.size()==4 && "selects".equals(ll1)) return findBoolean(ll.get(0))? copyFindObject(ll.get(2)): copyFindObject(ll.get(3));
         if(ll.size()==3 && "selects".equals(ll1)) return copyFindObject(findHashOrListAndGet(ll.get(2),ll.get(0)));
+        if(ll.size()==2 && "as-is".equals(ll0))   return copyObject(ll.get(1), true);
         return copyFindEach(ll);
     }catch(Throwable t){ t.printStackTrace(); log(ll); return ll; } }
 
@@ -403,38 +404,38 @@ public class ObjectMash extends WebObject {
     // ----------------------------------------------------
 
     private Object copyFindObject(Object o){
-        return copyObject(findObject(o));
+        return copyObject(findObject(o), false);
     }
 
     @SuppressWarnings("unchecked")
-    public Object copyObject(Object o){
+    public Object copyObject(Object o, boolean asis){
         if(o==null) return null;
         if(o instanceof String)  return o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
-        if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o));
-        if(o instanceof LinkedList)    return copyList(((LinkedList)o));
+        if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o), asis);
+        if(o instanceof LinkedList)    return copyList(((LinkedList)o), asis);
         return o;
     }
 
     @SuppressWarnings("unchecked")
-    public Object copyHash(LinkedHashMap<String,Object> hm){
+    public Object copyHash(LinkedHashMap<String,Object> hm, boolean asis){
         boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String k=entry.getKey();
             Object o=entry.getValue();
-            if(k.equals("%uid")){ if(o.equals("new")){ spawned=true; }}
-            else r.put(k,copyFindObject(o));
+            if(k.equals("%uid") && !asis){ if(o.equals("new")){ spawned=true; }}
+            else r.put(k, asis? copyObject(o,true): copyFindObject(o));
         }
         if(spawned) try{ return spawn(getClass().newInstance().construct(r)); } catch(Throwable t){ t.printStackTrace(); }
         return r;
     }
 
     @SuppressWarnings("unchecked")
-    public LinkedList copyList(LinkedList ll){
+    public LinkedList copyList(LinkedList ll, boolean asis){
         LinkedList r=new LinkedList();
-        for(Object o: ll) r.add(copyFindObject(o));
+        for(Object o: ll) r.add(asis? copyObject(o,true): copyFindObject(o));
         return r;
     }
 
