@@ -176,7 +176,7 @@
   "title": "Local Calculator GUI",
   "view": {
       "#panel": [
-        { "#f": { "input": "chooser",   "label": "Function", "range": [ "product", "sum", "diff", "division" ] } },
+        { "#f": { "input": "chooser",   "label": "Function", "range": { "prod": "Multiply", "sum": "Add", "diff": "Subtract", "div": "Divide" } } },
         { "#a": { "input": "textfield", "label": "A", "value": "0" } },
         { "#b": { "input": "textfield", "label": "B", "value": "0" } },
       ],
@@ -191,13 +191,13 @@
   "form": [ "=>", "$:%alerted" ],
   "view": {
       "#panel": [
-        { "#f": { "value": [ "=>", "$:%alerted:form:f" ] } },
-        { "#a": { "value": [ "=>", "$:%alerted:form:a" ] } },
-        { "#b": { "value": [ "=>", "$:%alerted:form:b" ] } },
+        { "#f": { "value": [ "=>", "$:form:form:f" ] } },
+        { "#a": { "value": [ "=>", "$:form:form:a" ] } },
+        { "#b": { "value": [ "=>", "$:form:form:b" ] } },
       ],
-      "#result":{ "#r":[ "=>", "$:%alerted:form:a",
-                             [ "$:%alerted:form:f", "selects", { "product":"*", "sum":"+", "diff":"-", "division":"/" } ],
-                               "$:%alerted:form:b" ]
+      "#result":{ "#r":[ "=>", "$:form:form:a",
+                             [ "$:form:form:f", "selects", { "prod":"*", "sum":"+", "diff":"-", "div":"/" } ],
+                               "$:form:form:b" ]
       }
   }
 }
