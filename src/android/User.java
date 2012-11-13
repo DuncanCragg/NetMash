@@ -717,12 +717,19 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             new Evaluator(o){ public void evaluate(){ try{
                 if(!self.contentIsOrListContains("is", "editable")) return;
                 if(NetMash.top==null) return;
-                self.contentReplace(new JSON(NetMash.top.getRawSource(),true));
+                String source=spawnUIDNew(NetMash.top.getRawSource());
+                try{
+                self.contentReplace(new JSON(source,true));
+                }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]); }
                 self.contentSetAdd("is", "editable");
                 self.evaluate();
-            }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]);
             }catch(Exception e){ e.printStackTrace();
             }finally{ refreshObserves(); }}};
+    }
+
+    private String spawnUIDNew(String source){
+        while(source.indexOf(" uid-new ")!= -1){ source=source.replace(" uid-new ", " "+spawn(new Editable("{ \"is\": [ \"editable\" ] }"))+" "); }
+        return source;
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, boolean val){

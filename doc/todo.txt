@@ -3,6 +3,10 @@ To Do
 -----
 
 --------------------------------------------------------
+ - rule [] replace in edit remote
+ - NaN/Infinity breaking JSON syntax
+ - dbs all in sumer
+--------------------------------------------------------
 Prioritising
 
  - higher priority if showcasing
@@ -74,11 +78,9 @@ Stuff
     - real data
 
  - on-device programming VW/GUI
-    - editable rule for remote
     - uid:
        - create new object and link to it 'uid-new'
        - link to existing object - chooser? links?
-    - make a robot in the room
     - if clear, return to original
     - if space, leave as
 
@@ -91,6 +93,7 @@ Stuff
 
  - vary denominator with fixed total lights - hide them
     - or light up denominator from 18/24 total lights
+ - make a robot in the room
 --------------------------------------------------------
 Explore, Interact
 
