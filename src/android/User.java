@@ -743,7 +743,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     private LinkedHashMap makeEditRule(String path, Object val){
-        return deephash(list("=>",val), path);
+        return deephash(list("=>", "as-is", val), path);
     }
 
     private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }
