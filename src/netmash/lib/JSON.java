@@ -147,14 +147,6 @@ public class JSON {
         try{ return stringPath(path); }catch(PathOvershot po){ return null; }
     }
 
-    /** Get String value (or String form of
-      * value) at the given path.
-      */
-    public String asStringPath(String path) throws PathOvershot{
-        ensureContent();
-        return getAsStringPath(tophash, path);
-    }
-
     /** Check whether there's anything at the path. */
     public boolean isAtPath(String path) throws PathOvershot{
         ensureContent();
@@ -885,21 +877,6 @@ public class JSON {
         if(o instanceof Number) return ((Number)o).doubleValue();
         if(o instanceof String) try{ return Double.parseDouble((String)o); } catch(NumberFormatException e){}
         return 0;
-    }
-
-    private String getAsStringPath(LinkedHashMap content, String path) throws PathOvershot{
-        Object o=getObject(content, path);
-        if(o==null) return null;
-        if(o instanceof String)  return o.toString();
-        if(o instanceof Number)  return toNicerString((Number)o);
-        if(o instanceof Boolean) return o.toString();
-        if(o instanceof LinkedHashMap){
-            LinkedHashMap hm=(LinkedHashMap)o;
-            String r="";
-            for(Object key: hm.keySet()){ r+=key+": "+hm.get(key)+" "; }
-            return r.trim();
-        }
-        return o.toString();
     }
 
     private Object getObjectPath(LinkedHashMap content, String path) throws PathOvershot{

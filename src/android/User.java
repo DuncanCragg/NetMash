@@ -244,7 +244,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     LinkedList newscale=list(Mesh.getFloatFromList(oldscale,0,1)*(1f+d/10f),
                                              Mesh.getFloatFromList(oldscale,1,1)*(1f+d/10f),
                                              Mesh.getFloatFromList(oldscale,2,1)*(1f+d/10f));
-                    LinkedHashMap rule=makeEditRule("scale",newscale);
+                    LinkedHashMap rule=makeEditRule("scale",0,newscale);
                     contentMerge(rule);
                     notifying(edituid);
                     refreshObserves();
@@ -514,13 +514,13 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentListContainsAll("is", list("editable", "rule"))){
                     LinkedHashMap rule=null;
                     if(tag!=null){
-                        rule=makeEditRule(tag.substring("#val-".length()),val);
+                        rule=makeEditRule(tag.substring("#val-".length()),0,val);
                     }
                     else{
                         try{
                             JSON json=new JSON(NetMash.top.getRawSource(),true);
                             json.setPathAdd("is", "editable");
-                            rule=makeEditRule("",json);
+                            rule=makeEditRule("",contentInt("editable:%etag"),json);
                         }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]); }
                     }
                     if(rule!=null) contentMerge(rule);
@@ -742,8 +742,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         o.setUpdateVal(guiuid,val);
     }
 
-    private LinkedHashMap makeEditRule(String path, Object val){
-        return deephash(list("=>", "as-is", val), path);
+
+    private LinkedHashMap makeEditRule(String path, int etag, Object val){
+        return etag>0? deephash(list(hash("%etag",etag),"=>", "as-is",val), path):
+                       deephash(list(                   "=>", "as-is",val), path);
     }
 
     private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }

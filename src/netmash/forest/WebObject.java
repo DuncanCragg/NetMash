@@ -172,21 +172,34 @@ public class WebObject {
       * null and fire off whatever it takes to get it.
       */
 
-    /** Get String at this path in the JSON content. */
-    public String content(String path){
-        String s=null;
-        try{ s = updatingState.stringPath(path);
+    /** Get Object at this path in the JSON content. */
+    public Object contentObject(String path){
+        if(pathMatches(path,"%etag")) return Integer.valueOf(etag);
+        try{ return updatingState.objectPath(path);
         }catch(PathOvershot po){
             String parentuid=uid;
             while(true){
-                if(!(po.leaf() instanceof String)) break;
+                if(!(po.leaf() instanceof String)) return null;
                 WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ s = w.publicState.stringPath(po.path()); break;
+                if(w==null) return null;
+                if(pathMatches(po.path(),"%etag")) return Integer.valueOf(w.etag);
+                try{ return w.publicState.objectPath(po.path());
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
         }
-        return s;
+    }
+
+    private boolean pathMatches(String path, String match){
+        if(path.startsWith(":")) path=path.substring(1);
+        if(path.endsWith(  ":")) path=path.substring(0,path.length()-1);
+        return path.equals(match);
+    }
+
+    /** Get String at this path in the JSON content. */
+    public String content(String path){
+        Object o=contentObject(path);
+        if(o instanceof String) return (String)o;
+        return null;
     }
 
     /** Get String at this path in the JSON content, or given alternative if none. */
@@ -195,55 +208,25 @@ public class WebObject {
         return s!=null? s: or;
     }
 
-    /** Get Object at this path in the JSON content. */
-    public Object contentObject(String path){
-        Object o=null;
-        try{ o = updatingState.objectPath(path);
-        }catch(PathOvershot po){
-            String parentuid=uid;
-            while(true){
-                if(!(po.leaf() instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ o = w.publicState.objectPath(po.path()); break;
-                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
-            }
-        }
-        return o;
-    }
-
     /** Get String, or string form of object, at this path in the JSON content. */
     public String contentString(String path){
-        String s=null;
-        try{ s = updatingState.asStringPath(path);
-        }catch(PathOvershot po){
-            String parentuid=uid;
-            while(true){
-                if(!(po.leaf() instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ s = w.publicState.asStringPath(po.path()); break;
-                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
-            }
+        Object o=contentObject(path);
+        if(o==null) return null;
+        if(o instanceof String)  return ((String)o);
+        if(o instanceof Number)  return toNicerString((Number)o);
+        if(o instanceof Boolean) return o.toString();
+        if(o instanceof LinkedHashMap){
+            LinkedHashMap hm=(LinkedHashMap)o;
+            String r="";
+            for(Object key: hm.keySet()){ r+=key+": "+hm.get(key)+" "; }
+            return r.trim();
         }
-        return s;
+        return o.toString();
     }
 
     /** Test if anything set at path. */
     public boolean contentSet(String path){
-        boolean s=false;
-        try{ s = updatingState.isAtPath(path);
-        }catch(PathOvershot po){
-            String parentuid=uid;
-            while(true){
-                if(!(po.leaf() instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ s = w.publicState.isAtPath(po.path()); break;
-                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
-            }
-        }
-        return s;
+        return contentObject(path)!=null;
     }
 
     /** Test if Object at path is value, whether String, Number or Boolean. */
@@ -322,22 +305,7 @@ public class WebObject {
 
     /** Get int at this path in the JSON content. */
     public int contentInt(String path){
-        int i=0;
-        try{ if(path.equals("%etag")) i=etag;
-             else i = updatingState.intPath(path);
-        }catch(PathOvershot po){
-            String parentuid=uid;
-            while(true){
-                if(!(po.leaf() instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ if(po.path().equals("%etag")) i=w.etag;
-                     else i = w.publicState.intPath(po.path());
-                     break;
-                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
-            }
-        }
-        return i;
+        return (int)findNumberIn(contentObject(path));
     }
 
     /** Set int at this path in the JSON content. */
@@ -366,19 +334,7 @@ public class WebObject {
 
     /** Double value found at path. */
     public double contentDouble(String path){
-        double d=0;
-        try{ d = updatingState.doublePath(path);
-        }catch(PathOvershot po){
-            String parentuid=uid;
-            while(true){
-                if(!(po.leaf() instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ d = w.publicState.doublePath(po.path()); break;
-                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
-            }
-        }
-        return d;
+        return findNumberIn(contentObject(path));
     }
 
     /** Set double value at path. */
@@ -422,19 +378,9 @@ public class WebObject {
 
     /** Get boolean at this path in the JSON content. */
     public boolean contentBool(String path){
-        boolean b=false;
-        try{ b = updatingState.boolPath(path);
-        }catch(PathOvershot po){
-            String parentuid=uid;
-            while(true){
-                if(!(po.leaf() instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ b = w.publicState.boolPath(po.path()); break;
-                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
-            }
-        }
-        return b;
+        Object o=contentObject(path);
+        if(o instanceof Boolean) return ((Boolean)o).booleanValue();
+        return false;
     }
 
     /** Set boolean at this path in the JSON content. */
@@ -459,19 +405,9 @@ public class WebObject {
 
     /** Get list at path. */
     public LinkedList contentList(String path){
-        LinkedList l=null;
-        try{ l = updatingState.listPath(path);
-        }catch(PathOvershot po){
-            String parentuid=uid;
-            while(true){
-                if(!(po.leaf() instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ l = w.publicState.listPath(po.path()); break;
-                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
-            }
-        }
-        return l;
+        Object o=contentObject(path);
+        if(o instanceof LinkedList) return (LinkedList)o;
+        return null;
     }
 
     /** Get clone copy of list at path. */
@@ -576,21 +512,11 @@ public class WebObject {
 
     /** Return hash at path. */
     public LinkedHashMap contentHash(String path){
-        LinkedHashMap h=null;
-        try{ h = updatingState.hashPath(path);
-        }catch(PathOvershot po){
-            String parentuid=uid;
-            while(true){
-                if(!(po.leaf() instanceof String)) break;
-                WebObject w = observing(parentuid, (String)po.leaf(), path);
-                if(w==null)break;
-                try{ h = w.publicState.hashPath(po.path()); break;
-                }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
-            }
-        }
-        return h;
+        Object o=contentObject(path);
+        if(o instanceof LinkedHashMap) return (LinkedHashMap)o;
+        return null;
     }
-
+        
     /** Set hash at path. */
     public void contentHash(String path, LinkedHashMap val){
         doCopyOnWrite(path);
