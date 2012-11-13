@@ -501,7 +501,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
         else if(contentIsOrListContains("private:viewing:is", "land")){
             if(dehash(tag).equals("new")) formuid=content("private:responses:land:"+UID.toUID(guiuid));
-            else                          formuid=guiuid;
+            else
+            if(oneOfOurs(guiuid))         formuid=guiuid;
         }
         if(formuid==null) return null;
         return onlyUseThisToHandControlOfThreadToDependent(formuid);

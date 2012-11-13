@@ -36,7 +36,8 @@ public class ObjectMash extends WebObject {
             boolean ok=true;
             for(Object is: ruleis){
                 if("rule".equals(is)) continue;
-                if(!contentIsOrListContains("is", is.toString())){ ok=false; if(extralogging) log("Rule doesn't apply to this object"); break; }
+                if("editable".equals(is)) continue;
+                if(!contentIsOrListContains("is", is.toString())){ ok=false; if(extralogging) log("Rule doesn't apply: "+is+" "+contentString("is")); break; }
             }
             if(ok) runRule(r);
             r++;
