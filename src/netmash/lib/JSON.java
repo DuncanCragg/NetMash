@@ -1263,7 +1263,7 @@ public class JSON {
     private String listToString(LinkedList ll, int indent, int maxlength, boolean sumer){
         if(ll==null)  return "null";
         if(ll.size()==0) return "[ ]";
-        if(ll.size()==1 && sumer) return objectToString(ll.get(0), indent, maxlength, sumer);
+  //    if(ll.size()==1 && sumer) return objectToString(ll.get(0), indent, maxlength, sumer);
         boolean structured=false;
         if(maxlength==0){
             int i=0;

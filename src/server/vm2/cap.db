@@ -51,10 +51,10 @@
 { "%uid": "uid-5c78-11ee-a3c7-ba89",
   "%rules": [ "uid-0215-038b-7558-041a", "uid-5f28-9174-b47d-2a74", "uid-4a47-2cb6-8e99-a178", "uid-6419-0368-25da-f91e" ],
   "is": [ "updatable", "land" ],
-  "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
-    "Annex I Products", "Maintaining for grazing/cultivation",
-    "Permanent Grassland", "Permanent Crops",
-    "Nurseries", "Short-Rotation Coppice", "Fallow" ]
+  "usage":           { "input": "chooser",   "label": "Land Usage:", "range": {
+    "annex-1": "Annex I Products", "grazing-cultivation": "Maintaining for grazing/cultivation",
+    "perm-grass": "Permanent Grassland", "perm-crops": "Permanent Crops",
+    "nurseries": "Nurseries", "short-coppice": "Short-Rotation Coppice", "fallow": "Fallow" }
   },
   "entitlement":     { "input": "textfield", "label": "Entitlement Ref:" },
   "active":          { "input": "checkbox",  "label": "Confirm Actively Farmed" },
@@ -67,19 +67,23 @@
 { "%uid": "uid-9da2-71f4-4a2f-f389",
   "%rules": [ "uid-6d46-73a1-05c4-1703", "uid-c619-afdd-0d5d-1a5d" ],
   "is": [ "updatable", "land" ],
-  "usage":       { "input": "chooser",   "label": "Land Usage:", "range": [
-      "WCG: Delivering key priorities (broadleaf)",
-      "WCG: Delivering key priorities (conifer)",
-      "WCG: Delivering other priorities (broadleaf)",
-      "WCG: Delivering other priorities (conifer)",
-      "HLS: HD11 Restoration of traditional water meadows",
-      "HLS: HO1 Maintenance of lowland heathland",
-      "HLS: HK15 Maintenance of grassland for target features",
-      "HLS: HE10 Floristically enhanced grass buffer strips",
-      "Permanent (e.g. farmhouse)", "Temporary (e.g. caravan)",
-      "River", "Pond", "Polytunnel on Concrete",
-      "Other Woodland", "Other Wall"
-    ]
+  "usage":       { "input": "chooser",   "label": "Land Usage:", "range": {
+      "wcg-key-broad":     "WCG: Delivering key priorities (broadleaf)",
+      "wcg-key-conifer":   "WCG: Delivering key priorities (conifer)",
+      "wcg-other-broad":   "WCG: Delivering other priorities (broadleaf)",
+      "wcg-other-conifer": "WCG: Delivering other priorities (conifer)",
+      "hls-hd11":          "HLS: HD11 Restoration of traditional water meadows",
+      "hls-ho1":           "HLS: HO1 Maintenance of lowland heathland",
+      "hls-hk15":          "HLS: HK15 Maintenance of grassland for target features",
+      "hls-he10":          "HLS: HE10 Floristically enhanced grass buffer strips",
+      "permanent":           "Permanent (e.g. farmhouse)",
+      "temporary":           "Temporary (e.g. caravan)",
+      "river":               "River",
+      "pond":                "Pond",
+      "polytunnel-concrete": "Polytunnel on Concrete",
+      "other-woodland":      "Other Woodland",
+      "other-wall":          "Other Wall"
+    }
   },
   "ineligible":  { "input": "checkbox",  "label": "BPS-Ineligible" },
 }
@@ -120,14 +124,14 @@
   "bp-payment-per-ha": 100,
   "bp-minimum-payout": 200,
   "bp-maximum-payout": 300000,
-  "WCG: Delivering key priorities (broadleaf)": 4800,
-  "WCG: Delivering key priorities (conifer)": 4200,
-  "WCG: Delivering other priorities (broadleaf)": 3800,
-  "WCG: Delivering other priorities (conifer)": 3200,
-  "HLS: HD11 Restoration of traditional water meadows": 350,
-  "HLS: HO1 Maintenance of lowland heathland": 200,
-  "HLS: HK15 Maintenance of grassland for target features": 130,
-  "HLS: HE10 Floristically enhanced grass buffer strips": 485
+  "wcg-key-broad":     4800,
+  "wcg-key-conifer":   4200,
+  "wcg-other-broad":   3800,
+  "wcg-other-conifer": 3200,
+  "hls-hd11":          350,
+  "hls-ho1":           200,
+  "hls-hk15":          130,
+  "hls-he10":          485
 }
 
 { "%uid": "uid-872c-b29e-03a1-7b61",
@@ -175,7 +179,7 @@
   "%rules": [ ],
   "is": [ "land", "rule", "editable" ],
   "when": "area used for woodland creation, multiply area by payment per hectare for usage",
-  "area": "number", "usage": "/WCG: /",
+  "area": "number", "usage": "/wcg-/",
   "ne-total": [ "=>", 0 ],
   "fc-total": [ "=>", "$:area", "*", [ "$:usage", "selects", "$:place:place:constants" ] ]
 }
@@ -185,7 +189,7 @@
   "%rules": [ ],
   "is": [ "land", "rule", "editable" ],
   "when": "area used for stewardship, multiply area by payment per hectare for usage",
-  "area": "number", "usage": "/HLS: /",
+  "area": "number", "usage": "/hls-/",
   "fc-total": [ "=>", 0 ],
   "ne-total": [ "=>", "$:area", "*", [ "$:usage", "selects", "$:place:place:constants" ] ]
 }

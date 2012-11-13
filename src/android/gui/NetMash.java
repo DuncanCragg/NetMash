@@ -661,19 +661,24 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private View createFormSpinnerView(final String tag, final String label, Object choices, Object value){
-        if(choices==null || !(choices instanceof LinkedList)) return createTextView(label+": "+value,0,false);
-        LinkedList<String> choiceslist;
+        if(choices==null || !(choices instanceof LinkedHashMap)) return createTextView(label+": "+value,0,false);
+        LinkedHashMap<String,String> choiceshash=(LinkedHashMap<String,String>)choices;
+        final LinkedList<String> valueslist=new LinkedList<String>();
+        final LinkedList<String> choiceslist=new LinkedList<String>();
         if(value==null){
-            choiceslist=(LinkedList<String>)((LinkedList<String>)choices).clone();
-            choiceslist.push(label);
+            valueslist.add("-label-");
+            choiceslist.add(label);
         }
-        else choiceslist=(LinkedList<String>)choices;
+        for(Map.Entry<String,String> entry: choiceshash.entrySet()){
+            valueslist.add(entry.getKey());
+            choiceslist.add(entry.getValue());
+        }
         String[] choicesarray=choiceslist.toArray(new String[0]);
         Spinner view = new Spinner(this);
         view.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-                String val=parent.getItemAtPosition(pos).toString();
-                if(!val.equals(label)) user.setUpdateVal(viewUID, tag, val);
+                String val=valueslist.get(pos);
+                if(!val.equals("-label-")) user.setUpdateVal(viewUID, tag, val);
             }
             public void onNothingSelected(AdapterView parent){}
         });
@@ -681,8 +686,7 @@ log(show? "show keyboard": "hide keyboard");
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, choicesarray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         view.setAdapter(adapter);
-        if(value!=null)
-        view.setSelection(adapter.getPosition(value.toString()));
+        if(value!=null){ int i=0; for(String s: valueslist){ if(value.equals(s)){ view.setSelection(i); break; } i++; }}
         view.setPrompt(label);
         return view;
     }
