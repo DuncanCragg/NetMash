@@ -680,30 +680,23 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     private double areaInShape(LinkedList shape){
-        int lplat=Integer.MAX_VALUE;
-        int lplon=Integer.MAX_VALUE;
-        int fplat=Integer.MAX_VALUE;
-        int fplon=Integer.MAX_VALUE;
-        double estimateval=0;
-        int i=0;
-        for(Object o: shape){
-            LinkedHashMap<String,Number> pp=(LinkedHashMap<String,Number>)o;
-            int pplat=(int)(pp.get("lat").doubleValue()*1e6);
-            int pplon=(int)(pp.get("lon").doubleValue()*1e6);
-            if(lplat!=Integer.MAX_VALUE){
-                estimateval+=dist(pplat,pplon, lplat,lplon);
-                i++;
-            }
-            else{ fplat=pplat; fplon=pplon; }
-            lplat=pplat; lplon=pplon;
+        double area=0;
+        int n=shape.size();
+        int j=n-1;
+        for(int i=0; i<n; i++){
+            LinkedHashMap<String,Number> pi=(LinkedHashMap<String,Number>)shape.get(i);
+            LinkedHashMap<String,Number> pj=(LinkedHashMap<String,Number>)shape.get(j);
+            double pilat=pi.get("lat").doubleValue();
+            double pilon=pi.get("lon").doubleValue();
+            double pjlat=pj.get("lat").doubleValue();
+            double pjlon=pj.get("lon").doubleValue();
+            area+=((pjlat+pilat)/2)*(pjlon-pilon);
+            j=i;
         }
-        if(fplat!=Integer.MAX_VALUE){
-            estimateval+=dist(fplat,fplon, lplat,lplon);
-            i++;
-        }
-        estimateval /= 1300;
-        return (estimateval/i)*(estimateval/i);
+        return Math.abs(area)*1e6;
     }
+
+
 
     private double dist(double x, double y, double a, double b){
         return Math.sqrt((x-a)*(x-a)+(y-b)*(y-b));
