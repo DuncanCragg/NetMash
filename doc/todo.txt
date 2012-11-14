@@ -3,9 +3,6 @@ To Do
 -----
 
 --------------------------------------------------------
- - NaN/Infinity breaking JSON syntax
- - dbs all in sumer
---------------------------------------------------------
 Prioritising
 
  - higher priority if showcasing
@@ -56,43 +53,51 @@ Bugs, Refactoring
  - shaders: vert and frag should come together, else use basic: why sept?
  - don't fetch remote if it's yours anyway (?)
  - throw if calling certain methods outside of evaluator
+ - NaN/Infinity breaking JSON syntax
+ - calculator doesn't update when you set function
 --------------------------------------------------------
 Stuff
 
  - GIS:
-    - look up trianglising land algorithm
-    - show place/sub land in different colours
-    - don't allow outside of parent area
+    + look up trianglising land algorithm
+    + show place/sub land in different colours
+    + don't allow outside of parent area
     - delete land
     - more info in map popup
     - scale bar
 
  - schemes:
-    - zeroing BPS rules
-    - feature overlap rules
-    - ELS; calc points total
-    - EWGS params: species, % cover, planting date
-    - tree density param may select scheme
+    + zeroing BPS rules
+    + examples of editing rules and constants
+    + feature overlap rules
+    + EWGS params: species, % cover, planting date
+    + ELS; calc points total
+    + tree density param may select scheme
     - comment text param
     - real data
 
  - on-device programming VW/GUI
-    - uid:
-       - create new object and link to it 'uid-new'
-       - link to existing object - chooser? links?
-    - if clear, return to original
-    - if space, leave as
+    - multiline so quicker and can copy-paste
+       - detect touching uid
+    - link to existing object - chooser? links?
+    - undo?
+       - if clear, return to original
+       - if space, leave as
+    - editing own edit rule!
 
  - use local uids in topdb.json and convert to generated uids
+ - dbs all in sumer
+
+ - vary denominator with fixed total lights - hide them
+    - or light up denominator from 18/24 total lights
+
+ - make a robot in the room
 
  - GUIs
     - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
     - fill in form values: doc/local/getFormXVal.java
 
- - vary denominator with fixed total lights - hide them
-    - or light up denominator from 18/24 total lights
- - make a robot in the room
 --------------------------------------------------------
 Explore, Interact
 
