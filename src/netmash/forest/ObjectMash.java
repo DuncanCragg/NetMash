@@ -45,7 +45,7 @@ public class ObjectMash extends WebObject {
     }
 
     private void runRule(int r){
-        if(extralogging) log("Rule "+r+" alerted: "+alerted);
+        if(extralogging) log("Run rule #"+r+". alerted="+alerted);
         if(alerted().size()==0) runRule(r,null);
         else for(String alerted: alerted()) runRule(r,alerted);
     }
@@ -55,13 +55,14 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
-        if(extralogging) log("Running rule \""+contentOr(String.format("%%rules:%d:when", r),"")+"\"");
+        String name=contentOr(String.format("%%rules:%d:when", r),"");
+        if(extralogging) log("Running rule \""+name+"\"");
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
         contentTemp("%alerted", alerted);
         rewrites.clear(); bindings.clear();
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
-        if(ok) log("Rule fired: \""+contentOr(String.format("%%rules:%d:when", r),"")+"\"");
+        if(ok) log("Rule fired: \""+name+"\"");
         if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"\n===========");
         contentTemp("%alerted", null);
     }
