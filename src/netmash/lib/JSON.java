@@ -339,9 +339,15 @@ public class JSON {
     }
 
     /** Add to list at the given path. */
-    public boolean listPathAddAll(String path, List value){
+    public boolean listPathAddAll(String path, List values){
         ensureContent();
-        return addAllListPath(tophash, path, value);
+        return addAllListPath(tophash, path, values);
+    }
+
+    /** Push on list at the given path, taking list as set. */
+    public boolean setPathPushAll(String path, LinkedList values){
+        ensureContent();
+        return pushAllSetPath(tophash, path, values);
     }
 
     //----------------------------------
@@ -1017,11 +1023,22 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean addAllListPath(LinkedHashMap hashmap, String path, List value){
+    private boolean pushAllSetPath(LinkedHashMap hashmap, String path, LinkedList values){
         LinkedList list;
         try{ list=getOrMakeListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
-        list.addAll(value);
+        boolean changed=false;
+        for(Object o: values) if(!list.contains(o)){ list.addFirst(o); changed=true; }
+        return changed;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean addAllListPath(LinkedHashMap hashmap, String path, List values){
+        if(values.isEmpty()) return false;
+        LinkedList list;
+        try{ list=getOrMakeListPath(hashmap, path);
+        }catch(PathOvershot po){ return false; }
+        list.addAll(values);
         return true;
     }
 

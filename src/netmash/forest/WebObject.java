@@ -484,6 +484,12 @@ public class WebObject {
         statemod = updatingState.listPathAddAll(path, val) || statemod;
     }
 
+    /** Push all the values as if the list were a set. */
+    public void contentSetPushAll(String path, LinkedList val){
+        doCopyOnWrite(path);
+        statemod = updatingState.setPathPushAll(path, val) || statemod;
+    }
+
     /** Remove item at path and return object that was at that path. */
     public Object contentRemove(String path){
         Object o = contentObject(path);
