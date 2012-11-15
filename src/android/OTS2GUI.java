@@ -423,6 +423,7 @@ public class OTS2GUI {
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":title");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":fullName");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":contact:fullName");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":when");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":is");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":tags");
             }

@@ -541,10 +541,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     content("title",val);
                     LinkedHashMap      location=contentHashClone("place:location");
                     if(location==null) location=contentHashClone("user:location");
-                    contentHash("location", location);
-                    int area=1;
-                    contentList("shape", shapeAround(location, area));
-                    contentDouble("area", area);
+                    if(location!=null){
+                        contentHash("location", location);
+                        int area=1;
+                        contentList("shape", shapeAround(location, area));
+                        contentDouble("area", area);
+                    }
                     notifyingCN();
                 }
                 else

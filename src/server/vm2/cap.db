@@ -15,7 +15,7 @@
   "is": [ "gui", "rule", "editable" ],
   "when": "form submitted, create application",
   "%alerted": { "is": "form" },
-  "applications": [ [ { "form": "$:%alerted" } ], "!=>", "has",
+  "view": { "applications": [ [ { "form": "$:%alerted" } ], "!=>", "has",
     { "%uid": "new",
       "%rules": [ "uid-f265-941d-a0b8-ca5d", "uid-1cc7-4c21-9036-4e01", "uid-872c-b29e-03a1-7b61", "uid-9ce9-1bdd-ec05-c8fa" ],
       "is": [ "gui", "editable" ],
@@ -26,7 +26,7 @@
         "user": [ "style", "You:", "$:%alerted:user" ]
       }
     }
-  ]
+  ]}
 }
 
 { "%uid": "uid-f265-941d-a0b8-ca5d",
@@ -49,8 +49,10 @@
 }
 
 { "%uid": "uid-5c78-11ee-a3c7-ba89",
+  "%class": "netmash.forest.Editable",
   "%rules": [ "uid-0215-038b-7558-041a", "uid-5f28-9174-b47d-2a74", "uid-4a47-2cb6-8e99-a178", "uid-6419-0368-25da-f91e" ],
-  "is": [ "updatable", "land" ],
+  "is": [ "updatable", "land", "editable", "template" ],
+  "title": "Land area template",
   "usage":           { "input": "chooser",   "label": "Land Usage:", "range": {
     "annex-1": "Annex I Products", "grazing-cultivation": "Maintaining for grazing/cultivation",
     "perm-grass": "Permanent Grassland", "perm-crops": "Permanent Crops",
@@ -65,8 +67,10 @@
 }
 
 { "%uid": "uid-9da2-71f4-4a2f-f389",
+  "%class": "netmash.forest.Editable",
   "%rules": [ "uid-6d46-73a1-05c4-1703", "uid-c619-afdd-0d5d-1a5d" ],
-  "is": [ "updatable", "land" ],
+  "is": [ "updatable", "land", "editable", "template" ],
+  "title": "Land feature template",
   "usage":       { "input": "chooser",   "label": "Land Usage:", "range": {
       "wcg-key-broad":     "WCG: Delivering key priorities (broadleaf)",
       "wcg-key-conifer":   "WCG: Delivering key priorities (conifer)",
@@ -263,5 +267,19 @@
   "view": { "BP": [ "*", "*", [ "=>", "$:payment:bp-total" ] ],
             "FC": [ "*", "*", [ "=>", "$:payment:fc-total" ] ],
             "NE": [ "*", "*", [ "=>", "$:payment:ne-total" ] ] }
+}
+
+{ "%uid": "uid-f1d2-4269-6821-9d7a",
+  "is": [ "links", "list" ],
+  "title": "Interesting links",
+  "list": [
+    "uid-5c78-11ee-a3c7-ba89",
+    "uid-9da2-71f4-4a2f-f389",
+    "uid-2433-fd91-25ad-2e9b",
+    "uid-6d46-73a1-05c4-1703",
+    "uid-e683-5ee2-a986-b93b",
+    "uid-d958-bf42-c730-8406",
+    "uid-73ec-5ea1-9cf0-dfa5"
+  ]
 }
 
