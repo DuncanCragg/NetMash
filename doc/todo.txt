@@ -56,34 +56,35 @@ Bugs, Refactoring
  - NaN/Infinity breaking JSON syntax
  - calculator doesn't update when you set function
  - non-sumer appearing in remote rewrite(?)
+ - don't put template edit rule in instantiation
+ - rule can't have %alerted..
 --------------------------------------------------------
 Stuff
 
  - GIS:
-    + show place/sub land in different colours
-    + don't allow outside of parent area
+    - show place/sub land in different colours
+    - don't allow outside of parent area
+    - feature overlap rules
     - set 1ha area using trafalgar square
     - delete land
     - more info in map popup
     - scale bar
 
  - schemes:
-    + examples of editing rules and constants
-       - if scheme detected, flag ineligible
-       - adjusting constants
-    + zeroing BPS rules
-    + feature overlap rules
-    + suggest scheme and option based on feature, avoiding big-drop-down syndrome
-    + EWGS params: species, % cover, planting date
-    + ELS; calc points total
-    + tree density param may select scheme
+    - if scheme detected, flag ineligible
+    - adjusting constants
+    - suggest scheme and option based on feature, avoiding big-drop-down syndrome
+    - zeroing BPS rules
+    - EWGS params: species, % cover, planting date
+    - ELS; calc points total
+    - tree density param may select scheme
     - comment text param
     - real data
 
  - on-device programming VW/GUI
-    + multiline so quicker and can copy-paste
-       + detect touching uid
-    + editing own edit rule!
+    - multiline so quicker and can copy-paste
+       - detect touching uid
+    - editing own edit rule!
     - link to existing object - chooser? links?
     - undo?
        - if clear, return to original
