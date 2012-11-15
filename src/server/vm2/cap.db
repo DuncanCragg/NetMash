@@ -270,7 +270,7 @@
 }
 
 { "%uid": "uid-f1d2-4269-6821-9d7a",
-  "is": [ "links", "list" ],
+  "is": [ "link", "list" ],
   "title": "Interesting links",
   "list": [
     "uid-5c78-11ee-a3c7-ba89",

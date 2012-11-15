@@ -59,6 +59,7 @@ public class ObjectMash extends WebObject {
         if(extralogging) log("Running rule \""+name+"\"");
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
         contentTemp("%alerted", alerted);
+        if(extralogging) log("alerted:\n"+contentHash("%alerted:#"));
         rewrites.clear(); bindings.clear();
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();

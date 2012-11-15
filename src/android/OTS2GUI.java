@@ -420,10 +420,11 @@ public class OTS2GUI {
         for(String uid: links){ i++;
             String bmtext=null;
             if(user.contentSet(prefix+":"+i+":is")){
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":when");
+                if(bmtext!=null) bmtext="When "+bmtext;
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":title");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":fullName");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":contact:fullName");
-                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":when");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":is");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":tags");
             }

@@ -49,7 +49,7 @@ public class User extends ObjectMash {
               "}");
 
         User links = new User(
-              "{ \"is\": [ \"links\" ], \n"+
+              "{ \"is\": [ \"link\", \"list\" ], \n"+
               "  \"list\": null \n"+
               "}");
 
@@ -837,7 +837,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 viewhash=ots2gui.documentList2GUI();
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "land")){
+            if(contentListContainsAll("private:viewing:is", list("link", "list"))){
+                viewhash=ots2gui.links2GUI();
+            }
+            else
+            if( contentIsOrListContains("private:viewing:is", "land") &&
+               !contentIsOrListContains("private:viewing:is", "template")){
                 viewhash=ots2gui.land2GUI();
             }
             else
@@ -856,10 +861,6 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(contentIsOrListContains("private:viewing:is", "article") ||
                contentIsOrListContains("private:viewing:is", "chapter")   ){
                 viewhash=ots2gui.article2GUI();
-            }
-            else
-            if(contentIsOrListContains("private:viewing:is", "links")){
-                viewhash=ots2gui.links2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "look-up")){
@@ -911,7 +912,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 viewlist=ots2gui.contactList2Map("");
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "land")){
+            if( contentIsOrListContains("private:viewing:is", "land") &&
+               !contentIsOrListContains("private:viewing:is", "template")){
                 viewlist=ots2gui.land2Map();
             }
             else
