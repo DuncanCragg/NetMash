@@ -34,7 +34,7 @@
   when: "Test var match no-match nested list less/greater than and multiply"
   la: [ [ divisible-by 5 ] false [ divisible-by 2 ] ]
   a: $:x
-  "": { d: 19 }
+  : { d: 19 }
   f: [ 21 => as-is [ 3 + 4 ] ]
   b: !$:x
   c: [ > 1.9 ]
@@ -94,7 +94,7 @@
   l6: 49
   l9: -9
   l7: [ [ 1 2 ] [ 2 3 ] [ 1 3 ] [ 2 4 ] [ 3 4 ] ]
-  "": [ { la: 8 } => {
+  : [ { la: 8 } => {
     is: [ test ]
     title: "Test Complete"
   }
