@@ -612,10 +612,10 @@ public class OTS2GUI {
     }
 
     private LinkedHashMap mesh2mesh(String p, boolean shallow){
-        String vs=user.content(p+"vertexShader");
-        String fs=user.content(p+"fragmentShader");
-        shadersPut(vs, p+"vertexShader");
-        shadersPut(fs, p+"fragmentShader");
+        String vs=user.content(p+"vertex-shader");
+        String fs=user.content(p+"fragment-shader");
+        shadersPut(vs, p+"vertex-shader");
+        shadersPut(fs, p+"fragment-shader");
 
         if(shallow) return user.contentHash(p+"#");
 
@@ -632,16 +632,16 @@ public class OTS2GUI {
         objhash.put("normals",       user.contentList(p+"normals"));
         objhash.put("faces",         user.contentList(p+"faces"));
         objhash.put("textures",      user.contentList(p+"textures"));
-        objhash.put("vertexShader",  vs);
-        objhash.put("fragmentShader",fs);
+        objhash.put("vertex-shader",  vs);
+        objhash.put("fragment-shader",fs);
         return objhash;
     }
 
     private LinkedHashMap cuboid2mesh(String p){
-        String vs=user.content(p+"vertexShader");
-        String fs=user.content(p+"fragmentShader");
-        shadersPut(vs, p+"vertexShader");
-        shadersPut(fs, p+"fragmentShader");
+        String vs=user.content(p+"vertex-shader");
+        String fs=user.content(p+"fragment-shader");
+        shadersPut(vs, p+"vertex-shader");
+        shadersPut(fs, p+"fragment-shader");
 
         LinkedHashMap objhash=oldHashIfEtagSame(p);
         if(!objhash.isEmpty()) return objhash;
@@ -662,17 +662,17 @@ public class OTS2GUI {
                                           list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
         objhash.put("textures",      user.contentList(p+"textures"));
-        objhash.put("vertexShader",  vs);
-        objhash.put("fragmentShader",fs);
+        objhash.put("vertex-shader",  vs);
+        objhash.put("fragment-shader",fs);
 
         return objhash;
     }
 
     private LinkedHashMap notice2mesh(String p){
-        String vs=user.content(p+"vertexShader");
-        String fs=user.content(p+"fragmentShader");
-        shadersPut(vs, p+"vertexShader");
-        shadersPut(fs, p+"fragmentShader");
+        String vs=user.content(p+"vertex-shader");
+        String fs=user.content(p+"fragment-shader");
+        shadersPut(vs, p+"vertex-shader");
+        shadersPut(fs, p+"fragment-shader");
 
         LinkedHashMap objhash=oldHashIfEtagSame(p);
         if(!objhash.isEmpty()) return objhash;
@@ -700,8 +700,8 @@ public class OTS2GUI {
                                           list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
         objhash.put("textures", list(key));
-        objhash.put("vertexShader",  vs);
-        objhash.put("fragmentShader",fs);
+        objhash.put("vertex-shader",  vs);
+        objhash.put("fragment-shader",fs);
 
         return objhash;
     }

@@ -105,8 +105,8 @@ public class Mesh {
             il=ia.length;
 
             textures       = getListFromHash(mesh,"textures"); if(textures.size()==0) textures=list("placeholder");
-            vertexShader   = join(user.shaders.get(getStringFromHash(mesh,"vertexShader",""))," ");
-            fragmentShader = join(user.shaders.get(getStringFromHash(mesh,"fragmentShader",""))," ");
+            vertexShader   = join(user.shaders.get(getStringFromHash(mesh,"vertex-shader",""))," ");
+            fragmentShader = join(user.shaders.get(getStringFromHash(mesh,"fragment-shader",""))," ");
             subObjects     = getListFromHash(mesh,"subObjects");
             rotationX      = getFloatFromList(getListFromHash(mesh,"rotation"), 0, 0f);
             rotationY      = getFloatFromList(getListFromHash(mesh,"rotation"), 1, 0f);
