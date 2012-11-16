@@ -26,6 +26,13 @@ public class JSON {
         chp=0;
     }
 
+    /** Make from a JSON InputStream, sumer option. */
+    public JSON(InputStream is, boolean sumer) throws UnsupportedEncodingException, IOException{
+        this.sumer=sumer;
+        chars = getStringFromIS(is).toCharArray();
+        chp=0;
+    }
+
     /** Make from a JSON file. */
     public JSON(File file) throws FileNotFoundException, IOException{
         chars = getStringFromFile(file).array();

@@ -1085,7 +1085,7 @@ log(show? "show keyboard": "hide keyboard");
 
         InputStream configis = getResources().openRawResource(R.raw.netmashconfig);
         JSON config=null;
-        try{ config = new JSON(configis); }catch(Exception e){ throw new RuntimeException("Error in config file: "+e); }
+        try{ config = new JSON(configis,true); }catch(Exception e){ throw new RuntimeException("Error in config file: "+e); }
 
         String db = config.stringPathN("persist:db");
 
