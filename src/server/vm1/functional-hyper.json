@@ -1,6 +1,7 @@
-{ "%rules": [ "uid-71b5-57fa-cf4b-6435" ],
-  "is": [ "demo" ],
-  "x": "Hello",
-  "y": "World",
-  "title": "Demo.."
+{ %rules: [ uid-71b5-57fa-cf4b-6435 ]
+  is: [ demo ]
+  x: Hello
+  y: World
+  title: Demo..
 }
+

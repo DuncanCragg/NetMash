@@ -1,37 +1,38 @@
-{   "is": [ "gui" ],
-    "title": "Horizontal scrolling like a Calendar",
-    "view": {
-        "style": { "is":"style", "direction":"horizontal" },
-        "#stuff": [
-            { "is":"style", "direction":"horizontal" },
+{   is: [ gui ]
+    title: "Horizontal scrolling like a Calendar"
+    view: {
+        style: { is:style direction:horizontal }
+        #stuff: [
+            { is:style direction:horizontal }
 
-            [ { "is":"style", "direction":"vertical", "height":"17%",
-                "colours":"lightgreen,lightmauve*", "width":"10" },
-              "![Mon 12]!", "", "Go out with Fred", "", "" ],
+            [ { is:style direction:vertical height:17%
+                colours:lightgreen lightmauve* width:10 }
+              "![Mon 12]!" "" "Go out with Fred" "" "" ]
 
-            [ { "is":"style", "direction":"vertical", "height":"17%",
-                "colours":"lightblue,white*",       "width":"10" },
-              "![Tue 13]!", "Our big demo", "", "", "/[bed early]/" ],
+            [ { is:style direction:vertical height:17%
+                colours:lightblue white*       width:10 }
+              "![Tue 13]!" "Our big demo" "" "" "/[bed early]/" ]
 
-            [ { "is":"style", "direction":"vertical", "height":"17%",
-                "colours":"lightgreen,lightmauve*", "width":"10" },
-              "![Wed 14]!", "", "", "Trip to the show", "" ],
+            [ { is:style direction:vertical height:17%
+                colours:lightgreen lightmauve* width:10 }
+              "![Wed 14]!" "" "" "Trip to the show" "" ]
 
-            [ { "is":"style", "direction":"vertical", "height":"17%",
-                "colours":"lightblue,white*",       "width":"10" },
-              "![Thu 15]!", "Do more hacking", "", "", "" ],
+            [ { is:style direction:vertical height:17%
+                colours:lightblue white*       width:10 }
+              "![Thu 15]!" "Do more hacking" "" "" "" ]
 
-            [ { "is":"style", "direction":"vertical", "height":"17%",
-                "colours":"lightgreen,lightmauve*", "width":"10" },
-              "![Fri 16]!", "Do less hacking", "", "", "" ],
+            [ { is:style direction:vertical height:17%
+                colours:lightgreen lightmauve* width:10 }
+              "![Fri 16]!" "Do less hacking" "" "" "" ]
 
-            [ { "is":"style", "direction":"vertical", "height":"17%",
-                "colours":"lightblue,white*",       "width":"10" },
-              "![Sat 17]!", "Spend all my money", "on gadgets in town", "", "" ],
+            [ { is:style direction:vertical height:17%
+                colours:lightblue white*       width:10 }
+              "![Sat 17]!" "Spend all my money" "on gadgets in town" "" "" ]
 
-            [ { "is":"style", "direction":"vertical", "height":"17%",
-                "colours":"lightgreen,lightmauve*", "width":"10" },
-              "![Sun 18]!", "Take the day off", "", "", "" ],
+            [ { is:style direction:vertical height:17%
+                colours:lightgreen lightmauve* width:10 }
+              "![Sun 18]!" "Take the day off" "" "" "" ]
         ]
     }
 }
+
