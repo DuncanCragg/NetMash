@@ -241,7 +241,7 @@
   "content": [
       "this is an article",
       "that can be queried",
-      "with hasWords(article)"
+      "with has-words(article)"
   ]
 }
 
@@ -251,7 +251,7 @@
   "content": [
       "this is another article",
       "that can be queried",
-      "with hasWords(article)"
+      "with has-words(article)"
   ]
 }
 

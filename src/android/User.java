@@ -523,7 +523,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 }
                 else
                 if(contentListContainsAll("is", list("document", "query"))){
-                    content("content", String.format("<hasWords(%s)>",val));
+                    content("content", String.format("has-words(%s)",val));
                 }
                 else
                 if(contentIsOrListContains("is", "land")){
