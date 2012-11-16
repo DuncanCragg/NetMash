@@ -1,449 +1,449 @@
-{   "%uid": "uid-424d-01c5-ee08-2ec9",
-    "is": [ "fx", "dealer", "rule" ],
-    "when": "FX order comes in, start building ticket. 1",
-    "%alerted": { "is": "order", "ticket": "<#>" },
-    "ticketfor": "<#>%alerted",
-    "ticket": "<#>{}"
+{   %uid: uid-424d-01c5-ee08-2ec9
+    is: [ fx dealer rule ]
+    when: "FX order comes in start building ticket. 1"
+    %alerted: { is: order ticket: <#> }
+    ticketfor: <#>%alerted
+    ticket: <#>{}
 }
 
-{   "%uid": "uid-e772-4f4f-f981-0cea",
-    "is": [ "fx", "dealer", "rule" ],
-    "when": "FX order comes in, spawn and add ticket to tickets list. 2",
-    "ticket": {  "%rules": "<#>list(uid-05cf-8cb9-7b52-db80, uid-bce3-b010-e869-f26e, uid-1b6c-16b6-64aa-8d48, uid-a36b-54ea-7dd6-2626, uid-913e-f82c-7198-165b, uid-4f84-6624-1781-3377)",
-                 "is": "<#>list(fx, ticket)",
-                 "order": "<#>$:ticketfor",
-                 "ask": "<#>81.9",
-                 "status": "<#>waiting",
-                 "%uid": "<#>new"
-    },
-    "tickets": "<>has($:ticket)"
+{   %uid: uid-e772-4f4f-f981-0cea
+    is: [ fx dealer rule ]
+    when: "FX order comes in spawn and add ticket to tickets list. 2"
+    ticket: {  %rules: "<#>list(uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377)"
+                 is: "<#>list(fx ticket)"
+                 order: <#>$:ticketfor
+                 ask: <#>81.9
+                 status: <#>waiting
+                 %uid: <#>new
+    }
+    tickets: <>has($:ticket)
 }
 
-{   "%uid": "uid-05cf-8cb9-7b52-db80",
-    "is": [ "fx", "ticket", "rule" ],
-    "when": "new ticket, set params and notify order. 3",
-    "params": "<#>$:order:params",
-    "%notifying": "<>has($:order)"
+{   %uid: uid-05cf-8cb9-7b52-db80
+    is: [ fx ticket rule ]
+    when: "new ticket set params and notify order. 3"
+    params: <#>$:order:params
+    %notifying: <>has($:order)
 }
 
-{   "%uid": "uid-bce3-b010-e869-f26e",
-    "is": [ "fx", "ticket", "rule" ],
-    "when": "waiting, if order params change, update ticket params. 4",
-    "status": "waiting",
-    "params": "<{}>$:order:params"
+{   %uid: uid-bce3-b010-e869-f26e
+    is: [ fx ticket rule ]
+    when: "waiting if order params change update ticket params. 4"
+    status: waiting
+    params: <{}>$:order:params
 }
 
-{   "%uid": "uid-4f84-6624-1781-3377",
-    "is": [ "fx", "ticket", "rule" ],
-    "when": "ask goes below price of ticket, set to filled. 4.5",
-    "ask": "<lt($:params:price)>",
-    "status": "<waiting>filled"
+{   %uid: uid-4f84-6624-1781-3377
+    is: [ fx ticket rule ]
+    when: "ask goes below price of ticket set to filled. 4.5"
+    ask: <lt($:params:price)>
+    status: <waiting>filled
 }
 
-{   "%uid": "uid-1b6c-16b6-64aa-8d48",
-    "is": [ "fx", "ticket", "rule" ],
-    "when": "order differs once ticket filled, flag with not-as-ordered. 5",
-    "params": "<!$:order:params>",
-    "status": "<filled>has(not-as-ordered)"
+{   %uid: uid-1b6c-16b6-64aa-8d48
+    is: [ fx ticket rule ]
+    when: "order differs once ticket filled flag with not-as-ordered. 5"
+    params: <!$:order:params>
+    status: <filled>has(not-as-ordered)
 }
 
-{   "%uid": "uid-a36b-54ea-7dd6-2626",
-    "is": [ "fx", "ticket", "rule" ],
-    "when": "order matches once ticket filled, remove not-as-ordered. 6",
-    "params": "<$:order:params>",
-    "status": "<filled>hasno(not-as-ordered)"
+{   %uid: uid-a36b-54ea-7dd6-2626
+    is: [ fx ticket rule ]
+    when: "order matches once ticket filled remove not-as-ordered. 6"
+    params: <$:order:params>
+    status: <filled>hasno(not-as-ordered)
 }
 
-{   "%uid": "uid-913e-f82c-7198-165b",
-    "is": [ "fx", "ticket", "rule" ],
-    "when": "correct payment arrives, set status to paid. 7",
-    "order": { "payment": { "amount": "<prod($:ask, $:params:investment)>" } },
-    "status": "<filled>paid",
-    "payment": "<#>$:order:payment"
+{   %uid: uid-913e-f82c-7198-165b
+    is: [ fx ticket rule ]
+    when: "correct payment arrives set status to paid. 7"
+    order: { payment: { amount: "<prod($:ask $:params:investment)>" } }
+    status: <filled>paid
+    payment: <#>$:order:payment
 }
 
-{   "%uid": "uid-ba2b-8619-fdea-8c2c",
-    "%class": "FXDealerTicket",
-    "%rules": [ "uid-424d-01c5-ee08-2ec9", "uid-e772-4f4f-f981-0cea" ],
-    "is": [ "fx", "dealer" ],
-    "tickets": [ ]
+{   %uid: uid-ba2b-8619-fdea-8c2c
+    %class: FXDealerTicket
+    %rules: [ uid-424d-01c5-ee08-2ec9 uid-e772-4f4f-f981-0cea ]
+    is: [ fx dealer ]
+    tickets: [ ]
 }
 
-{   "%uid": "uid-c47f-5e67-9fc8-b842",
-    "%etag": 11,
-    "%class": "CountTo200",
-    "pair": "",
-    "count": 1
+{   %uid: uid-c47f-5e67-9fc8-b842
+    %etag: 11
+    %class: CountTo200
+    pair: ""
+    count: 1
 }
 
-{   "%uid": "uid-4574-a96f-f796-c5fb",
-    "%class": "HRLeavePeriods",
-    "is": [ "hr", "leave-record" ],
-    "employee": "/employees/1233123",
-    "organisation": "/..",
-    "daysAllocated": 23,
-    "daysUsed": 12,
-    "daysLeft": 11,
-    "leavePeriods": [ ]
+{   %uid: uid-4574-a96f-f796-c5fb
+    %class: HRLeavePeriods
+    is: [ hr leave-record ]
+    employee: /employees/1233123
+    organisation: /..
+    daysAllocated: 23
+    daysUsed: 12
+    daysLeft: 11
+    leavePeriods: [ ]
 }
 
-{   "%uid": "uid-2161-baf3-858b-858c",
-    "%class": "server.types.Twitter",
-    "is": [ "twitter" ],
-    "title": "Twitter Gateway",
-    "types": {
-        "twitter-user":      { "is": [ "twitter", "user" ],
-                               "id": "/string/",
-                               "id2": "/int/",
-                               "location": "/geo/",
-                               "contacts": { "following": "/uid;twitter-following/", "followers": "/uid;twitter-followers/" },
-                               "posts": "/uid;twitter-postlist/"
-        },
-        "twitter-following": { "is": [ "twitter", "following" ],
-                               "user": "/uid;twitter-user/",
-                               "list": "/uid-list;twitter-user/"
-        },
-        "twitter-followers": { "is": [ "twitter", "followers" ],
-                               "user": "/uid;twitter-user/",
-                               "list": "/uid-list;twitter-user/"
-        },
-        "twitter-postlist": {  "is": [ "twitter", "postlist" ],
-                               "user": "/uid;twitter-user/",
-                               "list": "/uid-list;twitter-post/"
-        },
-        "twitter-post": {      "is": [ "twitter", "post" ],
-                               "text": "/string/",
-                               "location": "/geo/",
-                               "user": "/uid;twitter-user/",
-                               "created": "/timestamp/"
+{   %uid: uid-2161-baf3-858b-858c
+    %class: server.types.Twitter
+    is: [ twitter ]
+    title: "Twitter Gateway"
+    types: {
+        twitter-user:      { is: [ twitter user ]
+                               id: /string/
+                               id2: /int/
+                               location: /geo/
+                               contacts: { following: /uid;twitter-following/ followers: /uid;twitter-followers/ }
+                               posts: /uid;twitter-postlist/
         }
-    },
-    "indexes": {
-        "followers": {
-            "user-id": {}
-        },
-        "posts": {
-            "user-num": {},
-            "search": {}
+        twitter-following: { is: [ twitter following ]
+                               user: /uid;twitter-user/
+                               list: /uid-list;twitter-user/
+        }
+        twitter-followers: { is: [ twitter followers ]
+                               user: /uid;twitter-user/
+                               list: /uid-list;twitter-user/
+        }
+        twitter-postlist: {  is: [ twitter postlist ]
+                               user: /uid;twitter-user/
+                               list: /uid-list;twitter-post/
+        }
+        twitter-post: {      is: [ twitter post ]
+                               text: /string/
+                               location: /geo/
+                               user: /uid;twitter-user/
+                               created: /timestamp/
+        }
+    }
+    indexes: {
+        followers: {
+            user-id: {}
+        }
+        posts: {
+            user-num: {}
+            search: {}
         }
     }
 }
 
-{   "%uid": "uid-f3fd-b3a5-a88c-8dd7",
-    "%class": "",
-    "is": [ "contact", "list" ],
-    "title": "Enterprise Locations NorthWest",
-    "list": [
-        "uid-4c3f-9b0f-3bf3-abe6",
-        "uid-05cc-e687-907f-cf7b",
-        "uid-691a-dd2e-2512-902e",
-        "uid-836b-7ca9-0e54-613a",
-        "uid-fe83-20d2-9fe7-47bd",
-        "uid-8531-41a0-5a6c-172f",
-        "uid-178e-2950-002f-1c03",
-        "uid-2622-e06c-bf3b-62b4",
-        "uid-543f-d8a4-bcbd-88d5",
-        "uid-b32e-52a8-130f-6ce7",
-        "uid-f857-3568-b57e-89b9"
+{   %uid: uid-f3fd-b3a5-a88c-8dd7
+    %class: ""
+    is: [ contact list ]
+    title: "Enterprise Locations NorthWest"
+    list: [
+        uid-4c3f-9b0f-3bf3-abe6
+        uid-05cc-e687-907f-cf7b
+        uid-691a-dd2e-2512-902e
+        uid-836b-7ca9-0e54-613a
+        uid-fe83-20d2-9fe7-47bd
+        uid-8531-41a0-5a6c-172f
+        uid-178e-2950-002f-1c03
+        uid-2622-e06c-bf3b-62b4
+        uid-543f-d8a4-bcbd-88d5
+        uid-b32e-52a8-130f-6ce7
+        uid-f857-3568-b57e-89b9
     ]
 }
 
-{   "%uid": "uid-4c3f-9b0f-3bf3-abe6",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise - Head Office",
-    "address": {
-      "street": [ "Gordon House",
-                  "Sceptre Way",
-                  "Bamber Bridge" ],
-      "locality": "Preston",
-      "region": "Lancashire",
-      "postal-code": "PR5 6AW"
-    },
-    "phone": { "work": "01772 819000" }
+{   %uid: uid-4c3f-9b0f-3bf3-abe6
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise - Head Office"
+    address: {
+      street: [ "Gordon House"
+                  "Sceptre Way"
+                  "Bamber Bridge" ]
+      locality: Preston
+      region: Lancashire
+      postal-code: "PR5 6AW"
+    }
+    phone: { work: "01772 819000" }
 }
 
-{   "%uid": "uid-05cc-e687-907f-cf7b",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise - Central",
-    "address": {
-      "street": [ "Lancaster House",
-                  "Centurion Way" ],
-      "locality": "Leyland",
-      "region": "Lancashire",
-      "postal-code": "PR26 6TX"
-    },
-    "phone": { "work": "01772 819000",
-             "fax":  "01772 819001" }
+{   %uid: uid-05cc-e687-907f-cf7b
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise - Central"
+    address: {
+      street: [ "Lancaster House"
+                  "Centurion Way" ]
+      locality: Leyland
+      region: Lancashire
+      postal-code: "PR26 6TX"
+    }
+    phone: { work: "01772 819000"
+             fax:  "01772 819001" }
 }
 
-{   "%uid": "uid-691a-dd2e-2512-902e",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise - Energy (Power)",
-    "address": {
-      "street": [ "Unit B2 Redscar Industrial Estate", 
-                  "Longridge Road",
-                  "Ribbleton" ],
-      "locality": "Preston",
-      "region": "Lancashire",
-      "postal-code": "PR2 5NJ"
-    },
-    "phone": { "work": "01772 705253",
-             "fax":  "01772 655971" }
+{   %uid: uid-691a-dd2e-2512-902e
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise - Energy (Power)"
+    address: {
+      street: [ "Unit B2 Redscar Industrial Estate" 
+                  "Longridge Road"
+                  Ribbleton ]
+      locality: Preston
+      region: Lancashire
+      postal-code: "PR2 5NJ"
+    }
+    phone: { work: "01772 705253"
+             fax:  "01772 655971" }
 }
 
-{   "%uid": "uid-836b-7ca9-0e54-613a",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise - Customer Contact Centre",
-    "address": {
-      "street": [ "The Matchworks",
-                  "Units 3-7",
-                  "Speke Road",
-                  "Garston" ],
-      "locality": "Liverpool",
-      "region": "Merseyside",
-      "postal-code": "L19 2PH"
-    },
-    "phone": { "work": "0800 521660" }
+{   %uid: uid-836b-7ca9-0e54-613a
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise - Customer Contact Centre"
+    address: {
+      street: [ "The Matchworks"
+                  "Units 3-7"
+                  "Speke Road"
+                  Garston ]
+      locality: Liverpool
+      region: Merseyside
+      postal-code: "L19 2PH"
+    }
+    phone: { work: "0800 521660" }
 }
 
-{   "%uid": "uid-fe83-20d2-9fe7-47bd",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise - Environmental",
-    "address": {
-      "street": [ "Moss Side Depot",
-                  "81 Bison Place",
-                  "Moss Side Industrial Estate" ],
-      "locality": "Leyland",
-      "region": "Lancashire",
-      "postal-code": "PR26 7QR"
-    },
-    "phone": { "work": "01772 624182" }
+{   %uid: uid-fe83-20d2-9fe7-47bd
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise - Environmental"
+    address: {
+      street: [ "Moss Side Depot"
+                  "81 Bison Place"
+                  "Moss Side Industrial Estate" ]
+      locality: Leyland
+      region: Lancashire
+      postal-code: "PR26 7QR"
+    }
+    phone: { work: "01772 624182" }
 }
 
-{   "%uid": "uid-8531-41a0-5a6c-172f",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise - Energy (Gas)",
-    "address": {
-      "street": [ "Building 005",
-                  "Common Lane",
-                  "Partington" ],
-      "locality": "Manchester",
-      "region": "Lancashire",
-      "postal-code": "M31 4BR",
-      "country": "UK"
-    },
-    "phone": { "work": "0161 7767800" }
+{   %uid: uid-8531-41a0-5a6c-172f
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise - Energy (Gas)"
+    address: {
+      street: [ "Building 005"
+                  "Common Lane"
+                  Partington ]
+      locality: Manchester
+      region: Lancashire
+      postal-code: "M31 4BR"
+      country: UK
+    }
+    phone: { work: "0161 7767800" }
 }
 
-{   "%uid": "uid-178e-2950-002f-1c03",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise Liverpool - Environmental",
-    "address": {
-      "street": [ "Moorgate Point",
-                  "Knowsley" ],
-      "locality": "Liverpool",
-      "region": "Merseyside",
-      "postal-code": "L33 7DR"
-    },
-    "phone": { "work": "0151 5477370" }
+{   %uid: uid-178e-2950-002f-1c03
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise Liverpool - Environmental"
+    address: {
+      street: [ "Moorgate Point"
+                  Knowsley ]
+      locality: Liverpool
+      region: Merseyside
+      postal-code: "L33 7DR"
+    }
+    phone: { work: "0151 5477370" }
 }
 
-{   "%uid": "uid-2622-e06c-bf3b-62b4",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise - Environmental",
-    "address": {
-      "street": [ "20 Old London Road Depot" ],
-      "locality": "Penrith",
-      "region": "Cumbria",
-      "postal-code": "CA11 8GU"
-    },
-    "phone": { "work": "01768 212800" }
+{   %uid: uid-2622-e06c-bf3b-62b4
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise - Environmental"
+    address: {
+      street: [ "20 Old London Road Depot" ]
+      locality: Penrith
+      region: Cumbria
+      postal-code: "CA11 8GU"
+    }
+    phone: { work: "01768 212800" }
 }
 
-{   "%uid": "uid-543f-d8a4-bcbd-88d5",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise Liverpool - Environmental",
-    "address": {
-      "street": [ "Newton Road Depot",
-                  "Old Swan" ],
-      "locality": "Liverpool",
-      "region": "Merseyside",
-      "postal-code": "L13 3HS",
-      "country": "UK"
-    },
-    "phone": { "work": "0151 2336550" }
+{   %uid: uid-543f-d8a4-bcbd-88d5
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise Liverpool - Environmental"
+    address: {
+      street: [ "Newton Road Depot"
+                  "Old Swan" ]
+      locality: Liverpool
+      region: Merseyside
+      postal-code: "L13 3HS"
+      country: UK
+    }
+    phone: { work: "0151 2336550" }
 }
 
-{   "%uid": "uid-b32e-52a8-130f-6ce7",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise - Highways",
-    "address": {
-      "street": [ "Holmesfield Road" ],
-      "locality": "Warrington",
-      "region": "Cheshire",
-      "postal-code": "WA1 2DS"
-    },
-    "phone": { "work": "01925 425780",
-             "fax":  "01925 425798" }
+{   %uid: uid-b32e-52a8-130f-6ce7
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise - Highways"
+    address: {
+      street: [ "Holmesfield Road" ]
+      locality: Warrington
+      region: Cheshire
+      postal-code: "WA1 2DS"
+    }
+    phone: { work: "01925 425780"
+             fax:  "01925 425798" }
 }
 
-{   "%uid": "uid-f857-3568-b57e-89b9",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Enterprise Manchester - Environmental",
-    "address": {
-      "street": [ "c/o Manchester City Council",
-                  "Hammerstone Road",
-                  "Gorton" ],
-      "locality": "Manchester",
-      "region": "Lancashire",
-      "postal-code": "M18 8EQ"
-    },
-    "phone": { "work": "0161 9578304",
-             "fax":  "0161 9578304" }
+{   %uid: uid-f857-3568-b57e-89b9
+    %class: ""
+    is: [ contact ]
+    full-name: "Enterprise Manchester - Environmental"
+    address: {
+      street: [ "c/o Manchester City Council"
+                  "Hammerstone Road"
+                  Gorton ]
+      locality: Manchester
+      region: Lancashire
+      postal-code: "M18 8EQ"
+    }
+    phone: { work: "0161 9578304"
+             fax:  "0161 9578304" }
 }
 
-{   "%uid": "uid-76b8-8502-45d3-0543",
-    "%class": "MeetUsUp",
-    "is": [ "meetusup", "contact", "list" ],
-    "title": "MeetUsUp List",
-    "venue": "uid-fc61-ba84-a7d8-9874",
-    "organiser": "uid-1b84-142d-4f34-3734",
-    "list": [
-        "uid-35ad-af7a-93fb-896d",
-        "uid-a0b2-0521-d5f1-b994",
-        "uid-b4b3-586c-88e5-05ae",
-        "uid-1b84-142d-4f34-3734",
-        "uid-6eab-8bc0-10a8-db4e",
-        "uid-bb90-d577-703b-e7a9",
-        "uid-f95d-8864-a3ef-7604"
+{   %uid: uid-76b8-8502-45d3-0543
+    %class: MeetUsUp
+    is: [ meetusup contact list ]
+    title: "MeetUsUp List"
+    venue: uid-fc61-ba84-a7d8-9874
+    organiser: uid-1b84-142d-4f34-3734
+    list: [
+        uid-35ad-af7a-93fb-896d
+        uid-a0b2-0521-d5f1-b994
+        uid-b4b3-586c-88e5-05ae
+        uid-1b84-142d-4f34-3734
+        uid-6eab-8bc0-10a8-db4e
+        uid-bb90-d577-703b-e7a9
+        uid-f95d-8864-a3ef-7604
     ]
 }
 
-{   "%uid": "uid-35ad-af7a-93fb-896d",
-    "%class": "netmash.forest.Editable",
-    "%rules": [ ],
-    "is": [ "contact", "editable" ],
-    "full-name": "Brian Rock",
-    "name": {
-      "given":  "Brian",
-      "middle": [ "Andy", "Charles" ],
-      "family": "Rock"
-    },
-    "address": {
-      "street": "150 Old Park Ln",
-      "postal-code": "W1K 1QZ",
-      "country": "UK"
-    },
-    "phone": { "work": "+44 20 7514 1700", "home": "020 8323 2343" },
-    "email": "brian.a.c.rock@site.com",
-    "bio": "I /[love]/ rock",
-    "role": "Business Analyst",
-    "web-view": [
-      "http://brian.org/",
-      "http://facebook.com/brio"
+{   %uid: uid-35ad-af7a-93fb-896d
+    %class: netmash.forest.Editable
+    %rules: [ ]
+    is: [ contact editable ]
+    full-name: "Brian Rock"
+    name: {
+      given:  Brian
+      middle: [ Andy Charles ]
+      family: Rock
+    }
+    address: {
+      street: "150 Old Park Ln"
+      postal-code: "W1K 1QZ"
+      country: UK
+    }
+    phone: { work: "+44 20 7514 1700" home: "020 8323 2343" }
+    email: brian.a.c.rock@site.com
+    bio: "I /[love]/ rock"
+    role: "Business Analyst"
+    web-view: [
+      http://brian.org/
+      http://facebook.com/brio
     ]
 }
 
-{   "%uid": "uid-1b84-142d-4f34-3734",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Duncan Cragg",
-    "email": "someone@thoughtworks.com",
-    "address": {
-        "street": [ "111 Bristol Road" ],
-        "locality": "Richmond",
-        "region": "Surrey",
-        "postal-code": "KT2 2PP"
-    },
-    "phone": { "home": "020 8567 8900", "mobile": "0777 77 77 777" }
+{   %uid: uid-1b84-142d-4f34-3734
+    %class: ""
+    is: [ contact ]
+    full-name: "Duncan Cragg"
+    email: someone@thoughtworks.com
+    address: {
+        street: [ "111 Bristol Road" ]
+        locality: Richmond
+        region: Surrey
+        postal-code: "KT2 2PP"
+    }
+    phone: { home: "020 8567 8900" mobile: "0777 77 77 777" }
 }
 
-{   "%uid": "uid-a0b2-0521-d5f1-b994",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Joe Test",
-    "email": "joe.test@testing.com",
-    "phone": { "mobile": "0777 88 77 555" },
+{   %uid: uid-a0b2-0521-d5f1-b994
+    %class: ""
+    is: [ contact ]
+    full-name: "Joe Test"
+    email: joe.test@testing.com
+    phone: { mobile: "0777 88 77 555" }
 }
 
-{   "%uid": "uid-b4b3-586c-88e5-05ae",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Sam Bloggs",
-    "email": "sam.bloggs@aol.com",
+{   %uid: uid-b4b3-586c-88e5-05ae
+    %class: ""
+    is: [ contact ]
+    full-name: "Sam Bloggs"
+    email: sam.bloggs@aol.com
 }
 
-{   "%uid": "uid-6eab-8bc0-10a8-db4e",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Jack Bloggs",
-    "email": "jack.bloggs@aol.com",
+{   %uid: uid-6eab-8bc0-10a8-db4e
+    %class: ""
+    is: [ contact ]
+    full-name: "Jack Bloggs"
+    email: jack.bloggs@aol.com
 }
 
-{   "%uid": "uid-bb90-d577-703b-e7a9",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Bobby Bloggs",
-    "email": "bob.bloggs@aol.com",
+{   %uid: uid-bb90-d577-703b-e7a9
+    %class: ""
+    is: [ contact ]
+    full-name: "Bobby Bloggs"
+    email: bob.bloggs@aol.com
 }
 
-{   "%uid": "uid-f95d-8864-a3ef-7604",
-    "%class": "",
-    "is": [ "contact" ],
-    "full-name": "Janice Bloggs",
-    "email": "jan.bloggs@aol.com",
+{   %uid: uid-f95d-8864-a3ef-7604
+    %class: ""
+    is: [ contact ]
+    full-name: "Janice Bloggs"
+    email: jan.bloggs@aol.com
 }
 
-{   "%uid": "uid-7235-60ba-d323-d5d6",
-    "%class": "DynamicPage",
-    "is": [ "gui" ],
-    "title": "Demo of Dynamic GUI and Remote App",
-    "view": {
-        "style": { "is": "style", "direction": "vertical", "colours": "lightturquoise, lightblue" },
-        "#title": "Demo of Dynamic GUI and Remote App",
-        "#incre": 1000,
-        "#stuff": [
-            { "is": "style", "direction":"vertical" },
-            [ { "is": "style", "direction":"horizontal", "proportions":"50%", "colours":"lightgreen,lightpink" }, "Showing", [ { "is":"style", "direction":"vertical" }, "horizontal", "vertical" ] ],
-            [ { "is": "style", "direction":"horizontal", "proportions":"33%", "colours":"lightblue,lightmauve*" }, "layouts, colours", "![text]!", "/[effects]/" ],
-            [ { "is": "style", "direction":"horizontal", "proportions":"99%", "colours":"lightpink" },             "and forms backed by server functions:" ],
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%" },                        "#something": "?[Type something: /string/]?" },
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%", "colours":"lightblue" }, "#checkit":   "?[Check me! /boolean/]?" },
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"98%", "colours":"lightblue" }, "#radioin":   "?[ /string;|this|that|other/ ]?" },
-            { "style": { "is": "style", "direction":"horizontal" },         "#spinme": "?[Choose one: /string;the first choice|that is another|the final option/ ]?" },
-            { "style": { "is": "style", "direction":"horizontal" },                                             "#toggler": "?[ /boolean;I'm now off|I'm now on/ ]?" },
-            { "style": { "is": "style", "direction":"horizontal", "proportions":"95%", "colours":"lightblue" }, "#rateme":  "?[ /integer;0||4/ ]?" }
+{   %uid: uid-7235-60ba-d323-d5d6
+    %class: DynamicPage
+    is: [ gui ]
+    title: "Demo of Dynamic GUI and Remote App"
+    view: {
+        style: { is: style direction: vertical colours: "lightturquoise lightblue" }
+        #title: "Demo of Dynamic GUI and Remote App"
+        #incre: 1000
+        #stuff: [
+            { is: style direction:vertical }
+            [ { is: style direction:horizontal proportions:50% colours:lightgreen lightpink } Showing [ { is:style direction:vertical } horizontal vertical ] ]
+            [ { is: style direction:horizontal proportions:33% colours:lightblue lightmauve* } "layouts colours" ![text]! /[effects]/ ]
+            [ { is: style direction:horizontal proportions:99% colours:lightpink }             "and forms backed by server functions:" ]
+            { style: { is: style direction:horizontal proportions:98% }                        #something: "?[Type something: /string/]?" }
+            { style: { is: style direction:horizontal proportions:98% colours:lightblue } #checkit:   "?[Check me! /boolean/]?" }
+            { style: { is: style direction:horizontal proportions:98% colours:lightblue } #radioin:   "?[ /string;|this|that|other/ ]?" }
+            { style: { is: style direction:horizontal }         #spinme: "?[Choose one: /string;the first choice|that is another|the final option/ ]?" }
+            { style: { is: style direction:horizontal }                                             #toggler: "?[ /boolean;I'm now off|I'm now on/ ]?" }
+            { style: { is: style direction:horizontal proportions:95% colours:lightblue } #rateme:  "?[ /integer;0||4/ ]?" }
          ]
     }
 }
 
-{   "%uid": "uid-6332-84e1-c1de-3364",
-    "%class": "server.types.UserHome",
-    "is": [ "userhome", "user", "list" ],
-    "title": "User Home",
-    "list": []
+{   %uid: uid-6332-84e1-c1de-3364
+    %class: server.types.UserHome
+    is: [ userhome user list ]
+    title: "User Home"
+    list: []
 }
 
-{   "%uid": "uid-4b71-f8d4-c761-be2d",
-    "is": [ "link", "list" ],
-    "title": "Random Collection of Links",
-    "list" : [ "http://netmash.net:8081/o/uid-6332-84e1-c1de-3364.json",
-               "http://netmash.net:8081/o/uid-7235-60ba-d323-d5d6.json",
-               "http://netmash.net:8081/o/uid-35ad-af7a-93fb-896d.json",
-               "http://netmash.net:8081/o/uid-76b8-8502-45d3-0543.json",
-               "http://netmash.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json",
-               "http://netmash.net:8081/o/uid-2161-baf3-858b-858c.json"
+{   %uid: uid-4b71-f8d4-c761-be2d
+    is: [ link list ]
+    title: "Random Collection of Links"
+    list : [ http://netmash.net:8081/o/uid-6332-84e1-c1de-3364.json
+               http://netmash.net:8081/o/uid-7235-60ba-d323-d5d6.json
+               http://netmash.net:8081/o/uid-35ad-af7a-93fb-896d.json
+               http://netmash.net:8081/o/uid-76b8-8502-45d3-0543.json
+               http://netmash.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json
+               http://netmash.net:8081/o/uid-2161-baf3-858b-858c.json
     ]
 }
 
