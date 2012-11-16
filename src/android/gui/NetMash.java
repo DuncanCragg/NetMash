@@ -1091,7 +1091,7 @@ log(show? "show keyboard": "hide keyboard");
 
         InputStream topdbis=null;
         try{ topdbis = openFileInput(db); }catch(Exception e){ }
-        if(topdbis==null) topdbis = getResources().openRawResource(R.raw.topdb);
+        if(topdbis==null) topdbis = getResources().openRawResource(R.raw.top);
 
         FileOutputStream topdbos=null;
         try{ topdbos = openFileOutput(db, Context.MODE_APPEND); }catch(Exception e){ throw new RuntimeException("Local DB: "+e); }

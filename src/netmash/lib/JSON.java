@@ -48,9 +48,17 @@ public class JSON {
         chp=0;
     }
 
+    /** Make from given String, with switch for Sumer format. */
     public JSON(String str, boolean sumer){
         this.sumer=sumer;
         chars = str.toCharArray();
+        chp=0;
+    }
+
+    /** Make from given CharBuffer, with switch for Sumer format. */
+    public JSON(CharBuffer charbuffer, boolean sumer){
+        this.sumer=sumer;
+        chars = charbuffer.toString().toCharArray();
         chp=0;
     }
 

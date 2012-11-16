@@ -27,6 +27,7 @@ public class Persistence implements FileUser {
     private InputStream      topdbis=null;
     private FileOutputStream topdbos=null;
     private JSON netmashconfig=null;
+    private boolean sumer=false;
 
     private ConcurrentHashMap<String,CharBuffer> jsoncache = new ConcurrentHashMap<String,CharBuffer>();
     private CopyOnWriteArraySet<WebObject>       syncable  = new CopyOnWriteArraySet<WebObject>();
@@ -78,11 +79,9 @@ public class Persistence implements FileUser {
             if(jsonbytes==null) return;
 
             CharBuffer jsonchars = UTF8.decode(jsonbytes);
-            String uid = findUID(jsonchars);
-            if(uid.equals("netmashconfig")) netmashconfig = new JSON(jsonchars);
+            String uid = findUIDAndDetectSumer(jsonchars);
+            if(uid.equals("netmashconfig")) netmashconfig = new JSON(jsonchars,sumer);
             else jsoncache.put(uid, jsonchars);
-jsonchars.position(0);
-log(new JSON(jsonchars).toString(true));
         }
     }
 
@@ -100,7 +99,7 @@ log(new JSON(jsonchars).toString(true));
         CharBuffer jsonchars = jsoncache.get(uid);
         if(jsonchars==null) return null;
         jsonchars.position(0);
-        JSON json = new JSON(jsonchars);
+        JSON json = new JSON(jsonchars,sumer);
         String classname = json.stringPathN("%class"); json.removePath("%class");
         WebObject w=null;
         try{
@@ -145,12 +144,18 @@ log(new JSON(jsonchars).toString(true));
 
     // ----------------------------------------
 
-    static public final String  UIDRE = "^\\s*\\{\\s*\"%uid\":\\s*\"([^\"]+)\".*";
-    static public final Pattern UIDPA = Pattern.compile(UIDRE, Pattern.MULTILINE | Pattern.DOTALL);
+    static public final String  UIDREJ = "^\\s*\\{\\s*\"%uid\":\\s*\"([^\"]+)\".*";
+    static public final Pattern UIDPAJ = Pattern.compile(UIDREJ, Pattern.MULTILINE | Pattern.DOTALL);
+    static public final String  UIDRES = "^\\s*\\{\\s*%uid:\\s*([^\\s]+).*";
+    static public final Pattern UIDPAS = Pattern.compile(UIDRES, Pattern.MULTILINE | Pattern.DOTALL);
 
-    static public String findUID(CharBuffer chars){
-        Matcher m = UIDPA.matcher(chars);
-        if(!m.matches()) return null;
+    public String findUIDAndDetectSumer(CharBuffer chars){
+        Matcher m = UIDPAJ.matcher(chars);
+        if(!m.matches()){
+                m = UIDPAS.matcher(chars);
+                if(!m.matches()) return null;
+                sumer=true;
+        }
         return m.group(1);
     }
 
