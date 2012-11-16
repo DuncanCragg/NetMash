@@ -206,7 +206,7 @@
     "%class": "netmash.forest.Editable",
     "%rules": [ ],
     "is": [ "contact", "editable" ],
-    "fullName": "Mr Brian Rock",
+    "full-name": "Mr Brian Rock",
     "name": {
       "given":  "Brian",
       "middle": "Andy",

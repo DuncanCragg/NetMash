@@ -29,7 +29,7 @@ public class Asymmetry extends WebObject {
             log("state 3 - move to state 4");
             contentInt("state", 4);
             contentSet("watch:state");
-            content("bobby:fullName");
+            content("bobby:full-name");
             contentHash("tick:#");
         }
         else

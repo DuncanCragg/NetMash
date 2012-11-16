@@ -44,7 +44,7 @@ public class User extends ObjectMash {
 
         User contact = new User(
               "{ \"is\": \"contact\", \n"+
-              "  \"fullName\": \""+fullName+"\", \n"+
+              "  \"full-name\": \""+fullName+"\", \n"+
               "  \"address\": { } \n"+
               "}");
 

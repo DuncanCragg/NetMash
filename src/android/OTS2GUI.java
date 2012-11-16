@@ -35,7 +35,7 @@ public class OTS2GUI {
     public LinkedHashMap user2GUI(){
         String useruid = user.content("private:viewing");
 
-        String fullname = user.content("private:viewing:contact:fullName");
+        String fullname = user.content("private:viewing:contact:full-name");
         if(fullname==null) fullname="Waiting for contact details "+user.content("private:viewing:contact");
 
         String contactuid = UID.normaliseUID(useruid, user.content("private:viewing:contact")); // remove normaliseUID
@@ -98,7 +98,7 @@ public class OTS2GUI {
         int i= -1;
         for(String uid: contacts){ i++;
             String contactuid = UID.normaliseUID(listuid, uid); // remove normaliseUID
-            String fullname=            user.content("private:viewing:list:"+i+":"+contactprefix+"fullName");
+            String fullname=            user.content("private:viewing:list:"+i+":"+contactprefix+"full-name");
             if(fullname==null) fullname=user.content("private:viewing:list:"+i+":is");
             if(fullname==null) viewlist.add("Loading..");
             else               viewlist.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), fullname, contactuid));
@@ -267,7 +267,7 @@ public class OTS2GUI {
 
     private LinkedHashMap point(String prefix, String sublabel, LinkedHashMap location, LinkedList shape, String uid){
         LinkedHashMap point = new LinkedHashMap();
-        String          label=user.content("private:viewing:"+prefix+"fullName");
+        String          label=user.content("private:viewing:"+prefix+"full-name");
         if(label==null) label=user.content("private:viewing:"+prefix+"title");
         point.put("label",    label!=null? label: "");
         point.put("sublabel", sublabel!=null? sublabel: "");
@@ -319,12 +319,12 @@ public class OTS2GUI {
 
         addListIfPresent(contactdetail, "publications", "Publications");
 
-        String fullname=user.content("private:viewing:fullName");
+        String fullname=user.content("private:viewing:full-name");
         String photourl=user.contentOr("private:viewing:photo","");
         LinkedHashMap<String,Object> titlehash=new LinkedHashMap<String,Object>();
         titlehash.put("style", style("direction","horizontal", "proportions","25%", "colours","lightpink*"));
         titlehash.put("#photo", photourl);
-        titlehash.put("#val-fullName", editable? hash("input","textfield", "value",fullname): fullname);
+        titlehash.put("#val-full-name", editable? hash("input","textfield", "value",fullname): fullname);
 
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical"));
@@ -423,8 +423,8 @@ public class OTS2GUI {
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":when");
                 if(bmtext!=null) bmtext="When "+bmtext;
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":title");
-                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":fullName");
-                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":contact:fullName");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":full-name");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":contact:full-name");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":is");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":tags");
             }

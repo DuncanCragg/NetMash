@@ -151,7 +151,7 @@
 {   "%uid": "uid-4c3f-9b0f-3bf3-abe6",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise - Head Office",
+    "full-name": "Enterprise - Head Office",
     "address": {
       "street": [ "Gordon House",
                   "Sceptre Way",
@@ -166,7 +166,7 @@
 {   "%uid": "uid-05cc-e687-907f-cf7b",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise - Central",
+    "full-name": "Enterprise - Central",
     "address": {
       "street": [ "Lancaster House",
                   "Centurion Way" ],
@@ -181,7 +181,7 @@
 {   "%uid": "uid-691a-dd2e-2512-902e",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise - Energy (Power)",
+    "full-name": "Enterprise - Energy (Power)",
     "address": {
       "street": [ "Unit B2 Redscar Industrial Estate", 
                   "Longridge Road",
@@ -197,7 +197,7 @@
 {   "%uid": "uid-836b-7ca9-0e54-613a",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise - Customer Contact Centre",
+    "full-name": "Enterprise - Customer Contact Centre",
     "address": {
       "street": [ "The Matchworks",
                   "Units 3-7",
@@ -213,7 +213,7 @@
 {   "%uid": "uid-fe83-20d2-9fe7-47bd",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise - Environmental",
+    "full-name": "Enterprise - Environmental",
     "address": {
       "street": [ "Moss Side Depot",
                   "81 Bison Place",
@@ -228,7 +228,7 @@
 {   "%uid": "uid-8531-41a0-5a6c-172f",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise - Energy (Gas)",
+    "full-name": "Enterprise - Energy (Gas)",
     "address": {
       "street": [ "Building 005",
                   "Common Lane",
@@ -244,7 +244,7 @@
 {   "%uid": "uid-178e-2950-002f-1c03",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise Liverpool - Environmental",
+    "full-name": "Enterprise Liverpool - Environmental",
     "address": {
       "street": [ "Moorgate Point",
                   "Knowsley" ],
@@ -258,7 +258,7 @@
 {   "%uid": "uid-2622-e06c-bf3b-62b4",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise - Environmental",
+    "full-name": "Enterprise - Environmental",
     "address": {
       "street": [ "20 Old London Road Depot" ],
       "locality": "Penrith",
@@ -271,7 +271,7 @@
 {   "%uid": "uid-543f-d8a4-bcbd-88d5",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise Liverpool - Environmental",
+    "full-name": "Enterprise Liverpool - Environmental",
     "address": {
       "street": [ "Newton Road Depot",
                   "Old Swan" ],
@@ -286,7 +286,7 @@
 {   "%uid": "uid-b32e-52a8-130f-6ce7",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise - Highways",
+    "full-name": "Enterprise - Highways",
     "address": {
       "street": [ "Holmesfield Road" ],
       "locality": "Warrington",
@@ -300,7 +300,7 @@
 {   "%uid": "uid-f857-3568-b57e-89b9",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Enterprise Manchester - Environmental",
+    "full-name": "Enterprise Manchester - Environmental",
     "address": {
       "street": [ "c/o Manchester City Council",
                   "Hammerstone Road",
@@ -334,7 +334,7 @@
     "%class": "netmash.forest.Editable",
     "%rules": [ ],
     "is": [ "contact", "editable" ],
-    "fullName": "Brian Rock",
+    "full-name": "Brian Rock",
     "name": {
       "given":  "Brian",
       "middle": [ "Andy", "Charles" ],
@@ -358,7 +358,7 @@
 {   "%uid": "uid-1b84-142d-4f34-3734",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Duncan Cragg",
+    "full-name": "Duncan Cragg",
     "email": "someone@thoughtworks.com",
     "address": {
         "street": [ "111 Bristol Road" ],
@@ -372,7 +372,7 @@
 {   "%uid": "uid-a0b2-0521-d5f1-b994",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Joe Test",
+    "full-name": "Joe Test",
     "email": "joe.test@testing.com",
     "phone": { "mobile": "0777 88 77 555" },
 }
@@ -380,28 +380,28 @@
 {   "%uid": "uid-b4b3-586c-88e5-05ae",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Sam Bloggs",
+    "full-name": "Sam Bloggs",
     "email": "sam.bloggs@aol.com",
 }
 
 {   "%uid": "uid-6eab-8bc0-10a8-db4e",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Jack Bloggs",
+    "full-name": "Jack Bloggs",
     "email": "jack.bloggs@aol.com",
 }
 
 {   "%uid": "uid-bb90-d577-703b-e7a9",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Bobby Bloggs",
+    "full-name": "Bobby Bloggs",
     "email": "bob.bloggs@aol.com",
 }
 
 {   "%uid": "uid-f95d-8864-a3ef-7604",
     "%class": "",
     "is": [ "contact" ],
-    "fullName": "Janice Bloggs",
+    "full-name": "Janice Bloggs",
     "email": "jan.bloggs@aol.com",
 }
 

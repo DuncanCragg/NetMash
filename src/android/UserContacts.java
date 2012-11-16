@@ -120,7 +120,7 @@ if(++i>10) break;
 
     static User newContact(String name, String phonenumber, String emailaddress, String address){
         return new User(         "{ \"is\": \"contact\", \n"+
-                                 "  \"fullName\": \""+name+"\""+
+                                 "  \"full-name\": \""+name+"\""+
             (phonenumber!=null?  ",\n  \"phone\": \""+phonenumber+"\"": "")+
             (emailaddress!=null? ",\n  \"email\": \""+emailaddress+"\"": "")+
             (address!=null?      ",\n  \"address\": \""+address+"\"": "")+

@@ -123,7 +123,7 @@
 
 { "%uid": "uid-35c0-9017-99c1-db63",
   "is": [ "contact" ],
-  "fullName": "Bletchley Park",
+  "full-name": "Bletchley Park",
   "address": {
       "extended": [ "The Mansion", "Bletchley Park" ],
       "street": "Sherwood Drive",
@@ -259,7 +259,7 @@
   "is": [ "site", "article", "list" ],
   "title": "What Not How",
   "subTitle": "Duncan Cragg on Declarative Architectures",
-  "author": { "is": "contact", "fullName": "Duncan Cragg" },
+  "author": { "is": "contact", "full-name": "Duncan Cragg" },
   "id": "http://duncan-cragg.org/blog/",
   "logo": "http://duncan-cragg.org/favicon.gif",
   "icon": "http://duncan-cragg.org/favicon.ico",
