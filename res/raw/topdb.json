@@ -2,7 +2,7 @@
   "%class": "netmash.forest.ObjectMash",
   "is": [ "place", "3d", "mesh", "editable" ],
   "title": "Your Room",
-  "subObjects": [
+  "sub-objects": [
     { "object": "uid-f6c8-2d51-8060-a52a", "coords": [  0,    1,  -11 ] },
     { "object": "uid-20ce-d0b1-c717-3dbb", "coords": [  0,    0,   -6 ] },
     { "object": "http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json", "coords": [  4,  0,  -7 ] },
@@ -45,7 +45,7 @@
   "rotation": [ 0, 0, 0 ],
   "scale": [ 1.0, 1.0, 1.0 ],
   "light": [ 0.5, 0.5, 1.0 ],
-  "subObjects": [ [ -1.20, -1.8 ], [ -0.40, -1.8 ], [ 0.40, -1.8 ], [ 1.20, -1.8 ],
+  "sub-objects": [ [ -1.20, -1.8 ], [ -0.40, -1.8 ], [ 0.40, -1.8 ], [ 1.20, -1.8 ],
                   [ -1.20, -1.0 ], [ -0.40, -1.0 ], [ 0.40, -1.0 ], [ 1.20, -1.0 ],
                   [ -1.20, -0.2 ], [ -0.40, -0.2 ], [ 0.40, -0.2 ], [ 1.20, -0.2 ] ],
   "gamerules": [ "uid-1b54-d28a-71dc-5827", "uid-7b1a-4b1d-1424-2818" ],
@@ -58,7 +58,7 @@
   "is": [ "3d", "rule", "editable" ],
   "when": "starting, create lights",
   "status": [ "creating", "=>", "waiting" ],
-  "subObjects": [ [ [ "number", "number" ], "=>",
+  "sub-objects": [ [ [ "number", "number" ], "=>",
       { "object":
           { "%uid": "new",
             "%rules": "$:gamerules",
@@ -71,7 +71,7 @@
         "coords": [ [ 0, "selects", "$:!"], [ 1, "selects", "$:!"],  -0.5 ]
       }
   ] ],
-  "denominator": [ "=>", [ "count", "$:subObjects" ] ]
+  "denominator": [ "=>", [ "count", "$:sub-objects" ] ]
 }
 
 { "%uid": "uid-fb3e-02d3-70bb-916f",
@@ -125,16 +125,16 @@
   "when": "checking, set to initial zero and recalc numerator and denominator",
   "status": "checking",
   "lit": [ "=>", 0 ],
-  "numerator": [ "=>", [ [ "$:numerator", "/", "$:denominator" ], "*", [ "count", "$:subObjects" ] ] ],
-  "denominator": [ "=>", [ "count", "$:subObjects" ] ]
+  "numerator": [ "=>", [ [ "$:numerator", "/", "$:denominator" ], "*", [ "count", "$:sub-objects" ] ] ],
+  "denominator": [ "=>", [ "count", "$:sub-objects" ] ]
 }
 
 { "%uid": "uid-0b6a-659e-3561-05b2",
   "is": [ "3d", "rule", "editable" ],
   "when": "checking, count lit up lights",
   "status": "checking",
-  "subObjects": [ { "object": { "light": [ "*", 1, 1 ] } } ],
-  "lit": [ "=>", "count", "$::subObjects" ]
+  "sub-objects": [ { "object": { "light": [ "*", 1, 1 ] } } ],
+  "lit": [ "=>", "count", "$::sub-objects" ]
 }
 
 { "%uid": "uid-4899-0de2-1bb5-58ba",

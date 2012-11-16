@@ -289,12 +289,12 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         float ux=Mesh.getFloatFromList(usercoords, 0,0);
         float uy=Mesh.getFloatFromList(usercoords, 1,0);
         float uz=Mesh.getFloatFromList(usercoords, 2,0);
-        LinkedList subObjects=contentList("place:subObjects");
+        LinkedList subObjects=contentList("place:sub-objects");
         if(subObjects==null) return null;
         for(int i=0; i< subObjects.size(); i++){
-            String objispath=String.format("place:subObjects:%d:object:is",i);
+            String objispath=String.format("place:sub-objects:%d:object:is",i);
             if(!contentListContains(objispath,"place")) continue;
-            LinkedList placecoords=contentList(String.format("place:subObjects:%d:coords",i));
+            LinkedList placecoords=contentList(String.format("place:sub-objects:%d:coords",i));
             float px=Mesh.getFloatFromList(placecoords,0,0);
             float py=Mesh.getFloatFromList(placecoords,1,0);
             float pz=Mesh.getFloatFromList(placecoords,2,0);
@@ -303,7 +303,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(d<10){
                 if(NetMash.top!=null) NetMash.top.onerenderer.resetCoordsAndView(dx,dy,dz);
                 contentList("coords", list(dx,dy,dz));
-                return content(String.format("place:subObjects:%d:object",i));
+                return content(String.format("place:sub-objects:%d:object",i));
             }
         }
         return null;

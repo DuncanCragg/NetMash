@@ -4,7 +4,7 @@
   "title": "Rob Ott's Place",
   "rotation": [ 0, 0, 0 ],
   "scale": [ 10.0, 10.0, 10.0 ],
-  "subObjects": [
+  "sub-objects": [
     { "object": "http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json", "coords": [  4, 0, 4 ] },
     { "object": "http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json", "coords": [ -4, 0, 4 ] },
     { "object": "http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json", "coords": [  0, 0, -27 ] }

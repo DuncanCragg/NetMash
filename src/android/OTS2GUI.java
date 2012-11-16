@@ -372,7 +372,7 @@ public class OTS2GUI {
         addIfPresent(citationcol, "volume", "Volume:", false, null);
         addIfPresent(citationcol, "issue", "Issue:", false, null);
         addIfPresent(citationcol, "doi", "DOI:", false, null);
-        addIfPresent(citationcol, "dxDoi", "View via dx.doi:", true, null);
+        addIfPresent(citationcol, "dx-doi", "View via dx.doi:", true, null);
 
         LinkedList authorsandrefscol = new LinkedList();
         authorsandrefscol.add(style("direction","vertical"));
@@ -546,28 +546,28 @@ public class OTS2GUI {
 
         addEditingToSubs(subobs);
 
-        LinkedList subs=user.contentList("private:viewing:subObjects");
+        LinkedList subs=user.contentList("private:viewing:sub-objects");
 
-        if(subs==null){ objhash.put("subObjects", subobs); return objhash; }
+        if(subs==null){ objhash.put("sub-objects", subobs); return objhash; }
 
         for(int i=0; i< subs.size(); i++){
-            String p=String.format("private:viewing:subObjects:%d",i);
+            String p=String.format("private:viewing:sub-objects:%d",i);
             addObjectToSubs("private:viewing",p,subobs,0,0,0);
         }
         for(int i=0; i< subs.size(); i++){
-            String o=String.format("private:viewing:subObjects:%d:object",i);
-            String c=String.format("private:viewing:subObjects:%d:coords",i);
-            String s=String.format("private:viewing:subObjects:%d:object:subObjects",i);
+            String o=String.format("private:viewing:sub-objects:%d:object",i);
+            String c=String.format("private:viewing:sub-objects:%d:coords",i);
+            String s=String.format("private:viewing:sub-objects:%d:object:sub-objects",i);
             LinkedList subcoords=user.contentList(c);
             LinkedList subsubs  =user.contentList(s);
             if(subsubs==null) continue;
             float tx=Mesh.getFloatFromList(subcoords,0,0),ty=Mesh.getFloatFromList(subcoords,1,0),tz=Mesh.getFloatFromList(subcoords,2,0);
             for(int j=0; j< subsubs.size(); j++){
-                String q=String.format("private:viewing:subObjects:%d:object:subObjects:%d",i,j);
+                String q=String.format("private:viewing:sub-objects:%d:object:sub-objects:%d",i,j);
                 addObjectToSubs(o,q,subobs, tx,ty,tz);
             }
         }
-        objhash.put("subObjects", subobs);
+        objhash.put("sub-objects", subobs);
         return objhash;
     }
 
