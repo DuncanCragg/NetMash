@@ -215,7 +215,7 @@
     "address": {
       "street": "150 Old Park Lane",
       "locality": "London",
-      "postalCode": "W1K 1QZ",
+      "postal-code": "W1K 1QZ",
     },
     "phone": { "work": [ "+44 20 7514 1700", "020 7231 3212" ] },
     "email": [ "brian.rock@site.com", "bri2001@hotmail.com" ],
@@ -223,7 +223,7 @@
       "name": "Super Site",
       "unit": "site.com"
     },
-    "webView": "http://facebook.com/brio",
+    "web-view": "http://facebook.com/brio",
     "photo": "http://farm5.static.flickr.com/4030/4334369685_ab7a06960f.jpg",
     "birthday": "1995-02-12",
     "nickname": "The Masher"

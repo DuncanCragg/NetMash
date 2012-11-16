@@ -158,7 +158,7 @@
                   "Bamber Bridge" ],
       "locality": "Preston",
       "region": "Lancashire",
-      "postalCode": "PR5 6AW"
+      "postal-code": "PR5 6AW"
     },
     "phone": { "work": "01772 819000" }
 }
@@ -172,7 +172,7 @@
                   "Centurion Way" ],
       "locality": "Leyland",
       "region": "Lancashire",
-      "postalCode": "PR26 6TX"
+      "postal-code": "PR26 6TX"
     },
     "phone": { "work": "01772 819000",
              "fax":  "01772 819001" }
@@ -188,7 +188,7 @@
                   "Ribbleton" ],
       "locality": "Preston",
       "region": "Lancashire",
-      "postalCode": "PR2 5NJ"
+      "postal-code": "PR2 5NJ"
     },
     "phone": { "work": "01772 705253",
              "fax":  "01772 655971" }
@@ -205,7 +205,7 @@
                   "Garston" ],
       "locality": "Liverpool",
       "region": "Merseyside",
-      "postalCode": "L19 2PH"
+      "postal-code": "L19 2PH"
     },
     "phone": { "work": "0800 521660" }
 }
@@ -220,7 +220,7 @@
                   "Moss Side Industrial Estate" ],
       "locality": "Leyland",
       "region": "Lancashire",
-      "postalCode": "PR26 7QR"
+      "postal-code": "PR26 7QR"
     },
     "phone": { "work": "01772 624182" }
 }
@@ -235,7 +235,7 @@
                   "Partington" ],
       "locality": "Manchester",
       "region": "Lancashire",
-      "postalCode": "M31 4BR",
+      "postal-code": "M31 4BR",
       "country": "UK"
     },
     "phone": { "work": "0161 7767800" }
@@ -250,7 +250,7 @@
                   "Knowsley" ],
       "locality": "Liverpool",
       "region": "Merseyside",
-      "postalCode": "L33 7DR"
+      "postal-code": "L33 7DR"
     },
     "phone": { "work": "0151 5477370" }
 }
@@ -263,7 +263,7 @@
       "street": [ "20 Old London Road Depot" ],
       "locality": "Penrith",
       "region": "Cumbria",
-      "postalCode": "CA11 8GU"
+      "postal-code": "CA11 8GU"
     },
     "phone": { "work": "01768 212800" }
 }
@@ -277,7 +277,7 @@
                   "Old Swan" ],
       "locality": "Liverpool",
       "region": "Merseyside",
-      "postalCode": "L13 3HS",
+      "postal-code": "L13 3HS",
       "country": "UK"
     },
     "phone": { "work": "0151 2336550" }
@@ -291,7 +291,7 @@
       "street": [ "Holmesfield Road" ],
       "locality": "Warrington",
       "region": "Cheshire",
-      "postalCode": "WA1 2DS"
+      "postal-code": "WA1 2DS"
     },
     "phone": { "work": "01925 425780",
              "fax":  "01925 425798" }
@@ -307,7 +307,7 @@
                   "Gorton" ],
       "locality": "Manchester",
       "region": "Lancashire",
-      "postalCode": "M18 8EQ"
+      "postal-code": "M18 8EQ"
     },
     "phone": { "work": "0161 9578304",
              "fax":  "0161 9578304" }
@@ -342,14 +342,14 @@
     },
     "address": {
       "street": "150 Old Park Ln",
-      "postalCode": "W1K 1QZ",
+      "postal-code": "W1K 1QZ",
       "country": "UK"
     },
     "phone": { "work": "+44 20 7514 1700", "home": "020 8323 2343" },
     "email": "brian.a.c.rock@site.com",
     "bio": "I /[love]/ rock",
     "role": "Business Analyst",
-    "webView": [
+    "web-view": [
       "http://brian.org/",
       "http://facebook.com/brio"
     ]
@@ -364,7 +364,7 @@
         "street": [ "111 Bristol Road" ],
         "locality": "Richmond",
         "region": "Surrey",
-        "postalCode": "KT2 2PP"
+        "postal-code": "KT2 2PP"
     },
     "phone": { "home": "020 8567 8900", "mobile": "0777 77 77 777" }
 }

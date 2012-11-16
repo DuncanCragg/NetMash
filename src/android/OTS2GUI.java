@@ -131,7 +131,7 @@ public class OTS2GUI {
                 LinkedHashMap<String,String> inl = (LinkedHashMap<String,String>)inlineoruid;
                 documentuid = UID.normaliseUID(listuid, inl.get("%more")); // remove normaliseUID
                 contentType=inl.get("is");
-                htmlurl = inl.get("webView");
+                htmlurl = inl.get("web-view");
                 published=inl.get("published");
             }
             if(documentuid==null) documentuid=listuid;
@@ -306,8 +306,8 @@ public class OTS2GUI {
         if(email==null) email=user.content("private:viewing:email");
         if(email!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Email address:", email));
 
-        String webView=user.content("private:viewing:webView:0");
-        if(webView==null) webView=user.content("private:viewing:webView");
+        String webView=user.content("private:viewing:web-view:0");
+        if(webView==null) webView=user.content("private:viewing:web-view");
         if(webView!=null) contactdetail.add(list(style("direction","horizontal", "proportions","35%"), "Website:", webView));
 
         String bio=user.content("private:viewing:bio:0");
@@ -363,7 +363,7 @@ public class OTS2GUI {
 
         LinkedList citationcol = new LinkedList();
         citationcol.add(style("direction","vertical"));
-        addIfPresent(citationcol, "webView", "View on Web:", true, null);
+        addIfPresent(citationcol, "web-view", "View on Web:", true, null);
         addIfPresent(citationcol, "published", "Published:", false, null);
         addIfPresent(citationcol, "publisher", "Publisher:", false, null);
         addIfPresent(citationcol, "journaltitle", "Journal:", false, null);
@@ -459,7 +459,7 @@ public class OTS2GUI {
         l=addressGetGeoStreet(address); if(l!=null){                   as.append(l); }
         l=address.get("locality");      if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
         l=address.get("region");        if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
-        l=address.get("postalCode");    if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
+        l=address.get("postal-code");   if(l!=null){ as.append(" \""); as.append(l); as.append("\""); }
         l=address.get("country");       if(l!=null){ as.append(" ");   as.append(l); }
     }
 
@@ -467,12 +467,12 @@ public class OTS2GUI {
         if(!(o instanceof LinkedHashMap)){ as.append(o.toString()); as.append("\n");  return; }
         LinkedHashMap address = (LinkedHashMap)o;
         Object l; String s;
-        l=address.get("postbox");    if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
-        l=addressGetStreet(address); if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
-        l=address.get("locality");   if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
-        l=address.get("region");     if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
-        l=address.get("postalCode"); if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
-        l=address.get("country");    if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("postbox");     if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=addressGetStreet(address);  if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("locality");    if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("region");      if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("postal-code"); if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
+        l=address.get("country");     if(l!=null){ s=l.toString().trim(); if(s.length()!=0){ as.append(l); as.append("\n"); }}
     }
 
     public Object addressGetGeoStreet(LinkedHashMap address){
