@@ -20,11 +20,11 @@
 
 { %uid: uid-ff5d-1ef4-cfa5-5f92
   %class: server.types.DynamicFile
-  watching: vertex-shader.json
+  watching: vertex-shader.db
 }
 
 { %uid: uid-1ff8-59e9-6dac-9b56
   %class: server.types.DynamicFile
-  watching: fragment-shader.json
+  watching: fragment-shader.db
 }
 

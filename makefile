@@ -47,10 +47,10 @@ editlocaldb:
 	vi -o -N src/server/vm1/local.db
 
 editdynamicfile:
-	vi -o -N src/server/vm1/functional-hyper.json src/server/vm1/functional-hyperule.json
+	vi -o -N src/server/vm1/functional-hyper.db src/server/vm1/functional-hyperule.db
 
 editlocaldbanddynamicfile:
-	vi -o -N src/server/vm1/local.db src/server/vm1/guitest.json
+	vi -o -N src/server/vm1/local.db src/server/vm1/guitest.db
 
 # -------------------------------------------------------------------
 

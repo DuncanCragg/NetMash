@@ -63,8 +63,6 @@ Bugs, Refactoring
 --------------------------------------------------------
 Stuff
 
- + dbs all in sumer
-
  + make a robot in the room entirely on-device
  + reaktion - time programming it!
 
