@@ -39,6 +39,13 @@ public class JSON {
         chp=0;
     }
 
+    /** Make from a JSON file, sumer option. */
+    public JSON(File file, boolean sumer) throws FileNotFoundException, IOException{
+        this.sumer=sumer;
+        chars = getStringFromFile(file).array();
+        chp=0;
+    }
+
     final String listprepend = "{ \"list\": ";
 
     /** Make from a JSON string. */
@@ -490,8 +497,8 @@ public class JSON {
 
         String path = file.getPath();
 
-        if(!path.endsWith(".json"))            throw new FileNotFoundException("JSON file name should end in '.json': "+path);
-        if(!(file.exists() && file.canRead())) throw new FileNotFoundException("File not readable: "+path);
+        if(!path.endsWith(".json") && !path.endsWith(".db")) throw new FileNotFoundException("JSON file name should end in '.json' or '.db': "+path);
+        if(!(file.exists() && file.canRead()))               throw new FileNotFoundException("File not readable: "+path);
 
         FileChannel channel    = new FileInputStream(file).getChannel();
         ByteBuffer  bytebuffer = ByteBuffer.allocate((int)file.length());

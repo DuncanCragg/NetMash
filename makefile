@@ -18,6 +18,8 @@ lan: androidlan runlan lancat
 
 rem: androidrem
 
+tests: json uid om
+
 om: runom showtestresults
 
 cap: androidemu runcap logcat
@@ -112,12 +114,10 @@ runon1:
 runon2:
 	( cd src/server/vm2 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
 
-runtests: runjson runuid
-
-runjson: jar
+json: jar
 	java -ea -classpath ./build/netmash.jar netmash.lib.TestJSON
 
-runuid: jar
+uid: jar
 	java -ea -classpath ./build/netmash.jar netmash.forest.UID
 
 run1: jar
@@ -176,61 +176,61 @@ setappremconfig:
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" src/android/User.java
 
 setvm2emuconfig:
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/netmashconfig.json
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/netmashconfig.db
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/world.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/world.db
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/netmashconfig.json
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/netmashconfig.json
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/netmashconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/netmashconfig.db
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/world.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/world.db
 
 setvm2lanconfig:
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/netmashconfig.json
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/netmashconfig.json
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/netmashconfig.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/netmashconfig.db
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/world.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/world.db
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/netmashconfig.json
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/netmashconfig.json
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/netmashconfig.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/netmashconfig.db
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/world.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/world.db
 
 setvm2tstconfig:
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/netmashconfig.db
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/world.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/world.db
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/netmashconfig.json
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/netmashconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/netmashconfig.db
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/world.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/world.db
 
 setvm2remconfig:
-	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm1/netmashconfig.json
+	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm1/netmashconfig.db
 	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm1/world.db
-	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm2/netmashconfig.json
+	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm2/netmashconfig.db
 	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm2/world.db
 
 setvmtestconfig:
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/netmashconfig.json
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/netmashconfig.json
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/netmashconfig.db
 
 netconfig:
-	cp src/server/vm2/netconfig.json src/server/vm2/netmashconfig.json
+	cp src/server/vm2/netconfig.db src/server/vm2/netmashconfig.db
 
 omconfig:
-	cp src/server/vm2/omconfig.json src/server/vm2/netmashconfig.json
+	cp src/server/vm2/omconfig.db src/server/vm2/netmashconfig.db
 
 curconfig:
-	cp src/server/vm2/curconfig.json src/server/vm2/netmashconfig.json
+	cp src/server/vm2/curconfig.db src/server/vm2/netmashconfig.db
 
 allconfig:
-	cp src/server/vm2/allconfig.json src/server/vm2/netmashconfig.json
+	cp src/server/vm2/allconfig.db src/server/vm2/netmashconfig.db
 
 # -------------------------------------------------------------------
 
 setup:
-	vim -o -N res/raw/netmashconfig.db res/raw/top.db src/server/vm1/netmashconfig.json src/server/vm1/test.db src/server/vm2/curconfig.json src/server/vm2/allconfig.json src/server/vm2/test.db
+	vim -o -N res/raw/netmashconfig.db res/raw/top.db src/server/vm1/netmashconfig.db src/server/vm1/test.db src/server/vm2/curconfig.db src/server/vm2/allconfig.db src/server/vm2/test.db
 
 showtestresults:
 	sleep 1
@@ -319,7 +319,7 @@ clean:
 veryclean: kill clean setappemuconfig netconfig setvm2emuconfig setemumapkey
 	rm -f  src/server/vm[12]/netmash.log
 	rm -f  src/server/vm[12]/netmash.db
-	rm -f  src/server/vm2/netmashconfig.json
+	rm -f  src/server/vm2/netmashconfig.db
 	rm -rf bin gen
 
 # -------------------------------------------------------------------

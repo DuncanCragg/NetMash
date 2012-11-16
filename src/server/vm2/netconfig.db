@@ -1,13 +1,13 @@
-{ "name": "vm2",
-  "kernel": { "threadpool": 33 },
-  "persist": { "directory": ".",
-               "db": "netmash.db",
-               "syncrate": 100,
-               "preload": [ ] },
-  "network": { "host": "10.0.2.2",
-               "port": 8082,
-               "pathprefix": "/o/",
-               "cache-notify": "c-n-0a3a-8cd3-d5c3-ed1c",
-               "log": false },
-  "rules": { "log": true }
+{ name: vm2
+  kernel: { threadpool: 33 }
+  persist: { directory: .
+             db: netmash.db
+             syncrate: 100
+             preload: [ ] }
+  network: { host: 10.0.2.2
+             port: 8082
+             pathprefix: /o/
+             cache-notify: c-n-0a3a-8cd3-d5c3-ed1c
+             log: false }
+  rules: { log: true }
 }

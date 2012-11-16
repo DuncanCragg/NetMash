@@ -64,7 +64,7 @@ public class TestJSON {
 
         {
 
-        JSON m = new JSON(new File("./src/server/vm1/netmashconfig.json"));
+        JSON m = new JSON(new File("./src/server/vm1/netmashconfig.db"),true);
         System.out.println(m);
 
         int port = m.intPath("network:port");
