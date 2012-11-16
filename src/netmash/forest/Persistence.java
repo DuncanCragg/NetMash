@@ -81,6 +81,8 @@ public class Persistence implements FileUser {
             String uid = findUID(jsonchars);
             if(uid.equals("netmashconfig")) netmashconfig = new JSON(jsonchars);
             else jsoncache.put(uid, jsonchars);
+jsonchars.position(0);
+log(new JSON(jsonchars).toString(true));
         }
     }
 

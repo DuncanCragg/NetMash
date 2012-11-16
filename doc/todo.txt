@@ -58,13 +58,15 @@ Bugs, Refactoring
  + non-sumer appearing in remote rewrite(?)
  + can edit own edit rule..
  + rule can't have %alerted..
+ + %rules magically appeared..
  - don't put template edit rule in instantiation
 --------------------------------------------------------
 Stuff
 
- + make a robot in the room entirely on-device
+ + dbs all in sumer
 
- + reaktion - timed!
+ + make a robot in the room entirely on-device
+ + reaktion - time programming it!
 
  - GIS:
     - show place/sub land in different colours
@@ -86,14 +88,11 @@ Stuff
     - real data
 
  - on-device programming VW/GUI
-    + multiline so quicker and can copy-paste
-       + detect touching uid
     - link to existing object - chooser? links?
     - undo?
        - if clear, return to original
        - if space, leave as
 
- + dbs all in sumer
  - use local uids in topdb.json and convert to generated uids
 
  - vary denominator with fixed total lights - hide them
