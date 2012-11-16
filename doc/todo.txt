@@ -55,11 +55,16 @@ Bugs, Refactoring
  - throw if calling certain methods outside of evaluator
  - NaN/Infinity breaking JSON syntax
  - calculator doesn't update when you set function
- - non-sumer appearing in remote rewrite(?)
+ + non-sumer appearing in remote rewrite(?)
+ + can edit own edit rule..
+ + rule can't have %alerted..
  - don't put template edit rule in instantiation
- - rule can't have %alerted..
 --------------------------------------------------------
 Stuff
+
+ + make a robot in the room entirely on-device
+
+ + reaktion - timed!
 
  - GIS:
     - show place/sub land in different colours
@@ -70,33 +75,29 @@ Stuff
     - more info in map popup
     - scale bar
 
- - schemes:
-    - if scheme detected, flag ineligible
+ - schemes/rules:
+    - zeroing rules
     - adjusting constants
+    - if scheme detected, flag ineligible
     - suggest scheme and option based on feature, avoiding big-drop-down syndrome
-    - zeroing BPS rules
     - EWGS params: species, % cover, planting date
     - ELS; calc points total
     - tree density param may select scheme
-    - comment text param
     - real data
 
  - on-device programming VW/GUI
-    - multiline so quicker and can copy-paste
-       - detect touching uid
-    - editing own edit rule!
+    + multiline so quicker and can copy-paste
+       + detect touching uid
     - link to existing object - chooser? links?
     - undo?
        - if clear, return to original
        - if space, leave as
 
+ + dbs all in sumer
  - use local uids in topdb.json and convert to generated uids
- - dbs all in sumer
 
  - vary denominator with fixed total lights - hide them
     - or light up denominator from 18/24 total lights
-
- - make a robot in the room
 
  - GUIs
     - gui format

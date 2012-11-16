@@ -514,16 +514,11 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             public void evaluate(){ logrule();
                 if(contentListContainsAll("is", list("editable", "rule"))){
                     LinkedHashMap rule=null;
-                    if(tag!=null){
-                        rule=makeEditRule(tag.substring("#val-".length()),0,val);
-                    }
-                    else{
-                        try{
-                            JSON json=new JSON(NetMash.top.getRawSource(),true);
-                            json.setPathAdd("is", "editable");
-                            rule=makeEditRule("",contentInt("editable:%etag"),json);
-                        }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]); }
-                    }
+                    try{
+                        JSON json=new JSON(NetMash.top.getRawSource(),true);
+                        json.setPathAdd("is", "editable");
+                        rule=makeEditRule("",contentInt("editable:%etag"),json);
+                    }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]); }
                     if(rule!=null) contentMerge(rule);
                 }
                 else
@@ -939,7 +934,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(contentSet("private:viewing:is")){
             String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
-            LinkedHashMap viewhash=ots2gui.guifyHash("", contentHash("private:viewing:#"), content("private:viewing"), editable);
+            LinkedHashMap viewhash=ots2gui.guifyHash(contentHash("private:viewing:#"), editable);
             viewhash.put("#uid", "uid: "+content("private:viewing"));
             content("place","");
             content("private:editing","");

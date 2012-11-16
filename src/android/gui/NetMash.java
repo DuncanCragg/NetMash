@@ -236,7 +236,6 @@ log(show? "show keyboard": "hide keyboard");
     private String uiUID;
     private Handler guiHandler = new Handler();
     private Runnable uiDrawJSONRunnable=new Runnable(){public void run(){uiDrawJSON();}};
-    private boolean focused = false;
     private String viewUID = null;
 
     public void drawJSON(JSON uiJSON, String uiUID){ log("drawJSON "+uiUID);
@@ -246,8 +245,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private void uiDrawJSON(){ if(false) log("uiDrawJSON "+uiUID+":\n"+uiJSON);
-     // if(focused && viewUID.equals(uiUID)){ log("** locked"); return; }
-        focused=false; viewUID=uiUID;
+        viewUID=uiUID;
         String title =uiJSON.stringPathN("title");
         if(title==null) setTitle(       "NetMash");
         else            setTitle(title+"|NetMash");
@@ -604,36 +602,49 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private View createFormTextView(final String tag, Object value, boolean borderless){
-        EditText view=new EditText(this){
-            protected void onFocusChanged(boolean f, int d, Rect p){
-                super.onFocusChanged(f, d, p);
-                focused=f;
-            }
-        };
+        EditText view=new EditText(this);
         if(!borderless) view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         else            view.setBackgroundDrawable(getResources().getDrawable(R.drawable.borderlessinputbox));
-        view.setOnKeyListener(new OnKeyListener(){
-            public boolean onKey(View v, int keyCode, KeyEvent event){
-                EditText etv=(EditText)v;
-                String currentText=etv.getText().toString();
-                if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
-                    InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                    user.setUpdateVal(viewUID, tag, currentText);
-                    return true;
-                }
-                etv.setMinEms(currentText.length()*2/3);
-                return false;
-            }
-        });
+        view.setOnKeyListener(  new OnKeyListener(){   public boolean onKey(  View v, int k, KeyEvent ev){ return updateOnEnter(v,k,ev,tag); }});
+        view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){     return jumpIfUID(v,ev); }});
         user.prepareResponse(viewUID);
         view.setText(value!=null? value.toString(): "");
-        view.selectAll();
         view.setTextSize(20);
         view.setTextColor(0xff000000);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         textViewsForRaw.add(view);
         return view;
+    }
+
+    private boolean updateOnEnter(View v, int keyCode, KeyEvent event, String tag){
+        EditText etv=(EditText)v;
+        String currentText=etv.getText().toString();
+        if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
+            InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+            user.setUpdateVal(viewUID, tag, currentText);
+            return true;
+        }
+        etv.setMinEms(currentText.length()*2/3);
+        return false;
+    }
+
+    private boolean jumpIfUID(View v, MotionEvent event){
+        if(event.getAction()!=MotionEvent.ACTION_UP) return false;
+        EditText etv=(EditText)v;
+        int s=etv.getSelectionStart();
+        int e=etv.getSelectionEnd();
+        if(s==e) return false;
+        String currentText=etv.getText().toString();
+        String uid;
+        do{ uid=currentText.substring(s,e);
+            if(uid.startsWith(" uid-")){ s++;
+                do{ uid=currentText.substring(s,e);
+                    if(uid.endsWith(" ")){ user.jumpToUID(uid.trim(),null,true); return true; }
+                }while(++e<currentText.length());
+            }
+        }while(--s>=0 && !uid.startsWith(" "));
+        return false;
     }
 
     public String getRawSource(){

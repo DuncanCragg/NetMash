@@ -498,66 +498,15 @@ public class OTS2GUI {
 
     // ---------------------------------------------------------------------------
 
-    public LinkedHashMap guifyHash(String path, LinkedHashMap<String,Object> hm, String objuid, boolean editable){
-        LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
-        hm2.put("json", toStrings(new JSON(hm), editable));
-        return hm2;
-    }
-
     @SuppressWarnings("unchecked")
-    public LinkedList toStrings(JSON json, boolean editable){
-        String[] lines=json.toString(true).split("\n");
-        LinkedList r=new LinkedList();
-        r.add(style("direction","vertical", "colours","lightyellow*", "borders","none"));
-        for(String line: lines){
-            if(!editable && line.indexOf(" uid-")== -1 && line.indexOf(" http://")== -1 && line.length()< 25) r.add(line);
-            else {
-                LinkedList h=new LinkedList();
-                h.add(style("direction","horizontal", "colours","lightyellow*", "borders","none"));
-                String[] bits=line.replaceAll(" ((uid-|http://)[^ ]+)"," \n$1\n").split("\n");
-                for(String bit: bits){
-                    if(!editable) h.add(bit);
-                    else{
-                        h.add(hash("input","textfield", "value",bit));
-                        if(bit.startsWith("uid-")||bit.startsWith("http://")) h.add(bit);
-                    }
-                }
-                r.add(h);
-            }
-        }
-        return r;
-    }
-
-    public LinkedHashMap guifyHash2(String path, LinkedHashMap<String,Object> hm, String objuid, boolean editable){
+    public LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, boolean editable){
+        String text=new JSON(hm).toString(true);
+        Object o;
+        if(!editable) o=list(style("direction","vertical", "colours","lightyellow*", "borders","none"),text);
+        else          o=hash("input","textfield", "value",text);
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
-        hm2.put("style", style("direction", hm.size()<=1? "horizontal": "vertical"));
-        for(String tag: hm.keySet()){
-            LinkedHashMap hm3 = new LinkedHashMap();
-            hm3.put("style", style("direction", "horizontal"));
-            hm3.put("#tag-"+path+tag, editable? hash("input","textfield", "value",tag+":"): tag+":");
-            addToHash(hm3,path+tag,hm.get(tag),objuid,editable);
-            hm2.put("#"+tag,hm3);
-        }
-        if(editable) hm2.put(".addnew",hash("input","button", "label","New Entry"));
+        hm2.put("json", o);
         return hm2;
-    }
-
-    public LinkedHashMap guifyList(String path, LinkedList ll, String objuid, boolean editable){
-        LinkedHashMap hm3 = new LinkedHashMap();
-        hm3.put("style", style("direction", ll.size()<=5? "horizontal": "vertical"));
-        int i=0;
-        for(Object o: ll){ addToHash(hm3,path+i,o,objuid,editable); i++; }
-        if(editable) hm3.put(".addnew",hash("input","button", "label","New Entry"));
-        return hm3;
-    }
-
-    public void addToHash(LinkedHashMap hm, String path, Object o, String objuid, boolean editable){
-        if(o instanceof LinkedHashMap) hm.put(path,guifyHash(path+":",(LinkedHashMap<String,Object>)o, objuid, editable));
-        else
-        if(o instanceof LinkedList)    hm.put(path,guifyList(path+":", (LinkedList)o, objuid, editable));
-        else
-        if(UID.isUID(o))               hm.put(path,UID.normaliseUID(objuid, (String)o));
-        else           { if(!editable) hm.put(path,o.toString()); else hm.put("#val-"+path,hash("input","textfield", "value",o)); }
     }
 
     // ---------------------------------------------------------------------------

@@ -1233,6 +1233,7 @@ public class JSON {
     }
 
     private String stringToString(String s, boolean sumer){
+        if(s.equals("")) return "\"\"";
         String r=replaceEscapableChars(s);
         if(!sumer || r.indexOf(" ")!= -1) return "\""+r+"\"";
         else return r;
