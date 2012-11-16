@@ -418,6 +418,13 @@ public class JSON {
         return new String(chars);
     }
 
+    /** Format this JSON: in Sumer notation. */
+    public String toString(boolean sumer){
+        ensureContent();
+        ensureChars(sumer);
+        return new String(chars);
+    }
+
     /** Format this JSON: single line of given max length. */
     public String toString(int maxlength){
         if(maxlength==0) return toString();
@@ -430,7 +437,15 @@ public class JSON {
     public String toString(String prepend){
         ensureContent();
         ensureChars();
-        if(chars.length< 2){ log("Failed toString with prepend:\n"+prepend+"\n"+this); return toString(); }
+        if(chars.length< 2){ log("Failed toString with prepend:\n"+prepend+"\n"+this); return new String(chars); }
+        return "{ "+prepend.trim()+"\n"+new String(chars).substring(2);
+    }
+
+    /** Format this JSON: prepend given string to top hash content; choose sumer. */
+    public String toString(String prepend, boolean sumer){
+        ensureContent();
+        ensureChars(sumer);
+        if(chars.length< 2){ log("Failed toString with prepend:\n"+prepend+"\n"+this); return new String(chars); }
         return "{ "+prepend.trim()+"\n"+new String(chars).substring(2);
     }
 
@@ -441,12 +456,6 @@ public class JSON {
         ensureChars(maxlength);
         if(chars.length< 2){ log("Failed toString with prepend:\n"+prepend+"\n"+this); return toString(); }
         return "{ "+prepend.trim()+" "+new String(chars).substring(2);
-    }
-
-    /** Format this JSON: in Sumer notation. */
-    public String toString(boolean b){
-        ensureContent();
-        return hashToString(tophash,4,0,true);
     }
 
     //----------------------------------
@@ -1223,11 +1232,16 @@ public class JSON {
     }
 
     private void ensureChars(int maxlength){
-        StringBuilder buf = new StringBuilder();
-        if(tophash!=null){
-            buf.append(hashToString(tophash,2,maxlength,false));
-        }
-        chars = new String(buf).toCharArray();
+        this.sumer=false;
+        String str=(tophash!=null)? hashToString(tophash,2,maxlength,false): "";
+        chars = str.toCharArray();
+        chp=0;
+    }
+
+    private void ensureChars(boolean sumer){
+        this.sumer=sumer;
+        String str=(tophash!=null)? hashToString(tophash,4,0,sumer): "";
+        chars = str.toCharArray();
         chp=0;
     }
 

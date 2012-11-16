@@ -760,6 +760,25 @@ public class WebObject {
         return r;
     }
 
+    public String toString(boolean sumer){
+        if(!sumer) return toString();
+        if(isShell()) return "{ %uid: "+uid+
+                           "\n  %notify: "+setToListString(notify, true)+
+                           "\n  %alertedin: "+setToListString(alertedin, true)+
+                           "\n  %state: "+shellstate+"\n}\n";
+        String r = publicState.toString(
+                               "%uid: "+uid+
+              (url!=null?  "\n  %url: "+url: "")+
+                           "\n  %etag: "+etag+
+                           "\n  %max-age: "+maxAge+
+                           "\n  %notify: "+setToListString(notify, true)+
+                           "\n  %observe: "+setToListString(observe, true)+
+      (cacheNotify!=null?  "\n  %cache-notify: "+cacheNotify: "")+
+                           "\n  %class: "+this.getClass().toString().substring(6)+
+                         "\n",true)+"\n";
+        return r;
+    }
+
     public String toString(){
         if(isShell()) return "{ \"%uid\": \""+uid+
                         "\",\n  \"%notify\": "+setToListString(notify)+

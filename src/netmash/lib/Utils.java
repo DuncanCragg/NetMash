@@ -169,12 +169,16 @@ public class Utils{
         return r;
     }
 
-    static public String setToListString(Iterable<String> set){
+    static public String setToListString(Iterable<String> set){ return setToListString(set,false); }
+
+    static public String setToListString(Iterable<String> set, boolean sumer){
+        String q=sumer? "": "\"";
+        String c=sumer? "": ",";
         Iterator<String> i = set.iterator();
         if(!i.hasNext()) return "[]";
         String r = "[";
-        do{ r+=" \""+i.next()+"\","; }while(i.hasNext());
-        r=r.substring(0, r.length()-1);
+        do{ r+=" "+q+i.next()+q+c; }while(i.hasNext());
+        if(!sumer) r=r.substring(0, r.length()-1);
         r+=" ]";
         return r;
     }

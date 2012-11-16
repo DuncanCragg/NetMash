@@ -126,7 +126,7 @@ public class Persistence implements FileUser {
             for(WebObject w: syncable){
                 syncable.remove(w);
                 CharBuffer jsonchars;
-                synchronized(w){ jsonchars=CharBuffer.wrap(w.toString()+"\n"); }
+                synchronized(w){ jsonchars=CharBuffer.wrap(w.toString(sumer)+"\n"); }
                 jsoncache.put(w.uid, jsonchars);
                 ByteBuffer bytebuffer = UTF8.encode(jsonchars);
                 if(topdbos==null){
