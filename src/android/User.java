@@ -31,7 +31,7 @@ import static netmash.lib.Utils.*;
 
 /** User viewing the Object Web.
   */
-public class User extends ObjectMash {
+public class User extends WebObject {
 
     // ---------------------------------------------------------
 
@@ -42,14 +42,14 @@ public class User extends ObjectMash {
         String fullName=UserContacts.getUsersFullName();
         String your=fullName.equals("You")? "Your": fullName+"'s";
 
-        User contact = new User(
-              "{ \"is\": \"contact\", \n"+
+        Editable contact = new Editable(
+              "{ \"is\": [ \"editable\", \"contact\" ], \n"+
               "  \"full-name\": \""+fullName+"\", \n"+
               "  \"address\": { } \n"+
               "}");
 
-        User links = new User(
-              "{ \"is\": [ \"link\", \"list\" ], \n"+
+        Editable links = new Editable(
+              "{ \"is\": [ \"link\", \"list\", \"editable\" ], \n"+
               "  \"list\": null \n"+
               "}");
 
@@ -130,8 +130,8 @@ public class User extends ObjectMash {
                         "}");
     }
 
-    static User newLand(LinkedList rules, boolean updatable, String landlistuid, String useruid, String templateuid){
-        User land=new User(
+    static ObjectMash newLand(LinkedList rules, boolean updatable, String landlistuid, String useruid, String templateuid){
+        ObjectMash land=new ObjectMash(
                         "{ "+
             (rules!=null? "\"%rules\": "+setToListString(rules)+",\n  ": "")+
               (updatable? "\"is\": [ \"updatable\", \"land\" ],\n":
@@ -420,7 +420,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     private boolean setResponse(String guiuid){ return setResponse(guiuid, false, 0,0); }
 
     private boolean setResponse(String guiuid, boolean editable, float dx, float dy){
-        User resp=null;
+        WebObject resp=null;
         String path=null;
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
@@ -764,10 +764,6 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else
         if(contentListContainsAll("is", list("document", "query"))){
             firstAlertedResponseSubscribeForUserFIXMEAndJumpUser();
-        }
-        else
-        if(contentIsOrListContains("is", "land")){
-            super.evaluate();
         }
         else
         if(contentIsOrListContains("is", "rsvp")){
