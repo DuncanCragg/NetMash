@@ -31,7 +31,7 @@ import static netmash.lib.Utils.*;
 
 /** User viewing the Object Web.
   */
-public class User extends WebObject {
+public class User extends ObjectMash {
 
     // ---------------------------------------------------------
 
@@ -130,8 +130,8 @@ public class User extends WebObject {
                         "}");
     }
 
-    static ObjectMash newLand(LinkedList rules, boolean updatable, String landlistuid, String useruid, String templateuid){
-        ObjectMash land=new ObjectMash(
+    static User newLand(LinkedList rules, boolean updatable, String landlistuid, String useruid, String templateuid){
+        User land=new User(
                         "{ "+
             (rules!=null? "\"%rules\": "+setToListString(rules)+",\n  ": "")+
               (updatable? "\"is\": [ \"updatable\", \"land\" ],\n":
@@ -172,7 +172,7 @@ public class User extends WebObject {
 
     public void onTopResume(){
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 showWhatIAmViewing();
                 refreshObserves();
             }
@@ -191,7 +191,7 @@ public class User extends WebObject {
 
     void onNewLocation(final Location location){
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 log("location: "+location);
                 contentDouble("location:lat", location.getLatitude());
                 contentDouble("location:lon", location.getLongitude());
@@ -364,7 +364,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
 
     public void jumpBack(){
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 if(!history.back()) return;
                 showWhatIAmViewing();
                 refreshObserves();
@@ -374,7 +374,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
 
     public boolean menuItem(final int itemid){
         new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 switch(itemid){
                     case NetMash.MENU_ITEM_ADD:
                     break;
@@ -420,7 +420,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     private boolean setResponse(String guiuid){ return setResponse(guiuid, false, 0,0); }
 
     private boolean setResponse(String guiuid, boolean editable, float dx, float dy){
-        WebObject resp=null;
+        User resp=null;
         String path=null;
         editable=editable || contentIs("private:viewas","raw");
         if(editable){
@@ -511,7 +511,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     public void setUpdateVal(final String guiuid, final String tag, final String val){
         if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 if(contentListContainsAll("is", list("editable", "rule"))){
                     LinkedHashMap rule=null;
                     try{
@@ -529,8 +529,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentIsOrListContains("is", "land")){
                     if(!dehash(tag).equals("new")){
                         content(dehash(tag), val);
-                        refreshObserves(); // ?
-                        self.evaluate();
+                        refreshObserves();
+                        if(statemod) self.evaluate();
                         return;
                     }
                     content("title",val);
@@ -571,7 +571,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     public void setUpdateVal(final String guiuid, final String tag, final boolean val){
         if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 if(contentIsOrListContains("is", "rsvp")){
                     content("attending", val? "yes": "no");
                 }
@@ -579,7 +579,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 if(contentIsOrListContains("is", "land")){
                     contentBool(dehash(tag), val);
                     refreshObserves();
-                    self.evaluate();
+                    if(statemod) self.evaluate();
                     return;
                 }
                 else
@@ -595,11 +595,11 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     public void setUpdateVal(final String guiuid, final String tag, final int val){
         if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 if(contentIsOrListContains("is", "land")){
                     contentInt(dehash(tag), val);
                     refreshObserves();
-                    self.evaluate();
+                    if(statemod) self.evaluate();
                     return;
                 }
                 else
@@ -615,11 +615,11 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     public void setUpdateVal(final String guiuid, final GeoPoint val){
         if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, val);
         else new Evaluator(this){
-            public void evaluate(){ logrule();
+            public void evaluate(){
                 if(contentIsOrListContains("is", "land")){
                     setNearestShapePointTo(val);
                     refreshObserves();
-                    self.evaluate();
+                    if(statemod) self.evaluate();
                     return;
                 }
                 notifying(guiuid);
@@ -766,6 +766,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             firstAlertedResponseSubscribeForUserFIXMEAndJumpUser();
         }
         else
+        if(contentListContainsAll("is", list("updatable", "land"))){
+            super.evaluate();
+        }
+        else
         if(contentIsOrListContains("is", "rsvp")){
         }
         else
@@ -891,7 +895,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
     }
 
-    private void showWhatIAmViewingOnMap(){ logrule();
+    private void showWhatIAmViewingOnMap(){
         if(contentSet("private:viewing:is")){
             LinkedList viewlist=null;
             String title=content("private:viewing:title");
@@ -926,7 +930,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         }
     }
 
-    private void showWhatIAmViewingAsRawJSON(){ logrule();
+    private void showWhatIAmViewingAsRawJSON(){
         if(contentSet("private:viewing:is")){
             String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");

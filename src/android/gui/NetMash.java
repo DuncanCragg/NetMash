@@ -775,9 +775,9 @@ log(show? "show keyboard": "hide keyboard");
         view.setText(s);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
-        view.setSingleLine(false);
-        view.setHorizontalScrollBarEnabled(true);
-        view.setHorizontallyScrolling(true);
+     // view.setSingleLine(false);
+     // view.setHorizontalScrollBarEnabled(true);
+     // view.setHorizontallyScrolling(true);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         return view;
     }
