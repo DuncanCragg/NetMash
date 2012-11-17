@@ -26,6 +26,8 @@ cap: androidemu runcap logcat
 
 lap: androidlan runlap lancat
 
+tst: androidemu runtst logcat
+
 # -------------------------------------------------------------------
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
@@ -98,6 +100,8 @@ runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
 
 runlap: kill clean netconfig setvm2lanconfig usecapdb  run1n2
 
+runtst: kill clean           setvmemuconfig  usestaticdb run1n2
+
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
 runall: kill clean allconfig setvm2tstconfig usetestdb run1n2
@@ -145,6 +149,9 @@ usetestdb:
 	cp src/server/vm1/test.db src/server/vm1/netmash.db
 	cp src/server/vm2/test.db src/server/vm2/netmash.db
 
+usestaticdb:
+	cp src/server/vm1/static.db src/server/vm1/netmash.db
+
 setremmapkey:
 	sed -i"" -e "s:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/android/gui/NetMash.java
 
@@ -174,6 +181,12 @@ setappremconfig:
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" res/raw/netmashconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" res/raw/top.db
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" src/android/User.java
+
+setvmemuconfig:
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/static.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/static.db
 
 setvm2emuconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/netmashconfig.db

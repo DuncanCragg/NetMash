@@ -221,6 +221,12 @@ public class WebObject {
             for(Object key: hm.keySet()){ r+=key+": "+hm.get(key)+" "; }
             return r.trim();
         }
+        if(o instanceof LinkedList){
+            LinkedList ll=(LinkedList)o;
+            String r="[ ";
+            for(Object i: ll) r+=i+" ";
+            return r+"]";
+        }
         return o.toString();
     }
 

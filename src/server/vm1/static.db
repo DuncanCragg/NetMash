@@ -12,7 +12,7 @@
   %rules: [ ]
   is: [ demo rule editable ]
   when: "run set title to join of x and y"
-  title: "<>join(  $:x $:y)"
+  title: [ => join [ $:x $:y ] " " ]
 }
 
 { %uid: uid-3927-d995-837f-f165

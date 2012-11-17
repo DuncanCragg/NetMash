@@ -54,15 +54,18 @@ Bugs, Refactoring
  - don't fetch remote if it's yours anyway (?)
  - throw if calling certain methods outside of evaluator
  - NaN/Infinity breaking JSON syntax
- - calculator doesn't update when you set function
- + non-sumer appearing in remote rewrite(?)
- + can edit own edit rule..
+ + calculator doesn't update when you set function
+ + hello world doesn't update immediately cos misses evt & gets out of sync
  + rule can't have %alerted..
- + %rules magically appeared..
+ + can edit own edit rule.. hide edit rules?
+ + non-sumer appearing in remote rewrite(?)
  - don't put template edit rule in instantiation
 --------------------------------------------------------
 Stuff
 
+ + add jump uid to readonly textview
+ + scroll right on readonly textview
+ + uid-new on remote
  + make a robot in the room entirely on-device
  + reaktion - time programming it!
 

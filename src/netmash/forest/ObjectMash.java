@@ -58,14 +58,17 @@ public class ObjectMash extends WebObject {
         String name=contentOr(String.format("%%rules:%d:when", r),"");
         if(extralogging) log("Running rule \""+name+"\"");
         LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
-        contentTemp("%alerted", alerted);
+        boolean noalerted=!contentSet("%alerted");
+        if(noalerted) contentTemp("%alerted", alerted);
         if(extralogging) log("alerted:\n"+contentHash("%alerted:#"));
         rewrites.clear(); bindings.clear();
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
         if(ok) log("Rule fired: \""+name+"\"");
         if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"\n===========");
-        contentTemp("%alerted", null);
+        if(noalerted) contentTemp("%alerted", null);
+        Object o=contentRemove("%%alerted");
+        if(o!=null) contentObject("%alerted",o);
     }
 
     // ----------------------------------------------------
@@ -263,6 +266,7 @@ public class ObjectMash extends WebObject {
         if(ll.size()==4 && "selects".equals(ll1)) return findBoolean(ll.get(0))? copyFindObject(ll.get(2)): copyFindObject(ll.get(3));
         if(ll.size()==3 && "selects".equals(ll1)) return copyFindObject(findHashOrListAndGet(ll.get(2),ll.get(0)));
         if(ll.size()==2 && "as-is".equals(ll0))   return copyObject(ll.get(1), true);
+        if(ll.size()==3 && "join".equals(ll0))    return join(findList(ll.get(1)), findString(ll.get(2)));
         return copyFindEach(ll);
     }catch(Throwable t){ t.printStackTrace(); log(ll); return ll; } }
 
