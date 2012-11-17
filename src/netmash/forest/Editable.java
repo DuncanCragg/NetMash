@@ -2,26 +2,29 @@ package netmash.forest;
 
 import java.util.*;
 
+import netmash.lib.JSON;
+
 import static netmash.lib.Utils.*;
 
 public class Editable extends ObjectMash {
 
     public Editable(){}
     public Editable(String jsonstring){ super(jsonstring); }
+    public Editable(JSON json){ super(json); }
 
     public void evaluate(){
         LinkedList<String> evalrules=new LinkedList<String>();
         for(String alerted: alerted()){
-            contentTemp("%alerted", alerted);
-            if(contentListContainsAll("%alerted:is",list("editable","rule"))){
+            contentTemp("%temp", alerted);
+            if(contentListContainsAll("%temp:is",list("editable","rule"))){
                 evalrules.add(alerted);
             }
-            contentTemp("%alerted", null);
+            contentTemp("%temp", null);
         }
 // first rule will be skipped first time
-        contentSetPushAll("%rules",evalrules);
+        if(!evalrules.isEmpty()) contentSetPushAll("%rules",evalrules);
         super.evaluate();
-        contentSetPushAll("%rules",evalrules);
+        if(!evalrules.isEmpty()) contentSetPushAll("%rules",evalrules);
     }
 }
 
