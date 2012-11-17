@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.*;
 import android.view.View.*;
 import android.widget.*;
+import android.text.InputType;
 
 import android.opengl.GLSurfaceView;
 
@@ -611,6 +612,10 @@ log(show? "show keyboard": "hide keyboard");
         view.setText(value!=null? value.toString(): "");
         view.setTextSize(20);
         view.setTextColor(0xff000000);
+        view.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        view.setSingleLine(false);
+        view.setHorizontalScrollBarEnabled(true);
+        view.setHorizontallyScrolling(true);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         textViewsForRaw.add(view);
         return view;
@@ -765,9 +770,14 @@ log(show? "show keyboard": "hide keyboard");
             view.setTypeface(Typeface.DEFAULT, Typeface.ITALIC);
             s=s.substring(2,s.length()-2);
         }
+     // view.setTextIsSelectable(true);
+     // view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){     return jumpIfUID(v,ev); }});
         view.setText(s);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
+        view.setSingleLine(false);
+        view.setHorizontalScrollBarEnabled(true);
+        view.setHorizontallyScrolling(true);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         return view;
     }
