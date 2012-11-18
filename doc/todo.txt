@@ -62,7 +62,6 @@ Bugs, Refactoring
 --------------------------------------------------------
 Stuff
 
- + readonly textview is r/w one but reset back on CR
  + rule with Alerted; AAlerted?!
  + uid-new on remote/as-is; => { UID: new } -vs- uid-new
 

@@ -569,16 +569,17 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private View createFormView(String tag, LinkedHashMap hm, int colour, boolean borderless){
-        String type =getStringFrom(hm,"input");
-        String label=getStringFrom(hm,"label");
-        Object range=hm.get("range");
-        Object value=hm.get("value");
+        String  type =getStringFrom( hm,    "input");
+        String  label=getStringFrom( hm,    "label");
+        Object  range=               hm.get("range");
+        Object  value=               hm.get("value");
+        boolean fixed=getBooleanFrom(hm,    "fixed");
         View view=null;
         if("button".equals(type))    view=createFormButtonView(tag, label);
         else
         if("checkbox".equals(type))  view=createFormCheckView(tag, value);
         else
-        if("textfield".equals(type)) view=createFormTextView(tag, value, borderless);
+        if("textfield".equals(type)) view=createFormTextView(tag, value, borderless, fixed);
         else
         if("chooser".equals(type))   view=createFormSpinnerView(tag, label, range, value);
         else
@@ -602,14 +603,15 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormTextView(final String tag, Object value, boolean borderless){
+    private View createFormTextView(final String tag, Object value, boolean borderless, final boolean fixed){
+        final String text=(value!=null)? value.toString(): "";
         EditText view=new EditText(this);
         if(!borderless) view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         else            view.setBackgroundDrawable(getResources().getDrawable(R.drawable.borderlessinputbox));
-        view.setOnKeyListener(  new OnKeyListener(){   public boolean onKey(  View v, int k, KeyEvent ev){ return updateOnEnter(v,k,ev,tag); }});
+        view.setOnKeyListener(  new OnKeyListener(){   public boolean onKey(  View v, int k, KeyEvent ev){ return updateOnEnter(v,k,ev,tag,fixed?text:null); }});
         view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){     return jumpIfUID(v,ev); }});
         user.prepareResponse(viewUID);
-        view.setText(value!=null? value.toString(): "");
+        view.setText(text);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
         view.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -621,29 +623,29 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private boolean updateOnEnter(View v, int keyCode, KeyEvent event, String tag){
-        EditText etv=(EditText)v;
-        String currentText=etv.getText().toString();
+    private boolean updateOnEnter(View v, int keyCode, KeyEvent event, String tag, String revert){
+        EditText view=(EditText)v;
+        String currentText=view.getText().toString();
         if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
             InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-            user.setUpdateVal(viewUID, tag, currentText);
+            if(revert==null) user.setUpdateVal(viewUID, tag, currentText);
+            else view.setText(revert);
             return true;
         }
-        etv.setMinEms(currentText.length()*2/3);
         return false;
     }
 
     private boolean jumpIfUID(View v, MotionEvent event){
         if(event.getAction()!=MotionEvent.ACTION_UP) return false;
-        EditText etv=(EditText)v;
-        int s=etv.getSelectionStart();
-        int e=etv.getSelectionEnd();
+        EditText view=(EditText)v;
+        int s=view.getSelectionStart();
+        int e=view.getSelectionEnd();
         if(s==e) return false;
-        String currentText=etv.getText().toString();
+        String currentText=view.getText().toString();
         String uid;
         do{ uid=currentText.substring(s,e);
-            if(uid.startsWith(" uid-")){ s++;
+            if(uid.startsWith(" uid-")||uid.startsWith(" http://")){ s++;
                 do{ uid=currentText.substring(s,e);
                     if(uid.endsWith(" ")){ user.jumpToUID(uid.trim(),null,true); return true; }
                 }while(++e<currentText.length());
