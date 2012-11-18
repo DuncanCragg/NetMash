@@ -54,20 +54,30 @@ Bugs, Refactoring
  - don't fetch remote if it's yours anyway (?)
  - throw if calling certain methods outside of evaluator
  - NaN/Infinity breaking JSON syntax
- + calculator doesn't update when you set function
- + hello world doesn't update immediately cos misses evt & gets out of sync
- + rule can't have %alerted..
- + can edit own edit rule.. hide edit rules?
- + non-sumer appearing in remote rewrite(?)
+ - calculator doesn't update when you set function
+ - hello world doesn't update immediately cos misses evt & gets out of sync
+ - can edit own edit rule.. hide edit rules?
+ - non-sumer appearing in remote rewrite(?)
  - don't put template edit rule in instantiation
 --------------------------------------------------------
 Stuff
 
- + add jump uid to readonly textview
- + scroll right on readonly textview
- + uid-new on remote
+ + readonly textview is r/w one but reset back on CR
+ + rule with Alerted; AAlerted?!
+ + uid-new on remote/as-is; => { UID: new } -vs- uid-new
+
+ + all language changes %alerted->Alerted, $:x->:x:, etc
+    - also use of '!', => ; self check $:/:
+    - tags delim lists - make single-item=multi work everywhere; xml style visually a: => b [ d ] :f: g: a b = a: [ => b [ d ] :f: ] g: [a b]
+    - items(/properties/props) not objects(/fields/tags) - in gui and code
+    - OM/OTS, etc -> sumer
+    - null, empty, empty list, #
+    - roll Editable into OM
+
  + make a robot in the room entirely on-device
- + reaktion - time programming it!
+ + reaktion - time programming it! event review dims and sub-events
+ + API to NXT from Android or on-device
+ + mars rover running
 
  - GIS:
     - show place/sub land in different colours

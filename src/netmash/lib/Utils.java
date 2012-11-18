@@ -104,6 +104,14 @@ public class Utils{
 
     static SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+    static public String getStringFrom(LinkedHashMap hm, String tag){
+        return findStringIn(hm.get(tag));
+    }
+
+    static public boolean getBooleanFrom(LinkedHashMap hm, String tag){
+        return findBooleanIn(hm.get(tag));
+    }
+
     static public LinkedList findListIn(Object o){
         if(o==null) return null;
         if(o instanceof LinkedList) return (LinkedList)o;
@@ -181,13 +189,6 @@ public class Utils{
         if(!sumer) r=r.substring(0, r.length()-1);
         r+=" ]";
         return r;
-    }
-
-    static public String getStringFrom(LinkedHashMap hm, String tag){
-        Object o=hm.get(tag);
-        if(o==null) return null;
-        if(o instanceof Number) return toNicerString((Number)o);
-        return o.toString();
     }
 
     static public <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }

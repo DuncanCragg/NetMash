@@ -904,16 +904,11 @@ public class JSON {
     }
 
     private boolean getBoolPath(LinkedHashMap content, String path) throws PathOvershot{
-        Object o=getObject(content, path);
-        if(o instanceof Boolean){ Boolean b=(Boolean)o; return b.booleanValue(); }
-        return false;
+        return findBooleanIn(getObject(content, path));
     }
 
     private double getDoublePath(LinkedHashMap content, String path) throws PathOvershot{
-        Object o=getObject(content, path);
-        if(o instanceof Number) return ((Number)o).doubleValue();
-        if(o instanceof String) try{ return Double.parseDouble((String)o); } catch(NumberFormatException e){}
-        return 0;
+        return findNumberIn(getObject(content, path));
     }
 
     private Object getObjectPath(LinkedHashMap content, String path) throws PathOvershot{
@@ -921,15 +916,11 @@ public class JSON {
     }
 
     private LinkedHashMap getHashPath(LinkedHashMap content, String path) throws PathOvershot{
-        Object o=getObject(content, path);
-        if(o instanceof LinkedHashMap){ return (LinkedHashMap)o; }
-        return null;
+        return findHashIn(getObject(content, path));
     }
 
     private LinkedList getListPath(LinkedHashMap content, String path) throws PathOvershot{
-        Object o=getObject(content, path);
-        if(o instanceof LinkedList){ return (LinkedList)o; }
-        return null;
+        return findListIn(getObject(content, path));
     }
 
     static private Object getObjectN(LinkedHashMap hashmap, String path){
