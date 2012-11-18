@@ -608,6 +608,7 @@ log(show? "show keyboard": "hide keyboard");
         EditText view=new EditText(this);
         if(!borderless) view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         else            view.setBackgroundDrawable(getResources().getDrawable(R.drawable.borderlessinputbox));
+        if(fixed)       view.setBackgroundColor(0xffffffee);
         view.setOnKeyListener(  new OnKeyListener(){   public boolean onKey(  View v, int k, KeyEvent ev){ return updateOnEnter(v,k,ev,tag,fixed?text:null); }});
         view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){     return jumpIfUID(v,ev); }});
         user.prepareResponse(viewUID);
@@ -772,14 +773,9 @@ log(show? "show keyboard": "hide keyboard");
             view.setTypeface(Typeface.DEFAULT, Typeface.ITALIC);
             s=s.substring(2,s.length()-2);
         }
-     // view.setTextIsSelectable(true);
-     // view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){     return jumpIfUID(v,ev); }});
         view.setText(s);
         view.setTextSize(20);
         view.setTextColor(0xff000000);
-     // view.setSingleLine(false);
-     // view.setHorizontalScrollBarEnabled(true);
-     // view.setHorizontallyScrolling(true);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         return view;
     }

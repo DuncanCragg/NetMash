@@ -72,9 +72,10 @@ Stuff
     - OM/OTS, etc -> sumer
     - null, empty, empty list, #
     - roll Editable into OM
+    - see local cap.db
 
  + make a robot in the room entirely on-device
- + reaktion - time programming it! event review dims and sub-events
+ + Reaktion - time programming it! event review dims and sub-events
  + API to NXT from Android or on-device
  + mars rover running
 
