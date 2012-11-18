@@ -1139,7 +1139,7 @@ public class JSON {
             if(o==null){
                 if(i==parts.length-1){
                     if(value!=null){ hm.put(part, value); changed=true; }
-                    else           { hm.remove(part);     changed=true; }
+                    else changed=false;
                 }
                 return changed;
             }
@@ -1150,7 +1150,7 @@ public class JSON {
                             hm.put(part, value); changed=true;
                         }
                     }
-                    else { hm.remove(part); changed=true; }
+                    else changed=hm.remove(part)!=null;
                     return changed;
                 }
                 hm=(LinkedHashMap)o;
@@ -1163,7 +1163,7 @@ public class JSON {
                             hm.put(part, value); changed=true;
                         }
                     }
-                    else { hm.remove(part); changed=true; }
+                    else changed=hm.remove(part)!=null;
                     return changed;
                 }
                 LinkedList ll=(LinkedList)o;
@@ -1205,7 +1205,7 @@ public class JSON {
                             hm.put(part, value); changed=true;
                         }
                     }
-                    else { hm.remove(part); changed=true; }
+                    else changed=hm.remove(part)!=null;
                 }
                 return changed;
             }
@@ -1218,7 +1218,7 @@ public class JSON {
                             hm.put(part, toNumberIfPoss(value)); changed=true;
                         }
                     }
-                    else { hm.remove(part); changed=true; }
+                    else changed=hm.remove(part)!=null;
                 }
                 return changed;
             }
@@ -1231,7 +1231,7 @@ public class JSON {
                             hm.put(part, toBooleanIfPoss(value)); changed=true;
                         }
                     }
-                    else { hm.remove(part); changed=true; }
+                    else changed=hm.remove(part)!=null;
                 }
                 return changed;
             }
