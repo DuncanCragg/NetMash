@@ -65,13 +65,14 @@ Bugs, Refactoring
 --------------------------------------------------------
 Stuff
 
- + all language changes %alerted->Alerted, $:x->:x:, etc
-    - also use of '!', => ; self check $:/:
+ + all language changes
+    - %alerted->Alerted, $:x->:x:, etc
     - tags delim lists - make single-item=multi work everywhere; xml style visually a: => b [ d ] :f: g: a b = a: [ => b [ d ] :f: ] g: [a b]
+    - see local cap.db: () not []
+    - also use of '!', => ; self check $:/:
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - OM/OTS, etc -> sumer
     - null, empty, empty list, #
-    - see local cap.db
 
  + make a robot in the room entirely on-device
  + Reaktion - time programming it! event review dims and sub-events

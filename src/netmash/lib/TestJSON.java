@@ -109,8 +109,8 @@ public class TestJSON {
             "                                 logic: netmash.drivers.TestDriver } }\n"+
             "                   modules:  { cache: { funky: \""+funkychars+"\" }\n"+
             "                               http: { port: 8080 }\n"+
-            "                               logic: [ true false null true false null stringnospaces \"string with  spaces\"  ]\n"+
-            "                               more: [ true 35392743408672770 -2147483649 2147483648 -2147483648 2147483647 null true false null ] \n"+
+            "                               logic: ( true false null true false null stringnospaces \"string with  spaces\"  )\n"+
+            "                               more: ( true 35392743408672770 -2147483649 2147483648 -2147483648 2147483647 null true false null ) \n"+
             "                   }\n"+
             "      }\n", true);
 

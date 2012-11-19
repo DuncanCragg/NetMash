@@ -530,7 +530,7 @@ public class JSON {
         if(chars[chp]=='{'){
             return readSumerHash();
         }
-        if(chars[chp]=='['){
+        if(chars[chp]=='('){
             return readSumerList();
         }
         int chpsave=chp;
@@ -606,7 +606,7 @@ public class JSON {
         LinkedList ll = new LinkedList();
         boolean docom=false;
         for(; chp<chars.length; chp++){
-            if(chars[chp]==']'){
+            if(chars[chp]==')'){
                 break;
             }
             if(chars[chp]>' '){
@@ -1307,9 +1307,11 @@ public class JSON {
 
     private String listToString(LinkedList ll, int indent, int maxlength, boolean sumer){
         if(ll==null)  return "null";
-        if(ll.size()==0) return "[ ]";
+        if(ll.size()==0) return sumer? "( )": "[ ]";
   //    if(ll.size()==1 && sumer) return objectToString(ll.get(0), indent, maxlength, sumer);
         boolean structured=false;
+        String ob=sumer? "(": "[";
+        String cb=sumer? ")": "]";
         if(maxlength==0){
             int i=0;
             int w=0;
@@ -1335,7 +1337,7 @@ public class JSON {
             }
         }
         StringBuilder buf=new StringBuilder();
-        buf.append(structured? "[\n": "[");
+        buf.append(structured? ob+"\n": ob);
         int i=0;
         for(Object val: ll){
             if(structured){
@@ -1345,8 +1347,8 @@ public class JSON {
             buf.append(objectToString(val, indent, maxlength, sumer));
             i++;
         }
-        if(structured) buf.append("\n"+indentation(indent-2)+" ]");
-        else           buf.append(" ]");
+        if(structured) buf.append("\n"+indentation(indent-2)+" "+cb);
+        else           buf.append(" "+cb);
         return buf.toString();
     }
 

@@ -1,103 +1,103 @@
 { %uid: uid-39da-3645-4f58-50cb
   %class: netmash.forest.ObjectMash
-  %rules: [ uid-e164-2547-46b0-f47e
+  %rules: ( uid-e164-2547-46b0-f47e
               uid-40fb-5964-b385-c922
               uid-1de5-4d69-667a-56e4
               uid-61d6-65c9-2931-505b
               uid-d3e7-6831-3804-7cbf
-              uid-d039-5967-f60c-70f7 ]
-  is: [ test ]
+              uid-d039-5967-f60c-70f7 )
+  is: ( test )
   title: "Test Running"
   x: 20
-  z: [ 1 2 3 ]
-  m: [ true 4 false 5 hi ]
-  o: [ { a: [ 1 2 ] } { a: [ 2 3 ] } { a: [ 1 3 ] } { a: [ 2 4 ] } { a: [ 3 4 ] } ]
+  z: ( 1 2 3 )
+  m: ( true 4 false 5 hi )
+  o: ( { a: ( 1 2 ) } { a: ( 2 3 ) } { a: ( 1 3 ) } { a: ( 2 4 ) } { a: ( 3 4 ) } )
 }
 
 { %uid: uid-e164-2547-46b0-f47e
-  is: [ test rule ]
+  is: ( test rule )
   when: "Test fetching var and addition and random"
   title: "/est Ru/"
-  a: [ # => $:x ]
-  d: [ # => clamp 14 19 $:x ]
-  f: [ # => clamp 21 40 $:x ]
-  b: [ # => clamp 20 29 [ $:x + 10 ] ]
-  c: [ # => clamp 2 7 [ random 1 8 ] ]
-  m: [ yo !=> has yo ]
-  s: [ # => + $:o:a:1 ]
-  o: [ [ { a: 5 } ] !=> has { a: [ 1 5 ] } ]
-  la: [ => [ $:z:2 selects $:m ] [ $:z:1 selects $:m ] [ $:z:0 selects $:m ] ]
+  a: ( # => $:x )
+  d: ( # => clamp 14 19 $:x )
+  f: ( # => clamp 21 40 $:x )
+  b: ( # => clamp 20 29 ( $:x + 10 ) )
+  c: ( # => clamp 2 7 ( random 1 8 ) )
+  m: ( yo !=> has yo )
+  s: ( # => + $:o:a:1 )
+  o: ( ( { a: 5 } ) !=> has { a: ( 1 5 ) } )
+  la: ( => ( $:z:2 selects $:m ) ( $:z:1 selects $:m ) ( $:z:0 selects $:m ) )
 }
 
 { %uid: uid-40fb-5964-b385-c922
-  is: [ test rule ]
+  is: ( test rule )
   when: "Test var match no-match nested list less/greater than and multiply"
-  la: [ [ divisible-by 5 ] false [ divisible-by 2 ] ]
+  la: ( ( divisible-by 5 ) false ( divisible-by 2 ) )
   a: $:x
   : { d: 19 }
-  f: [ 21 => as-is [ 3 + 4 ] ]
+  f: ( 21 => as-is ( 3 + 4 ) )
   b: !$:x
-  c: [ > 1.9 ]
-  z: [ [ < 2 ] [ > 1 ] [ [ < 4 ] => $:b × 10 ]]
+  c: ( > 1.9 )
+  z: ( ( < 2 ) ( > 1 ) ( ( < 4 ) => $:b × 10 ))
   s: 16
 }
 
 { %uid: uid-1de5-4d69-667a-56e4
-  is: [ test rule ]
+  is: ( test rule )
   when: "Test list element match 1"
-  f: [ 3 + 4 ]
-  z: [ 2 [ > 289 ] ]
-  o: [ { a: [ 1 ] } { a: [ 4 ] } ]
-  m: [ => has [ format %s%s 7.5 1.0 ] ]
-  l1: [ => ok ]
+  f: ( 3 + 4 )
+  z: ( 2 ( > 289 ) )
+  o: ( { a: ( 1 ) } { a: ( 4 ) } )
+  m: ( => has ( format %s%s 7.5 1.0 ) )
+  l1: ( => ok )
 }
 
 { %uid: uid-61d6-65c9-2931-505b
-  is: [ test rule ]
+  is: ( test rule )
   when: "Test constructors"
-  z: [ number [ number => 111 { %uid: new a: $:a } ] number ]
-  m: [ [ number => { n: $:! } ] ]
+  z: ( number ( number => 111 { %uid: new a: $:a } ) number )
+  m: ( ( number => { n: $:! } ) )
 }
 
 { %uid: uid-d3e7-6831-3804-7cbf
-  is: [ test rule ]
+  is: ( test rule )
   when: "Test list element match 2"
-  m: [ true { n: 4 } { n: 5 } hi yo { n: 7.51 } ]
-  o: [ { a: [ 3 ] } ]
-  z: [ [ [ number * ] => [ 1 selects $:! ] [ 0 selects $:! ] ] ]
-  l2: [ => count $::o ]
-  l0: [ => $::o:1 ]
-  l7: [ => $:o:a ]
-  l8: [ => $::o:a ]
-  l3: [ => $:o ]
-  l4: [ => $:m:0 selects 1 2 ]
-  l5: [ => $:m:2 selects 3 4 ]
-  l6: [ => $:a [ $:m:0 selects + * ] $:b ]
-  l9: [ => $:a [ $:m:4 selects { ha:+ hi:- } ] $:b ]
-  la: [ => [ integer $:m:6:n ] ]
+  m: ( true { n: 4 } { n: 5 } hi yo { n: 7.51 } )
+  o: ( { a: ( 3 ) } )
+  z: ( ( ( number * ) => ( 1 selects $:! ) ( 0 selects $:! ) ) )
+  l2: ( => count $::o )
+  l0: ( => $::o:1 )
+  l7: ( => $:o:a )
+  l8: ( => $::o:a )
+  l3: ( => $:o )
+  l4: ( => $:m:0 selects 1 2 )
+  l5: ( => $:m:2 selects 3 4 )
+  l6: ( => $:a ( $:m:0 selects + * ) $:b )
+  l9: ( => $:a ( $:m:4 selects { ha:+ hi:- } ) $:b )
+  la: ( => ( integer $:m:6:n ) )
 }
 
 { %uid: uid-d039-5967-f60c-70f7
-  is: [ test rule ]
+  is: ( test rule )
   when: "Test completion"
-  z: [ 1 [ { a: 20 } 111 ] 290 ]
+  z: ( 1 ( { a: 20 } 111 ) 290 )
   a: 20
   b: 29
   l1: ok
   l2: 3
-  c: [ < 7.1 ]
-  l0: { a: [ 1 3 ] }
-  l8: [ [ 2 3 ] [ 1 3 ] [ 3 4 ] ]
-  l3: [ list-count 6 ]
+  c: ( < 7.1 )
+  l0: { a: ( 1 3 ) }
+  l8: ( ( 2 3 ) ( 1 3 ) ( 3 4 ) )
+  l3: ( list-count 6 )
   l4: 1
   l5: 4
   l6: 49
   l9: -9
-  l7: [ [ 1 2 ] [ 2 3 ] [ 1 3 ] [ 2 4 ] [ 3 4 ] ]
-  : [ { la: 8 } => {
-    is: [ test ]
+  l7: ( ( 1 2 ) ( 2 3 ) ( 1 3 ) ( 2 4 ) ( 3 4 ) )
+  : ( { la: 8 } => {
+    is: ( test )
     title: "Test Complete"
   }
-  ]
+  )
 }
 
