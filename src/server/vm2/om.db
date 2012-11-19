@@ -73,7 +73,7 @@
   l4: ( => $:m:0 selects 1 2 )
   l5: ( => $:m:2 selects 3 4 )
   l6: ( => $:a ( $:m:0 selects + * ) $:b )
-  l9: ( => $:a ( $:m:4 selects { ha:+ hi:- } ) $:b )
+  l9: ( => $:a ( $:m:4 selects { ha: + hi: - } ) $:b )
   la: ( => ( integer $:m:6:n ) )
 }
 
