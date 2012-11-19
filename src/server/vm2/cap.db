@@ -1,5 +1,4 @@
 { %uid: uid-c102-dd84-8284-c360
-  %class: netmash.forest.Editable
   %rules: [ uid-c265-091b-418c-c329 ]
   is: [ gui editable ]
   title: "CAP Payments Demo"
@@ -11,8 +10,6 @@
 }
 
 { %uid: uid-c265-091b-418c-c329
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ gui rule editable ]
   when: "form submitted create application"
   %alerted: { is: form }
@@ -31,8 +28,6 @@
 }
 
 { %uid: uid-f265-941d-a0b8-ca5d
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ gui rule editable ]
   when: "application created create land object"
   %notifying: [ => has $:form ]
@@ -50,7 +45,6 @@
 }
 
 { %uid: uid-5c78-11ee-a3c7-ba89
-  %class: netmash.forest.Editable
   %rules: [ uid-0215-038b-7558-041a uid-5f28-9174-b47d-2a74 uid-4a47-2cb6-8e99-a178 uid-6419-0368-25da-f91e ]
   is: [ updatable land editable template ]
   title: "Land area template"
@@ -68,7 +62,6 @@
 }
 
 { %uid: uid-9da2-71f4-4a2f-f389
-  %class: netmash.forest.Editable
   %rules: [ uid-6d46-73a1-05c4-1703 uid-c619-afdd-0d5d-1a5d ]
   is: [ updatable land editable template ]
   title: "Land feature template"
@@ -103,8 +96,6 @@
 }
 
 { %uid: uid-1cc7-4c21-9036-4e01
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ gui rule editable ]
   when: "application created create payment summaries and object"
   view: {
@@ -122,8 +113,6 @@
 }
 
 { %uid: uid-2433-fd91-25ad-2e9b
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ look-up editable ]
   title: "Payments Look-up"
   bp-payment-per-ha: 100
@@ -140,8 +129,6 @@
 }
 
 { %uid: uid-872c-b29e-03a1-7b61
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ gui rule editable ]
   when: "gui built set up its styles"
   view: { style: [ # => { is: style colours:lightgreen } ]
@@ -154,16 +141,12 @@
 }
 
 { %uid: uid-51b1-5d09-ed2f-519c
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ land rule editable ]
   when: "land area changes update total"
   area: [ => + $:list:area ]
 }
 
 { %uid: uid-0215-038b-7558-041a
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ land rule editable ]
   when: "land object notified add to list"
   %alerted: { is: land place: * }
@@ -171,8 +154,6 @@
 }
 
 { %uid: uid-5f28-9174-b47d-2a74
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ land rule editable ]
   when: "ineligible land seen calculate unclaimable area"
   list: [ { area: * ineligible: true } ]
@@ -180,8 +161,6 @@
 }
 
 { %uid: uid-6d46-73a1-05c4-1703
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ land rule editable ]
   when: "area used for woodland creation multiply area by payment per hectare for usage"
   area: number usage: /wcg-/
@@ -190,8 +169,6 @@
 }
 
 { %uid: uid-c619-afdd-0d5d-1a5d
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ land rule editable ]
   when: "area used for stewardship multiply area by payment per hectare for usage"
   area: number usage: /hls-/
@@ -200,8 +177,6 @@
 }
 
 { %uid: uid-4a47-2cb6-8e99-a178
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ land rule editable ]
   when: "totals available calculate land total"
   list: [ { fc-total: * } ]
@@ -209,8 +184,6 @@
 }
 
 { %uid: uid-6419-0368-25da-f91e
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ land rule editable ]
   when: "totals available calculate land total"
   list: [ { ne-total: * } ]
@@ -218,8 +191,6 @@
 }
 
 { %uid: uid-e683-5ee2-a986-b93b
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ payment rule editable ]
   when: "eligible BP land seen calculate claimable area and multiply by payment per hectare"
   land: { list: [ { area: * usage: * entitlement: * active: true } ] }
@@ -227,24 +198,18 @@
 }
 
 { %uid: uid-d958-bf42-c730-8406
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ payment rule editable ]
   when: "basic payment calculated if less than min set to zero"
   bp-total: [ [ < $:land:constants:bp-minimum-payout ] => 0 ]
 }
 
 { %uid: uid-73ec-5ea1-9cf0-dfa5
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ payment rule editable ]
   when: "basic payment calculated set maximum"
   bp-total: [ [ > $:land:constants:bp-maximum-payout ] => $:land:constants:bp-maximum-payout ]
 }
 
 { %uid: uid-8bbc-4ffc-dc43-5903
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ payment rule editable ]
   when: "totals available calculate grand total"
   land: { list: [ { fc-total: * } ] }
@@ -252,8 +217,6 @@
 }
 
 { %uid: uid-a2c3-59ac-d898-0fc5
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ payment rule editable ]
   when: "totals available calculate grand total"
   land: { list: [ { ne-total: * } ] }
@@ -261,8 +224,6 @@
 }
 
 { %uid: uid-9ce9-1bdd-ec05-c8fa
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ gui rule editable ]
   when: "payment updates show it"
   view: { BP: [ * * [ => $:payment:bp-total ] ]

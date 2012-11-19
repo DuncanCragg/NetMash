@@ -24,6 +24,8 @@ public class ObjectMash extends WebObject {
     public ObjectMash(JSON json){ super(json); extralogging = Kernel.config.boolPathN("rules:log"); }
 
     public void evaluate(){
+        LinkedList<String> evalrules=getEvalRules();
+        if(!evalrules.isEmpty()) contentSetPushAll("%rules",evalrules);
         if(extralogging) log("Running ObjectMash on "+uid+": "+contentHash("#"));
         LinkedList rules=contentList("%rules");
         if(extralogging) log("Rules: "+rules);
@@ -42,6 +44,17 @@ public class ObjectMash extends WebObject {
             if(ok) runRule(r);
             r++;
         }
+        if(!evalrules.isEmpty()) contentSetPushAll("%rules",evalrules);
+    }
+
+    private LinkedList<String> getEvalRules(){
+        LinkedList<String> evalrules=new LinkedList<String>();
+        for(String alerted: alerted()){
+            contentTemp("%temp", alerted);
+            if(contentListContainsAll("%temp:is",list("editable","rule"))) evalrules.add(alerted);
+            contentTemp("%temp", null);
+        }
+        return evalrules;
     }
 
     private void runRule(int r){

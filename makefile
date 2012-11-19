@@ -284,7 +284,6 @@ classes: \
 ./build/classes/netmash/forest/FunctionalObserver.class \
 ./build/classes/netmash/forest/Fjord.class \
 ./build/classes/netmash/forest/ObjectMash.class \
-./build/classes/netmash/forest/Editable.class \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/server/types/UserHome.class \
 ./build/classes/server/types/PresenceTracker.class \

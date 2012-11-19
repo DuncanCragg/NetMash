@@ -203,8 +203,6 @@
 }
 
 {   %uid: uid-9153-8032-3fd4-9156
-    %class: netmash.forest.Editable
-    %rules: [ ]
     is: [ contact editable ]
     full-name: "Mr Brian Rock"
     name: {

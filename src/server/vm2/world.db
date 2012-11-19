@@ -30,15 +30,12 @@
 }
 
 { %uid: uid-56d4-91ef-a2fc-2585
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ place rule editable ]
   when: "tilt the floor in proportion to number present"
   rotation: [ * * [ => $:present × 10 ]]
 }
 
 { %uid: uid-7794-3aa8-2192-7a60
-  %class: netmash.forest.Editable
   is: [ 3d mesh editable ]
   title: Avatar
   rotation: [ 0 45 0 ]
@@ -64,7 +61,6 @@
 }
 
 { %uid: uid-c058-2db1-0b26-8f48
-  %class: netmash.forest.Editable
   is: [ 3d mesh editable ]
   title: "Nice Box"
   rotation: [ 0 0 0 ]
@@ -90,7 +86,6 @@
 }
 
 { %uid: uid-8a54-9690-a4d5-4a9c
-  %class: netmash.forest.Editable
   is: [ 3d notice editable ]
   title: "Important Notice"
   text: "Welcome to Ann Droid's Place!"

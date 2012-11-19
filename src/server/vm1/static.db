@@ -1,5 +1,4 @@
 { %uid: uid-26bc-8ee9-5443-851a
-  %class: netmash.forest.Editable
   %rules: [ uid-16f2-2db0-e9fe-1d7d ]
   is: [ demo editable ]
   x: Hello
@@ -8,8 +7,6 @@
 }
 
 { %uid: uid-16f2-2db0-e9fe-1d7d
-  %class: netmash.forest.Editable
-  %rules: [ ]
   is: [ demo rule editable ]
   when: "run set title to join of x and y"
   title: [ => join [ $:x $:y ] " " ]

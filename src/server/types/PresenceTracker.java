@@ -1,12 +1,12 @@
 package server.types;
 
 import java.util.*;
-import netmash.forest.Editable;
+import netmash.forest.*;
 import static netmash.lib.Utils.*;
 
 /** Tracks Presence of Users viewing it.
   */
-public class PresenceTracker extends Editable {
+public class PresenceTracker extends ObjectMash {
 
     public PresenceTracker(){}
 

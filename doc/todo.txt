@@ -59,6 +59,7 @@ Bugs, Refactoring
  - can edit own edit rule.. hide edit rules?
  - non-sumer appearing in remote rewrite(?)
  - don't put template edit rule in instantiation
+ - editable rule push: first rule will be skipped first time
 --------------------------------------------------------
 Stuff
 
@@ -71,7 +72,6 @@ Stuff
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - OM/OTS, etc -> sumer
     - null, empty, empty list, #
-    - roll Editable into OM
     - see local cap.db
 
  + make a robot in the room entirely on-device

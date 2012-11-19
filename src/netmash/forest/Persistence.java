@@ -105,7 +105,7 @@ public class Persistence implements FileUser {
         try{
             if(classname!=null && classname.length() >0){
                 w=(WebObject)Class.forName(classname).newInstance();
-            } else w=new WebObject();
+            } else w=new ObjectMash();
             w.construct(json);
             return w;
         }catch(Exception e){

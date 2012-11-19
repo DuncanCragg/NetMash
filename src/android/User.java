@@ -42,13 +42,13 @@ public class User extends ObjectMash {
         String fullName=UserContacts.getUsersFullName();
         String your=fullName.equals("You")? "Your": fullName+"'s";
 
-        Editable contact = new Editable(
+        ObjectMash contact = new ObjectMash(
               "{ \"is\": [ \"editable\", \"contact\" ], \n"+
               "  \"full-name\": \""+fullName+"\", \n"+
               "  \"address\": { } \n"+
               "}");
 
-        Editable links = new Editable(
+        ObjectMash links = new ObjectMash(
               "{ \"is\": [ \"link\", \"list\", \"editable\" ], \n"+
               "  \"list\": null \n"+
               "}");
@@ -718,7 +718,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
     }
 
     private String spawnUIDNew(String source){
-        while(source.indexOf(" uid-new ")!= -1){ source=source.replace(" uid-new ", " "+spawn(new Editable("{ \"is\": [ \"editable\" ] }"))+" "); }
+        while(source.indexOf(" uid-new ")!= -1){ source=source.replace(" uid-new ", " "+spawn(new ObjectMash("{ \"is\": [ \"editable\" ] }"))+" "); }
         return source;
     }
 
