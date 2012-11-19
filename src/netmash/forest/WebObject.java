@@ -223,9 +223,9 @@ public class WebObject {
         }
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
-            String r="[ ";
+            String r="";
             for(Object i: ll) r+=i+" ";
-            return r+"]";
+            return r;
         }
         return o.toString();
     }

@@ -182,12 +182,14 @@ public class Utils{
     static public String setToListString(Iterable<String> set, boolean sumer){
         String q=sumer? "": "\"";
         String c=sumer? "": ",";
+        String s=sumer? "(": "[";
+        String e=sumer? ")": "]";
         Iterator<String> i = set.iterator();
-        if(!i.hasNext()) return "[]";
-        String r = "[";
+        if(!i.hasNext()) return sumer? "( )": "[ ]";
+        String r = s;
         do{ r+=" "+q+i.next()+q+c; }while(i.hasNext());
         if(!sumer) r=r.substring(0, r.length()-1);
-        r+=" ]";
+        r+=" "+e;
         return r;
     }
 
