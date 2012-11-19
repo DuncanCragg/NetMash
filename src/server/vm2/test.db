@@ -1,30 +1,30 @@
-{ %uid: uid-5f55-165f-abb3-947a
+{ UID: uid-5f55-165f-abb3-947a
   %class: netmash.forest.Fjord
   %rules: ( uid-b2ea-21bc-8546-cf49 )
   is: testfjord
   list: ( a b c )
 }
 
-{ %uid: uid-b2ea-21bc-8546-cf49
+{ UID: uid-b2ea-21bc-8546-cf49
   is: ( testfjord rule )
   when: "second item in list found rewrite"
   list: { 1: <>bee }
 }
 
-{ %uid: uid-2875-04a7-a6cb-eeee
+{ UID: uid-2875-04a7-a6cb-eeee
   %class: netmash.forest.Fjord
   %rules: ( uid-7731-edb1-73a5-00ad )
   is: testfjord
   x: 1 aa: {}
 }
 
-{ %uid: uid-7731-edb1-73a5-00ad
+{ UID: uid-7731-edb1-73a5-00ad
   is: ( testfjord rule )
   when: "empty hash found spawn"
-  a: { bee: <#>$:x cee: <#>sum(2,$:x) %uid: <#>new }
+  a: { bee: <#>$:x cee: <#>sum(2,$:x) UID: <#>new }
 }
 
-{   %uid: uid-5348-3aaa-bfc1-7d0c
+{   UID: uid-5348-3aaa-bfc1-7d0c
     is: ( fx order rule )
     when: "you can see the dealer but have no ticket notify the dealer. 1"
     ticket: <#>
@@ -32,7 +32,7 @@
     %notifying: <>has($:dealer)
 }
 
-{   %uid: uid-3aaa-bfc1-7d0c-5348
+{   UID: uid-3aaa-bfc1-7d0c-5348
     is: ( fx order rule )
     when: "you see the ticket link to it and start notifying it instead of the dealer. 2"
     %alerted: { is: ticket }
@@ -40,14 +40,14 @@
     %notifying: <>has($:ticket);hasno($:dealer)
 }
 
-{   %uid: uid-7d0c-5348-3aaa-bfc1
+{   UID: uid-7d0c-5348-3aaa-bfc1
     is: ( fx order rule )
     when: "you have the ticket at 500 bump up your investment. 3"
     ticket: {}
     params: { investment: <500.00>1000.00 }
 }
 
-{   %uid: uid-bfc1-7d0c-5348-3aaa
+{   UID: uid-bfc1-7d0c-5348-3aaa
     is: ( fx order rule )
     when: "you see the order filled simulate a race by dropping the price. 4"
     ticket: { status: filled }
@@ -55,7 +55,7 @@
     params: { price: <81.7>81.5 }
 }
 
-{   %uid: uid-4e30-2365-3015-e181
+{   UID: uid-4e30-2365-3015-e181
     is: ( fx order rule )
     when: "race noticed set price back and create payment shell. 5"
     ticket: { status: not-as-ordered }
@@ -63,7 +63,7 @@
     payment: <#>{}
 }
 
-{   %uid: uid-5411-baae-d459-4c6c
+{   UID: uid-5411-baae-d459-4c6c
     is: ( fx order rule )
     when: "payment shell there fill it out and spawn it. 6"
     payment: { %rules: <#>list(uid-c8f2-3fcb-bea9-08b4)
@@ -72,18 +72,18 @@
                  invoice: <#>$:ticket
                  amount: "<#>prod($:ticket:ask $:params:investment)"
                  account: <#>{}
-                 %uid: <#>new
+                 UID: <#>new
     }
 }
 
-{   %uid: uid-c8f2-3fcb-bea9-08b4
+{   UID: uid-c8f2-3fcb-bea9-08b4
     is: ( payment rule )
     when: "invoice has no payment notify it that we are paying. 7"
     invoice: { payment: <#> }
     %notifying: <>has($:invoice)
 }
 
-{   %uid: uid-0145-54f4-36db-302e
+{   UID: uid-0145-54f4-36db-302e
     %class: netmash.forest.Fjord
     %rules: ( uid-5348-3aaa-bfc1-7d0c uid-3aaa-bfc1-7d0c-5348 uid-7d0c-5348-3aaa-bfc1
                 uid-bfc1-7d0c-5348-3aaa uid-4e30-2365-3015-e181 uid-5411-baae-d459-4c6c )
@@ -92,68 +92,68 @@
     dealer: http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json
 }
 
-{   %uid: uid-2520-44e1-a2a2-8ef1
+{   UID: uid-2520-44e1-a2a2-8ef1
     is: ( equity bid rule )
     when: "a bid has no price set it 10% above the high-bid and notify the instrument. 1"
     price: "<#>prod($:on:bid-ask-spread:high-bid 1.10)"
     %notifying: <>has($:on)
 }
 
-{   %uid: uid-b382-de77-f352-efe6
+{   UID: uid-b382-de77-f352-efe6
     is: ( equity ask rule )
     when: "an ask has no price set it 10% below the low-ask and notify the instrument. 2"
     price: "<#>prod($:on:bid-ask-spread:low-ask 0.90)"
     %notifying: <>has($:on)
 }
 
-{   %uid: uid-286a-b820-14ff-8d02
+{   UID: uid-286a-b820-14ff-8d02
     is: ( equity instrument rule )
     when: "someone bids on this instrument add to buyers. 3"
     %alerted: { is: ( equity bid ) on: <$:> }
     buyers: <>has(%alerted)
 }
 
-{   %uid: uid-1cb9-6b32-be37-8f3b
+{   UID: uid-1cb9-6b32-be37-8f3b
     is: ( equity instrument rule )
     when: "someone asks on this instrument add to sellers. 4"
     %alerted: { is: ( equity ask ) on: <$:> }
     sellers: <>has(%alerted)
 }
 
-{   %uid: uid-fed3-2712-f1c8-7c49
+{   UID: uid-fed3-2712-f1c8-7c49
     is: ( equity instrument rule )
     when: "any buyer price changes recalculate the high-bid. 5"
     bid-ask-spread: { high-bid: <>max($:buyers:price) }
 }
 
-{   %uid: uid-dd27-36cf-f13d-3768
+{   UID: uid-dd27-36cf-f13d-3768
     is: ( equity instrument rule )
     when: "any seller price changes recalculate the low-ask. 6"
     bid-ask-spread: { low-ask:  <>min($:sellers:price) }
 }
 
-{   %uid: uid-a39f-b330-0492-100f
+{   UID: uid-a39f-b330-0492-100f
     %class: netmash.forest.Fjord
     %rules: ( uid-2520-44e1-a2a2-8ef1 )
     is: ( equity bid )
     on: uid-1488-6110-092d-2bae
 }
 
-{   %uid: uid-9272-b51a-1606-32e0
+{   UID: uid-9272-b51a-1606-32e0
     %class: netmash.forest.Fjord
     %rules: ( uid-2520-44e1-a2a2-8ef1 )
     is: ( equity bid )
     on: uid-1488-6110-092d-2bae
 }
 
-{   %uid: uid-09e4-e69b-54a4-a725
+{   UID: uid-09e4-e69b-54a4-a725
     %class: netmash.forest.Fjord
     %rules: ( uid-b382-de77-f352-efe6 )
     is: ( equity ask )
     on: uid-1488-6110-092d-2bae
 }
 
-{   %uid: uid-1488-6110-092d-2bae
+{   UID: uid-1488-6110-092d-2bae
     %class: netmash.forest.Fjord
     %rules: ( uid-286a-b820-14ff-8d02 uid-1cb9-6b32-be37-8f3b uid-fed3-2712-f1c8-7c49 uid-dd27-36cf-f13d-3768 )
     is: ( equity instrument )
@@ -163,13 +163,13 @@
     bid-ask-spread: { high-bid: 10.0 low-ask:  20.0 }
 }
 
-{   %uid: uid-80d7-ff34-61f1-0db7
+{   UID: uid-80d7-ff34-61f1-0db7
     %class: CountTo200
     pair: http://localhost:8081/o/uid-c47f-5e67-9fc8-b842.json
     count: 1
 }
 
-{   %uid: uid-61c2-20d0-c001-aa46
+{   UID: uid-61c2-20d0-c001-aa46
     %class: HRRequestResponse
     is: ( hr leave-request event )
     title:  "Trip to Spain"
@@ -184,14 +184,14 @@
     leaveRecords: http://localhost:8081/o/uid-4574-a96f-f796-c5fb.json
 }
 
-{   %uid: uid-d7ec-6c0f-68a9-81df
+{   UID: uid-d7ec-6c0f-68a9-81df
     %class: TwitterMash
     is: ( twittermash top )
     topuser: duncancragg
     twitter: http://localhost:8081/o/uid-2161-baf3-858b-858c.json
 }
 
-{   %uid: uid-cb6f-00fb-3be2-453c
+{   UID: uid-cb6f-00fb-3be2-453c
     %notify: ( http://localhost:8081/o/c-n-14d5-99c5-da00-806a )
     %class: Asymmetry
     is: ( asymm )
@@ -202,7 +202,7 @@
     tick: http://localhost:8081/o/uid-7235-60ba-d323-d5d6.json
 }
 
-{   %uid: uid-9153-8032-3fd4-9156
+{   UID: uid-9153-8032-3fd4-9156
     is: ( contact editable )
     full-name: "Mr Brian Rock"
     name: {

@@ -1,11 +1,11 @@
-{ %uid: uid-6332-84e1-c1de-3364
+{ UID: uid-6332-84e1-c1de-3364
   %class: server.types.UserHome
   is: ( userhome user list )
   title: "User Home"
   list: ()
 }
 
-{ %uid: uid-39da-3645-4f58-50cb
+{ UID: uid-39da-3645-4f58-50cb
   %class: server.types.PresenceTracker
   %rules: ( uid-56d4-91ef-a2fc-2585 )
   is: ( place 3d mesh editable )
@@ -29,13 +29,13 @@
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
 }
 
-{ %uid: uid-56d4-91ef-a2fc-2585
+{ UID: uid-56d4-91ef-a2fc-2585
   is: ( place rule editable )
   when: "tilt the floor in proportion to number present"
   rotation: ( * * ( => $:present × 10 ))
 }
 
-{ %uid: uid-7794-3aa8-2192-7a60
+{ UID: uid-7794-3aa8-2192-7a60
   is: ( 3d mesh editable )
   title: Avatar
   rotation: ( 0 45 0 )
@@ -60,7 +60,7 @@
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
 }
 
-{ %uid: uid-c058-2db1-0b26-8f48
+{ UID: uid-c058-2db1-0b26-8f48
   is: ( 3d mesh editable )
   title: "Nice Box"
   rotation: ( 0 0 0 )
@@ -85,7 +85,7 @@
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
 }
 
-{ %uid: uid-8a54-9690-a4d5-4a9c
+{ UID: uid-8a54-9690-a4d5-4a9c
   is: ( 3d notice editable )
   title: "Important Notice"
   text: "Welcome to Ann Droid's Place!"

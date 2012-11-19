@@ -1,4 +1,4 @@
-{   %uid: uid-424d-01c5-ee08-2ec9
+{   UID: uid-424d-01c5-ee08-2ec9
     is: ( fx dealer rule )
     when: "FX order comes in start building ticket. 1"
     %alerted: { is: order ticket: <#> }
@@ -6,7 +6,7 @@
     ticket: <#>{}
 }
 
-{   %uid: uid-e772-4f4f-f981-0cea
+{   UID: uid-e772-4f4f-f981-0cea
     is: ( fx dealer rule )
     when: "FX order comes in spawn and add ticket to tickets list. 2"
     ticket: {  %rules: "<#>list(uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377)"
@@ -14,47 +14,47 @@
                  order: <#>$:ticketfor
                  ask: <#>81.9
                  status: <#>waiting
-                 %uid: <#>new
+                 UID: <#>new
     }
     tickets: <>has($:ticket)
 }
 
-{   %uid: uid-05cf-8cb9-7b52-db80
+{   UID: uid-05cf-8cb9-7b52-db80
     is: ( fx ticket rule )
     when: "new ticket set params and notify order. 3"
     params: <#>$:order:params
     %notifying: <>has($:order)
 }
 
-{   %uid: uid-bce3-b010-e869-f26e
+{   UID: uid-bce3-b010-e869-f26e
     is: ( fx ticket rule )
     when: "waiting if order params change update ticket params. 4"
     status: waiting
     params: <{}>$:order:params
 }
 
-{   %uid: uid-4f84-6624-1781-3377
+{   UID: uid-4f84-6624-1781-3377
     is: ( fx ticket rule )
     when: "ask goes below price of ticket set to filled. 4.5"
     ask: <lt($:params:price)>
     status: <waiting>filled
 }
 
-{   %uid: uid-1b6c-16b6-64aa-8d48
+{   UID: uid-1b6c-16b6-64aa-8d48
     is: ( fx ticket rule )
     when: "order differs once ticket filled flag with not-as-ordered. 5"
     params: <!$:order:params>
     status: <filled>has(not-as-ordered)
 }
 
-{   %uid: uid-a36b-54ea-7dd6-2626
+{   UID: uid-a36b-54ea-7dd6-2626
     is: ( fx ticket rule )
     when: "order matches once ticket filled remove not-as-ordered. 6"
     params: <$:order:params>
     status: <filled>hasno(not-as-ordered)
 }
 
-{   %uid: uid-913e-f82c-7198-165b
+{   UID: uid-913e-f82c-7198-165b
     is: ( fx ticket rule )
     when: "correct payment arrives set status to paid. 7"
     order: { payment: { amount: "<prod($:ask $:params:investment)>" } }
@@ -62,21 +62,21 @@
     payment: <#>$:order:payment
 }
 
-{   %uid: uid-ba2b-8619-fdea-8c2c
+{   UID: uid-ba2b-8619-fdea-8c2c
     %class: FXDealerTicket
     %rules: ( uid-424d-01c5-ee08-2ec9 uid-e772-4f4f-f981-0cea )
     is: ( fx dealer )
     tickets: ( )
 }
 
-{   %uid: uid-c47f-5e67-9fc8-b842
+{   UID: uid-c47f-5e67-9fc8-b842
     %etag: 11
     %class: CountTo200
     pair: ""
     count: 1
 }
 
-{   %uid: uid-4574-a96f-f796-c5fb
+{   UID: uid-4574-a96f-f796-c5fb
     %class: HRLeavePeriods
     is: ( hr leave-record )
     employee: /employees/1233123
@@ -87,7 +87,7 @@
     leavePeriods: ( )
 }
 
-{   %uid: uid-2161-baf3-858b-858c
+{   UID: uid-2161-baf3-858b-858c
     %class: server.types.Twitter
     is: ( twitter )
     title: "Twitter Gateway"
@@ -129,7 +129,7 @@
     }
 }
 
-{   %uid: uid-f3fd-b3a5-a88c-8dd7
+{   UID: uid-f3fd-b3a5-a88c-8dd7
     %class: ""
     is: ( contact list )
     title: "Enterprise Locations NorthWest"
@@ -148,7 +148,7 @@
     )
 }
 
-{   %uid: uid-4c3f-9b0f-3bf3-abe6
+{   UID: uid-4c3f-9b0f-3bf3-abe6
     %class: ""
     is: ( contact )
     full-name: "Enterprise - Head Office"
@@ -163,7 +163,7 @@
     phone: { work: "01772 819000" }
 }
 
-{   %uid: uid-05cc-e687-907f-cf7b
+{   UID: uid-05cc-e687-907f-cf7b
     %class: ""
     is: ( contact )
     full-name: "Enterprise - Central"
@@ -178,7 +178,7 @@
              fax:  "01772 819001" }
 }
 
-{   %uid: uid-691a-dd2e-2512-902e
+{   UID: uid-691a-dd2e-2512-902e
     %class: ""
     is: ( contact )
     full-name: "Enterprise - Energy (Power)"
@@ -194,7 +194,7 @@
              fax:  "01772 655971" }
 }
 
-{   %uid: uid-836b-7ca9-0e54-613a
+{   UID: uid-836b-7ca9-0e54-613a
     %class: ""
     is: ( contact )
     full-name: "Enterprise - Customer Contact Centre"
@@ -210,7 +210,7 @@
     phone: { work: "0800 521660" }
 }
 
-{   %uid: uid-fe83-20d2-9fe7-47bd
+{   UID: uid-fe83-20d2-9fe7-47bd
     %class: ""
     is: ( contact )
     full-name: "Enterprise - Environmental"
@@ -225,7 +225,7 @@
     phone: { work: "01772 624182" }
 }
 
-{   %uid: uid-8531-41a0-5a6c-172f
+{   UID: uid-8531-41a0-5a6c-172f
     %class: ""
     is: ( contact )
     full-name: "Enterprise - Energy (Gas)"
@@ -241,7 +241,7 @@
     phone: { work: "0161 7767800" }
 }
 
-{   %uid: uid-178e-2950-002f-1c03
+{   UID: uid-178e-2950-002f-1c03
     %class: ""
     is: ( contact )
     full-name: "Enterprise Liverpool - Environmental"
@@ -255,7 +255,7 @@
     phone: { work: "0151 5477370" }
 }
 
-{   %uid: uid-2622-e06c-bf3b-62b4
+{   UID: uid-2622-e06c-bf3b-62b4
     %class: ""
     is: ( contact )
     full-name: "Enterprise - Environmental"
@@ -268,7 +268,7 @@
     phone: { work: "01768 212800" }
 }
 
-{   %uid: uid-543f-d8a4-bcbd-88d5
+{   UID: uid-543f-d8a4-bcbd-88d5
     %class: ""
     is: ( contact )
     full-name: "Enterprise Liverpool - Environmental"
@@ -283,7 +283,7 @@
     phone: { work: "0151 2336550" }
 }
 
-{   %uid: uid-b32e-52a8-130f-6ce7
+{   UID: uid-b32e-52a8-130f-6ce7
     %class: ""
     is: ( contact )
     full-name: "Enterprise - Highways"
@@ -297,7 +297,7 @@
              fax:  "01925 425798" }
 }
 
-{   %uid: uid-f857-3568-b57e-89b9
+{   UID: uid-f857-3568-b57e-89b9
     %class: ""
     is: ( contact )
     full-name: "Enterprise Manchester - Environmental"
@@ -313,7 +313,7 @@
              fax:  "0161 9578304" }
 }
 
-{   %uid: uid-76b8-8502-45d3-0543
+{   UID: uid-76b8-8502-45d3-0543
     %class: MeetUsUp
     is: ( meetusup contact list )
     title: "MeetUsUp List"
@@ -330,7 +330,7 @@
     )
 }
 
-{   %uid: uid-35ad-af7a-93fb-896d
+{   UID: uid-35ad-af7a-93fb-896d
     is: ( contact editable )
     full-name: "Brian Rock"
     name: {
@@ -353,7 +353,7 @@
     )
 }
 
-{   %uid: uid-1b84-142d-4f34-3734
+{   UID: uid-1b84-142d-4f34-3734
     %class: ""
     is: ( contact )
     full-name: "Duncan Cragg"
@@ -367,7 +367,7 @@
     phone: { home: "020 8567 8900" mobile: "0777 77 77 777" }
 }
 
-{   %uid: uid-a0b2-0521-d5f1-b994
+{   UID: uid-a0b2-0521-d5f1-b994
     %class: ""
     is: ( contact )
     full-name: "Joe Test"
@@ -375,35 +375,35 @@
     phone: { mobile: "0777 88 77 555" }
 }
 
-{   %uid: uid-b4b3-586c-88e5-05ae
+{   UID: uid-b4b3-586c-88e5-05ae
     %class: ""
     is: ( contact )
     full-name: "Sam Bloggs"
     email: sam.bloggs@aol.com
 }
 
-{   %uid: uid-6eab-8bc0-10a8-db4e
+{   UID: uid-6eab-8bc0-10a8-db4e
     %class: ""
     is: ( contact )
     full-name: "Jack Bloggs"
     email: jack.bloggs@aol.com
 }
 
-{   %uid: uid-bb90-d577-703b-e7a9
+{   UID: uid-bb90-d577-703b-e7a9
     %class: ""
     is: ( contact )
     full-name: "Bobby Bloggs"
     email: bob.bloggs@aol.com
 }
 
-{   %uid: uid-f95d-8864-a3ef-7604
+{   UID: uid-f95d-8864-a3ef-7604
     %class: ""
     is: ( contact )
     full-name: "Janice Bloggs"
     email: jan.bloggs@aol.com
 }
 
-{   %uid: uid-7235-60ba-d323-d5d6
+{   UID: uid-7235-60ba-d323-d5d6
     %class: DynamicPage
     is: ( gui )
     title: "Demo of Dynamic GUI and Remote App"
@@ -426,14 +426,14 @@
     }
 }
 
-{   %uid: uid-6332-84e1-c1de-3364
+{   UID: uid-6332-84e1-c1de-3364
     %class: server.types.UserHome
     is: ( userhome user list )
     title: "User Home"
     list: ()
 }
 
-{   %uid: uid-4b71-f8d4-c761-be2d
+{   UID: uid-4b71-f8d4-c761-be2d
     is: ( link list )
     title: "Random Collection of Links"
     list : ( http://netmash.net:8081/o/uid-6332-84e1-c1de-3364.json

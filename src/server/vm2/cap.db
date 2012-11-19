@@ -1,4 +1,4 @@
-{ %uid: uid-c102-dd84-8284-c360
+{ UID: uid-c102-dd84-8284-c360
   %rules: ( uid-c265-091b-418c-c329 )
   is: ( gui editable )
   title: "CAP Payments Demo"
@@ -9,12 +9,12 @@
   }
 }
 
-{ %uid: uid-c265-091b-418c-c329
+{ UID: uid-c265-091b-418c-c329
   is: ( gui rule editable )
   when: "form submitted create application"
   %alerted: { is: form }
   view: { applications: ( ( { form: $:%alerted } ) !=> has
-    { %uid: new
+    { UID: new
       %rules: ( uid-f265-941d-a0b8-ca5d uid-1cc7-4c21-9036-4e01 uid-872c-b29e-03a1-7b61 uid-9ce9-1bdd-ec05-c8fa )
       is: ( gui editable )
       title: "CAP application"
@@ -27,13 +27,13 @@
   )}
 }
 
-{ %uid: uid-f265-941d-a0b8-ca5d
+{ UID: uid-f265-941d-a0b8-ca5d
   is: ( gui rule editable )
   when: "application created create land object"
   %notifying: ( => has $:form )
   view: {
     land: ( # => style "Your Land:"
-      { %uid: new
+      { UID: new
         %rules: ( uid-0215-038b-7558-041a uid-51b1-5d09-ed2f-519c )
         is: ( updatable land )
         title: Holding
@@ -44,7 +44,7 @@
   }
 }
 
-{ %uid: uid-5c78-11ee-a3c7-ba89
+{ UID: uid-5c78-11ee-a3c7-ba89
   %rules: ( uid-0215-038b-7558-041a uid-5f28-9174-b47d-2a74 uid-4a47-2cb6-8e99-a178 uid-6419-0368-25da-f91e )
   is: ( updatable land editable template )
   title: "Land area template"
@@ -61,7 +61,7 @@
   template: uid-9da2-71f4-4a2f-f389
 }
 
-{ %uid: uid-9da2-71f4-4a2f-f389
+{ UID: uid-9da2-71f4-4a2f-f389
   %rules: ( uid-6d46-73a1-05c4-1703 uid-c619-afdd-0d5d-1a5d )
   is: ( updatable land editable template )
   title: "Land feature template"
@@ -86,7 +86,7 @@
   ineligible:  { input: checkbox  label: BPS-Ineligible }
 }
 
-{ %uid: uid-fc2b-1ecb-5e7f-99c5
+{ UID: uid-fc2b-1ecb-5e7f-99c5
   bp-info: { style: { is:style direction:horizontal proportions:75% }
              text: "CAP Info:" link: http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm }
   fc-info: { style: { is:style direction:horizontal proportions:75% }
@@ -95,7 +95,7 @@
              text: "Stewardship Info:" link: http://www.naturalengland.gov.uk/ourwork/farming/funding/es/default.aspx }
 }
 
-{ %uid: uid-1cc7-4c21-9036-4e01
+{ UID: uid-1cc7-4c21-9036-4e01
   is: ( gui rule editable )
   when: "application created create payment summaries and object"
   view: {
@@ -104,7 +104,7 @@
     NE: ( # => style "Stewardship Payment (£):" 0 )
   }
   payment: ( # =>
-      { %uid: new
+      { UID: new
         %rules: ( uid-e683-5ee2-a986-b93b uid-d958-bf42-c730-8406 uid-73ec-5ea1-9cf0-dfa5 uid-8bbc-4ffc-dc43-5903 uid-a2c3-59ac-d898-0fc5 )
         is: ( payment editable )
         land: $:view:land:2
@@ -112,7 +112,7 @@
   )
 }
 
-{ %uid: uid-2433-fd91-25ad-2e9b
+{ UID: uid-2433-fd91-25ad-2e9b
   is: ( look-up editable )
   title: "Payments Look-up"
   bp-payment-per-ha: 100
@@ -128,7 +128,7 @@
   hls-he10:          485
 }
 
-{ %uid: uid-872c-b29e-03a1-7b61
+{ UID: uid-872c-b29e-03a1-7b61
   is: ( gui rule editable )
   when: "gui built set up its styles"
   view: { style: ( # => { is: style colours:lightgreen } )
@@ -140,27 +140,27 @@
   }
 }
 
-{ %uid: uid-51b1-5d09-ed2f-519c
+{ UID: uid-51b1-5d09-ed2f-519c
   is: ( land rule editable )
   when: "land area changes update total"
   area: ( => + $:list:area )
 }
 
-{ %uid: uid-0215-038b-7558-041a
+{ UID: uid-0215-038b-7558-041a
   is: ( land rule editable )
   when: "land object notified add to list"
   %alerted: { is: land place: * }
   list: ( ( $:%alerted ) !=> has $:%alerted )
 }
 
-{ %uid: uid-5f28-9174-b47d-2a74
+{ UID: uid-5f28-9174-b47d-2a74
   is: ( land rule editable )
   when: "ineligible land seen calculate unclaimable area"
   list: ( { area: * ineligible: true } )
   ineligible-area: ( => + $::list:area )
 }
 
-{ %uid: uid-6d46-73a1-05c4-1703
+{ UID: uid-6d46-73a1-05c4-1703
   is: ( land rule editable )
   when: "area used for woodland creation multiply area by payment per hectare for usage"
   area: number usage: /wcg-/
@@ -168,7 +168,7 @@
   fc-total: ( => $:area * ( $:usage selects $:place:place:constants ) )
 }
 
-{ %uid: uid-c619-afdd-0d5d-1a5d
+{ UID: uid-c619-afdd-0d5d-1a5d
   is: ( land rule editable )
   when: "area used for stewardship multiply area by payment per hectare for usage"
   area: number usage: /hls-/
@@ -176,54 +176,54 @@
   ne-total: ( => $:area * ( $:usage selects $:place:place:constants ) )
 }
 
-{ %uid: uid-4a47-2cb6-8e99-a178
+{ UID: uid-4a47-2cb6-8e99-a178
   is: ( land rule editable )
   when: "totals available calculate land total"
   list: ( { fc-total: * } )
   fc-total: ( => integer ( + $::list:fc-total ) )
 }
 
-{ %uid: uid-6419-0368-25da-f91e
+{ UID: uid-6419-0368-25da-f91e
   is: ( land rule editable )
   when: "totals available calculate land total"
   list: ( { ne-total: * } )
   ne-total: ( => integer ( + $::list:ne-total ) )
 }
 
-{ %uid: uid-e683-5ee2-a986-b93b
+{ UID: uid-e683-5ee2-a986-b93b
   is: ( payment rule editable )
   when: "eligible BP land seen calculate claimable area and multiply by payment per hectare"
   land: { list: ( { area: * usage: * entitlement: * active: true } ) }
   bp-total: ( => integer ( ( ( + $::land:list:area ) - ( + $::land:list:ineligible-area ) ) * $:land:constants:bp-payment-per-ha ) )
 }
 
-{ %uid: uid-d958-bf42-c730-8406
+{ UID: uid-d958-bf42-c730-8406
   is: ( payment rule editable )
   when: "basic payment calculated if less than min set to zero"
   bp-total: ( ( < $:land:constants:bp-minimum-payout ) => 0 )
 }
 
-{ %uid: uid-73ec-5ea1-9cf0-dfa5
+{ UID: uid-73ec-5ea1-9cf0-dfa5
   is: ( payment rule editable )
   when: "basic payment calculated set maximum"
   bp-total: ( ( > $:land:constants:bp-maximum-payout ) => $:land:constants:bp-maximum-payout )
 }
 
-{ %uid: uid-8bbc-4ffc-dc43-5903
+{ UID: uid-8bbc-4ffc-dc43-5903
   is: ( payment rule editable )
   when: "totals available calculate grand total"
   land: { list: ( { fc-total: * } ) }
   fc-total: ( => + $::land:list:fc-total )
 }
 
-{ %uid: uid-a2c3-59ac-d898-0fc5
+{ UID: uid-a2c3-59ac-d898-0fc5
   is: ( payment rule editable )
   when: "totals available calculate grand total"
   land: { list: ( { ne-total: * } ) }
   ne-total: ( => + $::land:list:ne-total )
 }
 
-{ %uid: uid-9ce9-1bdd-ec05-c8fa
+{ UID: uid-9ce9-1bdd-ec05-c8fa
   is: ( gui rule editable )
   when: "payment updates show it"
   view: { BP: ( * * ( => $:payment:bp-total ) )
@@ -231,7 +231,7 @@
           NE: ( * * ( => $:payment:ne-total ) ) }
 }
 
-{ %uid: uid-f1d2-4269-6821-9d7a
+{ UID: uid-f1d2-4269-6821-9d7a
   is: ( link list )
   title: "Business-Configurable Items"
   list: (

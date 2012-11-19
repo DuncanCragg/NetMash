@@ -198,7 +198,7 @@ public class Fjord extends WebObject {
         else
         if(evalFunction(pk,rhs,false));
         else
-        if(rhs.equals("new") && pk.endsWith("%uid")){
+        if(rhs.equals("new") && pk.endsWith("UID")){
             String basepath=pk.substring(0,pk.length()-5);
             content(basepath, spawn(getClass().newInstance().construct(contentHash(basepath))));
         }

@@ -144,9 +144,9 @@ public class Persistence implements FileUser {
 
     // ----------------------------------------
 
-    static public final String  UIDREJ = "^\\s*\\{\\s*\"%uid\":\\s*\"([^\"]+)\".*";
+    static public final String  UIDREJ = "^\\s*\\{\\s*\"UID\":\\s*\"([^\"]+)\".*";
     static public final Pattern UIDPAJ = Pattern.compile(UIDREJ, Pattern.MULTILINE | Pattern.DOTALL);
-    static public final String  UIDRES = "^\\s*\\{\\s*%uid:\\s*([^\\s]+).*";
+    static public final String  UIDRES = "^\\s*\\{\\s*UID:\\s*([^\\s]+).*";
     static public final Pattern UIDPAS = Pattern.compile(UIDRES, Pattern.MULTILINE | Pattern.DOTALL);
 
     public String findUIDAndDetectSumer(CharBuffer chars){

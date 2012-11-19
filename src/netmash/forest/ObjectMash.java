@@ -442,7 +442,7 @@ public class ObjectMash extends WebObject {
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String k=entry.getKey();
             Object o=entry.getValue();
-            if(k.equals("%uid") && !asis){ if(o.equals("new")){ spawned=true; }}
+            if(k.equals("UID") && !asis){ if(o.equals("new")){ spawned=true; }}
             else r.put(k, asis? copyObject(o,true): copyFindObject(o));
         }
         if(spawned) try{ return spawn(getClass().newInstance().construct(r)); } catch(Throwable t){ t.printStackTrace(); }

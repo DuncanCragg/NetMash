@@ -68,7 +68,7 @@ Stuff
  + all language changes
     - %alerted->Alerted, $:x->:x:, etc
     - tags delim lists - make single-item=multi work everywhere; xml style visually a: => b [ d ] :f: g: a b = a: [ => b [ d ] :f: ] g: [a b]
-    - see local cap.db: () not []
+    - see local cap.db
     - also use of '!', => ; self check $:/:
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - OM/OTS, etc -> sumer

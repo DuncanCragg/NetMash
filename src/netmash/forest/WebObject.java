@@ -61,7 +61,7 @@ public class WebObject {
     /** Construct WebObject after null ctor from Persistence. */
     public void construct(JSON json){
         funcobs = FunctionalObserver.funcobs;
-        uid     =          json.stringPathN("%uid");          json.removePath("%uid");
+        uid     =          json.stringPathN("UID");          json.removePath("UID");
         url     =          json.stringPathN("%url");          json.removePath("%url");
         etag    =          json.intPathN(   "%etag");         json.removePath("%etag"); if(etag==0) etag=1;
         maxAge  =          json.intPathN(   "%max-age");      json.removePath("%max-age");
@@ -78,7 +78,7 @@ public class WebObject {
         int httpetag=0;   try{ httpetag   = Integer.parseInt(httpETag);   }catch(Throwable t){ httpETag  =null; }
         int httpmaxage=0; try{ httpmaxage = Integer.parseInt(httpMaxAge); }catch(Throwable t){ httpMaxAge=null; }
         uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%url");     json.removePath("%url");
-        uid     = (uid       !=null)? uid:        json.stringPathN("%uid");     json.removePath("%uid");
+        uid     = (uid       !=null)? uid:        json.stringPathN("UID");     json.removePath("UID");
         uid     = (uid       !=null)? uid:        httpReqURL;
         uid     = UID.toUIDifLocal(uid);
         etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
@@ -749,12 +749,12 @@ public class WebObject {
 
     public String toString(int maxlength){
         if(maxlength==0) return toString();
-        if(isShell()) return   "{ \"%uid\": \""+uid+
+        if(isShell()) return   "{ \"UID\": \""+uid+
                              "\", \"%notify\": "+setToListString(notify)+
                                ", \"%alertedin\": "+setToListString(alertedin)+
                                ", \"%state\": \""+shellstate+"\"}";
         String r = publicState.toString(
-                                 "\"%uid\": \""+uid+
+                                 "\"UID\": \""+uid+
                  (url!=null? "\", \"%url\": \""+url: "")+
                              "\", \"%etag\": "+etag+
                                ", \"%max-age\": "+maxAge+
@@ -768,12 +768,12 @@ public class WebObject {
 
     public String toString(boolean sumer){
         if(!sumer) return toString();
-        if(isShell()) return "{ %uid: "+uid+
+        if(isShell()) return "{ UID: "+uid+
                            "\n  %notify: "+setToListString(notify, true)+
                            "\n  %alertedin: "+setToListString(alertedin, true)+
                            "\n  %state: "+shellstate+"\n}\n";
         String r = publicState.toString(
-                               "%uid: "+uid+
+                               "UID: "+uid+
               (url!=null?  "\n  %url: "+url: "")+
                            "\n  %etag: "+etag+
                            "\n  %max-age: "+maxAge+
@@ -786,12 +786,12 @@ public class WebObject {
     }
 
     public String toString(){
-        if(isShell()) return "{ \"%uid\": \""+uid+
+        if(isShell()) return "{ \"UID\": \""+uid+
                         "\",\n  \"%notify\": "+setToListString(notify)+
                           ",\n  \"%alertedin\": "+setToListString(alertedin)+
                           ",\n  \"%state\": \""+shellstate+"\"\n}\n";
         String r = publicState.toString(
-                                 "\"%uid\": \""+uid+
+                                 "\"UID\": \""+uid+
             (url!=null? "\",\n  \"%url\": \""+url: "")+
                         "\",\n  \"%etag\": "+etag+
                           ",\n  \"%max-age\": "+maxAge+
@@ -805,7 +805,7 @@ public class WebObject {
 
     public String toString(HashSet<String> percents){
         String r = publicState.toString(
-                       ( percents.contains("%uid")?               "\"%uid\": \""  +uid+                  "\",\n    ": "")+
+                       ( percents.contains("UID")?               "\"UID\": \""  +uid+                  "\",\n    ": "")+
                        ((percents.contains("%url") && url!=null)? "\"%url\": \""  +url+                  "\",\n    ": "")+
                        ( percents.contains("%etag")?              "\"%etag\": "   +etag+                   ",\n    ": "")+
                        ( percents.contains("%max-age")?           "\"%max-age\": "+maxAge+                 ",\n    ": "")+

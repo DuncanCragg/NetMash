@@ -499,7 +499,7 @@ abstract class HTTPCommon {
     protected HashSet<String> getPercents(boolean includeNotify){
         HashSet<String> percents = new HashSet<String>();
         if(tunnelHeaders){
-            percents.add("%uid");
+            percents.add("UID");
             percents.add("%url");
             percents.add("%etag");
             percents.add("%max-age");
