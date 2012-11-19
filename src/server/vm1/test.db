@@ -1,8 +1,8 @@
 {   UID: uid-424d-01c5-ee08-2ec9
     is: ( fx dealer rule )
     when: "FX order comes in start building ticket. 1"
-    %alerted: { is: order ticket: <#> }
-    ticketfor: <#>%alerted
+    Alerted: { is: order ticket: <#> }
+    ticketfor: <#>Alerted
     ticket: <#>{}
 }
 

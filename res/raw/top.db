@@ -33,8 +33,8 @@
 { UID: uid-e6e9-df58-ddab-6eb9
   is: ( 3d rule editable )
   when: "swiped, change light"
-  %alerted: {  is: swipe }
-  light: ( * ( => clamp 0 1 ( $:light:1 + $:%alerted:dx ) ) ( => clamp 0 1 ( $:light:2 + $:%alerted:dy ) ) )
+  Alerted: {  is: swipe }
+  light: ( * ( => clamp 0 1 ( $:light:1 + $:Alerted:dx ) ) ( => clamp 0 1 ( $:light:2 + $:Alerted:dy ) ) )
 }
 
 { UID: uid-f6c8-2d51-8060-a52a
@@ -80,21 +80,21 @@
 { UID: uid-fb3e-02d3-70bb-916f
   is: ( 3d rule editable )
   when: "swiped right, set to checking"
-  %alerted: { is: swipe dx: ( > 0 ) }
+  Alerted: { is: swipe dx: ( > 0 ) }
   status: ( => checking )
 }
 
 { UID: uid-536b-de0b-41db-41d1
   is: ( 3d rule editable )
   when: "swiped left after sorry, set to waiting with old challenge"
-  %alerted: { is: swipe dx: ( < 0 ) }
+  Alerted: { is: swipe dx: ( < 0 ) }
   status: ( sorry => waiting )
 }
 
 { UID: uid-fbd9-4a4d-c3c7-c31f
   is: ( 3d rule editable )
   when: "swiped left after good, set to waiting and create random numerator"
-  %alerted: { is: swipe dx: ( < 0 ) }
+  Alerted: { is: swipe dx: ( < 0 ) }
   status: ( good => waiting )
   numerator: ( => random 0 $:denominator )
 }
@@ -161,14 +161,14 @@
 { UID: uid-1b54-d28a-71dc-5827
   is: ( 3d rule editable )
   when: "swiped down, turn on light"
-  %alerted: { is: swipe dy: ( > 0 ) }
+  Alerted: { is: swipe dy: ( > 0 ) }
   light: ( * ( => 1 ) ( => 1 ) )
 }
 
 { UID: uid-7b1a-4b1d-1424-2818
   is: ( 3d rule editable )
   when: "swiped up, turn off light"
-  %alerted: { is: swipe dy: ( < 0 ) }
+  Alerted: { is: swipe dy: ( < 0 ) }
   light: ( * ( => 0.4 ) ( => 0.7 ) )
 }
 
@@ -190,8 +190,8 @@
 { UID: uid-58cb-cc31-1769-c2c4
   is: ( gui rule editable )
   when: "form changes, do calculation"
-  %alerted: {  is: form }
-  form: ( => $:%alerted )
+  Alerted: {  is: form }
+  form: ( => $:Alerted )
   view: {
     #panel: (
       { #f: { value: ( => $:form:form:f ) } }

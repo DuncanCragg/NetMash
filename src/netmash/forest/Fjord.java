@@ -50,14 +50,14 @@ public class Fjord extends WebObject {
 
         LinkedHashMap<String,Object> rule=contentHash(String.format("Rules:%d:#", r));
 
-        contentTemp("%alerted", alerted);
+        contentTemp("Alerted", alerted);
 
         boolean ok=scanRuleHash(rule, "");
 
         if(ok) log("Rule fired: \"When "+contentOr(String.format("Rules:%d:when", r),"fired")+"\"");
         if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
 
-        contentTemp("%alerted", null);
+        contentTemp("Alerted", null);
     }
 
     static public final String  REWRITERE = "^<(.*)>(.*)$";
@@ -188,7 +188,7 @@ public class Fjord extends WebObject {
         else
         if(rhs.startsWith("hasno("))   contentListRemove(pk,         rhs.substring(6,rhs.length()-1));
         else
-        if(rhs.equals("%alerted")) content(pk,content(rhs));
+        if(rhs.equals("Alerted")) content(pk,content(rhs));
         else
         if(rhs.equals("$:"))       content(pk,uid);
         else

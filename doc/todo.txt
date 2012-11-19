@@ -66,7 +66,7 @@ Bugs, Refactoring
 Stuff
 
  + all language changes
-    - %alerted->Alerted, $:x->:x:, etc
+    - $:x->:x:, etc
     - tags delim lists - make single-item=multi work everywhere; xml style visually a: => b [ d ] :f: g: a b = a: [ => b [ d ] :f: ] g: [a b]
     - see local cap.db
     - also use of '!', => ; self check $:/:
@@ -151,14 +151,14 @@ Interactions
     - or scroll by swiping, edit someotherhow
  - move from edge, interact from middle
  - touch state linking to user. as you move, it updates.
-   %alerted:
+   Alerted:
    { is: swipe, user: .., target: .., swipe: [ 1.4, 4.3 ], direction: [ -0.1, 0.23 ] }
     .. accumulated distance / vector from start; current direction vector
-   userswipes: +=> %alerted
+   userswipes: +=> Alerted
    [ [ + $:userswipes:swipe:0 ] / [ count $:userswipes ] ] is average of x
    [ [ average $:userswipes:swipe:0 ] ]
  - bumping into something can be an event too, just like swiping
- - attaching accelerometer value to an object: %alerted, then watch user
+ - attaching accelerometer value to an object: Alerted, then watch user
 
 Physics
 

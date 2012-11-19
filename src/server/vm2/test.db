@@ -35,8 +35,8 @@
 {   UID: uid-3aaa-bfc1-7d0c-5348
     is: ( fx order rule )
     when: "you see the ticket link to it and start notifying it instead of the dealer. 2"
-    %alerted: { is: ticket }
-    ticket: <#>%alerted
+    Alerted: { is: ticket }
+    ticket: <#>Alerted
     %notifying: <>has($:ticket);hasno($:dealer)
 }
 
@@ -109,15 +109,15 @@
 {   UID: uid-286a-b820-14ff-8d02
     is: ( equity instrument rule )
     when: "someone bids on this instrument add to buyers. 3"
-    %alerted: { is: ( equity bid ) on: <$:> }
-    buyers: <>has(%alerted)
+    Alerted: { is: ( equity bid ) on: <$:> }
+    buyers: <>has(Alerted)
 }
 
 {   UID: uid-1cb9-6b32-be37-8f3b
     is: ( equity instrument rule )
     when: "someone asks on this instrument add to sellers. 4"
-    %alerted: { is: ( equity ask ) on: <$:> }
-    sellers: <>has(%alerted)
+    Alerted: { is: ( equity ask ) on: <$:> }
+    sellers: <>has(Alerted)
 }
 
 {   UID: uid-fed3-2712-f1c8-7c49

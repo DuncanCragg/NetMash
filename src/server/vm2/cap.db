@@ -12,16 +12,16 @@
 { UID: uid-c265-091b-418c-c329
   is: ( gui rule editable )
   when: "form submitted create application"
-  %alerted: { is: form }
-  view: { applications: ( ( { form: $:%alerted } ) !=> has
+  Alerted: { is: form }
+  view: { applications: ( ( { form: $:Alerted } ) !=> has
     { UID: new
       Rules: ( uid-f265-941d-a0b8-ca5d uid-1cc7-4c21-9036-4e01 uid-872c-b29e-03a1-7b61 uid-9ce9-1bdd-ec05-c8fa )
       is: ( gui editable )
       title: "CAP application"
-      form: $:%alerted
+      form: $:Alerted
       view: {
         title: "CAP Application"
-        user: ( style You: $:%alerted:user )
+        user: ( style You: $:Alerted:user )
       }
     }
   )}
@@ -149,8 +149,8 @@
 { UID: uid-0215-038b-7558-041a
   is: ( land rule editable )
   when: "land object notified add to list"
-  %alerted: { is: land place: * }
-  list: ( ( $:%alerted ) !=> has $:%alerted )
+  Alerted: { is: land place: * }
+  list: ( ( $:Alerted ) !=> has $:Alerted )
 }
 
 { UID: uid-5f28-9174-b47d-2a74
