@@ -24,7 +24,7 @@
         user: ( style "You:" $:Alerted:user )
       }
     }
-  )}
+  ) }
 }
 
 { UID: uid-f265-941d-a0b8-ca5d
@@ -87,11 +87,11 @@
 }
 
 { UID: uid-fc2b-1ecb-5e7f-99c5
-  bp-info: { style: { is:style direction:horizontal proportions:75% }
+  bp-info: { style: { is: style direction: horizontal proportions: 75% }
              text: "CAP Info:" link: http://ec.europa.eu/agriculture/cap-post-2013/index_en.htm }
-  fc-info: { style: { is:style direction:horizontal proportions:75% }
+  fc-info: { style: { is: style direction: horizontal proportions: 75% }
              text: "Forestry Info:" link: http://www.forestry.gov.uk/forestry/infd-6dcegu }
-  ne-info: { style: { is:style direction:horizontal proportions:75% }
+  ne-info: { style: { is: style direction: horizontal proportions: 75% }
              text: "Stewardship Info:" link: http://www.naturalengland.gov.uk/ourwork/farming/funding/es/default.aspx }
 }
 
@@ -131,12 +131,12 @@
 { UID: uid-872c-b29e-03a1-7b61
   is: ( gui rule editable )
   when: "gui built set up its styles"
-  view: { style: ( # => { is: style colours:lightgreen } )
-          user: ( ( style => { is:style direction:horizontal proportions:75% } ) )
-          land: ( ( style => { is:style direction:horizontal proportions:75% } ) )
-          BP:   ( ( style => { is:style direction:horizontal proportions:50% colours:lightblue } ) )
-          FC:   ( ( style => { is:style direction:horizontal proportions:50% colours:lightblue } ) )
-          NE:   ( ( style => { is:style direction:horizontal proportions:50% colours:lightblue } ) )
+  view: { style: ( # => { is: style colours: lightgreen } )
+          user: ( ( style => { is: style direction: horizontal proportions: 75% } ) )
+          land: ( ( style => { is: style direction: horizontal proportions: 75% } ) )
+          BP:   ( ( style => { is: style direction: horizontal proportions: 50% colours: lightblue } ) )
+          FC:   ( ( style => { is: style direction: horizontal proportions: 50% colours: lightblue } ) )
+          NE:   ( ( style => { is: style direction: horizontal proportions: 50% colours: lightblue } ) )
   }
 }
 

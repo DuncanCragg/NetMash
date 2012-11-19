@@ -110,6 +110,7 @@ public class TestJSON {
             "                   modules:  { cache: { funky: \""+funkychars+"\" }\n"+
             "                               http: { port: 8080 }\n"+
             "                               logic: true false { foo: null } ( true false ( ( null stringnospaces ) ) \"string with  spaces\" )\n"+
+            "                               bits: \"string with  (double ) spaces:\" b: c \n"+
             "                               more: true ( 35392743408672770 { a: -2147483649 b: 2147483648 c: ( -2147483648 2147483647 y: ) x } false ) null\n"+
             "                   }\n"+
             "      }\n", true);

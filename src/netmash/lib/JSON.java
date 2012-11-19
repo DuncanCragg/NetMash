@@ -535,6 +535,7 @@ public class JSON {
             int chpsave=chp;
             if(chars[chp]=='{'){ ll.add(readSumerHash()); continue; }
             if(chars[chp]=='('){ ll.add(readSumerList()); continue; }
+            if(chars[chp]=='"'){ ll.add(readString());    continue; }
             String s=readSumerString();
             int chpstringok=chp;
             chp=chpsave;
