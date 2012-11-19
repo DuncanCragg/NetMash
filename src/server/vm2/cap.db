@@ -21,7 +21,7 @@
       form: $:Alerted
       view: {
         title: "CAP Application"
-        user: ( style You: $:Alerted:user )
+        user: ( style "You:" $:Alerted:user )
       }
     }
   )}
@@ -163,7 +163,8 @@
 { UID: uid-6d46-73a1-05c4-1703
   is: ( land rule editable )
   when: "area used for woodland creation multiply area by payment per hectare for usage"
-  area: number usage: /wcg-/
+  area: number
+  usage: /wcg-/
   ne-total: ( => 0 )
   fc-total: ( => $:area * ( $:usage selects $:place:place:constants ) )
 }

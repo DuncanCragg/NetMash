@@ -164,7 +164,7 @@ public class ObjectMash extends WebObject {
 
     private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
-        if(!r && extralogging) log("Failed to match "+v+" at: "+pk);
+        if(!r && extralogging) log("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
         return r;
     }
 
