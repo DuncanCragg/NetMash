@@ -9,7 +9,7 @@
 {   UID: uid-e772-4f4f-f981-0cea
     is: ( fx dealer rule )
     when: "FX order comes in spawn and add ticket to tickets list. 2"
-    ticket: {  %rules: "<#>list(uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377)"
+    ticket: {  Rules: "<#>list(uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377)"
                  is: "<#>list(fx ticket)"
                  order: <#>$:ticketfor
                  ask: <#>81.9
@@ -64,7 +64,7 @@
 
 {   UID: uid-ba2b-8619-fdea-8c2c
     %class: FXDealerTicket
-    %rules: ( uid-424d-01c5-ee08-2ec9 uid-e772-4f4f-f981-0cea )
+    Rules: ( uid-424d-01c5-ee08-2ec9 uid-e772-4f4f-f981-0cea )
     is: ( fx dealer )
     tickets: ( )
 }

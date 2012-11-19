@@ -25,14 +25,14 @@ public class ObjectMash extends WebObject {
 
     public void evaluate(){
         LinkedList<String> evalrules=getEvalRules();
-        if(!evalrules.isEmpty()) contentSetPushAll("%rules",evalrules);
+        if(!evalrules.isEmpty()) contentSetPushAll("Rules",evalrules);
         if(extralogging) log("Running ObjectMash on "+uid+": "+contentHash("#"));
-        LinkedList rules=contentList("%rules");
+        LinkedList rules=contentList("Rules");
         if(extralogging) log("Rules: "+rules);
         if(rules==null) return;
         int r=0;
         for(Object o: rules){
-            LinkedList ruleis=contentList(String.format("%%rules:%d:is", r));
+            LinkedList ruleis=contentList(String.format("Rules:%d:is", r));
             if(extralogging) log("Rule "+r+" is="+ruleis);
             if(ruleis==null) return;
             boolean ok=true;
@@ -44,7 +44,7 @@ public class ObjectMash extends WebObject {
             if(ok) runRule(r);
             r++;
         }
-        if(!evalrules.isEmpty()) contentSetPushAll("%rules",evalrules);
+        if(!evalrules.isEmpty()) contentSetPushAll("Rules",evalrules);
     }
 
     private LinkedList<String> getEvalRules(){
@@ -68,12 +68,12 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
-        String name=contentOr(String.format("%%rules:%d:when", r),"");
+        String name=contentOr(String.format("Rules:%d:when", r),"");
         if(alerted!=null && !contentSet("%alerted")) contentTemp("%alerted",alerted);
         ; if(extralogging) log("Running rule \""+name+"\"");
         ; if(extralogging) log("alerted:\n"+contentHash("%alerted:#"));
         rewrites.clear(); bindings.clear();
-        LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
+        LinkedHashMap<String,Object> rule=contentHash(String.format("Rules:%d:#", r));
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
         ; if(ok) log("Rule fired: \""+name+"\"");
@@ -89,7 +89,7 @@ public class ObjectMash extends WebObject {
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=path+entry.getKey();
             if(path.equals("")){
-                if(pk.equals("%rules")) continue;
+                if(pk.equals("Rules")) continue;
                 if(pk.equals("is")) continue;
                 if(pk.equals("when")) continue;
                 if(pk.equals("watching")) continue;

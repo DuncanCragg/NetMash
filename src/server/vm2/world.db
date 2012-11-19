@@ -7,7 +7,7 @@
 
 { UID: uid-39da-3645-4f58-50cb
   %class: server.types.PresenceTracker
-  %rules: ( uid-56d4-91ef-a2fc-2585 )
+  Rules: ( uid-56d4-91ef-a2fc-2585 )
   is: ( place 3d mesh editable )
   title: "Ann Droid's Place"
   rotation: ( 0 0 0 )

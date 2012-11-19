@@ -1,6 +1,6 @@
 { UID: uid-39da-3645-4f58-50cb
   %class: netmash.forest.ObjectMash
-  %rules: ( uid-e164-2547-46b0-f47e
+  Rules: ( uid-e164-2547-46b0-f47e
               uid-40fb-5964-b385-c922
               uid-1de5-4d69-667a-56e4
               uid-61d6-65c9-2931-505b

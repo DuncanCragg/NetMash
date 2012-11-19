@@ -1,6 +1,6 @@
 { UID: uid-5f55-165f-abb3-947a
   %class: netmash.forest.Fjord
-  %rules: ( uid-b2ea-21bc-8546-cf49 )
+  Rules: ( uid-b2ea-21bc-8546-cf49 )
   is: testfjord
   list: ( a b c )
 }
@@ -13,7 +13,7 @@
 
 { UID: uid-2875-04a7-a6cb-eeee
   %class: netmash.forest.Fjord
-  %rules: ( uid-7731-edb1-73a5-00ad )
+  Rules: ( uid-7731-edb1-73a5-00ad )
   is: testfjord
   x: 1 aa: {}
 }
@@ -66,7 +66,7 @@
 {   UID: uid-5411-baae-d459-4c6c
     is: ( fx order rule )
     when: "payment shell there fill it out and spawn it. 6"
-    payment: { %rules: <#>list(uid-c8f2-3fcb-bea9-08b4)
+    payment: { Rules: <#>list(uid-c8f2-3fcb-bea9-08b4)
                  is: <#>payment
                  order: <#>$:
                  invoice: <#>$:ticket
@@ -85,7 +85,7 @@
 
 {   UID: uid-0145-54f4-36db-302e
     %class: netmash.forest.Fjord
-    %rules: ( uid-5348-3aaa-bfc1-7d0c uid-3aaa-bfc1-7d0c-5348 uid-7d0c-5348-3aaa-bfc1
+    Rules: ( uid-5348-3aaa-bfc1-7d0c uid-3aaa-bfc1-7d0c-5348 uid-7d0c-5348-3aaa-bfc1
                 uid-bfc1-7d0c-5348-3aaa uid-4e30-2365-3015-e181 uid-5411-baae-d459-4c6c )
     is: ( fx order )
     params: { fxpair: usd/jpy fxtype: buylim price: 81.7 investment: 500.00 }
@@ -134,28 +134,28 @@
 
 {   UID: uid-a39f-b330-0492-100f
     %class: netmash.forest.Fjord
-    %rules: ( uid-2520-44e1-a2a2-8ef1 )
+    Rules: ( uid-2520-44e1-a2a2-8ef1 )
     is: ( equity bid )
     on: uid-1488-6110-092d-2bae
 }
 
 {   UID: uid-9272-b51a-1606-32e0
     %class: netmash.forest.Fjord
-    %rules: ( uid-2520-44e1-a2a2-8ef1 )
+    Rules: ( uid-2520-44e1-a2a2-8ef1 )
     is: ( equity bid )
     on: uid-1488-6110-092d-2bae
 }
 
 {   UID: uid-09e4-e69b-54a4-a725
     %class: netmash.forest.Fjord
-    %rules: ( uid-b382-de77-f352-efe6 )
+    Rules: ( uid-b382-de77-f352-efe6 )
     is: ( equity ask )
     on: uid-1488-6110-092d-2bae
 }
 
 {   UID: uid-1488-6110-092d-2bae
     %class: netmash.forest.Fjord
-    %rules: ( uid-286a-b820-14ff-8d02 uid-1cb9-6b32-be37-8f3b uid-fed3-2712-f1c8-7c49 uid-dd27-36cf-f13d-3768 )
+    Rules: ( uid-286a-b820-14ff-8d02 uid-1cb9-6b32-be37-8f3b uid-fed3-2712-f1c8-7c49 uid-dd27-36cf-f13d-3768 )
     is: ( equity instrument )
     long-name: "Acme Co. Inc"
     buyers: ( )

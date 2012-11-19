@@ -1,5 +1,5 @@
 { UID: uid-c102-dd84-8284-c360
-  %rules: ( uid-c265-091b-418c-c329 )
+  Rules: ( uid-c265-091b-418c-c329 )
   is: ( gui editable )
   title: "CAP Payments Demo"
   view: { logo: http://www.shaunthesheep.be/shaunthesheep/foto/500/thefarmer-1.jpg
@@ -15,7 +15,7 @@
   %alerted: { is: form }
   view: { applications: ( ( { form: $:%alerted } ) !=> has
     { UID: new
-      %rules: ( uid-f265-941d-a0b8-ca5d uid-1cc7-4c21-9036-4e01 uid-872c-b29e-03a1-7b61 uid-9ce9-1bdd-ec05-c8fa )
+      Rules: ( uid-f265-941d-a0b8-ca5d uid-1cc7-4c21-9036-4e01 uid-872c-b29e-03a1-7b61 uid-9ce9-1bdd-ec05-c8fa )
       is: ( gui editable )
       title: "CAP application"
       form: $:%alerted
@@ -34,7 +34,7 @@
   view: {
     land: ( # => style "Your Land:"
       { UID: new
-        %rules: ( uid-0215-038b-7558-041a uid-51b1-5d09-ed2f-519c )
+        Rules: ( uid-0215-038b-7558-041a uid-51b1-5d09-ed2f-519c )
         is: ( updatable land )
         title: Holding
         template: uid-5c78-11ee-a3c7-ba89
@@ -45,7 +45,7 @@
 }
 
 { UID: uid-5c78-11ee-a3c7-ba89
-  %rules: ( uid-0215-038b-7558-041a uid-5f28-9174-b47d-2a74 uid-4a47-2cb6-8e99-a178 uid-6419-0368-25da-f91e )
+  Rules: ( uid-0215-038b-7558-041a uid-5f28-9174-b47d-2a74 uid-4a47-2cb6-8e99-a178 uid-6419-0368-25da-f91e )
   is: ( updatable land editable template )
   title: "Land area template"
   usage:           { input: chooser   label: "Land Usage:" range: {
@@ -62,7 +62,7 @@
 }
 
 { UID: uid-9da2-71f4-4a2f-f389
-  %rules: ( uid-6d46-73a1-05c4-1703 uid-c619-afdd-0d5d-1a5d )
+  Rules: ( uid-6d46-73a1-05c4-1703 uid-c619-afdd-0d5d-1a5d )
   is: ( updatable land editable template )
   title: "Land feature template"
   usage:       { input: chooser   label: "Land Usage:" range: {
@@ -105,7 +105,7 @@
   }
   payment: ( # =>
       { UID: new
-        %rules: ( uid-e683-5ee2-a986-b93b uid-d958-bf42-c730-8406 uid-73ec-5ea1-9cf0-dfa5 uid-8bbc-4ffc-dc43-5903 uid-a2c3-59ac-d898-0fc5 )
+        Rules: ( uid-e683-5ee2-a986-b93b uid-d958-bf42-c730-8406 uid-73ec-5ea1-9cf0-dfa5 uid-8bbc-4ffc-dc43-5903 uid-a2c3-59ac-d898-0fc5 )
         is: ( payment editable )
         land: $:view:land:2
       }

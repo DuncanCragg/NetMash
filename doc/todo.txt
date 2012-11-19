@@ -235,7 +235,7 @@ IDE stuff
     - smooths over ugliness: %, "", etc
  - render a rule nicely: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
     - render rules specially as recognised type
-    - render JSON as recognised ObNet type: %rules, %more, is, etc known
+    - render JSON as recognised ObNet type: Rules, %more, is, etc known
     - colour syntax highlighting
  - show how lists and singles are treated the same somehow
  - split-screen and/or easy-flip: Object, Object Net, Object Mash

@@ -21,12 +21,12 @@ public class Fjord extends WebObject {
 
     public void evaluate(){
         if(extralogging) log("Running Fjord on "+contentHash("#"));
-        LinkedList rules=contentList("%rules");
+        LinkedList rules=contentList("Rules");
         if(extralogging) log("Rules: "+rules);
         if(rules==null) return;
         int r=0;
         for(Object o: rules){
-            LinkedList ruleis=contentList(String.format("%%rules:%d:is", r));
+            LinkedList ruleis=contentList(String.format("Rules:%d:is", r));
             if(ruleis==null) return;
             boolean ok=true;
             for(Object is: ruleis){
@@ -46,15 +46,15 @@ public class Fjord extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
-        if(extralogging) log("Running rule \"When "+contentOr(String.format("%%rules:%d:when", r),"fired")+"\"");
+        if(extralogging) log("Running rule \"When "+contentOr(String.format("Rules:%d:when", r),"fired")+"\"");
 
-        LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
+        LinkedHashMap<String,Object> rule=contentHash(String.format("Rules:%d:#", r));
 
         contentTemp("%alerted", alerted);
 
         boolean ok=scanRuleHash(rule, "");
 
-        if(ok) log("Rule fired: \"When "+contentOr(String.format("%%rules:%d:when", r),"fired")+"\"");
+        if(ok) log("Rule fired: \"When "+contentOr(String.format("Rules:%d:when", r),"fired")+"\"");
         if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"===========\n");
 
         contentTemp("%alerted", null);
@@ -71,7 +71,7 @@ public class Fjord extends WebObject {
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=path+entry.getKey();
             if(path.equals("")){
-                if(pk.equals("%rules")) continue;
+                if(pk.equals("Rules")) continue;
                 if(pk.equals("is")) continue;
                 if(pk.equals("when")) continue;
                 if(pk.equals("watching")) continue;
