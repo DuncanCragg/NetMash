@@ -3,8 +3,8 @@
   persist: { directory: .
              db: netmash.db
              syncrate: 100
-             preload: [ uid-5f55-165f-abb3-947a uid-2875-04a7-a6cb-eeee ]
-             pieload: [ uid-1488-6110-092d-2bae uid-a39f-b330-0492-100f uid-09e4-e69b-54a4-a725 ]
+             preload: ( uid-5f55-165f-abb3-947a uid-2875-04a7-a6cb-eeee )
+             pieload: ( uid-1488-6110-092d-2bae uid-a39f-b330-0492-100f uid-09e4-e69b-54a4-a725 )
    }
   network: { host: localhost
              port: 8082

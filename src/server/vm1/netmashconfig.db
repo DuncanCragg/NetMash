@@ -3,7 +3,7 @@
   persist: { directory: .
              db: netmash.db
              syncrate: 100
-             preload: [ ] }
+             preload: ( ) }
   network: { host: 10.0.2.2
              port: 8081
              pathprefix: /o/

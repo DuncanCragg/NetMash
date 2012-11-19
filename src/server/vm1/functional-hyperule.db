@@ -1,4 +1,4 @@
-{ is: [ demo rule ]
+{ is: ( demo rule )
   when: "run set title to join of x and y"
   title: "<>join(  $:x $:y)"
 }

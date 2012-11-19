@@ -1,15 +1,15 @@
 { %uid: uid-26bc-8ee9-5443-851a
-  %rules: [ uid-16f2-2db0-e9fe-1d7d ]
-  is: [ demo editable ]
+  %rules: ( uid-16f2-2db0-e9fe-1d7d )
+  is: ( demo editable )
   x: Hello
   y: World
   title: Demo..
 }
 
 { %uid: uid-16f2-2db0-e9fe-1d7d
-  is: [ demo rule editable ]
+  is: ( demo rule editable )
   when: "run set title to join of x and y"
-  title: [ => join [ $:x $:y ] " " ]
+  title: ( => join ( $:x $:y ) " " )
 }
 
 { %uid: uid-3927-d995-837f-f165
@@ -24,19 +24,19 @@
 
 { %uid: uid-f74b-020f-af28-5671
   %class: netmash.forest.Fjord
-  %rules: [ uid-3c3a-7576-a61b-ed87
-              uid-61fd-78a2-60b6-4c27 ]
+  %rules: ( uid-3c3a-7576-a61b-ed87
+              uid-61fd-78a2-60b6-4c27 )
   is: fibonacci
   title: "Fibonacci Generator"
   x: 1
   y: 1
   config: uid-7756-cb46-4b1b-89cc
   o: {}
-  seq: []
+  seq: ()
 }
 
 { %uid: uid-3c3a-7576-a61b-ed87
-  is: [ fibonacci rule ]
+  is: ( fibonacci rule )
   when: "running z is sum of x and y"
   y: <lt($:config:max)>
   z: <>sum($:x $:y)
@@ -46,7 +46,7 @@
 }
 
 { %uid: uid-61fd-78a2-60b6-4c27
-  is: [ fibonacci rule ]
+  is: ( fibonacci rule )
   when: "z calculated shift back"
   z: <sum($:x $:y)>
   x: <>$:y
@@ -59,27 +59,27 @@
 }
 
 { %uid: uid-bbfb-f9c4-81f5-fb57
-  is: [ gui rule ]
+  is: ( gui rule )
   when: "max changed set it"
   %alerted: { is: form }
   max: <>$:%alerted:form:max
 }
 
 { %uid: uid-0c8f-4a83-b6c2-84c0
-  is: [ gui rule ]
+  is: ( gui rule )
   when: "processor changed set it"
   %alerted: { is: processor }
   view: { #res: <>$:%alerted:results }
 }
 
 { %uid: uid-6373-8190-fe6c-27ba
-  is: [ gui rule ]
+  is: ( gui rule )
   when: "gui built set up its styles. 1"
   view: { style: <#>{} }
 }
 
 { %uid: uid-cc96-00ff-a9df-381a
-  is: [ gui rule ]
+  is: ( gui rule )
   when: "gui built set up its styles. 2"
   view: { style:{
       is: <#>style
@@ -89,19 +89,19 @@
 
 { %uid: uid-a205-babf-72a4-1272
   %class: netmash.forest.Fjord
-  %rules: [ uid-5f5d-6d29-64d8-2d8c
-              uid-b3ae-5b55-65ad-a296 ]
-  is: [ attendable event ]
+  %rules: ( uid-5f5d-6d29-64d8-2d8c
+              uid-b3ae-5b55-65ad-a296 )
+  is: ( attendable event )
   title: "Over the Air 2011"
   content: "UK Mobile meetup at Bletchley Park"
   start: "Fri 30 Sep 2011 09:00:00 GMT"
   end:   "Sat  1 Oct 2011 23:00:00 GMT"
   location: uid-35c0-9017-99c1-db63
-  attendees: [ ]
+  attendees: ( )
 }
 
 { %uid: uid-5f5d-6d29-64d8-2d8c
-  is: [ event rule ]
+  is: ( event rule )
   when: "rsvp attending received ensure user is in attendees"
   %alerted: { is: rsvp
                 event: <$:>
@@ -110,7 +110,7 @@
 }
 
 { %uid: uid-b3ae-5b55-65ad-a296
-  is: [ event rule ]
+  is: ( event rule )
   when: "rsvp not attending ensure user not in attendees"
   %alerted: { is: rsvp
                 event: <$:>
@@ -119,42 +119,42 @@
 }
 
 { %uid: uid-35c0-9017-99c1-db63
-  is: [ contact ]
+  is: ( contact )
   full-name: "Bletchley Park"
   address: {
-      extended: [ "The Mansion" "Bletchley Park" ]
+      extended: ( "The Mansion" "Bletchley Park" )
       street: "Sherwood Drive"
-      locality: [ Bletchley "Milton Keynes" ]
+      locality: ( Bletchley "Milton Keynes" )
       region: Buckinghamshire
       postal-code: "MK3 6EB"
       country: UK
   }
   phone: { work: "01908 640404" }
-  email: [ info@bletchleypark.org.uk ]
+  email: ( info@bletchleypark.org.uk )
   web-view: http://www.bletchleypark.org/
 }
 
 { %uid: uid-afcb-9ff0-9270-98b0
   %class: netmash.forest.Fjord
-  %rules: [ uid-6db8-55e9-793e-e35c ]
-  is: [ gui ]
+  %rules: ( uid-6db8-55e9-793e-e35c )
+  is: ( gui )
   title: "Event Attendance Manager"
   view: {
-       #attending: "?[Attending /boolean/ ]?"
-       #event: [ { is: style
+       #attending: "?(Attending /boolean/ )?"
+       #event: ( { is: style
                      direction: horizontal
                      options: jump
                      proportions: 75% }
               Event:
               http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json
-       ]
+       )
   }
   event: http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json
   rsvp: {}
 }
 
 { %uid: uid-6db8-55e9-793e-e35c
-  is: [ gui rule ]
+  is: ( gui rule )
   when: "attendance set first time set form create new rsvp"
   %alerted: { is: form gui: <$:> }
   form: <#>%alerted
@@ -168,7 +168,7 @@
 }
 
 { %uid: uid-da1d-583e-0be6-ad59
-  is: [ rsvp rule ]
+  is: ( rsvp rule )
   when: "attendance set each time set rsvp status for event"
   gui:{ form:{ form:{ attending: true }}}
   attending: <>yes
@@ -176,7 +176,7 @@
 }
 
 { %uid: uid-939a-8ca9-4845-94cc
-  is: [ rsvp rule ]
+  is: ( rsvp rule )
   when: "attendance set each time set rsvp status for event"
   gui:{form:{ form:{ attending: false }}}
   attending: <>no
@@ -185,14 +185,14 @@
 
 { %uid: uid-b236-2c49-c6f8-fea6
   %class: netmash.forest.Fjord
-  %rules: [ uid-648d-beb0-89a1-d613 ]
+  %rules: ( uid-648d-beb0-89a1-d613 )
   is: coordinator
   articles-a: uid-d88e-7954-590f-a2d8
   articles-b: http://duncan-cragg.org/blog/atom.json
 }
 
 { %uid: uid-648d-beb0-89a1-d613
-  is: [ coordinator rule ]
+  is: ( coordinator rule )
   when: "event notified take info. 1"
   %alerted: { is: event title: <$:articles-a:title> }
   info-a: <#>list($:%alerted:start $:%alerted:end $:%alerted:content)
@@ -200,22 +200,22 @@
 
 { %uid: uid-2a68-0c60-16da-9796
   %class: netmash.forest.Fjord
-  %rules:[uid-b6d6-c2be-e69d-abbf uid-fb3f-b8ca-3187-5175]
-  is: [ searchable document list ]
+  %rules:(uid-b6d6-c2be-e69d-abbf uid-fb3f-b8ca-3187-5175)
+  is: ( searchable document list )
   title: "Test document database"
-  list: [ uid-393e-1881-a861-f0fb uid-b091-7da1-2db6-1f6a ]
+  list: ( uid-393e-1881-a861-f0fb uid-b091-7da1-2db6-1f6a )
 }
 
 { %uid: uid-b6d6-c2be-e69d-abbf
-  is: [ document list rule ]
+  is: ( document list rule )
   when: "query posted grab it and begin response. 1"
-  %alerted: { is: [ document query ] }
+  %alerted: { is: ( document query ) }
   query: <#>%alerted
   response: <#>{}
 }
 
 { %uid: uid-fb3f-b8ca-3187-5175
-  is: [ document list rule ]
+  is: ( document list rule )
   when: "query posted spawn response. 2"
   response: { %rules: <#>list(uid-e415-a7c8-81d3-da3c)
                 is: "<#>list(document list)"
@@ -225,7 +225,7 @@
 }
 
 { %uid: uid-e415-a7c8-81d3-da3c
-  is: [ document list rule ]
+  is: ( document list rule )
   when: "new response notify query. 3"
   title: "<>Query results"
   list: <>$:query:list:list
@@ -235,37 +235,37 @@
 { %uid: uid-393e-1881-a861-f0fb
   is: article
   title: "Test document one"
-  content: [
+  content: (
       "this is an article"
       "that can be queried"
       "with has-words(article)"
-  ]
+  )
 }
 
 { %uid: uid-b091-7da1-2db6-1f6a
   is: article
   title: "Test document two"
-  content: [
+  content: (
       "this is another article"
       "that can be queried"
       "with has-words(article)"
-  ]
+  )
 }
 
 { %uid: uid-d88e-7954-590f-a2d8
-  is: [ site article list ]
+  is: ( site article list )
   title: "What Not How"
   subTitle: "Duncan Cragg on Declarative Architectures"
   author: { is: contact full-name: "Duncan Cragg" }
   id: http://duncan-cragg.org/blog/
   logo: http://duncan-cragg.org/favicon.gif
   icon: http://duncan-cragg.org/favicon.ico
-  rights: "All content including photos and images by Duncan Cragg. Copyright (c) Duncan Cragg your rights preserved: see [the CXL][http://duncan-cragg.org/CXL.html]."
+  rights: "All content including photos and images by Duncan Cragg. Copyright (c) Duncan Cragg your rights preserved: see (the CXL)(http://duncan-cragg.org/CXL.html)."
   generator: "Duncan Cragg's Django Blog"
   web-view: http://duncan-cragg.org/blog/
   atom: http://duncan-cragg.org/blog/atom/
   updated: 2012-01-20T18:07:00Z
-  list: [
+  list: (
      { is: article
        title: "The Basics | The Object Network"
        published: 2012-01-20T18:07:00Z
@@ -309,6 +309,6 @@
        %more: http://duncan-cragg.org/blog/post/forest-news/atom.json
      }
      {}
-   ]
+   )
 }
 
