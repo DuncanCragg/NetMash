@@ -60,10 +60,10 @@ Bugs, Refactoring
  - non-sumer appearing in remote rewrite(?)
  - don't put template edit rule in instantiation
  - editable rule push: first rule will be skipped first time
+ - can't jump http
+ - too space-dependent in editing: CRs
 --------------------------------------------------------
 Stuff
-
- + uid-new on remote/as-is; => { UID: new } -vs- uid-new
 
  + all language changes %alerted->Alerted, $:x->:x:, etc
     - also use of '!', => ; self check $:/:

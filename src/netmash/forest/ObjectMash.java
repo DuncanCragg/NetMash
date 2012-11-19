@@ -427,7 +427,7 @@ public class ObjectMash extends WebObject {
     @SuppressWarnings("unchecked")
     public Object copyObject(Object o, boolean asis){
         if(o==null) return null;
-        if(o instanceof String)  return o;
+        if(o instanceof String)  return ((String)o).equals("uid-new")? spawn(new ObjectMash("{ \"is\": [ \"editable\" ] }")): o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o), asis);
