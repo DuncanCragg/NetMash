@@ -526,18 +526,28 @@ public class JSON {
 
     //----------------------------------
 
-    private Object readSumerObject(){
-        if(chars[chp]=='{'){
-            return readSumerHash();
+    @SuppressWarnings("unchecked")
+    private Object readSumerObject(boolean terminateOnTag){
+        LinkedList ll=new LinkedList();
+        for(int i=0; i<40; i++, chp++){
+            while(chp<chars.length && chars[chp]<=' ') chp++;
+            if(chp>=chars.length){ chp--; break; }
+            int chpsave=chp;
+            if(chars[chp]=='{'){ ll.add(readSumerHash()); continue; }
+            if(chars[chp]=='('){ ll.add(readSumerList()); continue; }
+            String s=readSumerString();
+            int chpstringok=chp;
+            chp=chpsave;
+            if(s==null || ( terminateOnTag && s.endsWith(":")) || s.equals("}") || s.equals(")")){ chp--; chp--; break; }
+            try{ ll.add(readBoolean()); continue; }catch(Exception e){ chp=chpsave; }
+            try{ ll.add(readNumber());  continue; }catch(Exception e){ chp=chpsave; }
+            try{ ll.add(readNull());    continue; }catch(Exception e){ chp=chpsave; }
+            chp=chpstringok;
+            ll.add(s);
         }
-        if(chars[chp]=='('){
-            return readSumerList();
-        }
-        int chpsave=chp;
-        try{ return readBoolean(); }catch(Exception e){ chp=chpsave; }
-        try{ return readNumber();  }catch(Exception e){ chp=chpsave; }
-        try{ return readNull();    }catch(Exception e){ chp=chpsave; }
-        return readSumerString();
+        if(ll.size()==0) return null;
+        if(ll.size()==1) return ll.get(0);
+        return ll;
     }
 
     @SuppressWarnings("unchecked")
@@ -580,7 +590,7 @@ public class JSON {
 
             if(!doobj){
                 if(chars[chp]>' '){
-                    hm.put(tag, readSumerObject());
+                    hm.put(tag, readSumerObject(true));
                     doobj=true;
                 }
                 continue;
@@ -606,11 +616,13 @@ public class JSON {
         LinkedList ll = new LinkedList();
         boolean docom=false;
         for(; chp<chars.length; chp++){
-            if(chars[chp]==')'){
+            if(chars[chp]==')'||chars[chp]=='}'){
                 break;
             }
             if(chars[chp]>' '){
-                ll.add(readSumerObject());
+                Object o=readSumerObject(false);
+                if(o instanceof LinkedList) ll.addAll((LinkedList)o);
+                else ll.add(o);
                 continue;
             }
         }
@@ -1412,6 +1424,10 @@ public class JSON {
 
     static public void log(Object o){
         log(enableLogging, o);
+    }
+
+    static public void logXX(Object o){
+        log(enableLogging, "xxxxxx "+o);
     }
 
     static public void log(boolean doit, Object o){
