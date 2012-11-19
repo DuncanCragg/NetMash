@@ -546,7 +546,7 @@ public class JSON {
             ll.add(s);
         }
         if(ll.size()==0) return null;
-        if(ll.size()==1) return ll.get(0);
+        if(ll.size()==1 && terminateOnTag) return ll.get(0);
         return ll;
     }
 
