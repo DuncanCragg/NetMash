@@ -69,19 +69,16 @@ public class ObjectMash extends WebObject {
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
         String name=contentOr(String.format("%%rules:%d:when", r),"");
-        if(extralogging) log("Running rule \""+name+"\"");
-        LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
-        boolean noalerted=!contentSet("%alerted");
-        if(noalerted) contentTemp("%alerted", alerted);
-        if(extralogging) log("alerted:\n"+contentHash("%alerted:#"));
+        if(alerted!=null && !contentSet("%alerted")) contentTemp("%alerted",alerted);
+        ; if(extralogging) log("Running rule \""+name+"\"");
+        ; if(extralogging) log("alerted:\n"+contentHash("%alerted:#"));
         rewrites.clear(); bindings.clear();
+        LinkedHashMap<String,Object> rule=contentHash(String.format("%%rules:%d:#", r));
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
-        if(ok) log("Rule fired: \""+name+"\"");
-        if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"\n===========");
-        if(noalerted) contentTemp("%alerted", null);
-        Object o=contentRemove("%%alerted");
-        if(o!=null) contentObject("%alerted",o);
+        ; if(ok) log("Rule fired: \""+name+"\"");
+        ; if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"\n===========");
+        if(alerted!=null && contentIs("%alerted",alerted)) contentTemp("%alerted",null);
     }
 
     // ----------------------------------------------------
