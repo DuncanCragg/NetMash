@@ -430,7 +430,7 @@
     %class: server.types.UserHome
     is: ( userhome user list )
     title: "User Home"
-    list: ()
+    list: ( )
 }
 
 {   UID: uid-4b71-f8d4-c761-be2d
