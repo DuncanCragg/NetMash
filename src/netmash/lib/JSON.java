@@ -947,18 +947,19 @@ public class JSON {
         String[] parts=splitPath(path);
         LinkedHashMap<String,Object> hm=hashmap;
         for(int i=0; i<parts.length; i++){
-            Object o=null;
+            boolean term =(i==parts.length-1);
+            boolean term0=(i==parts.length-2 && parts[i+1].equals("0"));
             String part=parts[i];
-            if(part.equals("*")) o=getSingleEntry(hm);
-            else
+            Object o;
+            if(part.equals("*")) o=getSingleEntry(hm); else
             if(part.equals("#")) o=hm;
             else                 o=hm.get(part);
-            if(o==null) return null;
-            if(i==parts.length-1) return o;
-            if(o instanceof LinkedHashMap){
-                hm=(LinkedHashMap)o;
-                continue;
-            }
+            if(o==null){ if(part.equals("0")){ if(term) return hm; continue; } return null; }
+            if(term) return o;
+            if(o instanceof String){  if(term0) return o; throw new PathOvershot(o, parts, i); }
+            if(o instanceof Number){  if(term0) return o; throw new PathOvershot(o, parts, i); }
+            if(o instanceof Boolean){ if(term0) return o; throw new PathOvershot(o, parts, i); }
+            if(o instanceof LinkedHashMap){ hm=(LinkedHashMap)o; continue; }
             if(o instanceof LinkedList){
                 LinkedList ll=(LinkedList)o;
                 while(true){
@@ -978,15 +979,6 @@ public class JSON {
                     throw new PathOvershot(o, parts, i);
                 }
                 continue;
-            }
-            if(o instanceof String){
-                throw new PathOvershot(o, parts, i);
-            }
-            if(o instanceof Number){
-                throw new PathOvershot(o, parts, i);
-            }
-            if(o instanceof Boolean){
-                throw new PathOvershot(o, parts, i);
             }
         }
         return null;

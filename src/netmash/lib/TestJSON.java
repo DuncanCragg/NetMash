@@ -129,10 +129,10 @@ public class TestJSON {
         String portstr = m.stringPath("modules:http:port");
         assert portstr==null: "port should be null, but it's "+portstr;
 
-        int port = m.intPath("modules:http:port");
+        int port = m.intPath("modules:0:http:port:0");
         assert port==8080: "port should be 8080, but it's "+port;
 
-        LinkedHashMap<String,String> modulenames = m.hashPath("kernel:modules");
+        LinkedHashMap<String,String> modulenames = m.hashPath("kernel:modules:0");
         assert "netmash.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be netmash.cache.JSONCache, but it's "+
                                                                                                 modulenames.get("cache");
         assert modulenames instanceof LinkedHashMap: "kernel:modules should be ordered hash";

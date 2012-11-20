@@ -215,6 +215,7 @@ public class ObjectMash extends WebObject {
         Object vso;
         if(var) vso=findObject(vs);
         else    vso=findObject(vs.substring(1));
+        if(vso==null) return false;
         if(vso.equals(pko)) return var;
         if(pko instanceof Number && vso instanceof Number){
             return (((Number)pko).doubleValue()==((Number)vso).doubleValue())? var: nov;
