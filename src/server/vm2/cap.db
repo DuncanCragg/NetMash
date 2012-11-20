@@ -1,5 +1,5 @@
 { UID: uid-c102-dd84-8284-c360
-  Rules: ( uid-c265-091b-418c-c329 )
+  Rules: uid-c265-091b-418c-c329
   is: gui editable
   title: "CAP Payments Demo"
   view: { logo: http://www.shaunthesheep.be/shaunthesheep/foto/500/thefarmer-1.jpg

@@ -27,7 +27,7 @@ public class ObjectMash extends WebObject {
         LinkedList<String> evalrules=getEvalRules();
         if(!evalrules.isEmpty()) contentSetPushAll("Rules",evalrules);
         if(extralogging) log("Running ObjectMash on "+uid+": "+contentHash("#"));
-        LinkedList rules=contentList("Rules");
+        LinkedList rules=contentAsList("Rules");
         if(extralogging) log("Rules: "+rules);
         if(rules==null) return;
         int r=0;
