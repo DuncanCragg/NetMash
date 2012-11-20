@@ -1255,12 +1255,12 @@ public class JSON {
         chp=0;
     }
 
-    private String objectToString(Object o, int indent, int maxlength, boolean sumer){
+    private String objectToString(Object o, int indent, int maxlength, boolean sumer, boolean tagdelim){
         if(o==null) return "null";
         if(o instanceof Number)        return toNicerString((Number)o);
         if(o instanceof String)        return stringToString((String)o, sumer);
         if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength, sumer);
-        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength, sumer);
+        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength, sumer, tagdelim);
         return o.toString();
     }
 
@@ -1303,20 +1303,20 @@ public class JSON {
                 if(i==0) buf.append(                  indentation(indent));
                 else     buf.append((sumer?"\n":",\n")+indentation(indent));
             } else buf.append(i==0||sumer? " ": ", ");
-            buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, sumer));
+            buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, sumer, true));
         }
         if(structured) buf.append("\n"+indentation(indent-2)+"}");
         else           buf.append(" }");
         return buf.toString();
     }
 
-    private String listToString(LinkedList ll, int indent, int maxlength, boolean sumer){
+    private String listToString(LinkedList ll, int indent, int maxlength, boolean sumer, boolean tagdelim){
         if(ll==null)  return "null";
         if(ll.size()==0) return sumer? "( )": "[ ]";
-  //    if(ll.size()==1 && sumer) return objectToString(ll.get(0), indent, maxlength, sumer);
+        if(ll.size()==1 && sumer) return objectToString(ll.get(0), indent, maxlength, sumer, false);
         boolean structured=false;
-        String ob=sumer? "(": "[";
-        String cb=sumer? ")": "]";
+        String ob=sumer? (tagdelim? "": "("): "[";
+        String cb=sumer? (tagdelim? "": ")"): "]";
         if(maxlength==0){
             int i=0;
             int w=0;
@@ -1349,7 +1349,7 @@ public class JSON {
                 if(i==0) buf.append(                  indentation(indent));
                 else     buf.append((sumer?"\n":",\n")+indentation(indent));
             } else buf.append((i==0||sumer)? " ": ", ");
-            buf.append(objectToString(val, indent, maxlength, sumer));
+            buf.append(objectToString(val, indent, maxlength, sumer, false));
             i++;
         }
         if(structured) buf.append("\n"+indentation(indent-2)+" "+cb);

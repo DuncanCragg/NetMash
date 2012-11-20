@@ -66,10 +66,9 @@ Bugs, Refactoring
 Stuff
 
  + all language changes
-    - $:x->:x:, etc
-    - tags delim lists - make single-item=multi work everywhere; xml style visually a: => b [ d ] :f: g: a b = a: [ => b [ d ] :f: ] g: [a b]
+    - make single-item=multi work everywhere; xml style visually
     - see local cap.db
-    - also use of '!', => ; self check $:/:
+    - self check $:/:
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - OM/OTS, etc -> sumer
     - null, empty, empty list, #
