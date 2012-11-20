@@ -210,7 +210,9 @@ public class ObjectMash extends WebObject {
     }
 
     private String scanBoolean(Boolean vb, String pk){
-        return (contentBool(pk)==vb || contentListContains(pk, vb))?pk:null;
+        if(contentBool(pk)==vb) return pk;
+        int i=contentListIndexOf(pk,vb); if(i>=0) return pk+":"+i;
+        return null;
     }
 
     private boolean regexMatch(String regex, String pk){
