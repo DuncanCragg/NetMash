@@ -85,9 +85,11 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanHash(LinkedHashMap<String,Object> hash, String path){
-        if(hash.isEmpty()) return contentHash(path)!=null;
+        LinkedHashMap hm=contentHashMayJump(path);
+        if(hm==null){ if(contentListMayJump(path)==null) return false; return scanList(list(hash), path); }
+        if(hash.isEmpty()) return true;
         for(Map.Entry<String,Object> entry: hash.entrySet()){
-            String pk=path+entry.getKey();
+            String pk=(path.equals("")? "": path+":")+entry.getKey();
             if(path.equals("")){
                 if(pk.equals("Rules")) continue;
                 if(pk.equals("is")) continue;
@@ -143,7 +145,7 @@ public class ObjectMash extends WebObject {
             return !ok;
         }
         LinkedList<String> bl=new LinkedList<String>();
-        LinkedList ll=contentList(path);
+        LinkedList ll=contentListMayJump(path);
         if(ll==null) return false;
         int i=0;
         boolean matchEach=list.size()!=1;
@@ -173,7 +175,7 @@ public class ObjectMash extends WebObject {
         if(v instanceof String)        return scanString((String)v, pk);
         if(v instanceof Number)        return scanNumber((Number)v, pk);
         if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
-        if(v instanceof LinkedHashMap) return scanHash((LinkedHashMap<String,Object>)v, pk+":");
+        if(v instanceof LinkedHashMap) return scanHash((LinkedHashMap<String,Object>)v, pk);
         if(v instanceof LinkedList)    return scanList((LinkedList)v, pk);
         log("oh noes "+v);
         return false;
@@ -194,7 +196,7 @@ public class ObjectMash extends WebObject {
     }
 
     private boolean scanBoolean(Boolean vb, String pk){
-        return contentBool(pk)==vb;
+        return contentBool(pk)==vb || contentListContains(pk, vb);
     }
 
     private boolean regexMatch(String regex, String pk){

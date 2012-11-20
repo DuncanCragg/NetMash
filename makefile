@@ -247,7 +247,7 @@ setup:
 
 showtestresults:
 	sleep 1
-	egrep -i 'running rule|scan|failed|error|exception|fired' src/server/vm2/netmash.log
+	egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx' src/server/vm2/netmash.log
 
 whappen:
 	vim -o -N src/server/vm1/netmash.log src/server/vm2/netmash.log src/server/vm1/netmash.db src/server/vm2/netmash.db
