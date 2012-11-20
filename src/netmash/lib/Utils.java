@@ -152,6 +152,7 @@ public class Utils{
     }
 
     static public boolean isNumber(Object o){
+        if(o==null) return false;
         if(o instanceof Number) return true;
         try{ Double.parseDouble((String)o); } catch(Throwable t){ return false; }
         return true;

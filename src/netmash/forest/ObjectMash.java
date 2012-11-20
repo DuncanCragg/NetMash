@@ -189,12 +189,24 @@ public class ObjectMash extends WebObject {
         if(contentIs(pk,vs)) return pk;
         int i=contentListIndexOf(pk,vs); if(i>=0) return pk+":"+i;
         if(foundObjectSameOrNot(pk,vs)) return pk;
-        if(vs.equals("number") && isNumber(contentObject(pk))) return pk;
+        if(vs.equals("number")){ String pkk=pathOfANumber(pk); if(pkk!=null) return pkk; }
+        return null;
+    }
+
+    private String pathOfANumber(String pk){
+        if(isNumber(contentObject(pk))) return pk;
+        LinkedList ll=contentList(pk);
+        if(ll==null) return null;
+        int i=0; for(Object o: ll){
+            if(isNumber(o)) return pk+":"+i;
+        i++; }
         return null;
     }
 
     private String scanNumber(Number vb, String pk){
-        return (contentDouble(pk)==vb.doubleValue() || contentListContains(pk, vb))?pk:null;
+        if(contentDouble(pk)==vb.doubleValue()) return pk;
+        int i=contentListIndexOf(pk,vb); if(i>=0) return pk+":"+i;
+        return null;
     }
 
     private String scanBoolean(Boolean vb, String pk){
