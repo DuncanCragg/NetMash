@@ -156,7 +156,7 @@
 { UID: uid-5f28-9174-b47d-2a74
   is: land rule editable
   when: "ineligible land seen calculate unclaimable area"
-  list: ( { area: * ineligible: true } )
+  list: { area: * ineligible: true }
   ineligible-area: => + $::list:area
 }
 
@@ -180,21 +180,21 @@
 { UID: uid-4a47-2cb6-8e99-a178
   is: land rule editable
   when: "totals available calculate land total"
-  list: ( { fc-total: * } )
+  list: { fc-total: * }
   fc-total: => integer ( + $::list:fc-total )
 }
 
 { UID: uid-6419-0368-25da-f91e
   is: land rule editable
   when: "totals available calculate land total"
-  list: ( { ne-total: * } )
+  list: { ne-total: * }
   ne-total: => integer ( + $::list:ne-total )
 }
 
 { UID: uid-e683-5ee2-a986-b93b
   is: payment rule editable
   when: "eligible BP land seen calculate claimable area and multiply by payment per hectare"
-  land: { list: ( { area: * usage: * entitlement: * active: true } ) }
+  land: { list: { area: * usage: * entitlement: * active: true } }
   bp-total: => integer ( ( ( + $::land:list:area ) - ( + $::land:list:ineligible-area ) ) * $:land:constants:bp-payment-per-ha )
 }
 
@@ -213,14 +213,14 @@
 { UID: uid-8bbc-4ffc-dc43-5903
   is: payment rule editable
   when: "totals available calculate grand total"
-  land: { list: ( { fc-total: * } ) }
+  land: { list: { fc-total: * } }
   fc-total: => + $::land:list:fc-total
 }
 
 { UID: uid-a2c3-59ac-d898-0fc5
   is: payment rule editable
   when: "totals available calculate grand total"
-  land: { list: ( { ne-total: * } ) }
+  land: { list: { ne-total: * } }
   ne-total: => + $::land:list:ne-total
 }
 
