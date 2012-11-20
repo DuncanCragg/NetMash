@@ -132,11 +132,11 @@
   is: gui rule editable
   when: "gui built set up its styles"
   view: { style: # => { is: style colours: lightgreen }
-          user: ( ( style => { is: style direction: horizontal proportions: 75% } ) )
-          land: ( ( style => { is: style direction: horizontal proportions: 75% } ) )
-          BP:   ( ( style => { is: style direction: horizontal proportions: 50% colours: lightblue } ) )
-          FC:   ( ( style => { is: style direction: horizontal proportions: 50% colours: lightblue } ) )
-          NE:   ( ( style => { is: style direction: horizontal proportions: 50% colours: lightblue } ) )
+          user: style => { is: style direction: horizontal proportions: 75% }
+          land: style => { is: style direction: horizontal proportions: 75% }
+          BP:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
+          FC:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
+          NE:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
   }
 }
 
@@ -227,9 +227,9 @@
 { UID: uid-9ce9-1bdd-ec05-c8fa
   is: gui rule editable
   when: "payment updates show it"
-  view: { BP: ( * * ( => $:payment:bp-total ) )
-          FC: ( * * ( => $:payment:fc-total ) )
-          NE: ( * * ( => $:payment:ne-total ) ) }
+  view: { BP: number => $:payment:bp-total
+          FC: number => $:payment:fc-total
+          NE: number => $:payment:ne-total }
 }
 
 { UID: uid-f1d2-4269-6821-9d7a
