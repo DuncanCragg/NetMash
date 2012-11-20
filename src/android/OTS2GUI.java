@@ -546,7 +546,7 @@ public class OTS2GUI {
 
         addEditingToSubs(subobs);
 
-        LinkedList subs=user.contentList("private:viewing:sub-objects");
+        LinkedList subs=user.contentAsList("private:viewing:sub-objects");
 
         if(subs==null){ objhash.put("sub-objects", subobs); return objhash; }
 
@@ -558,8 +558,8 @@ public class OTS2GUI {
             String o=String.format("private:viewing:sub-objects:%d:object",i);
             String c=String.format("private:viewing:sub-objects:%d:coords",i);
             String s=String.format("private:viewing:sub-objects:%d:object:sub-objects",i);
-            LinkedList subcoords=user.contentList(c);
-            LinkedList subsubs  =user.contentList(s);
+            LinkedList subcoords=user.contentAsList(c);
+            LinkedList subsubs  =user.contentAsList(s);
             if(subsubs==null) continue;
             float tx=Mesh.getFloatFromList(subcoords,0,0),ty=Mesh.getFloatFromList(subcoords,1,0),tz=Mesh.getFloatFromList(subcoords,2,0);
             for(int j=0; j< subsubs.size(); j++){
@@ -578,7 +578,7 @@ public class OTS2GUI {
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("object",objhash);
         LinkedList coords=new LinkedList();
-        LinkedList subcoords=user.contentList(p+":coords");
+        LinkedList subcoords=user.contentAsList(p+":coords");
         coords.add(tx+Mesh.getFloatFromList(subcoords,0,0));
         coords.add(ty+Mesh.getFloatFromList(subcoords,1,0));
         coords.add(tz+Mesh.getFloatFromList(subcoords,2,0));
@@ -596,19 +596,13 @@ public class OTS2GUI {
     }
 
     private LinkedHashMap object2mesh(String p, boolean shallow){
-        do{
-            LinkedList is=user.contentList(p+"is");
-            if(is==null) break;
-            if(is.contains("mesh"))   return mesh2mesh(p, shallow);
-            if(is.contains("cuboid")) return cuboid2mesh(p);
-            if(is.contains("notice")) return notice2mesh(p);
-            return null;
-        }while(false);{
-            String is=user.content(p+"is");
-            if(is==null) return null;
-            if(is.equals("user"))     return mesh2mesh(p+"avatar:", shallow);
-            return null;
-        }
+        LinkedList is=user.contentAsList(p+"is");
+        if(is==null) return null;
+        if(is.contains("mesh"))   return mesh2mesh(p, shallow);
+        if(is.contains("cuboid")) return cuboid2mesh(p);
+        if(is.contains("notice")) return notice2mesh(p);
+        if(is.contains("user"))   return mesh2mesh(p+"avatar:", shallow);
+        return null;
     }
 
     private LinkedHashMap mesh2mesh(String p, boolean shallow){
@@ -623,15 +617,15 @@ public class OTS2GUI {
         if(!objhash.isEmpty()) return objhash;
 
         objhash.put("is", "mesh");
-        objhash.put("title",         user.contentString(p+"title"));
-        objhash.put("rotation",      user.contentList(p+"rotation"));
-        objhash.put("scale",         user.contentList(p+"scale"));
-        objhash.put("light",         user.contentList(p+"light"));
-        objhash.put("vertices",      user.contentList(p+"vertices"));
-        objhash.put("texturepoints", user.contentList(p+"texturepoints"));
-        objhash.put("normals",       user.contentList(p+"normals"));
-        objhash.put("faces",         user.contentList(p+"faces"));
-        objhash.put("textures",      user.contentList(p+"textures"));
+        objhash.put("title",         user.contentObject(p+"title"));
+        objhash.put("rotation",      user.contentObject(p+"rotation"));
+        objhash.put("scale",         user.contentObject(p+"scale"));
+        objhash.put("light",         user.contentObject(p+"light"));
+        objhash.put("vertices",      user.contentObject(p+"vertices"));
+        objhash.put("texturepoints", user.contentObject(p+"texturepoints"));
+        objhash.put("normals",       user.contentObject(p+"normals"));
+        objhash.put("faces",         user.contentObject(p+"faces"));
+        objhash.put("textures",      user.contentObject(p+"textures"));
         objhash.put("vertex-shader",  vs);
         objhash.put("fragment-shader",fs);
         return objhash;
@@ -647,10 +641,10 @@ public class OTS2GUI {
         if(!objhash.isEmpty()) return objhash;
 
         objhash.put("is", "mesh");
-        objhash.put("title",         user.contentString(p+"title"));
-        objhash.put("rotation",      user.contentList(p+"rotation"));
-        objhash.put("scale",         user.contentList(p+"scale"));
-        objhash.put("light",         user.contentList(p+"light"));
+        objhash.put("title",         user.contentObject(p+"title"));
+        objhash.put("rotation",      user.contentObject(p+"rotation"));
+        objhash.put("scale",         user.contentObject(p+"scale"));
+        objhash.put("light",         user.contentObject(p+"light"));
         objhash.put("vertices",      list(list(  1.0, -1.0, -1.0 ), list(  1.0, -1.0,  1.0 ), list( -1.0, -1.0,  1.0 ), list( -1.0, -1.0, -1.0 ),
                                           list(  1.0,  1.0, -1.0 ), list(  1.0,  1.0,  1.0 ), list( -1.0,  1.0,  1.0 ), list( -1.0,  1.0, -1.0 )));
         objhash.put("texturepoints", list(list( 1.0, 1.0 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 1.0 ) ));
@@ -661,7 +655,7 @@ public class OTS2GUI {
                                           list( "3/1/1","8/3/1","4/4/1" ), list( "2/1/6","6/2/6","3/4/6" ), list( "6/2/6","7/3/6","3/4/6" ),
                                           list( "1/1/2","5/2/2","2/4/2" ), list( "5/2/2","6/3/2","2/4/2" ), list( "5/1/4","8/2/4","6/4/4" ),
                                           list( "8/2/4","7/3/4","6/4/4" ), list( "1/1/3","2/2/3","3/3/3" ), list( "1/1/3","3/3/3","4/4/3" )));
-        objhash.put("textures",      user.contentList(p+"textures"));
+        objhash.put("textures",      user.contentObject(p+"textures"));
         objhash.put("vertex-shader",  vs);
         objhash.put("fragment-shader",fs);
 
@@ -678,7 +672,7 @@ public class OTS2GUI {
         if(!objhash.isEmpty()) return objhash;
 
         String    title=user.contentString(p+"title");
-        LinkedList text=user.contentList(  p+"text");
+        LinkedList text=user.contentAsList(p+"text");
         if(title==null) title="No Title";
         if(text ==null){ String t=user.contentString(p+"text"); if(t!=null) text=list(t); }
         if(text ==null) text=list("No Text");
@@ -686,9 +680,9 @@ public class OTS2GUI {
 
         objhash.put("is", "mesh");
         objhash.put("title",         title);
-        objhash.put("rotation",      user.contentList(p+"rotation"));
-        objhash.put("scale",         user.contentList(p+"scale"));
-        objhash.put("light",         user.contentList(p+"light"));
+        objhash.put("rotation",      user.contentObject(p+"rotation"));
+        objhash.put("scale",         user.contentObject(p+"scale"));
+        objhash.put("light",         user.contentObject(p+"light"));
         objhash.put("vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
                                           list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
         objhash.put("texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));

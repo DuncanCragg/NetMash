@@ -125,8 +125,9 @@ public class Mesh {
 
     static public LinkedList getListFromHash(LinkedHashMap hm, String tag){
         Object o=hm.get(tag);
-        if(o==null || !(o instanceof LinkedList)) return new LinkedList();
-        return (LinkedList)o;
+        if(o==null) return new LinkedList();
+        if(o instanceof LinkedList) return (LinkedList)o;
+        return list(o);
     }
 
     static public LinkedHashMap getHashFromHash(LinkedHashMap hm, String tag){

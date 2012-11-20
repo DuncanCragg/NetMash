@@ -14,14 +14,14 @@
   normals: ( 1 0 0 ) ( -1 0 0 ) ( 0 1 0 ) ( 0 -1 0 ) ( 0 0 1 ) ( 0 0 -1 )
   faces: ( 5/1/5 4/3/5 1/2/5 ) ( 5/1/5 8/4/5 4/3/5 ) ( 3/1/1 8/3/1 7/2/1 ) ( 3/1/1 4/4/1 8/3/1 ) ( 2/1/6 3/4/6 6/2/6 ) ( 6/2/6 3/4/6 7/3/6 )
          ( 1/1/2 2/4/2 5/2/2 ) ( 5/2/2 2/4/2 6/3/2 ) ( 5/1/4 6/4/4 8/2/4 ) ( 8/2/4 6/4/4 7/3/4 ) ( 1/1/3 3/3/3 2/2/3 ) ( 1/1/3 4/4/3 3/3/3 )
-  textures: ( http://www.textures123.com/free-texture/sand/sand-texture4.jpg )
+  textures: http://www.textures123.com/free-texture/sand/sand-texture4.jpg
   vertex-shader: http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
 }
 
 { UID: uid-20ce-d0b1-c717-3dbb
   %class: netmash.forest.ObjectMash
-  Rules: ( uid-e6e9-df58-ddab-6eb9 )
+  Rules: uid-e6e9-df58-ddab-6eb9
   is: 3d cuboid editable
   title: Light
   rotation: 0 45 0
@@ -73,7 +73,7 @@
         coords: ( 0 selects $:. ) ( 1 selects $:. ) -0.5
       }
   ) )
-  denominator: => ( count $:sub-objects )
+  denominator: => count $:sub-objects
 }
 
 { UID: uid-fb3e-02d3-70bb-916f
@@ -127,15 +127,15 @@
   when: "checking, set to initial zero and recalc numerator and denominator"
   status: checking
   lit: => 0
-  numerator: => ( ( $:numerator / $:denominator ) * ( count $:sub-objects ) )
-  denominator: => ( count $:sub-objects )
+  numerator: => ( $:numerator / $:denominator ) * ( count $:sub-objects )
+  denominator: => count $:sub-objects
 }
 
 { UID: uid-0b6a-659e-3561-05b2
   is: 3d rule editable
   when: "checking, count lit up lights"
   status: checking
-  sub-objects: ( { object: { light: ( * 1 1 ) } } )
+  sub-objects: { object: { light: * 1 1 } }
   lit: => count $::sub-objects
 }
 
@@ -160,28 +160,27 @@
 { UID: uid-1b54-d28a-71dc-5827
   is: 3d rule editable
   when: "swiped down, turn on light"
-  Alerted: { is: swipe dy: ( > 0 ) }
+  Alerted: { is: swipe dy: > 0 }
   light: * ( => 1 ) ( => 1 )
 }
 
 { UID: uid-7b1a-4b1d-1424-2818
   is: 3d rule editable
   when: "swiped up, turn off light"
-  Alerted: { is: swipe dy: ( < 0 ) }
+  Alerted: { is: swipe dy: < 0 }
   light: * ( => 0.4 ) ( => 0.7 )
 }
 
 { UID: uid-d9e4-4f7c-d9fe-9e7c
   %class: netmash.forest.ObjectMash
-  Rules: ( uid-58cb-cc31-1769-c2c4 )
+  Rules: uid-58cb-cc31-1769-c2c4
   is: gui editable
   title: "Local Calculator GUI"
   view: {
-    #panel: (
+    #panel:
       { #f: { input: chooser label: Function range: {  prod: Multiply sum: Add diff: Subtract div: Divide } } }
       { #a: {  input: textfield label: A value: 0 } }
       { #b: {  input: textfield label: B value: 0 } }
-   )
    #result: {  #r: 0 }
   }
 }
@@ -192,11 +191,10 @@
   Alerted: { is: form }
   form: => $:Alerted
   view: {
-    #panel: (
+    #panel:
       { #f: { value: => $:form:form:f } }
       { #a: { value: => $:form:form:a } }
       { #b: { value: => $:form:form:b } }
-     )
     #result: { #r: => $:form:form:a
                     ( $:form:form:f selects {  prod: * sum: + diff: - div: / } )
                       $:form:form:b
