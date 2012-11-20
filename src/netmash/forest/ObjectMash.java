@@ -231,14 +231,14 @@ public class ObjectMash extends WebObject {
             if(ll.size()==2 && ll.get(0).equals("has")){
                 Object e=copyFindObject(ll.get(1));
                 if(e==null) continue;
-                if(currentRewritePath.equals("%notifying")) notifying(e.toString());
+                if(currentRewritePath.equals("Notifying")) notifying(e.toString());
                 else contentSetAdd(currentRewritePath, e);
             }
             else
             if(ll.size()==2 && ll.get(0).equals("has-no")){
                 Object e=findObject(ll.get(1));
                 if(e==null) continue;
-                if(currentRewritePath.equals("%notifying")) unnotifying(e.toString());
+                if(currentRewritePath.equals("Notifying")) unnotifying(e.toString());
                 else contentListRemove(currentRewritePath, e);
             }
             else{

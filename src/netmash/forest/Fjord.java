@@ -171,7 +171,7 @@ public class Fjord extends WebObject {
 
     private void doRHS(String pk, String rhs){ try{
         if(rhs.length()==0) return;
-        if(pk.equals("%notifying")){
+        if(pk.equals("Notifying")){
             if(rhs.startsWith("has($:"))     notifying(content(rhs.substring(6,rhs.length()-1)));
             if(rhs.startsWith("hasno($:")) unnotifying(content(rhs.substring(8,rhs.length()-1)));
             return;

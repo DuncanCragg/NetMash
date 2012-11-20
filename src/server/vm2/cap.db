@@ -30,7 +30,7 @@
 { UID: uid-f265-941d-a0b8-ca5d
   is: gui rule editable
   when: "application created create land object"
-  %notifying: => has $:form
+  Notifying: => has $:form
   view: {
     land: ( # => style "Your Land:"
       { UID: new

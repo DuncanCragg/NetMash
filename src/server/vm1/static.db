@@ -172,7 +172,7 @@
   when: "attendance set each time set rsvp status for event"
   gui: { form:{ form:{ attending: true }}}
   attending: <>yes
-  %notifying: <>has($:gui:event)
+  Notifying: <>has($:gui:event)
 }
 
 { UID: uid-939a-8ca9-4845-94cc
@@ -180,7 +180,7 @@
   when: "attendance set each time set rsvp status for event"
   gui: {form:{ form:{ attending: false }}}
   attending: <>no
-  %notifying: <>has($:gui:event)
+  Notifying: <>has($:gui:event)
 }
 
 { UID: uid-b236-2c49-c6f8-fea6
@@ -229,7 +229,7 @@
   when: "new response notify query. 3"
   title: "<>Query results"
   list: <>$:query:list:list
-  %notifying: <>has($:query)
+  Notifying: <>has($:query)
 }
 
 { UID: uid-393e-1881-a861-f0fb

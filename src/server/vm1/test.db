@@ -23,7 +23,7 @@
     is: ( fx ticket rule )
     when: "new ticket set params and notify order. 3"
     params: <#>$:order:params
-    %notifying: <>has($:order)
+    Notifying: <>has($:order)
 }
 
 {   UID: uid-bce3-b010-e869-f26e

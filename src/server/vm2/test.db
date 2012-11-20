@@ -29,7 +29,7 @@
     when: "you can see the dealer but have no ticket notify the dealer. 1"
     ticket: <#>
     dealer: { is: dealer }
-    %notifying: <>has($:dealer)
+    Notifying: <>has($:dealer)
 }
 
 {   UID: uid-3aaa-bfc1-7d0c-5348
@@ -37,7 +37,7 @@
     when: "you see the ticket link to it and start notifying it instead of the dealer. 2"
     Alerted: { is: ticket }
     ticket: <#>Alerted
-    %notifying: <>has($:ticket);hasno($:dealer)
+    Notifying: <>has($:ticket);hasno($:dealer)
 }
 
 {   UID: uid-7d0c-5348-3aaa-bfc1
@@ -80,7 +80,7 @@
     is: ( payment rule )
     when: "invoice has no payment notify it that we are paying. 7"
     invoice: { payment: <#> }
-    %notifying: <>has($:invoice)
+    Notifying: <>has($:invoice)
 }
 
 {   UID: uid-0145-54f4-36db-302e
@@ -96,14 +96,14 @@
     is: ( equity bid rule )
     when: "a bid has no price set it 10% above the high-bid and notify the instrument. 1"
     price: "<#>prod($:on:bid-ask-spread:high-bid 1.10)"
-    %notifying: <>has($:on)
+    Notifying: <>has($:on)
 }
 
 {   UID: uid-b382-de77-f352-efe6
     is: ( equity ask rule )
     when: "an ask has no price set it 10% below the low-ask and notify the instrument. 2"
     price: "<#>prod($:on:bid-ask-spread:low-ask 0.90)"
-    %notifying: <>has($:on)
+    Notifying: <>has($:on)
 }
 
 {   UID: uid-286a-b820-14ff-8d02
