@@ -71,7 +71,7 @@
           scale: ( 0.36 0.36 0.36 )
           light: ( 0 0.4 0.7 )
         }
-        coords: ( ( 0 selects $:! ) ( 1 selects $:! ) -0.5 )
+        coords: ( ( 0 selects $:. ) ( 1 selects $:. ) -0.5 )
       }
   ) )
   denominator: ( => ( count $:sub-objects ) )
@@ -103,16 +103,16 @@
   is: ( 3d rule editable )
   when: "waiting, halve fraction if possible"
   status: waiting
-  numerator:   ( ( divisible-by 2 ) => $:!  / 2 )
-  denominator: ( ( divisible-by 2 ) => $:!  / 2 )
+  numerator:   ( ( divisible-by 2 ) => $:.  / 2 )
+  denominator: ( ( divisible-by 2 ) => $:.  / 2 )
 }
 
 { UID: uid-ab7f-889e-edb9-6bab
   is: ( 3d rule editable )
   when: "waiting, third fraction if possible"
   status: waiting
-  numerator:   ( ( divisible-by 3 ) => $:!  / 3 )
-  denominator: ( ( divisible-by 3 ) => $:!  / 3 )
+  numerator:   ( ( divisible-by 3 ) => $:.  / 3 )
+  denominator: ( ( divisible-by 3 ) => $:.  / 3 )
 }
 
 { UID: uid-a9ff-4a17-9772-3859

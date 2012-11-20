@@ -55,7 +55,7 @@
   is: test rule
   when: "Test constructors"
   z: number ( number => 111 { UID: new a: $:a } ) number
-  m: ( ( number => { n: $:! } ) )
+  m: ( ( number => { n: $:. } ) )
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -63,7 +63,7 @@
   when: "Test list element match 2"
   m: true { n: 4 } { n: 5 } hi yo { n: 7.51 }
   o: ( { a: ( 3 ) } )
-  z: ( ( ( number * ) => ( 1 selects $:! ) ( 0 selects $:! ) ) )
+  z: ( ( ( number * ) => ( 1 selects $:. ) ( 0 selects $:. ) ) )
   l2: => count $::o
   l0: => $::o:1
   l7: => $:o:a

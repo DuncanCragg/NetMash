@@ -345,42 +345,42 @@ public class ObjectMash extends WebObject {
     // ----------------------------------------------------
 
     private Object eitherBindingOrContentObject(String path){
+        if(path.equals(".")) return contentObject(currentRewritePath);
         if(path.startsWith(":")) return getBinding(path.substring(1));
-        if(path.startsWith("!")) return contentObject(currentRewritePath);
         Object o=contentObject(path);
         if(o!=null) return o;
         return contentAll(path);
     }
 
     private String eitherBindingOrContentString(String path){
+        if(path.equals(".")) return content(currentRewritePath);
         if(path.startsWith(":")) return findStringIn(getBinding(path.substring(1)));
-        if(path.startsWith("!")) return content(currentRewritePath);
         return contentString(path);
     }
 
     private double eitherBindingOrContentDouble(String path){
+        if(path.equals(".")) return contentDouble(currentRewritePath);
         if(path.startsWith(":")) return findNumberIn(getBinding(path.substring(1)));
-        if(path.startsWith("!")) return contentDouble(currentRewritePath);
         return contentDouble(path);
     }
 
     private boolean eitherBindingOrContentBool(String path){
+        if(path.equals(".")) return contentBool(currentRewritePath);
         if(path.startsWith(":")) return findBooleanIn(getBinding(path.substring(1)));
-        if(path.startsWith("!")) return contentBool(currentRewritePath);
         return contentBool(path);
     }
 
     private LinkedList eitherBindingOrContentList(String path){
+        if(path.equals(".")) return contentList(currentRewritePath);
         if(path.startsWith(":")) return findListIn(getBinding(path.substring(1)));
-        if(path.startsWith("!")) return contentList(currentRewritePath);
         LinkedList ll=contentList(path);
         if(ll!=null) return ll;
         return contentAll(path);
     }
 
     private LinkedHashMap eitherBindingOrContentHash(String path){
+        if(path.equals(".")) return contentHash(currentRewritePath);
         if(path.startsWith(":")) return findHashIn(getBinding(path.substring(1)));
-        if(path.startsWith("!")) return contentHash(currentRewritePath);
         return contentHashMayJump(path);
     }
 
