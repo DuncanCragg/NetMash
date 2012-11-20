@@ -12,6 +12,7 @@
   z: 1 2 3
   m: true 4 false 5 hi
   o: { a: 1 2 } { a: 2 3 } { a: 1 3 } { a: 2 4 } { a: 3 4 }
+  j: x y z
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -27,6 +28,7 @@
   s: # => + $:o:a:1
   o: { a: 5 } !=> has { a: 1 5 }
   la: => ( $:z:2 selects $:m ) ( $:z:1 selects $:m ) ( $:z:0 selects $:m )
+  j: y => { m: n }
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -40,6 +42,7 @@
   c: > 1.9
   z: ( < 2 ) ( > 1 ) ( ( < 4 ) => $:b × 10 )
   s: 16
+  j: x { m: n } z
 }
 
 { UID: uid-1de5-4d69-667a-56e4

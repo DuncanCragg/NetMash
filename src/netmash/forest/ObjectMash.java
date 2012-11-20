@@ -74,20 +74,20 @@ public class ObjectMash extends WebObject {
         ; if(extralogging) log("alerted:\n"+contentHash("Alerted:#"));
         rewrites.clear(); bindings.clear();
         LinkedHashMap<String,Object> rule=contentHash(String.format("Rules:%d:#", r));
-        boolean ok=scanHash(rule, "");
-        if(ok) doRewrites();
-        ; if(ok) log("Rule fired: \""+name+"\"");
-        ; if(extralogging) log("==========\nscanRuleHash="+ok+"\n"+rule+"\n"+contentHash("#")+"\n===========");
+        String ok=scanHash(rule, "");
+        if(ok!=null) doRewrites();
+        ; if(ok!=null) log("Rule fired: \""+name+"\"");
+        ; if(extralogging) log("==========\nscanRuleHash="+((ok!=null)?"pass":"fail")+"\n"+rule+"\n"+contentHash("#")+"\n===========");
         if(alerted!=null && contentIs("Alerted",alerted)) contentTemp("Alerted",null);
     }
 
     // ----------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private boolean scanHash(LinkedHashMap<String,Object> hash, String path){
+    private String scanHash(LinkedHashMap<String,Object> hash, String path){
         LinkedHashMap hm=contentHashMayJump(path);
-        if(hm==null){ if(contentListMayJump(path)==null) return false; return scanList(list(hash), path); }
-        if(hash.isEmpty()) return true;
+        if(hm==null){ if(contentListMayJump(path)==null) return null; return scanList(list(hash), path); }
+        if(hash.isEmpty()) return path;
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=(path.equals("")? "": path+":")+entry.getKey();
             if(path.equals("")){
@@ -99,104 +99,106 @@ public class ObjectMash extends WebObject {
                 if(pk.equals("user")) continue;
             }
             Object v=entry.getValue();
-            if(!scanType(v,pk)) return false;
+            if(scanType(v,pk)==null) return null;
         }
-        return true;
+        return path;
     }
 
     @SuppressWarnings("unchecked")
-    private boolean scanList(LinkedList list, String path){
-        if(list.size()==0) return true;
+    private String scanList(LinkedList list, String path){
+        if(list.size()==0) return path;
         if(list.size()==2 && list.get(0).equals("<")){
             double d=findDouble(list.get(1));
-            return contentDouble(path) < d;
+            return (contentDouble(path) < d)?path:null;
         }
         if(list.size()==2 && list.get(0).equals(">")){
             double d=findDouble(list.get(1));
-            return contentDouble(path) > d;
+            return (contentDouble(path) > d)?path:null;
         }
         if(list.size()==2 && list.get(0).equals("divisible-by")){
             int i=(int)findDouble(list.get(1));
             int j=(int)contentDouble(path);
-            return (j % i)==0;
+            return ((j % i)==0)?path:null;
         }
         if(list.size()==2 && list.get(0).equals("list-count")){
             double d=findDouble(list.get(1));
             LinkedList ll=contentList(path);
-            return ll!=null && ll.size()==(int)d;
+            return (ll!=null && ll.size()==(int)d)?path:null;
         }
         if(list.size() >= 2 && (list.get(0).equals("=>") || list.get(1).equals("=>"))){
             if(list.get(1).equals("=>")){
                 LinkedList rhs=new LinkedList(list.subList(2,list.size()));
-                boolean ok=scanType(list.get(0),path);
-                if(ok) rewrites.put(path,rhs);
-                return ok;
+                String ok=scanType(list.get(0),path);
+                if(ok!=null) rewrites.put(ok,rhs);
+                return (ok!=null)?path:null;
             }
             else{
                 LinkedList rhs=new LinkedList(list.subList(1,list.size()));
                 rewrites.put(path,rhs);
-                return true;
+                return path;
             }
         }
         if(list.size() >= 3 && list.get(1).equals("!=>")){
             LinkedList rhs=new LinkedList(list.subList(2,list.size()));
-            boolean ok=scanType(list.get(0),path);
-            if(!ok) rewrites.put(path,rhs);
-            return !ok;
+            String ok=scanType(list.get(0),path);
+            if(ok==null) rewrites.put(path,rhs);
+            return (ok==null)?path:null;
         }
         LinkedList<String> bl=new LinkedList<String>();
         LinkedList ll=contentListMayJump(path);
-        if(ll==null) return false;
+        if(ll==null) return null;
         int i=0;
         boolean matchEach=list.size()!=1;
         for(Object v: list){
             for(; i<ll.size(); i++){
                 String pk=String.format("%s:%d",path,i);
-                if(scanType(v,pk)){ bl.add(pk); if(matchEach) break; }
+                String pkk=scanType(v,pk);
+                if(pkk!=null){ bl.add(pkk); if(matchEach) break; }
             }
             if(matchEach){
-                if(i==ll.size()) return false;
+                if(i==ll.size()) return null;
                 i++;
             }
-            else if(bl.size()==0) return false;
+            else if(bl.size()==0) return null;
         }
         bindings.put(path,bl);
-        return true;
+        return path;
     }
 
-    private boolean scanType(Object v, String pk){
-        boolean r=doScanType(v,pk);
-        if(!r && extralogging) log("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
+    private String scanType(Object v, String pk){
+        String r=doScanType(v,pk);
+        if(r==null && extralogging) log("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
         return r;
     }
 
     @SuppressWarnings("unchecked")
-    private boolean doScanType(Object v, String pk){
+    private String doScanType(Object v, String pk){
         if(v instanceof String)        return scanString((String)v, pk);
         if(v instanceof Number)        return scanNumber((Number)v, pk);
         if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
         if(v instanceof LinkedHashMap) return scanHash((LinkedHashMap<String,Object>)v, pk);
         if(v instanceof LinkedList)    return scanList((LinkedList)v, pk);
         log("oh noes "+v);
-        return false;
+        return null;
     }
 
-    private boolean scanString(String vs, String pk){
-        if(vs.equals("*")) return  contentSet(pk);
-        if(vs.equals("#")) return !contentSet(pk);
-        if(vs.startsWith("/") && vs.endsWith("/")) return regexMatch(vs.substring(1,vs.length()-1),pk);
-        if(contentIsOrListContains(pk,vs)) return true;
-        if(foundObjectSameOrNot(pk,vs)) return true;
-        if(vs.equals("number") && isNumber(contentObject(pk))) return true;
-        return false;
+    private String scanString(String vs, String pk){
+        if(vs.equals("*")) return  contentSet(pk)?pk:null;
+        if(vs.equals("#")) return !contentSet(pk)?pk:null;
+        if(vs.startsWith("/") && vs.endsWith("/")) return regexMatch(vs.substring(1,vs.length()-1),pk)?pk:null;
+        if(contentIs(pk,vs)) return pk;
+        int i=contentListIndexOf(pk,vs); if(i>=0) return pk+":"+i;
+        if(foundObjectSameOrNot(pk,vs)) return pk;
+        if(vs.equals("number") && isNumber(contentObject(pk))) return pk;
+        return null;
     }
 
-    private boolean scanNumber(Number vb, String pk){
-        return contentDouble(pk)==vb.doubleValue() || contentListContains(pk, vb);
+    private String scanNumber(Number vb, String pk){
+        return (contentDouble(pk)==vb.doubleValue() || contentListContains(pk, vb))?pk:null;
     }
 
-    private boolean scanBoolean(Boolean vb, String pk){
-        return contentBool(pk)==vb || contentListContains(pk, vb);
+    private String scanBoolean(Boolean vb, String pk){
+        return (contentBool(pk)==vb || contentListContains(pk, vb))?pk:null;
     }
 
     private boolean regexMatch(String regex, String pk){

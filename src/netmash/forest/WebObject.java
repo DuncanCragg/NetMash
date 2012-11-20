@@ -445,6 +445,13 @@ public class WebObject {
         return list.contains(val);
     }
 
+    /** Returns first index in list at path that contains the value, -1 if not found. */
+    public int contentListIndexOf(String path, Object val){
+        LinkedList list=contentList(path);
+        if(list==null) return -1;
+        return list.indexOf(val);
+    }
+
     /** Returns true if list at path contains the value. */
     @SuppressWarnings("unchecked")
     public boolean contentListContainsAll(String path, List val){
