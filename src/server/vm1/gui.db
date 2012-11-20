@@ -1,9 +1,8 @@
-{ Rules: ( uid-bbfb-f9c4-81f5-fb57
-           uid-0c8f-4a83-b6c2-84c0
-           uid-6373-8190-fe6c-27ba
-           uid-cc96-00ff-a9df-381a
-  )
-  is: ( gui )
+{ Rules: uid-bbfb-f9c4-81f5-fb57
+         uid-0c8f-4a83-b6c2-84c0
+         uid-6373-8190-fe6c-27ba
+         uid-cc96-00ff-a9df-381a
+  is: gui
   title: "Fibonacci Config"
   view: {
       #maxlabel: Max:
