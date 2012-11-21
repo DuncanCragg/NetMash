@@ -8,7 +8,7 @@
   is: test
   title: "Test Running"
   x: 20
-  h: { x: y }
+  h: { x: uid-39da-3645-4f58-50cb }
   z: 1 2 3
   m: true 4 false 5 hi
   o: { a: 1 2 } { a: 2 3 } { a: 1 3 } { a: 2 4 } { a: 3 4 }
@@ -19,7 +19,7 @@
   is: test rule
   when: "Test 1"
   title: "/est Ru/"
-  a: # => $:x $:h:0:x
+  a: # => $:x $:h:0:x:h:x
   d: # => clamp 14 19 $:x
   f: # => clamp 21 40 $:x
   b: # => clamp 20 29 ( $:x + 10 )
@@ -35,19 +35,19 @@
   is: test rule
   when: "Test 2"
   la: ( divisible-by 5 ) false ( divisible-by 2 )
-  a: $:x:0 y
+  a: $:x:0 { UID: $ is: test s: 16 }
   : { d: 19 }
   f: 21 => as-is ( 3 + 4 )
   b: !$:x
   c: > 1.9
   z: ( < 2 ) ( > 1 ) ( < 4 => $:b × 10 )
-  s: 16
   j: x { m: n } 8
 }
 
 { UID: uid-1de5-4d69-667a-56e4
   is: test rule
   when: "Test 3"
+  a: $:x:0 $
   f: 3 + 4
   z: number ( number => 111 { UID: new a: $:a } ) ( > 289 )
   o: { a: 1 } { a: 4 }

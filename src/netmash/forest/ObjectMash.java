@@ -185,7 +185,7 @@ public class ObjectMash extends WebObject {
         if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
         if(v instanceof LinkedHashMap) return scanHash((LinkedHashMap<String,Object>)v, pk);
         if(v instanceof LinkedList)    return scanList((LinkedList)v, pk, null);
-        log("oh noes "+v);
+        log("oh noes "+v+" "+pk);
         return false;
     }
 
@@ -194,6 +194,7 @@ public class ObjectMash extends WebObject {
         if(contentIs(pk,v)) return true;
         if(v.equals("*")) return  contentSet(pk);
         if(v.equals("#")) return !contentSet(pk);
+        if(v.equals("$"))       return contentIsThis(pk);
         if(v.equals("number"))  return isNumber( contentObject(pk));
         if(v.equals("boolean")) return isBoolean(contentObject(pk));
         if(v.startsWith("/") && v.endsWith("/")) return regexMatch(v.substring(1,v.length()-1),pk);

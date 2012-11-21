@@ -174,6 +174,7 @@ public class WebObject {
 
     /** Get Object at this path in the JSON content. */
     public Object contentObject(String path){
+        if(pathMatches(path,"UID"  )) return uid;
         if(pathMatches(path,"%etag")) return Integer.valueOf(etag);
         try{ return updatingState.objectPath(path);
         }catch(PathOvershot po){
@@ -182,6 +183,7 @@ public class WebObject {
                 if(!(po.leaf() instanceof String)) return null;
                 WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null) return null;
+                if(pathMatches(po.path(),"UID"  )) return w.uid;
                 if(pathMatches(po.path(),"%etag")) return Integer.valueOf(w.etag);
                 try{ return w.publicState.objectPath(po.path());
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
