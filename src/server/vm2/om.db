@@ -17,7 +17,7 @@
 
 { UID: uid-e164-2547-46b0-f47e
   is: test rule
-  when: "Test 1"
+  when: "-------------- Test 1"
   title: "/est Ru/"
   a: # => $:x $:h:0:x:h:x
   d: # => clamp 14 19 $:x
@@ -33,9 +33,9 @@
 
 { UID: uid-40fb-5964-b385-c922
   is: test rule
-  when: "Test 2"
+  when: "-------------- Test 2"
   la: ( divisible-by 5 ) false ( divisible-by 2 )
-  a: $:x:0 { UID: $ is: test s: 16 }
+  a: $:x:0 { UID: $ is: test x: 20 }
   : { d: 19 }
   f: 21 => as-is ( 3 + 4 )
   b: !$:x
@@ -46,7 +46,7 @@
 
 { UID: uid-1de5-4d69-667a-56e4
   is: test rule
-  when: "Test 3"
+  when: "-------------- Test 3"
   a: $:x:0 $
   f: 3 + 4
   z: number ( number => 111 { UID: new a: $:a } ) ( > 289 )
@@ -58,7 +58,7 @@
 
 { UID: uid-61d6-65c9-2931-505b
   is: test rule
-  when: "Test 4"
+  when: "-------------- Test 4"
   m: number => { n: $:. }
   j: x eight
   z: number * => ( 2 selects $:. ) ( 1 selects $:. ) ( 0 selects $:. )
@@ -66,7 +66,7 @@
 
 { UID: uid-d3e7-6831-3804-7cbf
   is: test rule
-  when: "Test 5"
+  when: "-------------- Test 5"
   m: true { n: 4 } { n: 5 } hi yo { n: 7.51 }
   o: { a: 3 }
   z: ( number * ) => ( 1 selects $:. ) ( 0 selects $:. )
@@ -85,7 +85,7 @@
 
 { UID: uid-d039-5967-f60c-70f7
   is: test rule
-  when: "Test completion"
+  when: "-------------- Test completion"
   z: 290 ( { a: 20 } 111 ) 1
   a: 20
   b: 29
