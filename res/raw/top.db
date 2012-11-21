@@ -60,7 +60,7 @@
   is: 3d rule editable
   when: "starting, create lights"
   status: creating => waiting
-  sub-objects: ( ( ( number number ) =>
+  sub-objects: ( number number ) =>
       { object:
         { UID: new
           Rules: $:gamerules
@@ -72,7 +72,6 @@
         }
         coords: ( 0 selects $:. ) ( 1 selects $:. ) -0.5
       }
-  ) )
   denominator: => count $:sub-objects
 }
 

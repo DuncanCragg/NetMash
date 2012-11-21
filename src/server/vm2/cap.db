@@ -13,7 +13,7 @@
   is: gui rule editable
   when: "form submitted create application"
   Alerted: { is: form }
-  view: { applications: ( ( { form: $:Alerted } ) !=> has
+  view: { applications: { form: $:Alerted } !=> has
     { UID: new
       Rules: uid-f265-941d-a0b8-ca5d uid-1cc7-4c21-9036-4e01 uid-872c-b29e-03a1-7b61 uid-9ce9-1bdd-ec05-c8fa
       is: gui editable
@@ -24,7 +24,7 @@
         user: style "You:" $:Alerted:user
       }
     }
-  ) }
+  }
 }
 
 { UID: uid-f265-941d-a0b8-ca5d
@@ -148,7 +148,7 @@
   is: land rule editable
   when: "land object notified add to list"
   Alerted: { is: land place: * }
-  list: ( $:Alerted ) !=> has $:Alerted
+  list: $:Alerted !=> has $:Alerted
 }
 
 { UID: uid-5f28-9174-b47d-2a74
