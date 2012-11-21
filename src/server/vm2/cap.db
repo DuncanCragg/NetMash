@@ -129,7 +129,7 @@
 { UID: uid-872c-b29e-03a1-7b61
   is: gui rule editable
   when: "gui built set up its styles"
-  view: { style: # => { is: style colours: lightgreen }
+  view: { style:    # => { is: style colours: lightgreen }
           user: style => { is: style direction: horizontal proportions: 75% }
           land: style => { is: style direction: horizontal proportions: 75% }
           BP:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
@@ -147,7 +147,7 @@
 { UID: uid-0215-038b-7558-041a
   is: land rule editable
   when: "land object notified add to list"
-  Alerted: { is: land place: * }
+  Alerted: { is: land place: $ }
   list: $:Alerted !=> has $:Alerted
 }
 

@@ -65,18 +65,15 @@ Bugs, Refactoring
 --------------------------------------------------------
 Stuff
 
- + all language changes
-    - make single-item=multi work everywhere; xml style visually
-    - see local cap.db
-    - self check $:/:
-    - items(/properties/props) not objects(/fields/tags) - in gui and code
-    - OM/OTS, etc -> sumer
-    - null, empty, empty list, #
-
- + make a robot in the room entirely on-device
  + Reaktion - time programming it! event review dims and sub-events
+ + make a robot in the room entirely on-device
  + API to NXT from Android or on-device
  + mars rover running
+
+ - all language changes
+    - items(/properties/props) not objects(/fields/tags) - in gui and code
+    - OM/OTS, etc -> sumer or what
+    - reconcile all null, empty tag value or rhs value or $:x, ( ), #
 
  - GIS:
     - show place/sub land in different colours
