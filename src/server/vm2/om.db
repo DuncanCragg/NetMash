@@ -17,7 +17,7 @@
 
 { UID: uid-e164-2547-46b0-f47e
   is: test rule
-  when: "Test fetching var and addition and random"
+  when: "Test 1"
   title: "/est Ru/"
   a: # => $:x $:h:0:x
   d: # => clamp 14 19 $:x
@@ -33,7 +33,7 @@
 
 { UID: uid-40fb-5964-b385-c922
   is: test rule
-  when: "Test var match no-match nested list less/greater than and multiply"
+  when: "Test 2"
   la: ( divisible-by 5 ) false ( divisible-by 2 )
   a: $:x:0 y
   : { d: 19 }
@@ -47,9 +47,9 @@
 
 { UID: uid-1de5-4d69-667a-56e4
   is: test rule
-  when: "Test list element match 1"
+  when: "Test 3"
   f: 3 + 4
-  z: 2 ( > 289 )
+  z: number ( number => 111 { UID: new a: $:a } ) ( > 289 )
   o: { a: 1 } { a: 4 }
   m: 4 boolean number => has ( format %s%s 7.5 1.0 )
   l1: => ok
@@ -58,18 +58,18 @@
 
 { UID: uid-61d6-65c9-2931-505b
   is: test rule
-  when: "Test constructors"
-  z: number ( number => 111 { UID: new a: $:a } ) number
+  when: "Test 4"
   m: number => { n: $:. }
   j: x eight
+  z: number * => ( 2 selects $:. ) ( 1 selects $:. ) ( 0 selects $:. )
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
   is: test rule
-  when: "Test list element match 2"
+  when: "Test 5"
   m: true { n: 4 } { n: 5 } hi yo { n: 7.51 }
   o: { a: 3 }
-  z: ( ( number * => ( 1 selects $:. ) ( 0 selects $:. ) ) )
+  z: ( number * ) => ( 1 selects $:. ) ( 0 selects $:. )
   l2: => count $::o
   l0: => $::o:1
   l7: => $:o:a
@@ -86,7 +86,7 @@
 { UID: uid-d039-5967-f60c-70f7
   is: test rule
   when: "Test completion"
-  z: 1 ( { a: 20 } 111 ) 290
+  z: 290 ( { a: 20 } 111 ) 1
   a: 20
   b: 29
   l1: ok

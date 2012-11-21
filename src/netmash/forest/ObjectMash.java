@@ -190,7 +190,7 @@ public class ObjectMash extends WebObject {
     }
 
     private boolean scanString(String v, String pk){
-        if(contentList(pk)!=null) return scanList(list(v),pk,null);
+        if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         if(contentIs(pk,v)) return true;
         if(v.equals("*")) return  contentSet(pk);
         if(v.equals("#")) return !contentSet(pk);
@@ -202,15 +202,21 @@ public class ObjectMash extends WebObject {
     }
 
     private boolean scanNumber(Number v, String pk){
-        if(contentList(pk)!=null) return scanList(list(v),pk,null);
+        if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         if(contentDouble(pk)==v.doubleValue()) return true;
         return false;
     }
 
     private boolean scanBoolean(Boolean v, String pk){
-        if(contentList(pk)!=null) return scanList(list(v),pk,null);
+        if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         if(contentBool(pk)==v) return true;
         return false;
+    }
+
+    private boolean scanListFromSingleIfNotAlready(Object v, String pk){
+        String[] parts=pk.split(":");
+        if(isNumber(parts[parts.length-1])) return false;
+        return scanList(list(v),pk,null);
     }
 
     private boolean regexMatch(String regex, String pk){
