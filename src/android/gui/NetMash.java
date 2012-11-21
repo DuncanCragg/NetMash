@@ -637,21 +637,35 @@ log(show? "show keyboard": "hide keyboard");
         return false;
     }
 
-    private boolean jumpIfUID(View v, MotionEvent event){
-        if(event.getAction()!=MotionEvent.ACTION_UP) return false;
+    private float jx= -1;
+
+    private boolean jumpIfUID(View v, MotionEvent ev){
+        if(ev.getAction()!=MotionEvent.ACTION_MOVE){ jx= -1; return false; }
+        float x=ev.getX(0);
+        if(jx== -1){ jx=x; return false; }
+        float dx=x-jx;
+        jx= -1;
+        if(dx>0) return false;
         EditText view=(EditText)v;
         int s=view.getSelectionStart();
         int e=view.getSelectionEnd();
-        if(s==e) return false;
+        if(s!=e) return false;
         String currentText=view.getText().toString();
         String uid;
-        do{ uid=currentText.substring(s,e);
-            if(uid.startsWith(" uid-")||uid.startsWith(" http://")){ s++;
-                do{ uid=currentText.substring(s,e);
-                    if(uid.endsWith(" ")){ user.jumpToUID(uid.trim(),null,true); return true; }
-                }while(++e<currentText.length());
+        do{ if(--s<=0) return false;
+            uid=currentText.substring(s,e);
+        }while(!uid.startsWith(" "));
+        s++;
+        while(++e< currentText.length()){
+            uid=currentText.substring(s,e);
+            if(uid.endsWith(" ") || uid.endsWith("\n")){
+                if(uid.startsWith("uid-")||uid.startsWith("http://")){
+                    user.jumpToUID(uid.trim(),null,true);
+                    return true;
+                }
+                return false;
             }
-        }while(--s>=0 && !uid.startsWith(" "));
+        }
         return false;
     }
 

@@ -1352,8 +1352,10 @@ public class JSON {
             buf.append(objectToString(val, indent, maxlength, sumer, false));
             i++;
         }
-        if(structured) buf.append("\n"+indentation(indent-2)+" "+cb);
-        else           buf.append(" "+cb);
+        if(cb.length() >0){
+            if(structured) buf.append("\n"+indentation(indent-2)+" "+cb);
+            else           buf.append(" "+cb);
+        }
         return buf.toString();
     }
 
