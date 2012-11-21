@@ -231,7 +231,7 @@ IDE stuff
     - smooths over ugliness: %, "", etc
  - render a rule nicely: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
     - render rules specially as recognised type
-    - render JSON as recognised ObNet type: Rules, %more, is, etc known
+    - render JSON as recognised ObNet type: Rules, More, is, etc known
     - colour syntax highlighting
  - show how lists and singles are treated the same somehow
  - split-screen and/or easy-flip: Object, Object Net, Object Mash
@@ -278,7 +278,7 @@ HTTP
     - actually this is long-polling GET for C-N=object URL not cache
  - detect POST subsumed by c-n - e.g. homeusers
  - POST response is event targetted at POST request body object
-    - or do you put %notify in - not mentioned in FX paper
+    - or do you put Notify in - not mentioned in FX paper
 
 
 -------------------------------------------------------------------

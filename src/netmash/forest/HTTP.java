@@ -501,11 +501,11 @@ abstract class HTTPCommon {
         if(tunnelHeaders){
             percents.add("UID");
             percents.add("%url");
-            percents.add("%etag");
-            percents.add("%max-age");
+            percents.add("Version");
+            percents.add("Max-Age");
         }
         if(includeNotify){
-            percents.add("%notify");
+            percents.add("Notify");
         }
         return percents;
     }

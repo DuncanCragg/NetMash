@@ -63,21 +63,21 @@
 }
 
 {   UID: uid-ba2b-8619-fdea-8c2c
-    %class: FXDealerTicket
+    Class: FXDealerTicket
     Rules: uid-424d-01c5-ee08-2ec9 uid-e772-4f4f-f981-0cea
     is: fx dealer
     tickets: ( )
 }
 
 {   UID: uid-c47f-5e67-9fc8-b842
-    %etag: 11
-    %class: CountTo200
+    Version: 11
+    Class: CountTo200
     pair: ""
     count: 1
 }
 
 {   UID: uid-4574-a96f-f796-c5fb
-    %class: HRLeavePeriods
+    Class: HRLeavePeriods
     is: ( hr leave-record )
     employee: /employees/1233123
     organisation: /..
@@ -88,7 +88,7 @@
 }
 
 {   UID: uid-2161-baf3-858b-858c
-    %class: server.types.Twitter
+    Class: server.types.Twitter
     is: ( twitter )
     title: "Twitter Gateway"
     types: {
@@ -130,7 +130,7 @@
 }
 
 {   UID: uid-f3fd-b3a5-a88c-8dd7
-    %class: ""
+    Class: ""
     is: ( contact list )
     title: "Enterprise Locations NorthWest"
     list: (
@@ -149,7 +149,7 @@
 }
 
 {   UID: uid-4c3f-9b0f-3bf3-abe6
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise - Head Office"
     address: {
@@ -164,7 +164,7 @@
 }
 
 {   UID: uid-05cc-e687-907f-cf7b
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise - Central"
     address: {
@@ -179,7 +179,7 @@
 }
 
 {   UID: uid-691a-dd2e-2512-902e
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise - Energy (Power)"
     address: {
@@ -195,7 +195,7 @@
 }
 
 {   UID: uid-836b-7ca9-0e54-613a
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise - Customer Contact Centre"
     address: {
@@ -211,7 +211,7 @@
 }
 
 {   UID: uid-fe83-20d2-9fe7-47bd
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise - Environmental"
     address: {
@@ -226,7 +226,7 @@
 }
 
 {   UID: uid-8531-41a0-5a6c-172f
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise - Energy (Gas)"
     address: {
@@ -242,7 +242,7 @@
 }
 
 {   UID: uid-178e-2950-002f-1c03
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise Liverpool - Environmental"
     address: {
@@ -256,7 +256,7 @@
 }
 
 {   UID: uid-2622-e06c-bf3b-62b4
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise - Environmental"
     address: {
@@ -269,7 +269,7 @@
 }
 
 {   UID: uid-543f-d8a4-bcbd-88d5
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise Liverpool - Environmental"
     address: {
@@ -284,7 +284,7 @@
 }
 
 {   UID: uid-b32e-52a8-130f-6ce7
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise - Highways"
     address: {
@@ -298,7 +298,7 @@
 }
 
 {   UID: uid-f857-3568-b57e-89b9
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Enterprise Manchester - Environmental"
     address: {
@@ -314,7 +314,7 @@
 }
 
 {   UID: uid-76b8-8502-45d3-0543
-    %class: MeetUsUp
+    Class: MeetUsUp
     is: ( meetusup contact list )
     title: "MeetUsUp List"
     venue: uid-fc61-ba84-a7d8-9874
@@ -354,7 +354,7 @@
 }
 
 {   UID: uid-1b84-142d-4f34-3734
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Duncan Cragg"
     email: someone@thoughtworks.com
@@ -368,7 +368,7 @@
 }
 
 {   UID: uid-a0b2-0521-d5f1-b994
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Joe Test"
     email: joe.test@testing.com
@@ -376,35 +376,35 @@
 }
 
 {   UID: uid-b4b3-586c-88e5-05ae
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Sam Bloggs"
     email: sam.bloggs@aol.com
 }
 
 {   UID: uid-6eab-8bc0-10a8-db4e
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Jack Bloggs"
     email: jack.bloggs@aol.com
 }
 
 {   UID: uid-bb90-d577-703b-e7a9
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Bobby Bloggs"
     email: bob.bloggs@aol.com
 }
 
 {   UID: uid-f95d-8864-a3ef-7604
-    %class: ""
+    Class: ""
     is: ( contact )
     full-name: "Janice Bloggs"
     email: jan.bloggs@aol.com
 }
 
 {   UID: uid-7235-60ba-d323-d5d6
-    %class: DynamicPage
+    Class: DynamicPage
     is: ( gui )
     title: "Demo of Dynamic GUI and Remote App"
     view: {
@@ -427,7 +427,7 @@
 }
 
 {   UID: uid-6332-84e1-c1de-3364
-    %class: server.types.UserHome
+    Class: server.types.UserHome
     is: ( userhome user list )
     title: "User Home"
     list: ( )

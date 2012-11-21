@@ -129,7 +129,7 @@ public class OTS2GUI {
             else
             if(inlineoruid instanceof LinkedHashMap){
                 LinkedHashMap<String,String> inl = (LinkedHashMap<String,String>)inlineoruid;
-                documentuid = UID.normaliseUID(listuid, inl.get("%more")); // remove normaliseUID
+                documentuid = UID.normaliseUID(listuid, inl.get("More")); // remove normaliseUID
                 contentType=inl.get("is");
                 htmlurl = inl.get("web-view");
                 published=inl.get("published");
@@ -771,7 +771,7 @@ public class OTS2GUI {
 
     private LinkedHashMap oldHashIfEtagSame(String p){
         String uid=user.content(p);
-        int newetag=user.contentInt(p+"%etag");
+        int newetag=user.contentInt(p+"Version");
         Integer oldetag=etags.get(uid);
         if(oldetag!=null && oldetag.intValue()==newetag) return meshes.get(uid);
         etags.put(uid, newetag);

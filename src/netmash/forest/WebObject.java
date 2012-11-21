@@ -63,11 +63,11 @@ public class WebObject {
         funcobs = FunctionalObserver.funcobs;
         uid     =          json.stringPathN("UID");          json.removePath("UID");
         url     =          json.stringPathN("%url");          json.removePath("%url");
-        etag    =          json.intPathN(   "%etag");         json.removePath("%etag"); if(etag==0) etag=1;
-        maxAge  =          json.intPathN(   "%max-age");      json.removePath("%max-age");
-        listToSet(notify,  json.listPathN(  "%notify"));      json.removePath("%notify");
-        listToSet(observe, json.listPathN(  "%observe"));     json.removePath("%observe");
-        cacheNotify =      json.stringPathN("%cache-notify"); json.removePath("%cache-notify");
+        etag    =          json.intPathN(   "Version");         json.removePath("Version"); if(etag==0) etag=1;
+        maxAge  =          json.intPathN(   "Max-Age");      json.removePath("Max-Age");
+        listToSet(notify,  json.listPathN(  "Notify"));      json.removePath("Notify");
+        listToSet(observe, json.listPathN(  "Observe"));     json.removePath("Observe");
+        cacheNotify =      json.stringPathN("Cache-Notify"); json.removePath("Cache-Notify");
         publicState = json;
         updatingState = publicState;
     }
@@ -81,9 +81,9 @@ public class WebObject {
         uid     = (uid       !=null)? uid:        json.stringPathN("UID");     json.removePath("UID");
         uid     = (uid       !=null)? uid:        httpReqURL;
         uid     = UID.toUIDifLocal(uid);
-        etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "%etag");    json.removePath("%etag");
-        maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "%max-age"); json.removePath("%max-age");
-        listToSet(notify,                         json.listPathN(  "%notify")); json.removePath("%notify");
+        etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "Version");    json.removePath("Version");
+        maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "Max-Age"); json.removePath("Max-Age");
+        listToSet(notify,                         json.listPathN(  "Notify")); json.removePath("Notify");
         if(httpNotify!=null && !httpNotify.startsWith("c-n-")) notify.add(httpNotify);
         cacheNotify = httpCacheNotify;
         publicState = json;
@@ -175,7 +175,7 @@ public class WebObject {
     /** Get Object at this path in the JSON content. */
     public Object contentObject(String path){
         if(pathMatches(path,"UID"  )) return uid;
-        if(pathMatches(path,"%etag")) return Integer.valueOf(etag);
+        if(pathMatches(path,"Version")) return Integer.valueOf(etag);
         try{ return updatingState.objectPath(path);
         }catch(PathOvershot po){
             String parentuid=uid;
@@ -184,7 +184,7 @@ public class WebObject {
                 WebObject w = observing(parentuid, (String)po.leaf(), path);
                 if(w==null) return null;
                 if(pathMatches(po.path(),"UID"  )) return w.uid;
-                if(pathMatches(po.path(),"%etag")) return Integer.valueOf(w.etag);
+                if(pathMatches(po.path(),"Version")) return Integer.valueOf(w.etag);
                 try{ return w.publicState.objectPath(po.path());
                 }catch(PathOvershot po2){ po=po2; parentuid=w.uid; }
             }
@@ -767,18 +767,18 @@ public class WebObject {
     public String toString(int maxlength){
         if(maxlength==0) return toString();
         if(isShell()) return   "{ \"UID\": \""+uid+
-                             "\", \"%notify\": "+setToListString(notify)+
+                             "\", \"Notify\": "+setToListString(notify)+
                                ", \"%alertedin\": "+setToListString(alertedin)+
                                ", \"%state\": \""+shellstate+"\"}";
         String r = publicState.toString(
                                  "\"UID\": \""+uid+
                  (url!=null? "\", \"%url\": \""+url: "")+
-                             "\", \"%etag\": "+etag+
-                               ", \"%max-age\": "+maxAge+
-                               ", \"%notify\": "+setToListString(notify)+
-                               ", \"%observe\": "+setToListString(observe)+
-           (cacheNotify!=null? ", \"%cache-notify\": \""+cacheNotify+"\"": "")+
-                               ", \"%class\": \""+this.getClass().toString().substring(6)+
+                             "\", \"Version\": "+etag+
+                               ", \"Max-Age\": "+maxAge+
+                               ", \"Notify\": "+setToListString(notify)+
+                               ", \"Observe\": "+setToListString(observe)+
+           (cacheNotify!=null? ", \"Cache-Notify\": \""+cacheNotify+"\"": "")+
+                               ", \"Class\": \""+this.getClass().toString().substring(6)+
                              "\",", maxlength);
         return r;
     }
@@ -786,36 +786,36 @@ public class WebObject {
     public String toString(boolean sumer){
         if(!sumer) return toString();
         if(isShell()) return "{ UID: "+uid+
-                           "\n  %notify: "+setToListString(notify, true)+
+                           "\n  Notify: "+setToListString(notify, true)+
                            "\n  %alertedin: "+setToListString(alertedin, true)+
                            "\n  %state: "+shellstate+"\n}\n";
         String r = publicState.toString(
                                "UID: "+uid+
               (url!=null?  "\n  %url: "+url: "")+
-                           "\n  %etag: "+etag+
-                           "\n  %max-age: "+maxAge+
-                           "\n  %notify: "+setToListString(notify, true)+
-                           "\n  %observe: "+setToListString(observe, true)+
-      (cacheNotify!=null?  "\n  %cache-notify: "+cacheNotify: "")+
-                           "\n  %class: "+this.getClass().toString().substring(6)+
+                           "\n  Version: "+etag+
+                           "\n  Max-Age: "+maxAge+
+                           "\n  Notify: "+setToListString(notify, true)+
+                           "\n  Observe: "+setToListString(observe, true)+
+      (cacheNotify!=null?  "\n  Cache-Notify: "+cacheNotify: "")+
+                           "\n  Class: "+this.getClass().toString().substring(6)+
                          "\n",true)+"\n";
         return r;
     }
 
     public String toString(){
         if(isShell()) return "{ \"UID\": \""+uid+
-                        "\",\n  \"%notify\": "+setToListString(notify)+
+                        "\",\n  \"Notify\": "+setToListString(notify)+
                           ",\n  \"%alertedin\": "+setToListString(alertedin)+
                           ",\n  \"%state\": \""+shellstate+"\"\n}\n";
         String r = publicState.toString(
                                  "\"UID\": \""+uid+
             (url!=null? "\",\n  \"%url\": \""+url: "")+
-                        "\",\n  \"%etag\": "+etag+
-                          ",\n  \"%max-age\": "+maxAge+
-                          ",\n  \"%notify\": "+setToListString(notify)+
-                          ",\n  \"%observe\": "+setToListString(observe)+
-      (cacheNotify!=null? ",\n  \"%cache-notify\": \""+cacheNotify+"\"": "")+
-                          ",\n  \"%class\": \""+this.getClass().toString().substring(6)+
+                        "\",\n  \"Version\": "+etag+
+                          ",\n  \"Max-Age\": "+maxAge+
+                          ",\n  \"Notify\": "+setToListString(notify)+
+                          ",\n  \"Observe\": "+setToListString(observe)+
+      (cacheNotify!=null? ",\n  \"Cache-Notify\": \""+cacheNotify+"\"": "")+
+                          ",\n  \"Class\": \""+this.getClass().toString().substring(6)+
                         "\",\n")+"\n";
         return r;
     }
@@ -824,9 +824,9 @@ public class WebObject {
         String r = publicState.toString(
                        ( percents.contains("UID")?               "\"UID\": \""  +uid+                  "\",\n    ": "")+
                        ((percents.contains("%url") && url!=null)? "\"%url\": \""  +url+                  "\",\n    ": "")+
-                       ( percents.contains("%etag")?              "\"%etag\": "   +etag+                   ",\n    ": "")+
-                       ( percents.contains("%max-age")?           "\"%max-age\": "+maxAge+                 ",\n    ": "")+
-                       ( percents.contains("%notify")?            "\"%notify\": " +setToListString(notify)+",\n    ": "")
+                       ( percents.contains("Version")?              "\"Version\": "   +etag+                   ",\n    ": "")+
+                       ( percents.contains("Max-Age")?           "\"Max-Age\": "+maxAge+                 ",\n    ": "")+
+                       ( percents.contains("Notify")?            "\"Notify\": " +setToListString(notify)+",\n    ": "")
                    )+"\n";
         return r;
     }

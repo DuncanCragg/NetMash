@@ -50,9 +50,9 @@ public class ObjectMash extends WebObject {
     private LinkedList<String> getEvalRules(){
         LinkedList<String> evalrules=new LinkedList<String>();
         for(String alerted: alerted()){
-            contentTemp("%temp", alerted);
-            if(contentListContainsAll("%temp:is",list("editable","rule"))) evalrules.add(alerted);
-            contentTemp("%temp", null);
+            contentTemp("Temp", alerted);
+            if(contentListContainsAll("Temp:is",list("editable","rule"))) evalrules.add(alerted);
+            contentTemp("Temp", null);
         }
         return evalrules;
     }

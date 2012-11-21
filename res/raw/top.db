@@ -1,5 +1,5 @@
 { UID: uid-f862-56af-d46d-c440
-  %class: netmash.forest.ObjectMash
+  Class: netmash.forest.ObjectMash
   is: place 3d mesh editable
   title: "Your Room"
   sub-objects:
@@ -20,7 +20,7 @@
 }
 
 { UID: uid-20ce-d0b1-c717-3dbb
-  %class: netmash.forest.ObjectMash
+  Class: netmash.forest.ObjectMash
   Rules: uid-e6e9-df58-ddab-6eb9
   is: 3d cuboid editable
   title: Light
@@ -37,7 +37,7 @@
 }
 
 { UID: uid-f6c8-2d51-8060-a52a
-  %class: netmash.forest.ObjectMash
+  Class: netmash.forest.ObjectMash
   Rules: uid-8f4e-551c-858b-d345 uid-fb3e-02d3-70bb-916f uid-536b-de0b-41db-41d1 uid-fbd9-4a4d-c3c7-c31f
          uid-acc3-1f94-1458-ab18 uid-ab7f-889e-edb9-6bab uid-a9ff-4a17-9772-3859 uid-aad5-7236-b521-4780 uid-0b6a-659e-3561-05b2
          uid-4899-0de2-1bb5-58ba uid-3558-f24b-c0c4-d32b
@@ -171,7 +171,7 @@
 }
 
 { UID: uid-d9e4-4f7c-d9fe-9e7c
-  %class: netmash.forest.ObjectMash
+  Class: netmash.forest.ObjectMash
   Rules: uid-58cb-cc31-1769-c2c4
   is: gui editable
   title: "Local Calculator GUI"

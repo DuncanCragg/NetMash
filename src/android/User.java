@@ -517,7 +517,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     try{
                         JSON json=new JSON(NetMash.top.getRawSource(),true);
                         json.setPathAdd("is", "editable");
-                        rule=makeEditRule("",contentInt("editable:%etag"),json);
+                        rule=makeEditRule("",contentInt("editable:Version"),json);
                     }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]); }
                     if(rule!=null) contentMerge(rule);
                 }
@@ -742,7 +742,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
 
 
     private LinkedHashMap makeEditRule(String path, int etag, Object val){
-        return etag>0? deephash(list(hash("%etag",etag),"=>", "as-is",val), path):
+        return etag>0? deephash(list(hash("Version",etag),"=>", "as-is",val), path):
                        deephash(list(                   "=>", "as-is",val), path);
     }
 

@@ -1,12 +1,12 @@
 { UID: uid-6332-84e1-c1de-3364
-  %class: server.types.UserHome
+  Class: server.types.UserHome
   is: userhome user list
   title: "User Home"
   list: ( )
 }
 
 { UID: uid-39da-3645-4f58-50cb
-  %class: server.types.PresenceTracker
+  Class: server.types.PresenceTracker
   Rules: uid-56d4-91ef-a2fc-2585
   is: place 3d mesh editable
   title: "Ann Droid's Place"

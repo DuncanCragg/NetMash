@@ -1,5 +1,5 @@
 { UID: uid-1e51-f298-5f55-6caa
-  %class: server.types.PresenceTracker
+  Class: server.types.PresenceTracker
   is: place 3d mesh editable
   title: "Rob Ott's Place"
   rotation: 0 0 0
@@ -18,12 +18,12 @@
 }
 
 { UID: uid-ff5d-1ef4-cfa5-5f92
-  %class: server.types.DynamicFile
+  Class: server.types.DynamicFile
   watching: vertex-shader.db
 }
 
 { UID: uid-1ff8-59e9-6dac-9b56
-  %class: server.types.DynamicFile
+  Class: server.types.DynamicFile
   watching: fragment-shader.db
 }
 

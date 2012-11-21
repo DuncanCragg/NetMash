@@ -100,7 +100,7 @@ public class Persistence implements FileUser {
         if(jsonchars==null) return null;
         jsonchars.position(0);
         JSON json = new JSON(jsonchars,sumer);
-        String classname = json.stringPathN("%class"); json.removePath("%class");
+        String classname = json.stringPathN("Class"); json.removePath("Class");
         WebObject w=null;
         try{
             if(classname!=null && classname.length() >0){
