@@ -199,13 +199,13 @@
 { UID: uid-d958-bf42-c730-8406
   is: payment rule editable
   when: "basic payment calculated if less than min set to zero"
-  bp-total: ( < $:land:constants:bp-minimum-payout ) => 0
+  bp-total: < $:land:constants:bp-minimum-payout => 0
 }
 
 { UID: uid-73ec-5ea1-9cf0-dfa5
   is: payment rule editable
   when: "basic payment calculated set maximum"
-  bp-total: ( > $:land:constants:bp-maximum-payout ) => $:land:constants:bp-maximum-payout
+  bp-total: > $:land:constants:bp-maximum-payout => $:land:constants:bp-maximum-payout
 }
 
 { UID: uid-8bbc-4ffc-dc43-5903
