@@ -1,6 +1,6 @@
 { UID: uid-6332-84e1-c1de-3364
   %class: server.types.UserHome
-  is: ( userhome user list )
+  is: userhome user list
   title: "User Home"
   list: ( )
 }
@@ -8,89 +8,82 @@
 { UID: uid-39da-3645-4f58-50cb
   %class: server.types.PresenceTracker
   Rules: uid-56d4-91ef-a2fc-2585
-  is: ( place 3d mesh editable )
+  is: place 3d mesh editable
   title: "Ann Droid's Place"
-  rotation: ( 0 0 0 )
-  scale: ( 15.0 15.0 15.0 )
+  rotation: 0 0 0
+  scale: 15.0 15.0 15.0
   present: 0
-  sub-objects: (
-    { object: uid-8a54-9690-a4d5-4a9c coords: (  0 0 15 ) }
-    { object: uid-c058-2db1-0b26-8f48 coords: (  7 0  7 ) }
-    { object: uid-c058-2db1-0b26-8f48 coords: ( -7 0  7 ) }
-    { object: uid-c058-2db1-0b26-8f48 coords: (  7 0 -7 ) }
-    { object: uid-c058-2db1-0b26-8f48 coords: ( -7 0 -7 ) }
-  )
-  vertices: ( (  1.0 -0.1 -1.0 ) ( 1.0 -0.1 1.0 ) ( -1.0 -0.1 1.0 ) ( -1.0 -0.1 -1.0 ) )
-  texturepoints: ( ( 0.0 0.0 ) ( 5.0 0.0 ) ( 5.0 5.0 ) ( 0.0 5.0 ) )
-  normals: ( (  0.0 1.0 0.0 ) )
-  faces: ( ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 ) )
-  textures: ( http://www.photoshopstar.com/wp-content/uploads/2007/12/diamond-plate-metal.jpg )
+  sub-objects:
+    { object: uid-8a54-9690-a4d5-4a9c coords:  0 0 15 }
+    { object: uid-c058-2db1-0b26-8f48 coords:  7 0  7 }
+    { object: uid-c058-2db1-0b26-8f48 coords: -7 0  7 }
+    { object: uid-c058-2db1-0b26-8f48 coords:  7 0 -7 }
+    { object: uid-c058-2db1-0b26-8f48 coords: -7 0 -7 }
+  vertices: (  1.0 -0.1 -1.0 ) ( 1.0 -0.1 1.0 ) ( -1.0 -0.1 1.0 ) ( -1.0 -0.1 -1.0 )
+  texturepoints: ( 0.0 0.0 ) ( 5.0 0.0 ) ( 5.0 5.0 ) ( 0.0 5.0 )
+  normals: ( 0.0 1.0 0.0 )
+  faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )
+  textures: http://www.photoshopstar.com/wp-content/uploads/2007/12/diamond-plate-metal.jpg
   vertex-shader: http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
 }
 
 { UID: uid-56d4-91ef-a2fc-2585
-  is: ( place rule editable )
+  is: place rule editable
   when: "tilt the floor in proportion to number present"
-  rotation: ( * * ( => $:present × 10 ) )
+  rotation: * * ( => $:present × 10 )
 }
 
 { UID: uid-7794-3aa8-2192-7a60
-  is: ( 3d mesh editable )
+  is: 3d mesh editable
   title: Avatar
-  rotation: ( 0 45 0 )
-  scale: ( 1.0 1.0 1.0 )
-  vertices: (
+  rotation: 0 45 0
+  scale: 1.0 1.0 1.0
+  vertices:
     (  1.0 -1.0 -1.0 ) (  1.0 -1.0  1.0 ) ( -1.0 -1.0  1.0 ) ( -1.0 -1.0 -1.0 )
     (  1.0  1.0 -1.0 ) (  1.0  1.0  1.0 ) ( -1.0  1.0  1.0 ) ( -1.0  1.0 -1.0 )
-  )
-  texturepoints: ( ( 0.0 0.0 ) ( 1.0 0.0 ) ( 1.0 1.0 ) ( 0.0 1.0 ) )
-  normals: ( ( -1.0  0.0  0.0 ) ( 1.0 0.0 0.0 )
-               (  0.0 -1.0  0.0 ) ( 0.0 1.0 0.0 )
-               (  0.0  0.0 -1.0 ) ( 0.0 0.0 1.0 )
-  )
-  faces: (
+  texturepoints: ( 0.0 0.0 ) ( 1.0 0.0 ) ( 1.0 1.0 ) ( 0.0 1.0 )
+  normals: ( -1.0  0.0  0.0 ) ( 1.0 0.0 0.0 )
+           (  0.0 -1.0  0.0 ) ( 0.0 1.0 0.0 )
+           (  0.0  0.0 -1.0 ) ( 0.0 0.0 1.0 )
+  faces:
     ( 5/1/5 1/2/5 4/3/5 ) ( 5/1/5 4/3/5 8/4/5 ) ( 3/1/1 7/2/1 8/3/1 )
     ( 3/1/1 8/3/1 4/4/1 ) ( 2/1/6 6/2/6 3/4/6 ) ( 6/2/6 7/3/6 3/4/6 )
     ( 1/1/2 5/2/2 2/4/2 ) ( 5/2/2 6/3/2 2/4/2 ) ( 5/1/4 8/2/4 6/4/4 )
     ( 8/2/4 7/3/4 6/4/4 ) ( 1/1/3 2/2/3 3/3/3 ) ( 1/1/3 3/3/3 4/4/3 )
-  )
-  textures: ( http://fc08.deviantart.net/fs51/i/2009/284/5/e/IMVU_eye_texture_by_lilylisete.png )
+  textures: http://fc08.deviantart.net/fs51/i/2009/284/5/e/IMVU_eye_texture_by_lilylisete.png
   vertex-shader: http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
 }
 
 { UID: uid-c058-2db1-0b26-8f48
-  is: ( 3d mesh editable )
+  is: 3d mesh editable
   title: "Nice Box"
-  rotation: ( 0 0 0 )
-  scale: ( 1.0 1.0 1.0 )
-  vertices: (
+  rotation: 0 0 0
+  scale: 1.0 1.0 1.0
+  vertices:
     (  1.0 -1.0 -1.0 ) (  1.0 -1.0  1.0 ) ( -1.0 -1.0  1.0 ) ( -1.0 -1.0 -1.0 )
     (  1.0  1.0 -1.0 ) (  1.0  1.0  1.0 ) ( -1.0  1.0  1.0 ) ( -1.0  1.0 -1.0 )
-  )
-  texturepoints: ( ( 0.0 0.0 ) ( 1.0 0.0 ) ( 1.0 1.0 ) ( 0.0 1.0 ) )
-  normals: ( ( -1.0  0.0  0.0 ) ( 1.0 0.0 0.0 )
-               (  0.0 -1.0  0.0 ) ( 0.0 1.0 0.0 )
-               (  0.0  0.0 -1.0 ) ( 0.0 0.0 1.0 )
-  )
-  faces: (
+  texturepoints: ( 0.0 0.0 ) ( 1.0 0.0 ) ( 1.0 1.0 ) ( 0.0 1.0 )
+  normals: ( -1.0  0.0  0.0 ) ( 1.0 0.0 0.0 )
+           (  0.0 -1.0  0.0 ) ( 0.0 1.0 0.0 )
+           (  0.0  0.0 -1.0 ) ( 0.0 0.0 1.0 )
+  faces:
     ( 5/1/5 1/2/5 4/3/5 ) ( 5/1/5 4/3/5 8/4/5 ) ( 3/1/1 7/2/1 8/3/1 )
     ( 3/1/1 8/3/1 4/4/1 ) ( 2/1/6 6/2/6 3/4/6 ) ( 6/2/6 7/3/6 3/4/6 )
     ( 1/1/2 5/2/2 2/4/2 ) ( 5/2/2 6/3/2 2/4/2 ) ( 5/1/4 8/2/4 6/4/4 )
     ( 8/2/4 7/3/4 6/4/4 ) ( 1/1/3 2/2/3 3/3/3 ) ( 1/1/3 3/3/3 4/4/3 )
-  )
-  textures: ( http://www.chaoliucl.com/yy3d/yy3d_archive/image/yy3d_help_textureWood.jpg )
+  textures: http://www.chaoliucl.com/yy3d/yy3d_archive/image/yy3d_help_textureWood.jpg
   vertex-shader: http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
 }
 
 { UID: uid-8a54-9690-a4d5-4a9c
-  is: ( 3d notice editable )
+  is: 3d notice editable
   title: "Important Notice"
   text: "Welcome to Ann Droid's Place!"
-  rotation: ( 10 10 10 )
-  scale: ( 1.0 1.0 1.0 )
-  light: ( 0.5 1.0 1.0 )
+  rotation: 10 10 10
+  scale: 1.0 1.0 1.0
+  light: 0.5 1.0 1.0
 }
 
