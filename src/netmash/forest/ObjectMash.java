@@ -125,22 +125,36 @@ public class ObjectMash extends WebObject {
             LinkedList ll=contentList(path);
             return (ll!=null && ll.size()==(int)d)?path:null;
         }
-        if(list.size() >= 2 && (list.get(0).equals("=>") || list.get(1).equals("=>"))){
-            if(list.get(1).equals("=>")){
-                LinkedList rhs=new LinkedList(list.subList(2,list.size()));
-                String ok=scanType(list.get(0),path);
-                if(ok!=null) rewrites.put(ok,rhs);
-                return (ok!=null)?path:null;
-            }
-            else{
-                LinkedList rhs=new LinkedList(list.subList(1,list.size()));
+        int becomes=list.indexOf("=>");
+        if(becomes!= -1){
+            LinkedList rhs=new LinkedList(list.subList(becomes+1,list.size()));
+            if(becomes==0){
                 rewrites.put(path,rhs);
                 return path;
             }
+            String ok;
+            if(becomes==1){
+                ok=scanType(list.get(0),path);
+            }
+            else{
+                LinkedList lhs=new LinkedList(list.subList(0,becomes));
+                ok=scanList(lhs,path);
+            }
+            if(ok!=null) rewrites.put(ok,rhs);
+            return (ok!=null)?path:null;
         }
-        if(list.size() >= 3 && list.get(1).equals("!=>")){
-            LinkedList rhs=new LinkedList(list.subList(2,list.size()));
-            String ok=scanType(list.get(0),path);
+        becomes=list.indexOf("!=>");
+        if(becomes!= -1){
+            if(becomes==0) return null;
+            LinkedList rhs=new LinkedList(list.subList(becomes+1,list.size()));
+            String ok;
+            if(becomes==1){
+                ok=scanType(list.get(0),path);
+            }
+            else{
+                LinkedList lhs=new LinkedList(list.subList(0,becomes));
+                ok=scanList(lhs,path);
+            }
             if(ok==null) rewrites.put(path,rhs);
             return (ok==null)?path:null;
         }
