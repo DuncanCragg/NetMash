@@ -158,6 +158,17 @@ public class Utils{
         return true;
     }
 
+    static public boolean isBoolean(Object o){
+        if(o==null) return false;
+        if(o instanceof Boolean) return true;
+        if(o instanceof String){
+            String s=(String)o;
+            if(s.toLowerCase().equals("true" )) return true;
+            if(s.toLowerCase().equals("false")) return true;
+        }
+        return false;
+    }
+
     static public double tryDouble(Object o, double d){
         if(o==null) return d;
         if(o instanceof Number) return ((Number)o).doubleValue();
