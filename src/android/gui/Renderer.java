@@ -85,7 +85,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     public Renderer(NetMash netmash, LinkedHashMap hm) {
         this.netmash=netmash;
         this.mesh=new Mesh(hm,netmash.user);
-        resetCoordsAndView(0,1.0f,-0.5f);
+        resetCoordsAndView(0,1.0f,3.0f);
     }
 
     synchronized public void newMesh(LinkedHashMap hm){
