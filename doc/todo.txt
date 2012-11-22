@@ -67,8 +67,9 @@ Stuff
 
  + Reaktion - time programming it! event review dims and sub-events
  + make a robot in the room entirely on-device
+    + where to put PresenceTracker
  + API to NXT from Android or on-device
- + mars rover running
+ + Mars Rover running
 
  - all language changes
     - items(/properties/props) not objects(/fields/tags) - in gui and code

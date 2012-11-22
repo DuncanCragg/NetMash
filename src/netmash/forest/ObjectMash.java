@@ -252,15 +252,15 @@ public class ObjectMash extends WebObject {
         for(Map.Entry<String,LinkedList> entry: rewrites.entrySet()){
             currentRewritePath=entry.getKey();
             LinkedList ll=entry.getValue();
-            if(ll.size()==2 && ll.get(0).equals("has")){
-                Object e=copyFindObject(ll.get(1));
+            if(ll.size()==3 && ll.get(0).equals("$.") && ll.get(1).equals("has")){
+                Object e=copyFindObject(ll.get(2));
                 if(e==null) continue;
                 if(currentRewritePath.equals("Notifying")) notifying(e.toString());
                 else contentSetAdd(currentRewritePath, e);
             }
             else
-            if(ll.size()==2 && ll.get(0).equals("has-no")){
-                Object e=findObject(ll.get(1));
+            if(ll.size()==3 && ll.get(0).equals("$.") && ll.get(1).equals("has-no")){
+                Object e=findObject(ll.get(2));
                 if(e==null) continue;
                 if(currentRewritePath.equals("Notifying")) unnotifying(e.toString());
                 else contentListRemove(currentRewritePath, e);
@@ -299,12 +299,12 @@ public class ObjectMash extends WebObject {
         if(ll.size()==3 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)));
         if(ll.size()==4 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)), findString(ll.get(3)));
         if(ll.size()==5 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)), findString(ll.get(3)), findString(ll.get(4)));
-        if(ll.size()==4 && "selects".equals(ll1)) return findBoolean(ll.get(0))? copyFindObject(ll.get(2)): copyFindObject(ll.get(3));
-        if(ll.size()==3 && "selects".equals(ll1)) return copyFindObject(findHashOrListAndGet(ll.get(2),ll.get(0)));
+        if(ll.size()==6 && "if".equals(ll0))      return findBoolean(ll.get(1))? copyFindObject(ll.get(3)): copyFindObject(ll.get(5));
+        if(ll.size()==3 && "select".equals(ll1))  return copyFindObject(findHashOrListAndGet(ll.get(0),ll.get(2)));
         if(ll.size()==2 && "as-is".equals(ll0))   return copyObject(ll.get(1), true);
         if(ll.size()==3 && "join".equals(ll0))    return join(findList(ll.get(1)), findString(ll.get(2)));
         return copyFindEach(ll);
-    }catch(Throwable t){ t.printStackTrace(); log(ll); return ll; } }
+    }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
 
     @SuppressWarnings("unchecked")
     private Object copyFindEach(LinkedList ll){
@@ -317,14 +317,14 @@ public class ObjectMash extends WebObject {
 
     private Object findObject(Object o){
         if(o==null) return null;
-        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentObject(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$")) return eitherBindingOrContentObject(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return o;
     }
 
     private String findString(Object o){
         if(o==null) return "";
-        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentString(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$")) return eitherBindingOrContentString(((String)o).substring(1));
         if(o instanceof LinkedList){ o=eval((LinkedList)o); if(o==null) return null; }
         if(o instanceof Number) return toNicerString((Number)o);
         return o.toString();
@@ -332,28 +332,28 @@ public class ObjectMash extends WebObject {
 
     private double findDouble(Object o){
         if(o==null) return 0;
-        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentDouble(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$")) return eitherBindingOrContentDouble(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findNumberIn(o);
     }
 
     private boolean findBoolean(Object o){
         if(o==null) return false;
-        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentBool(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$")) return eitherBindingOrContentBool(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findBooleanIn(o);
     }
 
     private LinkedHashMap findHash(Object o){
         if(o==null) return new LinkedHashMap();
-        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentHash(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$")) return eitherBindingOrContentHash(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findHashIn(o);
     }
 
     private LinkedList findList(Object o){
         if(o==null) return new LinkedList();
-        if(o instanceof String && ((String)o).startsWith("$:")) return eitherBindingOrContentList(((String)o).substring(2));
+        if(o instanceof String && ((String)o).startsWith("$")) return eitherBindingOrContentList(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findListIn(o);
     }
@@ -371,42 +371,48 @@ public class ObjectMash extends WebObject {
     // ----------------------------------------------------
 
     private Object eitherBindingOrContentObject(String path){
-        if(path.equals(".")) return contentObject(currentRewritePath);
-        if(path.startsWith(":")) return getBinding(path.substring(1));
+        if(path.startsWith(".")) return contentObject(currentRewritePath+(path.equals(".")? "": ":"+path.substring(1)));
+        if(path.startsWith("::")) return getBinding(path.substring(2));
+        if(!path.startsWith(":")) return null;
         Object o=contentObject(path);
         if(o!=null) return o;
         return contentAll(path);
     }
 
     private String eitherBindingOrContentString(String path){
-        if(path.equals(".")) return content(currentRewritePath);
-        if(path.startsWith(":")) return findStringIn(getBinding(path.substring(1)));
+        if(path.startsWith(".")) return content(currentRewritePath+(path.equals(".")? "": ":"+path.substring(1)));
+        if(path.startsWith("::")) return findStringIn(getBinding(path.substring(2)));
+        if(!path.startsWith(":")) return null;
         return contentString(path);
     }
 
     private double eitherBindingOrContentDouble(String path){
-        if(path.equals(".")) return contentDouble(currentRewritePath);
-        if(path.startsWith(":")) return findNumberIn(getBinding(path.substring(1)));
+        if(path.startsWith(".")) return contentDouble(currentRewritePath+(path.equals(".")? "": ":"+path.substring(1)));
+        if(path.startsWith("::")) return findNumberIn(getBinding(path.substring(2)));
+        if(!path.startsWith(":")) return 0;
         return contentDouble(path);
     }
 
     private boolean eitherBindingOrContentBool(String path){
-        if(path.equals(".")) return contentBool(currentRewritePath);
-        if(path.startsWith(":")) return findBooleanIn(getBinding(path.substring(1)));
+        if(path.startsWith(".")) return contentBool(currentRewritePath+(path.equals(".")? "": ":"+path.substring(1)));
+        if(path.startsWith("::")) return findBooleanIn(getBinding(path.substring(2)));
+        if(!path.startsWith(":")) return false;
         return contentBool(path);
     }
 
     private LinkedList eitherBindingOrContentList(String path){
-        if(path.equals(".")) return contentList(currentRewritePath);
-        if(path.startsWith(":")) return findListIn(getBinding(path.substring(1)));
+        if(path.startsWith(".")) return contentList(currentRewritePath+(path.equals(".")? "": ":"+path.substring(1)));
+        if(path.startsWith("::")) return findListIn(getBinding(path.substring(2)));
+        if(!path.startsWith(":")) return null;
         LinkedList ll=contentList(path);
         if(ll!=null) return ll;
         return contentAll(path);
     }
 
     private LinkedHashMap eitherBindingOrContentHash(String path){
-        if(path.equals(".")) return contentHash(currentRewritePath);
-        if(path.startsWith(":")) return findHashIn(getBinding(path.substring(1)));
+        if(path.startsWith(".")) return contentHash(currentRewritePath+(path.equals(".")? "": ":"+path.substring(1)));
+        if(path.startsWith("::")) return findHashIn(getBinding(path.substring(2)));
+        if(!path.startsWith(":")) return null;
         return contentHashMayJump(path);
     }
 
