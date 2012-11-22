@@ -67,7 +67,7 @@
           scale: 0.36 0.36 0.36
           light: 0 0.4 0.7
         }
-        coords: ( 0 selects $:. ) ( 1 selects $:. ) -0.5
+        coords: $.0 $.1 -0.5
       }
   denominator: => count $:sub-objects
 }
@@ -98,16 +98,16 @@
   is: 3d rule editable
   when: "waiting, halve fraction if possible"
   status: waiting
-  numerator:   ( divisible-by 2 ) => $:.  / 2
-  denominator: ( divisible-by 2 ) => $:.  / 2
+  numerator:   divisible-by 2 => $. / 2
+  denominator: divisible-by 2 => $. / 2
 }
 
 { UID: uid-ab7f-889e-edb9-6bab
   is: 3d rule editable
   when: "waiting, third fraction if possible"
   status: waiting
-  numerator:   ( divisible-by 3 ) => $:.  / 3
-  denominator: ( divisible-by 3 ) => $:.  / 3
+  numerator:   divisible-by 3 => $. / 3
+  denominator: divisible-by 3 => $. / 3
 }
 
 { UID: uid-a9ff-4a17-9772-3859
@@ -174,9 +174,9 @@
   view: {
     #panel:
       { #f: { input: chooser label: Function range: {  prod: Multiply sum: Add diff: Subtract div: Divide } } }
-      { #a: {  input: textfield label: A value: 0 } }
-      { #b: {  input: textfield label: B value: 0 } }
-   #result: {  #r: 0 }
+      { #a: { input: textfield label: A value: 0 } }
+      { #b: { input: textfield label: B value: 0 } }
+   #result: { #r: 0 }
   }
 }
 
@@ -191,7 +191,7 @@
       { #a: { value: => $:form:form:a } }
       { #b: { value: => $:form:form:b } }
     #result: { #r: => $:form:form:a
-                    ( $:form:form:f selects {  prod: * sum: + diff: - div: / } )
+                    ( { prod: * sum: + diff: - div: / } select $:form:form:f )
                       $:form:form:b
     }
   }

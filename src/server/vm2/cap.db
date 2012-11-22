@@ -13,7 +13,7 @@
   is: gui rule editable
   when: "form submitted create application"
   Alerted: { is: form }
-  view: { applications: { form: $:Alerted } !=> has
+  view: { applications: { form: $:Alerted } !=> $. has
     { UID: new
       Rules: uid-f265-941d-a0b8-ca5d uid-1cc7-4c21-9036-4e01 uid-872c-b29e-03a1-7b61 uid-9ce9-1bdd-ec05-c8fa
       is: gui editable
@@ -30,7 +30,7 @@
 { UID: uid-f265-941d-a0b8-ca5d
   is: gui rule editable
   when: "application created create land object"
-  Notifying: => has $:form
+  Notifying: => $. has $:form
   view: {
     land: # => style "Your Land:"
       { UID: new
@@ -148,7 +148,7 @@
   is: land rule editable
   when: "land object notified add to list"
   Alerted: { is: land place: $ }
-  list: $:Alerted !=> has $:Alerted
+  list: $:Alerted !=> $. has $:Alerted
 }
 
 { UID: uid-5f28-9174-b47d-2a74
@@ -164,7 +164,7 @@
   area: number
   usage: /wcg-/
   ne-total: => 0
-  fc-total: => $:area * ( $:usage selects $:place:place:constants )
+  fc-total: => $:area * ( $:place:place:constants select $:usage )
 }
 
 { UID: uid-c619-afdd-0d5d-1a5d
@@ -172,7 +172,7 @@
   when: "area used for stewardship multiply area by payment per hectare for usage"
   area: number usage: /hls-/
   fc-total: => 0
-  ne-total: => $:area * ( $:usage selects $:place:place:constants )
+  ne-total: => $:area * ( $:place:place:constants select $:usage )
 }
 
 { UID: uid-4a47-2cb6-8e99-a178
