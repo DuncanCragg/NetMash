@@ -500,7 +500,7 @@ abstract class HTTPCommon {
         HashSet<String> percents = new HashSet<String>();
         if(tunnelHeaders){
             percents.add("UID");
-            percents.add("%url");
+            percents.add("URL");
             percents.add("Version");
             percents.add("Max-Age");
         }

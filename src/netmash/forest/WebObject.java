@@ -62,7 +62,7 @@ public class WebObject {
     public void construct(JSON json){
         funcobs = FunctionalObserver.funcobs;
         uid     =          json.stringPathN("UID");          json.removePath("UID");
-        url     =          json.stringPathN("%url");          json.removePath("%url");
+        url     =          json.stringPathN("URL");          json.removePath("URL");
         etag    =          json.intPathN(   "Version");         json.removePath("Version"); if(etag==0) etag=1;
         maxAge  =          json.intPathN(   "Max-Age");      json.removePath("Max-Age");
         listToSet(notify,  json.listPathN(  "Notify"));      json.removePath("Notify");
@@ -77,7 +77,7 @@ public class WebObject {
         funcobs = FunctionalObserver.funcobs;
         int httpetag=0;   try{ httpetag   = Integer.parseInt(httpETag);   }catch(Throwable t){ httpETag  =null; }
         int httpmaxage=0; try{ httpmaxage = Integer.parseInt(httpMaxAge); }catch(Throwable t){ httpMaxAge=null; }
-        uid     = (httpUID   !=null)? httpUID:    json.stringPathN("%url");     json.removePath("%url");
+        uid     = (httpUID   !=null)? httpUID:    json.stringPathN("URL");     json.removePath("URL");
         uid     = (uid       !=null)? uid:        json.stringPathN("UID");     json.removePath("UID");
         uid     = (uid       !=null)? uid:        httpReqURL;
         uid     = UID.toUIDifLocal(uid);
@@ -768,11 +768,11 @@ public class WebObject {
         if(maxlength==0) return toString();
         if(isShell()) return   "{ \"UID\": \""+uid+
                              "\", \"Notify\": "+setToListString(notify)+
-                               ", \"%alertedin\": "+setToListString(alertedin)+
-                               ", \"%state\": \""+shellstate+"\"}";
+                               ", \"Alertedin\": "+setToListString(alertedin)+
+                               ", \"State\": \""+shellstate+"\"}";
         String r = publicState.toString(
                                  "\"UID\": \""+uid+
-                 (url!=null? "\", \"%url\": \""+url: "")+
+                 (url!=null? "\", \"URL\": \""+url: "")+
                              "\", \"Version\": "+etag+
                                ", \"Max-Age\": "+maxAge+
                                ", \"Notify\": "+setToListString(notify)+
@@ -787,11 +787,11 @@ public class WebObject {
         if(!sumer) return toString();
         if(isShell()) return "{ UID: "+uid+
                            "\n  Notify: "+setToListString(notify, true)+
-                           "\n  %alertedin: "+setToListString(alertedin, true)+
-                           "\n  %state: "+shellstate+"\n}\n";
+                           "\n  Alertedin: "+setToListString(alertedin, true)+
+                           "\n  State: "+shellstate+"\n}\n";
         String r = publicState.toString(
                                "UID: "+uid+
-              (url!=null?  "\n  %url: "+url: "")+
+              (url!=null?  "\n  URL: "+url: "")+
                            "\n  Version: "+etag+
                            "\n  Max-Age: "+maxAge+
                            "\n  Notify: "+setToListString(notify, true)+
@@ -805,11 +805,11 @@ public class WebObject {
     public String toString(){
         if(isShell()) return "{ \"UID\": \""+uid+
                         "\",\n  \"Notify\": "+setToListString(notify)+
-                          ",\n  \"%alertedin\": "+setToListString(alertedin)+
-                          ",\n  \"%state\": \""+shellstate+"\"\n}\n";
+                          ",\n  \"Alertedin\": "+setToListString(alertedin)+
+                          ",\n  \"State\": \""+shellstate+"\"\n}\n";
         String r = publicState.toString(
                                  "\"UID\": \""+uid+
-            (url!=null? "\",\n  \"%url\": \""+url: "")+
+            (url!=null? "\",\n  \"URL\": \""+url: "")+
                         "\",\n  \"Version\": "+etag+
                           ",\n  \"Max-Age\": "+maxAge+
                           ",\n  \"Notify\": "+setToListString(notify)+
@@ -823,7 +823,7 @@ public class WebObject {
     public String toString(HashSet<String> percents){
         String r = publicState.toString(
                        ( percents.contains("UID")?               "\"UID\": \""  +uid+                  "\",\n    ": "")+
-                       ((percents.contains("%url") && url!=null)? "\"%url\": \""  +url+                  "\",\n    ": "")+
+                       ((percents.contains("URL") && url!=null)? "\"URL\": \""  +url+                  "\",\n    ": "")+
                        ( percents.contains("Version")?              "\"Version\": "   +etag+                   ",\n    ": "")+
                        ( percents.contains("Max-Age")?           "\"Max-Age\": "+maxAge+                 ",\n    ": "")+
                        ( percents.contains("Notify")?            "\"Notify\": " +setToListString(notify)+",\n    ": "")
