@@ -54,13 +54,11 @@ Bugs, Refactoring
  - don't fetch remote if it's yours anyway (?)
  - throw if calling certain methods outside of evaluator
  - NaN/Infinity breaking JSON syntax
- - calculator doesn't update when you set function
  - hello world doesn't update immediately cos misses evt & gets out of sync
  - can edit own edit rule.. hide edit rules?
  - non-sumer appearing in remote rewrite(?)
  - don't put template edit rule in instantiation
  - editable rule push: first rule will be skipped first time
- - can't jump http
  - too space-dependent in editing: CRs
 --------------------------------------------------------
 Stuff

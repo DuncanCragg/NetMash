@@ -168,7 +168,7 @@
 }
 
 { UID: uid-d9e4-4f7c-d9fe-9e7c
-  Rules: uid-58cb-cc31-1769-c2c4
+  Rules: uid-58cb-cc31-1769-c2c4 uid-3395-9f29-80d0-a8ac
   is: gui editable
   title: "Local Calculator GUI"
   view: {
@@ -182,9 +182,14 @@
 
 { UID: uid-58cb-cc31-1769-c2c4
   is: gui rule editable
-  when: "form changes, do calculation"
+  when: "form alerted, save it"
   Alerted: { is: form }
   form: => $:Alerted
+}
+
+{ UID: uid-3395-9f29-80d0-a8ac
+  is: gui rule editable
+  when: "form changes, do calculation"
   view: {
     #panel:
       { #f: { value: => $:form:form:f } }
