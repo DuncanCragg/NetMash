@@ -480,22 +480,28 @@ log(show? "show keyboard": "hide keyboard");
                 boolean needsLabel = hm.get("label")!=null && ("checkbox".equals(type)||"textfield".equals(type)||"rating".equals(type));
                 if(needsLabel){  LinkedHashMap widget=(LinkedHashMap)hm.clone();
                                  Object label=widget.remove("label");
-                                 String proportions="checkbox".equals(type)? "85%":"40%";
-                                 LinkedHashMap hs=hash("style",style("direction","horizontal","proportions",proportions), "label",label, tag,widget);
-                                 addHorizontalStrip(layout, createHorizontalStrip(hs), colour, prop, height, width);
+                                 if(!"rating".equals(type)){
+                                     String proportions="checkbox".equals(type)? "85%":"40%";
+                                     LinkedHashMap hs=hash("style",style("direction","horizontal","proportions",proportions), "label",label, tag,widget);
+                                     addStrip(layout, createHorizontalStrip(hs), colour, prop, height, width);
+                                 }
+                                 else{
+                                     LinkedHashMap hs=hash("style",style("direction","vertical"), "label",label, tag,widget);
+                                     addStrip(layout, createVerticalStrip(hs), colour, prop, height, width);
+                                 }
                 }
-                else             addAView(          layout, createFormView(tag, hm, colour, borderless), prop, height, width);
+                else  addAView(layout, createFormView(tag, hm, colour, borderless), prop, height, width);
             }
             else
-            if(isHorizontal(hm)) addHorizontalStrip(layout, createHorizontalStrip(hm), colour, prop, height, width);
-            else                 addVerticalStrip(  layout, createVerticalStrip(hm), colour, prop, height, width);
+            if(isHorizontal(hm)) addStrip(layout, createHorizontalStrip(hm), colour, prop, height, width);
+            else                 addStrip(layout, createVerticalStrip(hm),   colour, prop, height, width);
         }
         else
         if(o instanceof LinkedList){
             LinkedList ll=(LinkedList)o;
             if(ll.size()==0) return;
-            if(isHorizontal(ll)) addHorizontalStrip(layout, createHorizontalStrip(ll), colour, prop, height, width);
-            else                 addVerticalStrip(  layout, createVerticalStrip(ll), colour, prop, height, width);
+            if(isHorizontal(ll)) addStrip(layout, createHorizontalStrip(ll), colour, prop, height, width);
+            else                 addStrip(layout, createVerticalStrip(ll),   colour, prop, height, width);
         }
         else{
             String s=o.toString();
@@ -510,14 +516,7 @@ log(show? "show keyboard": "hide keyboard");
         }
     }
 
-    private void addHorizontalStrip(LinearLayout layout, View view, int colour, float prop, float height, float width){
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
-        lp.setMargins(0,0,0,0);
-        view.setLayoutParams(lp);
-        layout.addView(view);
-    }
-
-    private void addVerticalStrip(LinearLayout layout, View view, int colour, float prop, float height, float width){
+    private void addStrip(LinearLayout layout, View view, int colour, float prop, float height, float width){
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(FILL_PARENT, WRAP_CONTENT);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
