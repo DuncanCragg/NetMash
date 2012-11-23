@@ -12,6 +12,15 @@
   title: => join ( $:x $:y ) " "
 }
 
+{ UID: uid-0112-09a9-3f54-b720
+  Rules: uid-5f5d-6d29-64d8-2d8c uid-b3ae-5b55-65ad-a296
+  is: attendable reviewable event
+  title: "Geek Speak December"
+  text: "Europe's Top Tech"
+  start: "Wed 12 Dec 2012 18:00:00 GMT"
+  end:   "Wed 12 Dec 2012 23:00:00 GMT"
+}
+
 { UID: uid-3927-d995-837f-f165
   Class: server.types.DynamicFile
   watching: functional-hyper.db
@@ -32,25 +41,24 @@
   y: 1
   config: uid-7756-cb46-4b1b-89cc
   o: {}
-  seq: ( )
 }
 
 { UID: uid-3c3a-7576-a61b-ed87
-  is: ( fibonacci rule )
+  is: fibonacci rule
   when: "running z is sum of x and y"
-  y: <lt($:config:max)>
-  z: <>sum($:x $:y)
-  o: { n: <>$:z }
-  seq: <>has($:o)
-  ratio: <>div($:y $:x)
+  y: < $:config:max
+  z: => sum $:x $:y
+  o: { n: => $:z }
+  seq: => $. has $:o
+  ratio: => $:y / $:x
 }
 
 { UID: uid-61fd-78a2-60b6-4c27
-  is: ( fibonacci rule )
+  is: fibonacci rule
   when: "z calculated shift back"
-  z: <sum($:x $:y)>
-  x: <>$:y
-  y: <>$:z
+  z: $:x + $:y
+  x: => $:y
+  y: => $:z
 }
 
 { UID: uid-7756-cb46-4b1b-89cc
@@ -59,128 +67,115 @@
 }
 
 { UID: uid-bbfb-f9c4-81f5-fb57
-  is: ( gui rule )
+  is: gui rule
   when: "max changed set it"
   Alerted: { is: form }
-  max: <>$:Alerted:form:max
+  max: => $:Alerted:form:max
 }
 
 { UID: uid-0c8f-4a83-b6c2-84c0
-  is: ( gui rule )
+  is: gui rule
   when: "processor changed set it"
   Alerted: { is: processor }
-  view: { #res: <>$:Alerted:results }
+  view: { #res: => $:Alerted:results }
 }
 
 { UID: uid-6373-8190-fe6c-27ba
-  is: ( gui rule )
+  is: gui rule
   when: "gui built set up its styles. 1"
-  view: { style: <#>{} }
+  view: { style: # => {} }
 }
 
 { UID: uid-cc96-00ff-a9df-381a
-  is: ( gui rule )
+  is: gui rule
   when: "gui built set up its styles. 2"
   view: { style:{
-      is: <#>style
-      colours: <#>lightturquoise white lightturquoise lightblue*
+      is: # => style
+      colours: # => lightturquoise white lightturquoise lightblue*
   } }
 }
 
 { UID: uid-a205-babf-72a4-1272
-  Class: netmash.forest.Fjord
-  Rules: uid-5f5d-6d29-64d8-2d8c
-         uid-b3ae-5b55-65ad-a296
-  is: ( attendable event )
+  Rules: uid-5f5d-6d29-64d8-2d8c uid-b3ae-5b55-65ad-a296
+  is: attendable event
   title: "Over the Air 2011"
-  content: "UK Mobile meetup at Bletchley Park"
+  text: "UK Mobile meetup at Bletchley Park"
   start: "Fri 30 Sep 2011 09:00:00 GMT"
   end:   "Sat  1 Oct 2011 23:00:00 GMT"
   location: uid-35c0-9017-99c1-db63
-  attendees: ( )
 }
 
 { UID: uid-5f5d-6d29-64d8-2d8c
-  is: ( event rule )
+  is: event rule
   when: "rsvp attending received ensure user is in attendees"
-  Alerted: { is: rsvp
-                event: <$:>
-                attending: yes }
-  attendees: <>has($:Alerted:user)
+  Alerted: { is: rsvp event: $ attending: yes }
+  attendees: => $. has $:Alerted:user
 }
 
 { UID: uid-b3ae-5b55-65ad-a296
-  is: ( event rule )
+  is: event rule
   when: "rsvp not attending ensure user not in attendees"
-  Alerted: { is: rsvp
-                event: <$:>
-                attending: no }
-  attendees: <>hasno($:Alerted:user)
+  Alerted: { is: rsvp event: $ attending: no }
+  attendees: => $. has-no $:Alerted:user
 }
 
 { UID: uid-35c0-9017-99c1-db63
-  is: ( contact )
+  is: contact
   full-name: "Bletchley Park"
   address: {
-      extended: ( "The Mansion" "Bletchley Park" )
+      extended: "The Mansion" "Bletchley Park"
       street: "Sherwood Drive"
-      locality: ( Bletchley "Milton Keynes" )
+      locality: Bletchley "Milton Keynes"
       region: Buckinghamshire
       postal-code: "MK3 6EB"
       country: UK
   }
   phone: { work: "01908 640404" }
-  email: ( info@bletchleypark.org.uk )
+  email: info@bletchleypark.org.uk
   web-view: http://www.bletchleypark.org/
 }
 
 { UID: uid-afcb-9ff0-9270-98b0
   Class: netmash.forest.Fjord
   Rules: uid-6db8-55e9-793e-e35c
-  is: ( gui )
+  is: gui
   title: "Event Attendance Manager"
   view: {
        #attending: "?(Attending /boolean/ )?"
-       #event: ( { is: style
-                     direction: horizontal
-                     options: jump
-                     proportions: 75% }
-              Event:
-              http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json
-       )
+       #event: { is: style direction: horizontal proportions: 75% }
+               Event: http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json
   }
   event: http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json
-  rsvp: {}
 }
 
 { UID: uid-6db8-55e9-793e-e35c
-  is: ( gui rule )
+  is: gui rule
   when: "attendance set first time set form create new rsvp"
-  Alerted: { is: form gui: <$:> }
-  form: <#>Alerted
-  rsvp: { Rules: <#>list(uid-da1d-583e-0be6-ad59 uid-939a-8ca9-4845-94cc)
-            is: <#>rsvp
-            gui: <#>$:
-            user: <#>$:form:user
-            event: <#>$:event
-            UID: <#>new
-  }
+  Alerted: { is: form gui: $ }
+  form: # => $:Alerted:
+  rsvp: # => { UID: new
+               Rules: uid-da1d-583e-0be6-ad59 uid-939a-8ca9-4845-94cc
+               is: rsvp
+               gui: $
+               user: $:form:user
+               event: $:event
+             }
 }
 
 { UID: uid-da1d-583e-0be6-ad59
-  is: ( rsvp rule )
+  is: rsvp rule
   when: "attendance set each time set rsvp status for event"
-  gui: { form:{ form:{ attending: true }}}
-  attending: <>yes
-  Notifying: <>has($:gui:event)
+  gui: { form:{ form:{ attending: true } } }
+  attending: => yes
+  Notifying: => $. has($:gui:event)
 }
 
 { UID: uid-939a-8ca9-4845-94cc
-  is: ( rsvp rule )
+  is: rsvp rule
   when: "attendance set each time set rsvp status for event"
-  gui: {form:{ form:{ attending: false }}}
-  attending: <>no
-  Notifying: <>has($:gui:event)
+  gui: { form: { form: { attending: false } } }
+  attending: => no
+  Notifying: => $. has($:gui:event)
 }
 
 { UID: uid-b236-2c49-c6f8-fea6
@@ -192,68 +187,60 @@
 }
 
 { UID: uid-648d-beb0-89a1-d613
-  is: ( coordinator rule )
+  is: coordinator rule
   when: "event notified take info. 1"
-  Alerted: { is: event title: <$:articles-a:title> }
-  info-a: <#>list($:Alerted:start $:Alerted:end $:Alerted:content)
+  Alerted: { is: event title: $:articles-a:title }
+  info-a: # => $:Alerted:start $:Alerted:end $:Alerted:text
 }
 
 { UID: uid-2a68-0c60-16da-9796
   Class: netmash.forest.Fjord
-  Rules: uid-b6d6-c2be-e69d-abbf uid-fb3f-b8ca-3187-5175
-  is: ( searchable document list )
+  Rules: uid-b6d6-c2be-e69d-abbf
+  is: searchable document list
   title: "Test document database"
-  list: ( uid-393e-1881-a861-f0fb uid-b091-7da1-2db6-1f6a )
+  list: uid-393e-1881-a861-f0fb uid-b091-7da1-2db6-1f6a
 }
 
 { UID: uid-b6d6-c2be-e69d-abbf
-  is: ( document list rule )
+  is: document list rule
   when: "query posted grab it and begin response. 1"
-  Alerted: { is: ( document query ) }
-  query: <#>Alerted
-  response: <#>{}
-}
-
-{ UID: uid-fb3f-b8ca-3187-5175
-  is: ( document list rule )
-  when: "query posted spawn response. 2"
-  response: { Rules: <#>list(uid-e415-a7c8-81d3-da3c)
-                is: "<#>list(document list)"
-                query: <#>$:query
-                UID: <#>new
-  }
+  Alerted: { is: document query }
+  query: # => $:Alerted
+  response: # => { UID: new
+                   Rules: uid-e415-a7c8-81d3-da3c
+                   is: document list
+                   query: $:query
+                 }
 }
 
 { UID: uid-e415-a7c8-81d3-da3c
-  is: ( document list rule )
+  is: document list rule
   when: "new response notify query. 3"
-  title: "<>Query results"
-  list: <>$:query:list:list
-  Notifying: <>has($:query)
+  title: => "Query results"
+  list: => $:query:list:list
+  Notifying: => $. has $:query
 }
 
 { UID: uid-393e-1881-a861-f0fb
   is: article
   title: "Test document one"
-  content: (
+  text:
       "this is an article"
       "that can be queried"
-      "with has-words(article)"
-  )
+      "with has-words article"
 }
 
 { UID: uid-b091-7da1-2db6-1f6a
   is: article
   title: "Test document two"
-  content: (
+  text:
       "this is another article"
       "that can be queried"
-      "with has-words(article)"
-  )
+      "with has-words article"
 }
 
 { UID: uid-d88e-7954-590f-a2d8
-  is: ( site article list )
+  is: site article list
   title: "What Not How"
   subTitle: "Duncan Cragg on Declarative Architectures"
   author: { is: contact full-name: "Duncan Cragg" }
@@ -265,7 +252,7 @@
   web-view: http://duncan-cragg.org/blog/
   atom: http://duncan-cragg.org/blog/atom/
   updated: 2012-01-20T18:07:00Z
-  list: (
+  list:
      { is: article
        title: "The Basics | The Object Network"
        published: 2012-01-20T18:07:00Z
@@ -309,6 +296,5 @@
        More: http://duncan-cragg.org/blog/post/forest-news/atom.json
      }
      {}
-   )
 }
 
