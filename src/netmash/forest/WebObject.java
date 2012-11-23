@@ -668,6 +668,11 @@ public class WebObject {
         return w!=null && !w.isShell();
     }
 
+    /** Only normalise if it's not ours. */
+    public String normaliseUIDIfNotOurs(String baseurl, String uid){
+        return oneOfOurs(uid)? UID.toUID(uid): UID.normaliseUID(baseurl, uid);
+    }
+
     /** Don't use this unless you're handing the thread over to an object that's responsible and local. */
     public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheOrPersistenceGet(UID.toUID(uid)); }
 
@@ -688,16 +693,17 @@ public class WebObject {
 
     /* ---------------------------------------------------- */
 
-    private WebObject observing(String baseurl, String uid2url, String path){
+    private WebObject observing(String baseurl, String uid, String path){
         boolean tempObserve = tempPath!=null && path.startsWith(tempPath);
-        String observeduid=UID.normaliseUID(baseurl, uid2url);
+        String observeduid=normaliseUIDIfNotOurs(baseurl, uid);
         if(!UID.isUID(observeduid)) return null;
         obsalmod = true;
         return funcobs.observing(this, observeduid, tempObserve);
     }
 
-    private void notifying(String baseurl, String uid2url){
-        String alertuid=UID.normaliseUID(baseurl, uid2url);
+    private void notifying(String baseurl, String uid){
+        String alertuid=normaliseUIDIfNotOurs(baseurl, uid);
+        if(!UID.isUID(alertuid)) return;
         if(notify.contains(alertuid)) return;
         obsalmod = true;
         newalert.add(alertuid);
