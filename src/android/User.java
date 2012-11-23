@@ -417,6 +417,44 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
+    public Double getFormDoubleVal(final String guiuid, final String tag){
+        final Double[] val=new Double[1];
+        new Evaluator(this){
+            public void evaluate(){
+                setResponse(guiuid);
+                if(contentListContainsAll("private:viewing:is", list("attendable","event"))||
+                   contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
+                    val[0]=contentDouble("private:responses:rsvp:"+UID.toUID(guiuid)+":"+dehash(tag));
+                }
+                else if(contentIsOrListContains("private:viewing:is", "gui")){
+                    val[0]=contentDouble("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                }
+                else val[0]=null;
+                refreshObserves();
+            }
+        };
+        return val[0];
+    }
+
+    public Boolean getFormBooleanVal(final String guiuid, final String tag){
+        final Boolean[] val=new Boolean[1];
+        new Evaluator(this){
+            public void evaluate(){
+                setResponse(guiuid);
+                if(contentListContainsAll("private:viewing:is", list("attendable","event"))||
+                   contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
+                    val[0]=contentIs("private:responses:rsvp:"+UID.toUID(guiuid)+":"+dehash(tag),"yes");
+                }
+                else if(contentIsOrListContains("private:viewing:is", "gui")){
+                    val[0]=contentBool("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                }
+                else val[0]=null;
+                refreshObserves();
+            }
+        };
+        return val[0];
+    }
+
     private boolean setResponse(String guiuid){ return setResponse(guiuid, false, 0,0); }
 
     private boolean setResponse(String guiuid, boolean editable, float dx, float dy){

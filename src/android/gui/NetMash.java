@@ -734,8 +734,9 @@ log(show? "show keyboard": "hide keyboard");
         view.setOnClickListener(new OnClickListener(){
             public void onClick(View v){ user.setUpdateVal(viewUID, tag, ((CheckBox)v).isChecked()); }
         });
-        user.prepareResponse(viewUID);
-        view.setChecked(value!=null && (value instanceof Boolean) && ((Boolean)value));
+        Boolean v1=user.getFormBooleanVal(viewUID,tag);
+        Boolean v2=value!=null && (value instanceof Boolean) && ((Boolean)value);
+        view.setChecked(v1!=null? v1: (v2!=null? v2: false));
         view.setTextSize(20);
         view.setTextColor(0xff000000);
         return view;
@@ -761,13 +762,14 @@ log(show? "show keyboard": "hide keyboard");
     private View createFormRatingView(final String tag, String label, Object value){
         RatingBar view = new RatingBar(this);
         view.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
-            public void onRatingChanged(RatingBar b, float r, boolean f){ user.setUpdateVal(viewUID, tag, (int)r); }
+            public void onRatingChanged(RatingBar b, float r, boolean f){ if(f) user.setUpdateVal(viewUID, tag, (int)(r+0.5)); }
         });
-        int numchoices=5;
         user.prepareResponse(viewUID);
         view.setStepSize(1.0f);
-        view.setNumStars(numchoices);
-        view.setRating(0.0f);
+        view.setNumStars(5);
+        Double v1=user.getFormDoubleVal(viewUID,tag);
+        Double v2=(value!=null && (value instanceof Double))? ((Double)value): null;
+        view.setRating((float)(v1!=null? v1: (v2!=null? v2: 0)));
         return view;
     }
 

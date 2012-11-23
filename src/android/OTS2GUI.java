@@ -305,7 +305,7 @@ public class OTS2GUI {
         LinkedHashMap<String,Object> titlehash=new LinkedHashMap<String,Object>();
         titlehash.put("style", style("direction","horizontal", "proportions","25%", "colours","lightpink*"));
         titlehash.put("#photo", photourl);
-        titlehash.put("#val-full-name", editable? hash("input","textfield", "value",fullname): fullname);
+        titlehash.put("full-name", editable? hash("input","textfield", "value",fullname): fullname);
 
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical"));
@@ -329,9 +329,9 @@ public class OTS2GUI {
         viewhash.put("#title", "!["+(title!=null? title: "Event")+"]!");
         viewhash.put("#event", event);
         if(user.contentListContains("private:viewing:is", "reviewable"))
-        viewhash.put("#rate", hash("input","rating", "label","Rate this event"));
+        viewhash.put("rating", hash("input","rating", "label","Rate this event"));
         if(user.contentListContains("private:viewing:is", "attendable"))
-        viewhash.put("#rsvp", hash("input","checkbox", "label","Attending"));
+        viewhash.put("attending", hash("input","checkbox", "label","Attending"));
         LinkedList attendees = new LinkedList();
         attendees.add(style("direction","vertical", "colours","lightgreen"));
         addListIfPresent(attendees, "attendees", "Attendees");
