@@ -445,7 +445,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
             if(!contentSet("private:responses:query")) contentHash("private:responses:query", hash());
             resp=newDocumentQuery(guiuid, uid);
         }
-        else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
+        else if(contentListContainsAll("private:viewing:is", list("attendable","event"))||
+                contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
             path="private:responses:rsvp:"+UID.toUID(guiuid);
             if(contentSet(path)) return false;
             if(!contentSet("private:responses:rsvp")) contentHash("private:responses:rsvp", hash());
@@ -493,7 +494,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
             formuid=content("private:responses:query:"+UID.toUID(guiuid));
         }
-        else if(contentListContainsAll("private:viewing:is", list("attendable","event"))){
+        else if(contentListContainsAll("private:viewing:is", list("attendable","event"))||
+                contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
             formuid=content("private:responses:rsvp:"+UID.toUID(guiuid));
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){

@@ -19,6 +19,23 @@
   text: "Europe's Top Tech"
   start: "Wed 12 Dec 2012 18:00:00 GMT"
   end:   "Wed 12 Dec 2012 23:00:00 GMT"
+  list: uid-3e0e-a630-b669-23d7 uid-0a01-cec7-61b7-a770
+}
+
+{ UID: uid-3e0e-a630-b669-23d7
+  is: reviewable event
+  title: "My Love of Clojure"
+  text: "Long ago, I fell in love with Lisp.."
+  start: "Wed 12 Dec 2012 18:00:00 GMT"
+  end:   "Wed 12 Dec 2012 19:00:00 GMT"
+}
+
+{ UID: uid-0a01-cec7-61b7-a770
+  is: reviewable event
+  title: "My Love of FORTRAN"
+  text: "Back when I were a lad .."
+  start: "Wed 12 Dec 2012 19:00:00 GMT"
+  end:   "Wed 12 Dec 2012 20:00:00 GMT"
 }
 
 { UID: uid-3927-d995-837f-f165

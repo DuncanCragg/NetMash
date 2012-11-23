@@ -168,8 +168,6 @@ public class OTS2GUI {
             if(!(o instanceof LinkedHashMap)) continue;
             addIfPresent(valuescol, entry.getKey(), null, false, (LinkedHashMap)((LinkedHashMap)o).clone());
         }
-        String listuid = user.content("private:viewing");
-        LinkedList viewlist=landList2Col(listuid);
         String title=user.content("private:viewing:title");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
@@ -177,25 +175,8 @@ public class OTS2GUI {
         viewhash.put("#values", valuescol);
         if(user.contentSet("private:viewing:template"))
         viewhash.put("#new", hash("input","textfield", "label","Name of new sub-land entry"));
-        viewhash.put("#landlist", viewlist);
+        viewhash.put("#landlist", list2Col());
         return viewhash;
-    }
-
-    private LinkedList landList2Col(String listuid){
-        LinkedList lands = user.contentList("private:viewing:list");
-        LinkedList viewlist = new LinkedList();
-        viewlist.add(style("direction","vertical"));
-        int i= -1;
-        if(lands!=null) for(Object o: lands){ i++;
-            String landuid=null;
-            if(o instanceof String) landuid = (String)o;
-            if(landuid==null) landuid=listuid;
-            String          title=user.contentString("private:viewing:list:"+i+":title");
-            if(title==null) title=user.contentString("private:viewing:list:"+i+":is");
-            if(title==null) viewlist.add("Loading..");
-            else            viewlist.add(list(style("direction","horizontal", "colours","lightblue", "proportions","75%"), title, landuid));
-        }
-        return viewlist;
     }
 
     public LinkedList contact2Map(String contactprefix){
@@ -352,10 +333,27 @@ public class OTS2GUI {
         if(user.contentListContains("private:viewing:is", "attendable"))
         viewhash.put("#rsvp", hash("input","checkbox", "label","Attending"));
         LinkedList attendees = new LinkedList();
-        attendees.add(style("direction","vertical"));
+        attendees.add(style("direction","vertical", "colours","lightgreen"));
         addListIfPresent(attendees, "attendees", "Attendees");
         viewhash.put("#attendees", attendees);
+        viewhash.put("#eventlist", list2Col());
         return viewhash;
+    }
+
+    private LinkedList list2Col(){
+        LinkedList items = user.contentList("private:viewing:list");
+        LinkedList viewlist = new LinkedList();
+        viewlist.add(style("direction","vertical"));
+        int i= -1;
+        if(items!=null) for(Object o: items){ i++;
+            String itemuid=null;
+            if(o instanceof String) itemuid = (String)o;
+            String          title=user.contentString("private:viewing:list:"+i+":title");
+            if(title==null) title=user.contentString("private:viewing:list:"+i+":is");
+            if(title==null) viewlist.add("Loading..");
+            else            viewlist.add(list(style("direction","horizontal", "colours","lightblue", "proportions","75%"), title, itemuid));
+        }
+        return viewlist;
     }
 
     public LinkedHashMap article2GUI(){
