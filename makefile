@@ -100,7 +100,7 @@ runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
 
 runlap: kill clean netconfig setvm2lanconfig usecapdb  run1n2
 
-runtst: kill clean           setvmemuconfig  usestaticdb run1n2
+runtst: kill clean netconfig setvmemuconfig  usestaticdb run1n2
 
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 

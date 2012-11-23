@@ -477,7 +477,7 @@ log(show? "show keyboard": "hide keyboard");
             String type=getStringFrom(hm,"input");
             boolean isFormField = type!=null;
             if(isFormField){
-                boolean needsLabel = hm.get("label")!=null && ("checkbox".equals(type)||"textfield".equals(type));
+                boolean needsLabel = hm.get("label")!=null && ("checkbox".equals(type)||"textfield".equals(type)||"rating".equals(type));
                 if(needsLabel){  LinkedHashMap widget=(LinkedHashMap)hm.clone();
                                  Object label=widget.remove("label");
                                  String proportions="checkbox".equals(type)? "85%":"40%";
@@ -527,7 +527,7 @@ log(show? "show keyboard": "hide keyboard");
     private void addAView(LinearLayout layout, View view, float prop, float height, float width){
         int w=(width>0?  (int)(width*14): (prop!=0? (int)((prop/101.0)*screenWidth+0.5): FILL_PARENT));
         int h=(height>0? (int)((height/101.0)*screenHeight+0.5): FILL_PARENT);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(w, h);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(view instanceof RatingBar? WRAP_CONTENT: w, h);
         lp.setMargins(0,0,0,0);
         view.setLayoutParams(lp);
         layout.addView(view);
@@ -583,11 +583,12 @@ log(show? "show keyboard": "hide keyboard");
         else
         if("chooser".equals(type))   view=createFormSpinnerView(tag, label, range, value);
         else
+        if("rating".equals(type))    view=createFormRatingView(tag, label, value);
+        else
                                      view=createTextView(label+": "+value,colour,borderless);
         return view;
      //         view=createFormRadioView( tag, label, types[1].split("\\|", -1));
      //         view=createFormToggleView(tag, label, types[1].split("\\|", -1));
-     //         view=createFormRatingView(tag, label, null);
      //         view=createFormRatingView(tag, label, types[1].split("\\|", -1));
     }
 
@@ -758,15 +759,12 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormRatingView(final String tag, String label, String[] choices){
+    private View createFormRatingView(final String tag, String label, Object value){
         RatingBar view = new RatingBar(this);
         view.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
             public void onRatingChanged(RatingBar b, float r, boolean f){ user.setUpdateVal(viewUID, tag, (int)r); }
         });
         int numchoices=5;
-        if(choices!=null && choices.length!=0){
-            try{ numchoices=Integer.parseInt(choices[choices.length-1]); }catch(Exception e){}
-        }
         user.prepareResponse(viewUID);
         view.setStepSize(1.0f);
         view.setNumStars(numchoices);
