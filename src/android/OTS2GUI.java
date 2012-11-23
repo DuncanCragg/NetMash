@@ -337,22 +337,24 @@ public class OTS2GUI {
         String eventuid = user.content("private:viewing");
         String locationuid = UID.normaliseUID(eventuid, user.content("private:viewing:location")); // remove normaliseUID
         LinkedList event = list(style("colours","lightmauve"),
-                                user.content("private:viewing:content"),
+                                user.content("private:viewing:text"),
                                 list(style("direction","horizontal", "proportions","30%"), "Start:", user.content("private:viewing:start")),
                                 list(style("direction","horizontal", "proportions","30%"), "End:",   user.content("private:viewing:end"))
         );
         if(locationuid!=null) event.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), "Location:", locationuid));
-        LinkedList attendees = new LinkedList();
-        attendees.add(style("direction","vertical"));
-        addListIfPresent(attendees, "attendees", "Attendees");
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         String title = user.content("private:viewing:title");
         viewhash.put("style", style("direction","vertical", "colours","lightblue"));
         viewhash.put("#title", "!["+(title!=null? title: "Event")+"]!");
         viewhash.put("#event", event);
-        viewhash.put("#attendees", attendees);
-        if(user.contentIsOrListContains("private:viewing:is", "attendable"))
+        if(user.contentListContains("private:viewing:is", "reviewable"))
+        viewhash.put("#rate", hash("input","rating", "label","Rate this event"));
+        if(user.contentListContains("private:viewing:is", "attendable"))
         viewhash.put("#rsvp", hash("input","checkbox", "label","Attending"));
+        LinkedList attendees = new LinkedList();
+        attendees.add(style("direction","vertical"));
+        addListIfPresent(attendees, "attendees", "Attendees");
+        viewhash.put("#attendees", attendees);
         return viewhash;
     }
 
@@ -379,17 +381,17 @@ public class OTS2GUI {
         addListIfPresent(authorsandrefscol, "authors", "Authors");
         addListIfPresent(authorsandrefscol, "references", "References");
 
-        LinkedList contentcol = new LinkedList();
-        contentcol.add(style("direction","vertical"));
-        LinkedList content=user.contentList("private:viewing:content");
-        if(content!=null) for(Object para: content) contentcol.add(para);
+        LinkedList textcol = new LinkedList();
+        textcol.add(style("direction","vertical"));
+        LinkedList text=user.contentAsList("private:viewing:text");
+        if(text!=null) for(Object para: text) textcol.add(para);
 
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         viewhash.put("style", style("direction","vertical", "colours",article? "lightblue": "lightmauve"));
         viewhash.put("#title", title!=null? title: "Article");
         viewhash.put("#citation", citationcol);
         viewhash.put("#authorsandrefs", authorsandrefscol);
-        viewhash.put("#content", contentcol);
+        viewhash.put("#text", textcol);
         return viewhash;
     }
 
