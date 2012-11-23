@@ -596,6 +596,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
         else new Evaluator(this){
             public void evaluate(){
+                if(contentIsOrListContains("is", "rsvp")){
+                    contentInt("rating", val);
+                }
+                else
                 if(contentIsOrListContains("is", "land")){
                     contentInt(dehash(tag), val);
                     refreshObserves();
