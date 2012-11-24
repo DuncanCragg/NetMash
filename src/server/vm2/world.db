@@ -31,7 +31,7 @@
 { UID: uid-56d4-91ef-a2fc-2585
   is: place rule editable
   when: "tilt the floor in proportion to number present"
-  rotation: * * ( => $:present × 10 )
+  rotation: * * ( => @present × 10 )
 }
 
 { UID: uid-7794-3aa8-2192-7a60

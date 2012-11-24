@@ -31,7 +31,7 @@
   is: 3d rule editable
   when: "swiped, change light"
   Alerted: {  is: swipe }
-  light: * ( => clamp 0 1 ( $:light:1 + $:Alerted:dx ) ) ( => clamp 0 1 ( $:light:2 + $:Alerted:dy ) )
+  light: * ( => clamp 0 1 ( @light:1 + @Alerted:dx ) ) ( => clamp 0 1 ( @light:2 + @Alerted:dy ) )
 }
 
 { UID: uid-f6c8-2d51-8060-a52a
@@ -60,16 +60,16 @@
   sub-objects: ( number number ) =>
       { object:
         { UID: new
-          Rules: $:gamerules
+          Rules: @gamerules
           is: 3d cuboid editable
           title: "Game Cube"
           rotation: 0 0 0
           scale: 0.36 0.36 0.36
           light: 0 0.4 0.7
         }
-        coords: $.0 $.1 -0.5
+        coords: @.0 @.1 -0.5
       }
-  denominator: => count $:sub-objects
+  denominator: => count @sub-objects
 }
 
 { UID: uid-fb3e-02d3-70bb-916f
@@ -91,30 +91,30 @@
   when: "swiped left after good, set to waiting and create random numerator"
   Alerted: { is: swipe dx: < 0 }
   status: good => waiting
-  numerator: => random 0 $:denominator
+  numerator: => random 0 @denominator
 }
 
 { UID: uid-acc3-1f94-1458-ab18
   is: 3d rule editable
   when: "waiting, halve fraction if possible"
   status: waiting
-  numerator:   divisible-by 2 => $. / 2
-  denominator: divisible-by 2 => $. / 2
+  numerator:   divisible-by 2 => @. / 2
+  denominator: divisible-by 2 => @. / 2
 }
 
 { UID: uid-ab7f-889e-edb9-6bab
   is: 3d rule editable
   when: "waiting, third fraction if possible"
   status: waiting
-  numerator:   divisible-by 3 => $. / 3
-  denominator: divisible-by 3 => $. / 3
+  numerator:   divisible-by 3 => @. / 3
+  denominator: divisible-by 3 => @. / 3
 }
 
 { UID: uid-a9ff-4a17-9772-3859
   is: 3d rule editable
   when: "waiting, set text to challenge"
   status: waiting
-  text: * ( => ( format %s/%s $:numerator $:denominator ) ) ( => "Swipe right when done ->" )
+  text: * ( => ( format %s/%s @numerator @denominator ) ) ( => "Swipe right when done ->" )
   light: ( => 0.5 ) ( => 0.5 ) ( => 1 )
 }
 
@@ -123,8 +123,8 @@
   when: "checking, set to initial zero and recalc numerator and denominator"
   status: checking
   lit: => 0
-  numerator: => ( $:numerator / $:denominator ) * ( count $:sub-objects )
-  denominator: => count $:sub-objects
+  numerator: => ( @numerator / @denominator ) * ( count @sub-objects )
+  denominator: => count @sub-objects
 }
 
 { UID: uid-0b6a-659e-3561-05b2
@@ -132,14 +132,14 @@
   when: "checking, count lit up lights"
   status: checking
   sub-objects: { object: { light: * 1 1 } }
-  lit: => count $::sub-objects
+  lit: => count @=sub-objects
 }
 
 { UID: uid-4899-0de2-1bb5-58ba
   is: 3d rule editable
   when: "checking, if incorrect, set text"
   status: checking => sorry
-  lit: !$:numerator
+  lit: !@numerator
   text: * * ( => "Sorry.. Swipe left <-" )
   light: ( => 1 ) ( => 0.5 ) ( => 0.5 )
 }
@@ -148,7 +148,7 @@
   is: 3d rule editable
   when: "checking, if correct, set text"
   status: checking => good
-  lit: $:numerator
+  lit: @numerator
   text: * * ( => "Good! Swipe left <-" )
   light: ( => 0.5 ) ( => 1 ) ( => 0.5 )
 }
@@ -184,7 +184,7 @@
   is: gui rule editable
   when: "form alerted, save it"
   Alerted: { is: form }
-  form: => $:Alerted
+  form: => @Alerted
 }
 
 { UID: uid-3395-9f29-80d0-a8ac
@@ -192,12 +192,12 @@
   when: "form changes, do calculation"
   view: {
     #panel:
-      { #f: { value: => $:form:form:f } }
-      { #a: { value: => $:form:form:a } }
-      { #b: { value: => $:form:form:b } }
-    #result: { #r: => $:form:form:a
-                    ( { prod: * sum: + diff: - div: / } select $:form:form:f )
-                      $:form:form:b
+      { #f: { value: => @form:form:f } }
+      { #a: { value: => @form:form:a } }
+      { #b: { value: => @form:form:b } }
+    #result: { #r: => @form:form:a
+                    ( { prod: * sum: + diff: - div: / } select @form:form:f )
+                      @form:form:b
     }
   }
 }
