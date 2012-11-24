@@ -508,6 +508,12 @@ public class WebObject {
     }
 
     /** Push all the values as if the list were a set. */
+    public void contentSetAddAll(String path, LinkedList val){
+        doCopyOnWrite(path);
+        statemod = updatingState.setPathAddAll(path, val) || statemod;
+    }
+
+    /** Push all the values as if the list were a set. */
     public void contentSetPushAll(String path, LinkedList val){
         doCopyOnWrite(path);
         statemod = updatingState.setPathPushAll(path, val) || statemod;
