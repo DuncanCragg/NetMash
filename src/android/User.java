@@ -829,6 +829,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
 
     private void firstAlertedResponseSubscribeForUserFIXMEAndJumpUser(){
         for(String alertedUid: alerted()){
+            if(contentSet("response")) break;
             content("response",alertedUid);
             if(contentSet("response:is")) currentUser.jumpToUID(alertedUid,"gui",false);
         }

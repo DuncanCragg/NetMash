@@ -12,6 +12,8 @@ import netmash.lib.*;
   */
 public class FunctionalObserver implements Module {
 
+    static public boolean tryOutEagerAlertingForABit=true;
+
     static public FunctionalObserver funcobs;
 
     public Persistence persistence;
@@ -202,7 +204,7 @@ public class FunctionalObserver implements Module {
     private void notifyUpdated(WebObject notifier, boolean realupdate){
         for(String notifieduid: notifier.notify){
             WebObject notified = cacheGet(notifieduid);
-            if(!notified.observe.contains(notifier.uid)){
+            if(tryOutEagerAlertingForABit || !notified.observe.contains(notifier.uid)){
                 notified.alertedin.add(notifier.uid);
             }
             evaluatableOrPush(notified, realupdate);
@@ -223,7 +225,7 @@ public class FunctionalObserver implements Module {
     private void alertFirst(WebObject notifier){
         for(String alertuid: notifier.newalert){
             WebObject alerted = cacheGet(alertuid);
-            if(!alerted.observe.contains(notifier.uid)){
+            if(tryOutEagerAlertingForABit || !alerted.observe.contains(notifier.uid)){
                 alerted.alertedin.add(notifier.uid);
                 evaluatableOrPush(alerted, true);
             }
@@ -324,7 +326,7 @@ public class FunctionalObserver implements Module {
         w.notify.addAll(s.notify);
         w.httpnotify.addAll(s.httpnotify);
         for(String notifieruid: s.alertedin){
-            if(!w.observe.contains(notifieruid)){
+            if(tryOutEagerAlertingForABit || !w.observe.contains(notifieruid)){
                 w.alertedin.add(notifieruid);
             }
         }
