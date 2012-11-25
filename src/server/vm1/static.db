@@ -14,7 +14,7 @@
 
 { UID: uid-0112-09a9-3f54-b720
   Rules: uid-5f5d-6d29-64d8-2d8c uid-b3ae-5b55-65ad-a296
-  is: attendable reviewable event
+  is: attendable event
   title: "Geek Speak December"
   text: "Europe's Top Tech"
   start: "Wed 12 Dec 2012 18:00:00 GMT"
@@ -23,6 +23,7 @@
 }
 
 { UID: uid-3e0e-a630-b669-23d7
+  Rules: uid-f885-d373-af3a-cb8d
   is: reviewable event
   title: "My Love of Clojure"
   text: "Long ago, I fell in love with Lisp.."
@@ -31,6 +32,7 @@
 }
 
 { UID: uid-0a01-cec7-61b7-a770
+  Rules: uid-f885-d373-af3a-cb8d
   is: reviewable event
   title: "My Love of FORTRAN"
   text: "Back when I were a lad .."
@@ -133,6 +135,13 @@
   is: event rule
   when: "rsvp not attending ensure user not in attendees"
   attendees: { is: rsvp attending: no } => #
+}
+
+{ UID: uid-f885-d373-af3a-cb8d
+  is: event rule
+  when: "rsvp review received ensure user is in reviews"
+  Alerted: { is: rsvp event: @ rating: number }
+  reviews: => @. with @Alerted
 }
 
 { UID: uid-35c0-9017-99c1-db63
