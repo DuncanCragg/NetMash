@@ -7,6 +7,8 @@ import java.io.*;
 import netmash.platform.*;
 import netmash.lib.*;
 
+import static netmash.lib.Utils.*;
+
 /** Holds object cache; manages notify and observe; runs evaluate; sorts out
   * persistence and networking and cacheing-in objects; drives retry and timeout.
   */
@@ -105,7 +107,9 @@ public class FunctionalObserver implements Module {
             WebObject w=cache.get(uid);
             if(w!=null) return w;
             w=persistence.cache(uid);
-            if(w!=null) cache.put(uid, w);
+            if(w==null) return null;
+            cache.put(uid, w);
+            w.handleEval();
             return w;
         }
     }
