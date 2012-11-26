@@ -13,7 +13,7 @@
 }
 
 { UID: uid-0112-09a9-3f54-b720
-  Rules: uid-5f5d-6d29-64d8-2d8c uid-b3ae-5b55-65ad-a296
+  Rules: uid-5f5d-6d29-64d8-2d8c uid-b3ae-5b55-65ad-a296 uid-701d-7264-39b3-ad65
   is: attendable event
   title: "Geek Speak December"
   text: "Europe's Top Tech"
@@ -158,10 +158,17 @@
 }
 
 { UID: uid-c435-22f4-7938-6d4f
-  is: reviewable editable event rule
+  is: reviewable event rule
   when: "review changes, calculate average rating"
   reviews: *
   rating: => ( + @reviews:rating ) / ( count @reviews:rating )
+}
+
+{ UID: uid-701d-7264-39b3-ad65
+  is: event rule
+  when: "reviews of sub-events change, calculate average rating"
+  list: { rating: number }
+  rating: => ( + @list:rating ) / ( count @list:rating )
 }
 
 { UID: uid-35c0-9017-99c1-db63
