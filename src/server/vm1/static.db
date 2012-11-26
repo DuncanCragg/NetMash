@@ -9,11 +9,11 @@
 { UID: uid-16f2-2db0-e9fe-1d7d
   is: demo rule editable
   when: "run set title to join of x and y"
-  title: => join ( @x @y ) " "
+  title: => join " " ( @x @y )
 }
 
 { UID: uid-0112-09a9-3f54-b720
-  Rules: uid-5f5d-6d29-64d8-2d8c uid-b3ae-5b55-65ad-a296 uid-701d-7264-39b3-ad65
+  Rules: uid-5f5d-6d29-64d8-2d8c uid-b3ae-5b55-65ad-a296 uid-701d-7264-39b3-ad65 uid-5c83-67b4-2edf-1474
   is: attendable event
   title: "Geek Speak December"
   text: "Europe's Top Tech"
@@ -169,6 +169,13 @@
   when: "reviews of sub-events change, calculate average rating"
   list: { rating: number }
   rating: => ( + @list:rating ) / ( count @list:rating )
+}
+
+{ UID: uid-5c83-67b4-2edf-1474
+  is: editable event rule
+  when: "anything changes, pick an email at random"
+  list: { contest-selection: * }
+  text: => join "\n" ( "Europe's Top Tech" "Contest winner:" ( @=list:contest-selection select ( random 0 ( ( count @=list ) - 1 ) ) ) )
 }
 
 { UID: uid-fbad-2ac9-f645-6c87

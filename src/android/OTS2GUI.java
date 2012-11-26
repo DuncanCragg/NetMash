@@ -318,7 +318,7 @@ public class OTS2GUI {
         String eventuid = user.content("private:viewing");
         String locationuid = UID.normaliseUID(eventuid, user.content("private:viewing:location")); // remove normaliseUID
         LinkedList event = list(style("colours","lightmauve"),
-                                user.content("private:viewing:text"),
+                                user.contentString("private:viewing:text"),
                                 list(style("direction","horizontal", "proportions","30%"), "Start:", user.content("private:viewing:start")),
                                 list(style("direction","horizontal", "proportions","30%"), "End:",   user.content("private:viewing:end"))
         );

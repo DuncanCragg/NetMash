@@ -315,7 +315,7 @@ public class ObjectMash extends WebObject {
         if(ll.size()==6 && "if".equals(ll0))      return findBoolean(ll.get(1))? copyFindObject(ll.get(3)): copyFindObject(ll.get(5));
         if(ll.size()==3 && "select".equals(ll1))  return copyFindObject(findHashOrListAndGet(ll.get(0),ll.get(2)));
         if(ll.size()==2 && "as-is".equals(ll0))   return copyObject(ll.get(1), true);
-        if(ll.size()==3 && "join".equals(ll0))    return join(findList(ll.get(1)), findString(ll.get(2)));
+        if(ll.size()==3 && "join".equals(ll0))    return join(findList(ll.get(2)), findString(ll.get(1)));
         return copyFindEach(ll);
     }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
 
