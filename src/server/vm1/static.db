@@ -147,7 +147,7 @@
 { UID: uid-f885-d373-af3a-cb8d
   is: reviewable event rule
   when: "rsvp review received ensure user is in reviews"
-  Alerted: { is: rsvp event: @ place: { attending: yes } rating: number }
+  Alerted: { is: rsvp event: @ place: { attending: yes } }
   reviews: => @. with @Alerted
 }
 

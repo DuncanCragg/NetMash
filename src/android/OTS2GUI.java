@@ -443,6 +443,7 @@ public class OTS2GUI {
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":title");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":full-name");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":contact:full-name");
+                if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":user:contact:full-name");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":is");
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":tags");
             }
