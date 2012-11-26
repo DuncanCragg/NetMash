@@ -21,14 +21,14 @@
   end:   "Wed 12 Dec 2012 23:00:00 GMT"
   list: uid-3e0e-a630-b669-23d7 uid-0a01-cec7-61b7-a770
   review-template: {
-      email:    { input: textfield label: "Your Email:" }
-      comments: { input: textfield label: "Comments:" }
-      style:    { input: rating    label: "Presentation Style:" }
+      email:      { input: textfield label: "Your Email:" }
+      comments:   { input: textfield label: "Comments:" }
+      pres-style: { input: rating    label: "Presentation Style:" }
   }
 }
 
 { UID: uid-3e0e-a630-b669-23d7
-  Rules: uid-f885-d373-af3a-cb8d uid-e006-8ce3-054a-8158
+  Rules: uid-f885-d373-af3a-cb8d uid-e006-8ce3-054a-8158 uid-c435-22f4-7938-6d4f
   is: reviewable event
   title: "My Love of Clojure"
   text: "Long ago, I fell in love with Lisp.."
@@ -38,7 +38,7 @@
 }
 
 { UID: uid-0a01-cec7-61b7-a770
-  Rules: uid-f885-d373-af3a-cb8d uid-e006-8ce3-054a-8158
+  Rules: uid-f885-d373-af3a-cb8d uid-e006-8ce3-054a-8158 uid-c435-22f4-7938-6d4f
   is: reviewable event
   title: "My Love of FORTRAN"
   text: "Back when I were a lad .."
@@ -155,6 +155,13 @@
   is: reviewable event rule
   when: "rsvp not attending ensure user not in reviews"
   reviews: { place: { attending: no } } => #
+}
+
+{ UID: uid-c435-22f4-7938-6d4f
+  is: reviewable editable event rule
+  when: "review changes, calculate average rating"
+  reviews: *
+  rating: => ( + @reviews:rating ) / ( count @reviews:rating )
 }
 
 { UID: uid-35c0-9017-99c1-db63
