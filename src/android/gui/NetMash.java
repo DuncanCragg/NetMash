@@ -271,11 +271,8 @@ log(show? "show keyboard": "hide keyboard");
         }
     }
 
-    private LinkedList<TextView> textViewsForRaw;
-
     private void addGUI(Object o){
         disposeOfMeshView();
-        textViewsForRaw=new LinkedList<TextView>();
         ViewGroup view;
         if(isMapList(o)){
             view = createMapView(o);
@@ -573,12 +570,13 @@ log(show? "show keyboard": "hide keyboard");
         Object  range=               hm.get("range");
         Object  value=               hm.get("value");
         boolean fixed=getBooleanFrom(hm,    "fixed");
+        boolean scroll=getBooleanFrom(hm,   "scroll");
         View view=null;
         if("button".equals(type))    view=createFormButtonView(tag, label);
         else
         if("checkbox".equals(type))  view=createFormCheckView(tag, value);
         else
-        if("textfield".equals(type)) view=createFormTextView(tag, value, borderless, fixed);
+        if("textfield".equals(type)) view=createFormTextView(tag, value, borderless, fixed, scroll);
         else
         if("chooser".equals(type))   view=createFormSpinnerView(tag, label, range, value);
         else
@@ -603,7 +601,7 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormTextView(final String tag, Object value, boolean borderless, final boolean fixed){
+    private View createFormTextView(final String tag, Object value, boolean borderless, final boolean fixed, boolean scroll){
         final String text=(value!=null)? value.toString(): "";
         EditText view=new EditText(this);
         if(!borderless) view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
@@ -617,12 +615,17 @@ log(show? "show keyboard": "hide keyboard");
         view.setTextColor(0xff000000);
         view.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         view.setSingleLine(false);
-        view.setHorizontalScrollBarEnabled(true);
-        view.setHorizontallyScrolling(true);
+        view.setMinLines(scroll? 1: 2);
+        view.setHorizontalScrollBarEnabled(scroll);
+        view.setHorizontallyScrolling(scroll);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        textViewsForRaw.add(view);
+        textViewForRaw=view;
         return view;
     }
+
+    private TextView textViewForRaw;
+
+    public String getRawSource(){ return textViewForRaw.getText().toString(); }
 
     private boolean updateOnEnter(View v, int keyCode, KeyEvent event, String tag, String revert){
         EditText view=(EditText)v;
@@ -667,12 +670,6 @@ log(show? "show keyboard": "hide keyboard");
             }
         }
         return false;
-    }
-
-    public String getRawSource(){
-        String source="";
-        for(TextView v: textViewsForRaw) source+=v.getText().toString();
-        return source;
     }
 
     private View createFormRadioView(final String tag, String[] choices){

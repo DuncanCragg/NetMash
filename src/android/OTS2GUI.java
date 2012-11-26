@@ -520,8 +520,8 @@ public class OTS2GUI {
     public LinkedHashMap guifyHash(LinkedHashMap<String,Object> hm, boolean editable){
         String text=new JSON(hm).toString(true);
         Object o;
-        if(!editable) o=hash("input","textfield", "fixed",true, "value",text);
-        else          o=hash("input","textfield",               "value",text);
+        if(!editable) o=hash("input","textfield", "scroll",true, "fixed",true, "value",text);
+        else          o=hash("input","textfield", "scroll",true,               "value",text);
         LinkedHashMap<String,Object> hm2 = new LinkedHashMap<String,Object>();
         hm2.put("json", o);
         return hm2;
