@@ -2,10 +2,9 @@ package server.types;
 
 import java.io.*;
 import netmash.lib.JSON;
-import netmash.forest.WebObject;
-import netmash.forest.Fjord;
+import netmash.forest.*;
 
-public class DynamicFile extends Fjord {
+public class DynamicFile extends ObjectMash {
 
     public DynamicFile(){}
 
@@ -37,7 +36,7 @@ public class DynamicFile extends Fjord {
                     long modified=file.lastModified();
                     if(modified > fileModified){
                         fileModified=modified;
-                        contentReplace(new JSON(file));
+                        contentReplace(new JSON(file,true));
                         content("watching", watching);
                         self.evaluate();
                     }
