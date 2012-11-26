@@ -323,6 +323,11 @@ public class OTS2GUI {
                                 list(style("direction","horizontal", "proportions","30%"), "End:",   user.content("private:viewing:end"))
         );
         if(locationuid!=null) event.add(list(style("direction","horizontal", "options","jump", "proportions","75%"), "Location:", locationuid));
+
+        if(user.contentSet("private:viewing:rating")){
+            Double rating=Double.valueOf(user.contentDouble("private:viewing:rating"));
+            event.add(hash("input","rating", "label","Overall rating for this event:", "value",rating));
+        }
         LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
         String title = user.content("private:viewing:title");
         viewhash.put("style", style("direction","vertical", "colours","lightblue"));
