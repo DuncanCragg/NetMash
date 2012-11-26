@@ -219,6 +219,11 @@ public class Utils{
         return x;
     }
 
+    static public int sizeOf(LinkedList ll){
+        if(ll==null) return 0;
+        return ll.size();
+    }
+
     static public double sumAll(LinkedList ll){
         if(ll==null || ll.isEmpty()) return 0;
         double d=0;
