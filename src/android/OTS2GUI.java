@@ -162,7 +162,7 @@ public class OTS2GUI {
         LinkedList valuescol = new LinkedList();
         valuescol.add(style("direction","vertical"));
         addIfPresent(valuescol, "area", null, false, hash("input","textfield", "label","Area (ha):"));
-        LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:place:template");
+        LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:place:update-template");
         if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
             Object o=entry.getValue();
             if(!(o instanceof LinkedHashMap)) continue;
@@ -173,7 +173,7 @@ public class OTS2GUI {
         viewhash.put("style", style("direction","vertical", "colours", "lightgreen"));
         viewhash.put("#title", hash("input","textfield", "value",title!=null? title: "Land"));
         viewhash.put("#values", valuescol);
-        if(user.contentSet("private:viewing:template"))
+        if(user.contentSet("private:viewing:update-template"))
         viewhash.put("#new", hash("input","textfield", "label","Name of new sub-land entry"));
         viewhash.put("#landlist", list2Col());
         return viewhash;

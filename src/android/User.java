@@ -138,15 +138,16 @@ public class User extends ObjectMash {
                           "\"is\": [ \"land\" ],\n")+
                         "  \"place\": \""+landlistuid+"\",\n"+
                         "  \"user\": \""+useruid+"\",\n"+
-    (templateuid!=null? "  \"template\": \""+templateuid+"\"\n": "")+
+    (templateuid!=null? "  \"update-template\": \""+templateuid+"\"\n": "")+
                         "}");
         return land;
     }
 
-    static User newRSVP(String eventuid, String useruid){
+    static User newRSVP(String eventuid, String useruid, String placeuid){
         return new User("{ \"is\": \"rsvp\", \n"+
                         "  \"event\": \""+eventuid+"\",\n"+
-                        "  \"user\": \""+useruid+"\"\n"+
+                        "  \"user\": \""+useruid+"\",\n"+
+       (placeuid!=null? "  \"place\": \""+placeuid+"\"\n": "")+
                         "}");
     }
 
@@ -487,8 +488,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                 contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
             path="private:responses:rsvp:"+UID.toUID(guiuid);
             if(contentSet(path)) return false;
+            String evplaceuid=content("private:viewing:place");
+            String placeuid=(evplaceuid!=null)? content("private:responses:rsvp:"+UID.toUID(evplaceuid)): null;
             if(!contentSet("private:responses:rsvp")) contentHash("private:responses:rsvp", hash());
-            resp=newRSVP(guiuid, uid);
+            resp=newRSVP(guiuid, uid, placeuid);
         }
         else if(contentIsOrListContains("private:viewing:is", "gui")){
             path="private:responses:form:"+UID.toUID(guiuid);
@@ -499,11 +502,11 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else if(contentIsOrListContains("private:viewing:is", "land")){
             path="private:responses:land:"+UID.toUID(guiuid);
             if(contentSet(path) && !contentSet(path+":title")) return false;
-            if(contentSet("private:viewing:template") && !contentSet("private:viewing:template:is")) return false;
-            String templateuid =UID.normaliseUID(guiuid, content(          "private:viewing:template"));
-            LinkedList rules   =UID.normaliseUIDs(templateuid, contentList("private:viewing:template:Rules"));
-            boolean updatable  =contentListContains(                       "private:viewing:template:is", "updatable");
-            String     template=UID.normaliseUID( templateuid, content(    "private:viewing:template:template"));
+            if(contentSet("private:viewing:update-template") && !contentSet("private:viewing:update-template:is")) return false;
+            String templateuid =UID.normaliseUID(guiuid, content(          "private:viewing:update-template"));
+            LinkedList rules   =UID.normaliseUIDs(templateuid, contentList("private:viewing:update-template:Rules"));
+            boolean updatable  =contentListContains(                       "private:viewing:update-template:is", "updatable");
+            String     template=UID.normaliseUID( templateuid, content(    "private:viewing:update-template:update-template"));
             if(!contentSet("private:responses:land")) contentHash("private:responses:land", hash());
             resp=newLand(rules, updatable, guiuid, uid, template);
         }

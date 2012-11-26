@@ -20,24 +20,27 @@
   start: "Wed 12 Dec 2012 18:00:00 GMT"
   end:   "Wed 12 Dec 2012 23:00:00 GMT"
   list: uid-3e0e-a630-b669-23d7 uid-0a01-cec7-61b7-a770
+  review-template: { email: { input: textfield label: "Email:" } }
 }
 
 { UID: uid-3e0e-a630-b669-23d7
-  Rules: uid-f885-d373-af3a-cb8d
+  Rules: uid-f885-d373-af3a-cb8d uid-e006-8ce3-054a-8158
   is: reviewable event
   title: "My Love of Clojure"
   text: "Long ago, I fell in love with Lisp.."
   start: "Wed 12 Dec 2012 18:00:00 GMT"
   end:   "Wed 12 Dec 2012 19:00:00 GMT"
+  place: uid-0112-09a9-3f54-b720
 }
 
 { UID: uid-0a01-cec7-61b7-a770
-  Rules: uid-f885-d373-af3a-cb8d
+  Rules: uid-f885-d373-af3a-cb8d uid-e006-8ce3-054a-8158
   is: reviewable event
   title: "My Love of FORTRAN"
   text: "Back when I were a lad .."
   start: "Wed 12 Dec 2012 19:00:00 GMT"
   end:   "Wed 12 Dec 2012 20:00:00 GMT"
+  place: uid-0112-09a9-3f54-b720
 }
 
 { UID: uid-3927-d995-837f-f165
@@ -125,23 +128,29 @@
 }
 
 { UID: uid-5f5d-6d29-64d8-2d8c
-  is: event rule
+  is: attendable event rule
   when: "rsvp attending received ensure user is in attendees"
   Alerted: { is: rsvp event: @ attending: yes }
   attendees: => @. with @Alerted
 }
 
 { UID: uid-b3ae-5b55-65ad-a296
-  is: event rule
+  is: attendable event rule
   when: "rsvp not attending ensure user not in attendees"
-  attendees: { is: rsvp attending: no } => #
+  attendees: { attending: no } => #
 }
 
 { UID: uid-f885-d373-af3a-cb8d
-  is: event rule
+  is: reviewable event rule
   when: "rsvp review received ensure user is in reviews"
-  Alerted: { is: rsvp event: @ rating: number }
+  Alerted: { is: rsvp event: @ place: { attending: yes } rating: number }
   reviews: => @. with @Alerted
+}
+
+{ UID: uid-e006-8ce3-054a-8158
+  is: reviewable event rule
+  when: "rsvp not attending ensure user not in reviews"
+  reviews: { place: { attending: no } } => #
 }
 
 { UID: uid-35c0-9017-99c1-db63

@@ -37,7 +37,7 @@
         Rules: uid-0215-038b-7558-041a uid-51b1-5d09-ed2f-519c
         is: updatable land
         title: Holding
-        template: uid-5c78-11ee-a3c7-ba89
+        update-template: uid-5c78-11ee-a3c7-ba89
         constants: uid-2433-fd91-25ad-2e9b
       }
   }
@@ -57,7 +57,7 @@
   ineligible-area: { input: textfield label: "Ineligible Area (ha):" value: 0 }
   fc-total:        { input: textfield label: "Woodland Total (£):" value: 0 }
   ne-total:        { input: textfield label: "Stewardship Total (£):" value: 0 }
-  template: uid-9da2-71f4-4a2f-f389
+  update-template: uid-9da2-71f4-4a2f-f389
 }
 
 { UID: uid-9da2-71f4-4a2f-f389
