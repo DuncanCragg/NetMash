@@ -47,6 +47,60 @@
   place: uid-0112-09a9-3f54-b720
 }
 
+{ UID: uid-5f5d-6d29-64d8-2d8c
+  is: attendable event rule
+  when: "rsvp attending received ensure user is in attendees"
+  Alerted: { is: rsvp event: @ attending: yes }
+  attendees: => @. with @Alerted
+}
+
+{ UID: uid-b3ae-5b55-65ad-a296
+  is: attendable event rule
+  when: "rsvp not attending ensure user not in attendees"
+  attendees: { attending: no } => #
+}
+
+{ UID: uid-701d-7264-39b3-ad65
+  is: event rule
+  when: "reviews of sub-events change, calculate average rating"
+  list: { rating: number }
+  rating: => ( + @list:rating ) / ( count @list:rating )
+}
+
+{ UID: uid-5c83-67b4-2edf-1474
+  is: editable event rule
+  when: "anything changes, pick an email at random"
+  list: { contest-selection: * }
+  text: => join "\n" ( "Europe's Top Tech" "Contest winner:" ( @=list:contest-selection select ( random 0 ( ( count @=list ) - 1 ) ) ) )
+}
+
+{ UID: uid-f885-d373-af3a-cb8d
+  is: reviewable event rule
+  when: "rsvp review received ensure user is in reviews"
+  Alerted: { is: rsvp event: @ place: { attending: yes } }
+  reviews: => @. with @Alerted
+}
+
+{ UID: uid-e006-8ce3-054a-8158
+  is: reviewable event rule
+  when: "rsvp not attending ensure user not in reviews"
+  reviews: { place: { attending: no } } => #
+}
+
+{ UID: uid-c435-22f4-7938-6d4f
+  is: reviewable event rule
+  when: "review changes, calculate average rating"
+  reviews: { rating: number }
+  rating: => ( + @reviews:rating ) / ( count @reviews:rating )
+}
+
+{ UID: uid-fbad-2ac9-f645-6c87
+  is: editable event rule
+  when: "anything changes, pick an email at random"
+  reviews: { email: * }
+  contest-selection: => @=reviews:email select ( random 0 ( ( count @=reviews ) - 1 ) )
+}
+
 { UID: uid-3927-d995-837f-f165
   Class: server.types.DynamicFile
   watching: functional-hyper.db
@@ -129,60 +183,6 @@
   start: "Fri 30 Sep 2011 09:00:00 GMT"
   end:   "Sat  1 Oct 2011 23:00:00 GMT"
   location: uid-35c0-9017-99c1-db63
-}
-
-{ UID: uid-5f5d-6d29-64d8-2d8c
-  is: attendable event rule
-  when: "rsvp attending received ensure user is in attendees"
-  Alerted: { is: rsvp event: @ attending: yes }
-  attendees: => @. with @Alerted
-}
-
-{ UID: uid-b3ae-5b55-65ad-a296
-  is: attendable event rule
-  when: "rsvp not attending ensure user not in attendees"
-  attendees: { attending: no } => #
-}
-
-{ UID: uid-f885-d373-af3a-cb8d
-  is: reviewable event rule
-  when: "rsvp review received ensure user is in reviews"
-  Alerted: { is: rsvp event: @ place: { attending: yes } }
-  reviews: => @. with @Alerted
-}
-
-{ UID: uid-e006-8ce3-054a-8158
-  is: reviewable event rule
-  when: "rsvp not attending ensure user not in reviews"
-  reviews: { place: { attending: no } } => #
-}
-
-{ UID: uid-c435-22f4-7938-6d4f
-  is: reviewable event rule
-  when: "review changes, calculate average rating"
-  reviews: { rating: number }
-  rating: => ( + @reviews:rating ) / ( count @reviews:rating )
-}
-
-{ UID: uid-701d-7264-39b3-ad65
-  is: event rule
-  when: "reviews of sub-events change, calculate average rating"
-  list: { rating: number }
-  rating: => ( + @list:rating ) / ( count @list:rating )
-}
-
-{ UID: uid-5c83-67b4-2edf-1474
-  is: editable event rule
-  when: "anything changes, pick an email at random"
-  list: { contest-selection: * }
-  text: => join "\n" ( "Europe's Top Tech" "Contest winner:" ( @=list:contest-selection select ( random 0 ( ( count @=list ) - 1 ) ) ) )
-}
-
-{ UID: uid-fbad-2ac9-f645-6c87
-  is: editable event rule
-  when: "anything changes, pick an email at random"
-  reviews: { email: * }
-  contest-selection: => @=reviews:email select ( random 0 ( ( count @=reviews ) - 1 ) )
 }
 
 { UID: uid-35c0-9017-99c1-db63
