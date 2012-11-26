@@ -418,6 +418,25 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
+    public String getFormStringVal(final String guiuid, final String tag){
+        final String[] val=new String[1];
+        new Evaluator(this){
+            public void evaluate(){
+                setResponse(guiuid);
+                if(contentListContainsAll("private:viewing:is", list("attendable","event"))||
+                   contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
+                    val[0]=content("private:responses:rsvp:"+UID.toUID(guiuid)+":"+dehash(tag));
+                }
+                else if(contentIsOrListContains("private:viewing:is", "gui")){
+                    val[0]=content("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                }
+                else val[0]=null;
+                refreshObserves();
+            }
+        };
+        return val[0];
+    }
+
     public Double getFormDoubleVal(final String guiuid, final String tag){
         final Double[] val=new Double[1];
         new Evaluator(this){
@@ -569,6 +588,10 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     content("content", String.format("has-words(%s)",val));
                 }
                 else
+                if(contentIsOrListContains("is", "rsvp")){
+                    content(dehash(tag), val);
+                }
+                else
                 if(contentIsOrListContains("is", "land")){
                     if(!dehash(tag).equals("new")){
                         content(dehash(tag), val);
@@ -616,7 +639,8 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else new Evaluator(this){
             public void evaluate(){
                 if(contentIsOrListContains("is", "rsvp")){
-                    content("attending", val? "yes": "no");
+                    if(tag.equals("attending")) content(tag, val? "yes": "no");
+                    else                        contentBool(dehash(tag),val);
                 }
                 else
                 if(contentIsOrListContains("is", "land")){
@@ -640,7 +664,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         else new Evaluator(this){
             public void evaluate(){
                 if(contentIsOrListContains("is", "rsvp")){
-                    contentInt("rating", val);
+                    contentInt(dehash(tag), val);
                 }
                 else
                 if(contentIsOrListContains("is", "land")){
