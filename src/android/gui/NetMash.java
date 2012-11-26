@@ -458,7 +458,7 @@ log(show? "show keyboard": "hide keyboard");
                 if(s.startsWith("render:")) continue;
                 if(s.startsWith("options:")) continue;
             }
-            addToLayout(layout, null, o, selectColour(colours,i), borderless, i==0? dim0: dimn, height, width);
+            addToLayout(layout, "fixed", o, selectColour(colours,i), borderless, i==0? dim0: dimn, height, width);
             i++;
         }
     }
@@ -565,12 +565,12 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private View createFormView(String tag, LinkedHashMap hm, int colour, boolean borderless){
-        String  type =getStringFrom( hm,    "input");
-        String  label=getStringFrom( hm,    "label");
-        Object  range=               hm.get("range");
-        Object  value=               hm.get("value");
-        boolean fixed=getBooleanFrom(hm,    "fixed");
-        boolean scroll=getBooleanFrom(hm,   "scroll");
+        String  type  =getStringFrom( hm,    "input");
+        String  label =getStringFrom( hm,    "label");
+        Object  range =               hm.get("range");
+        Object  value =               hm.get("value");
+        boolean fixed =getBooleanFrom(hm,    "fixed") || "fixed".equals(tag);
+        boolean scroll=getBooleanFrom(hm,    "scroll");
         View view=null;
         if("button".equals(type))    view=createFormButtonView(tag, label);
         else
@@ -580,7 +580,7 @@ log(show? "show keyboard": "hide keyboard");
         else
         if("chooser".equals(type))   view=createFormSpinnerView(tag, label, range, value);
         else
-        if("rating".equals(type))    view=createFormRatingView(tag, label, value);
+        if("rating".equals(type))    view=createFormRatingView(tag, label, value, fixed);
         else
                                      view=createTextView(label+": "+value,colour,borderless);
         return view;
@@ -756,16 +756,18 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
-    private View createFormRatingView(final String tag, String label, Object value){
+    private View createFormRatingView(final String tag, String label, Object value, final boolean fixed){
+        final Double v2=(value!=null && (value instanceof Double))? ((Double)value): null;
         RatingBar view = new RatingBar(this);
-        view.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
-            public void onRatingChanged(RatingBar b, float r, boolean f){ if(f) user.setUpdateVal(viewUID, tag, (int)(r+0.5)); }
-        });
+        view.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){ public void onRatingChanged(RatingBar b, float r, boolean f){
+            if(!f) return;
+            if(fixed) b.setRating((float)(v2!=null? v2: 0));
+            else user.setUpdateVal(viewUID,tag,(int)(r+0.5));
+        }});
         user.prepareResponse(viewUID);
         view.setStepSize(1.0f);
         view.setNumStars(5);
-        Double v1=user.getFormDoubleVal(viewUID,tag);
-        Double v2=(value!=null && (value instanceof Double))? ((Double)value): null;
+        Double v1=fixed? null: user.getFormDoubleVal(viewUID,tag);
         view.setRating((float)(v1!=null? v1: (v2!=null? v2: 0)));
         return view;
     }
