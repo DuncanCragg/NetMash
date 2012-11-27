@@ -265,14 +265,26 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    private float px=0,py=0,pz=0;
+    private long earliest=0;
+    private boolean waiting=false;
+    private float lastx,lasty,lastz;
+
     public void onNewCoords(final float x, final float y, final float z){
-        float dx=x-px, dy=y-py, dz=z-pz;
-        if(dx*dx+dy*dy+dz*dz<1.0) return;
+        lastx=x; lasty=y; lastz=z;
+        final long updated=System.currentTimeMillis();
+        if(updated<earliest){
+            if(waiting) return; waiting=true;
+            new Thread(){ public void run(){
+                Kernel.sleep(earliest-updated);
+                waiting=false;
+                onNewCoords(lastx,lasty,lastz);
+            }}.start();
+            return;
+        }
+        earliest=updated+1000;
         new Evaluator(this){
             public void evaluate(){
                 contentList("coords", list(x,y,z));
-                px=x; py=y; pz=z;
                 String newplaceuid=findNewPlaceNearer();
                 if(newplaceuid!=null){
                     history.forward();

@@ -526,7 +526,7 @@ public class Kernel {
 
     //-----------------------------------------------------
 
-    static public void sleep(int millis){
+    static public void sleep(long millis){
         try{ Thread.sleep(millis); }catch(Exception e){}
     }
 
