@@ -63,11 +63,19 @@ Bugs, Refactoring
 --------------------------------------------------------
 Stuff
 
- + Reaktion - time programming it! event review dims and sub-events
  + make a robot in the room entirely on-device
-    + where to put PresenceTracker; use Rob Ott's Place for now; need time events
- + Mars Rover running
- + API to NXT from Android or on-device
+    + stomp out redundancies!
+    + need time events
+    + need vector maths: coords => ( @. + target-coords ) / 2
+    + annoying edit rule at front of list
+    + two-pane view/edit on tablet; alt-tab on phone
+    + where to put PresenceTracker; use Ann Droid's Place for now
+    + ready for Tech Mesh using tablet
+
+ - Mars Rover running - using those vector maths
+ - API to NXT from Android or on-device
+
+ - Reaktion - show programming it
 
  - all language changes
     - items(/properties/props) not objects(/fields/tags) - in gui and code

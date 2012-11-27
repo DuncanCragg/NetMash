@@ -21,7 +21,7 @@ import static netmash.lib.Utils.*;
 
 public class Renderer implements GLSurfaceView.Renderer {
 
-    public static boolean debugGL=false;
+    private boolean debugGL=false;
 
     private NetMash netmash;
     private Mesh mesh;
@@ -83,6 +83,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     static String lightFragmentShaderSource     = "precision mediump float; uniform vec3 lightCol; uniform sampler2D texture0; varying vec2 texturePt; void main(){ gl_FragColor=vec4(lightCol,1.0)*texture2D(texture0,texturePt); }";
 
     public Renderer(NetMash netmash, LinkedHashMap hm) {
+        debugGL=Kernel.config.boolPathN("gl:log"); if(debugGL) log("** GL Debugging on! May be slower..");
         this.netmash=netmash;
         this.mesh=new Mesh(hm,netmash.user);
         resetCoordsAndView(0,1.0f,3.0f);
