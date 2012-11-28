@@ -562,6 +562,8 @@ public class OTS2GUI {
 
     public LinkedHashMap scene2GUI(){ log("scene2GUI");
 
+        for(String alertedUid: user.alerted()) logXX("scene2GUI, object changed:",alertedUid);
+
         LinkedHashMap objhash=object2mesh("private:viewing:",false);
         if(objhash==null) return null;
         mesh2uidPut(objhash, user.content("private:viewing"), user.content("private:viewing"));
@@ -728,7 +730,7 @@ public class OTS2GUI {
 
         if(!user.contentSet("private:editing") || user.contentIs("private:editing","")) return null;
 
-        LinkedHashMap objhash=oldHashIfEtagSame("private:editing");
+        LinkedHashMap objhash=oldHashIfEtagSame("private:editing:");
         if(!objhash.isEmpty()) return objhash;
 
         String title="Edit Panel";

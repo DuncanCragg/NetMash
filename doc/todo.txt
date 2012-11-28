@@ -60,20 +60,23 @@ Bugs, Refactoring
  - don't put template edit rule in instantiation
  - editable rule push: first rule will be skipped first time
  - too space-dependent in editing: CRs
+ - 250ms Kernel halt..
+ - alerted on User to determine scene graph change
 --------------------------------------------------------
 Stuff
 
  + make a robot in the room entirely on-device
     + stomp out redundancies!
-    + need time events
-    + need vector maths: coords => ( @. + target-coords ) / 2
+    + need time events uid-tick={ is: tick time: 213131232234 }
+    + need vector maths: coords => ( @. + target-coords ) / 2 x,/,.,- no overloading by type
     + annoying edit rule at front of list
-    + two-pane view/edit on tablet; alt-tab on phone
+    + two-pane view/edit on tablet; alt-tab on phone reorders history
     + where to put PresenceTracker; use Ann Droid's Place for now
     + ready for Tech Mesh using tablet
 
  - Mars Rover running - using those vector maths
  - API to NXT from Android or on-device
+ - BeRo
 
  - Reaktion - show programming it
 
