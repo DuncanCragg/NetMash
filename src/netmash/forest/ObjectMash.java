@@ -68,7 +68,7 @@ public class ObjectMash extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void runRule(int r, String alerted){
-        String name=contentOr(String.format("Rules:%d:when", r),"");
+        String name=contentStringOr(String.format("Rules:%d:when", r),"");
         if(alerted!=null && !contentSet("Alerted")) contentTemp("Alerted",alerted);
         ; if(extralogging) log("Running rule \""+name+"\"");
         ; if(extralogging) log("alerted:\n"+contentHash("Alerted:#"));

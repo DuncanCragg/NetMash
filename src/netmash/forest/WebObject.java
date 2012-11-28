@@ -172,7 +172,7 @@ public class WebObject {
       * null and fire off whatever it takes to get it.
       */
 
-    /** Get Object at this path in the JSON content. */
+    /** Get Object at this path. */
     public Object contentObject(String path){
         if(pathMatches(path,"UID"  )) return uid;
         if(pathMatches(path,"Version")) return Integer.valueOf(etag);
@@ -197,20 +197,26 @@ public class WebObject {
         return path.equals(match);
     }
 
-    /** Get String at this path in the JSON content. */
+    /** Get String at this path. */
     public String content(String path){
         Object o=contentObject(path);
         if(o instanceof String) return (String)o;
         return null;
     }
 
-    /** Get String at this path in the JSON content, or given alternative if none. */
+    /** Get String at this path, or given alternative if none. */
     public String contentOr(String path, String or){
         String s=content(path);
         return s!=null? s: or;
     }
 
-    /** Get String, or string form of object, at this path in the JSON content. */
+    /** Get String, or string form of object, at this path, or given alternative if none. */
+    public String contentStringOr(String path, String or){
+        String s=contentString(path);
+        return s!=null? s: or;
+    }
+
+    /** Get String, or string form of object, at this path. */
     public String contentString(String path){
         Object o=contentObject(path);
         if(o==null) return null;
@@ -227,7 +233,7 @@ public class WebObject {
             LinkedList ll=(LinkedList)o;
             String r="";
             for(Object i: ll) r+=i+" ";
-            return r;
+            return r.trim();
         }
         return o.toString();
     }
@@ -272,19 +278,19 @@ public class WebObject {
 
     // --------------------------------------------------------------
 
-    /** Set Object at this path in the JSON content. */
+    /** Set Object at this path. */
     public void contentObject(String path, Object val){
         doCopyOnWrite(path);
         statemod = updatingState.objectPath(path, val) || statemod;
     }
 
-    /** Set String at this path in the JSON content. */
+    /** Set String at this path. */
     public void content(String path, String val){
         doCopyOnWrite(path);
         statemod = updatingState.stringPath(path, val) || statemod;
     }
 
-    /** Set String at this path in the JSON content: don't mark as Etag change. */
+    /** Set String at this path: don't mark as Etag change. */
     public void contentTemp(String path, String val){
         if(val!=null) tempPath = path; else tempPath = null;
         doCopyOnWrite(path);
@@ -303,7 +309,7 @@ public class WebObject {
         return true;
     }
 
-    /** Set UID at this path in the JSON content as a fully-qualified URL. */
+    /** Set UID at this path as a fully-qualified URL. */
     public void contentURL(String path, String val){
         doCopyOnWrite(path);
         statemod = updatingState.stringPath(path, UID.toURL(val)) || statemod;
@@ -311,12 +317,12 @@ public class WebObject {
 
     // --------------------------------------------------------------
 
-    /** Get int at this path in the JSON content. */
+    /** Get int at this path. */
     public int contentInt(String path){
         return (int)findNumberIn(contentObject(path));
     }
 
-    /** Set int at this path in the JSON content. */
+    /** Set int at this path. */
     public void contentInt(String path, int val){
         doCopyOnWrite(path);
         statemod = updatingState.intPath(path, val) || statemod;
@@ -384,14 +390,14 @@ public class WebObject {
         return sb.toString();
     }
 
-    /** Get boolean at this path in the JSON content. */
+    /** Get boolean at this path. */
     public boolean contentBool(String path){
         Object o=contentObject(path);
         if(o instanceof Boolean) return ((Boolean)o).booleanValue();
         return false;
     }
 
-    /** Set boolean at this path in the JSON content. */
+    /** Set boolean at this path. */
     public void contentBool(String path, boolean val){
         doCopyOnWrite(path);
         statemod = updatingState.boolPath(path, val) || statemod;
