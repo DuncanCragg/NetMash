@@ -125,6 +125,11 @@ public class ObjectMash extends WebObject {
             LinkedList ll=contentList(path);
             return (ll!=null && ll.size()==(int)d);
         }
+        if(list.size()==2 && list.get(1).equals("**")){
+            boolean ok=scanType(list.get(0),path+":0");
+            if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
+        }
         int becomes=list.indexOf("=>");
         if(becomes!= -1){
             LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));

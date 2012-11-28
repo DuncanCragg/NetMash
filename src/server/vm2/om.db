@@ -30,7 +30,7 @@
   m: yo !=> @. with yo
   s: # => + @o:a:1
   o: { a: 5 } !=> @. with { a: 1 5 } { a: 1 1 } { a: 5 9 }
-  z: ( number => # ) *
+  z: ( ( < 1 ) => # ) **
   la: => ( @m select @z:2 ) ( @m select @z:1 ) ( @m select @z:0 )
   j: y => { m: n }
 }
