@@ -290,7 +290,13 @@ public class ObjectMash extends WebObject {
                 else contentObject(currentRewritePath, e);
             }
         }
-        for(String p: shufflists.keySet()){ LinkedList lr=new LinkedList(), ll=contentList(p); for(Object o: ll) if(!"#".equals(o)) lr.add(o); contentList(p,lr); }
+        for(String p: shufflists.keySet()){
+            LinkedList ll=contentList(p);
+            if(ll==null) continue;
+            LinkedList lr=new LinkedList();
+            for(Object o: ll) if(!"#".equals(o)) lr.add(o);
+            contentList(p,lr);
+        }
     }
 
     private Object eval(LinkedList ll){ try{
