@@ -213,14 +213,43 @@ public class User extends ObjectMash {
 
     // ---------------------------------------------------------
 
-    public void onObjectTouched(LinkedHashMap mesh, final boolean edit, final float dx, final float dy){
+    private long earliest=0;
+    private boolean waiting=false;
+
+    private float lastx,lasty,lastz;
+    private LinkedHashMap lastmesh=null;
+    private boolean lastedit;
+    private float lastdx, lastdy;
+
+    synchronized public void onObjectTouched(LinkedHashMap mesh, final boolean edit, final float dx, final float dy){
+        if(mesh!=lastmesh){ lastdx=0; lastdy=0; earliest=0; waiting=false; }
+        lastmesh=mesh; lastedit=edit; lastdx+=dx; lastdy+=dy;
+        final long updated=System.currentTimeMillis();
+        final User self=this;
+        if(updated<earliest){
+            if(waiting) return; waiting=true;
+            new Thread(){ public void run(){
+                Kernel.sleep(earliest-updated);
+                waiting=false;
+                synchronized(self){
+                    if(lastdx+lastdy==0) return;
+                    float ldx=lastdx,ldy=lastdy;
+                    lastdx=0; lastdy=0;
+                    onObjectTouched(lastmesh,lastedit,ldx,ldy);
+                }
+            }}.start();
+            return;
+        }
+        final float ndx=lastdx, ndy=lastdy;
+        lastdx=0; lastdy=0;
+        earliest=updated+500;
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
-logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"+objectuid);
         if(objectuid==null) return;
+logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectuid,ndx,ndy);
         if(objectuid.equals("editing")){
             String edituid=content("private:editing");
-            if(dy*dy>dx*dx/2) getObjectUpdating(edituid, "", true).setEditVal(edituid,dy);
-            else if(NetMash.top!=null) NetMash.top.getKeys(dx>0);
+            if(ndy*ndy>ndx*ndx/2) getObjectUpdating(edituid, "", true).setEditVal(edituid,ndy);
+            else if(NetMash.top!=null) NetMash.top.getKeys(ndx>0);
         }
         else new Evaluator(this){
             public void evaluate(){
@@ -230,7 +259,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
                     showWhatIAmViewing();
                 }
                 else{
-                    if(!setResponse(objectuid, false, dx/10, dy/10)) getObjectUpdating(objectuid).setSwipeVal(objectuid, dx/10, dy/10);
+                    if(!setResponse(objectuid, false, ndx/30, ndy/30)) getObjectUpdating(objectuid).setSwipeVal(objectuid, ndx/30, ndy/30);
                 }
                 refreshObserves();
             }
@@ -265,11 +294,7 @@ logZero("touched object: "+mesh.get("title")+", "+(edit? "edit": "send")+" uid:"
         };
     }
 
-    private long earliest=0;
-    private boolean waiting=false;
-    private float lastx,lasty,lastz;
-
-    public void onNewCoords(final float x, final float y, final float z){
+    synchronized public void onNewCoords(final float x, final float y, final float z){
         lastx=x; lasty=y; lastz=z;
         final long updated=System.currentTimeMillis();
         if(updated<earliest){
