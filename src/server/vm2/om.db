@@ -9,7 +9,7 @@
   title: "Test Running"
   x: 20
   h: { x: uid-39da-3645-4f58-50cb }
-  z: 1 2 3
+  z: 0 1 2 3
   m: true 4 false 5 hi
   o: { a: 1 2 } { a: 2 3 } { a: 1 3 } { a: 2 4 } { a: 3 4 }
   j: x y 8 true
@@ -30,6 +30,7 @@
   m: yo !=> @. with yo
   s: # => + @o:a:1
   o: { a: 5 } !=> @. with { a: 1 5 } { a: 1 1 } { a: 5 9 }
+  z: ( number => # ) *
   la: => ( @m select @z:2 ) ( @m select @z:1 ) ( @m select @z:0 )
   j: y => { m: n }
 }

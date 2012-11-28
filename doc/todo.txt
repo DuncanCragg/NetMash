@@ -23,16 +23,19 @@ Current priority:
 Performance
 ---------------------------------------------------------
  - light lags massively
+ - 250ms Kernel halt..
  - stroke light toggles on/off; or left/right?
  - slightly crap touch response in game
  - don't need to save to persistence if not changed, and not so often either
  - don't need to spend so much time scanning the scenegraph when only one change
  - redundant rendering/refresh when nothing changed
     - use Etag, if no need to respond to incoming subs
+ - stomp out redundancies!
  - cache, and detect changes in components of view - how?
     - share same shaders .. by uid
     - share same meshes? detect internal change
     - share same textures .. by URL
+ - alerted on User to determine scene graph change
  - no new VBOs!
     - derivative objects resend VBOs
     - top level mesh not cached
@@ -57,28 +60,31 @@ Bugs, Refactoring
  - hello world doesn't update immediately cos misses evt & gets out of sync
  - can edit own edit rule.. hide edit rules?
  - non-sumer appearing in remote rewrite(?)
- - don't put template edit rule in instantiation
  - editable rule push: first rule will be skipped first time
  - too space-dependent in editing: CRs
- - 250ms Kernel halt..
- - alerted on User to determine scene graph change
 --------------------------------------------------------
 Stuff
 
- + make a robot in the room entirely on-device
-    + stomp out redundancies!
-    + need time events uid-tick={ is: tick time: 213131232234 }
+ + Mars Rover running
     + need vector maths: coords => ( @. + target-coords ) / 2 x,/,.,- no overloading by type
-    + annoying edit rule at front of list
-    + two-pane view/edit on tablet; alt-tab on phone reorders history
-    + where to put PresenceTracker; use Ann Droid's Place for now
-    + ready for Tech Mesh using tablet
 
- - Mars Rover running - using those vector maths
+ - make a robot in the room entirely on-device
+    - use those vector maths
+    - need time events uid-tick={ is: tick time: 213131232234 } target-coords: ..
+    - where to put PresenceTracker; use Ann Droid's Place for now
+    - ready for Tech Mesh using tablet
+
  - API to NXT from Android or on-device
  - BeRo
 
  - Reaktion - show programming it
+
+ - annoying edit rule at front of list
+    - don't put template edit rule in instantiation
+    - take out once done?
+    - check width of toString and go structured if wide
+
+ - two-pane view/edit on tablet; alt-tab on phone reorders history
 
  - all language changes
     - items(/properties/props) not objects(/fields/tags) - in gui and code
