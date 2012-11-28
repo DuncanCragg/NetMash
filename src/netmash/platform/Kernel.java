@@ -214,9 +214,9 @@ public class Kernel {
                 if(i==0 && !Thread.interrupted()) throw new RuntimeException("select returned nothing but not interrupted?!");
                 if(i!=0) failwait=0;
             }catch(Throwable t) {
-                if(failwait>0){
-                    logErr("Failure in event loop: "+t+" .. waiting for "+failwait+"ms");
-                    sleep(failwait);
+                if(failwait>1000){
+                    logErr("Failure in event loop: "+t+" .. waiting for "+(failwait-500)+"ms");
+                    sleep(failwait-500);
                 }
                 failwait+=250;
                 if(failwait>10000) failwait=10000;

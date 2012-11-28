@@ -23,7 +23,6 @@ Current priority:
 Performance
 ---------------------------------------------------------
  - light lags massively
- - 250ms Kernel halt..
  - stroke light toggles on/off; or left/right?
  - slightly crap touch response in game
  - don't need to save to persistence if not changed, and not so often either
