@@ -46,6 +46,48 @@ public class Utils{
 
     // -------------------------------
 
+    /** Matrix operations */
+
+    @SuppressWarnings("unchecked")
+    static public LinkedList vmdot(LinkedList v, LinkedList m){
+        if(v==null || m==null) return list();
+        LinkedList r=new LinkedList();
+        for(Object o: m){
+            if(!(o instanceof LinkedList)) return list();
+            LinkedList w=(LinkedList)o;
+            r.add(Double.valueOf(vvdot(v,w)));
+        }
+        return r;
+    }
+
+    static public double vvdot(LinkedList v, LinkedList w){
+        if(w.size()!=v.size()) return 0;
+        double r=0;
+        int i=0; for(Object p: v){ Object q=w.get(i);
+            r+=tryDouble(p,0)*tryDouble(q,0);
+        i++; }
+        return r;
+    }
+
+    @SuppressWarnings("unchecked")
+    static public LinkedList vvadd(LinkedList a, LinkedList b){
+        if(a==null) return b; if(b==null) return a;
+        int as=a.size(), bs=b.size();
+        if(as==0) return b; if(bs==0) return a;
+        boolean abigger=(as>bs);
+        LinkedList c=abigger? a: b;
+        LinkedList d=abigger? b: a;
+        int       ds=abigger? bs: as;
+        LinkedList r=new LinkedList();
+        int i=0; for(Object o: c){
+            Object p=(i< ds)? d.get(i): Double.valueOf(0);
+            r.add(Double.valueOf(tryDouble(o,0)+tryDouble(p,0)));
+        i++; }
+        return r;
+    }
+
+    // -------------------------------
+
     /** Construct a list utility. */
     @SuppressWarnings("unchecked")
     static public LinkedList list(Object...args){
