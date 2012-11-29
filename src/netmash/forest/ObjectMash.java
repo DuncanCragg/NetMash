@@ -276,9 +276,10 @@ public class ObjectMash extends WebObject {
                 if(e==null){ log("failed to rewrite "+currentRewritePath); continue; }
                 if("#".equals(e)){
                     String[] parts=currentRewritePath.split(":");
-                    if(parts.length==1 || !isNumber(parts[parts.length-1])) contentRemove(currentRewritePath);
+                    String lastpart=parts[parts.length-1];
+                    if(parts.length==1 || !isNumber(lastpart)) contentRemove(currentRewritePath);
                     else { String p=currentRewritePath.substring(0,currentRewritePath.lastIndexOf(":"));
-                           if(contentList(p)==null) contentRemove(currentRewritePath);
+                           if(contentList(p)==null){ if("0".equals(lastpart)) contentRemove(p); else contentRemove(currentRewritePath); }
                            else{ content(currentRewritePath,"#"); shufflists.put(p,true); }
                     }
                 }

@@ -16,6 +16,8 @@
   p: { a: b c: d }
   vo: 0 1
   vc: 5 5
+  xx: qq
+  zz: oo
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -33,6 +35,8 @@
   z: ( ( < 1 ) => # ) **
   la: => ( @m select @z:2 ) ( @m select @z:1 ) ( @m select @z:0 )
   j: y => { m: n }
+  xx: ( qq => # ) **
+  zz: oo => #
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -49,6 +53,8 @@
   o: { a: 1 } => #
   vo: => @. . ( ( 0 1 ) ( -1 0 ) )
   vc: 5 5 => @. ++ @vo
+  xx: #
+  zz: #
 }
 
 { UID: uid-1de5-4d69-667a-56e4
