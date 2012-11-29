@@ -5,6 +5,7 @@
   rotation: 0 0 0
   scale: 10.0 10.0 10.0
   sub-objects:
+    { object: uid-a07e-434c-b8e7-5b40 coords: 0 0 -3 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords:  4 0 4 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: -4 0 4 }
     { object: http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json coords:  0 0 -27 }
@@ -15,6 +16,35 @@
   textures: http://img.photobucket.com/albums/v693/fakirnogwat/0009.png
   vertex-shader: uid-ff5d-1ef4-cfa5-5f92
   fragment-shader: uid-1ff8-59e9-6dac-9b56
+}
+
+{ UID: uid-a07e-434c-b8e7-5b40
+  Rules: uid-83a6-53ef-9f44-43bd uid-101b-2c33-9fd6-96a1
+  is: 3d cuboid editable
+  title: bot
+  rotation: 45 45 45
+  scale: 0.3 0.3 0.3
+  light: 0.0 0.0 1
+  place: uid-1e51-f298-5f55-6caa
+  coords: 0 0 -3
+  time: { timestamp: 10 }
+  next-time: 0
+}
+
+{ UID: uid-83a6-53ef-9f44-43bd
+  is:  3d cuboid editable rule
+  place: {
+    present: > 0
+    sub-objects: { object: {  is: user } }
+  }
+  target-coords: => ( @=place:sub-objects:coords select 0 ) v+v ( 0 0 -3 )
+}
+
+{ UID: uid-101b-2c33-9fd6-96a1
+  is:  3d cuboid editable rule
+  time: { timestamp: > @next-time }
+  next-time: => @time:timestamp + 1000
+  coords: => ( @. v+v @target-coords ) v/s 2
 }
 
 { UID: uid-ff5d-1ef4-cfa5-5f92
