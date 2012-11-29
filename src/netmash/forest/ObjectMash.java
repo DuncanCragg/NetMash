@@ -24,27 +24,33 @@ public class ObjectMash extends WebObject {
     public ObjectMash(JSON json){ super(json); extralogging = Kernel.config.boolPathN("rules:log"); }
 
     public void evaluate(){
-        LinkedList<String> evalrules=getEvalRules();
-        if(!evalrules.isEmpty()) contentSetPushAll("Rules",evalrules);
+        contentSetPushAll("Rules",getEvalRules());
         if(extralogging) log("Running ObjectMash on "+uid+": "+contentHash("#"));
-        LinkedList rules=contentAsList("Rules");
-        if(extralogging) log("Rules: "+rules);
-        if(rules==null) return;
-        for(Object ruleuid: rules){
-            contentTemp("Rule",ruleuid.toString());
-            LinkedList ruleis=contentList("Rule:is");
-            if(extralogging) log("Rule is="+ruleis);
-            if(ruleis==null) continue;
-            boolean ok=true;
-            for(Object is: ruleis){
-                if("rule".equals(is)) continue;
-                if("editable".equals(is)) continue;
-                if(!contentIsOrListContains("is", is.toString())){ ok=false; if(extralogging) log("Rule doesn't apply: "+is+" "+contentString("is")); break; }
+        boolean modified=statemod;
+        int i=0; for(; i<20; i++){
+            statemod=false;
+            LinkedList rules=contentAsList("Rules");
+            if(extralogging) log("Rules: "+rules);
+            if(rules==null) break;
+            for(Object ruleuid: rules){
+                contentTemp("Rule",ruleuid.toString());
+                LinkedList ruleis=contentList("Rule:is");
+                if(extralogging) log("Rule is="+ruleis);
+                if(ruleis==null) continue;
+                boolean ok=true;
+                for(Object is: ruleis){
+                    if("rule".equals(is)) continue;
+                    if("editable".equals(is)) continue;
+                    if(!contentIsOrListContains("is", is.toString())){ ok=false; if(extralogging) log("Rule doesn't apply: "+is+" "+contentString("is")); break; }
+                }
+                if(ok) runRule();
             }
-            if(ok) runRule();
+            if(!statemod) break;
+            modified=true;
         }
+        if(i==20) log("*** Maximum loops reached running rules: use self or mutual observation instead ***");
+        statemod=modified;
         contentTemp("Rule",null);
-logXX("statemod",statemod,"obsalmod",obsalmod);
     }
 
     private LinkedList<String> getEvalRules(){

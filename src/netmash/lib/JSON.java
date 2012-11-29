@@ -1124,8 +1124,7 @@ public class JSON {
         try{ list = getListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
         if(list==null) return false;
-        list.removeAll(value);
-        return true;
+        return list.removeAll(value);
     }
 
     private void mergeHash(LinkedHashMap hashmap, LinkedHashMap other){
@@ -1352,7 +1351,7 @@ public class JSON {
                     w+=s.length();
                 }
                 else w+=5;
-                if(w>80){ structured=true; break; }
+                if(w>40){ structured=true; break; }
                 if(i>10){ structured=true; break; }
                 i++;
             }

@@ -88,7 +88,7 @@ Stuff
  - all language changes
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - OM/OTS, etc -> sumer or what
-    - reconcile all null, empty tag value or rhs value or $:x, ( ), #
+    - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
 
  - GIS:
     - show place/sub land in different colours

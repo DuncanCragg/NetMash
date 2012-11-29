@@ -465,6 +465,7 @@ public class WebObject {
     public boolean contentListContainsAll(String path, List val){
         LinkedList list=contentList(path);
         if(list==null) return false;
+        if(val.isEmpty()) return true;
         return list.containsAll(val);
     }
 
@@ -509,18 +510,21 @@ public class WebObject {
 
     /** Add all the values onto the list at the path. */
     public void contentListAddAll(String path, List val){
+        if(val.isEmpty()) return;
         doCopyOnWrite(path);
         statemod = updatingState.listPathAddAll(path, val) || statemod;
     }
 
     /** Push all the values as if the list were a set. */
     public void contentSetAddAll(String path, LinkedList val){
+        if(val.isEmpty()) return;
         doCopyOnWrite(path);
         statemod = updatingState.setPathAddAll(path, val) || statemod;
     }
 
     /** Push all the values as if the list were a set. */
     public void contentSetPushAll(String path, LinkedList val){
+        if(val.isEmpty()) return;
         doCopyOnWrite(path);
         statemod = updatingState.setPathPushAll(path, val) || statemod;
     }
@@ -547,6 +551,7 @@ public class WebObject {
 
     /** Remove all the values in the list at the path. */
     public void contentListRemoveAll(String path, List val){
+        if(val.isEmpty()) return;
         doCopyOnWrite(path);
         statemod = updatingState.listPathRemoveAll(path, val) || statemod;
     }
