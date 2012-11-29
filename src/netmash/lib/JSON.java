@@ -1265,7 +1265,7 @@ public class JSON {
 
     private void ensureChars(boolean sumer){
         this.sumer=sumer;
-        String str=(tophash!=null)? hashToString(tophash,4,0,sumer): "";
+        String str=(tophash!=null)? hashToString(tophash,2,0,sumer): "";
         chars = str.toCharArray();
         chp=0;
     }
