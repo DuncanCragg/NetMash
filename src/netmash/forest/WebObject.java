@@ -39,7 +39,7 @@ public class WebObject {
     public  JSON updatingState=null;
 
     private boolean copyshallow = true;
-    private String  tempPath = null;
+    private LinkedList<String> tempPaths = new LinkedList<String>();
     public  boolean statemod = false;
     public  boolean obsalmod = false;
     public  boolean refreshobserves = false;
@@ -290,9 +290,9 @@ public class WebObject {
         statemod = updatingState.stringPath(path, val) || statemod;
     }
 
-    /** Set String at this path: don't mark as Etag change. */
+    /** Set String at this path: don't mark as Etag change and don't observe through any link. */
     public void contentTemp(String path, String val){
-        if(val!=null) tempPath = path; else tempPath = null;
+        if(val!=null) tempPaths.add(path); else tempPaths.remove(path);
         doCopyOnWrite(path);
         updatingState.stringPath(path, val);
     }
@@ -706,11 +706,16 @@ public class WebObject {
     /* ---------------------------------------------------- */
 
     private WebObject observing(String baseurl, String uid, String path){
-        boolean tempObserve = tempPath!=null && path.startsWith(tempPath);
+        boolean tempObserve = startsWithAnyTemp(path);
         String observeduid=normaliseUIDIfNotOurs(baseurl, uid);
         if(!UID.isUID(observeduid)) return null;
         obsalmod = true;
         return funcobs.observing(this, observeduid, tempObserve);
+    }
+
+    private boolean startsWithAnyTemp(String path){
+        for(String tempPath: tempPaths) if(path.startsWith(tempPath)) return true;
+        return false;
     }
 
     private void notifying(String baseurl, String uid){

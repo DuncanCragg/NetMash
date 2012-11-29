@@ -30,21 +30,21 @@ public class ObjectMash extends WebObject {
         LinkedList rules=contentAsList("Rules");
         if(extralogging) log("Rules: "+rules);
         if(rules==null) return;
-        int r=0;
-        for(Object o: rules){
-            LinkedList ruleis=contentList(String.format("Rules:%d:is", r));
-            if(extralogging) log("Rule "+r+" is="+ruleis);
-            if(ruleis==null) return;
+        for(Object ruleuid: rules){
+            contentTemp("Rule",ruleuid.toString());
+            LinkedList ruleis=contentList("Rule:is");
+            if(extralogging) log("Rule is="+ruleis);
+            if(ruleis==null) continue;
             boolean ok=true;
             for(Object is: ruleis){
                 if("rule".equals(is)) continue;
                 if("editable".equals(is)) continue;
                 if(!contentIsOrListContains("is", is.toString())){ ok=false; if(extralogging) log("Rule doesn't apply: "+is+" "+contentString("is")); break; }
             }
-            if(ok) runRule(r);
-            r++;
+            if(ok) runRule();
         }
-        if(!evalrules.isEmpty()) contentSetPushAll("Rules",evalrules);
+        contentTemp("Rule",null);
+logXX("statemod",statemod,"obsalmod",obsalmod);
     }
 
     private LinkedList<String> getEvalRules(){
@@ -57,26 +57,26 @@ public class ObjectMash extends WebObject {
         return evalrules;
     }
 
-    private void runRule(int r){
-        if(extralogging) log("Run rule #"+r+". alerted="+alerted);
-        if(alerted().size()==0) runRule(r,null);
-        else for(String alerted: alerted()) runRule(r,alerted);
+    private void runRule(){
+        if(extralogging) log("Run rule. alerted="+alerted());
+        if(alerted().size()==0) runRule(null);
+        else for(String alerted: alerted()) runRule(alerted);
     }
 
     LinkedHashMap<String,LinkedList>         rewrites=new LinkedHashMap<String,LinkedList>();
     LinkedHashMap<String,LinkedList<String>> bindings=new LinkedHashMap<String,LinkedList<String>>();
 
     @SuppressWarnings("unchecked")
-    private void runRule(int r, String alerted){
-        String name=contentStringOr(String.format("Rules:%d:when", r),"");
+    private void runRule(String alerted){
+        String when=contentStringOr("Rule:when","");
         if(alerted!=null && !contentSet("Alerted")) contentTemp("Alerted",alerted);
-        ; if(extralogging) log("Running rule \""+name+"\"");
+        ; if(extralogging) log("Running rule \""+when+"\"");
         ; if(extralogging) log("alerted:\n"+contentHash("Alerted:#"));
         rewrites.clear(); bindings.clear();
-        LinkedHashMap<String,Object> rule=contentHash(String.format("Rules:%d:#", r));
+        LinkedHashMap<String,Object> rule=contentHash("Rule:#");
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
-        ; if(ok) log("Rule fired: \""+name+"\"");
+        ; if(ok) log("Rule fired: \""+when+"\"");
         ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+"\n"+rule+"\n"+contentHash("#")+"\n===========");
         if(alerted!=null && contentIs("Alerted",alerted)) contentTemp("Alerted",null);
     }
