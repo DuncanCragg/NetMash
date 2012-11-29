@@ -23,6 +23,7 @@ Current priority:
 Performance
 ---------------------------------------------------------
  - light lags massively
+ - phone move event takes a while and jumps a lot
  - stroke light toggles on/off; or left/right?
  - slightly crap touch response in game
  - don't need to save to persistence if not changed, and not so often either
@@ -57,20 +58,17 @@ Bugs, Refactoring
  - throw if calling certain methods outside of evaluator
  - NaN/Infinity breaking JSON syntax
  - hello world doesn't update immediately cos misses evt & gets out of sync
- - can edit own edit rule.. hide edit rules?
  - non-sumer appearing in remote rewrite(?)
- - editable rule push: first rule will be skipped first time
- - too space-dependent in editing: CRs
+ - edit rules still left: if edit rule misses Version, will hang around
 --------------------------------------------------------
 Stuff
 
- + Mars Rover running
-    + need vector maths: coords => ( @. + target-coords ) / 2 x,/,.,- no overloading by type
+ - allow type-based overloading of functions and operators? v+v -> +
 
  - make a robot in the room entirely on-device
-    - use those vector maths
-    - need time events uid-tick={ is: tick time: 213131232234 } target-coords: ..
-    - where to put PresenceTracker; use Ann Droid's Place for now
+    - put PresenceTracker in netmash.types and have in room
+    - specify class (e.g. Time/PT) in uid-new?
+    - check time unobserved
     - ready for Tech Mesh using tablet
 
  - API to NXT from Android or on-device
@@ -78,12 +76,8 @@ Stuff
 
  - Reaktion - show programming it
 
- - annoying edit rule at front of list
-    - don't put template edit rule in instantiation
-    - take out once done?
-    - check width of toString and go structured if wide
-
- - two-pane view/edit on tablet; alt-tab on phone reorders history
+ - two-pane view/edit on tablet
+    - alt-tab on phone reorders history
 
  - all language changes
     - items(/properties/props) not objects(/fields/tags) - in gui and code
