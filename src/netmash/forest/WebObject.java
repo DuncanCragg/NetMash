@@ -297,6 +297,12 @@ public class WebObject {
         updatingState.stringPath(path, val);
     }
 
+    /** Set String at this path: don't mark as Etag change but do observe through any link. */
+    public void contentTempObserve(String path, String val){
+        doCopyOnWrite(path);
+        updatingState.stringPath(path, val);
+    }
+
     /** Clone from source path to path. */
     public boolean contentClone(String path, String source){
         Object o = contentObject(source);

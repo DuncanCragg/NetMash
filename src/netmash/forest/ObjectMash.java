@@ -33,7 +33,7 @@ public class ObjectMash extends WebObject {
             if(extralogging) log("Rules: "+rules);
             if(rules==null) break;
             for(Object ruleuid: rules){
-                contentTemp("Rule",ruleuid.toString());
+                contentTempObserve("Rule",ruleuid.toString());
                 LinkedList ruleis=contentList("Rule:is");
                 if(extralogging) log("Rule is="+ruleis);
                 if(ruleis==null) continue;
