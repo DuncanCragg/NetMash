@@ -14,8 +14,8 @@
   o: { a: 1 2 } { a: 2 3 } { a: 1 3 } { a: 2 4 } { a: 3 4 }
   j: x y 8 true
   p: { a: b c: d }
-  vo: 0 1
-  vc: 5 5
+  vo: 0 1 0
+  vc: 5 5 5
   xx: qq
   zz: oo
 }
@@ -51,8 +51,8 @@
   z: ( < 2 ) ( > 1 ) ( < 4 => @b × ( if ( @z:0 < 2 ) then 10 else 100 ) )
   j: x { m: n } 8
   o: { a: 1 } => #
-  vo: => @. . ( ( 0 1 ) ( -1 0 ) )
-  vc: 5 5 => @. ++ @vo
+  vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
+  vc: 5 5 5 => @. v+v @vo
   xx: #
   zz: #
 }
@@ -67,8 +67,8 @@
   m: 4 boolean number => @. with ( format %s%s 7.5 1.0 )
   l1: => ok
   j: number => eight
-  vo: => @. . ( ( 0 1 ) ( -1 0 ) )
-  vc: 6 5 => @. ++ @vo
+  vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
+  vc: 6 5 5 => @. v+v @vo
 }
 
 { UID: uid-61d6-65c9-2931-505b
@@ -78,8 +78,8 @@
   j: x eight
   z: number * => @.2 @.1 @.0
   p: { c: d } => @.c @.a
-  vo: => @. . ( ( 0 1 ) ( -1 0 ) )
-  vc: 6 4 => @. ++ @vo
+  vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
+  vc: 6 4 5 => @. v+v @vo
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -100,8 +100,8 @@
   la: => integer @m:6:n
   j: true => false
   p: d b
-  vo: => @. . ( ( 0 1 ) ( -1 0 ) )
-  vc: 5 4 => @. ++ @vo
+  vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
+  vc: 5 4 5 => ( @. v+v @vo ) v/s 5
 }
 
 { UID: uid-d039-5967-f60c-70f7
@@ -123,7 +123,8 @@
   j: x { m: n } eight false
   l7: ( 2 3 ) ( 2 4 ) ( 3 4 )
   l8: ( 2 3 ) ( 3 4 )
-  vc: 5 5
+  vo: 0 1 0
+  vc: 1 1 1
   : { la: 8 } => {
     is: test
     title: "Test Complete"

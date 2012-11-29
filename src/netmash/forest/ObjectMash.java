@@ -329,8 +329,9 @@ public class ObjectMash extends WebObject {
         if(ll.size()==3 && "*".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
         if(ll.size()==3 && "÷".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
         if(ll.size()==3 && "/".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
-        if(ll.size()==3 && ".".equals(ll1))       return vmdot(findList(ll.get(0)), findList(ll.get(2)));
-        if(ll.size()==3 && "++".equals(ll1))      return vvadd(findList(ll.get(0)), findList(ll.get(2)));
+        if(ll.size()==3 && "v.m".equals(ll1))     return vmdot(findList(ll.get(0)), findList(ll.get(2)));
+        if(ll.size()==3 && "v+v".equals(ll1))     return vvadd(findList(ll.get(0)), findList(ll.get(2)));
+        if(ll.size()==3 && "v/s".equals(ll1))     return vsdiv(findList(ll.get(0)), findDouble(ll.get(2)));
         if(ll.size()==3 && "<".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) < findDouble(ll.get(2)));
         if(ll.size()==3 && ">".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) > findDouble(ll.get(2)));
         if(ll.size()==3 && "select".equals(ll1))  return copyFindObject(findHashOrListAndGet(ll.get(0),ll.get(2)));

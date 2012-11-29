@@ -86,6 +86,14 @@ public class Utils{
         return r;
     }
 
+    @SuppressWarnings("unchecked")
+    static public LinkedList vsdiv(LinkedList v, double s){
+        if(s==0) return v;
+        LinkedList r=new LinkedList();
+        for(Object o: v) r.add(Double.valueOf(tryDouble(o,0)/s));
+        return r;
+    }
+
     // -------------------------------
 
     /** Construct a list utility. */
