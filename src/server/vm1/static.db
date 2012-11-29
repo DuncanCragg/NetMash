@@ -1,15 +1,45 @@
 { UID: uid-26bc-8ee9-5443-851a
   Rules: uid-16f2-2db0-e9fe-1d7d
   is: demo editable
+  title: Demo
   x: Hello
   y: World
-  title: Demo..
 }
 
 { UID: uid-16f2-2db0-e9fe-1d7d
   is: demo rule editable
   when: "run set title to join of x and y"
   title: => join " " ( @x @y )
+}
+
+{ UID: uid-8ed3-ee4a-eeef-0313
+  Rules: uid-e85e-7755-1593-0665 uid-c287-63cf-9c45-1f9f uid-4709-6676-f0e2-8054
+  is: editable mars rover
+  title: Mars Rover
+  commands: L M R R M
+  coordinates: 0 0
+  orientation: 0 1
+}
+
+{ UID: uid-e85e-7755-1593-0665
+  is: editable mars rover rule
+  when: L command, turn left
+  commands: ( L => # ) **
+  orientation: => @. . ( ( 0 -1 ) ( 1 0 ) )
+}
+
+{ UID: uid-c287-63cf-9c45-1f9f
+  is: editable mars rover rule
+  when: R command, turn right
+  commands: ( R => # ) **
+  orientation: => @. . ( ( 0 1 ) ( -1 0 ) )
+}
+
+{ UID: uid-4709-6676-f0e2-8054
+  is: editable mars rover rule
+  when: M command, move forward
+  commands: ( M => # ) **
+  coordinates: => @. ++ @orientation
 }
 
 { UID: uid-0112-09a9-3f54-b720
