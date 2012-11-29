@@ -3,21 +3,72 @@ To Do
 -----
 
 --------------------------------------------------------
-Prioritising
+Stuff
 
- - higher priority if showcasing
-    - high impact feature or USP
-    - next not-done in end-to-end slice
- - higher priority if addressing
-    - robustness, performance, refactoring
-    - code/implementation unknowns
+ - allow type-based overloading of functions and operators? v+v -> +
+
+ - if rules read alerted, must only read them once, like edit rules
+
+   - room stuff runs crazy - game/light
+
+ - make a robot in the room entirely on-device
+
+    - put PresenceTracker in netmash.types and have in room
+    - specify class (e.g. Time/PT) in uid-new?
+    - check time unobserved
+    - ready for Tech Mesh using tablet
+
+ - API to NXT from Android or on-device
+ - BeRo
+
+ - Reaktion - show programming it
+
+ - two-pane view/edit on tablet
+    - alt-tab on phone reorders history
+
+ - all language changes
+    - items(/properties/props) not objects(/fields/tags) - in gui and code
+    - OM/OTS, etc -> sumer or what
+    - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
+
 ---------------------------------------------------------
-Current priority:
 
-   Onboard editing - rules of game, create robot, etc
+ - GIS:
+    - show place/sub land in different colours
+    - don't allow outside of parent area
+    - feature overlap rules
+    - set 1ha area using trafalgar square
+    - delete land
+    - more info in map popup
+    - scale bar
 
- - shows off USP of ease of programming, object interactivity and learning aspects
- - focus on visible value towards Xmas demo
+ - schemes/rules:
+    - zeroing rules
+    - adjusting constants
+    - if scheme detected, flag ineligible
+    - suggest scheme and option based on feature, avoiding big-drop-down syndrome
+    - EWGS params: species, % cover, planting date
+    - ELS; calc points total
+    - tree density param may select scheme
+    - real data
+
+---------------------------------------------------------
+
+ - on-device programming VW/GUI
+    - link to existing object - chooser? links?
+    - undo?
+       - if clear, return to original
+       - if space, leave as
+
+ - use local uids in topdb.json and convert to generated uids
+
+ - vary denominator with fixed total lights - hide them
+    - or light up denominator from 18/24 total lights
+
+ - GUIs
+    - gui format
+    - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
+    - fill in form values: doc/local/getFormXVal.java
 
 ---------------------------------------------------------
 Performance
@@ -61,63 +112,21 @@ Bugs, Refactoring
  - non-sumer appearing in remote rewrite(?)
  - edit rules still left: if edit rule misses Version, will hang around
 --------------------------------------------------------
-Stuff
+Prioritising
 
- - allow type-based overloading of functions and operators? v+v -> +
+ - higher priority if showcasing
+    - high impact feature or USP
+    - next not-done in end-to-end slice
+ - higher priority if addressing
+    - robustness, performance, refactoring
+    - code/implementation unknowns
+---------------------------------------------------------
+Current priority:
 
- - make a robot in the room entirely on-device
-    - put PresenceTracker in netmash.types and have in room
-    - specify class (e.g. Time/PT) in uid-new?
-    - check time unobserved
-    - ready for Tech Mesh using tablet
+   Onboard editing - rules of game, create robot, etc
 
- - API to NXT from Android or on-device
- - BeRo
-
- - Reaktion - show programming it
-
- - two-pane view/edit on tablet
-    - alt-tab on phone reorders history
-
- - all language changes
-    - items(/properties/props) not objects(/fields/tags) - in gui and code
-    - OM/OTS, etc -> sumer or what
-    - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
-
- - GIS:
-    - show place/sub land in different colours
-    - don't allow outside of parent area
-    - feature overlap rules
-    - set 1ha area using trafalgar square
-    - delete land
-    - more info in map popup
-    - scale bar
-
- - schemes/rules:
-    - zeroing rules
-    - adjusting constants
-    - if scheme detected, flag ineligible
-    - suggest scheme and option based on feature, avoiding big-drop-down syndrome
-    - EWGS params: species, % cover, planting date
-    - ELS; calc points total
-    - tree density param may select scheme
-    - real data
-
- - on-device programming VW/GUI
-    - link to existing object - chooser? links?
-    - undo?
-       - if clear, return to original
-       - if space, leave as
-
- - use local uids in topdb.json and convert to generated uids
-
- - vary denominator with fixed total lights - hide them
-    - or light up denominator from 18/24 total lights
-
- - GUIs
-    - gui format
-    - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
-    - fill in form values: doc/local/getFormXVal.java
+ - shows off USP of ease of programming, object interactivity and learning aspects
+ - focus on visible value towards Xmas demo
 
 --------------------------------------------------------
 Explore, Interact
