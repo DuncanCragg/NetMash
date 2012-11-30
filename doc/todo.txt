@@ -5,29 +5,29 @@ To Do
 --------------------------------------------------------
 Stuff
 
- - room stuff runs crazy - game/light
+ - room fixes:
+    - game/light need to prevent loops
+    - stop following and check time unobserved
 
- - make a robot in the room entirely on-device
-
-    - PresenceTracker in room
-    - specify class (e.g. Time/PT) in uid-new?
-    - check time unobserved
+ - demos:
     - ready for Tech Mesh using tablet
+    - show how to make a robot in the room entirely on-device
+    - Reaktion - show programming it
 
- - API to NXT from Android or on-device
- - BeRo
-
- - Reaktion - show programming it
-
- - allow type-based overloading of functions and operators? v+v -> +
+ - real hardware/bots:
+    - API to NXT from Android or on-device
+    - BeRo
 
  - two-pane view/edit on tablet
     - alt-tab on phone reorders history
 
- - all language changes
+ - specify class (e.g. Time/PT) in uid-new?
+
+ - language/naming:
+    - new name and OM/OTS/sumer
     - items(/properties/props) not objects(/fields/tags) - in gui and code
-    - OM/OTS, etc -> sumer or what
     - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
+    - allow type-based overloading of functions and operators? v+v -> +
 
 ---------------------------------------------------------
 
