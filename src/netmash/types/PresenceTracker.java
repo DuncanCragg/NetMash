@@ -42,7 +42,15 @@ public class PresenceTracker extends ObjectMash {
                 String coordpath=String.format("sub-objects:%d:object:coords",i);
                 String mycrdpath=String.format("sub-objects:%d:coords",i);
                 LinkedList coords=contentListClone(coordpath);
-                if(coords!=null && coords.size()==3) contentList(mycrdpath, coords);
+                if(coords!=null && coords.size()==3){
+                    LinkedList mycoords=contentList(mycrdpath);
+                    if(mycoords==null) contentList(mycrdpath,coords);
+                    else if(!mycoords.equals(coords) && mycoords.size()==3){
+                        contentObject(mycrdpath+":0", coords.get(0));
+                        contentObject(mycrdpath+":1", coords.get(1));
+                        contentObject(mycrdpath+":2", coords.get(2));
+                    }
+                }
             }
             else{
                 contentListRemove("sub-objects", i);
