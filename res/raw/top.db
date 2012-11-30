@@ -1,7 +1,9 @@
 { UID: uid-f862-56af-d46d-c440
+  Class: netmash.types.PresenceTracker
   is: place 3d mesh editable
   title: "Your Room"
   sub-objects:
+    { object: uid-a07e-434c-b8e7-5b40 coords: 0 0 -3 }
     { object: uid-f6c8-2d51-8060-a52a coords: 0 1 -11 }
     { object: uid-20ce-d0b1-c717-3dbb coords: 0 0 -6 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: 4 0 -7 }
@@ -16,6 +18,41 @@
   textures: http://www.textures123.com/free-texture/sand/sand-texture4.jpg
   vertex-shader: http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
+}
+
+{ UID: uid-b553-d845-44d6-48ac
+  Class: netmash.types.Time
+}
+
+{ UID: uid-a07e-434c-b8e7-5b40
+  Rules: uid-83a6-53ef-9f44-43bd uid-101b-2c33-9fd6-96a1
+  is: 3d cuboid editable
+  title: bot
+  rotation: 45 45 45
+  scale: 0.3 0.3 0.3
+  light: 0.0 0.0 1
+  place: uid-f862-56af-d46d-c440
+  coords: 0 0 -3
+  time: uid-b553-d845-44d6-48ac
+  next-time: 0
+}
+
+{ UID: uid-83a6-53ef-9f44-43bd
+  is:  3d cuboid editable rule
+  when: user present, set target coords to just in front
+  place: {
+    present: > 0
+    sub-objects: { object: {  is: user } }
+  }
+  target-coords: => ( @=place:sub-objects:coords select 0 ) v+v ( 0 0 -3 )
+}
+
+{ UID: uid-101b-2c33-9fd6-96a1
+  is:  3d cuboid editable rule
+  when: time passes, set coords to half way to target
+  time: { timestamp: > @next-time }
+  next-time: => @time:timestamp + 1000
+  coords: => ( @. v+v @target-coords ) v/s 2
 }
 
 { UID: uid-20ce-d0b1-c717-3dbb

@@ -6,7 +6,7 @@
 }
 
 { UID: uid-39da-3645-4f58-50cb
-  Class: server.types.PresenceTracker
+  Class: netmash.types.PresenceTracker
   Rules: uid-56d4-91ef-a2fc-2585
   is: place 3d mesh editable
   title: "Ann Droid's Place"

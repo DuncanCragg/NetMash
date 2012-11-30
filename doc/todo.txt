@@ -5,15 +5,11 @@ To Do
 --------------------------------------------------------
 Stuff
 
- - allow type-based overloading of functions and operators? v+v -> +
-
- - if rules read alerted, must only read them once, like edit rules
-
-   - room stuff runs crazy - game/light
+ - room stuff runs crazy - game/light
 
  - make a robot in the room entirely on-device
 
-    - put PresenceTracker in netmash.types and have in room
+    - PresenceTracker in room
     - specify class (e.g. Time/PT) in uid-new?
     - check time unobserved
     - ready for Tech Mesh using tablet
@@ -22,6 +18,8 @@ Stuff
  - BeRo
 
  - Reaktion - show programming it
+
+ - allow type-based overloading of functions and operators? v+v -> +
 
  - two-pane view/edit on tablet
     - alt-tab on phone reorders history

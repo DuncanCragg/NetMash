@@ -1,4 +1,4 @@
-package server.types;
+package netmash.types;
 
 import java.util.*;
 import netmash.forest.*;

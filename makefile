@@ -286,8 +286,8 @@ classes: \
 ./build/classes/netmash/forest/ObjectMash.class \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/netmash/types/Time.class \
+./build/classes/netmash/types/PresenceTracker.class \
 ./build/classes/server/types/UserHome.class \
-./build/classes/server/types/PresenceTracker.class \
 ./build/classes/server/types/DynamicFile.class \
 
 
