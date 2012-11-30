@@ -94,6 +94,27 @@ public class Utils{
         return r;
     }
 
+    static public Boolean withinOf(double r, LinkedList a, LinkedList b){
+        return vvdist(a,b)<r;
+    }
+
+    static public Double vvdist(LinkedList a, LinkedList b){
+        if(a==null) a=new LinkedList();
+        if(b==null) b=new LinkedList();
+        int as=a.size(), bs=b.size();
+        boolean abigger=(as>bs);
+        LinkedList c=abigger? a: b;
+        LinkedList d=abigger? b: a;
+        int       ds=abigger? bs: as;
+        double r=0;
+        int i=0; for(Object o: c){
+            Object p=(i< ds)? d.get(i): Double.valueOf(0);
+            double m=tryDouble(o,0)-tryDouble(p,0);
+            r+=m*m;
+        i++; }
+        return Math.sqrt(r);
+    }
+
     // -------------------------------
 
     /** Construct a list utility. */

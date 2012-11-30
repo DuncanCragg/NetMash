@@ -136,6 +136,9 @@ public class ObjectMash extends WebObject {
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
+        if(list.size()==4 && list.get(0).equals("within")){
+            return withinOf(findDouble(list.get(1)), contentList(path), findList(list.get(3)));
+        }
         int becomes=list.indexOf("=>");
         if(becomes!= -1){
             LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));
@@ -331,6 +334,7 @@ public class ObjectMash extends WebObject {
         if(ll.size()==3 && "/".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
         if(ll.size()==3 && "v.m".equals(ll1))     return vmdot(findList(ll.get(0)), findList(ll.get(2)));
         if(ll.size()==3 && "v+v".equals(ll1))     return vvadd(findList(ll.get(0)), findList(ll.get(2)));
+        if(ll.size()==3 && "v~v".equals(ll1))     return vvdist(findList(ll.get(0)), findList(ll.get(2)));
         if(ll.size()==3 && "v/s".equals(ll1))     return vsdiv(findList(ll.get(0)), findDouble(ll.get(2)));
         if(ll.size()==3 && "<".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) < findDouble(ll.get(2)));
         if(ll.size()==3 && ">".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) > findDouble(ll.get(2)));

@@ -16,6 +16,7 @@
   p: { a: b c: d }
   vo: 0 1 0
   vc: 5 5 5
+  vd: 8 5 1
   xx: qq
   zz: oo
 }
@@ -37,6 +38,7 @@
   j: y => { m: n }
   xx: ( qq => # ) **
   zz: oo => #
+  vd: => @. v~v @vc
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -55,6 +57,7 @@
   vc: 5 5 5 => @. v+v @vo
   xx: #
   zz: #
+  vd: 5
 }
 
 { UID: uid-1de5-4d69-667a-56e4
@@ -101,7 +104,7 @@
   j: true => false
   p: d b
   vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
-  vc: 5 4 5 => ( @. v+v @vo ) v/s 5
+  vc: within 0.347 of ( 4.8 4.2 5.2 ) => ( @. v+v @vo ) v/s 5
 }
 
 { UID: uid-d039-5967-f60c-70f7
