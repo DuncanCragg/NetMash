@@ -42,7 +42,7 @@
   when: user present, set target coords to just in front
   place: {
     present: > 0
-    sub-objects: { object: {  is: user } }
+    sub-objects: { object: { is: user } }
   }
   target-coords: => ( @=place:sub-objects:coords select 0 ) v+v ( 0 0 -3 )
 }
@@ -67,7 +67,8 @@
 { UID: uid-e6e9-df58-ddab-6eb9
   is: 3d rule editable
   when: "swiped, change light"
-  Alerted: {  is: swipe }
+  Alerted: { Version: > @v is: swipe }
+  v: => @Alerted:Version
   light: * ( => clamp 0 1 ( @light:1 + @Alerted:dx ) ) ( => clamp 0 1 ( @light:2 + @Alerted:dy ) )
 }
 
@@ -112,8 +113,9 @@
 { UID: uid-fb3e-02d3-70bb-916f
   is: 3d rule editable
   when: "swiped right, set to checking"
-  Alerted: { is: swipe dx: > 0 }
-  status: => checking
+  Alerted: { Version: > @v is: swipe dx: > 0 }
+  v: => @Alerted:Version
+  status: waiting => checking
 }
 
 { UID: uid-536b-de0b-41db-41d1
@@ -210,7 +212,7 @@
   title: "Local Calculator GUI"
   view: {
     #panel:
-      { #f: { input: chooser label: Function range: {  prod: Multiply sum: Add diff: Subtract div: Divide } } }
+      { #f: { input: chooser label: Function range: { prod: Multiply sum: Add diff: Subtract div: Divide } } }
       { #a: { input: textfield label: A value: 0 } }
       { #b: { input: textfield label: B value: 0 } }
    #result: { #r: 0 }

@@ -5,9 +5,6 @@ To Do
 --------------------------------------------------------
 Stuff
 
- - room fixes:
-    - game/light need to prevent loops
-
  - demos:
     - ready for Tech Mesh using tablet
     - show how to make a robot in the room entirely on-device
@@ -30,6 +27,47 @@ Stuff
 
  - specify class (e.g. Time/PT) in uid-new?
 
+---------------------------------------------------------
+Performance
+---------------------------------------------------------
+ - light lags massively
+ - phone move event takes a while and jumps a lot
+ - stroke light toggles on/off; or left/right?
+ - slightly crap touch response in game
+ - don't need to save to persistence if not changed, and not so often either
+ - don't need to spend so much time scanning the scenegraph when only one change
+ - redundant rendering/refresh when nothing changed
+    - use Etag, if no need to respond to incoming subs
+ - stomp out redundancies!
+ - cache, and detect changes in components of view - how?
+    - share same shaders .. by uid
+    - share same meshes? detect internal change
+    - share same textures .. by URL
+ - alerted on User to determine scene graph change
+ - no new VBOs!
+    - derivative objects resend VBOs
+    - top level mesh not cached
+ - memory usage: see video http://www.youtube.com/watch?v=_CruQY55HOk
+ - check JSON structure/string cacheing/rebuilding
+---------------------------------------------------------
+Bugs, Refactoring
+---------------------------------------------------------
+ - NaN/Infinity breaking JSON syntax
+ - hello world doesn't update immediately cos misses evt & gets out of sync
+ - non-sumer appearing in remote rewrite(?)
+ - edit rules still left: if edit rule misses Version, will hang around
+ - sort out editable vs updatable:
+    - editable means accepts edit rules
+    - updateable means accepts other suggestions, such as new list members
+    - neither mean that you can change land GPS
+    - or are the way to indicate editability of your own objects
+    - all your own objects are always directly editable
+    - don't need editable/rule if it's your own object!
+    - can't allow edit of remote land
+ - fix vulnerability of faked POST to our object not theirs
+ - shaders: vert and frag should come together, else use basic: why sept?
+ - don't fetch remote if it's yours anyway (?)
+ - throw if calling certain methods outside of evaluator
 ---------------------------------------------------------
 
  - GIS:
@@ -67,49 +105,8 @@ Stuff
  - GUIs
     - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
-    - fill in form values: doc/local/getFormXVal.java
+    - fill in all other form type values
 
----------------------------------------------------------
-Performance
----------------------------------------------------------
- - light lags massively
- - phone move event takes a while and jumps a lot
- - stroke light toggles on/off; or left/right?
- - slightly crap touch response in game
- - don't need to save to persistence if not changed, and not so often either
- - don't need to spend so much time scanning the scenegraph when only one change
- - redundant rendering/refresh when nothing changed
-    - use Etag, if no need to respond to incoming subs
- - stomp out redundancies!
- - cache, and detect changes in components of view - how?
-    - share same shaders .. by uid
-    - share same meshes? detect internal change
-    - share same textures .. by URL
- - alerted on User to determine scene graph change
- - no new VBOs!
-    - derivative objects resend VBOs
-    - top level mesh not cached
- - memory usage: see video http://www.youtube.com/watch?v=_CruQY55HOk
- - check JSON structure/string cacheing/rebuilding
----------------------------------------------------------
-Bugs, Refactoring
----------------------------------------------------------
- - sort out editable vs updatable:
-    - editable means accepts edit rules
-    - updateable means accepts other suggestions, such as new list members
-    - neither mean that you can change land GPS
-    - or are the way to indicate editability of your own objects
-    - all your own objects are always directly editable
-    - don't need editable/rule if it's your own object!
-    - can't allow edit of remote land
- - fix vulnerability of faked POST to our object not theirs
- - shaders: vert and frag should come together, else use basic: why sept?
- - don't fetch remote if it's yours anyway (?)
- - throw if calling certain methods outside of evaluator
- - NaN/Infinity breaking JSON syntax
- - hello world doesn't update immediately cos misses evt & gets out of sync
- - non-sumer appearing in remote rewrite(?)
- - edit rules still left: if edit rule misses Version, will hang around
 --------------------------------------------------------
 Prioritising
 
