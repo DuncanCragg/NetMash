@@ -50,9 +50,9 @@
 { UID: uid-101b-2c33-9fd6-96a1
   is:  3d cuboid editable rule
   when: time passes, set coords to half way to target
+  coords: within 0.5 of @target-coords !=> ( @. v+v @target-coords ) v/s 2
   time: { timestamp: > @next-time }
   next-time: => @time:timestamp + 1000
-  coords: => ( @. v+v @target-coords ) v/s 2
 }
 
 { UID: uid-20ce-d0b1-c717-3dbb

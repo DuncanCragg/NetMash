@@ -7,27 +7,28 @@ Stuff
 
  - room fixes:
     - game/light need to prevent loops
-    - stop following and check time unobserved
 
  - demos:
     - ready for Tech Mesh using tablet
     - show how to make a robot in the room entirely on-device
     - Reaktion - show programming it
+    - CAP
+
+ - two-pane view/edit on tablet
+    - alt-tab on phone reorders history
+
+ - language/naming:
+    - ! val =>  not   val !=>
+    - new name and OM/OTS/sumer
+    - allow type-based overloading of functions and operators? v+v -> +
+    - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
+    - items(/properties/props) not objects(/fields/tags) - in gui and code
 
  - real hardware/bots:
     - API to NXT from Android or on-device
     - BeRo
 
- - two-pane view/edit on tablet
-    - alt-tab on phone reorders history
-
  - specify class (e.g. Time/PT) in uid-new?
-
- - language/naming:
-    - new name and OM/OTS/sumer
-    - items(/properties/props) not objects(/fields/tags) - in gui and code
-    - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
-    - allow type-based overloading of functions and operators? v+v -> +
 
 ---------------------------------------------------------
 
