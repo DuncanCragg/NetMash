@@ -25,7 +25,7 @@
 }
 
 { UID: uid-a07e-434c-b8e7-5b40
-  Rules: uid-83a6-53ef-9f44-43bd uid-101b-2c33-9fd6-96a1
+  Rules: uid-e31f-88ef-6c62-8440 uid-83a6-53ef-9f44-43bd uid-101b-2c33-9fd6-96a1
   is: 3d cuboid editable
   title: bot
   rotation: 45 45 45
@@ -37,14 +37,20 @@
   next-time: 0
 }
 
-{ UID: uid-83a6-53ef-9f44-43bd
+{ UID: uid-e31f-88ef-6c62-8440
   is:  3d cuboid editable rule
-  when: user present, set target coords to just in front
+  when: user present, set target user to first one
+  target-user: # => @=place:sub-objects:object select 0
   place: {
     present: > 0
     sub-objects: { object: { is: user } }
   }
-  target-coords: => ( @=place:sub-objects:coords select 0 ) v+v ( 0 0 -3 )
+}
+
+{ UID: uid-83a6-53ef-9f44-43bd
+  is:  3d cuboid editable rule
+  when: user coords change, set target coords to just in front
+  target-coords: => @target-user:coords v+v ( 2 1 -3 )
 }
 
 { UID: uid-101b-2c33-9fd6-96a1

@@ -3,9 +3,6 @@
 # Where you want the release Android apk to be copied
 #
 RELEASE_TARGET=../net/netmash.net/NetMash.apk
-LOCAL_IP=192.168.42.210
-LOCAL_IP=192.168.16.204
-LOCAL_IP=192.168.1.7
 LOCAL_IP=192.168.0.6
 #
 ################################################################################
