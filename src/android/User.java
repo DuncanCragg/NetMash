@@ -928,6 +928,10 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
                 return;
             }
             else
+            if(contentIsOrListContains("private:viewing:is", "3d")){
+                meshhash=ots2gui.scene2GUI();
+            }
+            else
             if(contentListContainsAll("private:viewing:is", list("user", "list"))){
                 viewhash=ots2gui.contactList2GUI("contact:");
             }
@@ -973,10 +977,6 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
             else
             if(contentIsOrListContains("private:viewing:is", "gui")){
                 viewhash=contentHash("private:viewing:view");
-            }
-            else
-            if(contentIsOrListContains("private:viewing:is", "3d")){
-                meshhash=ots2gui.scene2GUI();
             }
             else{
                 content("private:viewas","raw");
