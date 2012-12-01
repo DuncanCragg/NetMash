@@ -21,7 +21,7 @@ Stuff
     - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - clone: x: => @   x: { UID: => new }
-    - (fix content and contentString and contentObject)
+    - (fix content and contentString and contentObject and contentAs*)
 
  - real hardware/bots:
     - API to NXT from Android or on-device
