@@ -576,9 +576,10 @@ public class OTS2GUI {
 
         if(subs==null){ objhash.put("sub-objects", subobs); return objhash; }
 
+        String parentuid=user.content("private:viewing");
         for(int i=0; i< subs.size(); i++){
             String p=String.format("private:viewing:sub-objects:%d",i);
-            addObjectToSubs("private:viewing",p,subobs,0,0,0);
+            addObjectToSubs(parentuid,p,subobs,0,0,0);
         }
         for(int i=0; i< subs.size(); i++){
             String o=String.format("private:viewing:sub-objects:%d:object",i);
@@ -588,19 +589,20 @@ public class OTS2GUI {
             LinkedList subsubs  =user.contentAsList(s);
             if(subsubs==null) continue;
             float tx=Mesh.getFloatFromList(subcoords,0,0),ty=Mesh.getFloatFromList(subcoords,1,0),tz=Mesh.getFloatFromList(subcoords,2,0);
+            parentuid=user.content(o);
             for(int j=0; j< subsubs.size(); j++){
                 String q=String.format("private:viewing:sub-objects:%d:object:sub-objects:%d",i,j);
-                addObjectToSubs(o,q,subobs, tx,ty,tz);
+                addObjectToSubs(parentuid,q,subobs, tx,ty,tz);
             }
         }
         objhash.put("sub-objects", subobs);
         return objhash;
     }
 
-    private void addObjectToSubs(String o, String p, LinkedList subobs, float tx, float ty, float tz){
+    private void addObjectToSubs(String parentuid, String p, LinkedList subobs, float tx, float ty, float tz){
         LinkedHashMap objhash=object2mesh(p+":object:", true);
         if(objhash==null) return;
-        mesh2uidPut(objhash, user.content(o), user.content(p+":object"));
+        mesh2uidPut(objhash, parentuid, user.content(p+":object"));
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("object",objhash);
         LinkedList coords=new LinkedList();
