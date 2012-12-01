@@ -560,9 +560,7 @@ public class OTS2GUI {
 
     // ---------------------------------------------------------------------------
 
-    public LinkedHashMap scene2GUI(){ log("scene2GUI");
-
-        for(String alertedUid: user.alerted()) logXX("scene2GUI, object changed:",alertedUid);
+    public LinkedHashMap scene2GUI(){ logXX("scene2GUI",user.alerted());
 
         LinkedHashMap objhash=object2mesh("private:viewing:",false);
         if(objhash==null) return null;
