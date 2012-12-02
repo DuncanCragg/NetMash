@@ -34,7 +34,9 @@ public class PresenceTracker extends ObjectMash {
                     contentInc("present");
                 }
                 else{
-                    contentList(String.format("sub-objects:%d:coords",i),coords);
+                    String mycrdpath=String.format("sub-objects:%d:coords",i);
+                    LinkedList mycoords=contentList(mycrdpath);
+                    if(mycoords==null || !mycoords.equals(coords)) contentList(mycrdpath,coords);
                 }
             }
             else{
