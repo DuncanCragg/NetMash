@@ -1,0 +1,26 @@
+Field Descriptor Java Language Type
+
+Z boolean
+B byte
+C char
+S short
+I int
+J long
+F float
+D double
+V void?
+
+
+Field Descriptor       Java Language Type
+"Ljava/lang/String;"   String
+"[I"                   int[]
+"[Ljava/lang/Object;"  Object[]
+
+
+Method Descriptor         Java Language Type
+"()Ljava/lang/String;"    String f();
+"(ILjava/lang/Class;)J"   long f(int i, Class c);
+"([B)V"                   String(byte[] bytes);
+
+
+
