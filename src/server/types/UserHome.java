@@ -15,7 +15,7 @@ public class UserHome extends WebObject {
     }
 
     private void addNewUsers(){
-        for(String useruid: alerted()){ logrule();
+        for(String useruid: alerted()){
             contentSetAdd("list", useruid);
         }
     }

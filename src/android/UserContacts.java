@@ -50,7 +50,7 @@ public class UserContacts {
         return sb.toString().trim();
     }
 
-    static public LinkedList populateContacts(User user){ WebObject.logrule();
+    static public LinkedList populateContacts(User user){
         LinkedList contactslist = new LinkedList();
         if(NetMash.top==null) return null;
         Context context = NetMash.top.getApplicationContext();
