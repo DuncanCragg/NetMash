@@ -22,7 +22,7 @@ public class PresenceTracker extends ObjectMash {
             contentTemp("Alerted", trackuid);
             if(!contentSet("Alerted:place")) continue;
             LinkedList subuids=contentAll("sub-objects:object");
-            int i=subuids.indexOf(trackuid);
+            int i=(subuids==null)? -1: subuids.indexOf(trackuid);
             if(contentIsThis("Alerted:place")){
                 LinkedList coords=contentListClone("Alerted:coords");
                 if(coords==null) coords=list(0,0,0);
