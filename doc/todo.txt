@@ -3,16 +3,25 @@ To Do
 -----
 
 --------------------------------------------------------
-Productionising
-
- - server/client up/retry/down/up/retry/down
+Productionising: on-device editing
+ - -----------------------------------------------------
+ - server/client up/retry/down/up/retry/down (see HTTP below)
  - run server continuously
  - compress database
  - check Android resource usage
- - any efficiency improvements
- - finish obvious set of 2D widgets, including setting vals
+ - switchoffable GPS tracking, user->home
+ - -----------------------------------------------------
+ - any efficiency improvements (see radio efficiency below)
+ - finish/complete obvious language functions
+ - finish obvious set of 2D widgets, including setting vals; make gui format good
  - add a couple more meshes: room, sphere
-
+ - copyable uid link at bottom of raw
+ - fix lighting, phong
+ - -----------------------------------------------------
+ - accelerometer?
+ - alt-tab?
+ - avatar chat?
+ - -----------------------------------------------------
 --------------------------------------------------------
 Stuff
 
@@ -165,6 +174,7 @@ Scene Graph creation and navigation
  - put limit on render recursion depth and detect already-rendered-at-xyz
  - teleport coords and orientation on back button (save coords in history, thus also scroll state)
  - materials map to shaders
+ - dynamically edit shaders
 
 Interactions
 
@@ -308,7 +318,6 @@ HTTP
 
 
 -------------------------------------------------------------------
-
 
 Android
 
