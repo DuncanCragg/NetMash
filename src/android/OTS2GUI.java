@@ -562,7 +562,7 @@ public class OTS2GUI {
 
     public LinkedHashMap scene2GUI(){ logXX("scene2GUI",user.alerted());
 
-        for(String a: user.alerted()) if(a.equals(user.uid) && user.alerted().size()==1) return null;
+        for(String a: user.alerted()) if(a.equals(user.uid) && user.alerted().size()==1){ user.refreshObserves(); return null; }
 
         LinkedHashMap objhash=object2mesh("private:viewing:",false);
         if(objhash==null) return null;
