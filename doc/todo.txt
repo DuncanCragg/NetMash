@@ -5,18 +5,22 @@ To Do
 --------------------------------------------------------
 Productionising: on-device editing
  - -----------------------------------------------------
- - server/client up/retry/down/up/retry/down (see HTTP below)
+ - naming, renamings
+ - -----------------------------------------------------
+ - HTTP stuff below
  - run server continuously
  - compress database
+ - rotate logs; reduce logs
  - check Android resource usage
- - switchoffable GPS tracking, user->home
  - -----------------------------------------------------
+ - switchoffable GPS tracking, user->home
  - any efficiency improvements (see radio efficiency below)
+ - copyable uid link at bottom of raw
+ - fix lighting, phong
+ - -----------------------------------------------------
  - finish/complete obvious language functions
  - finish obvious set of 2D widgets, including setting vals; make gui format good
  - add a couple more meshes: room, sphere
- - copyable uid link at bottom of raw
- - fix lighting, phong
  - -----------------------------------------------------
  - accelerometer?
  - alt-tab?
@@ -296,33 +300,33 @@ Share
 
 Speed, Bugfixes, Robustness, Clean formats
 
- - remove event redundancies
- - client and server cycling and long/short poll
- - too chatty on the wire
- - think about multiple POSTs of user
  - avatar chat, "saying": ".."
  - avatar POSTs rotations
 
+-------------------------------------------------------------------
 HTTP
- - FX loop; lost notifications detected
- - match to uid not URL - e.g when fetch 192.168.. and C-L set to 10.0.2.2
- - still two network conns on main thread: at start and images
- - 201 Created may be missed
- - 403 if not observing
- - poll while waiting - max-age
+ + server/client up/retry/down/up/retry/down
+ + long/short poll; poll while waiting - max-age
+ + remove event redundancies; too chatty on the wire
+ + detect POST subsumed by c-n - e.g. homeusers
+ + FX loop; lost notifications detected
+ + 201 Created may be missed
+ + 403 if not observing
+ + POST response is event targetted at POST request body object
+    + or do you put Notify in - not mentioned in FX paper
+-------------------------------------------------------------------
  - need to hang POST responses so not POST requests; should be 204
     - actually this is long-polling GET for C-N=object URL not cache
- - detect POST subsumed by c-n - e.g. homeusers
- - POST response is event targetted at POST request body object
-    - or do you put Notify in - not mentioned in FX paper
-
-
+ - match to uid not URL - e.g when fetch 192.168.. and C-L set to 10.0.2.2
+ - still two network conns on main thread: at start and images
+ - think about multiple POSTs of user
+ - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
+ - HTTP.java longPollerPool concurrentmod.txt
 -------------------------------------------------------------------
 
 Android
 
  - http://www.infoq.com/news/2012/04/AQuery
- - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
 
 Stuff 
 
@@ -337,7 +341,6 @@ FuncObs
 Overall
 
  - tighten up thread syncing
- - HTTP.java longPollerPool concurrentmod.txt
 
 Types
 
