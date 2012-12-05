@@ -6,7 +6,6 @@ To Do
 Stuff
 
  - demos:
-    - ready for Tech Mesh using tablet
     - show how to make a robot in the room entirely on-device
     - Reaktion - show programming it
     - CAP

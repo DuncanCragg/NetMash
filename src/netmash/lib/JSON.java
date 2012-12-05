@@ -485,6 +485,7 @@ public class JSON {
     private int           chp;
     private LinkedHashMap tophash = null;
     private boolean       sumer=false;
+    private LinkedHashMap<String,Object> getObjectCache=new LinkedHashMap<String,Object>();
 
     //----------------------------------
 
@@ -528,6 +529,7 @@ public class JSON {
         tophash = hm;
         chars=null;
         chp=0;
+        getObjectCache.clear();
     }
 
     //----------------------------------
@@ -942,12 +944,30 @@ public class JSON {
         return findListIn(getObject(content, path));
     }
 
-    static private Object getObjectN(LinkedHashMap hashmap, String path){
+    private Object getObjectN(LinkedHashMap hashmap, String path){
         try{ return getObject(hashmap, path); }catch(PathOvershot po){ return null; }
     }
 
     @SuppressWarnings("unchecked")
-    static private Object getObject(LinkedHashMap hashmap, String path) throws PathOvershot{
+    private Object getObject(LinkedHashMap hashmap, String path) throws PathOvershot{
+        Object o=getObjectCache.get(path);
+        if(o==null){
+            o=getObjectReal(hashmap, path);
+            getObjectCache.put(path,o);
+        }
+        if(o instanceof PathOvershot) throw (PathOvershot)o; return o;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean delCacheUnder(String path){
+        LinkedList<String> delpaths=new LinkedList();
+        for(String p: getObjectCache.keySet()) if(p.startsWith(path)) delpaths.add(p);
+        for(String p: delpaths) getObjectCache.remove(p);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    static private Object getObjectReal(LinkedHashMap hashmap, String path) throws PathOvershot{
         path=path.trim();
         if(path.length() >0 && path.charAt(0)==':') path=path.substring(1);
         String[] parts=splitPath(path);
@@ -962,9 +982,9 @@ public class JSON {
             else                 o=hm.get(part);
             if(o==null){ if(part.equals("0")){ if(term) return hm; continue; } return null; }
             if(term) return o;
-            if(o instanceof String){  if(term0) return o; throw new PathOvershot(o, parts, i); }
-            if(o instanceof Number){  if(term0) return o; throw new PathOvershot(o, parts, i); }
-            if(o instanceof Boolean){ if(term0) return o; throw new PathOvershot(o, parts, i); }
+            if(o instanceof String){  if(term0) return o; return new PathOvershot(o, parts, i); }
+            if(o instanceof Number){  if(term0) return o; return new PathOvershot(o, parts, i); }
+            if(o instanceof Boolean){ if(term0) return o; return new PathOvershot(o, parts, i); }
             if(o instanceof LinkedHashMap){ hm=(LinkedHashMap)o; continue; }
             if(o instanceof LinkedList){
                 LinkedList ll=(LinkedList)o;
@@ -982,7 +1002,7 @@ public class JSON {
                         hm=(LinkedHashMap)o;
                         break;
                     }
-                    throw new PathOvershot(o, parts, i);
+                    return new PathOvershot(o, parts, i);
                 }
                 continue;
             }
@@ -1051,7 +1071,7 @@ public class JSON {
         LinkedList list;
         try{ list=getOrMakeListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
-        if(!list.contains(value)){ list.addFirst(value); return true; }
+        if(!list.contains(value)){ list.addFirst(value); return delCacheUnder(path); }
         return false;
     }
 
@@ -1072,7 +1092,7 @@ public class JSON {
         }catch(PathOvershot po){ return false; }
         boolean changed=false;
         for(Object o: values) if(!list.contains(o)){ list.addFirst(o); changed=true; }
-        return changed;
+        return changed? delCacheUnder(path): false;
     }
 
     @SuppressWarnings("unchecked")
@@ -1092,7 +1112,7 @@ public class JSON {
         if(o==null || !(o instanceof LinkedList)){
            list = new LinkedList();
            if(o!=null) list.add(o);
-           setListPath(hashmap, path, list);
+           if(setListPath(hashmap, path, list)) delCacheUnder(path);
         }
         else list=(LinkedList)o;
         return list;
@@ -1104,7 +1124,7 @@ public class JSON {
         try{ list = getListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
         if(list==null) return false;
-        return list.remove(value);
+        return list.remove(value)? delCacheUnder(path): false;
     }
 
     @SuppressWarnings("unchecked")
@@ -1115,6 +1135,7 @@ public class JSON {
         if(list==null) return false;
         if(index< 0 || index>=list.size()) return false;
         list.remove(index);
+        delCacheUnder(path);
         return true;
     }
 
@@ -1124,7 +1145,7 @@ public class JSON {
         try{ list = getListPath(hashmap, path);
         }catch(PathOvershot po){ return false; }
         if(list==null) return false;
-        return list.removeAll(value);
+        return list.removeAll(value)? delCacheUnder(path): false;
     }
 
     private void mergeHash(LinkedHashMap hashmap, LinkedHashMap other){
@@ -1136,7 +1157,12 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    static private boolean setObject(LinkedHashMap hashmap, String path, Object value){
+    private boolean setObject(LinkedHashMap hashmap, String path, Object value){
+        return setObjectReal(hashmap,path,value)? delCacheUnder(path): false;
+    }
+
+    @SuppressWarnings("unchecked")
+    static private boolean setObjectReal(LinkedHashMap hashmap, String path, Object value){
         path=path.trim();
         boolean changed = false;
         if(path.length() >0 && path.charAt(0)==':') path=path.substring(1);
@@ -1436,9 +1462,8 @@ public class JSON {
         log(enableLogging, o);
     }
 
-    static public void logXX(Object o){
-        log(enableLogging, "xxxxxx "+o);
-    }
+    @SuppressWarnings("unchecked")
+    static public void logXX(Object...args){ log(enableLogging, "xxxxxxx "+join(new LinkedList(Arrays.asList(args))," ")); }
 
     static public void log(boolean doit, Object o){
         if(!doit) return;
