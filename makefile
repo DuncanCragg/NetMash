@@ -7,6 +7,8 @@ LOCAL_IP=192.168.0.6
 #
 ################################################################################
 
+all: androidemu runall logcat
+
 loc: androidemu        logcat
 
 emu: androidemu runemu logcat
@@ -23,7 +25,7 @@ cap: androidemu runcap logcat
 
 lap: androidlan runlap lancat
 
-tst: androidemu runtst logcat
+stt: androidemu runstt logcat
 
 # -------------------------------------------------------------------
 
@@ -85,6 +87,8 @@ reinstalllan: uninstalllan installlan
 
 # -------------------------------------------------------------------
 
+runall: kill clean netconfig setvm2emuconfig usealldbs run1n2
+
 runemu: kill clean netconfig setvm2emuconfig useworlddb run1n2
 
 runlan: kill clean netconfig setvm2lanconfig useworlddb run1n2
@@ -97,11 +101,11 @@ runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
 
 runlap: kill clean netconfig setvm2lanconfig usecapdb  run1n2
 
-runtst: kill clean netconfig setvmemuconfig  usestaticdb run1n2
+runstt: kill clean netconfig setvmemuconfig  usestaticdb run1n2
 
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
-runall: kill clean allconfig setvm2tstconfig usetestdb run1n2
+runtst: kill clean tstconfig setvm2tstconfig usetestdb run1n2
 
 runone: kill clean           setvmtestconfig usetestdb run1
 
@@ -130,6 +134,10 @@ run2: jar
 run1n2: run1 run2
 
 # -------------------------------------------------------------------
+
+usealldbs: useworlddb
+	cat src/server/vm1/static.db >> src/server/vm1/netmash.db
+	cat src/server/vm2/cap.db    >> src/server/vm2/netmash.db
 
 useworlddb:
 	cp src/server/vm1/world.db src/server/vm1/netmash.db
@@ -234,7 +242,7 @@ omconfig:
 curconfig:
 	cp src/server/vm2/curconfig.db src/server/vm2/netmashconfig.db
 
-allconfig:
+tstconfig:
 	cp src/server/vm2/allconfig.db src/server/vm2/netmashconfig.db
 
 # -------------------------------------------------------------------

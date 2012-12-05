@@ -3,6 +3,17 @@ To Do
 -----
 
 --------------------------------------------------------
+Productionising
+
+ - server/client up/retry/down/up/retry/down
+ - run server continuously
+ - compress database
+ - check Android resource usage
+ - any efficiency improvements
+ - finish obvious set of 2D widgets, including setting vals
+ - add a couple more meshes: room, sphere
+
+--------------------------------------------------------
 Stuff
 
  - demos:
