@@ -25,12 +25,12 @@ import netmash.platform.Kernel;
 
 import static netmash.lib.Utils.*;
 
-/** Convertors from std OTS JSON to common GUI OTS JSON.
+/** Convertors from std Cyrus JSON to common GUI JSON.
   */
-public class OTS2GUI {
+public class Cyrus2GUI {
 
     private User user;
-    public OTS2GUI(User user){ this.user=user; }
+    public Cyrus2GUI(User user){ this.user=user; }
 
     public LinkedHashMap user2GUI(){
         String useruid = user.content("private:viewing");

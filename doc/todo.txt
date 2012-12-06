@@ -11,11 +11,12 @@ Xmas demo: local only, reasonably productionised
  + -----------------------------------------------------
  + fix lighting - up to 4 lights - phong or matte shaders - more ambient
  + -----------------------------------------------------
- + naming, renamings - new name and OM/OTS/sumer/sonn/fjord/forest
-    - items(/properties/props) not objects(/fields/tags) - in gui and code
+ + naming, renamings
+    - Netmash
     - Cyrus the app; Cyrus the PL; app/cyrus(+json) the MT; Cyrus std types
-    - still FOREST arch
+    - items(/properties/props) not objects(/fields/tags) - in gui and code
     - Items/properties not Objects; (Net?)Items not WebObjects
+    - still FOREST arch
     - no more Object Net? Item Net? Cyrus Net?
  + -----------------------------------------------------
  + domain/website .. actual download
@@ -127,7 +128,7 @@ Bugs, Refactoring
 ---------------------------------------------------------
  - NaN/Infinity breaking JSON syntax
  - hello world doesn't update immediately cos misses evt & gets out of sync
- - non-sumer appearing in remote rewrite(?)
+ - non-cyrus appearing in remote rewrite(?)
  - edit rules still left: if edit rule misses Version, will hang around
  - sort out editable vs updatable:
     - editable means accepts edit rules

@@ -53,8 +53,8 @@ public class User extends Cyrus {
               "  \"list\": null \n"+
               "}");
 
-        LinkedList otslinks=Kernel.config.listPathN("ots:links");
-        links.publicState.listPath("list", otslinks);
+        LinkedList cyruslinks=Kernel.config.listPathN("cyrus:links");
+        links.publicState.listPath("list", cyruslinks);
 
         User contacts = new User(
               "{ \"is\": [ \"private\", \"contact\", \"list\" ], \n"+
@@ -64,10 +64,10 @@ public class User extends Cyrus {
 
         // -----------------------------------------------------
 
-        String homeusers=Kernel.config.stringPathN("ots:homeusers");
+        String homeusers=Kernel.config.stringPathN("cyrus:homeusers");
         currentUser = new User(homeusers, contact.uid, links.uid, contacts.uid);
 
-        otslinks.addFirst(currentUser.uid);
+        cyruslinks.addFirst(currentUser.uid);
 
         currentUser.funcobs.setCacheNotifyAndSaveConfig(currentUser);
 
@@ -162,7 +162,7 @@ public class User extends Cyrus {
 
     // ---------------------------------------------------------
 
-    OTS2GUI ots2gui;
+    Cyrus2GUI cyrus2gui;
     CurrentLocation currentlocation=null;
     boolean trackGPS=true;
 
@@ -901,7 +901,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
     }
 
     private void showWhatIAmViewing(){
-        if(ots2gui==null) ots2gui = new OTS2GUI(this);
+        if(cyrus2gui==null) cyrus2gui = new Cyrus2GUI(this);
         if(content("private:viewing")==null) content("private:viewing", content("private:links"));
         if(contentIs("private:viewas","gui")){
             showWhatIAmViewingAsGUI();
@@ -929,50 +929,50 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
             }
             else
             if(contentIsOrListContains("private:viewing:is", "3d")){
-                meshhash=ots2gui.scene2GUI();
+                meshhash=cyrus2gui.scene2GUI();
             }
             else
             if(contentListContainsAll("private:viewing:is", list("user", "list"))){
-                viewhash=ots2gui.contactList2GUI("contact:");
+                viewhash=cyrus2gui.contactList2GUI("contact:");
             }
             else
             if(contentListContainsAll("private:viewing:is", list("contact", "list"))){
-                viewhash=ots2gui.contactList2GUI("");
+                viewhash=cyrus2gui.contactList2GUI("");
             }
             else
             if(contentListContainsAll("private:viewing:is", list("document", "list"))||
                contentListContainsAll("private:viewing:is", list("article",  "list"))  ){
-                viewhash=ots2gui.documentList2GUI();
+                viewhash=cyrus2gui.documentList2GUI();
             }
             else
             if(contentListContainsAll("private:viewing:is", list("link", "list"))){
-                viewhash=ots2gui.links2GUI();
+                viewhash=cyrus2gui.links2GUI();
             }
             else
             if( contentIsOrListContains("private:viewing:is", "land") &&
                !contentIsOrListContains("private:viewing:is", "template")){
-                viewhash=ots2gui.land2GUI();
+                viewhash=cyrus2gui.land2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "user")){
-                viewhash=ots2gui.user2GUI();
+                viewhash=cyrus2gui.user2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "contact")){
-                viewhash=ots2gui.contact2GUI(editable);
+                viewhash=cyrus2gui.contact2GUI(editable);
             }
             else
             if(contentIsOrListContains("private:viewing:is", "event")){
-                viewhash=ots2gui.event2GUI();
+                viewhash=cyrus2gui.event2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "article") ||
                contentIsOrListContains("private:viewing:is", "chapter")   ){
-                viewhash=ots2gui.article2GUI();
+                viewhash=cyrus2gui.article2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "look-up")){
-                viewhash=ots2gui.lookup2GUI();
+                viewhash=cyrus2gui.lookup2GUI();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "gui")){
@@ -1009,24 +1009,24 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
             LinkedList viewlist=null;
             String title=content("private:viewing:title");
             if(contentListContainsAll("private:viewing:is", list("user","list"))){
-                viewlist=ots2gui.contactList2Map("contact:");
+                viewlist=cyrus2gui.contactList2Map("contact:");
             }
             else
             if(contentListContainsAll("private:viewing:is", list("contact","list"))){
-                viewlist=ots2gui.contactList2Map("");
+                viewlist=cyrus2gui.contactList2Map("");
             }
             else
             if( contentIsOrListContains("private:viewing:is", "land") &&
                !contentIsOrListContains("private:viewing:is", "template")){
-                viewlist=ots2gui.land2Map();
+                viewlist=cyrus2gui.land2Map();
             }
             else
             if(contentIsOrListContains("private:viewing:is", "user")){
-                viewlist=ots2gui.contact2Map("contact:");
+                viewlist=cyrus2gui.contact2Map("contact:");
             }
             else
             if(contentIsOrListContains("private:viewing:is", "contact")){
-                viewlist=ots2gui.contact2Map("");
+                viewlist=cyrus2gui.contact2Map("");
             }
             else{
             }
@@ -1043,7 +1043,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         if(contentSet("private:viewing:is")){
             String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
-            LinkedHashMap viewhash=ots2gui.guifyHash(contentHash("private:viewing:#"), editable);
+            LinkedHashMap viewhash=cyrus2gui.guifyHash(contentHash("private:viewing:#"), editable);
             viewhash.put("#uid", "uid: "+content("private:viewing"));
             content("place","");
             content("private:editing","");
