@@ -1,5 +1,5 @@
 { UID: uid-1e51-f298-5f55-6caa
-  Class: netmash.types.PresenceTracker
+  Class: cyrus.types.PresenceTracker
   is: place 3d mesh editable
   title: "Rob Ott's Place"
   rotation: 0 0 0

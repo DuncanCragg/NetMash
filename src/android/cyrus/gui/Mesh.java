@@ -8,7 +8,7 @@ import android.util.Log;
 
 import cyrus.User;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 public class Mesh {
 

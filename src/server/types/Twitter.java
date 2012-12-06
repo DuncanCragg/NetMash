@@ -4,8 +4,8 @@ package server.types;
 import java.util.*;
 import java.util.regex.*;
 
-import netmash.lib.JSON;
-import netmash.forest.WebObject;
+import cyrus.lib.JSON;
+import cyrus.forest.WebObject;
 
 /** Twitter API driver.
   */

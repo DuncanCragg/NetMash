@@ -1,7 +1,7 @@
 { name: vm2
   kernel: { threadpool: 33 }
   persist: { directory: .
-             db: netmash.db
+             db: cyrus.db
              syncrate: 100
              preload: ( uid-39da-3645-4f58-50cb
                         uid-e164-2547-46b0-f47e

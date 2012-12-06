@@ -1,5 +1,5 @@
 
-import netmash.forest.WebObject;
+import cyrus.forest.WebObject;
 
 /** Meet Us Up application server side.
   */

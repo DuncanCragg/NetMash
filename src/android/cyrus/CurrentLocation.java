@@ -19,9 +19,9 @@ import static android.location.LocationManager.*;
 
 import cyrus.gui.*;
 
-import netmash.lib.JSON;
-import netmash.forest.*;
-import netmash.platform.Kernel;
+import cyrus.lib.JSON;
+import cyrus.forest.*;
+import cyrus.platform.Kernel;
 
 /** Algorithm for GPS.
   */

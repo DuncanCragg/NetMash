@@ -27,11 +27,11 @@ import static android.view.ViewGroup.LayoutParams.*;
 
 import com.google.android.maps.*;
 
-import netmash.platform.Kernel;
-import netmash.lib.*;
-import netmash.forest.*;
+import cyrus.platform.Kernel;
+import cyrus.lib.*;
+import cyrus.forest.*;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 import cyrus.User;
 
@@ -1103,7 +1103,7 @@ log(show? "show keyboard": "hide keyboard");
 
     private void runKernel(){
 
-        InputStream configis = getResources().openRawResource(R.raw.netmashconfig);
+        InputStream configis = getResources().openRawResource(R.raw.cyrusconfig);
         JSON config=null;
         try{ config = new JSON(configis,true); }catch(Exception e){ throw new RuntimeException("Error in config file: "+e); }
 

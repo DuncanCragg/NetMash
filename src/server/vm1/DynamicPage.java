@@ -1,5 +1,5 @@
 
-import netmash.forest.WebObject;
+import cyrus.forest.WebObject;
 
 public class DynamicPage extends WebObject {
 

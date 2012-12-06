@@ -2,9 +2,9 @@
 import java.util.*;
 import java.util.regex.*;
 
-import netmash.lib.JSON;
-import netmash.forest.UID;
-import netmash.forest.WebObject;
+import cyrus.lib.JSON;
+import cyrus.forest.UID;
+import cyrus.forest.WebObject;
 
 /** Declarative, Concurrent Twitter Mashup in the Object Web Cloud with a NoSQL database
   * and Map-Reduce!.

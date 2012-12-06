@@ -1,7 +1,7 @@
 #!/bin/bash
 
-javac -Xlint:unchecked -classpath ../../../build/netmash.jar *.java || exit
+javac -Xlint:unchecked -classpath ../../../build/cyrus.jar *.java || exit
 
-java -classpath .:../../../build/netmash.jar netmash.Cyrus > netmash.log 2>&1 &
+java -classpath .:../../../build/cyrus.jar cyrus.Cyrus > cyrus.log 2>&1 &
 
 

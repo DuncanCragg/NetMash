@@ -1,9 +1,9 @@
 
 import java.util.*;
-import netmash.forest.WebObject;
-import netmash.forest.Fjord;
+import cyrus.forest.WebObject;
+import cyrus.forest.Fjord;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** FX Dealer Object from Book Chapter example.
   * Run by Fjord rules, but have a pseudo-market ticker.

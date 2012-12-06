@@ -1,6 +1,6 @@
 package server.types;
 
-import netmash.forest.WebObject;
+import cyrus.forest.WebObject;
 
 /** User Home collection.
   */

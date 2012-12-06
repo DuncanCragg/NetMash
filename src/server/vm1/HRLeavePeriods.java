@@ -1,6 +1,6 @@
 
 import java.util.*;
-import netmash.forest.WebObject;
+import cyrus.forest.WebObject;
 
 /** .
   */

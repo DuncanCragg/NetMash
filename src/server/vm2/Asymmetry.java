@@ -1,5 +1,5 @@
 
-import netmash.forest.WebObject;
+import cyrus.forest.WebObject;
 
 public class Asymmetry extends WebObject {
 
@@ -37,7 +37,7 @@ public class Asymmetry extends WebObject {
             log("state 4 - refresh watch observe");
             contentSet("watch:state");
         }
-        netmash.platform.Kernel.sleep(600);
+        cyrus.platform.Kernel.sleep(600);
     }
 }
 

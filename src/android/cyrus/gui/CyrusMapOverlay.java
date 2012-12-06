@@ -16,7 +16,7 @@ import android.widget.*;
 
 import com.google.android.maps.*;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 public class CyrusMapOverlay extends ItemizedOverlay implements DialogInterface.OnClickListener {
 
@@ -32,12 +32,12 @@ public class CyrusMapOverlay extends ItemizedOverlay implements DialogInterface.
     }
 
     private ArrayList<Item> overlayitems = new ArrayList<Item>();
-    private Cyrus netmash;
+    private Cyrus cyrus;
 
-    public CyrusMapOverlay(Drawable defaultMarker, Cyrus netmash, String mapUID){
+    public CyrusMapOverlay(Drawable defaultMarker, Cyrus cyrus, String mapUID){
         super(boundCenterBottom(defaultMarker));
         populate();
-        this.netmash = netmash;
+        this.cyrus = cyrus;
         this.mapUID = mapUID;
     }
 
@@ -55,9 +55,9 @@ public class CyrusMapOverlay extends ItemizedOverlay implements DialogInterface.
     protected boolean onTap(int index){
         Item item = overlayitems.get(index);
         jumpUID=item.jumpUID;
-        AlertDialog.Builder dialog = new AlertDialog.Builder(netmash);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(cyrus);
         dialog.setTitle(item.getTitle());
-        dialog.setIcon(netmash.getResources().getDrawable(R.drawable.mappinlogo));
+        dialog.setIcon(cyrus.getResources().getDrawable(R.drawable.mappinlogo));
         String[] choices = new String[3];
         choices[0]=item.getSnippet().replace("\n",", ");
         choices[1]="Jump here";
@@ -73,7 +73,7 @@ public class CyrusMapOverlay extends ItemizedOverlay implements DialogInterface.
     public boolean onTap(GeoPoint p, MapView map){
         if(super.onTap(p,map)) return true;
         if(multimove) return false;
-        if(p!=null){ if(mapUID!=null) netmash.user.setUpdateVal(mapUID, p); return true; }
+        if(p!=null){ if(mapUID!=null) cyrus.user.setUpdateVal(mapUID, p); return true; }
         return false;
     }
 
@@ -87,8 +87,8 @@ public class CyrusMapOverlay extends ItemizedOverlay implements DialogInterface.
 
     @Override
     public void onClick(DialogInterface dialog, int choice){
-        if(choice==1) netmash.user.jumpToUID(jumpUID);
-        if(choice==2) netmash.user.jumpToUID(jumpUID,"gui",false);
+        if(choice==1) cyrus.user.jumpToUID(jumpUID);
+        if(choice==2) cyrus.user.jumpToUID(jumpUID,"gui",false);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class CyrusMapOverlay extends ItemizedOverlay implements DialogInterface.
 
     @Override
     public void draw(Canvas canvas, MapView mapview, boolean shadow){
-        netmash.saveZoom(mapview.getZoomLevel());
+        cyrus.saveZoom(mapview.getZoomLevel());
         super.draw(canvas, mapview, shadow);
     }
 }

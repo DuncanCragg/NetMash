@@ -18,11 +18,11 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
-import netmash.lib.*;
-import netmash.forest.*;
-import netmash.platform.Kernel;
+import cyrus.lib.*;
+import cyrus.forest.*;
+import cyrus.platform.Kernel;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 import cyrus.gui.*;
 

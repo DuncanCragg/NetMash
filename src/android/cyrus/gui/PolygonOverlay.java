@@ -15,7 +15,7 @@ import android.widget.*;
 
 import com.google.android.maps.*;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 public class PolygonOverlay extends Overlay {
 

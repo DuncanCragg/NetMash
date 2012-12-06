@@ -1,8 +1,8 @@
 
 import java.util.*;
-import netmash.forest.WebObject;
+import cyrus.forest.WebObject;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** FX Dealer Object from Book Chapter example. Original Java version.
   * In Cyrus, these WebObject classes are buckets for animation rules, as there isn't a

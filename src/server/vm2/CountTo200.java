@@ -1,5 +1,5 @@
 
-import netmash.forest.WebObject;
+import cyrus.forest.WebObject;
 
 /** Class of WebObject to test a ping-pong of two objects that set themselves one higher
   * than each other until they reach 200.

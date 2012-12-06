@@ -17,9 +17,9 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
-import netmash.lib.JSON;
-import netmash.forest.*;
-import netmash.platform.Kernel;
+import cyrus.lib.JSON;
+import cyrus.forest.*;
+import cyrus.platform.Kernel;
 
 import cyrus.gui.*;
 

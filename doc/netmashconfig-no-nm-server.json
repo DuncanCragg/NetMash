@@ -1,6 +1,6 @@
 { "name": "NetMash",
   "kernel": { "threadpool": 3 },
-  "persist": { "db": "netmash.db",
+  "persist": { "db": "cyrus.db",
                "syncrate": 100,
                "preload": [ ] },
   "network": { "pathprefix": "/o/",

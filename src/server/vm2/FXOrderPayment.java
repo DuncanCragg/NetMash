@@ -1,5 +1,5 @@
 
-import netmash.forest.WebObject;
+import cyrus.forest.WebObject;
 
 /** FX Order Object from Book Chapter example.
   * In Cyrus, these WebObject classes are buckets for animation rules, as there isn't a

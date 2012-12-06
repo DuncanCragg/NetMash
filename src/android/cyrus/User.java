@@ -23,11 +23,11 @@ import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
 import cyrus.gui.*;
-import netmash.lib.*;
-import netmash.forest.*;
-import netmash.platform.Kernel;
+import cyrus.lib.*;
+import cyrus.forest.*;
+import cyrus.platform.Kernel;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** User viewing the Object Web.
   */

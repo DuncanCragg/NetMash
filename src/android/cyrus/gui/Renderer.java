@@ -15,15 +15,15 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.*;
 
-import netmash.platform.*;
+import cyrus.platform.*;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 public class Renderer implements GLSurfaceView.Renderer {
 
     private boolean debugGL=false;
 
-    private Cyrus netmash;
+    private Cyrus cyrus;
     private Mesh mesh;
 
     private int texture0Loc;
@@ -82,15 +82,15 @@ public class Renderer implements GLSurfaceView.Renderer {
     static String lightVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; attribute vec2 tex; varying vec2 texturePt; void main(){ texturePt = tex; gl_Position = mvpm*pos; }";
     static String lightFragmentShaderSource     = "precision mediump float; uniform vec3 lightCol; uniform sampler2D texture0; varying vec2 texturePt; void main(){ gl_FragColor=vec4(lightCol,1.0)*texture2D(texture0,texturePt); }";
 
-    public Renderer(Cyrus netmash, LinkedHashMap hm) {
+    public Renderer(Cyrus cyrus, LinkedHashMap hm) {
         debugGL=Kernel.config.boolPathN("gl:log"); if(debugGL) log("** GL Debugging on! May be slower..");
-        this.netmash=netmash;
-        this.mesh=new Mesh(hm,netmash.user);
+        this.cyrus=cyrus;
+        this.mesh=new Mesh(hm,cyrus.user);
         resetCoordsAndView(0,1.0f,3.0f);
     }
 
     synchronized public void newMesh(LinkedHashMap hm){
-        this.mesh=new Mesh(hm,netmash.user);
+        this.mesh=new Mesh(hm,cyrus.user);
         meshes.put(System.identityHashCode(hm),this.mesh);
     }
 
@@ -126,7 +126,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             int touchedG=flipAndRound((int)b.get(1));
             int touchedB=flipAndRound((int)b.get(2));
             touchedObject=touchables.get(String.format("%d:%d:%d",touchedR,touchedG,touchedB));
-            if(touchedObject!=null) netmash.user.onObjectTouched(touchedObject.mesh,touchEdit,touchDX,touchDY);
+            if(touchedObject!=null) cyrus.user.onObjectTouched(touchedObject.mesh,touchEdit,touchDX,touchDY);
             touchDetecting=false;
         }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
         drawFrame();
@@ -160,7 +160,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(!(subobobj instanceof LinkedHashMap)) continue;
             LinkedHashMap hm=(LinkedHashMap)subobobj;
             Mesh ms=meshes.get(System.identityHashCode(hm));
-            if(ms==null){ ms=new Mesh(hm,netmash.user); meshes.put(System.identityHashCode(hm),ms); }
+            if(ms==null){ ms=new Mesh(hm,cyrus.user); meshes.put(System.identityHashCode(hm),ms); }
             Object subobcrd=subob.get("coords");
             if(subobcrd!=null) drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
             else               drawEditMesh(ms);
@@ -350,7 +350,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 seeX=eyeX-4.5f*FloatMath.sin(direction);
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
             }
-            netmash.user.onNewCoords(eyeX, eyeY, eyeZ);
+            cyrus.user.onNewCoords(eyeX, eyeY, eyeZ);
         }else{
             if(touchDetecting){ touchDX+=dx; touchDY+=dy; return; }
             if(x!=touchX || y!=touchY) touchedObject=null;
@@ -361,7 +361,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 touchDX=dx; touchDY=dy;
             }
             else{
-                netmash.user.onObjectTouched(touchedObject.mesh,touchEdit,dx,dy);
+                cyrus.user.onObjectTouched(touchedObject.mesh,touchEdit,dx,dy);
             }
         }
     }
@@ -384,9 +384,9 @@ public class Renderer implements GLSurfaceView.Renderer {
         for(int i=0; i< m.textures.size(); i++) {
             String url=m.textures.get(i).toString();
             Bitmap       bm=null;
-            if(url.equals("placeholder")) bm=netmash.getPlaceHolderBitmap();
-            if(bm==null)                  bm=netmash.user.textBitmaps.get(url);
-            if(bm==null)                  bm=netmash.getBitmap(url);
+            if(url.equals("placeholder")) bm=cyrus.getPlaceHolderBitmap();
+            if(bm==null)                  bm=cyrus.user.textBitmaps.get(url);
+            if(bm==null)                  bm=cyrus.getBitmap(url);
             if(bm==null) continue;
             if(bm!=textureBMs.get(url)){
                 int[] texID = new int[1];

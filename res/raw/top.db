@@ -1,5 +1,5 @@
 { UID: uid-f862-56af-d46d-c440
-  Class: netmash.types.PresenceTracker
+  Class: cyrus.types.PresenceTracker
   is: place 3d mesh editable
   title: "Your Room"
   sub-objects:
@@ -21,7 +21,7 @@
 }
 
 { UID: uid-b553-d845-44d6-48ac
-  Class: netmash.types.Time
+  Class: cyrus.types.Time
 }
 
 { UID: uid-a07e-434c-b8e7-5b40

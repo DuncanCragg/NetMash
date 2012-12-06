@@ -1,8 +1,8 @@
 package server.types;
 
 import java.io.*;
-import netmash.lib.JSON;
-import netmash.forest.*;
+import cyrus.lib.JSON;
+import cyrus.forest.*;
 
 public class DynamicFile extends CyrusLanguage {
 
