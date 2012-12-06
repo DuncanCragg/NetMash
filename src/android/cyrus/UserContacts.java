@@ -21,7 +21,7 @@ import cyrus.lib.JSON;
 import cyrus.forest.*;
 import cyrus.platform.Kernel;
 
-import cyrus.gui.*;
+import cyrus.gui.Cyrus;
 
 /** Access to User's contacts list.
 */

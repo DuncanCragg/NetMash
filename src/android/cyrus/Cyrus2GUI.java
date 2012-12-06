@@ -24,7 +24,8 @@ import cyrus.platform.Kernel;
 
 import static cyrus.lib.Utils.*;
 
-import cyrus.gui.*;
+import cyrus.gui.Cyrus;
+import cyrus.gui.Mesh;
 
 /** Convertors from std Cyrus JSON to common GUI JSON.
   */

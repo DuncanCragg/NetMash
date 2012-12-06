@@ -22,7 +22,8 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
-import cyrus.gui.*;
+import cyrus.gui.Cyrus;
+import cyrus.gui.Mesh;
 import cyrus.lib.*;
 import cyrus.forest.*;
 import cyrus.platform.Kernel;
