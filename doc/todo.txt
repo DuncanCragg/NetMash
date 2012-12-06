@@ -3,29 +3,75 @@ To Do
 -----
 
 --------------------------------------------------------
-Productionising: on-device editing
+Xmas demo: local only, reasonably productionised
  - -----------------------------------------------------
- - naming, renamings
+ * get some early feedback
+ - -----------------------------------------------------
+ * special paths cacheing in JSON
+ - Android resource usage - no logging, fewer db writes
+ - check perf with cacheing and db writes
+ - responsiveness not CPU usage: can use CPU as long as user not busy
+ - -----------------------------------------------------
+ - naming, renamings - new name and OM/OTS/sumer/sonn/fjord/forest
+    - items(/properties/props) not objects(/fields/tags) - in gui and code
+    - Cyrus the app; Cyrus the PL; app/cyrus(+json) the MT; Cyrus std types
+    - still FOREST arch
+    - Items/properties not Objects; (Net?)Items not WebObjects
+    - no more Object Net? Item Net? Cyrus Net?
+ - -----------------------------------------------------
+ - fix lighting - up to 4 lights - phong or matte shaders - more ambient
+ - got: game, bot, light; linked objects and worlds
+ - add a couple more meshes: room, sphere
+ - multitouch-release to view/edit the raw item
+ - copyable uid link at bottom of raw
+ - links to 2D guis in 3D world - touch to jump
+--------------------------------------------------------
+
+
+--------------------------------------------------------
+Examples dotted around on arrival
+
+ - snow globe
+ - lights that change when you swipe them
+ - rover roving
+ - some rotate on swipe, some open/close, some scroll thru gallery of pix
+ - lights come on when you enter that part of map
+ - point lights, blended transparent, simple colour vert interpolated cubes, etc
+ - curved shape from android tutorial made into flower
+ - accelerometer-based interactions and games like teeter - pick up a wooden toy
+ - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour
+--------------------------------------------------------
+
+
+--------------------------------------------------------
+Productionising: all on-device end-user editing
  - -----------------------------------------------------
  - HTTP stuff below
  - run server continuously
  - compress database
  - rotate logs; reduce logs
- - check Android resource usage
  - -----------------------------------------------------
  - switchoffable GPS tracking, user->home
- - any efficiency improvements (see radio efficiency below)
- - copyable uid link at bottom of raw
- - fix lighting, phong
+ - any efficiency improvements
  - -----------------------------------------------------
  - finish/complete obvious language functions
  - finish obvious set of 2D widgets, including setting vals; make gui format good
- - add a couple more meshes: room, sphere
  - -----------------------------------------------------
  - accelerometer?
- - alt-tab?
  - avatar chat?
- - -----------------------------------------------------
+-------------------------------------------------------------------
+HTTP
+ - server/client up/retry/down/up/retry/down
+ - long/short poll; poll while waiting - max-age
+ - remove event redundancies; too chatty on the wire
+ - detect POST subsumed by c-n - e.g. homeusers
+ - multiple POSTs of user
+ - FX loop; lost notifications detected
+ - 201 Created may be missed
+ - 403 if not observing
+ - POST response is event targetted at POST request body object
+    - or do you put Notify in - not mentioned in FX paper
+ - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
 --------------------------------------------------------
 Stuff
 
@@ -38,11 +84,9 @@ Stuff
     - alt-tab on phone reorders history
 
  - language/naming:
-    - ! val =>  not   val !=>
-    - new name and OM/OTS/sumer/forest/fjord
-    - allow type-based overloading of functions and operators? v+v -> +
     - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
-    - items(/properties/props) not objects(/fields/tags) - in gui and code
+    - allow type-based overloading of functions and operators? v+v -> +
+    - ! val =>  not   val !=>
     - clone: x: => @   x: { UID: => new }
     - (fix content and contentString and contentObject and contentAs*)
 
@@ -94,7 +138,6 @@ Bugs, Refactoring
  - don't fetch remote if it's yours anyway (?)
  - throw if calling certain methods outside of evaluator
 ---------------------------------------------------------
-
  - GIS:
     - show place/sub land in different colours
     - don't allow outside of parent area
@@ -103,7 +146,6 @@ Bugs, Refactoring
     - delete land
     - more info in map popup
     - scale bar
-
  - schemes/rules:
     - zeroing rules
     - adjusting constants
@@ -113,9 +155,7 @@ Bugs, Refactoring
     - ELS; calc points total
     - tree density param may select scheme
     - real data
-
 ---------------------------------------------------------
-
  - on-device programming VW/GUI
     - link to existing object - chooser? links?
     - undo?
@@ -131,7 +171,6 @@ Bugs, Refactoring
     - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
     - fill in all other form type values
-
 --------------------------------------------------------
 Prioritising
 
@@ -144,7 +183,7 @@ Prioritising
 ---------------------------------------------------------
 Current priority:
 
-   Onboard editing - rules of game, create robot, etc
+ * Onboard editing - rules of game, create robot, etc
 
  - shows off USP of ease of programming, object interactivity and learning aspects
  - focus on visible value towards Xmas demo
@@ -159,6 +198,7 @@ Explore, Interact
    - move -vs- interact
    - collisions
    - physics
+   - predictive movements - first part of physics
 
 GL basics
 
@@ -200,18 +240,7 @@ Physics
 
  - collision; touch; time; shaders as laws with time, mesh bending
  - walking law to smooth/animate movement if is: avatar
-
-Examples dotted around on arrival
-
- - lights that change when you swipe them
- - some rotate on swipe, some open/close, some scroll thru gallery of pix
- - lights come on when you enter that part of map
- - point lights, blended transparent, simple colour vert interpolated cubes, etc
- - curved shape from android tutorial made into flower
- - rover roving
- - accelerometer-based interactions and games like teeter - pick up a wooden toy
  - racing 'downhill' game - get on track; physics
- - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour
 
 Other
 
@@ -305,32 +334,12 @@ Speed, Bugfixes, Robustness, Clean formats
 
 -------------------------------------------------------------------
 HTTP
- + server/client up/retry/down/up/retry/down
- + long/short poll; poll while waiting - max-age
- + remove event redundancies; too chatty on the wire
- + detect POST subsumed by c-n - e.g. homeusers
- + FX loop; lost notifications detected
- + 201 Created may be missed
- + 403 if not observing
- + POST response is event targetted at POST request body object
-    + or do you put Notify in - not mentioned in FX paper
--------------------------------------------------------------------
+
  - need to hang POST responses so not POST requests; should be 204
     - actually this is long-polling GET for C-N=object URL not cache
  - match to uid not URL - e.g when fetch 192.168.. and C-L set to 10.0.2.2
  - still two network conns on main thread: at start and images
- - think about multiple POSTs of user
- - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
  - HTTP.java longPollerPool concurrentmod.txt
--------------------------------------------------------------------
-
-Android
-
- - http://www.infoq.com/news/2012/04/AQuery
-
-Stuff 
-
- - hello world stdio interface object - user object on command line
 
 FuncObs 
 
@@ -348,11 +357,20 @@ Types
  - always roundtrip extra tags in queryable
  - preview (?) not summary?
 
-
 Build
 
  - http://stackoverflow.com/questions/5334399/automation-for-android-release-build
 
+Android
 
+ - http://www.infoq.com/news/2012/04/AQuery
 
+Stuff 
+
+ - hello world stdio interface object - user object on command line
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 
