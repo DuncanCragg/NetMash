@@ -851,7 +851,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
 
     private LinkedHashMap makeEditRule(String path, int etag, Object val){
         return etag>0? deephash(list(hash("Version",etag),"=>", "as-is",val), path):
-                       deephash(list(                   "=>", "as-is",val), path);
+                       deephash(list(                     "=>", "as-is",val), path);
     }
 
     private String dehash(String s){ if(s.startsWith("#")) return s.substring(1); return s; }

@@ -4,23 +4,24 @@ To Do
 
 --------------------------------------------------------
 Xmas demo: local only, reasonably productionised
- - -----------------------------------------------------
+ + -----------------------------------------------------
+ x got: game, bot, light; linked objects and worlds
+ + -----------------------------------------------------
  * get some early feedback
- - -----------------------------------------------------
- * special paths cacheing in JSON
- - Android resource usage - no logging, fewer db writes
- - check perf with cacheing and db writes
- - responsiveness not CPU usage: can use CPU as long as user not busy
- - -----------------------------------------------------
- - naming, renamings - new name and OM/OTS/sumer/sonn/fjord/forest
+ + -----------------------------------------------------
+ + fix lighting - up to 4 lights - phong or matte shaders - more ambient
+ + -----------------------------------------------------
+ + naming, renamings - new name and OM/OTS/sumer/sonn/fjord/forest
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - Cyrus the app; Cyrus the PL; app/cyrus(+json) the MT; Cyrus std types
     - still FOREST arch
     - Items/properties not Objects; (Net?)Items not WebObjects
     - no more Object Net? Item Net? Cyrus Net?
- - -----------------------------------------------------
- - fix lighting - up to 4 lights - phong or matte shaders - more ambient
- - got: game, bot, light; linked objects and worlds
+ + -----------------------------------------------------
+ + domain/website .. actual download
+ + Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
+ + Android ensure restartable, pausable, etc
+ + -----------------------------------------------------
  - add a couple more meshes: room, sphere
  - multitouch-release to view/edit the raw item
  - copyable uid link at bottom of raw
@@ -99,6 +100,9 @@ Stuff
 ---------------------------------------------------------
 Performance
 ---------------------------------------------------------
+ - responsiveness not CPU usage: can use CPU as long as user not busy, so put off on workers
+ - check not unresponsive cos of locks
+ - fix doCopyOnWrite not to be shite
  - light lags massively
  - phone move event takes a while and jumps a lot
  - stroke light toggles on/off; or left/right?
