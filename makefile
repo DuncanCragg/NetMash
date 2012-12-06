@@ -158,34 +158,34 @@ usestaticdb:
 	cp src/server/vm1/static.db src/server/vm1/netmash.db
 
 setremmapkey:
-	sed -i"" -e "s:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/cyrus/gui/Cyrus.java
+	sed -i"" -e "s:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/android/cyrus/gui/Cyrus.java
 
 setemumapkey:
-	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:" src/cyrus/gui/Cyrus.java
+	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:" src/android/cyrus/gui/Cyrus.java
 
 setappemuconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:g" res/raw/netmashconfig.db
 	sed -i"" -e "s:netmash.net:10.0.2.2:g" res/raw/top.db
-	sed -i"" -e "s:netmash.net:10.0.2.2:g" src/cyrus/User.java
+	sed -i"" -e "s:netmash.net:10.0.2.2:g" src/android/cyrus/User.java
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/netmashconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/top.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/cyrus/User.java
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/android/cyrus/User.java
 
 setapplanconfig:
 	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" res/raw/netmashconfig.db
 	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" res/raw/top.db
-	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" src/cyrus/User.java
+	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" src/android/cyrus/User.java
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/netmashconfig.db
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/top.db
-	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" src/cyrus/User.java
+	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" src/android/cyrus/User.java
 
 setappremconfig:
 	sed -i"" -e    "s:10.0.2.2:netmash.net:g" res/raw/netmashconfig.db
 	sed -i"" -e    "s:10.0.2.2:netmash.net:g" res/raw/top.db
-	sed -i"" -e    "s:10.0.2.2:netmash.net:g" src/cyrus/User.java
+	sed -i"" -e    "s:10.0.2.2:netmash.net:g" src/android/cyrus/User.java
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" res/raw/netmashconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" res/raw/top.db
-	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" src/cyrus/User.java
+	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" src/android/cyrus/User.java
 
 setvmemuconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/netmashconfig.db
