@@ -5,9 +5,7 @@ To Do
 --------------------------------------------------------
 Xmas demo: local only, reasonably productionised
  + -----------------------------------------------------
- x got: game, bot, light; linked objects and worlds
- + -----------------------------------------------------
- * get some early feedback
+ + get some early feedback
  + -----------------------------------------------------
  + fix lighting - up to 4 lights - phong or matte shaders - more ambient
  + -----------------------------------------------------
@@ -16,10 +14,11 @@ Xmas demo: local only, reasonably productionised
     - Cyrus the app; Cyrus the PL; app/cyrus(+json) the MT; Cyrus std types
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - Items/properties not Objects; (Net?)Items not WebObjects
+    - no more Object Net? Item Net? Cyrus Net? the-cyrus.net
     - still FOREST arch
-    - no more Object Net? Item Net? Cyrus Net?
  + -----------------------------------------------------
  + domain/website .. actual download
+ + on-board welcome content and docs
  + Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
  + Android ensure restartable, pausable, etc
  + -----------------------------------------------------
@@ -27,6 +26,7 @@ Xmas demo: local only, reasonably productionised
  - multitouch-release to view/edit the raw item
  - copyable uid link at bottom of raw
  - links to 2D guis in 3D world - touch to jump
+ . got: game, bot, light; linked objects and worlds
 --------------------------------------------------------
 
 
