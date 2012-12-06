@@ -8,6 +8,8 @@ import java.nio.*;
 
 import netmash.lib.JSON;
 
+import static netmash.lib.Utils.*;
+
 /** TestJSON: test the JSON class. */
 @SuppressWarnings("unchecked")
 public class TestJSON {
@@ -93,6 +95,39 @@ public class TestJSON {
 
         String expected = "{  \"a\": \"b\", \"l\": \"n\", \"x\": [ \"y\", \"z\" ], \"c\": \"d\", \"o\": [ \"p\", \"q\" ] }";
         assert m.toString(100).equals(expected): "merge failed: \n"+m.toString(100)+" not \n"+expected;
+
+        }
+
+        System.out.println("---Test-4------------------");
+
+        {
+
+        JSON m = new JSON("{ \"a\": { \"b\": \"c\" }, \"l\": \"m\", \"x\": [ \"y\", \"z\" ] }");
+        System.out.println(m);
+
+        assert m.stringPath("x:0").equals("y");
+        m.stringPath("x:0","yy");
+        assert m.stringPath("x:0").equals("yy");
+
+        assert m.hashPath("#").equals(hash("a",hash("b","c"), "l","m", "x",list("yy","z")));
+
+        assert m.stringPath("x:0").equals("yy");
+        m.stringPath("x:0","yyy");
+        assert m.stringPath("x:0").equals("yyy");
+
+        assert m.hashPath("#").equals(hash("a",hash("b","c"), "l","m", "x",list("yyy","z")));
+
+        JSON n = new JSON("{ \"c\": \"d\", \"l\": \"n\", \"o\": [ \"p\", \"q\" ] }");
+        System.out.println(n);
+        m.mergeWith(n);
+
+        assert m.hashPath("#").equals(hash("a",hash("b","c"), "l","n", "x",list("yyy","z"), "c","d", "o",list("p","q")));
+
+        m.hashPath("a",hash("x","y"));
+        System.out.println(m);
+        assert m.hashPath("#").equals(hash("a",hash("x","y"), "l","n", "x",list("yyy","z"), "c","d", "o",list("p","q")));
+
+        System.out.println(m);
 
         }
 
