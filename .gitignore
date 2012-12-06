@@ -7,10 +7,10 @@ proguard.cfg
 netmash.keystore
 doc/local/
 src/server/vm?/local*.db
-src/server/vm?/netmash.db
+src/server/vm?/cyrus.db
 src/server/vm?/*.class
 src/server/vm?/*.log
-src/server/vm2/netmashconfig.json
+src/server/vm2/cyrusconfig.json
 ,*
 .*.swp
-build/netmash.jar
+build/cyrus.jar
