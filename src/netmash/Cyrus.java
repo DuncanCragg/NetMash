@@ -5,9 +5,9 @@ import netmash.Version;
 import netmash.platform.Kernel;
 import netmash.forest.FunctionalObserver;
 
-/**  NetMash: FOREST Reference Implementation; server main.
+/**  Cyrus: FOREST Reference Implementation; server main.
   */
-public class NetMash {
+public class Cyrus {
 
     //-----------------------------------------------------
 

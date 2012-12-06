@@ -35,12 +35,12 @@ import static netmash.lib.Utils.*;
 
 import android.User;
 
-/**  NetMash main.
+/**  Cyrus main.
   */
-public class NetMash extends MapActivity{
+public class Cyrus extends MapActivity{
 
-    static public NetMash top=null;
-    static public User    user=null;
+    static public Cyrus top=null;
+    static public User  user=null;
 
     public void onUserReady(User u){ user = u; }
 
@@ -248,8 +248,8 @@ log(show? "show keyboard": "hide keyboard");
     private void uiDrawJSON(){ if(false) log("uiDrawJSON "+uiUID+":\n"+uiJSON);
         viewUID=uiUID;
         String title =uiJSON.stringPathN("title");
-        if(title==null) setTitle(       "NetMash");
-        else            setTitle(title+"|NetMash");
+        if(title==null) setTitle(       "Cyrus");
+        else            setTitle(title+"|Cyrus");
         if("gui".equals(uiJSON.stringPathN("is"))){
             Object      o=uiJSON.hashPathN("view");
             if(o==null) o=uiJSON.listPathN("view");

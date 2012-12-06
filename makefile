@@ -2,7 +2,7 @@
 #
 # Where you want the release Android apk to be copied
 #
-RELEASE_TARGET=../net/netmash.net/NetMash.apk
+RELEASE_TARGET=../net/the-cyrus.net/Cyrus.apk
 LOCAL_IP=192.168.0.6
 #
 ################################################################################
@@ -58,22 +58,22 @@ editlocaldbanddynamicfile:
 androidemu: clean init setappemuconfig setemumapkey
 	ant debug
 	adb -e uninstall android.gui
-	adb -e install bin/NetMash-debug.apk
+	adb -e install bin/Cyrus-debug.apk
 
 androidlan: clean init setapplanconfig setremmapkey
 	ant release
-	( adb -d uninstall android.gui && adb -d install bin/NetMash-release.apk ) &
-	cp bin/NetMash-release.apk $(RELEASE_TARGET)
+	( adb -d uninstall android.gui && adb -d install bin/Cyrus-release.apk ) &
+	cp bin/Cyrus-release.apk $(RELEASE_TARGET)
 
 androidrem: clean init setappremconfig setremmapkey
 	ant release
-	cp bin/NetMash-release.apk $(RELEASE_TARGET)
+	cp bin/Cyrus-release.apk $(RELEASE_TARGET)
 
 installemu:
-	adb -e install bin/NetMash-debug.apk
+	adb -e install bin/Cyrus-debug.apk
 
 installlan:
-	adb -d install bin/NetMash-release.apk
+	adb -d install bin/Cyrus-release.apk
 
 uninstallemu:
 	adb -e uninstall android.gui
@@ -114,10 +114,10 @@ runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
 # -------------------------------------------------------------------
 
 runon1:
-	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
+	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.Cyrus > netmash.log 2>&1 & )
 
 runon2:
-	( cd src/server/vm2 ; java -classpath .:../../../build/netmash.jar netmash.NetMash > netmash.log 2>&1 & )
+	( cd src/server/vm2 ; java -classpath .:../../../build/netmash.jar netmash.Cyrus > netmash.log 2>&1 & )
 
 json: jar
 	java -ea -classpath ./build/netmash.jar netmash.lib.TestJSON
@@ -158,34 +158,34 @@ usestaticdb:
 	cp src/server/vm1/static.db src/server/vm1/netmash.db
 
 setremmapkey:
-	sed -i"" -e "s:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/android/gui/NetMash.java
+	sed -i"" -e "s:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/cyrus/gui/Cyrus.java
 
 setemumapkey:
-	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:" src/android/gui/NetMash.java
+	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:" src/cyrus/gui/Cyrus.java
 
 setappemuconfig:
 	sed -i"" -e "s:netmash.net:10.0.2.2:g" res/raw/netmashconfig.db
 	sed -i"" -e "s:netmash.net:10.0.2.2:g" res/raw/top.db
-	sed -i"" -e "s:netmash.net:10.0.2.2:g" src/android/User.java
+	sed -i"" -e "s:netmash.net:10.0.2.2:g" src/cyrus/User.java
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/netmashconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/top.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/android/User.java
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/cyrus/User.java
 
 setapplanconfig:
 	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" res/raw/netmashconfig.db
 	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" res/raw/top.db
-	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" src/android/User.java
+	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" src/cyrus/User.java
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/netmashconfig.db
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/top.db
-	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" src/android/User.java
+	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" src/cyrus/User.java
 
 setappremconfig:
 	sed -i"" -e    "s:10.0.2.2:netmash.net:g" res/raw/netmashconfig.db
 	sed -i"" -e    "s:10.0.2.2:netmash.net:g" res/raw/top.db
-	sed -i"" -e    "s:10.0.2.2:netmash.net:g" src/android/User.java
+	sed -i"" -e    "s:10.0.2.2:netmash.net:g" src/cyrus/User.java
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" res/raw/netmashconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" res/raw/top.db
-	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" src/android/User.java
+	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" src/cyrus/User.java
 
 setvmemuconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/netmashconfig.db
@@ -281,7 +281,7 @@ logout2:
 # -------------------------------------------------------------------
 
 classes: \
-./build/classes/netmash/NetMash.class \
+./build/classes/netmash/Cyrus.class \
 ./build/classes/netmash/lib/JSON.class \
 ./build/classes/netmash/lib/TestJSON.class \
 ./build/classes/netmash/lib/Utils.class \
@@ -329,8 +329,8 @@ clean:
 	rm -rf ./build/classes/server
 	rm -f  ./src/server/vm?/*.class
 	rm -rf bin/classes bin/classes.dex
-	rm -f  bin/NetMash.ap_ bin/NetMash*un*ed.apk
-	rm -f  gen/android/gui/R.java
+	rm -f  bin/Cyrus.ap_ bin/Cyrus*un*ed.apk
+	rm -f  gen/cyrus/gui/R.java
 	rm -f  ,*
 
 veryclean: kill clean setappemuconfig netconfig setvm2emuconfig setemumapkey
