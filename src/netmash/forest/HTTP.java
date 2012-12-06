@@ -444,12 +444,12 @@ abstract class HTTPCommon {
         sb.append("Access-Control-Allow-Origin: *\r\n");
         sb.append("Access-Control-Allow-Headers: X-Requested-With\r\n");
 
-        String content=rewriteUIDsToURLsIfNotServingNetMash(w.toString(percents));
+        String content=rewriteUIDsToURLsIfNotServingCyrus(w.toString(percents));
         sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n\r\n");
         sb.append(content);
     }
 
-    private String rewriteUIDsToURLsIfNotServingNetMash(String s){
+    private String rewriteUIDsToURLsIfNotServingCyrus(String s){
         if(httpUserAgent==null ||
            httpUserAgent.indexOf("Cyrus")!= -1 ||
            UID.notVisible()) return s;

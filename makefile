@@ -57,12 +57,12 @@ editlocaldbanddynamicfile:
 
 androidemu: clean init setappemuconfig setemumapkey
 	ant debug
-	adb -e uninstall android.gui
+	adb -e uninstall cyrus.gui
 	adb -e install bin/Cyrus-debug.apk
 
 androidlan: clean init setapplanconfig setremmapkey
 	ant release
-	( adb -d uninstall android.gui && adb -d install bin/Cyrus-release.apk ) &
+	( adb -d uninstall cyrus.gui && adb -d install bin/Cyrus-release.apk ) &
 	cp bin/Cyrus-release.apk $(RELEASE_TARGET)
 
 androidrem: clean init setappremconfig setremmapkey
@@ -76,10 +76,10 @@ installlan:
 	adb -d install bin/Cyrus-release.apk
 
 uninstallemu:
-	adb -e uninstall android.gui
+	adb -e uninstall cyrus.gui
 
 uninstalllan:
-	adb -d uninstall android.gui
+	adb -d uninstall cyrus.gui
 
 reinstallemu: uninstallemu installemu
 

@@ -18,7 +18,7 @@ import com.google.android.maps.*;
 
 import static netmash.lib.Utils.*;
 
-public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterface.OnClickListener {
+public class CyrusMapOverlay extends ItemizedOverlay implements DialogInterface.OnClickListener {
 
     private String mapUID=null;
     private String jumpUID;
@@ -34,7 +34,7 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
     private ArrayList<Item> overlayitems = new ArrayList<Item>();
     private Cyrus netmash;
 
-    public NetMashMapOverlay(Drawable defaultMarker, Cyrus netmash, String mapUID){
+    public CyrusMapOverlay(Drawable defaultMarker, Cyrus netmash, String mapUID){
         super(boundCenterBottom(defaultMarker));
         populate();
         this.netmash = netmash;

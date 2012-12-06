@@ -793,7 +793,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private MapView mapview=null;
-    private HashMap<String,NetMashMapOverlay> layers = new HashMap<String,NetMashMapOverlay>();
+    private HashMap<String,CyrusMapOverlay> layers = new HashMap<String,CyrusMapOverlay>();
 
     private MapView createMapView(Object o){
         if(o instanceof LinkedHashMap) return createMapView((LinkedHashMap<String,Object>)o);
@@ -817,7 +817,7 @@ log(show? "show keyboard": "hide keyboard");
         }
         mapview.setSatellite(false);
         Drawable drawable = getResources().getDrawable(R.drawable.mappinlogo);
-        NetMashMapOverlay itemizedoverlay=null;
+        CyrusMapOverlay itemizedoverlay=null;
         boolean updatable=false;
         for(Object o: ll){
             if(!(o instanceof String)) break;
@@ -833,13 +833,13 @@ log(show? "show keyboard": "hide keyboard");
             if(s.startsWith("layerkey:")){
                 itemizedoverlay = layers.get(s);
                 if(itemizedoverlay==null){
-                    itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable? viewUID: null);
+                    itemizedoverlay = new CyrusMapOverlay(drawable, this, updatable? viewUID: null);
                     layers.put(s, itemizedoverlay);
                 }
                 continue;
             }
         }
-        if(itemizedoverlay==null) itemizedoverlay = new NetMashMapOverlay(drawable, this, updatable? viewUID: null);
+        if(itemizedoverlay==null) itemizedoverlay = new CyrusMapOverlay(drawable, this, updatable? viewUID: null);
         PolygonOverlay polygonoverlay=new PolygonOverlay();
         itemizedoverlay.clear();
         int minlat=Integer.MAX_VALUE, maxlat=Integer.MIN_VALUE;
@@ -857,7 +857,7 @@ log(show? "show keyboard": "hide keyboard");
             int lon=(int)(location.get("lon").doubleValue()*1e6);
             minlat=Math.min(lat,minlat); maxlat=Math.max(lat,maxlat);
             minlon=Math.min(lon,minlon); maxlon=Math.max(lon,maxlon);
-            NetMashMapOverlay.Item overlayitem = new NetMashMapOverlay.Item(new GeoPoint(lat,lon), label, sublabel, jumpUID);
+            CyrusMapOverlay.Item overlayitem = new CyrusMapOverlay.Item(new GeoPoint(lat,lon), label, sublabel, jumpUID);
             itemizedoverlay.addItem(overlayitem);
             if(shape==null) continue;
             PolygonOverlay.PolyItem polyitem = new PolygonOverlay.PolyItem(shape, getPolyPaint());
