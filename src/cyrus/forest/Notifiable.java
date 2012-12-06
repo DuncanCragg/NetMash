@@ -1,4 +1,4 @@
-package netmash.forest;
+package cyrus.forest;
 
 /** Notifiable - callback from FunctionalObserver to HTTP.*/
 public interface Notifiable {

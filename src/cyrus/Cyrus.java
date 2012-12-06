@@ -1,9 +1,9 @@
 
-package netmash;
+package cyrus;
 
-import netmash.Version;
-import netmash.platform.Kernel;
-import netmash.forest.FunctionalObserver;
+import cyrus.Version;
+import cyrus.platform.Kernel;
+import cyrus.forest.FunctionalObserver;
 
 /**  Cyrus: FOREST Reference Implementation; server main.
   */

@@ -1,4 +1,4 @@
-package netmash.forest;
+package cyrus.forest;
 
 import java.util.*;
 import java.io.*;
@@ -7,10 +7,10 @@ import java.nio.charset.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
-import netmash.platform.*;
-import netmash.lib.JSON;
+import cyrus.platform.*;
+import cyrus.lib.JSON;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** Persistence of WebObjects.
   * A NoSQL JSON in-memory Database!
@@ -26,7 +26,7 @@ public class Persistence implements FileUser {
     private File dbfile=null;
     private InputStream      topdbis=null;
     private FileOutputStream topdbos=null;
-    private JSON netmashconfig=null;
+    private JSON cyrusconfig=null;
     private boolean cyrus=false;
 
     private ConcurrentHashMap<String,CharBuffer> jsoncache = new ConcurrentHashMap<String,CharBuffer>();
@@ -58,9 +58,9 @@ public class Persistence implements FileUser {
         new Thread(){ public void run(){ runSync(syncrate); } }.start();
 
         preload(Kernel.config.listPathN("persist:preload"));
-        if(netmashconfig!=null){
-            funcobs.hereIsTheConfigBack(netmashconfig);
-            preload(netmashconfig.listPathN("persist:preload"));
+        if(cyrusconfig!=null){
+            funcobs.hereIsTheConfigBack(cyrusconfig);
+            preload(cyrusconfig.listPathN("persist:preload"));
         }
 
         FunctionalObserver.log("Persistence: initialised.");
@@ -80,7 +80,7 @@ public class Persistence implements FileUser {
 
             CharBuffer jsonchars = UTF8.decode(jsonbytes);
             String uid = findUIDAndDetectCyrus(jsonchars);
-            if(uid.equals("netmashconfig")) netmashconfig = new JSON(jsonchars,cyrus);
+            if(uid.equals("cyrusconfig")) cyrusconfig = new JSON(jsonchars,cyrus);
             else jsoncache.put(uid, jsonchars);
         }
     }

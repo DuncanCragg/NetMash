@@ -1,4 +1,4 @@
-package netmash.platform;
+package cyrus.platform;
 
 import java.util.*;
 import java.nio.*;

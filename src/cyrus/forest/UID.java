@@ -1,4 +1,4 @@
-package netmash.forest;
+package cyrus.forest;
 
 import java.util.*;
 import java.io.*;
@@ -7,7 +7,7 @@ import java.nio.charset.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
-import netmash.platform.*;
+import cyrus.platform.*;
 
 public class UID {
 

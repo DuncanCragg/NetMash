@@ -1,7 +1,7 @@
 
-package netmash.platform;
+package cyrus.platform;
 
-/** import static netmash.platform.Logging.*;
+/** import static cyrus.platform.Logging.*;
 */
 public class Logging{
 

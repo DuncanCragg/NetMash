@@ -1,11 +1,11 @@
 
-package netmash.lib;
+package cyrus.lib;
 
 import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 
-import netmash.platform.*;
+import cyrus.platform.*;
 
 public class Utils{
 

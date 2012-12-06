@@ -1,4 +1,4 @@
-package netmash.forest;
+package cyrus.forest;
 
 import static java.util.Arrays.*;
 
@@ -11,11 +11,11 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
 
-import netmash.Version;
-import netmash.lib.*;
-import netmash.platform.*;
+import cyrus.Version;
+import cyrus.lib.*;
+import cyrus.platform.*;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** HTTP and REST: the Object Web.
   */

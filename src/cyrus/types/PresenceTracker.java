@@ -1,8 +1,8 @@
-package netmash.types;
+package cyrus.types;
 
 import java.util.*;
-import netmash.forest.*;
-import static netmash.lib.Utils.*;
+import cyrus.forest.*;
+import static cyrus.lib.Utils.*;
 
 /** Tracks Presence of Users viewing it.
   */

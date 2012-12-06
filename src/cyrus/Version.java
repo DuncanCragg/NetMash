@@ -1,4 +1,4 @@
-package netmash;
+package cyrus;
 
 public interface Version{
     static public final String NAME="Cyrus";

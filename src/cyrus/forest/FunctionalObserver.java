@@ -1,13 +1,13 @@
-package netmash.forest;
+package cyrus.forest;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.io.*;
 
-import netmash.platform.*;
-import netmash.lib.*;
+import cyrus.platform.*;
+import cyrus.lib.*;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** Holds object cache; manages notify and observe; runs evaluate; sorts out
   * persistence and networking and cacheing-in objects; drives retry and timeout.
@@ -175,16 +175,16 @@ public class FunctionalObserver implements Module {
     public void setCacheNotifyAndSaveConfig(WebObject user){
         String cn="c-n-"+user.uid.substring(4);
         http.setCacheNotify(cn);
-        WebObject netmashconfig = new WebObject(
+        WebObject cyrusconfig = new WebObject(
               "{   \"persist\": { \"preload\": [ \""+user.uid+"\" ] }, \n"+
               "    \"network\": { \"cache-notify\": \""+cn+"\"}\n"+
               "}");
-        netmashconfig.uid="netmashconfig";
-        persistence.save(netmashconfig);
+        cyrusconfig.uid="cyrusconfig";
+        persistence.save(cyrusconfig);
     }
 
-    public void hereIsTheConfigBack(JSON netmashconfig){
-        http.setCacheNotify(netmashconfig.stringPathN("network:cache-notify"));
+    public void hereIsTheConfigBack(JSON cyrusconfig){
+        http.setCacheNotify(cyrusconfig.stringPathN("network:cache-notify"));
     }
 
     void evalAndPersistSpawned(WebObject w){

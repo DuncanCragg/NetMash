@@ -1,14 +1,14 @@
 
-package netmash.lib;
+package cyrus.lib;
 
 import java.util.*;
 import java.util.regex.*;
 import java.io.*;
 import java.nio.*;
 
-import netmash.lib.JSON;
+import cyrus.lib.JSON;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** TestJSON: test the JSON class. */
 @SuppressWarnings("unchecked")
@@ -28,9 +28,9 @@ public class TestJSON {
         String funkycharsout="\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3";
 
         JSON m=new JSON(
-            " \t\n \n { \"kernel\": { \"modules\": {              \"cache\": \"netmash.cache.JSONCache\",\n"+
-            "                                            \"http\": \"netmash.drivers.HTTP\",\n"+
-            "                                            \"logic\": \"netmash.drivers.TestDriver\" } },\n"+
+            " \t\n \n { \"kernel\": { \"modules\": {              \"cache\": \"cyrus.cache.JSONCache\",\n"+
+            "                                            \"http\": \"cyrus.drivers.HTTP\",\n"+
+            "                                            \"logic\": \"cyrus.drivers.TestDriver\" } },\n"+
             "                   \"modules\":  { \"cache\": { \"funky\": \""+funkychars+"\"},\n"+
             "                                 \"http\": { \"port\": 8080 },\n"+
             "                                 \"logic\": [ true, false, null, true, false, null, \"stringnospaces\", \" string with  spaces \" ],\n"+
@@ -56,7 +56,7 @@ public class TestJSON {
         assert port==8080: "port should be 8080, but it's "+port;
 
         LinkedHashMap<String,String> modulenames = m.hashPath("kernel:modules");
-        assert "netmash.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be netmash.cache.JSONCache, but it's "+
+        assert "cyrus.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be cyrus.cache.JSONCache, but it's "+
                                                                                                 modulenames.get("cache");
         assert modulenames instanceof LinkedHashMap: "kernel:modules should be ordered hash";
 
@@ -66,7 +66,7 @@ public class TestJSON {
 
         {
 
-        JSON m = new JSON(new File("./src/server/vm1/netmashconfig.db"),true);
+        JSON m = new JSON(new File("./src/server/vm1/cyrusconfig.db"),true);
         System.out.println(m);
 
         int port = m.intPath("network:port");
@@ -139,9 +139,9 @@ public class TestJSON {
         String funkycharsout="\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3";
 
         JSON m=new JSON(
-            " \t\n \n { kernel: { modules: {  cache: netmash.cache.JSONCache\n"+
-            "                                 http: netmash.drivers.HTTP\n"+
-            "                                 logic: netmash.drivers.TestDriver } }\n"+
+            " \t\n \n { kernel: { modules: {  cache: cyrus.cache.JSONCache\n"+
+            "                                 http: cyrus.drivers.HTTP\n"+
+            "                                 logic: cyrus.drivers.TestDriver } }\n"+
             "                   modules:  { cache: { funky: \""+funkychars+"\" }\n"+
             "                               http: { port: 8080 }\n"+
             "                               logic: true false { foo: null } ( true false ( ( null stringnospaces ) ) \"string with  spaces\" )\n"+
@@ -168,7 +168,7 @@ public class TestJSON {
         assert port==8080: "port should be 8080, but it's "+port;
 
         LinkedHashMap<String,String> modulenames = m.hashPath("kernel:modules:0");
-        assert "netmash.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be netmash.cache.JSONCache, but it's "+
+        assert "cyrus.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be cyrus.cache.JSONCache, but it's "+
                                                                                                 modulenames.get("cache");
         assert modulenames instanceof LinkedHashMap: "kernel:modules should be ordered hash";
 

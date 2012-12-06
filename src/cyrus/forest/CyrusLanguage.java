@@ -1,13 +1,13 @@
-package netmash.forest;
+package cyrus.forest;
 
 import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 
-import netmash.platform.Kernel;
-import netmash.lib.JSON;
+import cyrus.platform.Kernel;
+import cyrus.lib.JSON;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** Object Mash Language.
   */

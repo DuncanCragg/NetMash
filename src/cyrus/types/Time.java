@@ -1,8 +1,8 @@
-package netmash.types;
+package cyrus.types;
 
 import java.lang.*;
 
-import netmash.forest.*;
+import cyrus.forest.*;
 
 public class Time extends WebObject {
 

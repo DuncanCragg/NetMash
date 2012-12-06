@@ -1,5 +1,5 @@
 
-package netmash.platform;
+package cyrus.platform;
 
 /** Module has a callback from Kernel.
   */

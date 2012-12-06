@@ -1,5 +1,5 @@
 
-package netmash.lib;
+package cyrus.lib;
 
 public class PathOvershot extends Exception{
 

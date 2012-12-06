@@ -1,5 +1,5 @@
 
-package netmash.lib;
+package cyrus.lib;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -12,7 +12,7 @@ import java.nio.channels.*;
 import java.nio.charset.*;
 import java.net.*;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 /** JSON objects.
   */

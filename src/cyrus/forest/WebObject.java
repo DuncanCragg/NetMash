@@ -1,4 +1,4 @@
-package netmash.forest;
+package cyrus.forest;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -10,11 +10,11 @@ import java.nio.channels.*;
 import java.nio.charset.*;
 import java.net.*;
 
-import netmash.platform.Kernel;
-import netmash.lib.*;
-import netmash.forest.FunctionalObserver;
+import cyrus.platform.Kernel;
+import cyrus.lib.*;
+import cyrus.forest.FunctionalObserver;
 
-import static netmash.lib.Utils.*;
+import static cyrus.lib.Utils.*;
 
 enum ShellState { FOUND, FINDING, TRYREMOTE, NOTFOUND }
 

@@ -1,5 +1,5 @@
 
-package netmash.platform;
+package cyrus.platform;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -10,10 +10,10 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.channels.spi.*;
 
-import netmash.lib.JSON;
+import cyrus.lib.JSON;
 
 /**  This is the runnable container or kernel class. 
-  *  Requires netmashconfig.db giving Threadpool size.
+  *  Requires cyrusconfig.db giving Threadpool size.
   *  Runs event loop, handles NIO, handles Threadpool
   *  and gives events/callbacks to runmodule.
   */
@@ -186,7 +186,7 @@ public class Kernel {
 
     static private void initConfig(JSON conf){
         try{
-            if(conf==null) config = new JSON(new File("./netmashconfig.db"),true);
+            if(conf==null) config = new JSON(new File("./cyrusconfig.db"),true);
             else           config = conf;
         } catch(Exception e){ bailOut("Error in config file", e, null); }
     }
