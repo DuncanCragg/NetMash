@@ -114,16 +114,16 @@ runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
 # -------------------------------------------------------------------
 
 runon1:
-	( cd src/server/vm1 ; java -classpath .:../../../build/netmash.jar netmash.Cyrus > netmash.log 2>&1 & )
+	( cd src/server/vm1 ; java -classpath .:../../../build/cyrus.jar cyrus.Cyrus > cyrus.log 2>&1 & )
 
 runon2:
-	( cd src/server/vm2 ; java -classpath .:../../../build/netmash.jar netmash.Cyrus > netmash.log 2>&1 & )
+	( cd src/server/vm2 ; java -classpath .:../../../build/cyrus.jar cyrus.Cyrus > cyrus.log 2>&1 & )
 
 json: jar
-	java -ea -classpath ./build/netmash.jar netmash.lib.TestJSON
+	java -ea -classpath ./build/cyrus.jar cyrus.lib.TestJSON
 
 uid: jar
-	java -ea -classpath ./build/netmash.jar netmash.forest.UID
+	java -ea -classpath ./build/cyrus.jar cyrus.forest.UID
 
 run1: jar
 	(cd src/server/vm1; ./run.sh)
@@ -136,26 +136,26 @@ run1n2: run1 run2
 # -------------------------------------------------------------------
 
 usealldbs: useworlddb
-	cat src/server/vm1/static.db >> src/server/vm1/netmash.db
-	cat src/server/vm2/cap.db    >> src/server/vm2/netmash.db
+	cat src/server/vm1/static.db >> src/server/vm1/cyrus.db
+	cat src/server/vm2/cap.db    >> src/server/vm2/cyrus.db
 
 useworlddb:
-	cp src/server/vm1/world.db src/server/vm1/netmash.db
-	cp src/server/vm2/world.db src/server/vm2/netmash.db
+	cp src/server/vm1/world.db src/server/vm1/cyrus.db
+	cp src/server/vm2/world.db src/server/vm2/cyrus.db
 
 useomdb:
-	cp src/server/vm2/om.db src/server/vm2/netmash.db
+	cp src/server/vm2/om.db src/server/vm2/cyrus.db
 
 usecapdb:
-	cp src/server/vm1/cap.db src/server/vm1/netmash.db
-	cp src/server/vm2/cap.db src/server/vm2/netmash.db
+	cp src/server/vm1/cap.db src/server/vm1/cyrus.db
+	cp src/server/vm2/cap.db src/server/vm2/cyrus.db
 
 usetestdb:
-	cp src/server/vm1/test.db src/server/vm1/netmash.db
-	cp src/server/vm2/test.db src/server/vm2/netmash.db
+	cp src/server/vm1/test.db src/server/vm1/cyrus.db
+	cp src/server/vm2/test.db src/server/vm2/cyrus.db
 
 usestaticdb:
-	cp src/server/vm1/static.db src/server/vm1/netmash.db
+	cp src/server/vm1/static.db src/server/vm1/cyrus.db
 
 setremmapkey:
 	sed -i"" -e "s:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:" src/android/cyrus/gui/Cyrus.java
@@ -164,98 +164,98 @@ setemumapkey:
 	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:" src/android/cyrus/gui/Cyrus.java
 
 setappemuconfig:
-	sed -i"" -e "s:netmash.net:10.0.2.2:g" res/raw/netmashconfig.db
-	sed -i"" -e "s:netmash.net:10.0.2.2:g" res/raw/top.db
-	sed -i"" -e "s:netmash.net:10.0.2.2:g" src/android/cyrus/User.java
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/netmashconfig.db
+	sed -i"" -e "s:cyrus.net:10.0.2.2:g" res/raw/cyrusconfig.db
+	sed -i"" -e "s:cyrus.net:10.0.2.2:g" res/raw/top.db
+	sed -i"" -e "s:cyrus.net:10.0.2.2:g" src/android/cyrus/User.java
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/top.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/android/cyrus/User.java
 
 setapplanconfig:
-	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" res/raw/netmashconfig.db
-	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" res/raw/top.db
-	sed -i"" -e "s:netmash.net:$(LOCAL_IP):g" src/android/cyrus/User.java
-	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/netmashconfig.db
+	sed -i"" -e "s:cyrus.net:$(LOCAL_IP):g" res/raw/cyrusconfig.db
+	sed -i"" -e "s:cyrus.net:$(LOCAL_IP):g" res/raw/top.db
+	sed -i"" -e "s:cyrus.net:$(LOCAL_IP):g" src/android/cyrus/User.java
+	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/cyrusconfig.db
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/top.db
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" src/android/cyrus/User.java
 
 setappremconfig:
-	sed -i"" -e    "s:10.0.2.2:netmash.net:g" res/raw/netmashconfig.db
-	sed -i"" -e    "s:10.0.2.2:netmash.net:g" res/raw/top.db
-	sed -i"" -e    "s:10.0.2.2:netmash.net:g" src/android/cyrus/User.java
-	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" res/raw/netmashconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" res/raw/top.db
-	sed -i"" -e "s:$(LOCAL_IP):netmash.net:g" src/android/cyrus/User.java
+	sed -i"" -e    "s:10.0.2.2:cyrus.net:g" res/raw/cyrusconfig.db
+	sed -i"" -e    "s:10.0.2.2:cyrus.net:g" res/raw/top.db
+	sed -i"" -e    "s:10.0.2.2:cyrus.net:g" src/android/cyrus/User.java
+	sed -i"" -e "s:$(LOCAL_IP):cyrus.net:g" res/raw/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):cyrus.net:g" res/raw/top.db
+	sed -i"" -e "s:$(LOCAL_IP):cyrus.net:g" src/android/cyrus/User.java
 
 setvmemuconfig:
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/netmashconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/static.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/static.db
 
 setvm2emuconfig:
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/netmashconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/world.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/world.db
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/netmashconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/netmashconfig.db
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/world.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/world.db
 
 setvm2lanconfig:
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/netmashconfig.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/netmashconfig.db
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/world.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/world.db
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/netmashconfig.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/netmashconfig.db
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/world.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/world.db
 
 setvm2tstconfig:
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/netmashconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/world.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/world.db
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/netmashconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/netmashconfig.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/world.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/world.db
 
 setvm2remconfig:
-	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm1/netmashconfig.db
-	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm1/world.db
-	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm2/netmashconfig.db
-	sed -i"" -e  "s:10.0.2.2:netmash.net:g" src/server/vm2/world.db
+	sed -i"" -e  "s:10.0.2.2:cyrus.net:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:cyrus.net:g" src/server/vm1/world.db
+	sed -i"" -e  "s:10.0.2.2:cyrus.net:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:cyrus.net:g" src/server/vm2/world.db
 
 setvmtestconfig:
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/netmashconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/netmashconfig.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
 
 netconfig:
-	cp src/server/vm2/netconfig.db src/server/vm2/netmashconfig.db
+	cp src/server/vm2/netconfig.db src/server/vm2/cyrusconfig.db
 
 omconfig:
-	cp src/server/vm2/omconfig.db src/server/vm2/netmashconfig.db
+	cp src/server/vm2/omconfig.db src/server/vm2/cyrusconfig.db
 
 curconfig:
-	cp src/server/vm2/curconfig.db src/server/vm2/netmashconfig.db
+	cp src/server/vm2/curconfig.db src/server/vm2/cyrusconfig.db
 
 tstconfig:
-	cp src/server/vm2/allconfig.db src/server/vm2/netmashconfig.db
+	cp src/server/vm2/allconfig.db src/server/vm2/cyrusconfig.db
 
 # -------------------------------------------------------------------
 
 setup:
-	vim -o -N res/raw/netmashconfig.db res/raw/top.db src/server/vm1/netmashconfig.db src/server/vm1/test.db src/server/vm2/curconfig.db src/server/vm2/allconfig.db src/server/vm2/test.db
+	vim -o -N res/raw/cyrusconfig.db res/raw/top.db src/server/vm1/cyrusconfig.db src/server/vm1/test.db src/server/vm2/curconfig.db src/server/vm2/allconfig.db src/server/vm2/test.db
 
 showtestresults:
 	sleep 1
-	egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx' src/server/vm2/netmash.log
+	egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx' src/server/vm2/cyrus.log
 
 whappen:
-	vim -o -N src/server/vm1/netmash.log src/server/vm2/netmash.log src/server/vm1/netmash.db src/server/vm2/netmash.db
+	vim -o -N src/server/vm1/cyrus.log src/server/vm2/cyrus.log src/server/vm1/cyrus.db src/server/vm2/cyrus.db
 
 logboth:
 	xterm -geometry 97x50+0+80 -e make logcat &
@@ -273,25 +273,25 @@ lancat:
 	adb -d logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"
 
 logout1:
-	tail -9999f src/server/vm1/netmash.log
+	tail -9999f src/server/vm1/cyrus.log
 
 logout2:
-	tail -9999f src/server/vm2/netmash.log
+	tail -9999f src/server/vm2/cyrus.log
 
 # -------------------------------------------------------------------
 
 classes: \
-./build/classes/netmash/Cyrus.class \
-./build/classes/netmash/lib/JSON.class \
-./build/classes/netmash/lib/TestJSON.class \
-./build/classes/netmash/lib/Utils.class \
-./build/classes/netmash/forest/WebObject.class \
-./build/classes/netmash/forest/FunctionalObserver.class \
-./build/classes/netmash/forest/Fjord.class \
-./build/classes/netmash/forest/CyrusLanguage.class \
-./build/classes/netmash/forest/Persistence.class \
-./build/classes/netmash/types/Time.class \
-./build/classes/netmash/types/PresenceTracker.class \
+./build/classes/cyrus/Cyrus.class \
+./build/classes/cyrus/lib/JSON.class \
+./build/classes/cyrus/lib/TestJSON.class \
+./build/classes/cyrus/lib/Utils.class \
+./build/classes/cyrus/forest/WebObject.class \
+./build/classes/cyrus/forest/FunctionalObserver.class \
+./build/classes/cyrus/forest/Fjord.class \
+./build/classes/cyrus/forest/CyrusLanguage.class \
+./build/classes/cyrus/forest/Persistence.class \
+./build/classes/cyrus/types/Time.class \
+./build/classes/cyrus/types/PresenceTracker.class \
 ./build/classes/server/types/UserHome.class \
 ./build/classes/server/types/DynamicFile.class \
 
@@ -309,7 +309,7 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 	mkdir -p ./build/classes
 
 jar: ./build/classes classes
-	( cd ./build/classes; jar cfm ../netmash.jar ../META-INF/MANIFEST.MF . )
+	( cd ./build/classes; jar cfm ../cyrus.jar ../META-INF/MANIFEST.MF . )
 
 # -------------------------------------------------------------------
 
@@ -325,7 +325,7 @@ kill:
 	@-pkill -f 'java -classpath'
 
 clean:
-	rm -rf ./build/classes/netmash
+	rm -rf ./build/classes/cyrus
 	rm -rf ./build/classes/server
 	rm -f  ./src/server/vm?/*.class
 	rm -rf bin/classes bin/classes.dex
@@ -334,9 +334,9 @@ clean:
 	rm -f  ,*
 
 veryclean: kill clean setappemuconfig netconfig setvm2emuconfig setemumapkey
-	rm -f  src/server/vm[12]/netmash.log
-	rm -f  src/server/vm[12]/netmash.db
-	rm -f  src/server/vm2/netmashconfig.db
+	rm -f  src/server/vm[12]/cyrus.log
+	rm -f  src/server/vm[12]/cyrus.db
+	rm -f  src/server/vm2/cyrusconfig.db
 	rm -rf bin gen
 
 # -------------------------------------------------------------------
