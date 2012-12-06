@@ -288,7 +288,7 @@ classes: \
 ./build/classes/netmash/forest/WebObject.class \
 ./build/classes/netmash/forest/FunctionalObserver.class \
 ./build/classes/netmash/forest/Fjord.class \
-./build/classes/netmash/forest/ObjectMash.class \
+./build/classes/netmash/forest/Cyrus.class \
 ./build/classes/netmash/forest/Persistence.class \
 ./build/classes/netmash/types/Time.class \
 ./build/classes/netmash/types/PresenceTracker.class \

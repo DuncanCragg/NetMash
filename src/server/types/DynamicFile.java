@@ -4,7 +4,7 @@ import java.io.*;
 import netmash.lib.JSON;
 import netmash.forest.*;
 
-public class DynamicFile extends ObjectMash {
+public class DynamicFile extends Cyrus {
 
     public DynamicFile(){}
 

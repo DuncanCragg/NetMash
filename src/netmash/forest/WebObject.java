@@ -817,8 +817,8 @@ public class WebObject {
         return r;
     }
 
-    public String toString(boolean sumer){
-        if(!sumer) return toString();
+    public String toString(boolean cyrus){
+        if(!cyrus) return toString();
         if(isShell()) return "{ UID: "+uid+
                            "\n  Notify: "+setToListString(notify, true)+
                            "\n  Alertedin: "+setToListString(alertedin, true)+

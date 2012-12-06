@@ -26,9 +26,9 @@ public class JSON {
         chp=0;
     }
 
-    /** Make from a JSON InputStream, sumer option. */
-    public JSON(InputStream is, boolean sumer) throws UnsupportedEncodingException, IOException{
-        this.sumer=sumer;
+    /** Make from a JSON InputStream, cyrus option. */
+    public JSON(InputStream is, boolean cyrus) throws UnsupportedEncodingException, IOException{
+        this.cyrus=cyrus;
         chars = getStringFromIS(is).toCharArray();
         chp=0;
     }
@@ -39,9 +39,9 @@ public class JSON {
         chp=0;
     }
 
-    /** Make from a JSON file, sumer option. */
-    public JSON(File file, boolean sumer) throws FileNotFoundException, IOException{
-        this.sumer=sumer;
+    /** Make from a JSON file, cyrus option. */
+    public JSON(File file, boolean cyrus) throws FileNotFoundException, IOException{
+        this.cyrus=cyrus;
         chars = getStringFromFile(file).array();
         chp=0;
     }
@@ -62,16 +62,16 @@ public class JSON {
         chp=0;
     }
 
-    /** Make from given String, with switch for Sumer format. */
-    public JSON(String str, boolean sumer){
-        this.sumer=sumer;
+    /** Make from given String, with switch for Cyrus format. */
+    public JSON(String str, boolean cyrus){
+        this.cyrus=cyrus;
         chars = str.toCharArray();
         chp=0;
     }
 
-    /** Make from given CharBuffer, with switch for Sumer format. */
-    public JSON(CharBuffer charbuffer, boolean sumer){
-        this.sumer=sumer;
+    /** Make from given CharBuffer, with switch for Cyrus format. */
+    public JSON(CharBuffer charbuffer, boolean cyrus){
+        this.cyrus=cyrus;
         chars = charbuffer.toString().toCharArray();
         chp=0;
     }
@@ -438,10 +438,10 @@ public class JSON {
         return new String(chars);
     }
 
-    /** Format this JSON: in Sumer notation. */
-    public String toString(boolean sumer){
+    /** Format this JSON: in Cyrus notation. */
+    public String toString(boolean cyrus){
         ensureContent();
-        ensureChars(sumer);
+        ensureChars(cyrus);
         return new String(chars);
     }
 
@@ -461,10 +461,10 @@ public class JSON {
         return "{ "+prepend.trim()+"\n"+new String(chars).substring(2);
     }
 
-    /** Format this JSON: prepend given string to top hash content; choose sumer. */
-    public String toString(String prepend, boolean sumer){
+    /** Format this JSON: prepend given string to top hash content; choose cyrus. */
+    public String toString(String prepend, boolean cyrus){
         ensureContent();
-        ensureChars(sumer);
+        ensureChars(cyrus);
         if(chars.length< 2){ log("Failed toString with prepend:\n"+prepend+"\n"+this); return new String(chars); }
         return "{ "+prepend.trim()+"\n"+new String(chars).substring(2);
     }
@@ -484,7 +484,7 @@ public class JSON {
     private char[]        chars;
     private int           chp;
     private LinkedHashMap tophash = null;
-    private boolean       sumer=false;
+    private boolean       cyrus=false;
     private LinkedHashMap<String,Object> getObjectCache=new LinkedHashMap<String,Object>();
 
     //----------------------------------
@@ -522,7 +522,7 @@ public class JSON {
     private void ensureContent(){
         if(tophash!=null) return;
         if(chars==null) return;
-        setTopHash(!sumer? readHashMap(): readSumerHash());
+        setTopHash(!cyrus? readHashMap(): readCyrusHash());
     }
 
     private void setTopHash(LinkedHashMap hm){
@@ -535,16 +535,16 @@ public class JSON {
     //----------------------------------
 
     @SuppressWarnings("unchecked")
-    private Object readSumerObject(boolean terminateOnTag){
+    private Object readCyrusObject(boolean terminateOnTag){
         LinkedList ll=new LinkedList();
         for(int i=0; i<40; i++, chp++){
             while(chp<chars.length && chars[chp]<=' ') chp++;
             if(chp>=chars.length){ chp--; break; }
             int chpsave=chp;
-            if(chars[chp]=='{'){ ll.add(readSumerHash()); continue; }
-            if(chars[chp]=='('){ ll.add(readSumerList()); continue; }
+            if(chars[chp]=='{'){ ll.add(readCyrusHash()); continue; }
+            if(chars[chp]=='('){ ll.add(readCyrusList()); continue; }
             if(chars[chp]=='"'){ ll.add(readString());    continue; }
-            String s=readSumerString();
+            String s=readCyrusString();
             int chpstringok=chp;
             chp=chpsave;
             if(s==null || ( terminateOnTag && s.endsWith(":")) || s.equals("}") || s.equals(")")){ chp--; chp--; break; }
@@ -560,7 +560,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedHashMap readSumerHash(){
+    private LinkedHashMap readCyrusHash(){
         for(; chp<chars.length; chp++) if(chars[chp]>' '){ if(chars[chp]=='{') break; else parseError('{'); }
         chp++;
         LinkedHashMap hm = new LinkedHashMap();
@@ -599,7 +599,7 @@ public class JSON {
 
             if(!doobj){
                 if(chars[chp]>' '){
-                    hm.put(tag, readSumerObject(true));
+                    hm.put(tag, readCyrusObject(true));
                     doobj=true;
                 }
                 continue;
@@ -620,7 +620,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedList readSumerList(){
+    private LinkedList readCyrusList(){
         chp++;
         LinkedList ll = new LinkedList();
         boolean docom=false;
@@ -629,7 +629,7 @@ public class JSON {
                 break;
             }
             if(chars[chp]>' '){
-                Object o=readSumerObject(false);
+                Object o=readCyrusObject(false);
                 if(o instanceof LinkedList) ll.addAll((LinkedList)o);
                 else ll.add(o);
                 continue;
@@ -638,7 +638,7 @@ public class JSON {
         return ll;
     }
 
-    private String readSumerString(){
+    private String readCyrusString(){
         if(chars[chp]=='"') return readString();
         StringBuilder buf = new StringBuilder();
         for(; chp<chars.length; chp++){
@@ -1283,39 +1283,39 @@ public class JSON {
     }
 
     private void ensureChars(int maxlength){
-        this.sumer=false;
+        this.cyrus=false;
         String str=(tophash!=null)? hashToString(tophash,2,maxlength,false): "";
         chars = str.toCharArray();
         chp=0;
     }
 
-    private void ensureChars(boolean sumer){
-        this.sumer=sumer;
-        String str=(tophash!=null)? hashToString(tophash,2,0,sumer): "";
+    private void ensureChars(boolean cyrus){
+        this.cyrus=cyrus;
+        String str=(tophash!=null)? hashToString(tophash,2,0,cyrus): "";
         chars = str.toCharArray();
         chp=0;
     }
 
-    private String objectToString(Object o, int indent, int maxlength, boolean sumer, boolean tagdelim){
+    private String objectToString(Object o, int indent, int maxlength, boolean cyrus, boolean tagdelim){
         if(o==null) return "null";
         if(o instanceof Number)        return toNicerString((Number)o);
-        if(o instanceof String)        return stringToString((String)o, sumer);
-        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength, sumer);
-        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength, sumer, tagdelim);
+        if(o instanceof String)        return stringToString((String)o, cyrus);
+        if(o instanceof LinkedHashMap) return hashToString((LinkedHashMap)o, indent+2, maxlength, cyrus);
+        if(o instanceof LinkedList)    return listToString((LinkedList)   o, indent+2, maxlength, cyrus, tagdelim);
         return o.toString();
     }
 
-    private String stringToString(String s, boolean sumer){
+    private String stringToString(String s, boolean cyrus){
         if(s.equals("")) return "\"\"";
         String r=replaceEscapableChars(s);
-        if(!sumer || r.indexOf(" ")!= -1) return "\""+r+"\"";
+        if(!cyrus || r.indexOf(" ")!= -1) return "\""+r+"\"";
         else return r;
     }
 
-    private String hashToString(LinkedHashMap hm, int indent, int maxlength, boolean sumer){
+    private String hashToString(LinkedHashMap hm, int indent, int maxlength, boolean cyrus){
         if(hm==null) return "null";
         if(hm.size()==0) return "{ }";
-        String quote=(sumer?"":"\"");
+        String quote=(cyrus?"":"\"");
         boolean structured=false;
         if(maxlength==0){
             int i=0;
@@ -1342,22 +1342,22 @@ public class JSON {
             Object val = hm.get(tag);
             if(structured){
                 if(i==0) buf.append(                  indentation(indent));
-                else     buf.append((sumer?"\n":",\n")+indentation(indent));
-            } else buf.append(i==0||sumer? " ": ", ");
-            buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, sumer, true));
+                else     buf.append((cyrus?"\n":",\n")+indentation(indent));
+            } else buf.append(i==0||cyrus? " ": ", ");
+            buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, cyrus, true));
         }
         if(structured) buf.append("\n"+indentation(indent-2)+"}");
         else           buf.append(" }");
         return buf.toString();
     }
 
-    private String listToString(LinkedList ll, int indent, int maxlength, boolean sumer, boolean tagdelim){
+    private String listToString(LinkedList ll, int indent, int maxlength, boolean cyrus, boolean tagdelim){
         if(ll==null)  return "null";
-        if(ll.size()==0) return sumer? "( )": "[ ]";
-        if(ll.size()==1 && sumer) return objectToString(ll.get(0), indent, maxlength, sumer, false);
+        if(ll.size()==0) return cyrus? "( )": "[ ]";
+        if(ll.size()==1 && cyrus) return objectToString(ll.get(0), indent, maxlength, cyrus, false);
         boolean structured=false;
-        String ob=sumer? (tagdelim? "": "("): "[";
-        String cb=sumer? (tagdelim? "": ")"): "]";
+        String ob=cyrus? (tagdelim? "": "("): "[";
+        String cb=cyrus? (tagdelim? "": ")"): "]";
         if(maxlength==0){
             int i=0;
             int w=0;
@@ -1388,9 +1388,9 @@ public class JSON {
         for(Object val: ll){
             if(structured){
                 if(i==0) buf.append(                  indentation(indent));
-                else     buf.append((sumer?"\n":",\n")+indentation(indent));
-            } else buf.append((i==0||sumer)? " ": ", ");
-            buf.append(objectToString(val, indent, maxlength, sumer, false));
+                else     buf.append((cyrus?"\n":",\n")+indentation(indent));
+            } else buf.append((i==0||cyrus)? " ": ", ");
+            buf.append(objectToString(val, indent, maxlength, cyrus, false));
             i++;
         }
         if(cb.length() >0){

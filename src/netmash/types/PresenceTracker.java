@@ -6,7 +6,7 @@ import static netmash.lib.Utils.*;
 
 /** Tracks Presence of Users viewing it.
   */
-public class PresenceTracker extends ObjectMash {
+public class PresenceTracker extends Cyrus {
 
     public PresenceTracker(){}
 

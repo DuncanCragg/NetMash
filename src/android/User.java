@@ -31,7 +31,7 @@ import static netmash.lib.Utils.*;
 
 /** User viewing the Object Web.
   */
-public class User extends ObjectMash {
+public class User extends Cyrus {
 
     // ---------------------------------------------------------
 
@@ -42,13 +42,13 @@ public class User extends ObjectMash {
         String fullName=UserContacts.getUsersFullName();
         String your=fullName.equals("You")? "Your": fullName+"'s";
 
-        ObjectMash contact = new ObjectMash(
+        Cyrus contact = new Cyrus(
               "{ \"is\": [ \"editable\", \"contact\" ], \n"+
               "  \"full-name\": \""+fullName+"\", \n"+
               "  \"address\": { } \n"+
               "}");
 
-        ObjectMash links = new ObjectMash(
+        Cyrus links = new Cyrus(
               "{ \"is\": [ \"link\", \"list\", \"editable\" ], \n"+
               "  \"list\": null \n"+
               "}");
@@ -826,7 +826,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
     }
 
     private String spawnUIDNew(String source){
-        while(source.indexOf(" uid-new ")!= -1){ source=source.replace(" uid-new ", " "+spawn(new ObjectMash("{ \"is\": [ \"editable\" ] }"))+" "); }
+        while(source.indexOf(" uid-new ")!= -1){ source=source.replace(" uid-new ", " "+spawn(new Cyrus("{ \"is\": [ \"editable\" ] }"))+" "); }
         return source;
     }
 

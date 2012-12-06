@@ -27,7 +27,7 @@ public class Persistence implements FileUser {
     private InputStream      topdbis=null;
     private FileOutputStream topdbos=null;
     private JSON netmashconfig=null;
-    private boolean sumer=false;
+    private boolean cyrus=false;
 
     private ConcurrentHashMap<String,CharBuffer> jsoncache = new ConcurrentHashMap<String,CharBuffer>();
     private CopyOnWriteArraySet<WebObject>       syncable  = new CopyOnWriteArraySet<WebObject>();
@@ -79,8 +79,8 @@ public class Persistence implements FileUser {
             if(jsonbytes==null) return;
 
             CharBuffer jsonchars = UTF8.decode(jsonbytes);
-            String uid = findUIDAndDetectSumer(jsonchars);
-            if(uid.equals("netmashconfig")) netmashconfig = new JSON(jsonchars,sumer);
+            String uid = findUIDAndDetectCyrus(jsonchars);
+            if(uid.equals("netmashconfig")) netmashconfig = new JSON(jsonchars,cyrus);
             else jsoncache.put(uid, jsonchars);
         }
     }
@@ -99,13 +99,13 @@ public class Persistence implements FileUser {
         CharBuffer jsonchars = jsoncache.get(uid);
         if(jsonchars==null) return null;
         jsonchars.position(0);
-        JSON json = new JSON(jsonchars,sumer);
+        JSON json = new JSON(jsonchars,cyrus);
         String classname = json.stringPathN("Class"); json.removePath("Class");
         WebObject w=null;
         try{
             if(classname!=null && classname.length() >0){
                 w=(WebObject)Class.forName(classname).newInstance();
-            } else w=new ObjectMash();
+            } else w=new Cyrus();
             w.construct(json);
             return w;
         }catch(Exception e){
@@ -126,7 +126,7 @@ public class Persistence implements FileUser {
             for(WebObject w: syncable){
                 syncable.remove(w);
                 CharBuffer jsonchars;
-                synchronized(w){ jsonchars=CharBuffer.wrap(w.toString(sumer)+"\n"); }
+                synchronized(w){ jsonchars=CharBuffer.wrap(w.toString(cyrus)+"\n"); }
                 jsoncache.put(w.uid, jsonchars);
                 ByteBuffer bytebuffer = UTF8.encode(jsonchars);
                 if(topdbos==null){
@@ -149,12 +149,12 @@ public class Persistence implements FileUser {
     static public final String  UIDRES = "^\\s*\\{\\s*UID:\\s*([^\\s]+).*";
     static public final Pattern UIDPAS = Pattern.compile(UIDRES, Pattern.MULTILINE | Pattern.DOTALL);
 
-    public String findUIDAndDetectSumer(CharBuffer chars){
+    public String findUIDAndDetectCyrus(CharBuffer chars){
         Matcher m = UIDPAJ.matcher(chars);
         if(!m.matches()){
                 m = UIDPAS.matcher(chars);
                 if(!m.matches()) return null;
-                sumer=true;
+                cyrus=true;
         }
         return m.group(1);
     }

@@ -11,21 +11,21 @@ import static netmash.lib.Utils.*;
 
 /** Object Mash Language.
   */
-public class ObjectMash extends WebObject {
+public class Cyrus extends WebObject {
 
     private boolean extralogging = false;
 
-    public ObjectMash(){ extralogging = Kernel.config.boolPathN("rules:log"); }
+    public Cyrus(){ extralogging = Kernel.config.boolPathN("rules:log"); }
 
-    public ObjectMash(String s){ super(s); extralogging = Kernel.config.boolPathN("rules:log"); }
+    public Cyrus(String s){ super(s); extralogging = Kernel.config.boolPathN("rules:log"); }
 
-    public ObjectMash(LinkedHashMap hm){ super(hm); extralogging = Kernel.config.boolPathN("rules:log"); }
+    public Cyrus(LinkedHashMap hm){ super(hm); extralogging = Kernel.config.boolPathN("rules:log"); }
 
-    public ObjectMash(JSON json){ super(json); extralogging = Kernel.config.boolPathN("rules:log"); }
+    public Cyrus(JSON json){ super(json); extralogging = Kernel.config.boolPathN("rules:log"); }
 
     public void evaluate(){
         contentSetPushAll("Rules",getEvalRules());
-        if(extralogging) log("Running ObjectMash on "+uid+": "+contentHash("#"));
+        if(extralogging) log("Running Cyrus on "+uid+": "+contentHash("#"));
         boolean modified=statemod;
         int i=0; for(; i<20; i++){
             statemod=false;
@@ -496,7 +496,7 @@ public class ObjectMash extends WebObject {
     @SuppressWarnings("unchecked")
     public Object copyObject(Object o, boolean asis){
         if(o==null) return null;
-        if(o instanceof String)  return ((String)o).equals("uid-new")? spawn(new ObjectMash("{ \"is\": [ \"editable\" ] }")): o;
+        if(o instanceof String)  return ((String)o).equals("uid-new")? spawn(new Cyrus("{ \"is\": [ \"editable\" ] }")): o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o), asis);
