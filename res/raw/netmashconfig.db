@@ -1,4 +1,4 @@
-{ name: NetMash
+{ name: Cyrus
   kernel: { threadpool: 3 }
   persist: { db: netmash.db
              syncrate: 100

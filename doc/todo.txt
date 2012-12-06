@@ -10,7 +10,7 @@ Xmas demo: local only, reasonably productionised
  + fix lighting - up to 4 lights - phong or matte shaders - more ambient
  + -----------------------------------------------------
  + naming, renamings
-    - Netmash/netmash
+    - NetMash/netmash
     - Cyrus the app; Cyrus the PL; app/cyrus(+json) the MT; Cyrus std types
     - items(/properties/props) not objects(/fields/tags) - in gui and code
     - Items/properties not Objects; (Net?)Items not WebObjects

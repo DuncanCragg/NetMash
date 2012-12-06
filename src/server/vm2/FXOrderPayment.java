@@ -2,7 +2,7 @@
 import netmash.forest.WebObject;
 
 /** FX Order Object from Book Chapter example.
-  * In NetMash, these WebObject classes are buckets for animation rules, as there isn't a
+  * In Cyrus, these WebObject classes are buckets for animation rules, as there isn't a
   * strict concept of class in FOREST. Here we bundle the code for two 'classes' - orders
   * and payments - into one Java file for convenience.
   */

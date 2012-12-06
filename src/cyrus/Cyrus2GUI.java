@@ -1,11 +1,10 @@
 
-package android;
+package cyrus;
 
 import java.util.*;
 import java.util.regex.*;
 import java.util.concurrent.*;
 
-import android.gui.*;
 import android.os.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
@@ -24,6 +23,8 @@ import netmash.forest.*;
 import netmash.platform.Kernel;
 
 import static netmash.lib.Utils.*;
+
+import cyrus.gui.*;
 
 /** Convertors from std Cyrus JSON to common GUI JSON.
   */
@@ -540,8 +541,8 @@ public class Cyrus2GUI {
         if(address==null || address.equals("")) return null;
         LinkedHashMap<String,Double> loc=geoCodeCache.get(address);
         if(loc!=null){ log("cached result="+loc); return loc; }
-        if(NetMash.top==null){ log("No Activity to geoCode from"); return null; }
-        Geocoder geocoder = new Geocoder(NetMash.top.getApplicationContext(), Locale.getDefault());
+        if(Cyrus.top==null){ log("No Activity to geoCode from"); return null; }
+        Geocoder geocoder = new Geocoder(Cyrus.top.getApplicationContext(), Locale.getDefault());
         try{
             List<Address> geos = geocoder.getFromLocationName(address, 1);
             if(!geos.isEmpty()){
@@ -760,8 +761,8 @@ public class Cyrus2GUI {
         if(bitmap!=null) return key;
         bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
         Canvas canvas = new Canvas(bitmap);
-        if(NetMash.top!=null){
-            Drawable background = NetMash.top.getPlaceHolderDrawable();
+        if(Cyrus.top!=null){
+            Drawable background = Cyrus.top.getPlaceHolderDrawable();
             background.setBounds(0, 0, 256, 256);
             background.draw(canvas);
         }

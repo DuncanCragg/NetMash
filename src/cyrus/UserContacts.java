@@ -1,10 +1,9 @@
 
-package android;
+package cyrus;
 
 import java.util.*;
 import java.util.regex.*;
 
-import android.gui.*;
 import android.os.*;
 
 import android.content.*;
@@ -22,12 +21,14 @@ import netmash.lib.JSON;
 import netmash.forest.*;
 import netmash.platform.Kernel;
 
+import cyrus.gui.*;
+
 /** Access to User's contacts list.
 */
 public class UserContacts {
 
     static String getUsersFullName(){
-        AccountManager acctmgr = AccountManager.get(NetMash.top);
+        AccountManager acctmgr = AccountManager.get(Cyrus.top);
         Account[] accounts = acctmgr.getAccountsByType("com.google");
         for(Account account: accounts){
             String name=account.name;
@@ -52,8 +53,8 @@ public class UserContacts {
 
     static public LinkedList populateContacts(User user){
         LinkedList contactslist = new LinkedList();
-        if(NetMash.top==null) return null;
-        Context context = NetMash.top.getApplicationContext();
+        if(Cyrus.top==null) return null;
+        Context context = Cyrus.top.getApplicationContext();
         ContentResolver cr=context.getContentResolver();
         Cursor concur = cr.query(Contacts.CONTENT_URI, null, null, null, null);
         int idcol   = concur.getColumnIndex(Contacts._ID);

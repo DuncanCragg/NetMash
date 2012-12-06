@@ -1,5 +1,5 @@
 
-package android.gui;
+package cyrus.gui;
 
 import java.util.*;
 import java.util.regex.*;
@@ -33,7 +33,7 @@ import netmash.forest.*;
 
 import static netmash.lib.Utils.*;
 
-import android.User;
+import cyrus.User;
 
 /**  Cyrus main.
   */

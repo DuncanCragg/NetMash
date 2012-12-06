@@ -1,5 +1,5 @@
 
-package android.gui;
+package cyrus.gui;
 
 import java.util.*;
 
@@ -32,9 +32,9 @@ public class NetMashMapOverlay extends ItemizedOverlay implements DialogInterfac
     }
 
     private ArrayList<Item> overlayitems = new ArrayList<Item>();
-    private NetMash netmash;
+    private Cyrus netmash;
 
-    public NetMashMapOverlay(Drawable defaultMarker, NetMash netmash, String mapUID){
+    public NetMashMapOverlay(Drawable defaultMarker, Cyrus netmash, String mapUID){
         super(boundCenterBottom(defaultMarker));
         populate();
         this.netmash = netmash;

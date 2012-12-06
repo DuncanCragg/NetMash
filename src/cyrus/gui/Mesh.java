@@ -1,11 +1,12 @@
 
-package android.gui;
+package cyrus.gui;
 
 import java.util.*;
 import java.nio.*;
 
 import android.util.Log;
-import android.User;
+
+import cyrus.User;
 
 import static netmash.lib.Utils.*;
 

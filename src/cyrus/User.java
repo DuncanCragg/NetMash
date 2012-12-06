@@ -1,11 +1,10 @@
 
-package android;
+package cyrus;
 
 import java.util.*;
 import java.util.regex.*;
 import java.util.concurrent.*;
 
-import android.gui.*;
 import android.os.*;
 import android.util.*;
 import android.graphics.*;
@@ -23,6 +22,7 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
+import cyrus.gui.*;
 import netmash.lib.*;
 import netmash.forest.*;
 import netmash.platform.Kernel;
@@ -31,7 +31,7 @@ import static netmash.lib.Utils.*;
 
 /** User viewing the Object Web.
   */
-public class User extends Cyrus {
+public class User extends CyrusLanguage {
 
     // ---------------------------------------------------------
 
@@ -42,13 +42,13 @@ public class User extends Cyrus {
         String fullName=UserContacts.getUsersFullName();
         String your=fullName.equals("You")? "Your": fullName+"'s";
 
-        Cyrus contact = new Cyrus(
+        CyrusLanguage contact = new CyrusLanguage(
               "{ \"is\": [ \"editable\", \"contact\" ], \n"+
               "  \"full-name\": \""+fullName+"\", \n"+
               "  \"address\": { } \n"+
               "}");
 
-        Cyrus links = new Cyrus(
+        CyrusLanguage links = new CyrusLanguage(
               "{ \"is\": [ \"link\", \"list\", \"editable\" ], \n"+
               "  \"list\": null \n"+
               "}");
@@ -77,7 +77,7 @@ public class User extends Cyrus {
         currentUser.funcobs.cacheSaveAndEvaluate(currentUser, true);
 
         if(homeusers!=null) currentUser.notifying(list(homeusers));
-        NetMash.top.onUserReady(currentUser);
+        Cyrus.top.onUserReady(currentUser);
     }
 
     public User(String jsonstring){ super(jsonstring); }
@@ -105,7 +105,7 @@ public class User extends Cyrus {
               "}");
     }
 
-    public User(){ if(currentUser==null){ currentUser=this; if(NetMash.top!=null) NetMash.top.onUserReady(currentUser); } }
+    public User(){ if(currentUser==null){ currentUser=this; if(Cyrus.top!=null) Cyrus.top.onUserReady(currentUser); } }
 
     static User newForm(String guiuid, String useruid){
         return new User("{ \"is\": \"form\",\n"+
@@ -249,7 +249,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         if(objectuid.equals("editing")){
             String edituid=content("private:editing");
             if(ndy*ndy>ndx*ndx/2) getObjectUpdating(edituid, "", true).setEditVal(edituid,ndy);
-            else if(NetMash.top!=null) NetMash.top.getKeys(ndx>0);
+            else if(Cyrus.top!=null) Cyrus.top.getKeys(ndx>0);
         }
         else new Evaluator(this){
             public void evaluate(){
@@ -339,7 +339,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
             float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
             if(d<10){
-                if(NetMash.top!=null) NetMash.top.onerenderer.resetCoordsAndView(dx,dy,dz);
+                if(Cyrus.top!=null) Cyrus.top.onerenderer.resetCoordsAndView(dx,dy,dz);
                 contentList("coords", list(dx,dy,dz));
                 return content(String.format("place:sub-objects:%d:object",i));
             }
@@ -414,25 +414,25 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         new Evaluator(this){
             public void evaluate(){
                 switch(itemid){
-                    case NetMash.MENU_ITEM_ADD:
+                    case Cyrus.MENU_ITEM_ADD:
                     break;
-                    case NetMash.MENU_ITEM_LNX:
+                    case Cyrus.MENU_ITEM_LNX:
                         history.forward();
                         content("private:viewing", content("private:links"));
                         content("private:viewas", "gui");
                         showWhatIAmViewing();
                     break;
-                    case NetMash.MENU_ITEM_GUI:
+                    case Cyrus.MENU_ITEM_GUI:
                         history.forward();
                         content("private:viewas", "gui");
                         showWhatIAmViewing();
                     break;
-                    case NetMash.MENU_ITEM_MAP:
+                    case Cyrus.MENU_ITEM_MAP:
                         history.forward();
                         content("private:viewas", "map");
                         showWhatIAmViewing();
                     break;
-                    case NetMash.MENU_ITEM_RAW:
+                    case Cyrus.MENU_ITEM_RAW:
                         history.forward();
                         content("private:viewas", "raw");
                         showWhatIAmViewing();
@@ -614,10 +614,10 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
                 if(contentListContainsAll("is", list("editable", "rule"))){
                     LinkedHashMap rule=null;
                     try{
-                        JSON json=new JSON(NetMash.top.getRawSource(),true);
+                        JSON json=new JSON(Cyrus.top.getRawSource(),true);
                         json.setPathAdd("is", "editable");
                         rule=makeEditRule("",contentInt("editable:Version"),json);
-                    }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]); }
+                    }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1]); }
                     if(rule!=null) contentMerge(rule);
                 }
                 else
@@ -814,11 +814,11 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         else
             new Evaluator(o){ public void evaluate(){ try{
                 if(!self.contentIsOrListContains("is", "editable")) return;
-                if(NetMash.top==null) return;
-                String source=spawnUIDNew(NetMash.top.getRawSource());
+                if(Cyrus.top==null) return;
+                String source=spawnUIDNew(Cyrus.top.getRawSource());
                 try{
                 self.contentReplace(new JSON(source,true));
-                }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1]); }
+                }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1]); }
                 self.contentSetAdd("is", "editable");
                 self.evaluate();
             }catch(Exception e){ e.printStackTrace();
@@ -826,7 +826,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
     }
 
     private String spawnUIDNew(String source){
-        while(source.indexOf(" uid-new ")!= -1){ source=source.replace(" uid-new ", " "+spawn(new Cyrus("{ \"is\": [ \"editable\" ] }"))+" "); }
+        while(source.indexOf(" uid-new ")!= -1){ source=source.replace(" uid-new ", " "+spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }"))+" "); }
         return source;
     }
 
@@ -1000,7 +1000,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
                 }
                 uiJSON=new JSON(meshhash);
             }
-            if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
+            if(Cyrus.top!=null && uiJSON!=null) Cyrus.top.drawJSON(uiJSON, content("private:viewing"));
         }
     }
 
@@ -1034,7 +1034,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
                 JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
                 uiJSON.stringPath("title", title);
                 uiJSON.listPath("view", viewlist);
-                if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
+                if(Cyrus.top!=null) Cyrus.top.drawJSON(uiJSON, content("private:viewing"));
             }
         }
     }
@@ -1050,7 +1050,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
             JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
             uiJSON.stringPath("title", title);
             uiJSON.hashPath("view", viewhash);
-            if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
+            if(Cyrus.top!=null) Cyrus.top.drawJSON(uiJSON, content("private:viewing"));
         }
     }
 

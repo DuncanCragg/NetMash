@@ -1,4 +1,4 @@
-package android.gui;
+package cyrus.gui;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -23,7 +23,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private boolean debugGL=false;
 
-    private NetMash netmash;
+    private Cyrus netmash;
     private Mesh mesh;
 
     private int texture0Loc;
@@ -82,7 +82,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     static String lightVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; attribute vec2 tex; varying vec2 texturePt; void main(){ texturePt = tex; gl_Position = mvpm*pos; }";
     static String lightFragmentShaderSource     = "precision mediump float; uniform vec3 lightCol; uniform sampler2D texture0; varying vec2 texturePt; void main(){ gl_FragColor=vec4(lightCol,1.0)*texture2D(texture0,texturePt); }";
 
-    public Renderer(NetMash netmash, LinkedHashMap hm) {
+    public Renderer(Cyrus netmash, LinkedHashMap hm) {
         debugGL=Kernel.config.boolPathN("gl:log"); if(debugGL) log("** GL Debugging on! May be slower..");
         this.netmash=netmash;
         this.mesh=new Mesh(hm,netmash.user);

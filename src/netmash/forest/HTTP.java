@@ -451,7 +451,7 @@ abstract class HTTPCommon {
 
     private String rewriteUIDsToURLsIfNotServingNetMash(String s){
         if(httpUserAgent==null ||
-           httpUserAgent.indexOf("NetMash")!= -1 ||
+           httpUserAgent.indexOf("Cyrus")!= -1 ||
            UID.notVisible()) return s;
         return s.replaceAll("\"(uid-[^\"]+)\"", "\""+UID.localPrePath()+"$1.json\"").replaceAll("10.0.2.2","localhost");
     }
