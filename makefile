@@ -17,9 +17,9 @@ lan: androidlan runlan lancat
 
 rem: androidrem
 
-tests: json uid om
+tests: json uid cyrus
 
-om: runom showtestresults
+cyrus: runcyrus showtestresults
 
 cap: androidemu runcap logcat
 
@@ -95,7 +95,7 @@ runlan: kill clean netconfig setvm2lanconfig useworlddb run1n2
 
 runrem: kill clean netconfig setvm2remconfig useworlddb run1n2
 
-runom:  kill       omconfig  setvm2tstconfig useomdb run2
+runcyrus: kill cyrusconfig   setvm2tstconfig usecyrusdb run2
 
 runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
 
@@ -143,7 +143,7 @@ useworlddb:
 	cp src/server/vm1/world.db src/server/vm1/cyrus.db
 	cp src/server/vm2/world.db src/server/vm2/cyrus.db
 
-useomdb:
+usecyrusdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db
 
 usecapdb:
@@ -236,7 +236,7 @@ setvmtestconfig:
 netconfig:
 	cp src/server/vm2/netconfig.db src/server/vm2/cyrusconfig.db
 
-omconfig:
+cyrusconfig:
 	cp src/server/vm2/omconfig.db src/server/vm2/cyrusconfig.db
 
 curconfig:
