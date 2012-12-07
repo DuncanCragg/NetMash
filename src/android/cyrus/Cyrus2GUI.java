@@ -570,18 +570,20 @@ public class Cyrus2GUI {
         if(objhash==null) return null;
         mesh2uidPut(objhash, user.content("private:viewing"), user.content("private:viewing"));
 
-        LinkedList subobs=new LinkedList();
+        LinkedList subone=new LinkedList();
 
-        addEditingToSubs(subobs);
+        addEditingToSubs(subone);
 
         LinkedList subs=user.contentAsList("private:viewing:sub-objects");
 
-        if(subs==null){ objhash.put("sub-objects", subobs); return objhash; }
+        if(subs==null){ objhash.put("sub-objects", subone); return objhash; }
+
+        LinkedList subtwo=new LinkedList();
 
         String parentuid=user.content("private:viewing");
         for(int i=0; i< subs.size(); i++){
             String p=String.format("private:viewing:sub-objects:%d",i);
-            addObjectToSubs(parentuid,p,subobs,0,0,0);
+            addObjectToSubs(parentuid,p,subone,subtwo,0,0,0);
         }
         for(int i=0; i< subs.size(); i++){
             String o=String.format("private:viewing:sub-objects:%d:object",i);
@@ -594,14 +596,15 @@ public class Cyrus2GUI {
             parentuid=user.content(o);
             for(int j=0; j< subsubs.size(); j++){
                 String q=String.format("private:viewing:sub-objects:%d:object:sub-objects:%d",i,j);
-                addObjectToSubs(parentuid,q,subobs, tx,ty,tz);
+                addObjectToSubs(parentuid,q,subone,subtwo,tx,ty,tz);
             }
         }
-        objhash.put("sub-objects", subobs);
+        subtwo.addAll(subone);
+        objhash.put("sub-objects", subtwo);
         return objhash;
     }
 
-    private void addObjectToSubs(String parentuid, String p, LinkedList subobs, float tx, float ty, float tz){
+    private void addObjectToSubs(String parentuid, String p, LinkedList subone, LinkedList subtwo, float tx, float ty, float tz){
         LinkedHashMap objhash=object2mesh(p+":object:", true);
         if(objhash==null) return;
         mesh2uidPut(objhash, parentuid, user.content(p+":object"));
@@ -613,7 +616,7 @@ public class Cyrus2GUI {
         coords.add(ty+Mesh.getFloatFromList(subcoords,1,0));
         coords.add(tz+Mesh.getFloatFromList(subcoords,2,0));
         hm.put("coords",coords);
-        subobs.add(hm);
+        ((objhash.get("light")==null)? subone: subtwo).add(hm);
     }
 
     private void addEditingToSubs(LinkedList subobs){
