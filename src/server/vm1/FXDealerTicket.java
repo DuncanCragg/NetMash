@@ -1,14 +1,14 @@
 
 import java.util.*;
 import cyrus.forest.WebObject;
-import cyrus.forest.Fjord;
+import cyrus.forest.CyrusLanguage;
 
 import static cyrus.lib.Utils.*;
 
 /** FX Dealer Object from Book Chapter example.
-  * Run by Fjord rules, but have a pseudo-market ticker.
+  * Run by CyrusLanguage rules, but have a pseudo-market ticker.
   */
-public class FXDealerTicket extends Fjord {
+public class FXDealerTicket extends CyrusLanguage {
 
     public FXDealerTicket(){}
 
