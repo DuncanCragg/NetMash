@@ -91,7 +91,6 @@
   sub-objects: ( -1.2 -1.8 ) ( -0.4 -1.8 ) ( 0.4 -1.8 ) ( 1.2 -1.8 )
                ( -1.2 -1.0 ) ( -0.4 -1.0 ) ( 0.4 -1.0 ) ( 1.2 -1.0 )
                ( -1.2 -0.2 ) ( -0.4 -0.2 ) ( 0.4 -0.2 ) ( 1.2 -0.2 )
-  gamerules: uid-1b54-d28a-71dc-5827 uid-7b1a-4b1d-1424-2818
   numerator: 2
   status: creating
   lit: 0
@@ -104,7 +103,7 @@
   sub-objects: ( number number ) =>
       { object:
         { UID: new
-          Rules: @gamerules
+          Rules: uid-1b54-d28a-71dc-5827 uid-7b1a-4b1d-1424-2818
           is: 3d cuboid editable
           title: "Game Cube"
           rotation: 0 0 0

@@ -10,19 +10,22 @@ Xmas demo: local only, reasonably productionised
  + fix lighting - up to 4 lights - phong or matte shaders - more ambient
  + -----------------------------------------------------
  + actual usable download link on the-cyrus.net
+ + on-board welcome content and docs - plus on website
  + Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
  + Android ensure restartable, pausable, etc - remember history
- + on-board welcome content and docs - plus on website
  + -----------------------------------------------------
- - naming, renamings
-    - netmash.keystore
-    - Items not WebObjects
- - -----------------------------------------------------
- - add a couple more meshes: room, sphere
  - multitouch-release to view/edit the raw item
+ - toast when reached loop limit
+ - log of fired rules: turn on toasty output?
+ + -----------------------------------------------------
+ - add a couple more meshes: room, sphere
  - copyable uid link at bottom of raw
  - links to 2D guis in 3D world - touch to jump
  . got: game, bot, light; linked objects and worlds
+ - -----------------------------------------------------
+ - naming, renamings
+    - netmash.keystore
+    - Items not WebObjects
 --------------------------------------------------------
 
 
