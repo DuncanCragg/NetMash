@@ -287,7 +287,6 @@ classes: \
 ./build/classes/cyrus/lib/Utils.class \
 ./build/classes/cyrus/forest/WebObject.class \
 ./build/classes/cyrus/forest/FunctionalObserver.class \
-./build/classes/cyrus/forest/Fjord.class \
 ./build/classes/cyrus/forest/CyrusLanguage.class \
 ./build/classes/cyrus/forest/Persistence.class \
 ./build/classes/cyrus/types/Time.class \
