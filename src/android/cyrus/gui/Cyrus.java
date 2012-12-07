@@ -309,7 +309,7 @@ log(show? "show keyboard": "hide keyboard");
         super.onCreateOptionsMenu(menu);
         menu.add(0, MENU_ITEM_ADD, Menu.NONE, "+ Link");
         menu.add(1, MENU_ITEM_LNX, Menu.NONE, "Links");
-        menu.add(2, MENU_ITEM_GUI, Menu.NONE, "Object");
+        menu.add(2, MENU_ITEM_GUI, Menu.NONE, "Item");
         menu.add(3, MENU_ITEM_MAP, Menu.NONE, "On Map");
         menu.add(4, MENU_ITEM_RAW, Menu.NONE, "View/Edit");
         return true;

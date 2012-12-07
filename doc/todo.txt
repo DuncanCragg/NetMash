@@ -9,18 +9,15 @@ Xmas demo: local only, reasonably productionised
  + -----------------------------------------------------
  + fix lighting - up to 4 lights - phong or matte shaders - more ambient
  + -----------------------------------------------------
- + naming, renamings
-    - NetMash/netmash
-    - Cyrus the app; Cyrus the PL; app/cyrus(+json) the MT; Cyrus std types
-    - items(/properties/props) not objects(/fields/tags) - in gui and code
-    - Items/properties not Objects; (Net?)Items not WebObjects
-    - no more Object Net? Item Net? Cyrus Net? the-cyrus.net
-    - still FOREST arch
- + -----------------------------------------------------
- + domain/website .. actual download
- + on-board welcome content and docs
  + Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
  + Android ensure restartable, pausable, etc
+ + -----------------------------------------------------
+ + actual usable download link on the-cyrus.net
+ + on-board welcome content and docs
+ + -----------------------------------------------------
+ + naming, renamings
+    - netmash.keystore
+    - Items not WebObjects
  + -----------------------------------------------------
  - add a couple more meshes: room, sphere
  - multitouch-release to view/edit the raw item
