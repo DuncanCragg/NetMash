@@ -13,6 +13,6 @@
       "mvvp = vec3(mvvm*pos);"
       "mvvn = vec3(mvvm*vec4(nor,0.0));"
       "gl_Position = mvpm*pos;"
-    "}"
+    " }"
 }
 
