@@ -290,11 +290,11 @@ public class WebObject {
         statemod = updatingState.stringPath(path, val) || statemod;
     }
 
-    /** Set String at this path: don't mark as Etag change and don't observe through any link. */
-    public void contentTemp(String path, String val){
+    /** Set Object at this path: don't mark as Etag change and don't observe through any link. */
+    public void contentTemp(String path, Object val){
         if(val!=null) tempPaths.add(path); else tempPaths.remove(path);
         doCopyOnWrite(path);
-        updatingState.stringPath(path, val);
+        updatingState.objectPath(path, val);
     }
 
     /** Set String at this path: don't mark as Etag change but do observe through any link. */

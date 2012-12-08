@@ -1,12 +1,12 @@
 { UID: uid-39da-3645-4f58-50cb
-  Rules: uid-e164-2547-46b0-f47e
+  Rules: { is: test rule when: "-------------- Test 0" title: # =>  "Test Running" }
+         uid-e164-2547-46b0-f47e
          uid-40fb-5964-b385-c922
          uid-1de5-4d69-667a-56e4
          uid-61d6-65c9-2931-505b
          uid-d3e7-6831-3804-7cbf
          uid-d039-5967-f60c-70f7
   is: test
-  title: "Test Running"
   x: 20
   h: { x: uid-39da-3645-4f58-50cb }
   z: 0 1 2 3

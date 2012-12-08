@@ -32,8 +32,11 @@ public class CyrusLanguage extends WebObject {
             LinkedList rules=contentAsList("Rules");
             if(extralogging) log("Rules: "+rules);
             if(rules==null) break;
-            for(Object ruleuid: rules){
-                contentTempObserve("Rule",ruleuid.toString());
+            for(Object rule: rules){
+                if(rule instanceof String) contentTempObserve("Rule", (String)rule);
+                else
+                if(rule instanceof LinkedHashMap) contentTemp("Rule", rule);
+                else continue;
                 LinkedList ruleis=contentList("Rule:is");
                 if(extralogging) log("Rule is="+ruleis);
                 if(ruleis==null) continue;
