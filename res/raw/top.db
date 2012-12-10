@@ -3,6 +3,7 @@
   is: place 3d mesh editable
   title: "Your Room"
   sub-objects:
+    { object: uid-e30d-92d3-3de9-f898 coords: 0 0 0 }
     { object: uid-a07e-434c-b8e7-5b40 coords: 0 0 -3 }
     { object: uid-f6c8-2d51-8060-a52a coords: 0 1 -11 }
     { object: uid-20ce-d0b1-c717-3dbb coords: 0 0 -6 }
@@ -18,6 +19,17 @@
   textures: http://www.textures123.com/free-texture/sand/sand-texture4.jpg
   vertex-shader: http://10.0.2.2:8081/o/uid-ff5d-1ef4-cfa5-5f92.json
   fragment-shader: http://10.0.2.2:8081/o/uid-1ff8-59e9-6dac-9b56.json
+}
+
+{ UID: uid-e30d-92d3-3de9-f898
+  Rules: {
+    is: 3d notice rule editable
+    when: "you edit this rule you can see the effect!"
+  }
+  is: 3d notice editable
+  title: Cyrus example
+  text: "Edit me: multitouch tap"
+  light: 1 1 0
 }
 
 { UID: uid-b553-d845-44d6-48ac
