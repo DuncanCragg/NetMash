@@ -10,14 +10,16 @@ Xmas demo: local only, reasonably productionised
  + fix lighting - up to 4 lights - phong or matte shaders - more ambient
  + -----------------------------------------------------
  + actual usable download link on the-cyrus.net
- + on-board welcome content and docs - plus on website
+ + on-board welcome content and docs - plus on website - examples to play with
  + Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
  + Android ensure restartable, pausable, etc - remember history
  + -----------------------------------------------------
- - multitouch-release to view/edit the raw item
  - toast when reached loop limit
+ - other resource limits: time to do a rule
  - log of fired rules: turn on toasty output?
- + -----------------------------------------------------
+ - bugs in CyrusLang - list things, @. + @., recursion issue, etc
+ - insist on @xxx: not @xxx ? ah .. => @xx: + @yy: parsed as a hash
+ - -----------------------------------------------------
  - add a couple more meshes: room, sphere
  - copyable uid link at bottom of raw
  - links to 2D guis in 3D world - touch to jump
@@ -100,9 +102,9 @@ Stuff
 ---------------------------------------------------------
 Performance
 ---------------------------------------------------------
+ - fix doCopyOnWrite not to be shite - term rewriting, reusing old and adding new
  - responsiveness not CPU usage: can use CPU as long as user not busy, so put off on workers
  - check not unresponsive cos of locks
- - fix doCopyOnWrite not to be shite
  - light lags massively
  - phone move event takes a while and jumps a lot
  - stroke light toggles on/off; or left/right?

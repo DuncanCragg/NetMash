@@ -141,6 +141,7 @@ log(show? "show keyboard": "hide keyboard");
     @Override
     public boolean onTouchEvent(MotionEvent e){
         if(onemeshview==null) return false;
+        final float xx,yy;
         switch(e.getActionMasked()){
             case MotionEvent.ACTION_DOWN:
                 ox=e.getX(0); oy=e.getY(0);
@@ -153,7 +154,24 @@ log(show? "show keyboard": "hide keyboard");
                 numTouch=2;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
+                xx=tx; yy=ty;
+                if(qx==tx && qy==ty) onemeshview.queueEvent(new Runnable(){ public void run(){
+                    if(onerenderer==null) return;
+                    onerenderer.swipe(true, 0, (int)xx,screenHeight-(int)yy, 0,0);
+                }});
                 numTouch=1;
+                break;
+            case MotionEvent.ACTION_UP:
+                xx=ox; yy=oy;
+                if(px==ox && py==oy) onemeshview.queueEvent(new Runnable(){ public void run(){
+                    if(onerenderer==null) return;
+                    onerenderer.swipe(false, 0, (int)xx,screenHeight-(int)yy, 0,0);
+                }});
+                ox=0; oy=0;
+                px=0; py=0;
+                tx=0; ty=0;
+                qx=0; qy=0;
+                numTouch=0;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(numTouch==0) break;
@@ -162,7 +180,6 @@ log(show? "show keyboard": "hide keyboard");
                 if(numTouch==2){ cx=e.getX(1); cy=e.getY(1); }
                 final boolean mt=numTouch>1;
                 float mx,my;
-                final float xx,yy;
                 if(!mt){
                     mx=cx-px; my=cy-py;
                     if(mx*mx+my*my<0.1) return true;

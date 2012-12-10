@@ -247,7 +247,13 @@ public class User extends CyrusLanguage {
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
 logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectuid,ndx,ndy);
-        if(objectuid.equals("editing")){
+        if(ndx+ndy==0){
+            history.forward();
+            content("private:viewing",objectuid);
+            content("private:viewas", "raw");
+            showWhatIAmViewing();
+        }
+        else if(objectuid.equals("editing")){
             String edituid=content("private:editing");
             if(ndy*ndy>ndx*ndx/2) getObjectUpdating(edituid, "", true).setEditVal(edituid,ndy);
             else if(Cyrus.top!=null) Cyrus.top.getKeys(ndx>0);
