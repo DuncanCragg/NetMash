@@ -3,37 +3,24 @@ To Do
 -----
 
 --------------------------------------------------------
-Xmas demo: local only, reasonably productionised
- + -----------------------------------------------------
- + get some early feedback
- + -----------------------------------------------------
- + fix lighting - up to 4 lights - phong or matte shaders - more ambient
- + -----------------------------------------------------
- + actual usable download link on the-cyrus.net
- + on-board welcome content and docs - plus on website - examples to play with
- + Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
- + Android ensure restartable, pausable, etc - remember history
- + -----------------------------------------------------
- - toast when reached loop limit
- - other resource limits: time to do a rule
- - log of fired rules: turn on toasty output?
- - bugs in CyrusLang - list things, @. + @., recursion issue, etc
- - insist on @xxx: not @xxx ? ah .. => @xx: + @yy: parsed as a hash
- - -----------------------------------------------------
- - add a couple more meshes: room, sphere
- - copyable uid link at bottom of raw
- - links to 2D guis in 3D world - touch to jump
- . got: game, bot, light; linked objects and worlds
- - -----------------------------------------------------
- - naming, renamings
-    - netmash.keystore
-    - Items not WebObjects
+ - Xmas Demo
+ - Productionise on-device programming
+ - Productionise distributed system
 --------------------------------------------------------
 
 
+--------------------------------------------------------
+Xmas demo
+ - -----------------------------------------------------
+ - on-device, controlled
+ - got: game, bot, light; linked objects and worlds
+ - get some early feedback
+ - -----------------------------------------------------
+ - fix lighting - up to 4 lights - phong or matte shaders - more ambient
+ - add a couple more pre-prepared meshes: room, sphere
 --------------------------------------------------------
 Examples dotted around on arrival
-
+ - -----------------------------------------------------
  - snow globe
  - lights that change when you swipe them
  - rover roving
@@ -43,11 +30,36 @@ Examples dotted around on arrival
  - curved shape from android tutorial made into flower
  - accelerometer-based interactions and games like teeter - pick up a wooden toy
  - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour
+ - program swipe-to-move example
 --------------------------------------------------------
 
 
 --------------------------------------------------------
-Productionising: all on-device end-user editing
+Productionise on-device programming
+ - -----------------------------------------------------
+ - actual usable download link on the-cyrus.net
+ - on-board welcome content and docs - plus on website - examples to play with
+ - -----------------------------------------------------
+ - Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
+ - Android ensure restartable, pausable, etc - remember history
+ - toast when reached loop limit
+ - other resource limits: time to do a rule
+ - log of fired rules: turn on toasty output?
+ - bugs in CyrusLang - list things, @. + @., recursion issue, etc
+ - -----------------------------------------------------
+ - links to 2D guis in 3D world - touch to jump
+ - -----------------------------------------------------
+ - copyable uid link at bottom of raw
+ - naming, renamings
+    - netmash.keystore
+    - Items not WebObjects
+--------------------------------------------------------
+
+
+--------------------------------------------------------
+Productionise distributed system
+ - -----------------------------------------------------
+ - all on-device end-user editing
  - -----------------------------------------------------
  - HTTP stuff below
  - run server continuously
@@ -76,6 +88,9 @@ HTTP
     - or do you put Notify in - not mentioned in FX paper
  - Android radio efficiency http://developer.android.com/training/efficient-downloads/efficient-network-access.html
 --------------------------------------------------------
+
+
+--------------------------------------------------------
 Stuff
 
  - demos:
@@ -102,7 +117,9 @@ Stuff
 ---------------------------------------------------------
 Performance
 ---------------------------------------------------------
- - fix doCopyOnWrite not to be shite - term rewriting, reusing old and adding new
+ - fix doCopyOnWrite not to be shite
+    - term rewriting, reusing old and adding new; merge rhs with data and reduce, rather than using paths
+    - or set flag in JSON to copyonwrite - to assume starting with shared hash and shallow copy from top down to edit
  - responsiveness not CPU usage: can use CPU as long as user not busy, so put off on workers
  - check not unresponsive cos of locks
  - light lags massively

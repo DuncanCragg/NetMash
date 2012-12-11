@@ -164,28 +164,28 @@ setemumapkey:
 	sed -i"" -e "s:03Hoq1TEN3zbEGUSHYbrBqYgXhph-qRQ7g8s3UA:03Hoq1TEN3zaDOQmSJNHwHM5fRQ3dajOdQYZGbw:" src/android/cyrus/gui/Cyrus.java
 
 setappemuconfig:
-	sed -i"" -e "s:cyrus.net:10.0.2.2:g" res/raw/cyrusconfig.db
-	sed -i"" -e "s:cyrus.net:10.0.2.2:g" res/raw/top.db
-	sed -i"" -e "s:cyrus.net:10.0.2.2:g" src/android/cyrus/User.java
+	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" res/raw/cyrusconfig.db
+	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" res/raw/top.db
+	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" src/android/cyrus/User.java
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/top.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/android/cyrus/User.java
 
 setapplanconfig:
-	sed -i"" -e "s:cyrus.net:$(LOCAL_IP):g" res/raw/cyrusconfig.db
-	sed -i"" -e "s:cyrus.net:$(LOCAL_IP):g" res/raw/top.db
-	sed -i"" -e "s:cyrus.net:$(LOCAL_IP):g" src/android/cyrus/User.java
+	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" res/raw/cyrusconfig.db
+	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" res/raw/top.db
+	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" src/android/cyrus/User.java
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/cyrusconfig.db
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/top.db
 	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" src/android/cyrus/User.java
 
 setappremconfig:
-	sed -i"" -e    "s:10.0.2.2:cyrus.net:g" res/raw/cyrusconfig.db
-	sed -i"" -e    "s:10.0.2.2:cyrus.net:g" res/raw/top.db
-	sed -i"" -e    "s:10.0.2.2:cyrus.net:g" src/android/cyrus/User.java
-	sed -i"" -e "s:$(LOCAL_IP):cyrus.net:g" res/raw/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):cyrus.net:g" res/raw/top.db
-	sed -i"" -e "s:$(LOCAL_IP):cyrus.net:g" src/android/cyrus/User.java
+	sed -i"" -e    "s:10.0.2.2:the-cyrus.net:g" res/raw/cyrusconfig.db
+	sed -i"" -e    "s:10.0.2.2:the-cyrus.net:g" res/raw/top.db
+	sed -i"" -e    "s:10.0.2.2:the-cyrus.net:g" src/android/cyrus/User.java
+	sed -i"" -e "s:$(LOCAL_IP):the-cyrus.net:g" res/raw/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):the-cyrus.net:g" res/raw/top.db
+	sed -i"" -e "s:$(LOCAL_IP):the-cyrus.net:g" src/android/cyrus/User.java
 
 setvmemuconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/cyrusconfig.db
@@ -224,10 +224,10 @@ setvm2tstconfig:
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/world.db
 
 setvm2remconfig:
-	sed -i"" -e  "s:10.0.2.2:cyrus.net:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e  "s:10.0.2.2:cyrus.net:g" src/server/vm1/world.db
-	sed -i"" -e  "s:10.0.2.2:cyrus.net:g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s:10.0.2.2:cyrus.net:g" src/server/vm2/world.db
+	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/world.db
+	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm2/world.db
 
 setvmtestconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
