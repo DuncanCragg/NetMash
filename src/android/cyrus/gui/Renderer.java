@@ -52,10 +52,12 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixMVP = new float[16];
     private float[] matrixNor = new float[16];
 
+    private LinkedList lights;
+
     private float[] touchCol = new float[4];
-    private float[] lightPosWorld = new float[]{0f,0f,0f,1f};
+    private float[] lightPosWorld = new float[4];
     private float[] lightPos = new float[4];
-    private float[] lightCol = new float[]{1f,1f,1f,1f};
+    private float[] lightCol = new float[4];
 
     private float eyeX;
     private float eyeY;
@@ -152,6 +154,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private void drawMeshAndSubs(Mesh m){
 
+        lights=new LinkedList();
         drawAMesh(m,0,0,0);
 
         for(Object o: m.subObjects){
@@ -172,8 +175,11 @@ public class Renderer implements GLSurfaceView.Renderer {
         if(!touchDetecting){
             lightObject=(m.lightR+m.lightG+m.lightB >0);
             if(lightObject){
-                lightPosWorld[0]=tx; lightPosWorld[1]=ty; lightPosWorld[2]=tz;
-                lightCol[0]=clamp(m.lightR); lightCol[1]=clamp(m.lightG); lightCol[2]=clamp(m.lightB);
+                float[] poscol=new float[6];
+                poscol[0]=tx; poscol[1]=ty; poscol[2]=tz;
+                poscol[3]  =m.lightR; poscol[4]  =m.lightG; poscol[5]  =m.lightB;
+                lightCol[0]=m.lightR; lightCol[1]=m.lightG; lightCol[2]=m.lightB;
+                lights.add(poscol);
                 program=getProgram(lightVertexShaderSource, lightFragmentShaderSource);
             }
             else program=getProgram(m);
@@ -237,6 +243,11 @@ public class Renderer implements GLSurfaceView.Renderer {
         }
         else{
             if(!lightObject){
+                float[] poscol;
+                if(lights.size()!=0) poscol=(float[])lights.get(0);
+                else                 poscol=new float[]{ 1.0f,1.0f,1.0f, 1.0f,1.0f,1.0f };
+                lightPosWorld[0]=poscol[0]; lightPosWorld[1]=poscol[1]; lightPosWorld[2]=poscol[2];
+                lightCol[0]     =poscol[3]; lightCol[1]     =poscol[4]; lightCol[2]     =poscol[5];
                 Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosWorld, 0);
                 GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);
             }
