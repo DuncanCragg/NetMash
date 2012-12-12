@@ -146,6 +146,19 @@ Performance
 ---------------------------------------------------------
 Bugs, Refactoring
 ---------------------------------------------------------
+ - fix website chatter
+ - tablet start, alt-tab, return, crashes with GL bug
+ - big eye following you around
+ - not set back to where you were when you come out of edit
+ - make rooms solid walls - fix lighting thereby
+ - look up and down stroking side
+ - faint bars for bottom and side
+ - make multitouch tap less sensitive
+ - freeze world on multi
+ - leaving two thumbs jumps position
+---------------------------------------------------------
+ - coords->position place->within scale->size and the rest
+---------------------------------------------------------
  - NaN/Infinity breaking JSON syntax
  - hello world doesn't update immediately cos misses evt & gets out of sync
  - non-cyrus appearing in remote rewrite(?)
