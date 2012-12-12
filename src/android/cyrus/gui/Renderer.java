@@ -52,7 +52,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float[] matrixMVP = new float[16];
     private float[] matrixNor = new float[16];
 
-    private LinkedList lights;
+    private LinkedList<float[]> lights;
 
     private float[] touchCol = new float[4];
     private float[] lightPosWorld = new float[4];
@@ -244,7 +244,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         else{
             if(!lightObject){
                 float[] poscol;
-                if(lights.size()!=0) poscol=(float[])lights.get(0);
+                if(lights.size()!=0) poscol=nearestLight(tx, ty, tz);
                 else                 poscol=new float[]{ 1.0f,1.0f,1.0f, 1.0f,1.0f,1.0f };
                 lightPosWorld[0]=poscol[0]; lightPosWorld[1]=poscol[1]; lightPosWorld[2]=poscol[2];
                 lightCol[0]     =poscol[3]; lightCol[1]     =poscol[4]; lightCol[2]     =poscol[5];
@@ -254,6 +254,17 @@ public class Renderer implements GLSurfaceView.Renderer {
             GLES20.glUniform3f(lightColLoc, lightCol[0], lightCol[1], lightCol[2]);
         }
         if(debugGL) throwAnyGLException("Setting variables");
+    }
+
+    private float[] nearestLight(float tx, float ty, float tz){
+        double d=Double.MAX_VALUE;
+        float[] nearest=null;
+        for(float[] light: lights){
+            float dx=tx-light[0], dy=ty-light[1], dz=tz-light[2];
+            double ld=Math.sqrt(dx*dx+dy*dy+dz*dz);
+            if(ld<d){ d=ld; nearest=light; }
+        }
+        return nearest;
     }
 
     private void setVariablesForEdit(Mesh m){
