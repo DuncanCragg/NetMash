@@ -13,20 +13,21 @@ To Do
 Xmas demo
  - -----------------------------------------------------
  - on-device, controlled
- - got: game, bot, light; linked objects and worlds
  - get some early feedback
  - -----------------------------------------------------
- - fix lighting - up to 4 lights - phong or matte shaders - more ambient
- - add a couple more pre-prepared meshes: room, sphere
---------------------------------------------------------
-Examples dotted around on arrival
+ - got: game
+ - got: linked objects and worlds
+ - got: lights that change when you swipe them
+ - got: rover roving
  - -----------------------------------------------------
- - snow globe
- - lights that change when you swipe them
- - rover roving
- - some rotate on swipe, some open/close, some scroll thru gallery of pix
- - lights come on when you enter that part of map
- - point lights, blended transparent, simple colour vert interpolated cubes, etc
+ + fix lighting - more ambient
+ + snow globe: first sphere mesh
+ + swipe actions: rotate, open/close, scroll thru gallery of pix
+ + lights come on when you enter that part of map
+ + blended transparent, simple colour vert interpolated cubes, etc
+ - phong or matte shaders
+ - -----------------------------------------------------
+ - sound when you go close - proportional by distance and inverse-square
  - curved shape from android tutorial made into flower
  - accelerometer-based interactions and games like teeter - pick up a wooden toy
  - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour
@@ -47,6 +48,7 @@ Productionise on-device programming
  - log of fired rules: turn on toasty output?
  - bugs in CyrusLang - list things, @. + @., recursion issue, etc
  - -----------------------------------------------------
+ - add a couple more pre-prepared meshes: room, sphere
  - links to 2D guis in 3D world - touch to jump
  - -----------------------------------------------------
  - copyable uid link at bottom of raw
