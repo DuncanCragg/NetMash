@@ -155,7 +155,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     private void drawMeshAndSubs(Mesh m){
 
         lights=new LinkedList();
-        drawAMesh(m,0,0,0);
 
         for(Object o: m.subObjects){
             LinkedHashMap subob=(LinkedHashMap)o;
@@ -168,6 +167,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(subobcrd!=null) drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
             else               drawEditMesh(ms);
         }
+        drawAMesh(m,0,0,0);
     }
 
     private void drawAMesh(Mesh m, float tx, float ty, float tz){
