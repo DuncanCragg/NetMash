@@ -138,7 +138,7 @@ Performance
 ---------------------------------------------------------
 Bugs, Refactoring
 ---------------------------------------------------------
- - tablet start, alt-tab, return, crashes with GL bug
+ - tablet start, alt-tab, return, crashes with GL bug (=QemuPipeStream?)
  - touch reaction
     - make multitouch tap less sensitive
     - freeze world on multi

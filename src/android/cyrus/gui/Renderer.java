@@ -246,7 +246,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 float[] poscol;
                 if(lights.size()!=0) poscol=nearestLight(tx, ty, tz);
                 else                 poscol=new float[]{ 1.0f,1.0f,1.0f, 1.0f,1.0f,1.0f };
-                lightPosWorld[0]=poscol[0]; lightPosWorld[1]=poscol[1]; lightPosWorld[2]=poscol[2];
+                lightPosWorld[0]=poscol[0]; lightPosWorld[1]=poscol[1]; lightPosWorld[2]=poscol[2]; lightPosWorld[3]=1;
                 lightCol[0]     =poscol[3]; lightCol[1]     =poscol[4]; lightCol[2]     =poscol[5];
                 Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosWorld, 0);
                 GLES20.glUniform3f(lightPosLoc, lightPos[0], lightPos[1], lightPos[2]);

@@ -39,9 +39,14 @@ public class Utils{
     static public String join(LinkedList strings, String joinwith){
         if(strings==null || strings.size()==0) return "";
         StringBuilder sb=new StringBuilder();
-        for(Object o: strings) sb.append(o+joinwith);
+        for(Object o: strings) sb.append(toString(o)+joinwith);
         String all=sb.toString();
         return all.substring(0,all.length()-joinwith.length());
+    }
+
+    static public String toString(Object o){
+        if(o instanceof float[]){ float[] fa=(float[])o; String r="[ "; for(int i=0; i<fa.length; i++) r+=fa[i]+" "; return r+" ]"; }
+        return o.toString();
     }
 
     // -------------------------------
