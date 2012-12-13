@@ -13,25 +13,31 @@ To Do
 Xmas demo
  - -----------------------------------------------------
  - on-device, controlled
- - get some early feedback
+ - get some early feedback and ideas
  - -----------------------------------------------------
  - got: game
  - got: linked objects and worlds
  - got: lights that change when you swipe them
  - got: rover roving
  - -----------------------------------------------------
- + fix lighting - more ambient
- + snow globe: first sphere mesh
- + swipe actions: rotate, open/close, scroll thru gallery of pix
+ + fix lighting
+    - more ambient light, or just brighter lights
+    - directional internally so you can see room walls better
+    - make rooms solid walls - will fix lighting?
+ + items:
+    + snow globe: first sphere mesh
+    + crystal, transparent, glinting the light
+    + blended transparent, simple colour vert interpolated cubes, etc
+    + curved shape from android tutorial made into flower
  + lights come on when you enter that part of map
- + blended transparent, simple colour vert interpolated cubes, etc
- - phong or matte shaders
+ + sound when you go close - proportional by distance and inverse-square
  - -----------------------------------------------------
- - sound when you go close - proportional by distance and inverse-square
- - curved shape from android tutorial made into flower
+ - stop the big eye following you around
+ - set back to where you were when you come out of edit
+ - -----------------------------------------------------
  - accelerometer-based interactions and games like teeter - pick up a wooden toy
  - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour
- - program swipe-to-move example
+ - swipe-to-move as example already there
 --------------------------------------------------------
 
 
@@ -39,6 +45,7 @@ Xmas demo
 Productionise on-device programming
  - -----------------------------------------------------
  - actual usable download link on the-cyrus.net
+ - fix website text for broader audience
  - on-board welcome content and docs - plus on website - examples to play with
  - -----------------------------------------------------
  - Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
@@ -46,15 +53,23 @@ Productionise on-device programming
  - toast when reached loop limit
  - other resource limits: time to do a rule
  - log of fired rules: turn on toasty output?
- - bugs in CyrusLang - list things, @. + @., recursion issue, etc
+ - bugs in CyrusLang
+    - list things, @. + @.,
+    - recursion issue doc/local/traces.txt, etc
+    - doesn't always reach loop limit when should do
  - -----------------------------------------------------
  - add a couple more pre-prepared meshes: room, sphere
+ - swipe actions: rotate, open/close, scroll thru gallery of pix
+ - phong or matte shaders
  - links to 2D guis in 3D world - touch to jump
+ - look up and down stroking side
+ - faint bars for bottom and side
  - -----------------------------------------------------
  - copyable uid link at bottom of raw
  - naming, renamings
     - netmash.keystore
     - Items not WebObjects
+ - coords->position place->within scale->size and the rest
 --------------------------------------------------------
 
 
@@ -92,33 +107,10 @@ HTTP
 --------------------------------------------------------
 
 
---------------------------------------------------------
-Stuff
-
- - demos:
-    - show how to make a robot in the room entirely on-device
-    - Reaktion - show programming it
-    - CAP
-
- - two-pane view/edit on tablet
-    - alt-tab on phone reorders history
-
- - language/naming:
-    - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
-    - allow type-based overloading of functions and operators? v+v -> +
-    - ! val =>  not   val !=>
-    - clone: x: => @   x: { UID: => new }
-    - (fix content and contentString and contentObject and contentAs*)
-
- - real hardware/bots:
-    - API to NXT from Android or on-device
-    - BeRo
-
- - specify class (e.g. Time/PT) in uid-new?
-
 ---------------------------------------------------------
 Performance
 ---------------------------------------------------------
+ - display thread blocked at start so slow to show?
  - fix doCopyOnWrite not to be shite
     - term rewriting, reusing old and adding new; merge rhs with data and reduce, rather than using paths
     - or set flag in JSON to copyonwrite - to assume starting with shared hash and shallow copy from top down to edit
@@ -146,18 +138,11 @@ Performance
 ---------------------------------------------------------
 Bugs, Refactoring
 ---------------------------------------------------------
- - fix website chatter
  - tablet start, alt-tab, return, crashes with GL bug
- - big eye following you around
- - not set back to where you were when you come out of edit
- - make rooms solid walls - fix lighting thereby
- - look up and down stroking side
- - faint bars for bottom and side
- - make multitouch tap less sensitive
- - freeze world on multi
- - leaving two thumbs jumps position
----------------------------------------------------------
- - coords->position place->within scale->size and the rest
+ - touch reaction
+    - make multitouch tap less sensitive
+    - freeze world on multi
+    - leaving two thumbs jumps position
 ---------------------------------------------------------
  - NaN/Infinity breaking JSON syntax
  - hello world doesn't update immediately cos misses evt & gets out of sync
@@ -175,7 +160,33 @@ Bugs, Refactoring
  - shaders: vert and frag should come together, else use basic: why sept?
  - don't fetch remote if it's yours anyway (?)
  - throw if calling certain methods outside of evaluator
----------------------------------------------------------
+--------------------------------------------------------
+
+
+--------------------------------------------------------
+Stuff
+
+ - demos:
+    - show how to make a robot in the room entirely on-device
+    - Reaktion - show programming it
+    - CAP
+
+ - two-pane view/edit on tablet
+    - alt-tab on phone reorders history
+
+ - language/naming:
+    - reconcile all null, empty tag value or rhs value or $:x, ( ), # use () for #? treat () as # anyway
+    - allow type-based overloading of functions and operators? v+v -> +
+    - ! val =>  not   val !=>
+    - clone: x: => @   x: { UID: => new }
+    - (fix content and contentString and contentObject and contentAs*)
+
+ - specify class (e.g. Time/PT) in uid-new?
+
+ - real hardware/bots:
+    - API to NXT from Android or on-device
+    - BeRo
+
  - GIS:
     - show place/sub land in different colours
     - don't allow outside of parent area
@@ -184,6 +195,7 @@ Bugs, Refactoring
     - delete land
     - more info in map popup
     - scale bar
+
  - schemes/rules:
     - zeroing rules
     - adjusting constants
@@ -193,9 +205,10 @@ Bugs, Refactoring
     - ELS; calc points total
     - tree density param may select scheme
     - real data
----------------------------------------------------------
+
  - on-device programming VW/GUI
     - link to existing object - chooser? links?
+    - show the title next to uid in raw or toast on click
     - undo?
        - if clear, return to original
        - if space, leave as
@@ -209,6 +222,8 @@ Bugs, Refactoring
     - gui format
     - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
     - fill in all other form type values
+--------------------------------------------------------
+--------------------------------------------------------
 --------------------------------------------------------
 Prioritising
 
