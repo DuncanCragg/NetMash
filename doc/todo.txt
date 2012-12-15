@@ -32,7 +32,7 @@ Xmas demo
  + lights come on when you enter that part of map
  + sound when you go close - proportional by distance and inverse-square
  - -----------------------------------------------------
- - stop the big eye following you around
+ - stop the big eye following you around: initial (thus shared) pos is off
  - set back to where you were when you come out of edit
  - -----------------------------------------------------
  - accelerometer-based interactions and games like teeter - pick up a wooden toy

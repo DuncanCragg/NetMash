@@ -791,9 +791,11 @@ public class Cyrus2GUI {
         if(mesh!=null && uid!=null) user.mesh2uid.put(System.identityHashCode(mesh),UID.normaliseUID(parentuid,uid));
     }
 
+    private static boolean loadShadersOnceDontForgetToSeeIfSettingToFalseIsSlow=false;
+
     private void shadersPut(String url, String path){
         if(url==null) return;
-        if(user.shaders.get(url)!=null) return;
+        if(loadShadersOnceDontForgetToSeeIfSettingToFalseIsSlow && user.shaders.get(url)!=null) return;
         LinkedList shader=user.contentListMayJump(path);
         if(shader==null) return;
         user.shaders.put(url, shader);

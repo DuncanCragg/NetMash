@@ -4,6 +4,8 @@ import java.io.*;
 import cyrus.lib.JSON;
 import cyrus.forest.*;
 
+import static cyrus.lib.Utils.*;
+
 public class DynamicFile extends CyrusLanguage {
 
     public DynamicFile(){}

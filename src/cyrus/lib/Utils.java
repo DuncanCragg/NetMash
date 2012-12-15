@@ -45,6 +45,7 @@ public class Utils{
     }
 
     static public String toString(Object o){
+        if(o==null) return "null";
         if(o instanceof float[]){ float[] fa=(float[])o; String r="[ "; for(int i=0; i<fa.length; i++) r+=fa[i]+" "; return r+" ]"; }
         return o.toString();
     }

@@ -3,10 +3,10 @@
   is: place 3d mesh editable
   title: "Your Room"
   sub-objects:
-    { object: uid-e30d-92d3-3de9-f898 coords: 0 0 0 }
-    { object: uid-a07e-434c-b8e7-5b40 coords: 0 0 -3 }
+    { object: uid-20ce-d0b1-c717-3dbb coords: 0 1 0 }
+    { object: uid-e30d-92d3-3de9-f898 coords: 0 0 -2 }
+    { object: uid-a07e-434c-b8e7-5b40 coords: 3 3 3 }
     { object: uid-f6c8-2d51-8060-a52a coords: 0 1 -11 }
-    { object: uid-20ce-d0b1-c717-3dbb coords: 0 0 -6 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: 4 0 -7 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: -4 0 -7 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: 0 4 -7 }
@@ -79,7 +79,7 @@
   title: Light
   rotation: 0 45 0
   scale: 0.3 0.5 0.3
-  light: 0.5 0.5 1
+  light: 2 2 2
 }
 
 { UID: uid-e6e9-df58-ddab-6eb9
@@ -87,7 +87,7 @@
   when: "swiped, change light"
   Alerted: { is: swipe Version: > @v }
   v: => @Alerted:Version
-  light: * ( => clamp 0 1 ( @. + @Alerted:dx ) ) ( => clamp 0 1 ( @. + @Alerted:dy ) )
+  light: * ( => clamp 0 10 ( @. + ( 10 * @Alerted:dx ) ) ) ( => clamp 0 10 ( @. + ( 10 * @Alerted:dy ) ) )
 }
 
 { UID: uid-f6c8-2d51-8060-a52a

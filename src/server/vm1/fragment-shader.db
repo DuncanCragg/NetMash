@@ -11,8 +11,8 @@
     "void main(){"
       "float lgtd=length(lightPos-mvvp);"
       "vec3 lgtv=normalize(lightPos-mvvp);"
-      "float dffus=max(dot(mvvn,lgtv),0.1)*(1.0/(1.0+(0.25*lgtd*lgtd)));"
-      "gl_FragColor=vec4(lightCol,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt);"
+      "float dffus=dot(mvvn,lgtv)*(1.0/(1.0+(0.1*lgtd*lgtd)));"
+      "gl_FragColor=vec4(lightCol,1.0)*(0.03+0.97*dffus)*texture2D(texture0,texturePt);"
     " }"
 }
 
