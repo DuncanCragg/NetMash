@@ -12,7 +12,7 @@
       "float lgtd=length(lightPos-mvvp);"
       "vec3 lgtv=normalize(lightPos-mvvp);"
       "float dffus=dot(mvvn,lgtv)*(1.0/(1.0+(0.1*lgtd*lgtd)));"
-      "gl_FragColor=vec4(lightCol,1.0)*(0.03+0.97*dffus)*texture2D(texture0,texturePt);"
+      "gl_FragColor=vec4(lightCol,1.0)*(0.07+0.93*dffus)*texture2D(texture0,texturePt);"
     " }"
 }
 
