@@ -951,7 +951,7 @@ log(show? "show keyboard": "hide keyboard");
             onemeshview.setFocusable(true);
             onemeshview.setFocusableInTouchMode(true);
             onemeshview.setEGLContextClientVersion(2);
-            onerenderer = new Renderer(this,mesh);
+            onerenderer = new Renderer(this,mesh,user.getCoords());
             onemeshview.setRenderer(onerenderer);
             onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }

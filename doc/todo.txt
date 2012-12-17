@@ -7,6 +7,9 @@ To Do
  - Productionise on-device programming
  - Productionise distributed system
 --------------------------------------------------------
+Separate out P3/home 3D/kids/teaching programming
+from         P2/work 2D/Cyrus/rules/EUP/prototyping/mobile/APIs
+--------------------------------------------------------
 
 
 --------------------------------------------------------
@@ -32,8 +35,8 @@ Xmas demo
  + lights come on when you enter that part of map
  + sound when you go close - proportional by distance and inverse-square
  - -----------------------------------------------------
- - stop the big eye following you around: initial (thus shared) pos is off
- - set back to where you were when you come out of edit
+ + stop the big eye following you around: initial (thus shared) pos is off
+ + set back to where you were when you come out of edit
  - -----------------------------------------------------
  - accelerometer-based interactions and games like teeter - pick up a wooden toy
  - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour
@@ -57,6 +60,11 @@ Productionise on-device programming
     - list things, @. + @.,
     - recursion issue doc/local/traces.txt, etc
     - doesn't always reach loop limit when should do
+ - copyable uid link at bottom of raw
+ - naming, renamings
+    - netmash.keystore
+    - Items not WebObjects sub-items: { item:
+ - coords->position place->within scale->size and the rest
  - -----------------------------------------------------
  - add a couple more pre-prepared meshes: room, sphere
  - swipe actions: rotate, open/close, scroll thru gallery of pix
@@ -64,12 +72,6 @@ Productionise on-device programming
  - links to 2D guis in 3D world - touch to jump
  - look up and down stroking side
  - faint bars for bottom and side
- - -----------------------------------------------------
- - copyable uid link at bottom of raw
- - naming, renamings
-    - netmash.keystore
-    - Items not WebObjects
- - coords->position place->within scale->size and the rest
 --------------------------------------------------------
 
 

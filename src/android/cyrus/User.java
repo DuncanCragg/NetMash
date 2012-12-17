@@ -90,7 +90,7 @@ public class User extends CyrusLanguage {
               "    \"homeusers\": \""+homeusers+"\", \n"+
               "    \"saying\": \"\", \n"+
               "    \"place\": null, \n"+
-              "    \"coords\": [ 0.0, 1.5, 0.0 ], \n"+
+              "    \"coords\": [ 0.0, 0.0, 0.0 ], \n"+
               "    \"avatar\": \"http://10.0.2.2:8082/o/uid-7794-3aa8-2192-7a60.json\", \n"+
               "    \"location\": { \"lat\": 54.106037, \"lon\": -1.579163 }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
@@ -316,8 +316,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         earliest=updated+1000;
         new Evaluator(this){
             public void evaluate(){
-                contentList("coords", list(x,y,z));
-                String newplaceuid=findNewPlaceNearer();
+                String newplaceuid=findNewPlaceNearer(x,y,z);
                 if(newplaceuid!=null){
                     history.forward();
                     content("private:viewing", newplaceuid);
@@ -329,11 +328,8 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         };
     }
 
-    private String findNewPlaceNearer(){
-        LinkedList usercoords=contentList("coords");
-        float ux=Mesh.getFloatFromList(usercoords, 0,0);
-        float uy=Mesh.getFloatFromList(usercoords, 1,0);
-        float uz=Mesh.getFloatFromList(usercoords, 2,0);
+    private String findNewPlaceNearer(float ux, float uy, float uz){
+        contentList("coords", list(ux,uy,uz));
         LinkedList subObjects=contentList("place:sub-objects");
         if(subObjects==null) return null;
         for(int i=0; i< subObjects.size(); i++){
@@ -460,6 +456,17 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
                 refreshObserves();
             }
         };
+    }
+
+    public LinkedList getCoords(){
+        final LinkedList[] val=new LinkedList[1];
+        new Evaluator(this){
+            public void evaluate(){
+                val[0]=contentList("coords");
+                refreshObserves();
+            }
+        };
+        return val[0];
     }
 
     public String getFormStringVal(final String guiuid, final String tag){
