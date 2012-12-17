@@ -101,7 +101,8 @@ public class User extends CyrusLanguage {
               "        \"links\": \""+linksuid+"\", \n"+
               "        \"history\": null, \n"+
               "        \"contacts\":  \""+contactsuid+"\", \n"+
-              "        \"responses\": { } \n"+
+              "        \"responses\": { }, \n"+
+              "        \"coords\": { } \n"+
               "    }\n"+
               "}");
     }
@@ -316,20 +317,26 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         earliest=updated+1000;
         new Evaluator(this){
             public void evaluate(){
-                String newplaceuid=findNewPlaceNearer(x,y,z);
-                if(newplaceuid!=null){
-                    history.forward();
-                    content("private:viewing", newplaceuid);
-                    content("private:viewas", "gui");
-                    showWhatIAmViewing();
+                LinkedList newplace=findNewPlaceNearer(x,y,z);
+                if(newplace==null){
+                    LinkedList newcoords=list(x,y,z);
+                    contentList("coords", newcoords);
+                    contentList("private:coords:"+UID.toUID(content("private:viewing")), newcoords);
+                }
+                else{
+                    String     newplaceuid=(String)    newplace.get(0);
+                    LinkedList newcoords  =(LinkedList)newplace.get(1);
+                    contentList("coords", newcoords);
+                    contentList("private:coords:"+UID.toUID(newplaceuid), newcoords);
+                    jumpToHereAndShow(newplaceuid,"gui");
+                    if(Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetCoordsAndView(newcoords);
                 }
                 refreshObserves();
             }
         };
     }
 
-    private String findNewPlaceNearer(float ux, float uy, float uz){
-        contentList("coords", list(ux,uy,uz));
+    private LinkedList findNewPlaceNearer(float ux, float uy, float uz){
         LinkedList subObjects=contentList("place:sub-objects");
         if(subObjects==null) return null;
         for(int i=0; i< subObjects.size(); i++){
@@ -341,11 +348,7 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
             float pz=Mesh.getFloatFromList(placecoords,2,0);
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
             float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
-            if(d<10){
-                if(Cyrus.top!=null) Cyrus.top.onerenderer.resetCoordsAndView(dx,dy,dz);
-                contentList("coords", list(dx,dy,dz));
-                return content(String.format("place:sub-objects:%d:object",i));
-            }
+            if(d<10) return list(content(String.format("place:sub-objects:%d:object",i)), list(dx,dy,dz));
         }
         return null;
     }
@@ -370,6 +373,9 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
             View view=history.pop();
             user.content("private:viewing", view.uid);
             user.content("private:viewas",  view.as);
+            LinkedList newcoords=contentList("private:coords:"+UID.toUID(view.uid));
+            contentList("coords", newcoords);
+            if(newcoords!=null && Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetCoordsAndView(newcoords);
             return true;
         }
         public String toString(){
@@ -393,14 +399,17 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         else                  jumpuid=uid;
         new Evaluator(this){
             public void evaluate(){
-                history.forward();
-                content("private:viewing", jumpuid);
-                if(mode!=null)
-                content("private:viewas", mode);
-                showWhatIAmViewing();
+                jumpToHereAndShow(jumpuid,mode);
                 refreshObserves();
             }
         };
+    }
+
+    private void jumpToHereAndShow(String uid, String mode){
+        history.forward();
+        content("private:viewing", uid);
+        if(mode!=null) content("private:viewas", mode);
+        showWhatIAmViewing();
     }
 
     public void jumpBack(){
@@ -458,11 +467,17 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
         };
     }
 
-    public LinkedList getCoords(){
+    public LinkedList getCoords(final String guiuid){
         final LinkedList[] val=new LinkedList[1];
         new Evaluator(this){
             public void evaluate(){
-                val[0]=contentList("coords");
+                String path="private:coords:"+UID.toUID(guiuid);
+                val[0]=contentList(path);
+                if(val[0]==null){
+                   val[0]=list(0,0.7,3);
+                   contentList(path,val[0]);
+                }
+                contentList("coords", val[0]);
                 refreshObserves();
             }
         };

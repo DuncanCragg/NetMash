@@ -88,7 +88,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         debugGL=Kernel.config.boolPathN("gl:log"); if(debugGL) log("** GL Debugging on! May be slower..");
         this.cyrus=cyrus;
         this.mesh=new Mesh(hm,cyrus.user);
-        resetCoordsAndView(Mesh.getFloatFromList(coords,0,0), Mesh.getFloatFromList(coords,1,0), Mesh.getFloatFromList(coords,2,0));
+        resetCoordsAndView(coords);
     }
 
     synchronized public void newMesh(LinkedHashMap hm){
@@ -245,7 +245,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(!lightObject){
                 float[] poscol;
                 if(lights.size()!=0) poscol=nearestLight(tx, ty, tz);
-                else                 poscol=new float[]{ 1.0f,1.0f,1.0f, 1.0f,1.0f,1.0f };
+                else                 poscol=new float[]{ 0f,10f,0f, 10f,10f,10f };
                 lightPosWorld[0]=poscol[0]; lightPosWorld[1]=poscol[1]; lightPosWorld[2]=poscol[2]; lightPosWorld[3]=1;
                 lightCol[0]     =poscol[3]; lightCol[1]     =poscol[4]; lightCol[2]     =poscol[5];
                 Matrix.multiplyMV(lightPos, 0, matrixVVV, 0, lightPosWorld, 0);
@@ -342,7 +342,10 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     // -------------------------------------------------------------
 
-    public void resetCoordsAndView(float x, float y, float z){
+    public void resetCoordsAndView(LinkedList coords){
+        float x=Mesh.getFloatFromList(coords,0,0);
+        float y=Mesh.getFloatFromList(coords,1,0);
+        float z=Mesh.getFloatFromList(coords,2,0);
         direction=0;
         eyeX=x;
         eyeY=y;
