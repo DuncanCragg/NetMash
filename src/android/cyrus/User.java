@@ -228,12 +228,13 @@ public class User extends CyrusLanguage {
         lastmesh=mesh; lastedit=edit; lastdx+=dx; lastdy+=dy;
         final long updated=System.currentTimeMillis();
         final User self=this;
+        if(waiting) return;
         if(updated<earliest){
-            if(waiting) return; waiting=true;
+            waiting=true;
             new Thread(){ public void run(){
                 Kernel.sleep(earliest-updated);
-                waiting=false;
                 synchronized(self){
+                    waiting=false;
                     if(lastdx+lastdy==0) return;
                     float ldx=lastdx,ldy=lastdy;
                     lastdx=0; lastdy=0;
@@ -305,12 +306,16 @@ logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectui
     synchronized public void onNewCoords(final float x, final float y, final float z){
         lastx=x; lasty=y; lastz=z;
         final long updated=System.currentTimeMillis();
+        final User self=this;
+        if(waiting) return;
         if(updated<earliest){
-            if(waiting) return; waiting=true;
+            waiting=true;
             new Thread(){ public void run(){
                 Kernel.sleep(earliest-updated);
-                waiting=false;
-                onNewCoords(lastx,lasty,lastz);
+                synchronized(self){
+                    waiting=false;
+                    onNewCoords(lastx,lasty,lastz);
+                }
             }}.start();
             return;
         }
