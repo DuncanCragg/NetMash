@@ -5,6 +5,7 @@
   rotation: 0 0 0
   scale: 10.0 10.0 10.0
   sub-objects:
+    { object: uid-bfa0-9dcb-1d1c-1e83 coords:  0 10 0 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords:  4 0 4 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: -4 0 4 }
     { object: http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json coords:  0 0 -27 }
@@ -25,5 +26,10 @@
 { UID: uid-1ff8-59e9-6dac-9b56
   Class: server.types.DynamicFile
   watching: fragment-shader.db
+}
+
+{ UID: uid-bfa0-9dcb-1d1c-1e83
+  is: 3d cuboid
+  light: 10 10 10
 }
 
