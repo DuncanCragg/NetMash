@@ -61,6 +61,7 @@ public class Cyrus extends MapActivity{
     @Override
     public void onRestart(){
         super.onRestart(); log("onRestart");
+        disposeOfMeshView();
     }
 
     @Override
@@ -85,11 +86,13 @@ public class Cyrus extends MapActivity{
     @Override
     public void onStop(){
         super.onStop(); log("onStop");
+        disposeOfMeshView();
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy(); log("onDestroy");
+        disposeOfMeshView();
         user.onTopDestroy();
         top=null;
     }
@@ -963,6 +966,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private void disposeOfMeshView(){
+        if(onemeshview!=null) onemeshview.onPause();
         onemeshview=null;
         onerenderer=null;
     }

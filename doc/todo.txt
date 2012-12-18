@@ -63,7 +63,7 @@ Productionise on-device programming
  - add a couple more pre-prepared meshes: room, sphere
  - swipe actions: rotate, open/close, scroll thru gallery of pix
  - phong or matte shaders
- - links to 2D guis in 3D world - touch to jump
+ - links to 2D guis in 3D world - touch to jump - or have text of gui at least
  - look up and down stroking side
  - faint bars for bottom and side
 --------------------------------------------------------

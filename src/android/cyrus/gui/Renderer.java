@@ -21,7 +21,7 @@ import static cyrus.lib.Utils.*;
 
 public class Renderer implements GLSurfaceView.Renderer {
 
-    private boolean debugGL=false;
+    private boolean debugGL;
 
     private Cyrus cyrus;
     private Mesh mesh;
