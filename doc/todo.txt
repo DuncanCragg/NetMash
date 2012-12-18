@@ -23,20 +23,14 @@ Xmas demo
  - got: lights that change when you swipe them
  - got: rover roving
  - -----------------------------------------------------
- + fix lighting
-    - more ambient light, or just brighter lights
-    - directional internally so you can see room walls better
-    - make rooms solid walls - will fix lighting?
  + items:
     + snow globe: first sphere mesh
+    + cylinder - for light poles
     + crystal, transparent, glinting the light
     + blended transparent, simple colour vert interpolated cubes, etc
     + curved shape from android tutorial made into flower
  + lights come on when you enter that part of map
  + sound when you go close - proportional by distance and inverse-square
- - -----------------------------------------------------
- + stop the big eye following you around: initial (thus shared) pos is off
- + set back to where you were when you come out of edit
  - -----------------------------------------------------
  - accelerometer-based interactions and games like teeter - pick up a wooden toy
  - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour

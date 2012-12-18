@@ -629,6 +629,7 @@ public class Cyrus2GUI {
     }
 
     private LinkedHashMap object2mesh(String p, boolean shallow){
+        if(user.contentIs(p,user.uid)) return null;
         LinkedList is=user.contentAsList(p+"is");
         if(is==null) return null;
         if(is.contains("mesh"))   return mesh2mesh(p, shallow);
