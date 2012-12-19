@@ -9,6 +9,7 @@ To Do
 --------------------------------------------------------
 Separate out P3/home 3D/kids/teaching programming
 from         P2/work 2D/Cyrus/rules/EUP/prototyping/mobile/APIs
+.. site is more 3 than 2
 --------------------------------------------------------
 
 
@@ -18,54 +19,66 @@ Xmas demo
  - on-device, controlled
  - get some early feedback and ideas
  - -----------------------------------------------------
- - got: game
- - got: linked objects and worlds
- - got: lights that change when you swipe them
- - got: rover roving
+ - items there:
+    - game
+    - linked objects and worlds
+    - lights that change when you swipe them
+    - rover roving
+ - items to add:
+    - snow globe: first sphere mesh
+    - cylinder - for light poles
+    - crystal, transparent, glinting the light
+    - blended transparent, simple colour vert interpolated cubes, etc
+    - curved shape from android tutorial made into flower
+    - lights come on when you enter that part of map
+    - sound when you go close - proportional by distance and inverse-square
+    - accelerometer-based interactions and games like teeter - pick up a wooden toy
  - -----------------------------------------------------
- + items:
-    + snow globe: first sphere mesh
-    + cylinder - for light poles
-    + crystal, transparent, glinting the light
-    + blended transparent, simple colour vert interpolated cubes, etc
-    + curved shape from android tutorial made into flower
- + lights come on when you enter that part of map
- + sound when you go close - proportional by distance and inverse-square
- - -----------------------------------------------------
- - accelerometer-based interactions and games like teeter - pick up a wooden toy
  - Minecraft: pick up/put down interaction as part of normal object interaction/behaviour
- - swipe-to-move as example already there
+    - swipe-to-move as example already there
+    - duplicate, delete, move, link
 --------------------------------------------------------
 
 
 --------------------------------------------------------
 Productionise on-device programming
  - -----------------------------------------------------
- - actual usable download link on the-cyrus.net
- - fix website text for broader audience
- - on-board welcome content and docs - plus on website - examples to play with
- - -----------------------------------------------------
- - Android resource usage - no logging, fewer db writes (less disk, less w.toString - check)
- - Android ensure restartable, pausable, etc - remember history
- - toast when reached loop limit
- - other resource limits: time to do a rule
- - log of fired rules: turn on toasty output?
- - bugs in CyrusLang
+ + resource usage:
+    - fewer db writes (less disk, less w.toString - check)
+    - turn-off-almost-all-logging flag in config
+ + syntax:
+    - uid-new needing space after - (, ), {, } also..
+    - syntax error if trailing chars
+ + naming:
+    - coords->position place->within scale->size and the rest
+    - Items not WebObjects - sub-items: { item:
+    - netmash.keystore; om.db
+ - lifecycle:
+    - restartable, pausable, etc
+    - remember history in user
+ - tracking rule firing:
+    - resource limits: time to do a rule; preventing rewrite mayhem
+    - toast when reached loop limit
+    - log of fired rules: turn on toasty output?
+ - bugs in CyrusLang:
     - list things, @. + @.,
     - recursion issue doc/local/traces.txt, etc
     - doesn't always reach loop limit when should do
- - copyable uid link at bottom of raw
- - naming, renamings
-    - netmash.keystore
-    - Items not WebObjects sub-items: { item:
- - coords->position place->within scale->size and the rest
- - -----------------------------------------------------
- - add a couple more pre-prepared meshes: room, sphere
+ - IDE:
+    - copyable uid link at bottom of raw
+--------------------------------------------------------
+ - pre-prepared meshes: room, sphere, cylinder
  - swipe actions: rotate, open/close, scroll thru gallery of pix
  - phong or matte shaders
  - links to 2D guis in 3D world - touch to jump - or have text of gui at least
- - look up and down stroking side
+ - look up and down swiping side
  - faint bars for bottom and side
+ - -----------------------------------------------------
+ - actual usable download link on the-cyrus.net
+ - fix website text for broader audience
+ - on-board welcome content and docs
+ - plus on website
+ - examples to play with
 --------------------------------------------------------
 
 
@@ -114,7 +127,7 @@ Performance
  - check not unresponsive cos of locks
  - light lags massively
  - phone move event takes a while and jumps a lot
- - stroke light toggles on/off; or left/right?
+ - swipe light toggles on/off; or left/right?
  - slightly crap touch response in game
  - don't need to save to persistence if not changed, and not so often either
  - don't need to spend so much time scanning the scenegraph when only one change
@@ -131,6 +144,10 @@ Performance
     - top level mesh not cached
  - memory usage: see video http://www.youtube.com/watch?v=_CruQY55HOk
  - check JSON structure/string cacheing/rebuilding
+---------------------------------------------------------
+
+
+
 ---------------------------------------------------------
 Bugs, Refactoring
 ---------------------------------------------------------
