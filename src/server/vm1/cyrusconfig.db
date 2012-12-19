@@ -8,6 +8,6 @@
              port: 8081
              pathprefix: /o/
              cache-notify: c-n-14d5-99c5-da00-806a
-             log: false }
-  rules: { log: false }
+             log: 0 }
+  rules: { log: 0 }
 }

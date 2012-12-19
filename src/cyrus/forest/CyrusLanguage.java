@@ -13,15 +13,22 @@ import static cyrus.lib.Utils.*;
   */
 public class CyrusLanguage extends WebObject {
 
+    private boolean anylogging = false;
     private boolean extralogging = false;
 
-    public CyrusLanguage(){ extralogging = Kernel.config.boolPathN("rules:log"); }
+    private void setLogging(){
+        int logging=Kernel.config.intPathN("rules:log");
+        anylogging   = logging>=1;
+        extralogging = logging==2;
+    }
 
-    public CyrusLanguage(String s){ super(s); extralogging = Kernel.config.boolPathN("rules:log"); }
+    public CyrusLanguage(){ setLogging(); }
 
-    public CyrusLanguage(LinkedHashMap hm){ super(hm); extralogging = Kernel.config.boolPathN("rules:log"); }
+    public CyrusLanguage(String s){ super(s); setLogging(); }
 
-    public CyrusLanguage(JSON json){ super(json); extralogging = Kernel.config.boolPathN("rules:log"); }
+    public CyrusLanguage(LinkedHashMap hm){ super(hm); setLogging(); }
+
+    public CyrusLanguage(JSON json){ super(json); setLogging(); }
 
     public void evaluate(){
         contentSetPushAll("Rules",getEvalRules());
@@ -85,7 +92,7 @@ public class CyrusLanguage extends WebObject {
         LinkedHashMap<String,Object> rule=contentHash("Rule:#");
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
-        ; if(ok) log("Rule fired: \""+when+"\"");
+        ; if(ok && anylogging) log("Rule fired: \""+when+"\"");
         ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+"\n"+rule+"\n"+contentHash("#")+"\n===========");
         if(alerted!=null && contentIs("Alerted",alerted)) contentTemp("Alerted",null);
     }

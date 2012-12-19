@@ -264,18 +264,17 @@ abstract class HTTPCommon {
         ByteBuffer headers = Kernel.chopAtDivider(bytebuffer, "\r\n\r\n".getBytes());
         if(headers==null) return;
         CharBuffer headchars = ASCII.decode(headers);
-        if(Kernel.config.boolPathN("network:log")) log("<---------------\n"+headchars);
+        if(Kernel.config.intPathN("network:log")==2) log("<---------------\n"+headchars);
         clearFirstLine();
         getFirstLine(headchars);
         clearInterestingHeaders();
         getInterestingHeaders(headchars);
-        logFirstLineBriefly();
+        if(Kernel.config.intPathN("network:log")==1) logFirstLineBriefly();
         fixKeepAlive();
         setDoingContent();
     }
 
     private void logFirstLineBriefly(){
-        if(Kernel.config.boolPathN("network:log")) return;
         log((httpMethod!=null?          httpMethod:          "")+"|"+
             (httpPath!=null?            httpPath:            "")+"|"+
             (httpStatus!=null?          httpStatus:          "")+"|"+
@@ -415,7 +414,7 @@ abstract class HTTPCommon {
 
     protected void topRequestHeaders(StringBuilder sb, String method, String host, int port, String path, int etag){
         sb.append(method); sb.append(path); sb.append(" HTTP/1.1\r\n");
-        if(!Kernel.config.boolPathN("network:log")) log(sb);
+        if(Kernel.config.intPathN("network:log")==1) log(sb);
         sb.append("Host: "); sb.append(host); if(port!=80) sb.append(":"+port); sb.append("\r\n");
         sb.append("User-Agent: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
         sb.append("Cache-Notify: "); sb.append(UID.toURL(CacheNotify())); sb.append("\r\n");
@@ -436,7 +435,7 @@ abstract class HTTPCommon {
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
         String cl=(w.url==null? UID.toURL(w.uid): w.url);
         sb.append("Content-Location: "); sb.append(cl); sb.append("\r\n");
-        if(!Kernel.config.boolPathN("network:log")) log(cl);
+        if(Kernel.config.intPathN("network:log")==1) log(cl);
         sb.append("ETag: \""); sb.append(w.etag); sb.append("\"\r\n");
         if(w.maxAge>=0){
         sb.append("Cache-Control: max-age="); sb.append(w.maxAge); sb.append("\r\n");}
@@ -460,7 +459,7 @@ abstract class HTTPCommon {
 
         ByteBuffer body = Kernel.chopAtLength(bytebuffer, contentLength);
         CharBuffer jsonchars = UTF8.decode(body);
-        if(Kernel.config.boolPathN("network:log")) log("<---------------\n"+jsonchars);
+        if(Kernel.config.intPathN("network:log")==2) log("<---------------\n"+jsonchars);
 
         if(webobject==null){
 
@@ -539,7 +538,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         } catch(Exception e){ close("Failed reading - closing connection", e); }
     }
 
-    protected void earlyEOF(){ if(Kernel.config.boolPathN("network:log")) log("Server earlyEOF"); }
+    protected void earlyEOF(){ if(Kernel.config.intPathN("network:log")==2) log("Server earlyEOF"); }
 
     protected void readContent(ByteBuffer bytebuffer, boolean eof) throws Exception{
         if(eof) return;
@@ -636,7 +635,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         StringBuilder sb=new StringBuilder();
         topResponseHeaders(sb, "200 OK");
         contentHeadersAndBody(sb, w, getPercents(includeNotify));
-        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb); else log("200 OK-->");
+        if(Kernel.config.intPathN("network:log")==1) log("200 OK-->"); else
+        if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
@@ -655,7 +655,8 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         topResponseHeaders(sb, responseCode);
         if(extraHeaders!=null) sb.append(extraHeaders);
         sb.append("Content-Length: 0\r\n\r\n");
-        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb); else log(responseCode+"-->");
+        if(Kernel.config.intPathN("network:log")==1) log(responseCode+"-->"); else
+        if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 }
@@ -732,7 +733,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         if(sleep!=0){
             new Thread(){ public void run(){
                 Kernel.sleep(sleep);
-                if(Kernel.config.boolPathN("network:log")) log("Retrying.. needsConnect="+needsConnect);
+                if(Kernel.config.intPathN("network:log")==2) log("Retrying.. needsConnect="+needsConnect);
                 doNextRequest(0);
             }}.start();
             return;
@@ -758,7 +759,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
             topRequestHeaders(sb, "POST ", host, port, request.path, 0);
             contentHeadersAndBody(sb, funcobs.cacheGet(request.notifieruid), getPercents(false));
         }
-        if(Kernel.config.boolPathN("network:log")) log("--------------->\n"+sb);
+        if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
@@ -824,7 +825,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
     }
 
     protected void earlyEOF(){
-        if(Kernel.config.boolPathN("network:log")) log("Client earlyEOF");
+        if(Kernel.config.intPathN("network:log")==2) log("Client earlyEOF");
         needsConnect=true;
         if(doingResponse()) return;
         setDoingResponse();
@@ -837,14 +838,14 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         int sleep=0;
         if(!request.type.equals("LONG")){
             if(retryRequest){
-                if(Kernel.config.boolPathN("network:log")) log("Failed request for "+request.path+" - will wait then retry");
+                if(Kernel.config.intPathN("network:log")==2) log("Failed request for "+request.path+" - will wait then retry");
                 sleep=CLIENT_RETRY_WAIT;
                 retry(request);
             }
         }
         else{
             if(longFailedSoWait){
-                if(Kernel.config.boolPathN("network:log")) log("Failed long poll or connection broken to "+request.path);
+                if(Kernel.config.intPathN("network:log")==2) log("Failed long poll or connection broken to "+request.path);
                 sleep=CLIENT_RETRY_WAIT;
             }
             retry(request);
