@@ -1,7 +1,7 @@
 { name: Cyrus
   kernel: { threadpool: 3 }
   persist: { db: cyrus.db
-             syncrate: 100
+             syncrate: 2000
              preload: ( ) }
   network: { pathprefix: /o/
              log: false
