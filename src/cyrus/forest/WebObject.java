@@ -43,6 +43,7 @@ public class WebObject {
     public  boolean statemod = false;
     public  boolean obsalmod = false;
     public  boolean refreshobserves = false;
+    public  boolean nopersist = false;
 
     HashSet<String>                   newalert   = new HashSet<String>();
     HashSet<String>                   remalert   = new HashSet<String>();
@@ -638,6 +639,11 @@ public class WebObject {
         funcobs.cachePut(w);
         spawned.add(w);
         return w.uid;
+    }
+
+    /** This is a transient object so don't persist its changes. */
+    public void noPersist(){
+        nopersist=true;
     }
 
     /** Keep all observations as they were. Thus don't need to

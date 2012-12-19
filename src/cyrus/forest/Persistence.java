@@ -118,7 +118,7 @@ public class Persistence implements FileUser {
     // ----------------------------------------
 
     public void save(WebObject w){
-        syncable.add(w);
+        if(!w.nopersist) syncable.add(w);
     }
 
     private void runSync(int syncrate){
@@ -129,16 +129,12 @@ public class Persistence implements FileUser {
                 synchronized(w){ jsonchars=CharBuffer.wrap(w.toString(cyrus)+"\n"); }
                 jsoncache.put(w.uid, jsonchars);
                 ByteBuffer bytebuffer = UTF8.encode(jsonchars);
-                if(topdbos==null){
-                    try{ Kernel.writeFile(dbfile, true, bytebuffer, this); }
-                    catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
-                }
-                else{
-                    try{ Kernel.writeFile(topdbos,      bytebuffer, this); }
-                    catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
-                }
+                try{
+                    if(topdbos==null) Kernel.writeFile(dbfile, true, bytebuffer, this);
+                    else              Kernel.writeFile(topdbos,      bytebuffer, this);
+                }catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
             }
-            try{ Thread.sleep(syncrate!=0? syncrate: 100); }catch(Exception e){}
+            Kernel.sleep(syncrate!=0? syncrate: 100);
         }
     }
 

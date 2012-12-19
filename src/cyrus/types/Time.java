@@ -6,7 +6,7 @@ import cyrus.forest.*;
 
 public class Time extends WebObject {
 
-    public Time(){}
+    public Time(){ noPersist(); }
 
     private boolean running=false;
 
