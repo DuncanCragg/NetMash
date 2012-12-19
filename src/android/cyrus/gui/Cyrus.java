@@ -259,7 +259,7 @@ log(show? "show keyboard": "hide keyboard");
     private Runnable uiDrawJSONRunnable=new Runnable(){public void run(){uiDrawJSON();}};
     private String viewUID = null;
 
-    public void drawJSON(JSON uiJSON, String uiUID){ log("drawJSON "+uiUID);
+    public void drawJSON(JSON uiJSON, String uiUID){ if(false) log("drawJSON "+uiUID);
         this.uiJSON=uiJSON;
         this.uiUID=uiUID;
         guiHandler.post(uiDrawJSONRunnable);

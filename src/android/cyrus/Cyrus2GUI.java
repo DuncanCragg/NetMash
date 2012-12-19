@@ -562,7 +562,7 @@ public class Cyrus2GUI {
 
     // ---------------------------------------------------------------------------
 
-    public LinkedHashMap scene2GUI(){ logXX("scene2GUI",user.alerted());
+    public LinkedHashMap scene2GUI(){
 
         for(String a: user.alerted()) if(a.equals(user.uid) && user.alerted().size()==1){ user.refreshObserves(); return null; }
 

@@ -8,7 +8,7 @@ To Do
  - Productionise distributed system
 --------------------------------------------------------
 Separate out P3/home 3D/kids/teaching programming
-from         P2/work 2D/Cyrus/rules/EUP/prototyping/mobile/APIs
+from         P2/work 2D/Rules/EUP/Languages/FP/Prototyping/Mobile/APIs
 .. site is more 3 than 2
 --------------------------------------------------------
 

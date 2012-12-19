@@ -195,7 +195,7 @@ public class User extends CyrusLanguage {
     void onNewLocation(final Location location){
         new Evaluator(this){
             public void evaluate(){
-                log("location: "+location);
+                if(false) log("location: "+location);
                 contentDouble("location:lat", location.getLatitude());
                 contentDouble("location:lon", location.getLongitude());
                 contentDouble("location:acc", location.getAccuracy());
@@ -248,7 +248,7 @@ public class User extends CyrusLanguage {
         earliest=updated+500;
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
-logXX("touched object:",mesh.get("title"),(edit? "edit": "send"),"uid:",objectuid,ndx,ndy);
+        if(false) log("touched object: "+mesh.get("title")+(edit? " edit": " send")+" uid: "+objectuid+" "+ndx+" "+ndy);
         if(ndx+ndy==0){
             history.forward();
             content("private:viewing",objectuid);

@@ -305,7 +305,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         if(meshIDs.get(m)!=null) return;
         int vbo[] = new int[1];
         GLES20.glGenBuffers(1, vbo, 0);
-        log("GPU: sending VBO "+vbo[0]+" "+m);
+        if(debugGL) log("GPU: sending VBO "+vbo[0]+" "+m);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0]);
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, m.vb.position(0).capacity()*4, m.vb, GLES20.GL_STATIC_DRAW);
         meshIDs.put(m,vbo[0]);
@@ -416,7 +416,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(bm!=textureBMs.get(url)){
                 int[] texID = new int[1];
                 GLES20.glGenTextures(1, texID, 0);
-                log("GPU: sending texture "+url+","+texID[0]+","+bm);
+                if(debugGL) log("GPU: sending texture "+url+","+texID[0]+","+bm);
                 sendTexture(texID[0],bm);
                 textureBMs.put(url, bm);
                 textureIDs.put(url, texID[0]);
@@ -465,7 +465,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             if(debugGL) throwAnyGLException("glUseProgram existing");
             return program;
         }
-        log("GPU: sending program \n"+vertshad+"\n"+fragshad);
+        if(debugGL) log("GPU: sending program \n"+vertshad+"\n"+fragshad);
 
         int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertshad);
         if(vertexShader==0) throw new RuntimeException("Could not compile vertexShader\n"+vertshad);
