@@ -824,11 +824,11 @@ public class WebObject {
     }
 
     public String toString(boolean cyrus){
-        if(!cyrus) return toString();
+        if(!cyrus) return toString()+"\n";
         if(isShell()) return "{ UID: "+uid+
                            "\n  Notify: "+setToListString(notify, true)+
                            "\n  Alertedin: "+setToListString(alertedin, true)+
-                           "\n  State: "+shellstate+"\n}\n";
+                           "\n  State: "+shellstate+"\n}\n\n";
         String r = publicState.toString(
                                "UID: "+uid+
               (url!=null?  "\n  URL: "+url: "")+
@@ -838,7 +838,7 @@ public class WebObject {
                            "\n  Observe: "+setToListString(observe, true)+
       (cacheNotify!=null?  "\n  Cache-Notify: "+cacheNotify: "")+
                            "\n  Class: "+this.getClass().toString().substring(6)+
-                         "\n",true)+"\n";
+                         "\n",true)+"\n\n";
         return r;
     }
 

@@ -44,8 +44,9 @@ Xmas demo
 Productionise on-device programming
  - -----------------------------------------------------
  + resource usage:
-    - fewer db writes (less disk, less w.toString - check)
-    - turn-off-almost-all-logging flag in config
+    - check fewer db writes means less disk, less w.toString
+    - other performance tracing
+    - memory allocations
  + syntax:
     - uid-new needing space after - (, ), {, } also..
     - syntax error if trailing chars
@@ -123,6 +124,7 @@ Performance
  - fix doCopyOnWrite not to be shite
     - term rewriting, reusing old and adding new; merge rhs with data and reduce, rather than using paths
     - or set flag in JSON to copyonwrite - to assume starting with shared hash and shallow copy from top down to edit
+    - if object reads/observes another, grab the public state for that evaluate, don't refetch it and risk inconsistency
  - responsiveness not CPU usage: can use CPU as long as user not busy, so put off on workers
  - check not unresponsive cos of locks
  - light lags massively
