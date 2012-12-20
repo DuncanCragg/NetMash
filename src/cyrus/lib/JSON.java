@@ -1341,13 +1341,14 @@ public class JSON {
             String tag = (String)it.next();
             Object val = hm.get(tag);
             if(structured){
-                if(i==0) buf.append(                  indentation(indent));
-                else     buf.append((cyrus?"\n":",\n")+indentation(indent));
+                if(i==0)                                 buf.append(indentation(indent));
+                else {   buf.append((cyrus?"\n":",\n")); buf.append(indentation(indent)); }
             } else buf.append(i==0||cyrus? " ": ", ");
-            buf.append(quote+tag+quote+": "+objectToString(val, indent, maxlength, cyrus, true));
+            buf.append(quote); buf.append(tag); buf.append(quote); buf.append(": ");
+            buf.append(objectToString(val, indent, maxlength, cyrus, true));
         }
-        if(structured) buf.append("\n"+indentation(indent-2)+"}");
-        else           buf.append(" }");
+        if(structured){ buf.append("\n"); buf.append(indentation(indent-2)); buf.append("}"); }
+        else            buf.append(" }");
         return buf.toString();
     }
 
@@ -1383,19 +1384,19 @@ public class JSON {
             }
         }
         StringBuilder buf=new StringBuilder();
-        buf.append(structured? ob+"\n": ob);
+        buf.append(ob); if(structured) buf.append("\n");
         int i=0;
         for(Object val: ll){
             if(structured){
-                if(i==0) buf.append(                  indentation(indent));
-                else     buf.append((cyrus?"\n":",\n")+indentation(indent));
+                if(i==0)                                 buf.append(indentation(indent));
+                else   { buf.append((cyrus?"\n":",\n")); buf.append(indentation(indent)); }
             } else buf.append((i==0||cyrus)? " ": ", ");
             buf.append(objectToString(val, indent, maxlength, cyrus, false));
             i++;
         }
         if(cb.length() >0){
-            if(structured) buf.append("\n"+indentation(indent-2)+" "+cb);
-            else           buf.append(" "+cb);
+            if(structured){ buf.append("\n"); buf.append(indentation(indent-2)); buf.append(" "); buf.append(cb); }
+            else          { buf.append(" "); buf.append(cb); }
         }
         return buf.toString();
     }
