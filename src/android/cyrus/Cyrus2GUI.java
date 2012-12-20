@@ -799,7 +799,7 @@ public class Cyrus2GUI {
         if(loadShadersOnceDontForgetToSeeIfSettingToFalseIsSlow && user.shaders.get(url)!=null) return;
         LinkedList shader=user.contentListMayJump(path);
         if(shader==null) return;
-        user.shaders.put(url, shader);
+        user.shaders.put(url, join(shader," "));
     }
 
     public ConcurrentHashMap<String,Integer>       etags  = new ConcurrentHashMap<String,Integer>();

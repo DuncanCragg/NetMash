@@ -209,7 +209,7 @@ public class User extends CyrusLanguage {
 
     public ConcurrentHashMap<String,Bitmap> textBitmaps = new ConcurrentHashMap<String,Bitmap>();
 
-    public ConcurrentHashMap<String,LinkedList> shaders = new ConcurrentHashMap<String,LinkedList>();
+    public ConcurrentHashMap<String,String> shaders = new ConcurrentHashMap<String,String>();
 
     public ConcurrentHashMap<Integer,String> mesh2uid = new ConcurrentHashMap<Integer,String>();
 
