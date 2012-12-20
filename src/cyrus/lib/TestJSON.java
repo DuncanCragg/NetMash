@@ -150,6 +150,47 @@ public class TestJSON {
             "                   }\n"+
             "      }\n", true);
 
+String expected=
+"{\n"+
+"  kernel: {\n"+
+"    modules: {\n"+
+"      cache: cyrus.cache.JSONCache\n"+
+"      http: cyrus.drivers.HTTP\n"+
+"      logic: cyrus.drivers.TestDriver\n"+
+"    }\n"+
+"  }\n"+
+"  modules: {\n"+
+"    cache: {  funky: \""+JSON.replaceEscapableChars(funkycharsout)+"\" }\n"+
+"    http: {  port: 8080 }\n"+
+"    logic: \n"+
+"      true\n"+
+"      false\n"+
+"      {  foo: null }\n"+
+"      (\n"+
+"        true\n"+
+"        false\n"+
+"        ( null stringnospaces )\n"+
+"        \"string with  spaces\"\n"+
+"       )\n"+
+"    bits: \"string with  (double ) spaces:\"\n"+
+"    b: c\n"+
+"    more: \n"+
+"      true\n"+
+"      (\n"+
+"        35392743408672770\n"+
+"        {\n"+
+"          a: -2147483649\n"+
+"          b: 2147483648\n"+
+"          c: \n"+
+"            ( -2147483648 2147483647 y: )\n"+
+"            x\n"+
+"        }\n"+
+"        false\n"+
+"       )\n"+
+"      null\n"+
+"  }\n"+
+"}";
+        assert m.toString(true).equals(expected): "parse and back wrong:\n[["+m.toString(true)+"]]\n\n[["+expected+"]]";
         System.out.println(m);
         m=new JSON(m.toString());
         System.out.println(m);
