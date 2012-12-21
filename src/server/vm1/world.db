@@ -5,10 +5,10 @@
   rotation: 0 0 0
   scale: 10.0 10.0 10.0
   sub-items:
-    { item: uid-bfa0-9dcb-1d1c-1e83 coords:  0 10 0 }
-    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords:  4 0 4 }
-    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: -4 0 4 }
-    { item: http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json coords:  0 0 -27 }
+    { item: uid-bfa0-9dcb-1d1c-1e83 position:  0 10 0 }
+    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position:  4 0 4 }
+    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: -4 0 4 }
+    { item: http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json position:  0 0 -27 }
   vertices: ( 1.0 -0.1 -1.0 ) ( 1.0 -0.1 1.0 ) ( -1.0 -0.1 1.0 ) ( -1.0 -0.1 -1.0 )
   texturepoints: ( 0.0 0.0 ) ( 5.0 0.0 ) ( 5.0 5.0 ) ( 0.0 5.0 )
   normals: ( 0.0 1.0 0.0 )

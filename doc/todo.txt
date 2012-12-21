@@ -44,7 +44,7 @@ Xmas demo
 Productionise on-device programming
  - -----------------------------------------------------
  + naming:
-    + coords->position place->within scale->size and the rest
+    + place->within scale->size and the rest
     - CyrusObjects not WebObjects
     - netmash.keystore; om.db
  - lifecycle:
@@ -282,7 +282,7 @@ Scene Graph creation and navigation
     - OM: width: [ "=>", "$:place:present", "×", 10 ]
  - circularity detect: why doesn't User presence blow up?
  - put limit on render recursion depth and detect already-rendered-at-xyz
- - teleport coords and orientation on back button (save coords in history, thus also scroll state)
+ - teleport position and orientation on back button (save position in history, thus also scroll state)
  - materials map to shaders
  - dynamically edit shaders
 

@@ -587,12 +587,12 @@ public class Cyrus2GUI {
         }
         for(int i=0; i< subs.size(); i++){
             String o=String.format("private:viewing:sub-items:%d:item",i);
-            String c=String.format("private:viewing:sub-items:%d:coords",i);
+            String c=String.format("private:viewing:sub-items:%d:position",i);
             String s=String.format("private:viewing:sub-items:%d:item:sub-items",i);
-            LinkedList subcoords=user.contentAsList(c);
-            LinkedList subsubs  =user.contentAsList(s);
+            LinkedList subposn=user.contentAsList(c);
+            LinkedList subsubs=user.contentAsList(s);
             if(subsubs==null) continue;
-            float tx=Mesh.getFloatFromList(subcoords,0,0),ty=Mesh.getFloatFromList(subcoords,1,0),tz=Mesh.getFloatFromList(subcoords,2,0);
+            float tx=Mesh.getFloatFromList(subposn,0,0),ty=Mesh.getFloatFromList(subposn,1,0),tz=Mesh.getFloatFromList(subposn,2,0);
             parentuid=user.content(o);
             for(int j=0; j< subsubs.size(); j++){
                 String q=String.format("private:viewing:sub-items:%d:item:sub-items:%d",i,j);
@@ -610,12 +610,12 @@ public class Cyrus2GUI {
         mesh2uidPut(objhash, parentuid, user.content(p+":item"));
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("item",objhash);
-        LinkedList coords=new LinkedList();
-        LinkedList subcoords=user.contentAsList(p+":coords");
-        coords.add(tx+Mesh.getFloatFromList(subcoords,0,0));
-        coords.add(ty+Mesh.getFloatFromList(subcoords,1,0));
-        coords.add(tz+Mesh.getFloatFromList(subcoords,2,0));
-        hm.put("coords",coords);
+        LinkedList position=new LinkedList();
+        LinkedList subposn=user.contentAsList(p+":position");
+        position.add(tx+Mesh.getFloatFromList(subposn,0,0));
+        position.add(ty+Mesh.getFloatFromList(subposn,1,0));
+        position.add(tz+Mesh.getFloatFromList(subposn,2,0));
+        hm.put("position",position);
         ((objhash.get("light")==null)? subone: subtwo).add(hm);
     }
 

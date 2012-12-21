@@ -84,11 +84,11 @@ public class Renderer implements GLSurfaceView.Renderer {
     static String lightVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; attribute vec2 tex; varying vec2 texturePt; void main(){ texturePt = tex; gl_Position = mvpm*pos; }";
     static String lightFragmentShaderSource     = "precision mediump float; uniform vec3 lightCol; uniform sampler2D texture0; varying vec2 texturePt; void main(){ gl_FragColor=vec4(lightCol,1.0)*texture2D(texture0,texturePt); }";
 
-    public Renderer(Cyrus cyrus, LinkedHashMap hm, LinkedList coords) {
+    public Renderer(Cyrus cyrus, LinkedHashMap hm, LinkedList position) {
         debugGL=Kernel.config.boolPathN("gl:log"); if(debugGL) log("** GL Debugging on! May be slower..");
         this.cyrus=cyrus;
         this.mesh=new Mesh(hm,cyrus.user);
-        resetCoordsAndView(coords);
+        resetPositionAndView(position);
     }
 
     synchronized public void newMesh(LinkedHashMap hm){
@@ -163,7 +163,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             LinkedHashMap hm=(LinkedHashMap)subobobj;
             Mesh ms=meshes.get(System.identityHashCode(hm));
             if(ms==null){ ms=new Mesh(hm,cyrus.user); meshes.put(System.identityHashCode(hm),ms); }
-            Object subobcrd=subob.get("coords");
+            Object subobcrd=subob.get("position");
             if(subobcrd!=null) drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
             else               drawEditMesh(ms);
         }
@@ -342,10 +342,10 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     // -------------------------------------------------------------
 
-    public void resetCoordsAndView(LinkedList coords){
-        float x=Mesh.getFloatFromList(coords,0,0);
-        float y=Mesh.getFloatFromList(coords,1,0);
-        float z=Mesh.getFloatFromList(coords,2,0);
+    public void resetPositionAndView(LinkedList position){
+        float x=Mesh.getFloatFromList(position,0,0);
+        float y=Mesh.getFloatFromList(position,1,0);
+        float z=Mesh.getFloatFromList(position,2,0);
         direction=0;
         eyeX=x;
         eyeY=y;
@@ -375,7 +375,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 seeX=eyeX-4.5f*FloatMath.sin(direction);
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
             }
-            cyrus.user.onNewCoords(eyeX, eyeY, eyeZ);
+            cyrus.user.onNewPosition(eyeX, eyeY, eyeZ);
         }else{
             if(touchDetecting){ touchDX+=dx; touchDY+=dy; return; }
             if(x!=touchX || y!=touchY) touchedObject=null;

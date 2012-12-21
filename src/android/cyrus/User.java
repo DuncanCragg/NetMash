@@ -90,7 +90,7 @@ public class User extends CyrusLanguage {
               "    \"homeusers\": \""+homeusers+"\", \n"+
               "    \"saying\": \"\", \n"+
               "    \"place\": null, \n"+
-              "    \"coords\": [ 0.0, 0.0, 0.0 ], \n"+
+              "    \"position\": [ 0.0, 0.0, 0.0 ], \n"+
               "    \"avatar\": \"http://10.0.2.2:8082/o/uid-7794-3aa8-2192-7a60.json\", \n"+
               "    \"location\": { \"lat\": 54.106037, \"lon\": -1.579163 }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
@@ -102,7 +102,7 @@ public class User extends CyrusLanguage {
               "        \"history\": null, \n"+
               "        \"contacts\":  \""+contactsuid+"\", \n"+
               "        \"responses\": { }, \n"+
-              "        \"coords\": { } \n"+
+              "        \"position\": { } \n"+
               "    }\n"+
               "}");
     }
@@ -303,7 +303,7 @@ public class User extends CyrusLanguage {
         };
     }
 
-    synchronized public void onNewCoords(final float x, final float y, final float z){
+    synchronized public void onNewPosition(final float x, final float y, final float z){
         lastx=x; lasty=y; lastz=z;
         final long updated=System.currentTimeMillis();
         final User self=this;
@@ -314,7 +314,7 @@ public class User extends CyrusLanguage {
                 Kernel.sleep(earliest-updated);
                 synchronized(self){
                     waiting=false;
-                    onNewCoords(lastx,lasty,lastz);
+                    onNewPosition(lastx,lasty,lastz);
                 }
             }}.start();
             return;
@@ -324,17 +324,17 @@ public class User extends CyrusLanguage {
             public void evaluate(){
                 LinkedList newplace=findNewPlaceNearer(x,y,z);
                 if(newplace==null){
-                    LinkedList newcoords=list(x,y,z);
-                    contentList("coords", newcoords);
-                    contentList("private:coords:"+UID.toUID(content("private:viewing")), newcoords);
+                    LinkedList newposn=list(x,y,z);
+                    contentList("position", newposn);
+                    contentList("private:position:"+UID.toUID(content("private:viewing")), newposn);
                 }
                 else{
                     String     newplaceuid=(String)    newplace.get(0);
-                    LinkedList newcoords  =(LinkedList)newplace.get(1);
-                    contentList("coords", newcoords);
-                    contentList("private:coords:"+UID.toUID(newplaceuid), newcoords);
+                    LinkedList newposn  =(LinkedList)newplace.get(1);
+                    contentList("position", newposn);
+                    contentList("private:position:"+UID.toUID(newplaceuid), newposn);
                     jumpToHereAndShow(newplaceuid,"gui");
-                    if(Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetCoordsAndView(newcoords);
+                    if(Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetPositionAndView(newposn);
                 }
                 refreshObserves();
             }
@@ -347,10 +347,10 @@ public class User extends CyrusLanguage {
         for(int i=0; i< subObjects.size(); i++){
             String objispath=String.format("place:sub-items:%d:item:is",i);
             if(!contentListContains(objispath,"place")) continue;
-            LinkedList placecoords=contentList(String.format("place:sub-items:%d:coords",i));
-            float px=Mesh.getFloatFromList(placecoords,0,0);
-            float py=Mesh.getFloatFromList(placecoords,1,0);
-            float pz=Mesh.getFloatFromList(placecoords,2,0);
+            LinkedList placeposn=contentList(String.format("place:sub-items:%d:position",i));
+            float px=Mesh.getFloatFromList(placeposn,0,0);
+            float py=Mesh.getFloatFromList(placeposn,1,0);
+            float pz=Mesh.getFloatFromList(placeposn,2,0);
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
             float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
             if(d<10) return list(content(String.format("place:sub-items:%d:item",i)), list(dx,dy,dz));
@@ -378,9 +378,9 @@ public class User extends CyrusLanguage {
             View view=history.pop();
             user.content("private:viewing", view.uid);
             user.content("private:viewas",  view.as);
-            LinkedList newcoords=contentList("private:coords:"+UID.toUID(view.uid));
-            contentList("coords", newcoords);
-            if(newcoords!=null && Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetCoordsAndView(newcoords);
+            LinkedList newposn=contentList("private:position:"+UID.toUID(view.uid));
+            contentList("position", newposn);
+            if(newposn!=null && Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetPositionAndView(newposn);
             return true;
         }
         public String toString(){
@@ -472,17 +472,17 @@ public class User extends CyrusLanguage {
         };
     }
 
-    public LinkedList getCoords(final String guiuid){
+    public LinkedList getPosition(final String guiuid){
         final LinkedList[] val=new LinkedList[1];
         new Evaluator(this){
             public void evaluate(){
-                String path="private:coords:"+UID.toUID(guiuid);
+                String path="private:position:"+UID.toUID(guiuid);
                 val[0]=contentList(path);
                 if(val[0]==null){
                    val[0]=list(0,0.7,3);
                    contentList(path,val[0]);
                 }
-                contentList("coords", val[0]);
+                contentList("position", val[0]);
                 refreshObserves();
             }
         };
