@@ -574,33 +574,33 @@ public class Cyrus2GUI {
 
         addEditingToSubs(subone);
 
-        LinkedList subs=user.contentAsList("private:viewing:sub-objects");
+        LinkedList subs=user.contentAsList("private:viewing:sub-items");
 
-        if(subs==null){ objhash.put("sub-objects", subone); return objhash; }
+        if(subs==null){ objhash.put("sub-items", subone); return objhash; }
 
         LinkedList subtwo=new LinkedList();
 
         String parentuid=user.content("private:viewing");
         for(int i=0; i< subs.size(); i++){
-            String p=String.format("private:viewing:sub-objects:%d",i);
+            String p=String.format("private:viewing:sub-items:%d",i);
             addObjectToSubs(parentuid,p,subone,subtwo,0,0,0);
         }
         for(int i=0; i< subs.size(); i++){
-            String o=String.format("private:viewing:sub-objects:%d:object",i);
-            String c=String.format("private:viewing:sub-objects:%d:coords",i);
-            String s=String.format("private:viewing:sub-objects:%d:object:sub-objects",i);
+            String o=String.format("private:viewing:sub-items:%d:object",i);
+            String c=String.format("private:viewing:sub-items:%d:coords",i);
+            String s=String.format("private:viewing:sub-items:%d:object:sub-items",i);
             LinkedList subcoords=user.contentAsList(c);
             LinkedList subsubs  =user.contentAsList(s);
             if(subsubs==null) continue;
             float tx=Mesh.getFloatFromList(subcoords,0,0),ty=Mesh.getFloatFromList(subcoords,1,0),tz=Mesh.getFloatFromList(subcoords,2,0);
             parentuid=user.content(o);
             for(int j=0; j< subsubs.size(); j++){
-                String q=String.format("private:viewing:sub-objects:%d:object:sub-objects:%d",i,j);
+                String q=String.format("private:viewing:sub-items:%d:object:sub-items:%d",i,j);
                 addObjectToSubs(parentuid,q,subone,subtwo,tx,ty,tz);
             }
         }
         subtwo.addAll(subone);
-        objhash.put("sub-objects", subtwo);
+        objhash.put("sub-items", subtwo);
         return objhash;
     }
 

@@ -2,7 +2,7 @@
   Class: cyrus.types.PresenceTracker
   is: place 3d mesh editable
   title: "Your Room"
-  sub-objects:
+  sub-items:
     { object: uid-20ce-d0b1-c717-3dbb coords: 0 1 0 }
     { object: uid-e30d-92d3-3de9-f898 coords: 0 0 -2 }
     { object: uid-a07e-434c-b8e7-5b40 coords: 3 3 3 }
@@ -52,10 +52,10 @@
 { UID: uid-e31f-88ef-6c62-8440
   is:  3d cuboid editable rule
   when: user present, set target user to first one
-  target-user: # => @=place:sub-objects:object select 0
+  target-user: # => @=place:sub-items:object select 0
   place: {
     present: > 0
-    sub-objects: { object: { is: user } }
+    sub-items: { object: { is: user } }
   }
 }
 
@@ -100,7 +100,7 @@
   rotation: 0 0 0
   scale: 1 1 1
   light: 0.5 0.5 1
-  sub-objects: ( -1.2 -1.8 ) ( -0.4 -1.8 ) ( 0.4 -1.8 ) ( 1.2 -1.8 )
+  sub-items: ( -1.2 -1.8 ) ( -0.4 -1.8 ) ( 0.4 -1.8 ) ( 1.2 -1.8 )
                ( -1.2 -1.0 ) ( -0.4 -1.0 ) ( 0.4 -1.0 ) ( 1.2 -1.0 )
                ( -1.2 -0.2 ) ( -0.4 -0.2 ) ( 0.4 -0.2 ) ( 1.2 -0.2 )
   numerator: 2
@@ -112,7 +112,7 @@
   is: 3d rule editable
   when: "starting, create lights"
   status: creating => waiting
-  sub-objects: ( number number ) =>
+  sub-items: ( number number ) =>
       { object:
         { UID: new
           Rules: uid-1b54-d28a-71dc-5827 uid-7b1a-4b1d-1424-2818
@@ -124,7 +124,7 @@
         }
         coords: @.0 @.1 -0.5
       }
-  denominator: => count @sub-objects
+  denominator: => count @sub-items
 }
 
 { UID: uid-fb3e-02d3-70bb-916f
@@ -179,16 +179,16 @@
   when: "checking, set to initial zero and recalc numerator and denominator"
   status: checking
   lit: => 0
-  numerator: => ( @numerator / @denominator ) * ( count @sub-objects )
-  denominator: => count @sub-objects
+  numerator: => ( @numerator / @denominator ) * ( count @sub-items )
+  denominator: => count @sub-items
 }
 
 { UID: uid-0b6a-659e-3561-05b2
   is: 3d rule editable
   when: "checking, count lit up lights"
   status: checking
-  sub-objects: { object: { light: * 1 1 } }
-  lit: => count @=sub-objects
+  sub-items: { object: { light: * 1 1 } }
+  lit: => count @=sub-items
 }
 
 { UID: uid-4899-0de2-1bb5-58ba

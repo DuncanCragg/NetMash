@@ -4,7 +4,7 @@
   title: "Rob Ott's Place"
   rotation: 0 0 0
   scale: 10.0 10.0 10.0
-  sub-objects:
+  sub-items:
     { object: uid-bfa0-9dcb-1d1c-1e83 coords:  0 10 0 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords:  4 0 4 }
     { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: -4 0 4 }

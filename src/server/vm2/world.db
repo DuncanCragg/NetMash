@@ -13,7 +13,7 @@
   rotation: 0 0 0
   scale: 15.0 15.0 15.0
   present: 0
-  sub-objects:
+  sub-items:
     { object: uid-311d-8423-3ca6-ddcb coords:  0 10 0 }
     { object: uid-8a54-9690-a4d5-4a9c coords:  0 0 15 }
     { object: uid-c058-2db1-0b26-8f48 coords:  7 0  7 }

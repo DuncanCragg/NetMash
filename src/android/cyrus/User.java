@@ -342,18 +342,18 @@ public class User extends CyrusLanguage {
     }
 
     private LinkedList findNewPlaceNearer(float ux, float uy, float uz){
-        LinkedList subObjects=contentList("place:sub-objects");
+        LinkedList subObjects=contentList("place:sub-items");
         if(subObjects==null) return null;
         for(int i=0; i< subObjects.size(); i++){
-            String objispath=String.format("place:sub-objects:%d:object:is",i);
+            String objispath=String.format("place:sub-items:%d:object:is",i);
             if(!contentListContains(objispath,"place")) continue;
-            LinkedList placecoords=contentList(String.format("place:sub-objects:%d:coords",i));
+            LinkedList placecoords=contentList(String.format("place:sub-items:%d:coords",i));
             float px=Mesh.getFloatFromList(placecoords,0,0);
             float py=Mesh.getFloatFromList(placecoords,1,0);
             float pz=Mesh.getFloatFromList(placecoords,2,0);
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
             float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
-            if(d<10) return list(content(String.format("place:sub-objects:%d:object",i)), list(dx,dy,dz));
+            if(d<10) return list(content(String.format("place:sub-items:%d:object",i)), list(dx,dy,dz));
         }
         return null;
     }

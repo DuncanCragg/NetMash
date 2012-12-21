@@ -12,7 +12,7 @@ public class PresenceTracker extends CyrusLanguage {
 
     public void evaluate(){
         trackPresence();
-        contentAll("sub-objects:object:is");
+        contentAll("sub-items:object:is");
         super.evaluate();
     }
 
@@ -21,7 +21,7 @@ public class PresenceTracker extends CyrusLanguage {
         for(String trackuid: alerted()){
             contentTemp("Alerted", trackuid);
             if(!contentSet("Alerted:place")) continue;
-            LinkedList subuids=contentAll("sub-objects:object");
+            LinkedList subuids=contentAll("sub-items:object");
             int i=(subuids==null)? -1: subuids.indexOf(trackuid);
             if(contentIsThis("Alerted:place")){
                 LinkedList coords=contentListClone("Alerted:coords");
@@ -30,18 +30,18 @@ public class PresenceTracker extends CyrusLanguage {
                     LinkedHashMap hm=new LinkedHashMap();
                     hm.put("object", trackuid);
                     hm.put("coords", coords);
-                    contentListAdd("sub-objects", hm);
+                    contentListAdd("sub-items", hm);
                     contentInc("present");
                 }
                 else{
-                    String mycrdpath=String.format("sub-objects:%d:coords",i);
+                    String mycrdpath=String.format("sub-items:%d:coords",i);
                     LinkedList mycoords=contentList(mycrdpath);
                     if(mycoords==null || !mycoords.equals(coords)) contentList(mycrdpath,coords);
                 }
             }
             else{
                 if(i!= -1){
-                    contentListRemove("sub-objects", i);
+                    contentListRemove("sub-items", i);
                     contentDec("present");
                 }
             }
