@@ -153,9 +153,9 @@ public class User extends CyrusLanguage {
                         "}");
     }
 
-    static User newSwipe(String objectuid, String useruid, float dx, float dy){
+    static User newSwipe(String itemuid, String useruid, float dx, float dy){
         return new User("{ \"is\": \"swipe\", \n"+
-                        "  \"object\": \""+objectuid+"\",\n"+
+                        "  \"item\": \""+itemuid+"\",\n"+
                         "  \"user\": \""+useruid+"\",\n"+
                         "  \"dx\": \""+dx+"\",\n"+
                         "  \"dy\": \""+dy+"\"\n"+
@@ -248,7 +248,7 @@ public class User extends CyrusLanguage {
         earliest=updated+500;
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
-        if(false) log("touched object: "+mesh.get("title")+(edit? " edit": " send")+" uid: "+objectuid+" "+ndx+" "+ndy);
+        if(false) log("touched item: "+mesh.get("title")+(edit? " edit": " send")+" uid: "+objectuid+" "+ndx+" "+ndy);
         if(ndx+ndy==0){
             history.forward();
             content("private:viewing",objectuid);
@@ -345,7 +345,7 @@ public class User extends CyrusLanguage {
         LinkedList subObjects=contentList("place:sub-items");
         if(subObjects==null) return null;
         for(int i=0; i< subObjects.size(); i++){
-            String objispath=String.format("place:sub-items:%d:object:is",i);
+            String objispath=String.format("place:sub-items:%d:item:is",i);
             if(!contentListContains(objispath,"place")) continue;
             LinkedList placecoords=contentList(String.format("place:sub-items:%d:coords",i));
             float px=Mesh.getFloatFromList(placecoords,0,0);
@@ -353,7 +353,7 @@ public class User extends CyrusLanguage {
             float pz=Mesh.getFloatFromList(placecoords,2,0);
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
             float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
-            if(d<10) return list(content(String.format("place:sub-items:%d:object",i)), list(dx,dy,dz));
+            if(d<10) return list(content(String.format("place:sub-items:%d:item",i)), list(dx,dy,dz));
         }
         return null;
     }
@@ -916,7 +916,7 @@ public class User extends CyrusLanguage {
         }
         else
         if(contentIsOrListContains("is", "swipe")){
-            notifying(content("object"));
+            notifying(content("item"));
         }
         else
         if(contentIs("is", "form")){

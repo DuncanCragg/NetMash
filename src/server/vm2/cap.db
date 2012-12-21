@@ -29,7 +29,7 @@
 
 { UID: uid-f265-941d-a0b8-ca5d
   is: gui rule editable
-  when: "application created create land object"
+  when: "application created create land item"
   Notifying: => @. with @form
   view: {
     land: # => style "Your Land:"
@@ -96,7 +96,7 @@
 
 { UID: uid-1cc7-4c21-9036-4e01
   is: gui rule editable
-  when: "application created create payment summaries and object"
+  when: "application created create payment summaries and item"
   view: {
     BP: # => style "Basic Payment (£):" 0
     FC: # => style "Woodland Payment (£):" 0
@@ -146,7 +146,7 @@
 
 { UID: uid-0215-038b-7558-041a
   is: land rule editable
-  when: "land object notified add to list"
+  when: "land item notified add to list"
   Alerted: { is: land place: @ }
   list: @Alerted !=> @. with @Alerted
 }

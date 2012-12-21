@@ -158,7 +158,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
         for(Object o: m.subObjects){
             LinkedHashMap subob=(LinkedHashMap)o;
-            Object subobobj=subob.get("object");
+            Object subobobj=subob.get("item");
             if(!(subobobj instanceof LinkedHashMap)) continue;
             LinkedHashMap hm=(LinkedHashMap)subobobj;
             Mesh ms=meshes.get(System.identityHashCode(hm));

@@ -304,7 +304,7 @@ public class CyrusLanguage extends WebObject {
                 }
                 else
                 if(currentRewritePath.equals("")){
-                    if(!(e instanceof LinkedHashMap)){ log("failed to rewrite entire object: "+e); continue; }
+                    if(!(e instanceof LinkedHashMap)){ log("failed to rewrite entire item: "+e); continue; }
                     contentReplace(new JSON((LinkedHashMap)e));
                 }
                 else contentObject(currentRewritePath, e);

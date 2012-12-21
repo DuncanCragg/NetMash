@@ -12,7 +12,7 @@ public class PresenceTracker extends CyrusLanguage {
 
     public void evaluate(){
         trackPresence();
-        contentAll("sub-items:object:is");
+        contentAll("sub-items:item:is");
         super.evaluate();
     }
 
@@ -21,14 +21,14 @@ public class PresenceTracker extends CyrusLanguage {
         for(String trackuid: alerted()){
             contentTemp("Alerted", trackuid);
             if(!contentSet("Alerted:place")) continue;
-            LinkedList subuids=contentAll("sub-items:object");
+            LinkedList subuids=contentAll("sub-items:item");
             int i=(subuids==null)? -1: subuids.indexOf(trackuid);
             if(contentIsThis("Alerted:place")){
                 LinkedList coords=contentListClone("Alerted:coords");
                 if(coords==null) coords=list(0,0,0);
                 if(i== -1){
                     LinkedHashMap hm=new LinkedHashMap();
-                    hm.put("object", trackuid);
+                    hm.put("item", trackuid);
                     hm.put("coords", coords);
                     contentListAdd("sub-items", hm);
                     contentInc("present");

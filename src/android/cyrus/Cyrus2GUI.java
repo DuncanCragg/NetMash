@@ -586,16 +586,16 @@ public class Cyrus2GUI {
             addObjectToSubs(parentuid,p,subone,subtwo,0,0,0);
         }
         for(int i=0; i< subs.size(); i++){
-            String o=String.format("private:viewing:sub-items:%d:object",i);
+            String o=String.format("private:viewing:sub-items:%d:item",i);
             String c=String.format("private:viewing:sub-items:%d:coords",i);
-            String s=String.format("private:viewing:sub-items:%d:object:sub-items",i);
+            String s=String.format("private:viewing:sub-items:%d:item:sub-items",i);
             LinkedList subcoords=user.contentAsList(c);
             LinkedList subsubs  =user.contentAsList(s);
             if(subsubs==null) continue;
             float tx=Mesh.getFloatFromList(subcoords,0,0),ty=Mesh.getFloatFromList(subcoords,1,0),tz=Mesh.getFloatFromList(subcoords,2,0);
             parentuid=user.content(o);
             for(int j=0; j< subsubs.size(); j++){
-                String q=String.format("private:viewing:sub-items:%d:object:sub-items:%d",i,j);
+                String q=String.format("private:viewing:sub-items:%d:item:sub-items:%d",i,j);
                 addObjectToSubs(parentuid,q,subone,subtwo,tx,ty,tz);
             }
         }
@@ -605,11 +605,11 @@ public class Cyrus2GUI {
     }
 
     private void addObjectToSubs(String parentuid, String p, LinkedList subone, LinkedList subtwo, float tx, float ty, float tz){
-        LinkedHashMap objhash=object2mesh(p+":object:", true);
+        LinkedHashMap objhash=object2mesh(p+":item:", true);
         if(objhash==null) return;
-        mesh2uidPut(objhash, parentuid, user.content(p+":object"));
+        mesh2uidPut(objhash, parentuid, user.content(p+":item"));
         LinkedHashMap hm=new LinkedHashMap();
-        hm.put("object",objhash);
+        hm.put("item",objhash);
         LinkedList coords=new LinkedList();
         LinkedList subcoords=user.contentAsList(p+":coords");
         coords.add(tx+Mesh.getFloatFromList(subcoords,0,0));
@@ -623,7 +623,7 @@ public class Cyrus2GUI {
         LinkedHashMap objhash=object2edit();
         if(objhash==null) return;
         LinkedHashMap hm=new LinkedHashMap();
-        hm.put("object",objhash);
+        hm.put("item",objhash);
         mesh2uidPut(objhash, "", "editing");
         subobs.add(hm);
     }

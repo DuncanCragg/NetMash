@@ -3,14 +3,14 @@
   is: place 3d mesh editable
   title: "Your Room"
   sub-items:
-    { object: uid-20ce-d0b1-c717-3dbb coords: 0 1 0 }
-    { object: uid-e30d-92d3-3de9-f898 coords: 0 0 -2 }
-    { object: uid-a07e-434c-b8e7-5b40 coords: 3 3 3 }
-    { object: uid-f6c8-2d51-8060-a52a coords: 0 1 -11 }
-    { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: 4 0 -7 }
-    { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: -4 0 -7 }
-    { object: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: 0 4 -7 }
-    { object: http://10.0.2.2:8081/o/uid-1e51-f298-5f55-6caa.json coords: 0 0 -30 }
+    { item: uid-20ce-d0b1-c717-3dbb coords: 0 1 0 }
+    { item: uid-e30d-92d3-3de9-f898 coords: 0 0 -2 }
+    { item: uid-a07e-434c-b8e7-5b40 coords: 3 3 3 }
+    { item: uid-f6c8-2d51-8060-a52a coords: 0 1 -11 }
+    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: 4 0 -7 }
+    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: -4 0 -7 }
+    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json coords: 0 4 -7 }
+    { item: http://10.0.2.2:8081/o/uid-1e51-f298-5f55-6caa.json coords: 0 0 -30 }
   vertices: ( 20 -1 -20 ) ( 20 -1 20 ) ( -20 -1 20 ) ( -20 -1 -20 ) ( 20 20 -20 ) ( 20 20 20 ) ( -20 20 20 ) ( -20 20 -20 )
   texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )
   normals: ( 1 0 0 ) ( -1 0 0 ) ( 0 1 0 ) ( 0 -1 0 ) ( 0 0 1 ) ( 0 0 -1 )
@@ -52,10 +52,10 @@
 { UID: uid-e31f-88ef-6c62-8440
   is:  3d cuboid editable rule
   when: user present, set target user to first one
-  target-user: # => @=place:sub-items:object select 0
+  target-user: # => @=place:sub-items:item select 0
   place: {
     present: > 0
-    sub-items: { object: { is: user } }
+    sub-items: { item: { is: user } }
   }
 }
 
@@ -113,7 +113,7 @@
   when: "starting, create lights"
   status: creating => waiting
   sub-items: ( number number ) =>
-      { object:
+      { item:
         { UID: new
           Rules: uid-1b54-d28a-71dc-5827 uid-7b1a-4b1d-1424-2818
           is: 3d cuboid editable
@@ -187,7 +187,7 @@
   is: 3d rule editable
   when: "checking, count lit up lights"
   status: checking
-  sub-items: { object: { light: * 1 1 } }
+  sub-items: { item: { light: * 1 1 } }
   lit: => count @=sub-items
 }
 

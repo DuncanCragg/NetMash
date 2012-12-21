@@ -44,8 +44,8 @@ Xmas demo
 Productionise on-device programming
  - -----------------------------------------------------
  + naming:
-    - coords->position place->within scale->size and the rest
-    - Items not WebObjects - sub-items: { item:
+    + coords->position place->within scale->size and the rest
+    - CyrusObjects not WebObjects
     - netmash.keystore; om.db
  - lifecycle:
     - restartable, pausable, etc
