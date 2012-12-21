@@ -43,8 +43,6 @@ Xmas demo
 --------------------------------------------------------
 Productionise on-device programming
  - -----------------------------------------------------
- + syntax:
-    - syntax error if trailing chars
  + naming:
     - coords->position place->within scale->size and the rest
     - Items not WebObjects - sub-items: { item:

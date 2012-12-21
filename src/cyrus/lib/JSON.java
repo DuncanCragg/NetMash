@@ -122,7 +122,7 @@ public class JSON {
     public void content(String json){
         chars=json.toCharArray();
         chp=0;
-        setTopHash(readHashMap());
+        setTopHash(readHashMap(true));
     }
 
     /** Set content LinkedHashMap. */
@@ -522,7 +522,7 @@ public class JSON {
     private void ensureContent(){
         if(tophash!=null) return;
         if(chars==null) return;
-        setTopHash(!cyrus? readHashMap(): readCyrusHash());
+        setTopHash(!cyrus? readHashMap(true): readCyrusHash(true));
     }
 
     private void setTopHash(LinkedHashMap hm){
@@ -543,7 +543,7 @@ public class JSON {
             int chpsave=chp;
             if(chars[chp]==')'){ chp--; break; }
             if(chars[chp]=='}'){ chp--; break; }
-            if(chars[chp]=='{'){ ll.add(readCyrusHash()); continue; }
+            if(chars[chp]=='{'){ ll.add(readCyrusHash(false)); continue; }
             if(chars[chp]=='('){ ll.add(readCyrusList()); continue; }
             if(chars[chp]=='"'){ ll.add(readString());    continue; }
             String s=readCyrusString();
@@ -562,7 +562,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedHashMap readCyrusHash(){
+    private LinkedHashMap readCyrusHash(boolean toplevel){
         for(; chp<chars.length; chp++) if(chars[chp]>' '){ if(chars[chp]=='{') break; else parseError('{'); }
         chp++;
         LinkedHashMap hm = new LinkedHashMap();
@@ -610,6 +610,7 @@ public class JSON {
 
             if(chars[chp]=='}') break;
         }
+        if(toplevel) for(chp++; chp<chars.length; chp++) if(chars[chp]>' ') parseError(' ');
         return hm;
     }
 
@@ -653,7 +654,7 @@ public class JSON {
             return readString();
         }
         if(chars[chp]=='{'){
-            return readHashMap();
+            return readHashMap(false);
         }
         if(chars[chp]=='['){
             return readList();
@@ -672,7 +673,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedHashMap readHashMap(){
+    private LinkedHashMap readHashMap(boolean toplevel){
         for(; chp<chars.length; chp++) if(chars[chp]>' '){ if(chars[chp]=='{') break; else parseError('{'); }
         chp++;
         LinkedHashMap hm = new LinkedHashMap();
@@ -744,6 +745,7 @@ public class JSON {
 
             if(chars[chp]>' ') parseError(',');
         }
+        if(toplevel) for(chp++; chp<chars.length; chp++) if(chars[chp]>' ') parseError(' ');
         return hm;
     }
 

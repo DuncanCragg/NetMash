@@ -87,6 +87,13 @@ public class TestJSON {
 
         {
 
+        try{
+            JSON m = new JSON("{ \"a\": \"b\", \"l\": \"m\", \"x\": [ \"y\", \"z\" ] } \n ");
+            assert m.stringPath("x:1").equals("z");
+            JSON n = new JSON("{ \"a\": \"b\", \"l\": \"m\", \"x\": [ \"y\", \"z\" ] } \n { } ");
+            assert !n.stringPath("x:1").equals("z"): "should catch trailing chars";
+        }catch(JSON.Syntax s){}
+
         JSON m = new JSON("{ \"a\": \"b\", \"l\": \"m\", \"x\": [ \"y\", \"z\" ] }");
         System.out.println(m);
         JSON n = new JSON("{ \"c\": \"d\", \"l\": \"n\", \"o\": [ \"p\", \"q\" ] }");
