@@ -147,7 +147,7 @@
 { UID: uid-0215-038b-7558-041a
   is: land rule editable
   when: "land item notified add to list"
-  Alerted: { is: land place: @ }
+  Alerted: { is: land within: @ }
   list: @Alerted !=> @. with @Alerted
 }
 
@@ -164,7 +164,7 @@
   area: number
   usage: /wcg-/
   ne-total: => 0
-  fc-total: => @area * ( @place:place:constants select @usage )
+  fc-total: => @area * ( @within:within:constants select @usage )
 }
 
 { UID: uid-c619-afdd-0d5d-1a5d
@@ -172,7 +172,7 @@
   when: "area used for stewardship multiply area by payment per hectare for usage"
   area: number usage: /hls-/
   fc-total: => 0
-  ne-total: => @area * ( @place:place:constants select @usage )
+  ne-total: => @area * ( @within:within:constants select @usage )
 }
 
 { UID: uid-4a47-2cb6-8e99-a178

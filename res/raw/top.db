@@ -43,7 +43,7 @@
   rotation: 45 45 45
   scale: 0.3 0.3 0.3
   light: 0.0 0.0 1
-  place: uid-f862-56af-d46d-c440
+  within: uid-f862-56af-d46d-c440
   position: 0 0 -3
   time: uid-b553-d845-44d6-48ac
   next-time: 0
@@ -52,8 +52,8 @@
 { UID: uid-e31f-88ef-6c62-8440
   is:  3d cuboid editable rule
   when: user present, set target user to first one
-  target-user: # => @=place:sub-items:item select 0
-  place: {
+  target-user: # => @=within:sub-items:item select 0
+  within: {
     present: > 0
     sub-items: { item: { is: user } }
   }

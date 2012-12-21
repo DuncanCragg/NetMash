@@ -164,7 +164,7 @@ public class Cyrus2GUI {
         LinkedList valuescol = new LinkedList();
         valuescol.add(style("direction","vertical"));
         addIfPresent(valuescol, "area", null, false, hash("input","textfield", "label","Area (ha):"));
-        LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:place:update-template");
+        LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:within:update-template");
         if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
             Object o=entry.getValue();
             if(!(o instanceof LinkedHashMap)) continue;
@@ -340,7 +340,7 @@ public class Cyrus2GUI {
             LinkedList valuescol = new LinkedList();
             valuescol.add(style("direction","vertical"));
             valuescol.add(hash("rating", hash("input","rating", "label","Rate this event")));
-            LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:place:review-template");
+            LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:within:review-template");
             if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
                 Object o=entry.getValue();
                 if(!(o instanceof LinkedHashMap)) continue;

@@ -64,7 +64,7 @@
   text: "Long ago, I fell in love with Lisp.."
   start: "Wed 12 Dec 2012 18:00:00 GMT"
   end:   "Wed 12 Dec 2012 19:00:00 GMT"
-  place: uid-0112-09a9-3f54-b720
+  within: uid-0112-09a9-3f54-b720
 }
 
 { UID: uid-0a01-cec7-61b7-a770
@@ -74,7 +74,7 @@
   text: "Back when I were a lad .."
   start: "Wed 12 Dec 2012 19:00:00 GMT"
   end:   "Wed 12 Dec 2012 20:00:00 GMT"
-  place: uid-0112-09a9-3f54-b720
+  within: uid-0112-09a9-3f54-b720
 }
 
 { UID: uid-5f5d-6d29-64d8-2d8c
@@ -107,14 +107,14 @@
 { UID: uid-f885-d373-af3a-cb8d
   is: reviewable event rule
   when: "rsvp review received ensure user is in reviews"
-  Alerted: { is: rsvp event: @ place: { attending: yes } }
+  Alerted: { is: rsvp event: @ within: { attending: yes } }
   reviews: => @. with @Alerted
 }
 
 { UID: uid-e006-8ce3-054a-8158
   is: reviewable event rule
   when: "rsvp not attending ensure user not in reviews"
-  reviews: { place: { attending: no } } => #
+  reviews: { within: { attending: no } } => #
 }
 
 { UID: uid-c435-22f4-7938-6d4f

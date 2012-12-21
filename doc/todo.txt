@@ -43,10 +43,6 @@ Xmas demo
 --------------------------------------------------------
 Productionise on-device programming
  - -----------------------------------------------------
- + naming:
-    + place->within scale->size and the rest
-    - CyrusObjects not WebObjects
-    - netmash.keystore; om.db
  - lifecycle:
     - restartable, pausable, etc
     - remember history in user
@@ -64,6 +60,10 @@ Productionise on-device programming
     - check fewer db writes means less disk, less w.toString
     - other performance tracing
     - memory allocations
+ - naming:
+    - scale->size and the rest
+    - CyrusObjects not WebObjects
+    - netmash.keystore; om.db
 --------------------------------------------------------
  - pre-prepared meshes: room, sphere, cylinder
  - swipe actions: rotate, open/close, scroll thru gallery of pix
@@ -201,7 +201,7 @@ Stuff
     - BeRo
 
  - GIS:
-    - show place/sub land in different colours
+    - show within/sub land in different colours
     - don't allow outside of parent area
     - feature overlap rules
     - set 1ha area using trafalgar square
@@ -279,7 +279,7 @@ Scene Graph creation and navigation
  - is: cube / sphere.obj - no mesh, simpler, easier, quicker
     - is:cube object generates that mesh
     - is:sphere object and mesh - Blender
-    - OM: width: [ "=>", "$:place:present", "×", 10 ]
+    - OM: width: [ "=>", "$:within:present", "×", 10 ]
  - circularity detect: why doesn't User presence blow up?
  - put limit on render recursion depth and detect already-rendered-at-xyz
  - teleport position and orientation on back button (save position in history, thus also scroll state)
@@ -364,7 +364,7 @@ IDE stuff
  - knowing type means can autocomplete and offer appropriate edit widgets (date, colour, ..)
     - constraints of JSON needn't be at all visible in gui
     - smooths over ugliness: %, "", etc
- - render a rule nicely: [ width: | => | $:place:present | × | 10 ] with colouring => and rhs
+ - render a rule nicely: [ width: | => | $:within:present | × | 10 ] with colouring => and rhs
     - render rules specially as recognised type
     - render JSON as recognised ObNet type: Rules, More, is, etc known
     - colour syntax highlighting

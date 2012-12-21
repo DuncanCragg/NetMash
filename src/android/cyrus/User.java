@@ -89,7 +89,7 @@ public class User extends CyrusLanguage {
         super("{   \"is\": \"user\", \n"+
               "    \"homeusers\": \""+homeusers+"\", \n"+
               "    \"saying\": \"\", \n"+
-              "    \"place\": null, \n"+
+              "    \"within\": null, \n"+
               "    \"position\": [ 0.0, 0.0, 0.0 ], \n"+
               "    \"avatar\": \"http://10.0.2.2:8082/o/uid-7794-3aa8-2192-7a60.json\", \n"+
               "    \"location\": { \"lat\": 54.106037, \"lon\": -1.579163 }, \n"+
@@ -138,7 +138,7 @@ public class User extends CyrusLanguage {
             (rules!=null? "\"Rules\": "+setToListString(rules)+",\n  ": "")+
               (updatable? "\"is\": [ \"updatable\", \"land\" ],\n":
                           "\"is\": [ \"land\" ],\n")+
-                        "  \"place\": \""+landlistuid+"\",\n"+
+                        "  \"within\": \""+landlistuid+"\",\n"+
                         "  \"user\": \""+useruid+"\",\n"+
     (templateuid!=null? "  \"update-template\": \""+templateuid+"\"\n": "")+
                         "}");
@@ -149,7 +149,7 @@ public class User extends CyrusLanguage {
         return new User("{ \"is\": \"rsvp\", \n"+
                         "  \"event\": \""+eventuid+"\",\n"+
                         "  \"user\": \""+useruid+"\",\n"+
-       (placeuid!=null? "  \"place\": \""+placeuid+"\"\n": "")+
+       (placeuid!=null? "  \"within\": \""+placeuid+"\"\n": "")+
                         "}");
     }
 
@@ -342,18 +342,18 @@ public class User extends CyrusLanguage {
     }
 
     private LinkedList findNewPlaceNearer(float ux, float uy, float uz){
-        LinkedList subObjects=contentList("place:sub-items");
+        LinkedList subObjects=contentList("within:sub-items");
         if(subObjects==null) return null;
         for(int i=0; i< subObjects.size(); i++){
-            String objispath=String.format("place:sub-items:%d:item:is",i);
+            String objispath=String.format("within:sub-items:%d:item:is",i);
             if(!contentListContains(objispath,"place")) continue;
-            LinkedList placeposn=contentList(String.format("place:sub-items:%d:position",i));
+            LinkedList placeposn=contentList(String.format("within:sub-items:%d:position",i));
             float px=Mesh.getFloatFromList(placeposn,0,0);
             float py=Mesh.getFloatFromList(placeposn,1,0);
             float pz=Mesh.getFloatFromList(placeposn,2,0);
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
             float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
-            if(d<10) return list(content(String.format("place:sub-items:%d:item",i)), list(dx,dy,dz));
+            if(d<10) return list(content(String.format("within:sub-items:%d:item",i)), list(dx,dy,dz));
         }
         return null;
     }
@@ -578,7 +578,7 @@ public class User extends CyrusLanguage {
                 contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
             path="private:responses:rsvp:"+UID.toUID(guiuid);
             if(contentSet(path)) return false;
-            String evplaceuid=content("private:viewing:place");
+            String evplaceuid=content("private:viewing:within");
             String placeuid=(evplaceuid!=null)? content("private:responses:rsvp:"+UID.toUID(evplaceuid)): null;
             if(!contentSet("private:responses:rsvp")) contentHash("private:responses:rsvp", hash());
             resp=newRSVP(guiuid, uid, placeuid);
@@ -671,7 +671,7 @@ public class User extends CyrusLanguage {
                         return;
                     }
                     content("title",val);
-                    LinkedHashMap      location=contentHashClone("place:location");
+                    LinkedHashMap      location=contentHashClone("within:location");
                     if(location==null) location=contentHashClone("user:location");
                     if(location!=null){
                         contentHash("location", location);
@@ -1019,7 +1019,7 @@ public class User extends CyrusLanguage {
             }
             JSON uiJSON=null;
             if(viewhash!=null){
-                content("place","");
+                content("within","");
                 content("private:editing","");
                 uiJSON=new JSON("{ \"is\": \"gui\" }");
                 uiJSON.stringPath("title", title);
@@ -1027,8 +1027,8 @@ public class User extends CyrusLanguage {
             }
             if(meshhash!=null){
                 String viewing=content("private:viewing");
-                if(!contentIs("place",viewing)){
-                    content(  "place",viewing);
+                if(!contentIs("within",viewing)){
+                    content(  "within",viewing);
                     content("private:editing","");
                     notifying(viewing);
                 }
@@ -1079,7 +1079,7 @@ public class User extends CyrusLanguage {
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
             LinkedHashMap viewhash=cyrus2gui.guifyHash(contentHash("private:viewing:#"), editable);
             viewhash.put("#uid", "uid: "+content("private:viewing"));
-            content("place","");
+            content("within","");
             content("private:editing","");
             JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
             uiJSON.stringPath("title", title);

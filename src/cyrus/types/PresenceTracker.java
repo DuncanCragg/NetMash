@@ -20,10 +20,10 @@ public class PresenceTracker extends CyrusLanguage {
     private void trackPresence(){
         for(String trackuid: alerted()){
             contentTemp("Alerted", trackuid);
-            if(!contentSet("Alerted:place")) continue;
+            if(!contentSet("Alerted:within")) continue;
             LinkedList subuids=contentAll("sub-items:item");
             int i=(subuids==null)? -1: subuids.indexOf(trackuid);
-            if(contentIsThis("Alerted:place")){
+            if(contentIsThis("Alerted:within")){
                 LinkedList position=contentListClone("Alerted:position");
                 if(position==null) position=list(0,0,0);
                 if(i== -1){
