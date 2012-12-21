@@ -93,7 +93,7 @@ public class TestJSON {
         System.out.println(n);
         m.mergeWith(n);
 
-        String expected = "{  \"a\": \"b\", \"l\": \"n\", \"x\": [ \"y\", \"z\" ], \"c\": \"d\", \"o\": [ \"p\", \"q\" ] }";
+        String expected = "{ \"a\": \"b\", \"l\": \"n\", \"x\": [ \"y\", \"z\" ], \"c\": \"d\", \"o\": [ \"p\", \"q\" ] }";
         assert m.toString(100).equals(expected): "merge failed: \n"+m.toString(100)+" not \n"+expected;
 
         }
@@ -139,63 +139,65 @@ public class TestJSON {
         String funkycharsout="\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3";
 
         JSON m=new JSON(
-            " \t\n \n { kernel: { modules: {  cache: cyrus.cache.JSONCache\n"+
-            "                                 http: cyrus.drivers.HTTP\n"+
-            "                                 logic: cyrus.drivers.TestDriver } }\n"+
-            "                   modules:  { cache: { funky: \""+funkychars+"\" }\n"+
-            "                               http: { port: 8080 }\n"+
-            "                               logic: true false { foo: null } ( true false ( ( null stringnospaces ) ) \"string with  spaces\" )\n"+
-            "                               bits: \"string with  (double ) spaces:\" b: c \n"+
-            "                               more: true ( 35392743408672770 { a: -2147483649 b: 2147483648 c: ( -2147483648 2147483647 y: ) x } false ) null\n"+
-            "                   }\n"+
+            " \t\n \n { kernel:{modules:{cache: cyrus.cache.JSONCache\n"+
+            "                            http: cyrus.drivers.HTTP\n"+
+            "                            logic: cyrus.drivers.TestDriver}}\n"+
+            "           modules:{cache:{funky: \""+funkychars+"\"}\n"+
+            "                    http:{port: 8080}\n"+
+            "                    logic: true false{foo: null}(true false((null stringnospaces))\"string with  spaces\")\n"+
+            "                    bits: \"string with  (double ) spaces:\" b: c\n"+
+            "                    more: true(35392743408672770{a:-2147483649 b: 2147483648 c:(-2147483648 2147483647 y: a:b 1.000)x}false)null\n"+
+            "           }\n"+
             "      }\n", true);
 
-String expected=
-"{\n"+
-"  kernel: {\n"+
-"    modules: {\n"+
-"      cache: cyrus.cache.JSONCache\n"+
-"      http: cyrus.drivers.HTTP\n"+
-"      logic: cyrus.drivers.TestDriver\n"+
-"    }\n"+
-"  }\n"+
-"  modules: {\n"+
-"    cache: {  funky: \""+JSON.replaceEscapableChars(funkycharsout)+"\" }\n"+
-"    http: {  port: 8080 }\n"+
-"    logic: \n"+
-"      true\n"+
-"      false\n"+
-"      {  foo: null }\n"+
-"      (\n"+
-"        true\n"+
-"        false\n"+
-"        ( null stringnospaces )\n"+
-"        \"string with  spaces\"\n"+
-"       )\n"+
-"    bits: \"string with  (double ) spaces:\"\n"+
-"    b: c\n"+
-"    more: \n"+
-"      true\n"+
-"      (\n"+
-"        35392743408672770\n"+
-"        {\n"+
-"          a: -2147483649\n"+
-"          b: 2147483648\n"+
-"          c: \n"+
-"            ( -2147483648 2147483647 y: )\n"+
-"            x\n"+
-"        }\n"+
-"        false\n"+
-"       )\n"+
-"      null\n"+
-"  }\n"+
-"}";
-        assert m.toString(true).equals(expected): "parse and back wrong:\n[["+m.toString(true)+"]]\n\n[["+expected+"]]";
-        System.out.println(m);
+        String expected=
+            "{\n"+
+            "  kernel: {\n"+
+            "    modules: {\n"+
+            "      cache: cyrus.cache.JSONCache\n"+
+            "      http: cyrus.drivers.HTTP\n"+
+            "      logic: cyrus.drivers.TestDriver\n"+
+            "    }\n"+
+            "  }\n"+
+            "  modules: {\n"+
+            "    cache: { funky: \""+JSON.replaceEscapableChars(funkycharsout)+"\" }\n"+
+            "    http: { port: 8080 }\n"+
+            "    logic: \n"+
+            "      true\n"+
+            "      false\n"+
+            "      { foo: null }\n"+
+            "      (\n"+
+            "        true\n"+
+            "        false\n"+
+            "        ( null stringnospaces )\n"+
+            "        \"string with  spaces\"\n"+
+            "      )\n"+
+            "    bits: \"string with  (double ) spaces:\"\n"+
+            "    b: c\n"+
+            "    more: \n"+
+            "      true\n"+
+            "      (\n"+
+            "        35392743408672770\n"+
+            "        {\n"+
+            "          a: -2147483649\n"+
+            "          b: 2147483648\n"+
+            "          c: \n"+
+            "            ( -2147483648 2147483647 y: a:b 1 )\n"+
+            "            x\n"+
+            "        }\n"+
+            "        false\n"+
+            "      )\n"+
+            "      null\n"+
+            "  }\n"+
+            "}";
+
+        assert m.toString(true).equals(expected): "parse and back wrong - expected:\n[["+expected+"]]\n\n[["+m.toString(true)+"]]";
         m=new JSON(m.toString());
-        System.out.println(m);
+        assert m.toString(true).equals(expected): "parse and back wrong - expected:\n[["+expected+"]]\n\n[["+m.toString(true)+"]]";
+        m=new JSON(m.toString(true),true);
+        assert m.toString(true).equals(expected): "parse and back wrong - expected:\n[["+expected+"]]\n\n[["+m.toString(true)+"]]";
+
         m=new JSON(m.toString("\"extra\": 33, "));
-        System.out.println(m);
         System.out.println(m.toString(33));
         System.out.println(m.toString(true));
 

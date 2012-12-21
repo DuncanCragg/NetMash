@@ -860,7 +860,7 @@ public class User extends CyrusLanguage {
     }
 
     private String spawnUIDNew(String source){
-        while(source.indexOf(" uid-new ")!= -1){ source=source.replace(" uid-new ", " "+spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }"))+" "); }
+        while(source.indexOf("uid-new")!= -1){ source=source.replace("uid-new", " "+spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }"))+" "); }
         return source;
     }
 

@@ -43,12 +43,7 @@ Xmas demo
 --------------------------------------------------------
 Productionise on-device programming
  - -----------------------------------------------------
- + resource usage:
-    - check fewer db writes means less disk, less w.toString
-    - other performance tracing
-    - memory allocations
  + syntax:
-    - uid-new needing space after - (, ), {, } also..
     - syntax error if trailing chars
  + naming:
     - coords->position place->within scale->size and the rest
@@ -67,6 +62,10 @@ Productionise on-device programming
     - doesn't always reach loop limit when should do
  - IDE:
     - copyable uid link at bottom of raw
+ - resource usage:
+    - check fewer db writes means less disk, less w.toString
+    - other performance tracing
+    - memory allocations
 --------------------------------------------------------
  - pre-prepared meshes: room, sphere, cylinder
  - swipe actions: rotate, open/close, scroll thru gallery of pix
@@ -120,6 +119,7 @@ HTTP
 ---------------------------------------------------------
 Performance
 ---------------------------------------------------------
+ - speed up ticker and think about observation and smoothing
  - display thread blocked at start so slow to show?
  - fix doCopyOnWrite not to be shite
     - term rewriting, reusing old and adding new; merge rhs with data and reduce, rather than using paths

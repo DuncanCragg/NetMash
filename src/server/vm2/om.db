@@ -28,15 +28,15 @@
   a: # => @x @h:0:x:h:x
   d: # => clamp 14 19 @x
   f: # => clamp 21 40 @x
-  b: # => clamp 20 29 ( @x + 10 )
-  c: # => clamp 2 7 ( random 1 8 )
+  b: # => clamp 20 29 (@x + 10)
+  c: # => clamp 2 7 (random 1 8)
   m: yo !=> @. with yo
   s: # => + @o:a:1
   o: { a: 5 } !=> @. with { a: 1 5 } { a: 1 1 } { a: 5 9 }
-  z: ( ( < 1 ) => # ) **
-  la: => ( @m select @z:2 ) ( @m select @z:1 ) ( @m select @z:0 )
+  z: ((< 1) => #) **
+  la: => (@m select @z:2)(@m select @z:1)(@m select @z:0)
   j: y => { m: n }
-  xx: ( qq => # ) **
+  xx: (qq => #) **
   zz: oo => #
   vd: => @. v~v @vc
 }
@@ -44,16 +44,16 @@
 { UID: uid-40fb-5964-b385-c922
   is: test rule
   when: "-------------- Test 2"
-  la: ( divisible-by 5 ) false ( divisible-by 2 )
+  la: (divisible-by 5) false (divisible-by 2)
   a: @x:0 { UID: @ is: test x: 20 }
   : { d: 19 }
-  f: 21 => as-is ( 3 + 4 )
+  f: 21 => as-is (3 + 4)
   b: !@x
   c: > 1.9
-  z: ( < 2 ) ( > 1 ) ( < 4 => @b × ( if ( @z:0 < 2 ) then 10 else 100 ) )
+  z: (< 2)(> 1)(< 4 => @b × (if (@z:0 < 2) then 10 else 100))
   j: x { m: n } 8
   o: { a: 1 } => #
-  vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
+  vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
   vc: 5 5 5 => @. v+v @vo
   xx: #
   zz: #
@@ -65,12 +65,12 @@
   when: "-------------- Test 3"
   a: @x:0 @
   f: 3 + 4
-  z: number ( number => 111 { UID: new a: @a } ) ( > 289 )
+  z: number (number => 111 { UID: new a: @a })(> 289)
   o: { a: 2 } { a: 4 }
-  m: 4 boolean number => @. with ( format %s%s 7.5 1.0 )
+  m: 4 boolean number => @. with (format %s%s 7.5 1.0)
   l1: => ok
   j: number => eight
-  vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
+  vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
   vc: 6 5 5 => @. v+v @vo
 }
 
@@ -81,7 +81,7 @@
   j: x eight
   z: number * => @.2 @.1 @.0
   p: { c: d } => @.c @.a
-  vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
+  vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
   vc: 6 4 5 => @. v+v @vo
 }
 
@@ -90,7 +90,7 @@
   when: "-------------- Test 5"
   m: true { n: 4 } { n: 5 } hi yo { n: 7.51 }
   o: { a: 3 }
-  z: ( number * ) => ( @. select 1 ) @.0
+  z: (number *) => (@. select 1) @.0
   l2: => count @=o
   l0: => @=o:1
   l7: => @o:a
@@ -98,19 +98,19 @@
   l3: => @o
   l4: => 1 2 select @m:0
   l5: => 3 4 select @m:2
-  l6: => @a:0 ( if @m:0 then + else * ) @b
-  l9: => @a:0 ( { ha: + hi: - } select @m:4 ) @b
+  l6: => @a:0 (if @m:0 then + else *) @b
+  l9: => @a:0 ({ ha: + hi: - } select @m:4) @b
   la: => integer @m:6:n
   j: true => false
   p: d b
-  vo: => @. v.m ( ( 0 1 0 ) ( -1 0 0 ) ( 0 0 0 ) )
-  vc: within 0.347 of ( 4.8 4.2 5.2 ) => ( @. v+v @vo ) v/s 5
+  vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
+  vc: within 0.347 of (4.8 4.2 5.2) => (@. v+v @vo) v/s 5
 }
 
 { UID: uid-d039-5967-f60c-70f7
   is: test rule
   when: "-------------- Test completion"
-  z: 290 ( { a: 20 } 111 ) 1
+  z: 290 ({ a: 20 } 111) 1
   a: 20
   b: 29
   l1: ok
@@ -124,8 +124,8 @@
   l6: 49
   l9: -9
   j: x { m: n } eight false
-  l7: ( 2 3 ) ( 2 4 ) ( 3 4 )
-  l8: ( 2 3 ) ( 3 4 )
+  l7: (2 3)(2 4)(3 4)
+  l8: (2 3)(3 4)
   vo: 0 1 0
   vc: 1 1 1
   : { la: 8 } => {

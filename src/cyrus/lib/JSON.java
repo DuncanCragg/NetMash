@@ -537,17 +537,19 @@ public class JSON {
     @SuppressWarnings("unchecked")
     private Object readCyrusObject(boolean terminateOnTag){
         LinkedList ll=new LinkedList();
-        for(int i=0; i<40; i++, chp++){
+        for(;;chp++){
             while(chp<chars.length && chars[chp]<=' ') chp++;
             if(chp>=chars.length){ chp--; break; }
             int chpsave=chp;
+            if(chars[chp]==')'){ chp--; break; }
+            if(chars[chp]=='}'){ chp--; break; }
             if(chars[chp]=='{'){ ll.add(readCyrusHash()); continue; }
             if(chars[chp]=='('){ ll.add(readCyrusList()); continue; }
             if(chars[chp]=='"'){ ll.add(readString());    continue; }
             String s=readCyrusString();
             int chpstringok=chp;
             chp=chpsave;
-            if(s==null || ( terminateOnTag && s.endsWith(":")) || s.equals("}") || s.equals(")")){ chp--; chp--; break; }
+            if(s==null || ( terminateOnTag && s.endsWith(":"))){ chp--; chp--; break; }
             try{ ll.add(readBoolean()); continue; }catch(Exception e){ chp=chpsave; }
             try{ ll.add(readNumber());  continue; }catch(Exception e){ chp=chpsave; }
             try{ ll.add(readNull());    continue; }catch(Exception e){ chp=chpsave; }
@@ -580,7 +582,6 @@ public class JSON {
                 }
                 else continue;
             }
-
             if(!doval){
                 if(chars[chp]==':'){
                     tag = new String(buf); buf = new StringBuilder();
@@ -596,7 +597,6 @@ public class JSON {
                 }
                 parseError(':');
             }
-
             if(!doobj){
                 if(chars[chp]>' '){
                     hm.put(tag, readCyrusObject(true));
@@ -604,17 +604,11 @@ public class JSON {
                 }
                 continue;
             }
+            dotag=false;
+            doval=false;
+            doobj=false;
 
-            if(chars[chp]==' '){
-                dotag=false;
-                doval=false;
-                doobj=false;
-                continue;
-            }
-
-            if(chars[chp]=='}'){
-                break;
-            }
+            if(chars[chp]=='}') break;
         }
         return hm;
     }
@@ -625,9 +619,7 @@ public class JSON {
         LinkedList ll = new LinkedList();
         boolean docom=false;
         for(; chp<chars.length; chp++){
-            if(chars[chp]==')'||chars[chp]=='}'){
-                break;
-            }
+            if(chars[chp]==')'||chars[chp]=='}') break;
             if(chars[chp]>' '){
                 Object o=readCyrusObject(false);
                 if(o instanceof LinkedList) ll.addAll((LinkedList)o);
@@ -642,7 +634,7 @@ public class JSON {
         if(chars[chp]=='"') return readString();
         StringBuilder buf = new StringBuilder();
         for(; chp<chars.length; chp++){
-            if(chars[chp]<=' '){
+            if(chars[chp]<=' ' || chars[chp]=='(' || chars[chp]==')' || chars[chp]=='{' || chars[chp]=='}'){
                 chp--;
                 return new String(buf);
             }
@@ -810,7 +802,7 @@ public class JSON {
     private Number readNumber(){
         StringBuilder buf = new StringBuilder();
         for(; chp<chars.length; chp++){
-            if(chars[chp]<=' ' || chars[chp]==',' || chars[chp]=='}' || chars[chp]==']'){
+            if(chars[chp]<=' ' || chars[chp]==',' || chars[chp]=='}' || chars[chp]==']' || chars[chp]==')'){
                 chp--;
                 String bufs=new String(buf);
                 Number n;
@@ -1335,7 +1327,7 @@ public class JSON {
             }
         }
         StringBuilder buf=new StringBuilder();
-        buf.append(structured? "{\n": "{ ");
+        buf.append(structured? "{\n": "{");
         int i=0;
         for(Iterator it=hm.keySet().iterator(); it.hasNext(); i++){
             String tag = (String)it.next();
@@ -1395,7 +1387,7 @@ public class JSON {
             i++;
         }
         if(cb.length() >0){
-            if(structured){ buf.append("\n"); buf.append(indentation(indent-2)); buf.append(" "); buf.append(cb); }
+            if(structured){ buf.append("\n"); buf.append(indentation(indent-2)); buf.append(cb); }
             else          { buf.append(" "); buf.append(cb); }
         }
         return buf.toString();
