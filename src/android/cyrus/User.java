@@ -835,8 +835,6 @@ public class User extends CyrusLanguage {
         return Math.abs(area)*1e6;
     }
 
-
-
     private double dist(double x, double y, double a, double b){
         return Math.sqrt((x-a)*(x-a)+(y-b)*(y-b));
     }
