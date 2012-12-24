@@ -151,9 +151,9 @@ public class TestJSON {
             "                            logic: cyrus.drivers.TestDriver}}\n"+
             "           modules:{cache:{funky: \""+funkychars+"\"}\n"+
             "                    http:{port: 8080}\n"+
-            "                    logic: true false{foo: null}(true false((null stringnospaces))\"string with  spaces\")\n"+
-            "                    bits: \"string with  (double ) spaces:\" b: c\n"+
-            "                    more: true(35392743408672770{a:-2147483649 b: 2147483648 c:(-2147483648 2147483647 y: a:b 1.000)x}false)null\n"+
+            "                    logic: true false{foo: null null}(true false((null stringnospaces))\"string with  spaces\")\n"+
+            "                    bits: \"string with  (double ) spaces:\" b: (c \"d)e\")\n"+
+            "                    more: true(35392743408672770{a:-2147483649 b: 2147483648 \"d:\" c:(-2147483648 2147483647 y: a:b 1.000)x}false)null\n"+
             "           }\n"+
             "      }\n", true);
 
@@ -172,7 +172,9 @@ public class TestJSON {
             "    logic: \n"+
             "      true\n"+
             "      false\n"+
-            "      { foo: null }\n"+
+            "      {\n"+
+            "        foo: null null\n"+
+            "      }\n"+
             "      (\n"+
             "        true\n"+
             "        false\n"+
@@ -180,16 +182,16 @@ public class TestJSON {
             "        \"string with  spaces\"\n"+
             "      )\n"+
             "    bits: \"string with  (double ) spaces:\"\n"+
-            "    b: c\n"+
+            "    b: c \"d)e\"\n"+
             "    more: \n"+
             "      true\n"+
             "      (\n"+
             "        35392743408672770\n"+
             "        {\n"+
             "          a: -2147483649\n"+
-            "          b: 2147483648\n"+
+            "          b: 2147483648 \"d:\"\n"+
             "          c: \n"+
-            "            ( -2147483648 2147483647 y: a:b 1 )\n"+
+            "            ( -2147483648 2147483647 \"y:\" a:b 1 )\n"+
             "            x\n"+
             "        }\n"+
             "        false\n"+
@@ -198,6 +200,7 @@ public class TestJSON {
             "  }\n"+
             "}";
 
+        m=new JSON(m.toString(true),true);
         assert m.toString(true).equals(expected): "parse and back wrong - expected:\n[["+expected+"]]\n\n[["+m.toString(true)+"]]";
         m=new JSON(m.toString());
         assert m.toString(true).equals(expected): "parse and back wrong - expected:\n[["+expected+"]]\n\n[["+m.toString(true)+"]]";

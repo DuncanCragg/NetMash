@@ -1302,8 +1302,9 @@ public class JSON {
     private String stringToString(String s, boolean cyrus){
         if(s.equals("")) return "\"\"";
         String r=replaceEscapableChars(s);
-        if(!cyrus || r.indexOf(" ")!= -1) return "\""+r+"\"";
-        else return r;
+        if(!cyrus) return "\""+r+"\"";
+        if(r.indexOf(" ")!= -1 || r.indexOf("(")!= -1 || r.indexOf(")")!= -1 || r.indexOf("{")!= -1 || r.indexOf("}")!= -1 || r.endsWith(":")) return "\""+r+"\"";
+        return r;
     }
 
     private String hashToString(LinkedHashMap hm, int indent, int maxlength, boolean cyrus){
@@ -1351,8 +1352,6 @@ public class JSON {
         if(ll.size()==0) return cyrus? "( )": "[ ]";
         if(ll.size()==1 && cyrus) return objectToString(ll.get(0), indent, maxlength, cyrus, false);
         boolean structured=false;
-        String ob=cyrus? (tagdelim? "": "("): "[";
-        String cb=cyrus? (tagdelim? "": ")"): "]";
         if(maxlength==0){
             int i=0;
             int w=0;
@@ -1378,13 +1377,15 @@ public class JSON {
             }
         }
         StringBuilder buf=new StringBuilder();
+        String ob=cyrus? (tagdelim? "": structured? "(": "( "): "[";
+        String cb=cyrus? (tagdelim? "": ")"): "]";
         buf.append(ob); if(structured) buf.append("\n");
         int i=0;
         for(Object val: ll){
             if(structured){
                 if(i==0)                                 buf.append(indentation(indent));
                 else   { buf.append((cyrus?"\n":",\n")); buf.append(indentation(indent)); }
-            } else buf.append((i==0||cyrus)? " ": ", ");
+            } else buf.append(i==0? (cyrus? "": " "): (cyrus? " ": ", "));
             buf.append(objectToString(val, indent, maxlength, cyrus, false));
             i++;
         }
