@@ -449,7 +449,10 @@ public class Renderer implements GLSurfaceView.Renderer {
     private int getProgram(Mesh m) {
         String vertshad=m.vertexShader;
         String fragshad=m.fragmentShader;
-        if(vertshad.length()==0 || fragshad.length()==0){ vertshad=basicVertexShaderSource; fragshad=basicFragmentShaderSource; }
+        if(vertshad==null || fragshad==null || vertshad.length()==0 || fragshad.length()==0){
+            vertshad=basicVertexShaderSource;
+            fragshad=basicFragmentShaderSource;
+        }
         return getProgram(vertshad, fragshad);
     }
 
