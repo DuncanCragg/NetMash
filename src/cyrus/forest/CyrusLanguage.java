@@ -30,11 +30,15 @@ public class CyrusLanguage extends WebObject {
 
     public CyrusLanguage(JSON json){ super(json); setLogging(); }
 
+    static int MAX_LOOPS=50;
+
     public void evaluate(){
         contentSetPushAll("Rules",getEvalRules());
         if(extralogging) log("Running CyrusLanguage on "+uid+": "+contentHash("#"));
         boolean modified=statemod;
-        int i=0; for(; i<20; i++){
+        contentRemove("MaxLoopsReached");
+        int maxloops=contentInt("MaxLoops"); if(maxloops<=0) maxloops=MAX_LOOPS;
+        int i=0; for(; i<maxloops; i++){
             statemod=false;
             LinkedList rules=contentAsList("Rules");
             if(extralogging) log("Rules: "+rules);
@@ -58,7 +62,7 @@ public class CyrusLanguage extends WebObject {
             if(!statemod) break;
             modified=true;
         }
-        if(i==20) log("*** Maximum loops reached running rules: use self or mutual observation instead ***");
+        if(i==maxloops){ contentBool("MaxLoopsReached", true); log("*** Maximum loops reached running rules: use self or mutual observation instead ***"); }
         statemod=modified;
         contentTemp("Rule",null);
     }
