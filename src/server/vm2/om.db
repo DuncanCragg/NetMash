@@ -66,7 +66,7 @@
   a: @x:0 @
   f: 3 + 4
   z: number (number => 111 { UID: new a: @a })(> 289)
-  o: { a: 2 } { a: 4 }
+  o: { a: 2 => 12 } { a: 4 => 14 }
   m: 4 boolean number => @. with (format %s%s 7.5 1.0)
   l1: => ok
   j: number => eight
@@ -124,8 +124,8 @@
   l6: 49
   l9: -9
   j: x { m: n } eight false
-  l7: (2 3)(2 4)(3 4)
-  l8: (2 3)(3 4)
+  l7: (12 3)(2 14)(3 4)
+  l8: (12 3)(3 4)
   vo: 0 1 0
   vc: 1 1 1
   : { la: 8 } => {

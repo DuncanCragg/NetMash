@@ -2,6 +2,9 @@
 To Do
 -----
 
+On-device tutorials on building little Android apps and prototypes in Cyrus
+ .. the main thing to point people to for documentation and intro and demo
+
 --------------------------------------------------------
  - Xmas Demo
  - Productionise on-device programming
@@ -118,6 +121,7 @@ HTTP
 ---------------------------------------------------------
 Performance
 ---------------------------------------------------------
+ - black screen at startup - using main thread probably
  - speed up ticker and think about observation and smoothing
  - display thread blocked at start so slow to show?
  - fix doCopyOnWrite not to be shite
