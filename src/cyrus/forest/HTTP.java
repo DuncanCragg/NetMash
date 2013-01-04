@@ -469,7 +469,7 @@ abstract class HTTPCommon {
             }
             else
             if(httpContentType.startsWith("application/x-www-form-urlencoded")){
-                json = new JSON(decodeAndGetFormValue("o",jsonchars));
+                json = new JSON(decodeAndGetFormValue(jsonchars));
             }
             WebObject w=null;
             if(json!=null) try{ w=new WebObject(json, httpContentLocation, httpReqURL, httpETag, httpMaxAge, httpCacheNotify, httpNotify); }
@@ -516,8 +516,8 @@ abstract class HTTPCommon {
         return percents;
     }
 
-    String decodeAndGetFormValue(String tag, CharBuffer cb){
-        String t=tag+"=";
+    String decodeAndGetFormValue(CharBuffer cb){
+        String t="i=";
         String s=cb.toString();
         if(!s.startsWith(t)) return null;
         s=s.substring(t.length());

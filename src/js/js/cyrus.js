@@ -42,7 +42,7 @@ function Network(){
                 type: 'POST',
                 url: url,
                 headers: headers,
-                data: 'o='+escape(json),
+                data: 'i='+escape(json),
              // contentType: 'application/json', // crappy CORS
                 dataType: 'json',
                 success: ok,
