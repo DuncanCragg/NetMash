@@ -146,7 +146,7 @@ function JSON2HTML(url){
             if(json.address      !== undefined) rows.push(this.getContactAddressHTML(json.address));
             if(json.phone        !== undefined) rows.push(this.getContactPhoneHTML(json.phone));
             if(json.email        !== undefined) rows.push('<div class="info-item">Email: <span class="email">'+this.getAnyHTML(json.email)+'</span></div>');
-            if(json.webView      !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json.webView)+'</div>');
+            if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
             if(json.publications !== undefined) rows.push(this.getObjectListHTML('Publications', 'publication', json.publications));
             if(json.bio          !== undefined) rows.push('<div class="info-item">Bio: '+this.getAnyHTML(json.bio)+'</div>');
             if(json.photo        !== undefined) rows.push('<div class="photo">'+this.getAnyHTML(json.photo)+'</div>');
@@ -193,6 +193,7 @@ function JSON2HTML(url){
             if(json.text      !== undefined) rows.push('<p class="description">'+this.getAnyHTML(json.text)+'</p>');
             if(json.start     !== undefined) rows.push('<div class="info-item">From: ' +this.getDateSpan("dtstart", json.start)+'</div>');
             if(json.end       !== undefined) rows.push('<div class="info-item">Until: '+this.getDateSpan("dtend",   json.end)  +'</div>');
+            if(json.list      !== undefined) rows.push(this.getObjectListHTML('Sub-Events', 'sub-event', json.list));
             if(json.location  !== undefined) rows.push(this.getEventLocationHTML(json.location));
             if(json.attendees !== undefined) rows.push(this.getObjectListHTML('Attendees:', 'attendee', json.attendees));
             if(json['%more']  !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more']));
@@ -218,7 +219,7 @@ function JSON2HTML(url){
             if(json.volume       !== undefined) rows.push('<div class="info-item">Volume: '+this.getAnyHTML(json.volume)+'</div>');
             if(json.issue        !== undefined) rows.push('<div class="info-item">Issue: '+this.getAnyHTML(json.issue)+'</div>');
             if(json.published    !== undefined) rows.push('<div class="info-item">Published: '+this.getDateSpan("published", json.published)+'</div>');
-            if(json.webView      !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json.webView)+'</div>');
+            if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true)+'</div>');
             if(json.authors      !== undefined) rows.push(this.getObjectListHTML('Authors:', 'author', json.authors));
             rows.push('</div><div class="document right">');
@@ -233,7 +234,7 @@ function JSON2HTML(url){
             rows.push(this.getObjectHeadHTML(this.getTitle(json,'Documents'), url, false, closed, json.icon));
             rows.push('<div class="plain-list">');
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
-            if(json.webView      !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json.webView)+'</div>');
+            if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
             if(json.contentCount !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json.contentCount,false,'Documents Available')+'</div>');
             if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list));
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true)+'</div>');
@@ -245,7 +246,7 @@ function JSON2HTML(url){
             rows.push(this.getObjectHeadHTML(this.getTitle(json,'Documents'), url, false, closed, json.icon));
             rows.push('<div class="document-list">');
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
-            if(json.webView      !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json.webView)+'</div>');
+            if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
             if(json.contentCount !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json.contentCount,false,'Documents Available')+'</div>');
             if(this.isA('searchable', json, true)){
             rows.push('<form id="query-form">');
