@@ -463,11 +463,18 @@ abstract class HTTPCommon {
 
         if(webobject==null){
 
-            JSON json = new JSON(jsonchars);
+            JSON json = null;
+            if(httpContentType.startsWith("application/json")){
+                json = new JSON(jsonchars);
+            }
+            else
+            if(httpContentType.startsWith("application/x-www-form-urlencoded")){
+                json = new JSON(decodeAndGetFormValue("o",jsonchars));
+            }
             WebObject w=null;
-            try{ w=new WebObject(json, httpContentLocation, httpReqURL, httpETag, httpMaxAge, httpCacheNotify, httpNotify); }
-            catch(Exception e){ log(e); }
-            if(w==null||w.uid==null){ log("Cannot convert to WebObject:\n"+json); return new PostResponse(400,null); }
+            if(json!=null) try{ w=new WebObject(json, httpContentLocation, httpReqURL, httpETag, httpMaxAge, httpCacheNotify, httpNotify); }
+            catch(Exception e){ e.printStackTrace(); }
+            if(w==null||w.uid==null){ log("Cannot convert to WebObject:\n"+json+"\n"+w); return new PostResponse(400,null); }
 
             String location=funcobs.httpNotify(w);
             return new PostResponse(location==null? 200:201, location);
@@ -507,6 +514,14 @@ abstract class HTTPCommon {
             percents.add("Notify");
         }
         return percents;
+    }
+
+    String decodeAndGetFormValue(String tag, CharBuffer cb){
+        String t=tag+"=";
+        String s=cb.toString();
+        if(!s.startsWith(t)) return null;
+        s=s.substring(t.length());
+        try{ return URLDecoder.decode(s,"UTF-8"); }catch(Throwable e){ return null; }
     }
 
     protected void close(String message, Exception e){

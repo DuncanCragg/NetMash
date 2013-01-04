@@ -197,6 +197,13 @@ function JSON2HTML(url){
             if(json.location  !== undefined) rows.push(this.getEventLocationHTML(json.location));
             if(json.attendees !== undefined) rows.push(this.getObjectListHTML('Attendees:', 'attendee', json.attendees));
             if(json['%more']  !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more']));
+            if(this.isA('attendable', json)){
+            rows.push('<form id="rsvp-form">');
+            rows.push('<label for="rsvp">Attending?</label>');
+            rows.push('<input id="rsvp" class="attending" type="checkbox" />');
+            rows.push('<input class="submit" type="submit" value="&gt;" />');
+            rows.push('</form>');
+            }
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
@@ -448,6 +455,12 @@ function Cyrus(){
                 mediaList.find(':nth-child('+mediaIndex+')').show();
                 mediaList.find(':nth-child('+mediaIndex+')').children().show();
                 mediaList.find(':nth-child('+mediaIndex+')').children().children().show();
+            });
+            $('#rsvp-form').unbind().submit(function(e){
+                var q=$('#rsvp').is(':checked');
+                var json = '{ "is": "rsvp", "event": "'+topObjectURL+'", "user": "", "within": "", "attending": "'+(q? 'yes': 'no')+'" }';
+                network.postJSON(topObjectURL, json, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
+                e.preventDefault();
             });
             $('#query').focus();
             $('#query-form').unbind().submit(function(e){

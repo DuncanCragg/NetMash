@@ -91,7 +91,7 @@ public class UID {
     }
 
     static public String toUIDifLocal(String url2uid){
-        if(notVisible()) return url2uid;
+        if(notVisible() || url2uid==null) return url2uid;
         return url2uid.startsWith(localPre())? toUID(url2uid): url2uid;
     }
 

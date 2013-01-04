@@ -81,6 +81,7 @@ public class WebObject {
         uid     = (httpUID   !=null)? httpUID:    json.stringPathN("URL");     json.removePath("URL");
         uid     = (uid       !=null)? uid:        json.stringPathN("UID");     json.removePath("UID");
         uid     = (uid       !=null)? uid:        httpReqURL;
+        uid     = (uid       !=null)? uid:        UID.generateUID();
         uid     = UID.toUIDifLocal(uid);
         etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "Version");    json.removePath("Version");
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "Max-Age"); json.removePath("Max-Age");
@@ -274,7 +275,7 @@ public class WebObject {
     public boolean contentIsThis(String path){
         String s = content(path);
         if(s==null) return false;
-        return s.equals(uid) || s.equals(UID.toURL(uid));
+        return UID.toUID(s).equals(uid);
     }
 
     // --------------------------------------------------------------
