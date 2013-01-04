@@ -1,6 +1,6 @@
 { "is": "event",
   "title": "Over the Air 2012",
-  "content": "Top ![Mobile Meetup]! at Bletchley Park",
+  "text": "Top ![Mobile Meetup]! at Bletchley Park",
   "start": "Fri,  1 Jun 2012 08:00:00 GMT",
   "end":   "Sat,  2 Jun 2012 22:00:00 GMT",
   "location": "http://forest-roa.org/456-789.json",

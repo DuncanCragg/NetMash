@@ -190,7 +190,7 @@ function JSON2HTML(url){
             rows.push(this.getObjectHeadHTML('Event: '+this.getTitle(json), url, false, closed));
             rows.push('<div class="vevent">');
             if(json.title     !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
-            if(json.content   !== undefined) rows.push('<p class="description">'+this.getAnyHTML(json.content)+'</p>');
+            if(json.text      !== undefined) rows.push('<p class="description">'+this.getAnyHTML(json.text)+'</p>');
             if(json.start     !== undefined) rows.push('<div class="info-item">From: ' +this.getDateSpan("dtstart", json.start)+'</div>');
             if(json.end       !== undefined) rows.push('<div class="info-item">Until: '+this.getDateSpan("dtend",   json.end)  +'</div>');
             if(json.location  !== undefined) rows.push(this.getEventLocationHTML(json.location));
@@ -222,7 +222,7 @@ function JSON2HTML(url){
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true)+'</div>');
             if(json.authors      !== undefined) rows.push(this.getObjectListHTML('Authors:', 'author', json.authors));
             rows.push('</div><div class="document right">');
-            if(json.content      !== undefined) rows.push('<div class="content">'+this.getAnyHTML(json.content)+'</div>');
+            if(json.text         !== undefined) rows.push('<div class="text">'+this.getAnyHTML(json.text)+'</div>');
             if(json['%more']     !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more']));
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
@@ -451,7 +451,7 @@ function Cyrus(){
             $('#query').focus();
             $('#query-form').unbind().submit(function(e){
                 var q=$('#query').val();
-                var json = '{ "is": [ "document", "query" ], "content": "<hasWords('+q.jsonEscape()+')>" }';
+                var json = '{ "is": [ "document", "query" ], "text": "<hasWords('+q.jsonEscape()+')>" }';
                 network.postJSON(topObjectURL, json, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
                 e.preventDefault();
             });
