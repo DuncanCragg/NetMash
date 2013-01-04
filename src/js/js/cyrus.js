@@ -406,7 +406,7 @@ function Cyrus(){
             if(!obj){ this.objectFail(url,null,'object empty; status='+s,null); return; }
             var moreofobj=moreOf[url];
             if(moreofobj){
-                this.mergeHashes(moreofobj,obj);
+            //  this.mergeHashes(moreofobj,obj);
                 this.topObjectIn(moreofobj,'mored',null);
                 moreOf[url]=undefined;
                 return;
@@ -524,8 +524,8 @@ function Cyrus(){
                 var bx;
 
                 if(typebx===String) bx=b[x]; else
-                if(typebx===Array)  bx=b[x].clone(); else
-                if(typebx===Object) bx=b[x].clone();
+                if(typebx===Array)  bx=clone(b[x]); else
+                if(typebx===Object) bx=clone(b[x]);
 
                 if(!a[x]){ a[x]=bx; continue; }
                 typeax=a[x].constructor;
@@ -570,8 +570,8 @@ function Cyrus(){
             for(x in b){
                 typebx=b[x].constructor;
                 if(typebx===String) if(a.indexOf(b[x])== -1) a.push(b[x]); else
-                if(typebx===Array)  if(a.indexOf(b[x])== -1) a.push(b[x].clone()); else
-                if(typebx===Object) if(a.indexOf(b[x])== -1) a.push(b[x].clone());
+                if(typebx===Array)  if(a.indexOf(b[x])== -1) a.push(clone(b[x])); else
+                if(typebx===Object) if(a.indexOf(b[x])== -1) a.push(clone(b[x]));
             }
         }
     };
@@ -599,17 +599,17 @@ String.prototype.htmlUnEscape = function(){
                .replace(/&quot;/g,'"');
 };
 
-Object.prototype.clone = function() {
+// --------------------
+
+function clone(o){
   var o = (this instanceof Array)? []: {};
   for(i in this){
     if(!(this[i] && this.hasOwnProperty(i))) continue;
-    if(typeof this[i]=="object") o[i]=this[i].clone();
+    if(typeof this[i]=="object") o[i]=clone(this[i]);
     else o[i]=this[i];
   }
   return o;
-};
-
-// --------------------
+}
 
 function getRootURL(){
     return window.location.protocol + '//' + window.location.host + '/';
