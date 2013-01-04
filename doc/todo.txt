@@ -2,9 +2,8 @@
 To Do
 -----
 
-On-device tutorials on building little Android apps and prototypes in Cyrus
- .. the main thing to point people to for documentation and intro and demo
-
+--------------------------------------------------------
+ - Cyrus.js demos and tutorials - bring Object-Mash into cyrus codebase
 --------------------------------------------------------
  - Xmas Demo
  - Productionise on-device programming
@@ -66,7 +65,7 @@ Productionise on-device programming
     - memory allocations
  - naming:
     - scale->size and the rest
-    - CyrusObjects not WebObjects
+    - CyrusItems not WebObjects
     - netmash.keystore; om.db
 --------------------------------------------------------
  - pre-prepared meshes: room, sphere, cylinder
