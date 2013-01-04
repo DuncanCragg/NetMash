@@ -1,0 +1,4 @@
+{ "is": "contact",
+  "%more": [ "http://localhost:8081/o/uid-35ad-af7a-93fb-896d.json",
+             "http://localhost:8082/o/uid-9153-8032-3fd4-9156.json" ]
+}

@@ -1,0 +1,10 @@
+{ "is": "event",
+  "title": "Over the Air 2012",
+  "content": "Top ![Mobile Meetup]! at Bletchley Park",
+  "start": "Fri,  1 Jun 2012 08:00:00 GMT",
+  "end":   "Sat,  2 Jun 2012 22:00:00 GMT",
+  "location": "http://forest-roa.org/456-789.json",
+  "organiser": [ "http://netmash.net/789-123.json" ],
+  "attendees": [ "http://duncan-cragg.org/777-777.json", "http://netmash.net/789-123.json" ],
+  "%more": "http://api2.the-object.net/lanyrd/2012/over-the-air.json"
+}

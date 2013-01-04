@@ -3,7 +3,8 @@ To Do
 -----
 
 --------------------------------------------------------
- - Cyrus.js demos and tutorials - bring Object-Mash into cyrus codebase
+ - Cyrus.js tutorials and demos
+ - doc/local/demodb.json
 --------------------------------------------------------
  - Xmas Demo
  - Productionise on-device programming

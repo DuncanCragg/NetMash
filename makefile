@@ -113,6 +113,11 @@ runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
 
 # -------------------------------------------------------------------
 
+runode:
+	( cd src/js/ ; node js/server.js > cyrus.log 2>&1 & )
+
+# -------------------------------------------------------------------
+
 runon1:
 	( cd src/server/vm1 ; java -classpath .:../../../build/cyrus.jar cyrus.Cyrus > cyrus.log 2>&1 & )
 

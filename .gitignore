@@ -8,9 +8,9 @@ netmash.keystore
 doc/local/
 src/server/vm?/local*.db
 src/server/vm?/cyrus.db
-src/server/vm?/*.class
-src/server/vm?/*.log
-src/server/vm2/cyrusconfig.json
+src/server/vm2/cyrusconfig.db
+*.class
+*.log
 ,*
 .*.swp
 build/cyrus.jar
