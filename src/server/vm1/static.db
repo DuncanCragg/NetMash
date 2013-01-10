@@ -50,11 +50,6 @@
   start: "Wed 12 Dec 2012 18:00:00 GMT"
   end:   "Wed 12 Dec 2012 23:00:00 GMT"
   list: uid-3e0e-a630-b669-23d7 uid-0a01-cec7-61b7-a770
-  review-template: {
-      email:      { input: textfield label: "Your Email:" }
-      comments:   { input: textfield label: "Comments:" }
-      pres-style: { input: rating    label: "Presentation Style:" }
-  }
 }
 
 { UID: uid-3e0e-a630-b669-23d7
@@ -65,6 +60,11 @@
   start: "Wed 12 Dec 2012 18:00:00 GMT"
   end:   "Wed 12 Dec 2012 19:00:00 GMT"
   within: uid-0112-09a9-3f54-b720
+  review-template: {
+      email:      { input: textfield label: "Your Email:" }
+      comments:   { input: textfield label: "Comments:" }
+      pres-style: { input: rating    label: "Presentation Style:" }
+  }
 }
 
 { UID: uid-0a01-cec7-61b7-a770
@@ -75,6 +75,11 @@
   start: "Wed 12 Dec 2012 19:00:00 GMT"
   end:   "Wed 12 Dec 2012 20:00:00 GMT"
   within: uid-0112-09a9-3f54-b720
+  review-template: {
+      email:      { input: textfield label: "Your Email:" }
+      comments:   { input: textfield label: "Comments:" }
+      pres-style: { input: rating    label: "Presentation Style:" }
+  }
 }
 
 { UID: uid-5f5d-6d29-64d8-2d8c

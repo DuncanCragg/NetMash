@@ -340,7 +340,7 @@ public class Cyrus2GUI {
             LinkedList valuescol = new LinkedList();
             valuescol.add(style("direction","vertical"));
             valuescol.add(hash("rating", hash("input","rating", "label","Rate this event")));
-            LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:within:review-template");
+            LinkedHashMap<String,Object> template=user.contentHashMayJump("private:viewing:review-template");
             if(template!=null) for(Map.Entry<String,Object> entry: template.entrySet()){
                 Object o=entry.getValue();
                 if(!(o instanceof LinkedHashMap)) continue;
