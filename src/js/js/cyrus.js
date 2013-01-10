@@ -3,7 +3,7 @@
 
 function Network(){
 
-    var useLocalStorage = typeof(localStorage)!=='undefined';
+    var useLocalStorage = false; //typeof(localStorage)!=='undefined';
     var localCache = {};
     var outstandingRequests = 0;
 
@@ -196,13 +196,42 @@ function JSON2HTML(url){
             if(json.list      !== undefined) rows.push(this.getObjectListHTML('Sub-Events', 'sub-event', json.list));
             if(json.location  !== undefined) rows.push(this.getEventLocationHTML(json.location));
             if(json.attendees !== undefined) rows.push(this.getObjectListHTML('Attendees:', 'attendee', json.attendees));
+            if(json.reviews   !== undefined) rows.push(this.getObjectListHTML('Reviews:', 'review', json.reviews));
             if(json['%more']  !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more']));
             if(this.isA('attendable', json)){
-            rows.push('<form id="rsvp-form">');
-            rows.push('<label for="rsvp">Attending?</label>');
-            rows.push('<input id="rsvp" class="attending" type="checkbox" />');
-            rows.push('<input class="submit" type="submit" value="&gt;" />');
-            rows.push('</form>');
+                rows.push('<form class="rsvp-form">');
+                rows.push('<input class="rsvp-type"   type="hidden" value="attendable" />');
+                rows.push('<input class="rsvp-target" type="hidden" value="'+url+'" />');
+                rows.push('<label for="rsvp">Attending?</label>');
+                rows.push('<input class="rsvp-attending" type="checkbox" />');
+                rows.push('<input class="submit" type="submit" value="&gt;" />');
+                rows.push('</form>');
+            }
+            if(this.isA('reviewable', json)){
+                rows.push('<form class="rsvp-form">');
+                rows.push('<input class="rsvp-type"   type="hidden" value="reviewable" />');
+                rows.push('<input class="rsvp-target" type="hidden" value="'+url+'" />');
+                rows.push('<input class="rsvp-within" type="hidden" value="'+json.within+'" />');
+                rows.push('<table>');
+                var reviewtemplate=json["review-template"];
+                for(tag in reviewtemplate){
+                    input=reviewtemplate[tag]["input"];
+                    label=reviewtemplate[tag]["label"];
+                    rows.push('<tr class="form-field">');
+                    if(input=="textfield"){
+                        rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                        rows.push('<td><input id="'+tag+'" class="rsvp-field" type="text" /></td>');
+                    }
+                    else
+                    if(input=="rating"){
+                        rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                        rows.push('<td><input id="'+tag+'" class="rsvp-field" type="text" /></td>');
+                    }
+                    rows.push('</tr>');
+                }
+                rows.push('</table>');
+                rows.push('<input class="submit" type="submit" value="&gt;" />');
+                rows.push('</form>');
             }
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
@@ -376,7 +405,6 @@ function Cyrus(){
     var json2html;
     var topObjectURL = null;
     var windowWidth = $(window).width();
-    var credsOfSite = {};
     var moreOf = {};
 
     var me = {
@@ -394,7 +422,7 @@ function Cyrus(){
                 else { /* $('#content').html('Reloading  '+mashURL); window.location = mashURL; return; */ }
             }
             if(s!='mored'){
-                var objMore=obj["%more"];
+                var objMore=obj.More;
                 if(objMore){
                     if(objMore.constructor===String) moreOf[objMore]=obj;
                     else for(i in objMore) moreOf[objMore[i]]=obj;
@@ -456,11 +484,31 @@ function Cyrus(){
                 mediaList.find(':nth-child('+mediaIndex+')').children().show();
                 mediaList.find(':nth-child('+mediaIndex+')').children().children().show();
             });
-            $('#rsvp-form').unbind().submit(function(e){
-                var q=$('#rsvp').is(':checked');
-                var json = '{ "is": "rsvp", "event": "'+topObjectURL+'", "user": "", "within": "", "attending": "'+(q? 'yes': 'no')+'" }';
-                network.postJSON(topObjectURL, json, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
-                e.preventDefault();
+            $('.rsvp-form').unbind().submit(function(e){
+                if($(this).find('.rsvp-type').val()=="attendable"){
+                    if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
+                    var targetURL=$(this).find('.rsvp-target').val();
+                    var uid=localStorage.getItem('responses:'+targetURL);
+                    if(!uid){ uid=me.generateUID(); localStorage.setItem('responses:'+targetURL, uid); }
+                    var q=$(this).find('.rsvp-attending').is(':checked');
+                    var json = '{ "UID": "'+uid+'", "is": "rsvp", "event": "'+targetURL+'", "user": "", "attending": "'+(q? 'yes': 'no')+'" }';
+                    network.postJSON(targetURL, json, me.getCreds(targetURL), null, null);
+                    e.preventDefault();
+                }
+                if($(this).find('.rsvp-type').val()=="reviewable"){
+                    if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
+                    var withinURL=$(this).find('.rsvp-within').val();
+                    var within=localStorage.getItem('responses:'+withinURL);
+                    if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
+                    var targetURL=$(this).find('.rsvp-target').val();
+                    var uid=localStorage.getItem('responses:'+targetURL);
+                    if(!uid){ uid=me.generateUID(); localStorage.setItem('responses:'+targetURL, uid); }
+                    var json = '{ "UID": "'+uid+'", "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'"';
+                    $(this).find('.rsvp-field').each(function(n,i){ json+=', "'+i.getAttribute('id')+'": "'+$(i).val()+'"'; });
+                    json+=' }';
+                    network.postJSON(targetURL, json, me.getCreds(targetURL), null, null);
+                    e.preventDefault();
+                }
             });
             $('#query').focus();
             $('#query-form').unbind().submit(function(e){
@@ -522,12 +570,18 @@ function Cyrus(){
         setCreds: function(siteURL, creds){
             var domain = getDomain(siteURL);
             if(useLocalStorage) localStorage.setItem('credsOfSite:'+domain, JSON.stringify(creds));
-            else                credsOfSite[domain] = creds;
         },
         getCreds: function(requestURL){
             var domain = getDomain(requestURL);
             if(useLocalStorage) return JSON.parse(localStorage.getItem('credsOfSite:'+domain));
-            else                return credsOfSite[domain];
+            return "";
+        },
+        fourHex: function(){
+            var h= "000"+Math.floor(Math.random()*65536).toString(16);
+            return h.substring(h.length-4);
+        },
+        generateUID: function(){
+            return "uid-"+me.fourHex()+"-"+me.fourHex()+"-"+me.fourHex()+"-"+me.fourHex();
         },
         mergeHashes: function(a, b){
             for(x in b){
