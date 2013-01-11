@@ -25,7 +25,7 @@ cap: androidemu runcap logcat
 
 lap: androidlan runlap lancat
 
-stt: androidemu runstt logcat
+stt: androidemu runsta logcat
 
 # -------------------------------------------------------------------
 
@@ -101,7 +101,9 @@ runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
 
 runlap: kill clean netconfig setvm2lanconfig usecapdb  run1n2
 
-runstt: kill clean netconfig setvmemuconfig  usestaticdb run1n2
+runsta: kill clean netconfig setvmemuconfig  usestaticdb run1n2
+
+runstt: kill clean netconfig setvmtestconfig usestaticdb run1
 
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
