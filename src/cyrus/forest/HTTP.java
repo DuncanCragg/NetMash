@@ -93,6 +93,7 @@ public class HTTP implements ChannelUser {
     }
 
     public void putLongPusher(String cn, HTTPServer server){
+        if(cn==null) return;
         HTTPServer oldserver = longPusherPool.get(cn);
         if(oldserver==server) return;
         if(oldserver!=null) server.longQ.addAll(oldserver.longQ);
@@ -293,8 +294,9 @@ abstract class HTTPCommon {
             httpMethod   = m.group(1);
             httpPath     = m.group(2);
             httpProtocol = m.group(3);
-            if(!httpMethod.equals("GET") && !httpMethod.equals("POST")) throw new Exception("Unsupported method: "+httpMethod);
-            if(httpPath.indexOf("..") != -1)                            throw new Exception("Bad path: "+httpPath);
+            if(!httpMethod.equals("GET") && !httpMethod.equals("HEAD") && !httpMethod.equals("POST") && !httpMethod.equals("OPTIONS"))
+                                             throw new Exception("Unsupported method: "+httpMethod);
+            if(httpPath.indexOf("..") != -1) throw new Exception("Bad path: "+httpPath);
         }
         else{
             m = STATPA.matcher(headchars);
@@ -431,7 +433,15 @@ abstract class HTTPCommon {
         sb.append("Cache-Notify: "); sb.append(UID.toURL(CacheNotify())); sb.append("\r\n");
     }
 
-    protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents){
+    boolean useBrainDeadSoCalledAccessControlVerboseHeaderCruft=true;
+
+    protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents, boolean head){
+        if(useBrainDeadSoCalledAccessControlVerboseHeaderCruft){
+        sb.append("Access-Control-Allow-Origin: *\r\n");
+        sb.append("Access-Control-Allow-Methods: GET, POST, HEAD, OPTIONS\r\n");
+        sb.append("Access-Control-Allow-Headers: X-Requested-With, X-Requested-By, Cache-Notify, Origin, Content-Type, Accept\r\n");
+        sb.append("Access-Control-Expose-Headers: Content-Location, Location, Cache-Notify\r\n");
+        }
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
         String cl=(w.url==null? UID.toURL(w.uid): w.url);
         sb.append("Content-Location: "); sb.append(cl); sb.append("\r\n");
@@ -440,12 +450,9 @@ abstract class HTTPCommon {
         if(w.maxAge>=0){
         sb.append("Cache-Control: max-age="); sb.append(w.maxAge); sb.append("\r\n");}
         sb.append("Content-Type: application/json\r\n");
-        sb.append("Access-Control-Allow-Origin: *\r\n");
-        sb.append("Access-Control-Allow-Headers: X-Requested-With\r\n");
-
         String content=rewriteUIDsToURLsIfNotServingCyrus(w.toString(percents));
         sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n\r\n");
-        sb.append(content);
+        if(!head) sb.append(content);
     }
 
     private String rewriteUIDsToURLsIfNotServingCyrus(String s){
@@ -569,6 +576,10 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             if(httpMethod.equals("GET" )) send404();
             else
             if(httpMethod.equals("POST")) readPOST(bytebuffer, uid);
+            else
+            if(httpMethod.equals("HEAD")) readHEAD(uid);
+            else
+            if(httpMethod.equals("OPTIONS")) readOPTIONS();
         } else send404();
     }
 
@@ -578,6 +589,19 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(w==null) return;
         if(("\""+w.etag+"\"").equals(httpIfNoneMatch)) send304();
         else send200(w);
+    }
+
+    private void readHEAD(String uid){
+        setDoingResponse();
+        WebObject w=funcobs.httpObserve(this, uid, httpCacheNotify);
+        if(w==null) return;
+        if(("\""+w.etag+"\"").equals(httpIfNoneMatch)) send304();
+        else send200(w,false,true);
+    }
+
+    private void readOPTIONS(){
+        setDoingResponse();
+        send200(null);
     }
 
     /** Notifiable callback from FunctionalObserver when object is found. */
@@ -603,7 +627,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         else{
             String notifieruid=null;
             try{ notifieruid=longQ.take(); }catch(Exception e){}
-            send200(funcobs.cacheGet(notifieruid), true);
+            send200(funcobs.cacheGet(notifieruid), true, false);
         }
     }
 
@@ -612,7 +636,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     synchronized public void longRequest(String notifieruid){
-        if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid), true); timer.interrupt(); }
+        if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid), true, false); timer.interrupt(); }
         else try{ longQ.put(notifieruid); }catch(Exception e){}
     }
 
@@ -643,13 +667,13 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     public void send200(WebObject w){
-        send200(w, false);
+        send200(w, false, false);
     }
 
-    public void send200(WebObject w, boolean includeNotify){
+    public void send200(WebObject w, boolean includeNotify, boolean head){
         StringBuilder sb=new StringBuilder();
         topResponseHeaders(sb, "200 OK");
-        contentHeadersAndBody(sb, w, getPercents(includeNotify));
+        contentHeadersAndBody(sb, w, getPercents(includeNotify), head);
         if(Kernel.config.intPathN("network:log")==1) log("200 OK-->"); else
         if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
@@ -772,7 +796,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         }
         else{
             topRequestHeaders(sb, "POST ", host, port, request.path, 0);
-            contentHeadersAndBody(sb, funcobs.cacheGet(request.notifieruid), getPercents(false));
+            contentHeadersAndBody(sb, funcobs.cacheGet(request.notifieruid), getPercents(false), false);
         }
         if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
