@@ -3,51 +3,76 @@
 
 function Network(){
 
-    var useLocalStorage = false; //typeof(localStorage)!=='undefined';
+    var useLocalStorage = false;//typeof(localStorage)!=='undefined';
+    var getting={};
     var localCache = {};
     var outstandingRequests = 0;
+    var cacheNotify = null;
 
     var me = {
         getJSON: function(url,creds,ok,err){
-            me.updateProgress(1);
+            var isCN=url.indexOf("/c-n-")!= -1;
+            if(!isCN) me.updateProgress(1);
             var obj=null;
             if(useLocalStorage){
                 var objstr = localStorage.getItem(url);
                 if(objstr) obj=JSON.parse(objstr);
             }
-            else obj=localCache[url];
+            //else obj=localCache[url];
             if(obj){
                 me.updateProgress(-1);
                 ok(obj,'from-cache',null);
             }else{
-                var headers = creds? { 'Authorization': me.buildAuth(creds,'GET',url) }: {}
+                if(getting[url]) return;
+                getting[url] = true;
+                var headers = { 'Cache-Notify': me.getCacheNotify() };
+                if(creds) headers.Authorization = me.buildAuth(creds,'GET',url);
                 $.ajax({
                     url: url,
                     headers: headers,
                     dataType: 'json',
-                    success: function(obj, s, x){
+                    success: function(obj,s,x){
+                        delete getting[url];
+                        if(isCN) url = x && x.getResponseHeader('Content-Location');
                         if(useLocalStorage){ try{ localStorage.setItem(url, JSON.stringify(obj));
                                             }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
                         } else localCache[url]=obj;
-                        me.updateProgress(-1);
-                        ok(obj,s,x);
+                        if(!isCN) me.updateProgress(-1);
+                        ok(url,obj,s,x);
                     },
-                    error: err
+                    error: function(x,s,e){
+                        delete getting[url];
+                        if(!isCN) me.updateProgress(-1);
+                        err(url,e,s,x);
+                    }
                 });
             }
         },
         postJSON: function(url,json,creds,ok,err){
-            var headers = creds? { 'Authorization': me.buildAuth(creds,'POST',url,json) }: {}
+            var headers = { 'Cache-Notify': me.getCacheNotify() };
+            if(creds) headers.Authorization = me.buildAuth(creds,'POST',url,json);
             $.ajax({
                 type: 'POST',
                 url: url,
                 headers: headers,
-                data: 'i='+escape(json),
-             // contentType: 'application/json', // crappy CORS
+                data: json,
+                contentType: 'application/json',
                 dataType: 'json',
                 success: ok,
                 error: err
             });
+        },
+        longGetJSON: function(cn,creds,ok,err){
+            for(uid in getting) if(getting[uid]) return;
+            me.getJSON(cn,creds,ok,err);
+        },
+        getCacheNotify: function(){
+            if(cacheNotify) return cacheNotify;
+            cacheNotify=localStorage.getItem("Cache-Notify");
+            if(cacheNotify) return cacheNotify;
+            cacheNotify=generateUID("c-n");
+            localStorage.setItem("Cache-Notify", cacheNotify);
+            return cacheNotify;
         },
         updateProgress: function(i){
             outstandingRequests+=i;
@@ -406,13 +431,14 @@ function Cyrus(){
     var topObjectURL = null;
     var windowWidth = $(window).width();
     var moreOf = {};
+    var retryDelay=100;
 
     var me = {
         init: function(){
             me.getTopObject(window.location);
             if(!useHistory) setInterval(function(){ me.getTopObject(window.location); }, 200);
         },
-        topObjectIn: function(obj, s, x){
+        topObjectIn: function(url,obj,s,x){
             var newURL = x && x.getResponseHeader('Content-Location');
             if(newURL && newURL!=topObjectURL){
                 topObjectURL = newURL;
@@ -432,12 +458,17 @@ function Cyrus(){
             window.scrollTo(0,0);
             $('#content').html(json2html.getHTML(topObjectURL, obj));
             me.setUpHTMLEvents();
-            setTimeout(function(){ me.ensureVisibleAndReflow($('#content')); }, 50);
+            setTimeout(function(){
+                me.ensureVisibleAndReflow($('#content'));
+                var cn = x && x.getResponseHeader('Cache-Notify');
+                if(cn) network.longGetJSON(cn,me.getCreds(cn),me.someObjectIn,me.objectFail);
+            }, 50);
+            retryDelay=100;
         },
-        topObjectFail: function(x,s,e){
-            $('#content').html('<div>topObjectFail: <a href="'+topObjectURL+'">'+topObjectURL+'</a></div><div>'+s+'; '+e+'</div>');
+        topObjectFail: function(url,err,s,x){
+            $('#content').html('<div>topObjectFail: <a href="'+topObjectURL+'">'+topObjectURL+'</a></div><div>'+s+'; '+err+'</div>');
         },
-        objectIn: function(url,obj,s){
+        objectIn: function(url,obj,s,x){
             if(!obj){ this.objectFail(url,null,'object empty; status='+s,null); return; }
             var moreofobj=moreOf[url];
             if(moreofobj){
@@ -452,9 +483,19 @@ function Cyrus(){
                 a.parent().replaceWith(html);
             });
             me.setUpHTMLEvents();
+            var cn = x && x.getResponseHeader('Cache-Notify');
+            if(cn) network.longGetJSON(cn,me.getCreds(cn),me.someObjectIn,me.objectFail);
+            retryDelay=100;
         },
-        objectFail: function(url,x,s,e){
-            console.log(s+' '+url);
+        objectFail: function(url,err,s,x){
+            console.log("objectFail "+url+" "+err+" "+s+" "+(x && x.getResponseHeader('Cache-Notify')));
+            var isCN=url.indexOf("/c-n-")!= -1;
+            retryDelay*=2;
+            if(isCN) setTimeout(function(){ network.longGetJSON(url,me.getCreds(url),me.someObjectIn,me.objectFail); }, retryDelay);
+        },
+        someObjectIn: function(url,obj,s,x){
+            if(url==topObjectURL) me.topObjectIn(url,obj,s,x);
+            else                     me.objectIn(url,obj,s,x);
         },
         setUpHTMLEvents: function(){
             $(window).resize(function(e){
@@ -489,7 +530,7 @@ function Cyrus(){
                     if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uid=localStorage.getItem('responses:'+targetURL);
-                    if(!uid){ uid=me.generateUID(); localStorage.setItem('responses:'+targetURL, uid); }
+                    if(!uid){ uid=generateUID("uid"); localStorage.setItem('responses:'+targetURL, uid); }
                     var q=$(this).find('.rsvp-attending').is(':checked');
                     var json = '{ "UID": "'+uid+'", "is": "rsvp", "event": "'+targetURL+'", "user": "", "attending": "'+(q? 'yes': 'no')+'" }';
                     network.postJSON(targetURL, json, me.getCreds(targetURL), null, null);
@@ -502,7 +543,7 @@ function Cyrus(){
                     if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uid=localStorage.getItem('responses:'+targetURL);
-                    if(!uid){ uid=me.generateUID(); localStorage.setItem('responses:'+targetURL, uid); }
+                    if(!uid){ uid=generateUID("uid"); localStorage.setItem('responses:'+targetURL, uid); }
                     var json = '{ "UID": "'+uid+'", "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'"';
                     $(this).find('.rsvp-field').each(function(n,i){ json+=', "'+i.getAttribute('id')+'": "'+$(i).val()+'"'; });
                     json+=' }';
@@ -549,7 +590,7 @@ function Cyrus(){
             $(panel).find('a.object-place').each(function(n,a){
                 if(!$(a).is(':visible')) return;
                 var url = a.getAttribute('href');
-                network.getJSON(url, me.getCreds(url), function(obj,s){ me.objectIn(url,obj,s); }, function(x,s,e){ me.objectFail(url,x,s,e);});
+                network.getJSON(url, me.getCreds(url), me.objectIn, me.objectFail);
                 $(a).next().html('Loading...');
             });
         },
@@ -575,13 +616,6 @@ function Cyrus(){
             var domain = getDomain(requestURL);
             if(useLocalStorage) return JSON.parse(localStorage.getItem('credsOfSite:'+domain));
             return "";
-        },
-        fourHex: function(){
-            var h= "000"+Math.floor(Math.random()*65536).toString(16);
-            return h.substring(h.length-4);
-        },
-        generateUID: function(){
-            return "uid-"+me.fourHex()+"-"+me.fourHex()+"-"+me.fourHex()+"-"+me.fourHex();
         },
         mergeHashes: function(a, b){
             for(x in b){
@@ -725,6 +759,15 @@ function deCameliseList(is){
 
 function deCamelise(s){
     return s.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3').replace(/^./, function(str){ return str.toUpperCase(); });
+}
+
+function generateUID(prefix){
+    return prefix+"-"+fourHex()+"-"+fourHex()+"-"+fourHex()+"-"+fourHex();
+}
+
+function fourHex(){
+    var h= "000"+Math.floor(Math.random()*65536).toString(16);
+    return h.substring(h.length-4);
 }
 
 // }--------------------------------------------------------{

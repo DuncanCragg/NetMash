@@ -103,7 +103,7 @@ runlap: kill clean netconfig setvm2lanconfig usecapdb  run1n2
 
 runsta: kill clean netconfig setvmemuconfig  usestaticdb run1n2
 
-runstt: kill clean netconfig setvmtestconfig usestaticdb run1
+runstt: kill clean           setvmtestconfig usestaticdb run1
 
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
