@@ -23,6 +23,18 @@ table.json{
     width: 100%;
 }
 
+table.grid{
+    width: 100%;
+}
+
+td.grid-col{
+    width: 33%;
+}
+
+textarea.cyrus-raw{
+    width: 100%;
+}
+
 div.photo{
     border-top: 1px solid #aaa;
     border-left: 1px solid #aaa;
@@ -45,12 +57,12 @@ span.object-title{
 */
 }
 
-td:first-child {
+td.raw:first-child {
     background-color: #fafafa;
     width: 15%;
 }
 
-td {
+td.raw {
     background-color: #ffffff;
     vertical-align: top;
     padding-left: 7px;

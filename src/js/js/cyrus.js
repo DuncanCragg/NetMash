@@ -5,7 +5,8 @@ function Network(){
 
     var useLocalStorage = false;//typeof(localStorage)!=='undefined';
     var getting={};
-    var localCache = {};
+    var localObjects = {};
+    var localVersions = {};
     var outstandingRequests = 0;
     var cacheNotify = null;
 
@@ -15,10 +16,10 @@ function Network(){
             if(!isCN) me.updateProgress(1);
             var obj=null;
             if(useLocalStorage){
-                var objstr = localStorage.getItem(url);
+                var objstr = localStorage.getItem('objects:'+url);
                 if(objstr) obj=JSON.parse(objstr);
             }
-            //else obj=localCache[url];
+            //else obj=localObjects[url];
             if(obj){
                 me.updateProgress(-1);
                 ok(obj,'from-cache',null);
@@ -32,11 +33,15 @@ function Network(){
                     headers: headers,
                     dataType: 'json',
                     success: function(obj,s,x){
-                        delete getting[url];
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
-                        if(useLocalStorage){ try{ localStorage.setItem(url, JSON.stringify(obj));
+                        var etag = x && x.getResponseHeader('ETag');
+                        delete obj.Notify;
+                        if(useLocalStorage){ try{ localStorage.setItem('objects:'+url, JSON.stringify(obj));
+                                                  if(etag) localStorage.setItem('versions:'+url, etag);
                                             }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
-                        } else localCache[url]=obj;
+                        } else { localObjects[url]=obj; localVersions[url]=etag; }
+if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+url, etag);
+                        delete getting[url];
                         if(!isCN) me.updateProgress(-1);
                         ok(url,obj,s,x);
                     },
@@ -106,6 +111,7 @@ function JSON2HTML(url){
     return {
         getHTML: function(url,json,closed){
             if(!json || json.constructor!==Object) return '<div><div>Not an object!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
+            if(this.isA('gui',     json))       return this.getGUIHTML(url,json,closed);
             if(this.isA('contact', json))       return this.getContactHTML(url,json,closed);
             if(this.isA('event',   json))       return this.getEventHTML(url,json,closed);
             if(this.isA('article', json))       return this.getArticleHTML(url,json,closed);
@@ -125,11 +131,15 @@ function JSON2HTML(url){
             return a!=null? ''+a: '-';
         },
         getObjectHTML: function(url,json,closed,title){
-            var that = this;
-            var rows = [];
-            $.each(json, function(key,val){ rows.push('<tr><td>'+deCamelise(key)+'</td><td>'+that.getAnyHTML(val)+ '</td></tr>'); });
-            return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
-                   '<table class="json">\n'+rows.join('\n')+'\n</table></div>';
+            if(this.isA('editable', json))
+                 return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
+                        '<form class="cyrus-form">\n'+
+                        '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
+                        '<textarea class="cyrus-raw">\n'+JSON.stringify(json)+'\n</textarea>\n'+
+                        '<input class="submit" type="submit" value="&gt;" />\n'+
+                        '</form>';
+            else return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
+                        '<div class="cyrus">\n'+JSON.stringify(json)+'\n</div>';
         },
         getListHTML: function(l){
             var that = this;
@@ -267,6 +277,31 @@ function JSON2HTML(url){
             rows.push('<div class="location">');
             rows.push(this.getObjectHeadHTML(null, locurl, true));
             rows.push('</div>');
+            return rows.join('\n')+'\n';
+        },
+        // ------------------------------------------------
+        getGUIHTML: function(url,json,closed){
+            var view=json.view;
+            var rows=[];
+            rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
+            rows.push('<table class="grid">');
+            rows.push('<tr class="grid-row">');
+            for(i in view){
+                var item=view[i];
+                if(item.constructor===Object){
+                    if(item.is=='style'){
+                    }
+                    else
+                    if(item.view=='raw'){
+                        rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true)+'</td>');
+                    }
+                }
+                else
+                if(this.isONLink(item)) rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item, true)+'</td>');
+                else rows.push('<td class="grid-col">'+item+'</td>');
+            }
+            rows.push('</tr>');
+            rows.push('</table>');
             return rows.join('\n')+'\n';
         },
         // ------------------------------------------------
@@ -525,6 +560,21 @@ function Cyrus(){
                 mediaList.find(':nth-child('+mediaIndex+')').children().show();
                 mediaList.find(':nth-child('+mediaIndex+')').children().children().show();
             });
+            $('.cyrus-form').unbind().submit(function(e){
+                if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
+                var targetURL=$(this).find('.cyrus-target').val();
+                var uid=localStorage.getItem('responses:'+targetURL);
+                if(!uid){ uid=generateUID("uid"); localStorage.setItem('responses:'+targetURL, uid); }
+                var cy; try{ cy=JSON.parse($(this).find('.cyrus-raw').val().trim()); } catch(e){ alert("Syntax: "+e); }
+                if(!cy){ e.preventDefault(); return; }
+                if(cy.is.constructor==String) cy.is=[ cy.is, "editable" ];
+                if(cy.is.constructor==Array && cy.is.indexOf("editable")== -1) cy.is.push("editable");
+                var ver=localStorage.getItem('versions:'+targetURL);
+                if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
+                var json = '{ "UID": "'+uid+'", "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';
+                network.postJSON(targetURL, me.makeEditRule(json,ver,cy), me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
             $('.rsvp-form').unbind().submit(function(e){
                 if($(this).find('.rsvp-type').val()=="attendable"){
                     if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
@@ -616,6 +666,12 @@ function Cyrus(){
             var domain = getDomain(requestURL);
             if(useLocalStorage) return JSON.parse(localStorage.getItem('credsOfSite:'+domain));
             return "";
+        },
+        makeEditRule: function(json,ver,val){
+            var j=JSON.parse(json);
+            var v={ 'Version': ver };
+            j['']=[ v, '=>', 'as-is', val ];
+            return JSON.stringify(j);
         },
         mergeHashes: function(a, b){
             for(x in b){

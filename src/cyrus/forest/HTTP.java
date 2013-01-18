@@ -440,7 +440,7 @@ abstract class HTTPCommon {
         sb.append("Access-Control-Allow-Origin: *\r\n");
         sb.append("Access-Control-Allow-Methods: GET, POST, HEAD, OPTIONS\r\n");
         sb.append("Access-Control-Allow-Headers: X-Requested-With, X-Requested-By, Cache-Notify, Origin, Content-Type, Accept\r\n");
-        sb.append("Access-Control-Expose-Headers: Content-Location, Location, Cache-Notify\r\n");
+        sb.append("Access-Control-Expose-Headers: Content-Location, Location, Cache-Notify, ETag\r\n");
         }
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
         String cl=(w.url==null? UID.toURL(w.uid): w.url);
