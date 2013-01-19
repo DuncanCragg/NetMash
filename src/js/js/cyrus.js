@@ -28,7 +28,7 @@ function Network(){
                 getting[url] = true;
                 var headers = { 'Cache-Notify': me.getCacheNotify() };
                 if(creds) headers.Authorization = me.buildAuth(creds,'GET',url);
-                $.ajax({
+                if(url.endethWith('.json')) $.ajax({
                     url: url,
                     headers: headers,
                     dataType: 'json',
@@ -51,18 +51,44 @@ if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+
                         err(url,e,s,x);
                     }
                 });
+                else if(url.endethWith('.cyr')) $.ajax({
+                    url: url,
+                    headers: headers,
+                    success: function(obj,s,x){
+                        if(isCN) url = x && x.getResponseHeader('Content-Location');
+                        var etag = x && x.getResponseHeader('ETag');
+if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+url, etag);
+                        delete getting[url];
+                        if(!isCN) me.updateProgress(-1);
+                        ok(url,obj,s,x);
+                    },
+                    error: function(x,s,e){
+                        delete getting[url];
+                        if(!isCN) me.updateProgress(-1);
+                        err(url,e,s,x);
+                    }
+                });
             }
         },
-        postJSON: function(url,json,creds,ok,err){
+        postJSON: function(url,json,cyrus,creds,ok,err){
             var headers = { 'Cache-Notify': me.getCacheNotify() };
             if(creds) headers.Authorization = me.buildAuth(creds,'POST',url,json);
-            $.ajax({
+            if(!cyrus) $.ajax({
                 type: 'POST',
                 url: url,
                 headers: headers,
                 data: json,
                 contentType: 'application/json',
                 dataType: 'json',
+                success: ok,
+                error: err
+            });
+            else $.ajax({
+                type: 'POST',
+                url: url,
+                headers: headers,
+                data: json,
+                contentType: 'text/cyrus',
                 success: ok,
                 error: err
             });
@@ -110,6 +136,10 @@ function JSON2HTML(url){
 
     return {
         getHTML: function(url,json,closed){
+            if(url.endethWith('.cyr')){
+                if(!json || json.constructor!==String) return '<div><div>Not Cyrus text!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
+                return this.getCyrusTextHTML(url,json,closed);
+            }
             if(!json || json.constructor!==Object) return '<div><div>Not an object!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
             if(this.isA('gui',     json))       return this.getGUIHTML(url,json,closed);
             if(this.isA('contact', json))       return this.getContactHTML(url,json,closed);
@@ -135,11 +165,22 @@ function JSON2HTML(url){
                  return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
                         '<form class="cyrus-form">\n'+
                         '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                        '<textarea class="cyrus-raw">\n'+JSON.stringify(json)+'\n</textarea>\n'+
+                        '<textarea class="cyrus-raw" rows="20">\n'+JSON.stringify(json)+'\n</textarea>\n'+
                         '<input class="submit" type="submit" value="&gt;" />\n'+
                         '</form>';
             else return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
                         '<div class="cyrus">\n'+JSON.stringify(json)+'\n</div>';
+        },
+        getCyrusTextHTML: function(url,item,closed){
+            if(item.indexOf('editable')!= -1)
+                 return this.getObjectHeadHTML('Cyrus Code',url,false,closed)+
+                        '<form class="cyrus-form">\n'+
+                        '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
+                        '<textarea class="cyrus-raw" rows="20">\n'+item+'\n</textarea>\n'+
+                        '<input class="submit" type="submit" value="&gt;" />\n'+
+                        '</form>';
+            else return this.getObjectHeadHTML('Cyrus Code',url,false,closed)+
+                        '<div class="cyrus">\n'+item+'\n</div>';
         },
         getListHTML: function(l){
             var that = this;
@@ -402,7 +443,7 @@ function JSON2HTML(url){
         },
         // ---------------------------------------------------
         getTitle: function(json,elsedefault){
-            if(!json) return 'No object';
+            if(!json || json.constructor!==Object) return '';
             if(json.fullName !== undefined) return this.getAnyHTML(json.fullName);
             if(json.title    !== undefined) return this.getAnyHTML(json.title);
             return elsedefault? elsedefault: deCameliseList(json.is);
@@ -432,7 +473,7 @@ function JSON2HTML(url){
             return s && s.startethWith('http://');
         },
         isONLink: function(s){
-            return s && (s.constructor===String) && ((this.isLink(s) && s.endethWith('.json')) || s.startethWith('uid-'));
+            return s && (s.constructor===String) && ((this.isLink(s) && (s.endethWith('.json') || s.endethWith('.cyr'))) || s.startethWith('uid-'));
         },
         isImageLink: function(s){
             return this.isLink(s) && (s.endethWith('.png' )||
@@ -449,7 +490,7 @@ function JSON2HTML(url){
             if(!s) return false;
             if( s.constructor!==String) return false;
             if(!s.startethWith('http:')) return false;
-            if(!s.endethWith('.json')) return false;
+            if(!s.endethWith('.json') && !s.endethWith('.cyr')) return false;
             return true;
         }
     };
@@ -475,14 +516,14 @@ function Cyrus(){
         },
         topObjectIn: function(url,obj,s,x){
             var newURL = x && x.getResponseHeader('Content-Location');
-            if(newURL && newURL!=topObjectURL){
+            if(false && newURL && newURL!=topObjectURL){
                 topObjectURL = newURL;
                 json2html = new JSON2HTML(topObjectURL.substring(0,topObjectURL.lastIndexOf('/')+1));
                 var mashURL = getMashURL(topObjectURL);
                 if(useHistory) history.pushState(null,null,mashURL);
                 else { /* $('#content').html('Reloading  '+mashURL); window.location = mashURL; return; */ }
             }
-            if(s!='mored'){
+            if(false && s!='mored'){
                 var objMore=obj.More;
                 if(objMore){
                     if(objMore.constructor===String) moreOf[objMore]=obj;
@@ -563,16 +604,25 @@ function Cyrus(){
             $('.cyrus-form').unbind().submit(function(e){
                 if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                 var targetURL=$(this).find('.cyrus-target').val();
+                var cyrus=targetURL.endethWith('.cyr');
                 var uid=localStorage.getItem('responses:'+targetURL);
                 if(!uid){ uid=generateUID("uid"); localStorage.setItem('responses:'+targetURL, uid); }
-                var cy; try{ cy=JSON.parse($(this).find('.cyrus-raw').val().trim()); } catch(e){ alert("Syntax: "+e); }
+                var cytext=$(this).find('.cyrus-raw').val().trim();
+                var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert("Syntax: "+e); }
                 if(!cy){ e.preventDefault(); return; }
-                if(cy.is.constructor==String) cy.is=[ cy.is, "editable" ];
-                if(cy.is.constructor==Array && cy.is.indexOf("editable")== -1) cy.is.push("editable");
+                if(!cyrus){
+                    if(cy.is.constructor==String) cy.is=[ cy.is, "editable" ];
+                    if(cy.is.constructor==Array && cy.is.indexOf("editable")== -1) cy.is.push("editable");
+                }
                 var ver=localStorage.getItem('versions:'+targetURL);
                 if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
-                var json = '{ "UID": "'+uid+'", "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';
-                network.postJSON(targetURL, me.makeEditRule(json,ver,cy), me.getCreds(targetURL), null, null);
+                if(cyrus){
+                    var cyr = '{ UID: '+uid+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ""\n  ';
+                    network.postJSON(targetURL, me.makeCyrusEditRule(cyr,ver,cy), true, me.getCreds(targetURL), null, null);
+                }else{
+                    var json = '{ "UID": "'+uid+'", "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';
+                    network.postJSON(targetURL, me.makeJSONEditRule(json,ver,cy), false, me.getCreds(targetURL), null, null);
+                }
                 e.preventDefault();
             });
             $('.rsvp-form').unbind().submit(function(e){
@@ -583,7 +633,7 @@ function Cyrus(){
                     if(!uid){ uid=generateUID("uid"); localStorage.setItem('responses:'+targetURL, uid); }
                     var q=$(this).find('.rsvp-attending').is(':checked');
                     var json = '{ "UID": "'+uid+'", "is": "rsvp", "event": "'+targetURL+'", "user": "", "attending": "'+(q? 'yes': 'no')+'" }';
-                    network.postJSON(targetURL, json, me.getCreds(targetURL), null, null);
+                    network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
                 }
                 if($(this).find('.rsvp-type').val()=="reviewable"){
@@ -597,7 +647,7 @@ function Cyrus(){
                     var json = '{ "UID": "'+uid+'", "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'"';
                     $(this).find('.rsvp-field').each(function(n,i){ json+=', "'+i.getAttribute('id')+'": "'+$(i).val()+'"'; });
                     json+=' }';
-                    network.postJSON(targetURL, json, me.getCreds(targetURL), null, null);
+                    network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
                 }
             });
@@ -605,7 +655,7 @@ function Cyrus(){
             $('#query-form').unbind().submit(function(e){
                 var q=$('#query').val();
                 var json = '{ "is": [ "document", "query" ], "text": "<hasWords('+q.jsonEscape()+')>" }';
-                network.postJSON(topObjectURL, json, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
+                network.postJSON(topObjectURL, json, false, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
                 e.preventDefault();
             });
             $('#login-form').unbind().submit(function(e){
@@ -655,7 +705,7 @@ function Cyrus(){
             url=getObjectURL(mashURL);
             if(!url) return null;
             if(!url.startethWith('http://')) url = getRootURL()+url;
-            if(!url.endethWith('.json'))     url = url+'.json';
+            if(!url.endethWith('.json') && !url.endethWith('.cyr')) url = url+'.json';
             return url;
         },
         setCreds: function(siteURL, creds){
@@ -667,11 +717,14 @@ function Cyrus(){
             if(useLocalStorage) return JSON.parse(localStorage.getItem('credsOfSite:'+domain));
             return "";
         },
-        makeEditRule: function(json,ver,val){
+        makeCyrusEditRule: function(cyr,ver,val){
+            return cyr+': { Version: '+ver+' } => as-is\n'+val+'\n}';
+        },
+        makeJSONEditRule: function(json,ver,val){
             var j=JSON.parse(json);
             var v={ 'Version': ver };
             j['']=[ v, '=>', 'as-is', val ];
-            return JSON.stringify(j);
+            return j;
         },
         mergeHashes: function(a, b){
             for(x in b){

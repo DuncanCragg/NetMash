@@ -21,8 +21,7 @@ import static cyrus.lib.Utils.*;
   */
 public class HTTP implements ChannelUser {
 
-    static public final String STRCTRE = "http://([^:/]+)(:([0-9]+))?(/.*/(uid-[-0-9a-f]+.json|c-n-[-0-9a-f]+))$";
-    static public final String  WURLRE = "http://([^:/]+)(:([0-9]+))?(/.*(.json|/c-n-[-0-9a-f]+))$";
+    static public final String  WURLRE = "http://([^:/]+)(:([0-9]+))?(/.*(.json|.cyr|/c-n-[-0-9a-f]+))$";
     static public final String   URLRE = "http://([^:/]+)(:([0-9]+))?(/.*)";
     static public final Pattern WURLPA = Pattern.compile(WURLRE);
     static public final Pattern  URLPA = Pattern.compile(URLRE);
@@ -435,7 +434,7 @@ abstract class HTTPCommon {
 
     boolean useBrainDeadSoCalledAccessControlVerboseHeaderCruft=true;
 
-    protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents, boolean head){
+    protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents, boolean head, boolean cyrus){
         if(useBrainDeadSoCalledAccessControlVerboseHeaderCruft){
         sb.append("Access-Control-Allow-Origin: *\r\n");
         sb.append("Access-Control-Allow-Methods: GET, POST, HEAD, OPTIONS\r\n");
@@ -449,8 +448,8 @@ abstract class HTTPCommon {
         sb.append("ETag: \""); sb.append(w.etag); sb.append("\"\r\n");
         if(w.maxAge>=0){
         sb.append("Cache-Control: max-age="); sb.append(w.maxAge); sb.append("\r\n");}
-        sb.append("Content-Type: application/json\r\n");
-        String content=rewriteUIDsToURLsIfNotServingCyrus(w.toString(percents));
+        sb.append("Content-Type: "); sb.append(cyrus? "text/cyrus": "application/json"); sb.append("\r\n");
+        String content=rewriteUIDsToURLsIfNotServingCyrus(w.toString(percents,cyrus));
         sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n\r\n");
         if(!head) sb.append(content);
     }
@@ -459,7 +458,10 @@ abstract class HTTPCommon {
         if(httpUserAgent==null ||
            httpUserAgent.indexOf("Cyrus")!= -1 ||
            UID.notVisible()) return s;
-        return s.replaceAll("\"(uid-[^\"]+)\"", "\""+UID.localPrePath()+"$1.json\"").replaceAll("10.0.2.2","localhost");
+        return s.replaceAll("\"(uid-[-a-zA-Z0-9]+.json)\"", "\""+UID.localPrePath()+"$1\"")
+                .replaceAll("\"(uid-[-a-zA-Z0-9]+.cyr)\"",  "\""+UID.localPrePath()+"$1\"")
+                .replaceAll("\"(uid-[^\"]+)\"",             "\""+UID.localPrePath()+"$1.json\"")
+                .replaceAll("10.0.2.2","localhost");
     }
 
     protected PostResponse readWebObject(ByteBuffer bytebuffer, int contentLength, String httpNotify, String httpReqURL, WebObject webobject, String param){
@@ -473,6 +475,10 @@ abstract class HTTPCommon {
             JSON json = null;
             if(httpContentType.startsWith("application/json")){
                 json = new JSON(jsonchars);
+            }
+            else
+            if(httpContentType.startsWith("text/cyrus")){
+                json = new JSON(jsonchars,true);
             }
             else
             if(httpContentType.startsWith("application/x-www-form-urlencoded")){
@@ -588,7 +594,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         WebObject w=funcobs.httpObserve(this, uid, httpCacheNotify);
         if(w==null) return;
         if(("\""+w.etag+"\"").equals(httpIfNoneMatch)) send304();
-        else send200(w);
+        else send200(w,false,false,httpPath.endsWith(".cyr"));
     }
 
     private void readHEAD(String uid){
@@ -596,7 +602,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         WebObject w=funcobs.httpObserve(this, uid, httpCacheNotify);
         if(w==null) return;
         if(("\""+w.etag+"\"").equals(httpIfNoneMatch)) send304();
-        else send200(w,false,true);
+        else send200(w,false,true,false);
     }
 
     private void readOPTIONS(){
@@ -609,7 +615,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(w.isShell()) send404();
         else
         if(("\""+w.etag+"\"").equals(httpIfNoneMatch)) send304();
-        else send200(w);
+        else send200(w,false,false,httpPath.endsWith(".cyr"));
     }
 
     synchronized private void readLong(String uid){
@@ -627,7 +633,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         else{
             String notifieruid=null;
             try{ notifieruid=longQ.take(); }catch(Exception e){}
-            send200(funcobs.cacheGet(notifieruid), true, false);
+            send200(funcobs.cacheGet(notifieruid), true, false, false);
         }
     }
 
@@ -636,7 +642,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     synchronized public void longRequest(String notifieruid){
-        if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid), true, false); timer.interrupt(); }
+        if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid), true, false, false); timer.interrupt(); }
         else try{ longQ.put(notifieruid); }catch(Exception e){}
     }
 
@@ -667,13 +673,13 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     public void send200(WebObject w){
-        send200(w, false, false);
+        send200(w, false, false, false);
     }
 
-    public void send200(WebObject w, boolean includeNotify, boolean head){
+    public void send200(WebObject w, boolean includeNotify, boolean head, boolean cyrus){
         StringBuilder sb=new StringBuilder();
         topResponseHeaders(sb, "200 OK");
-        contentHeadersAndBody(sb, w, getPercents(includeNotify), head);
+        contentHeadersAndBody(sb, w, getPercents(includeNotify), head, cyrus);
         if(Kernel.config.intPathN("network:log")==1) log("200 OK-->"); else
         if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
@@ -796,7 +802,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         }
         else{
             topRequestHeaders(sb, "POST ", host, port, request.path, 0);
-            contentHeadersAndBody(sb, funcobs.cacheGet(request.notifieruid), getPercents(false), false);
+            contentHeadersAndBody(sb, funcobs.cacheGet(request.notifieruid), getPercents(false), false, false);
         }
         if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));

@@ -839,7 +839,7 @@ public class WebObject {
                            "\n  Observe: "+setToListString(observe, true)+
       (cacheNotify!=null?  "\n  Cache-Notify: "+cacheNotify: "")+
                            "\n  Class: "+this.getClass().toString().substring(6)+
-                         "\n",true)+"\n\n";
+                           "\n",true)+"\n\n";
         return r;
     }
 
@@ -849,7 +849,7 @@ public class WebObject {
                           ",\n  \"Alertedin\": "+setToListString(alertedin)+
                           ",\n  \"State\": \""+shellstate+"\"\n}\n";
         String r = publicState.toString(
-                                 "\"UID\": \""+uid+
+                               "\"UID\": \""+uid+
             (url!=null? "\",\n  \"URL\": \""+url: "")+
                         "\",\n  \"Version\": "+etag+
                           ",\n  \"Max-Age\": "+maxAge+
@@ -861,13 +861,25 @@ public class WebObject {
         return r;
     }
 
+    public String toString(HashSet<String> percents, boolean cyrus){
+        if(!cyrus) return toString(percents);
+        String r = publicState.toString(
+                       ( percents.contains("UID")?               "UID: "    +uid+                         "\n  ": "")+
+                       ((percents.contains("URL") && url!=null)? "URL: "    +url+                         "\n  ": "")+
+                       ( percents.contains("Version")?           "Version: "+etag+                        "\n  ": "")+
+                       ( percents.contains("Max-Age")?           "Max-Age: "+maxAge+                      "\n  ": "")+
+                       ( percents.contains("Notify")?            "Notify: " +setToListString(notify,true)+"\n  ": ""),
+                       true)+"\n";
+        return r;
+    }
+
     public String toString(HashSet<String> percents){
         String r = publicState.toString(
-                       ( percents.contains("UID")?               "\"UID\": \""  +uid+                  "\",\n    ": "")+
-                       ((percents.contains("URL") && url!=null)? "\"URL\": \""  +url+                  "\",\n    ": "")+
-                       ( percents.contains("Version")?              "\"Version\": "   +etag+                   ",\n    ": "")+
-                       ( percents.contains("Max-Age")?           "\"Max-Age\": "+maxAge+                 ",\n    ": "")+
-                       ( percents.contains("Notify")?            "\"Notify\": " +setToListString(notify)+",\n    ": "")
+                       ( percents.contains("UID")?               "\"UID\": \""  +uid+                  "\",\n  ": "")+
+                       ((percents.contains("URL") && url!=null)? "\"URL\": \""  +url+                  "\",\n  ": "")+
+                       ( percents.contains("Version")?           "\"Version\": "+etag+                   ",\n  ": "")+
+                       ( percents.contains("Max-Age")?           "\"Max-Age\": "+maxAge+                 ",\n  ": "")+
+                       ( percents.contains("Notify")?            "\"Notify\": " +setToListString(notify)+",\n  ": "")
                    )+"\n";
         return r;
     }

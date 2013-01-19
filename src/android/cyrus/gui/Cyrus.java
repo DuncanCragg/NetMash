@@ -522,7 +522,7 @@ log(show? "show keyboard": "hide keyboard");
         }
         else{
             String s=o.toString();
-            boolean isUID       = s.startsWith("uid-") || (s.startsWith("http://") && s.endsWith(".json"));
+            boolean isUID       = s.startsWith("uid-") || (s.startsWith("http://") && (s.endsWith(".json")||s.endsWith(".cyr")));
             boolean isImage     = s.startsWith("http://") && ( s.endsWith(".jpg") || s.endsWith(".gif") || s.endsWith(".png") || s.endsWith(".ico"));
             boolean isWebURL    = s.startsWith("http://");
             View v= isUID?       createUIDView(s):

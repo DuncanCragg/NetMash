@@ -55,7 +55,7 @@ public class UID {
     static public Pattern URLPATHPA=null;
     static public Pattern URLPATHPA(){
         if(URLPATHRE==null){
-            URLPATHRE = Kernel.config.stringPathN("network:pathprefix")+"((uid-[-0-9a-f]+).json|(c-n-[-0-9a-f]+))$";
+            URLPATHRE = Kernel.config.stringPathN("network:pathprefix")+"((uid-[-0-9a-f]+).json|(uid-[-0-9a-f]+).cyr|(c-n-[-0-9a-f]+))$";
             URLPATHPA = Pattern.compile(URLPATHRE);
         }
         return URLPATHPA;
@@ -71,8 +71,9 @@ public class UID {
     static public String toUID(String url2uid){
         if(!url2uid.startsWith("http://"))         return url2uid;
         int s=url2uid.indexOf("uid-");  if(s== -1) return url2uid;
-        int e=url2uid.indexOf(".json"); if(e== -1) return url2uid.substring(s);
-        ;                                          return url2uid.substring(s,e);
+        int e=url2uid.indexOf(".json"); if(e!= -1) return url2uid.substring(s,e);
+        ;   e=url2uid.indexOf(".cyr");  if(e!= -1) return url2uid.substring(s,e);
+        ;                                          return url2uid.substring(s);
     }
 
     static public String normaliseUID(String baseurl, String uid2url){

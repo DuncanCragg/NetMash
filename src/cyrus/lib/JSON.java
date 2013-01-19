@@ -504,8 +504,9 @@ public class JSON {
 
         String path = file.getPath();
 
-        if(!path.endsWith(".json") && !path.endsWith(".db")) throw new FileNotFoundException("JSON file name should end in '.json' or '.db': "+path);
-        if(!(file.exists() && file.canRead()))               throw new FileNotFoundException("File not readable: "+path);
+        if(!path.endsWith(".json") && !path.endsWith(".db") && !path.endsWith(".cyr"))
+                                                   throw new FileNotFoundException("JSON file name should end in '.json', '.db' or '.cyr': "+path);
+        if(!(file.exists() && file.canRead()))     throw new FileNotFoundException("File not readable: "+path);
 
         FileChannel channel    = new FileInputStream(file).getChannel();
         ByteBuffer  bytebuffer = ByteBuffer.allocate((int)file.length());

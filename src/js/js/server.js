@@ -11,6 +11,7 @@ var mimeTypes={
     '.html': 'text/html',
     '.js':   'application/javascript',
     '.json': 'application/json',
+    '.cyr':  'text/cyrus',
     '.css':  'text/css',
     '.appcache': 'text/cache-manifest',
 
@@ -25,8 +26,9 @@ var charType={
     '.html': true,
     '.js':   true,
     '.json': true,
+    '.cyr':  true,
     '.css':  true,
-    '.manifest': true,
+    '.appcache': true,
 
     '.jpeg': false,
     '.jpg':  false,

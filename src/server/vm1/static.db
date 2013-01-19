@@ -4,7 +4,7 @@
   view:
     { is: style direction: horizontal }
     "Type stuff in the middle and see the results on the right:"
-    { view: raw item: uid-27c9-154b-c4bf-0453 }
+    { view: raw item: uid-27c9-154b-c4bf-0453.cyr }
     uid-27c9-154b-c4bf-0453
 }
 
