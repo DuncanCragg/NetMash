@@ -28,11 +28,12 @@ function Network(){
                 getting[url] = true;
                 var headers = { 'Cache-Notify': me.getCacheNotify() };
                 if(creds) headers.Authorization = me.buildAuth(creds,'GET',url);
-                if(url.endethWith('.json')) $.ajax({
+                if(url.endethWith('.json')||url.indexOf('c-n-')!=-1) $.ajax({
                     url: url,
                     headers: headers,
                     dataType: 'json',
                     success: function(obj,s,x){
+                        delete getting[url];
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
                         delete obj.Notify;
@@ -41,7 +42,6 @@ function Network(){
                                             }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
                         } else { localObjects[url]=obj; localVersions[url]=etag; }
 if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+url, etag);
-                        delete getting[url];
                         if(!isCN) me.updateProgress(-1);
                         ok(url,obj,s,x);
                     },
@@ -55,10 +55,10 @@ if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+
                     url: url,
                     headers: headers,
                     success: function(obj,s,x){
+                        delete getting[url];
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
 if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+url, etag);
-                        delete getting[url];
                         if(!isCN) me.updateProgress(-1);
                         ok(url,obj,s,x);
                     },
@@ -136,11 +136,12 @@ function JSON2HTML(url){
 
     return {
         getHTML: function(url,json,closed){
-            if(url.endethWith('.cyr')){
-                if(!json || json.constructor!==String) return '<div><div>Not Cyrus text!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
-                return this.getCyrusTextHTML(url,json,closed);
+            if(!json) return '<div><div>No object!</div><div>'+'<a href="'+url+'">'+url+'</a></div></div>';
+            if(json.constructor===String){
+                if(url.endethWith('.cyr'))      return this.getCyrusTextHTML(url,json,closed);
+                return '<div><div>Not Cyrus text!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
             }
-            if(!json || json.constructor!==Object) return '<div><div>Not an object!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
+            if(json.constructor!==Object) return '<div><div>Not an object!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
             if(this.isA('gui',     json))       return this.getGUIHTML(url,json,closed);
             if(this.isA('contact', json))       return this.getContactHTML(url,json,closed);
             if(this.isA('event',   json))       return this.getEventHTML(url,json,closed);
@@ -165,22 +166,22 @@ function JSON2HTML(url){
                  return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
                         '<form class="cyrus-form">\n'+
                         '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                        '<textarea class="cyrus-raw" rows="20">\n'+JSON.stringify(json)+'\n</textarea>\n'+
+                        '<textarea class="cyrus-raw" rows="14">\n'+JSON.stringify(json)+'\n</textarea>\n'+
                         '<input class="submit" type="submit" value="Update" />\n'+
                         '</form>';
             else return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
-                        '<div class="cyrus">\n'+JSON.stringify(json)+'\n</div>';
+                        '<pre class="cyrus">\n'+JSON.stringify(json)+'\n</pre>';
         },
         getCyrusTextHTML: function(url,item,closed){
             if(item.indexOf('editable')!= -1)
                  return this.getObjectHeadHTML('Cyrus Code',url,false,closed)+
                         '<form class="cyrus-form">\n'+
                         '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                        '<textarea class="cyrus-raw" rows="20">\n'+item+'\n</textarea>\n'+
+                        '<textarea class="cyrus-raw" rows="14">\n'+item+'\n</textarea>\n'+
                         '<input class="submit" type="submit" value="Update" />\n'+
                         '</form>';
             else return this.getObjectHeadHTML('Cyrus Code',url,false,closed)+
-                        '<div class="cyrus">\n'+item+'\n</div>';
+                        '<pre class="cyrus">\n'+item+'\n</pre>';
         },
         getListHTML: function(l){
             var that = this;
@@ -557,20 +558,22 @@ function Cyrus(){
         objectIn: function(url,obj,s,x){
             if(!obj){ this.objectFail(url,null,'object empty; status='+s,null); return; }
             var moreofobj=moreOf[url];
-            if(moreofobj){
-            //  this.mergeHashes(moreofobj,obj);
+            if(false && moreofobj){
+                this.mergeHashes(moreofobj,obj);
                 this.topObjectIn(moreofobj,'mored',null);
                 moreOf[url]=undefined;
                 return;
             }
             var htmlopen;
             var htmlclosed;
-            $('a.object-place').each(function(n,ae){ var a=$(ae);
+            $('a.object-place, a.object').each(function(n,ae){ var a=$(ae);
                 if(a.attr('href')!=url) return;
                 var open=a.parent().hasClass('open');
                 if(open){ if(!htmlopen)   htmlopen   = json2html.getHTML(url, obj, false); }
                 else    { if(!htmlclosed) htmlclosed = json2html.getHTML(url, obj, true); }
-                a.parent().replaceWith(open? htmlopen: htmlclosed);
+                var objhead = a.parent();
+                objhead.next().remove();
+                objhead.replaceWith(open? htmlopen: htmlclosed);
             });
             me.setUpHTMLEvents();
             var cn = x && x.getResponseHeader('Cache-Notify');

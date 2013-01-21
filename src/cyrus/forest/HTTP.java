@@ -572,7 +572,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(eof) return;
         Matcher m = UID.URLPATHPA().matcher(httpPath);
         if(m.matches()){
-            String uid=m.group(2); if(uid==null) uid=m.group(3);
+            String uid=m.group(2); if(uid==null) uid=m.group(3); if(uid==null) uid=m.group(4);
             if(uid==null) send404();
             else
             if(httpMethod.equals("GET" ) && uid.startsWith("uid-")) readGET(uid);
