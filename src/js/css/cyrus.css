@@ -4,7 +4,7 @@ body {
 }
 
 form{
-    padding-top: 10px;
+    padding: 0px;
 }
 
 div {
@@ -29,10 +29,23 @@ table.grid{
 
 td.grid-col{
     width: 33%;
+    vertical-align: top;
+}
+
+form.cyrus-form{
+    padding: 0.5em;
+    margin: 0;
 }
 
 textarea.cyrus-raw{
     width: 100%;
+    border: 1px solid #ddd;
+    padding: 0.5em;
+}
+
+div.cyrus{
+    padding: 0.5em;
+    margin: 0.5em;
 }
 
 div.photo{
@@ -119,8 +132,8 @@ input.text{
 }
 
 input.submit{
-    margin-left: 10px;
-    font-size: 1.3em;
+    font-size: 1em;
+    margin-left: 0;
 }
 
 label.login-label{

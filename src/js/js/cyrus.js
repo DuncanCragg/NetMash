@@ -166,7 +166,7 @@ function JSON2HTML(url){
                         '<form class="cyrus-form">\n'+
                         '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
                         '<textarea class="cyrus-raw" rows="20">\n'+JSON.stringify(json)+'\n</textarea>\n'+
-                        '<input class="submit" type="submit" value="&gt;" />\n'+
+                        '<input class="submit" type="submit" value="Update" />\n'+
                         '</form>';
             else return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
                         '<div class="cyrus">\n'+JSON.stringify(json)+'\n</div>';
@@ -177,7 +177,7 @@ function JSON2HTML(url){
                         '<form class="cyrus-form">\n'+
                         '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
                         '<textarea class="cyrus-raw" rows="20">\n'+item+'\n</textarea>\n'+
-                        '<input class="submit" type="submit" value="&gt;" />\n'+
+                        '<input class="submit" type="submit" value="Update" />\n'+
                         '</form>';
             else return this.getObjectHeadHTML('Cyrus Code',url,false,closed)+
                         '<div class="cyrus">\n'+item+'\n</div>';
@@ -189,7 +189,7 @@ function JSON2HTML(url){
             if(rows.length >5) return '<div class="list"><p class="list">'+rows.join('</p>\n<p class="list">')+'</p></div>\n';
             return rows.join(', ');
         },
-        getObjectListHTML: function(header,itemclass,list){
+        getObjectListHTML: function(header,itemclass,list,closed){
             var rows=[];
             if(header) rows.push('<h3>'+header+'</h3>');
             var that = this;
@@ -199,8 +199,8 @@ function JSON2HTML(url){
             rows.push('<ul>');
             $.each(list, function(key,item){
                 rows.push('<li class="'+itemclass+'">');
-                if(that.isONLink(item)) rows.push(that.getObjectHeadHTML(null, item, true));
-                else                    rows.push(that.getAnyHTML(item));
+                if(that.isONLink(item)) rows.push(that.getObjectHeadHTML(null, item, true, closed));
+                else                    rows.push(that.getAnyHTML(item,closed));
                 rows.push('</li>');
             });
             rows.push('</ul>');
@@ -223,13 +223,13 @@ function JSON2HTML(url){
             if(json.phone        !== undefined) rows.push(this.getContactPhoneHTML(json.phone));
             if(json.email        !== undefined) rows.push('<div class="info-item">Email: <span class="email">'+this.getAnyHTML(json.email)+'</span></div>');
             if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
-            if(json.publications !== undefined) rows.push(this.getObjectListHTML('Publications', 'publication', json.publications));
+            if(json.publications !== undefined) rows.push(this.getObjectListHTML('Publications', 'publication', json.publications, true));
             if(json.bio          !== undefined) rows.push('<div class="info-item">Bio: '+this.getAnyHTML(json.bio)+'</div>');
             if(json.photo        !== undefined) rows.push('<div class="photo">'+this.getAnyHTML(json.photo)+'</div>');
-            if(json.parents      !== undefined) rows.push(this.getObjectListHTML('Parents', 'parent', json.parents));
-            if(json.inspirations !== undefined) rows.push(this.getObjectListHTML('Inspired by', 'inspirations', json.inspirations));
-            if(json.following    !== undefined) rows.push(this.getObjectListHTML('Following', 'following', json.following));
-            if(json['%more']     !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more']));
+            if(json.parents      !== undefined) rows.push(this.getObjectListHTML('Parents', 'parent', json.parents, true));
+            if(json.inspirations !== undefined) rows.push(this.getObjectListHTML('Inspired by', 'inspirations', json.inspirations, true));
+            if(json.following    !== undefined) rows.push(this.getObjectListHTML('Following', 'following', json.following, true));
+            if(json['%more']     !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more'], true));
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
@@ -269,18 +269,18 @@ function JSON2HTML(url){
             if(json.text      !== undefined) rows.push('<p class="description">'+this.getAnyHTML(json.text)+'</p>');
             if(json.start     !== undefined) rows.push('<div class="info-item">From: ' +this.getDateSpan("dtstart", json.start)+'</div>');
             if(json.end       !== undefined) rows.push('<div class="info-item">Until: '+this.getDateSpan("dtend",   json.end)  +'</div>');
-            if(json.list      !== undefined) rows.push(this.getObjectListHTML('Sub-Events', 'sub-event', json.list));
-            if(json.location  !== undefined) rows.push(this.getEventLocationHTML(json.location));
-            if(json.attendees !== undefined) rows.push(this.getObjectListHTML('Attendees:', 'attendee', json.attendees));
-            if(json.reviews   !== undefined) rows.push(this.getObjectListHTML('Reviews:', 'review', json.reviews));
-            if(json['%more']  !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more']));
+            if(json.list      !== undefined) rows.push(this.getObjectListHTML('Sub-Events', 'sub-event', json.list, true));
+            if(json.location  !== undefined) rows.push(this.getEventLocationHTML(json.location, true));
+            if(json.attendees !== undefined) rows.push(this.getObjectListHTML('Attendees:', 'attendee', json.attendees, true));
+            if(json.reviews   !== undefined) rows.push(this.getObjectListHTML('Reviews:', 'review', json.reviews, true));
+            if(json['%more']  !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more'], true));
             if(this.isA('attendable', json)){
                 rows.push('<form class="rsvp-form">');
                 rows.push('<input class="rsvp-type"   type="hidden" value="attendable" />');
                 rows.push('<input class="rsvp-target" type="hidden" value="'+url+'" />');
                 rows.push('<label for="rsvp">Attending?</label>');
                 rows.push('<input class="rsvp-attending" type="checkbox" />');
-                rows.push('<input class="submit" type="submit" value="&gt;" />');
+                rows.push('<input class="submit" type="submit" value="Update" />');
                 rows.push('</form>');
             }
             if(this.isA('reviewable', json)){
@@ -306,17 +306,17 @@ function JSON2HTML(url){
                     rows.push('</tr>');
                 }
                 rows.push('</table>');
-                rows.push('<input class="submit" type="submit" value="&gt;" />');
+                rows.push('<input class="submit" type="submit" value="Update" />');
                 rows.push('</form>');
             }
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
-        getEventLocationHTML: function(locurl){
+        getEventLocationHTML: function(locurl,closed){
             var rows=[];
             rows.push('<h3>Location:</h3>');
             rows.push('<div class="location">');
-            rows.push(this.getObjectHeadHTML(null, locurl, true));
+            rows.push(this.getObjectHeadHTML(null, locurl, true, closed));
             rows.push('</div>');
             return rows.join('\n')+'\n';
         },
@@ -333,12 +333,16 @@ function JSON2HTML(url){
                     if(item.is=='style'){
                     }
                     else
-                    if(item.view=='raw'){
-                        rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true)+'</td>');
+                    if(this.isOrContains(item.view, 'raw')){
+                        rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !this.isOrContains(item.view,'open'))+'</td>');
+                    }
+                    else
+                    if(item.view){
+                        rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !this.isOrContains(item.view,'open'))+'</td>');
                     }
                 }
                 else
-                if(this.isONLink(item)) rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item, true)+'</td>');
+                if(this.isONLink(item)) rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item, true, true)+'</td>');
                 else rows.push('<td class="grid-col">'+item+'</td>');
             }
             rows.push('</tr>');
@@ -357,11 +361,11 @@ function JSON2HTML(url){
             if(json.issue        !== undefined) rows.push('<div class="info-item">Issue: '+this.getAnyHTML(json.issue)+'</div>');
             if(json.published    !== undefined) rows.push('<div class="info-item">Published: '+this.getDateSpan("published", json.published)+'</div>');
             if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
-            if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true)+'</div>');
-            if(json.authors      !== undefined) rows.push(this.getObjectListHTML('Authors:', 'author', json.authors));
+            if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
+            if(json.authors      !== undefined) rows.push(this.getObjectListHTML('Authors:', 'author', json.authors, true));
             rows.push('</div><div class="document right">');
             if(json.text         !== undefined) rows.push('<div class="text">'+this.getAnyHTML(json.text)+'</div>');
-            if(json['%more']     !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more']));
+            if(json['%more']     !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more'], true));
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
@@ -373,8 +377,8 @@ function JSON2HTML(url){
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
             if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
             if(json.contentCount !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json.contentCount,false,'Documents Available')+'</div>');
-            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list));
-            if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true)+'</div>');
+            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, false));
+            if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
@@ -389,7 +393,7 @@ function JSON2HTML(url){
             rows.push('<form id="query-form">');
             rows.push('<label for="query">Search these documents:</label>');
             rows.push('<input id="query" class="text" type="text" />');
-            rows.push('<input class="submit" type="submit" value="&gt;" />');
+            rows.push('<input class="submit" type="submit" value="Search" />');
             rows.push('</form>');
             }
             if(this.isA('personalisable', json, true)){
@@ -398,11 +402,11 @@ function JSON2HTML(url){
             rows.push('<input id="username" class="text" type="text" />');
             rows.push('<label for="userpass" class="login-label">Password</label>');
             rows.push('<input id="userpass" class="text" type="text" />');
-            rows.push('<input class="submit" type="submit" value="&gt;" />');
+            rows.push('<input class="submit" type="submit" value="Log in" />');
             rows.push('</form>');
             }
-            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list));
-            if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true)+'</div>');
+            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, false));
+            if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
@@ -492,6 +496,12 @@ function JSON2HTML(url){
             if(!s.startethWith('http:')) return false;
             if(!s.endethWith('.json') && !s.endethWith('.cyr')) return false;
             return true;
+        },
+        isOrContains: function(x,s){
+            if(!x) return false;
+            if(x.constructor===String && x==s) return true;
+            if(x.constructor===Array  && x.indexOf(s)!= -1) return true;
+            return false;
         }
     };
 };
@@ -532,7 +542,7 @@ function Cyrus(){
             }
             document.title = json2html.getTitle(obj).htmlUnEscape();
             window.scrollTo(0,0);
-            $('#content').html(json2html.getHTML(topObjectURL, obj));
+            $('#content').html(json2html.getHTML(topObjectURL, obj, false));
             me.setUpHTMLEvents();
             setTimeout(function(){
                 me.ensureVisibleAndReflow($('#content'));
@@ -553,10 +563,14 @@ function Cyrus(){
                 moreOf[url]=undefined;
                 return;
             }
-            var html = json2html.getHTML(url, obj, true);
+            var htmlopen;
+            var htmlclosed;
             $('a.object-place').each(function(n,ae){ var a=$(ae);
                 if(a.attr('href')!=url) return;
-                a.parent().replaceWith(html);
+                var open=a.parent().hasClass('open');
+                if(open){ if(!htmlopen)   htmlopen   = json2html.getHTML(url, obj, false); }
+                else    { if(!htmlclosed) htmlclosed = json2html.getHTML(url, obj, true); }
+                a.parent().replaceWith(open? htmlopen: htmlclosed);
             });
             me.setUpHTMLEvents();
             var cn = x && x.getResponseHeader('Cache-Notify');
