@@ -32,24 +32,23 @@ public class CyrusLanguage extends WebObject {
 
     static int MAX_LOOPS=50;
 
+    @SuppressWarnings("unchecked")
     public void evaluate(){
-        contentSetPushAll("Rules",getEvalRules());
-        if(extralogging) log("Running CyrusLanguage on "+uid+": "+contentHash("#"));
+        LinkedList rules=getEvalRules(); if(extralogging) log("Running CyrusLanguage on "+uid+": "+contentHash("#"));
         boolean modified=statemod;
         contentRemove("MaxLoopsReached");
         int maxloops=contentInt("MaxLoops"); if(maxloops<=0) maxloops=MAX_LOOPS;
         int i=0; for(; i<maxloops; i++){
             statemod=false;
-            LinkedList rules=contentAsList("Rules");
-            if(extralogging) log("Rules: "+rules);
+            LinkedList rs=contentAsList("Rules");
+            if(i==0){ if(rs!=null) rules.addAll(rs); } else rules=rs; if(extralogging) log("Rules: "+rules);
             if(rules==null) break;
             for(Object rule: rules){
                 if(rule instanceof String) contentTempObserve("Rule", (String)rule);
                 else
                 if(rule instanceof LinkedHashMap) contentTemp("Rule", rule);
                 else continue;
-                LinkedList ruleis=contentList("Rule:is");
-                if(extralogging) log("Rule is="+ruleis);
+                LinkedList ruleis=contentList("Rule:is"); if(extralogging) log("Rule is="+ruleis);
                 if(ruleis==null) continue;
                 boolean ok=true;
                 for(Object is: ruleis){
@@ -67,8 +66,10 @@ public class CyrusLanguage extends WebObject {
         contentTemp("Rule",null);
     }
 
-    private LinkedList<String> getEvalRules(){
-        LinkedList<String> evalrules=new LinkedList<String>();
+    @SuppressWarnings("unchecked")
+    private LinkedList getEvalRules(){
+        LinkedList evalrules=new LinkedList();
+        if(!contentIsOrListContains("is", "editable")) return evalrules;
         for(String alerted: alerted()){
             contentTemp("Temp", alerted);
             if(contentListContainsAll("Temp:is",list("editable","rule"))) evalrules.add(alerted);
