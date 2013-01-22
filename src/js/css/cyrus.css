@@ -25,10 +25,10 @@ table.json{
 
 table.grid{
     width: 100%;
+    table-layout: fixed;
 }
 
 td.grid-col{
-    width: 33%;
     vertical-align: top;
 }
 

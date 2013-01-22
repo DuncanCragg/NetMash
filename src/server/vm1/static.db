@@ -9,8 +9,9 @@
 }
 
 { UID: uid-27c9-154b-c4bf-0453
-  Rules: { is: test rule }
-  is: editable test
+  Rules: { is: gui rule }
+  is: editable gui
+  view: Hello World!
 }
 
 { UID: uid-26bc-8ee9-5443-851a

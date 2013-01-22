@@ -38,10 +38,10 @@ function Network(){
                         var etag = x && x.getResponseHeader('ETag');
                         delete obj.Notify;
                         if(useLocalStorage){ try{ localStorage.setItem('objects:'+url, JSON.stringify(obj));
-                                                  if(etag) localStorage.setItem('versions:'+url, etag);
+                                                  if(etag) localStorage.setItem('versions:'+getUID(url), etag);
                                             }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
                         } else { localObjects[url]=obj; localVersions[url]=etag; }
-if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+url, etag);
+if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+getUID(url), etag);
                         if(!isCN) me.updateProgress(-1);
                         ok(url,obj,s,x);
                     },
@@ -58,7 +58,7 @@ if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+
                         delete getting[url];
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
-if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+url, etag);
+if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+getUID(url), etag);
                         if(!isCN) me.updateProgress(-1);
                         ok(url,obj,s,x);
                     },
@@ -631,7 +631,7 @@ function Cyrus(){
                     if(cy.is.constructor==String) cy.is=[ cy.is, "editable" ];
                     if(cy.is.constructor==Array && cy.is.indexOf("editable")== -1) cy.is.push("editable");
                 }
-                var ver=localStorage.getItem('versions:'+targetURL);
+                var ver=localStorage.getItem('versions:'+getUID(targetURL));
                 if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
                 if(cyrus){
                     var cyr = '{ UID: '+uid+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ""\n  ';
@@ -856,6 +856,11 @@ function getObjectURL(mashURL){
 
 function getDomain(url){
     return RegExp('http://([^/]*)/').exec(url)[1];
+}
+
+function getUID(url){
+    var parts=RegExp('(uid-[-0-9a-zA-Z]*)').exec(url);
+    return parts && parts[1];
 }
 
 var daysLookupTable   = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
