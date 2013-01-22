@@ -289,23 +289,8 @@ function JSON2HTML(url){
                 rows.push('<input class="rsvp-type"   type="hidden" value="reviewable" />');
                 rows.push('<input class="rsvp-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="rsvp-within" type="hidden" value="'+json.within+'" />');
-                rows.push('<table>');
-                var reviewtemplate=json["review-template"];
-                for(tag in reviewtemplate){
-                    input=reviewtemplate[tag]["input"];
-                    label=reviewtemplate[tag]["label"];
-                    rows.push('<tr class="form-field">');
-                    if(input=="textfield"){
-                        rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                        rows.push('<td><input id="'+tag+'" class="rsvp-field" type="text" /></td>');
-                    }
-                    else
-                    if(input=="rating"){
-                        rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                        rows.push('<td><input id="'+tag+'" class="rsvp-field" type="text" /></td>');
-                    }
-                    rows.push('</tr>');
-                }
+                rows.push('<table class="grid">');
+                this.createGUI(json["review-template"],rows);
                 rows.push('</table>');
                 rows.push('<input class="submit" type="submit" value="Update" />');
                 rows.push('</form>');
@@ -323,32 +308,75 @@ function JSON2HTML(url){
         },
         // ------------------------------------------------
         getGUIHTML: function(url,json,closed){
-            var view=json.view;
             var rows=[];
             rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
+            rows.push('<form class="gui-form">');
+            rows.push('<input class="form-target" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
-            rows.push('<tr class="grid-row">');
-            for(i in view){
-                var item=view[i];
+            this.createGUI(json.view,rows);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit" />');
+            rows.push('</form>');
+            return rows.join('\n')+'\n';
+        },
+        createGUI: function(guilist,rows){
+            var horizontal=false;
+            for(i in guilist){ var item=guilist[i];
+                if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
+            }
+            var tagged=(guilist.constructor===Object);
+            if(horizontal) rows.push('<tr class="grid-row">');
+            for(i in guilist){
+                var tag=tagged? i: null;
+                var item=guilist[i];
                 if(item.constructor===Object){
-                    if(item.is=='style'){
+                    if(item.input){
+                        input=item.input;
+                        label=item.label;
+                        if(!horizontal) rows.push('<tr class="form-field">');
+                        if(input=="textfield"){
+                            rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                            rows.push('<td><input id="'+tag+'" class="rsvp-field" type="text" /></td>');
+                        }
+                        else
+                        if(input=="rating"){
+                            rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                            rows.push('<td><input id="'+tag+'" class="rsvp-field" type="text" /></td>');
+                        }
+                        if(!horizontal) rows.push('</tr>');
                     }
                     else
                     if(this.isOrContains(item.view, 'raw')){
+                        if(!horizontal) rows.push('<tr class="form-field">');
                         rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !this.isOrContains(item.view,'open'))+'</td>');
+                        if(!horizontal) rows.push('</tr>');
                     }
                     else
                     if(item.view){
+                        if(!horizontal) rows.push('<tr class="form-field">');
                         rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !this.isOrContains(item.view,'open'))+'</td>');
+                        if(!horizontal) rows.push('</tr>');
                     }
                 }
                 else
-                if(this.isONLink(item)) rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item, true, true)+'</td>');
-                else rows.push('<td class="grid-col">'+item+'</td>');
+                if(this.isONLink(item)){
+                    if(!horizontal) rows.push('<tr class="form-field">');
+                    rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item, true, true)+'</td>');
+                    if(!horizontal) rows.push('</tr>');
+                }
+                else
+                if(item.constructor===String){
+                    if(!horizontal) rows.push('<tr class="form-field">');
+                    rows.push('<td class="grid-col">'+item+'</td>');
+                    if(!horizontal) rows.push('</tr>');
+                }
+                else{
+                    if(!horizontal) rows.push('<tr class="form-field">');
+                    rows.push('<td class="grid-col">'+item+'</td>');
+                    if(!horizontal) rows.push('</tr>');
+                }
             }
-            rows.push('</tr>');
-            rows.push('</table>');
-            return rows.join('\n')+'\n';
+            if(horizontal) rows.push('</tr>');
         },
         // ------------------------------------------------
         getArticleHTML: function(url,json,closed){
