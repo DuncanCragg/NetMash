@@ -622,8 +622,6 @@ function Cyrus(){
                 if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                 var targetURL=$(this).find('.cyrus-target').val();
                 var cyrus=targetURL.endethWith('.cyr');
-                var uid=localStorage.getItem('responses:'+targetURL);
-                if(!uid){ uid=generateUID("uid"); localStorage.setItem('responses:'+targetURL, uid); }
                 var cytext=$(this).find('.cyrus-raw').val().trim();
                 var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert("Syntax: "+e); }
                 if(!cy){ e.preventDefault(); return; }
@@ -633,11 +631,12 @@ function Cyrus(){
                 }
                 var ver=localStorage.getItem('versions:'+getUID(targetURL));
                 if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
+                var uidver=me.getUIDandVer(targetURL,cyrus);
                 if(cyrus){
-                    var cyr = '{ UID: '+uid+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ""\n  ';
+                    var cyr = '{ '+uidver+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ""\n  ';
                     network.postJSON(targetURL, me.makeCyrusEditRule(cyr,ver,cy), true, me.getCreds(targetURL), null, null);
                 }else{
-                    var json = '{ "UID": "'+uid+'", "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';
+                    var json = '{ '+uidver+', "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';
                     network.postJSON(targetURL, me.makeJSONEditRule(json,ver,cy), false, me.getCreds(targetURL), null, null);
                 }
                 e.preventDefault();
@@ -646,22 +645,20 @@ function Cyrus(){
                 if($(this).find('.rsvp-type').val()=="attendable"){
                     if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
-                    var uid=localStorage.getItem('responses:'+targetURL);
-                    if(!uid){ uid=generateUID("uid"); localStorage.setItem('responses:'+targetURL, uid); }
+                    var uidver=me.getUIDandVer(targetURL);
                     var q=$(this).find('.rsvp-attending').is(':checked');
-                    var json = '{ "UID": "'+uid+'", "is": "rsvp", "event": "'+targetURL+'", "user": "", "attending": "'+(q? 'yes': 'no')+'" }';
+                    var json = '{ '+uidver+', "is": "rsvp", "event": "'+targetURL+'", "user": "", "attending": "'+(q? 'yes': 'no')+'" }';
                     network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
                 }
                 if($(this).find('.rsvp-type').val()=="reviewable"){
                     if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                     var withinURL=$(this).find('.rsvp-within').val();
-                    var within=localStorage.getItem('responses:'+withinURL);
+                    var within=me.getUIDOnly(withinURL);
                     if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
-                    var uid=localStorage.getItem('responses:'+targetURL);
-                    if(!uid){ uid=generateUID("uid"); localStorage.setItem('responses:'+targetURL, uid); }
-                    var json = '{ "UID": "'+uid+'", "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'"';
+                    var uidver=me.getUIDandVer(targetURL);
+                    var json = '{ '+uidver+', "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'"';
                     $(this).find('.rsvp-field').each(function(n,i){ json+=', "'+i.getAttribute('id')+'": "'+$(i).val()+'"'; });
                     json+=' }';
                     network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
@@ -698,6 +695,27 @@ function Cyrus(){
             if(!topObjectURL || topObjectURL==previousObjectURL) return;
             json2html = new JSON2HTML(topObjectURL.substring(0,topObjectURL.lastIndexOf('/')+1));
             network.getJSON(topObjectURL, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
+        },
+        getUIDandVer: function(url,cyrus){
+            var uidver=localStorage.getItem('responses:'+url);
+            if(!uidver){
+                if(cyrus) uidver= 'UID: '  +generateUID("uid")+' Version: ' +1;
+                else      uidver='"UID": "'+generateUID("uid")+'", "Version": '+1;
+            }else{
+                var re;
+                if(cyrus) re=RegExp('(.*Version: )(.*)').exec(uidver);
+                else      re=RegExp('(.*"Version": )(.*)').exec(uidver);
+                uidver=re[1]+(parseInt(re[2])+1);
+            }
+            localStorage.setItem('responses:'+url, uidver);
+            return uidver;
+        },
+        getUIDOnly: function(url){
+            var uidver=localStorage.getItem('responses:'+url);
+            if(!uidver) return null;
+            var re=RegExp('"UID": "([^"]*)"').exec(uidver);
+            if(!re) return null;
+            return re[1];
         },
         ensureVisibleAndReflow: function(panel){
             me.ensureVisibleObjectsIn(panel);
@@ -741,7 +759,7 @@ function Cyrus(){
             var j=JSON.parse(json);
             var v={ 'Version': ver };
             j['']=[ v, '=>', 'as-is', val ];
-            return j;
+            return JSON.stringify(j);
         },
         mergeHashes: function(a, b){
             for(x in b){
