@@ -325,7 +325,7 @@ function JSON2HTML(url){
                 if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
             }
             var tagged=(guilist.constructor===Object);
-            if(horizontal) rows.push('<tr class="grid-row">');
+            if(horizontal) rows.push('<tr>');
             for(i in guilist){
                 var tag=tagged? i: null;
                 var item=guilist[i];
@@ -333,45 +333,45 @@ function JSON2HTML(url){
                     if(item.input){
                         input=item.input;
                         label=item.label;
-                        if(!horizontal) rows.push('<tr class="form-field">');
+                        if(!horizontal) rows.push('<tr>');
                         if(input=="textfield"){
                             rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                            rows.push('<td><input id="'+tag+'" class="rsvp-field" type="text" /></td>');
+                            rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
                         }
                         else
                         if(input=="rating"){
                             rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                            rows.push('<td><input id="'+tag+'" class="rsvp-field" type="text" /></td>');
+                            rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
                         }
                         if(!horizontal) rows.push('</tr>');
                     }
                     else
                     if(this.isOrContains(item.view, 'raw')){
-                        if(!horizontal) rows.push('<tr class="form-field">');
+                        if(!horizontal) rows.push('<tr>');
                         rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !this.isOrContains(item.view,'open'))+'</td>');
                         if(!horizontal) rows.push('</tr>');
                     }
                     else
                     if(item.view){
-                        if(!horizontal) rows.push('<tr class="form-field">');
+                        if(!horizontal) rows.push('<tr>');
                         rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !this.isOrContains(item.view,'open'))+'</td>');
                         if(!horizontal) rows.push('</tr>');
                     }
                 }
                 else
                 if(this.isONLink(item)){
-                    if(!horizontal) rows.push('<tr class="form-field">');
+                    if(!horizontal) rows.push('<tr>');
                     rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item, true, true)+'</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
                 else
                 if(item.constructor===String){
-                    if(!horizontal) rows.push('<tr class="form-field">');
+                    if(!horizontal) rows.push('<tr>');
                     rows.push('<td class="grid-col">'+item+'</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
                 else{
-                    if(!horizontal) rows.push('<tr class="form-field">');
+                    if(!horizontal) rows.push('<tr>');
                     rows.push('<td class="grid-col">'+item+'</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
@@ -669,6 +669,18 @@ function Cyrus(){
                 }
                 e.preventDefault();
             });
+            $('.gui-form').unbind().submit(function(e){
+                if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
+                var targetURL=$(this).find('.form-target').val();
+                var uidver=me.getUIDandVer(targetURL);
+                var json = '{ '+uidver+',\n  "is": "form", "gui": "'+targetURL+'", "user": "",\n  "form": {\n   ';
+                var fields = [];
+                $(this).find('.form-field').each(function(n,i){ fields.push('"'+i.getAttribute('id')+'": "'+$(i).val()+'"'); });
+                json+=fields.join(',\n   ');
+                json+='\n }\n}';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
             $('.rsvp-form').unbind().submit(function(e){
                 if($(this).find('.rsvp-type').val()=="attendable"){
                     if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
@@ -687,7 +699,7 @@ function Cyrus(){
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
                     var json = '{ '+uidver+', "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'"';
-                    $(this).find('.rsvp-field').each(function(n,i){ json+=', "'+i.getAttribute('id')+'": "'+$(i).val()+'"'; });
+                    $(this).find('.form-field').each(function(n,i){ json+=', "'+i.getAttribute('id')+'": "'+$(i).val()+'"'; });
                     json+=' }';
                     network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
