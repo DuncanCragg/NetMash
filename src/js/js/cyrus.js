@@ -12,7 +12,7 @@ function Network(){
 
     var me = {
         getJSON: function(url,creds,ok,err){
-            var isCN=url.indexOf("/c-n-")!= -1;
+            var isCN=url.indexOf('/c-n-')!= -1;
             if(!isCN) me.updateProgress(1);
             var obj=null;
             if(useLocalStorage){
@@ -99,10 +99,10 @@ if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+
         },
         getCacheNotify: function(){
             if(cacheNotify) return cacheNotify;
-            cacheNotify=localStorage.getItem("Cache-Notify");
+            cacheNotify=localStorage.getItem('Cache-Notify');
             if(cacheNotify) return cacheNotify;
-            cacheNotify=generateUID("c-n");
-            localStorage.setItem("Cache-Notify", cacheNotify);
+            cacheNotify=generateUID('c-n');
+            localStorage.setItem('Cache-Notify', cacheNotify);
             return cacheNotify;
         },
         updateProgress: function(i){
@@ -158,7 +158,7 @@ function JSON2HTML(url){
             if(closed===undefined) closed=true;
             if(a.constructor===String) return this.getStringHTML(a);
             if(a.constructor===Array)  return this.getListHTML(a);
-            if(a.constructor===Object) return this.getHTML(a['%url']||a['%more'],a,closed);
+            if(a.constructor===Object) return this.getHTML(a.URL||a.More,a,closed);
             return a!=null? ''+a: '-';
         },
         getObjectHTML: function(url,json,closed,title){
@@ -223,14 +223,14 @@ function JSON2HTML(url){
             if(json.address      !== undefined) rows.push(this.getContactAddressHTML(json.address));
             if(json.phone        !== undefined) rows.push(this.getContactPhoneHTML(json.phone));
             if(json.email        !== undefined) rows.push('<div class="info-item">Email: <span class="email">'+this.getAnyHTML(json.email)+'</span></div>');
-            if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
+            if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
             if(json.publications !== undefined) rows.push(this.getObjectListHTML('Publications', 'publication', json.publications, true));
             if(json.bio          !== undefined) rows.push('<div class="info-item">Bio: '+this.getAnyHTML(json.bio)+'</div>');
             if(json.photo        !== undefined) rows.push('<div class="photo">'+this.getAnyHTML(json.photo)+'</div>');
             if(json.parents      !== undefined) rows.push(this.getObjectListHTML('Parents', 'parent', json.parents, true));
             if(json.inspirations !== undefined) rows.push(this.getObjectListHTML('Inspired by', 'inspirations', json.inspirations, true));
             if(json.following    !== undefined) rows.push(this.getObjectListHTML('Following', 'following', json.following, true));
-            if(json['%more']     !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more'], true));
+            if(json.More         !== undefined) rows.push(this.getObjectListHTML('More', 'more', json.More, true));
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
@@ -268,13 +268,13 @@ function JSON2HTML(url){
             rows.push('<div class="vevent">');
             if(json.title     !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
             if(json.text      !== undefined) rows.push('<p class="description">'+this.getAnyHTML(json.text)+'</p>');
-            if(json.start     !== undefined) rows.push('<div class="info-item">From: ' +this.getDateSpan("dtstart", json.start)+'</div>');
-            if(json.end       !== undefined) rows.push('<div class="info-item">Until: '+this.getDateSpan("dtend",   json.end)  +'</div>');
+            if(json.start     !== undefined) rows.push('<div class="info-item">From: ' +this.getDateSpan('dtstart', json.start)+'</div>');
+            if(json.end       !== undefined) rows.push('<div class="info-item">Until: '+this.getDateSpan('dtend',   json.end)  +'</div>');
             if(json.list      !== undefined) rows.push(this.getObjectListHTML('Sub-Events', 'sub-event', json.list, true));
             if(json.location  !== undefined) rows.push(this.getEventLocationHTML(json.location, true));
             if(json.attendees !== undefined) rows.push(this.getObjectListHTML('Attendees:', 'attendee', json.attendees, true));
             if(json.reviews   !== undefined) rows.push(this.getObjectListHTML('Reviews:', 'review', json.reviews, true));
-            if(json['%more']  !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more'], true));
+            if(json.More      !== undefined) rows.push(this.getObjectListHTML('More', 'more', json.More, true));
             if(this.isA('attendable', json)){
                 rows.push('<form class="rsvp-form">');
                 rows.push('<input class="rsvp-type"   type="hidden" value="attendable" />');
@@ -290,7 +290,7 @@ function JSON2HTML(url){
                 rows.push('<input class="rsvp-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="rsvp-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
-                this.createGUI(json["review-template"],rows);
+                this.createGUI(json['review-template'],rows);
                 rows.push('</table>');
                 rows.push('<input class="submit" type="submit" value="Update" />');
                 rows.push('</form>');
@@ -320,6 +320,7 @@ function JSON2HTML(url){
             return rows.join('\n')+'\n';
         },
         createGUI: function(guilist,rows){
+            if(guilist.constructor===String){ rows.push(guilist); return; }
             var horizontal=false;
             for(i in guilist){ var item=guilist[i];
                 if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
@@ -334,12 +335,12 @@ function JSON2HTML(url){
                         input=item.input;
                         label=item.label;
                         if(!horizontal) rows.push('<tr>');
-                        if(input=="textfield"){
+                        if(input=='textfield'){
                             rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
                             rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
                         }
                         else
-                        if(input=="rating"){
+                        if(input=='rating'){
                             rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
                             rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
                         }
@@ -388,13 +389,13 @@ function JSON2HTML(url){
             if(json.journalTitle !== undefined) rows.push('<div class="info-item">Journal: '+this.getAnyHTML(json.journalTitle)+'</div>');
             if(json.volume       !== undefined) rows.push('<div class="info-item">Volume: '+this.getAnyHTML(json.volume)+'</div>');
             if(json.issue        !== undefined) rows.push('<div class="info-item">Issue: '+this.getAnyHTML(json.issue)+'</div>');
-            if(json.published    !== undefined) rows.push('<div class="info-item">Published: '+this.getDateSpan("published", json.published)+'</div>');
-            if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
+            if(json.published    !== undefined) rows.push('<div class="info-item">Published: '+this.getDateSpan('published', json.published)+'</div>');
+            if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
             if(json.authors      !== undefined) rows.push(this.getObjectListHTML('Authors:', 'author', json.authors, true));
             rows.push('</div><div class="document right">');
             if(json.text         !== undefined) rows.push('<div class="text">'+this.getAnyHTML(json.text)+'</div>');
-            if(json['%more']     !== undefined) rows.push(this.getObjectListHTML('More', 'more', json['%more'], true));
+            if(json.More         !== undefined) rows.push(this.getObjectListHTML('More', 'more', json.More, true));
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
@@ -404,7 +405,7 @@ function JSON2HTML(url){
             rows.push(this.getObjectHeadHTML(this.getTitle(json,'Documents'), url, false, closed, json.icon));
             rows.push('<div class="plain-list">');
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
-            if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
+            if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
             if(json.contentCount !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json.contentCount,false,'Documents Available')+'</div>');
             if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, false));
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
@@ -416,7 +417,7 @@ function JSON2HTML(url){
             rows.push(this.getObjectHeadHTML(this.getTitle(json,'Documents'), url, false, closed, json.icon));
             rows.push('<div class="document-list">');
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
-            if(json["web-view"]  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json["web-view"])+'</div>');
+            if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
             if(json.contentCount !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json.contentCount,false,'Documents Available')+'</div>');
             if(this.isA('searchable', json, true)){
             rows.push('<form id="query-form">');
@@ -609,8 +610,8 @@ function Cyrus(){
             retryDelay=100;
         },
         objectFail: function(url,err,s,x){
-            console.log("objectFail "+url+" "+err+" "+s+" "+(x && x.getResponseHeader('Cache-Notify')));
-            var isCN=url.indexOf("/c-n-")!= -1;
+            console.log('objectFail '+url+' '+err+' '+s+' '+(x && x.getResponseHeader('Cache-Notify')));
+            var isCN=url.indexOf('/c-n-')!= -1;
             retryDelay*=2;
             if(isCN) setTimeout(function(){ network.longGetJSON(url,me.getCreds(url),me.someObjectIn,me.objectFail); }, retryDelay);
         },
@@ -651,11 +652,11 @@ function Cyrus(){
                 var targetURL=$(this).find('.cyrus-target').val();
                 var cyrus=targetURL.endethWith('.cyr');
                 var cytext=$(this).find('.cyrus-raw').val().trim();
-                var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert("Syntax: "+e); }
+                var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert('Syntax: '+e); }
                 if(!cy){ e.preventDefault(); return; }
                 if(!cyrus){
-                    if(cy.is.constructor==String) cy.is=[ cy.is, "editable" ];
-                    if(cy.is.constructor==Array && cy.is.indexOf("editable")== -1) cy.is.push("editable");
+                    if(cy.is.constructor==String) cy.is=[ cy.is, 'editable' ];
+                    if(cy.is.constructor==Array && cy.is.indexOf('editable')== -1) cy.is.push('editable');
                 }
                 var ver=localStorage.getItem('versions:'+getUID(targetURL));
                 if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
@@ -682,7 +683,7 @@ function Cyrus(){
                 e.preventDefault();
             });
             $('.rsvp-form').unbind().submit(function(e){
-                if($(this).find('.rsvp-type').val()=="attendable"){
+                if($(this).find('.rsvp-type').val()=='attendable'){
                     if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
@@ -691,7 +692,7 @@ function Cyrus(){
                     network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
                 }
-                if($(this).find('.rsvp-type').val()=="reviewable"){
+                if($(this).find('.rsvp-type').val()=='reviewable'){
                     if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                     var withinURL=$(this).find('.rsvp-within').val();
                     var within=me.getUIDOnly(withinURL);
@@ -713,7 +714,7 @@ function Cyrus(){
                 e.preventDefault();
             });
             $('#login-form').unbind().submit(function(e){
-                var creds = { "username": $('#username').val(), "userpass": $('#userpass').val() };
+                var creds = { 'username': $('#username').val(), 'userpass': $('#userpass').val() };
                 me.setCreds(topObjectURL, creds);
                 e.preventDefault();
             });
@@ -739,8 +740,8 @@ function Cyrus(){
         getUIDandVer: function(url,cyrus){
             var uidver=localStorage.getItem('responses:'+url);
             if(!uidver){
-                if(cyrus) uidver= 'UID: '  +generateUID("uid")+' Version: ' +1;
-                else      uidver='"UID": "'+generateUID("uid")+'", "Version": '+1;
+                if(cyrus) uidver= 'UID: '  +generateUID('uid')+' Version: ' +1;
+                else      uidver='"UID": "'+generateUID('uid')+'", "Version": '+1;
             }else{
                 var re;
                 if(cyrus) re=RegExp('(.*Version: )(.*)').exec(uidver);
@@ -790,7 +791,7 @@ function Cyrus(){
         getCreds: function(requestURL){
             var domain = getDomain(requestURL);
             if(useLocalStorage) return JSON.parse(localStorage.getItem('credsOfSite:'+domain));
-            return "";
+            return '';
         },
         makeCyrusEditRule: function(cyr,ver,val){
             return cyr+': { Version: '+ver+' } => as-is\n'+val+'\n}';
@@ -890,7 +891,7 @@ function clone(o){
   var o = (this instanceof Array)? []: {};
   for(i in this){
     if(!(this[i] && this.hasOwnProperty(i))) continue;
-    if(typeof this[i]=="object") o[i]=clone(this[i]);
+    if(typeof this[i]=='object') o[i]=clone(this[i]);
     else o[i]=this[i];
   }
   return o;
@@ -951,11 +952,11 @@ function deCamelise(s){
 }
 
 function generateUID(prefix){
-    return prefix+"-"+fourHex()+"-"+fourHex()+"-"+fourHex()+"-"+fourHex();
+    return prefix+'-'+fourHex()+'-'+fourHex()+'-'+fourHex()+'-'+fourHex();
 }
 
 function fourHex(){
-    var h= "000"+Math.floor(Math.random()*65536).toString(16);
+    var h= '000'+Math.floor(Math.random()*65536).toString(16);
     return h.substring(h.length-4);
 }
 
