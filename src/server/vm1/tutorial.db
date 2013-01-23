@@ -1,0 +1,17 @@
+{ UID: uid-7081-c95e-1c04-d7a5
+  is: gui
+  title: "Cyrus Tutorial"
+  view:
+    { is: style direction: horizontal }
+    "Type stuff in the middle and see the results on the right:"
+    { view: open raw item: uid-27c9-154b-c4bf-0453.cyr  }
+    { view: open     item: uid-27c9-154b-c4bf-0453 }
+}
+
+{ UID: uid-27c9-154b-c4bf-0453
+  Rules: { is: gui rule }
+  is: editable gui
+  view: Hello World!
+}
+
+

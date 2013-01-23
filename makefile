@@ -25,7 +25,7 @@ cap: androidemu runcap logcat
 
 lap: androidlan runlap lancat
 
-stt: androidemu runsta logcat
+sta: androidemu runsta logcat
 
 # -------------------------------------------------------------------
 
@@ -101,9 +101,11 @@ runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
 
 runlap: kill clean netconfig setvm2lanconfig usecapdb  run1n2
 
-runsta: kill clean netconfig setvmemuconfig  usestaticdb run1n2
+runtut: kill clean           setvmtestconfig usetutordb run1
 
 runstt: kill clean           setvmtestconfig usestaticdb run1
+
+runsta: kill clean netconfig setvmemuconfig  usestaticdb run1n2
 
 runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
 
@@ -160,6 +162,9 @@ usecapdb:
 usetestdb:
 	cp src/server/vm1/test.db src/server/vm1/cyrus.db
 	cp src/server/vm2/test.db src/server/vm2/cyrus.db
+
+usetutordb:
+	cp src/server/vm1/tutorial.db src/server/vm1/cyrus.db
 
 usestaticdb:
 	cp src/server/vm1/static.db src/server/vm1/cyrus.db
