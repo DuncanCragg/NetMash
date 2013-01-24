@@ -7,13 +7,11 @@ function Network(){
     var getting={};
     var localObjects = {};
     var localVersions = {};
-    var outstandingRequests = 0;
     var cacheNotify = null;
 
     var me = {
         getJSON: function(url,creds,ok,err){
             var isCN=url.indexOf('/c-n-')!= -1;
-            if(!isCN) me.updateProgress(1);
             var obj=null;
             if(useLocalStorage){
                 var objstr = localStorage.getItem('objects:'+url);
@@ -21,11 +19,9 @@ function Network(){
             }
             //else obj=localObjects[url];
             if(obj){
-                me.updateProgress(-1);
                 ok(obj,'from-cache',null);
             }else{
-                if(getting[url]) return;
-                getting[url] = true;
+                if(me.isGetting(true,url,isCN)) return;
                 var headers = { 'Cache-Notify': me.getCacheNotify() };
                 if(creds) headers.Authorization = me.buildAuth(creds,'GET',url);
                 if(url.endethWith('.json')||url.indexOf('c-n-')!=-1) $.ajax({
@@ -33,7 +29,7 @@ function Network(){
                     headers: headers,
                     dataType: 'json',
                     success: function(obj,s,x){
-                        delete getting[url];
+                        me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
                         delete obj.Notify;
@@ -42,12 +38,10 @@ function Network(){
                                             }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
                         } else { localObjects[url]=obj; localVersions[url]=etag; }
 if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+getUID(url), etag);
-                        if(!isCN) me.updateProgress(-1);
                         ok(url,obj,s,x);
                     },
                     error: function(x,s,e){
-                        delete getting[url];
-                        if(!isCN) me.updateProgress(-1);
+                        me.isGetting(false,url,isCN);
                         err(url,e,s,x);
                     }
                 });
@@ -55,16 +49,14 @@ if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+
                     url: url,
                     headers: headers,
                     success: function(obj,s,x){
-                        delete getting[url];
+                        me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
 if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+getUID(url), etag);
-                        if(!isCN) me.updateProgress(-1);
                         ok(url,obj,s,x);
                     },
                     error: function(x,s,e){
-                        delete getting[url];
-                        if(!isCN) me.updateProgress(-1);
+                        me.isGetting(false,url,isCN);
                         err(url,e,s,x);
                     }
                 });
@@ -94,7 +86,7 @@ if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+
             });
         },
         longGetJSON: function(cn,creds,ok,err){
-            for(uid in getting) if(getting[uid]) return;
+            if(sizeof(getting) >0) return;
             me.getJSON(cn,creds,ok,err);
         },
         getCacheNotify: function(){
@@ -105,9 +97,13 @@ if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+
             localStorage.setItem('Cache-Notify', cacheNotify);
             return cacheNotify;
         },
-        updateProgress: function(i){
-            outstandingRequests+=i;
-            $('#progress').width(5*outstandingRequests);
+        isGetting: function(get,url,isCN){
+            var pending=getting[url];
+            if(get) getting[url] = true;
+            else delete getting[url];
+            $('#progress').width(5*sizeof(getting));
+            // console.log((get?'get':'got')+' '+url+' '+(isCN?'cn':'')+' '+(pending?'pending':'')+' '+(getting[url]?'getting':'not getting')+' | '+sizeof(getting)+' '+toString(getting));
+            return pending;
         },
         buildAuth: function(creds, method, url, json){
             var expires = 1340000000000;
@@ -187,8 +183,7 @@ function JSON2HTML(url){
             var that = this;
             var rows = [];
             $.each(l, function(key,val){ rows.push(that.getAnyHTML(val)); });
-            if(rows.length >5) return '<div class="list"><p class="list">'+rows.join('</p>\n<p class="list">')+'</p></div>\n';
-            return rows.join(', ');
+            return '<div class="list"><p class="list">'+rows.join('</p>\n<p class="list">')+'</p></div>\n';
         },
         getObjectListHTML: function(header,itemclass,list,closed){
             var rows=[];
@@ -605,8 +600,11 @@ function Cyrus(){
                 objhead.replaceWith(open? htmlopen: htmlclosed);
             });
             me.setUpHTMLEvents();
-            var cn = x && x.getResponseHeader('Cache-Notify');
-            if(cn) network.longGetJSON(cn,me.getCreds(cn),me.someObjectIn,me.objectFail);
+            setTimeout(function(){
+                me.ensureVisibleAndReflow($('#content'));
+                var cn = x && x.getResponseHeader('Cache-Notify');
+                if(cn) network.longGetJSON(cn,me.getCreds(cn),me.someObjectIn,me.objectFail);
+            }, 50);
             retryDelay=100;
         },
         objectFail: function(url,err,s,x){
@@ -958,6 +956,21 @@ function generateUID(prefix){
 function fourHex(){
     var h= '000'+Math.floor(Math.random()*65536).toString(16);
     return h.substring(h.length-4);
+}
+
+function toString(o){
+    var r='';
+    if(o.constructor===Array)  for(i in o) r+=o[i]+', ';
+    else
+    if(o.constructor===Object) for(i in o) r+=i+': '+o[i]+', ';
+    else r=o;
+    return r;
+}
+
+function sizeof(o){
+    var i=0;
+    for(x in o) i++;
+    return i;
 }
 
 // }--------------------------------------------------------{
