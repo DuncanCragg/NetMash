@@ -3,7 +3,7 @@
   title: "Cyrus Tutorial"
   view:
     { is: style direction: horizontal }
-    { view: open     item: uid-080a-9478-a5d5-ce76 }
+    { view: open     item: uid-2dd4-fabc-223a-5152 }
     { view: open raw item: uid-27c9-154b-c4bf-0453.cyr  }
     { view: open     item: uid-27c9-154b-c4bf-0453 }
 }
@@ -13,16 +13,35 @@
   view: Hello
 }
 
+{ UID: uid-2dd4-fabc-223a-5152
+  is: article list
+  title: "The Cyrus Online Tutorial"
+  list: uid-080a-9478-a5d5-ce76
+        uid-419a-bc8d-d4ff-4146
+}
+
 { UID: uid-080a-9478-a5d5-ce76
   is: article
-  title: "The Cyrus Online Tutorial"
-  text: "![Quick Start]!"
-        "You probably don't want loads of intro waffle, so let's get started right away.."
+  title: "Start Here!"
+  text: "You probably don't want loads of intro waffle, so let's get started right away.."
         "On the right, you see two views of what are called 'items' in Cyrus."
         "The middle panel has the raw Cyrus 'code', and the right panel has the resulting 'render'."
         "Type 'World!' after 'Hello' in the middle panel. Then hit 'Update' below it."
         "The far panel should update accordingly. Hit refresh if it doesn't for some reason."
 }
 
-
+{ UID: uid-419a-bc8d-d4ff-4146
+  is: article
+  title: "Your first rewrite"
+  text: "Now paste the following code in:"
+        "=["
+        "{ UID: uid-27c9-154b-c4bf-0453"
+        "  Rules:{"
+        "    is: gui rule"
+        "  }"
+        "  is: editable gui"
+        "  view: Hello"
+        "}"
+        "]="
+}
 
