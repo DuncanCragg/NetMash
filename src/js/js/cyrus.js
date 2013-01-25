@@ -207,7 +207,7 @@ function JSON2HTML(url){
             if(this.isONLink(s))    return '<a class="new-state" href="'+getMashURL(this.fullURL(s).htmlEscape())+'"> &gt;&gt; </a>';
             if(this.isImageLink(s)) return '<img src="'+s.htmlEscape()+'" />';
             if(this.isLink(s))      return '<a href="'+s.htmlEscape()+'"> &gt;&gt; </a>';
-            return this.ONMLString2HTML(s);
+            return this.markupString2HTML(s);
         },
         // ------------------------------------------------
         getContactHTML: function(url,json,closed){
@@ -402,7 +402,7 @@ function JSON2HTML(url){
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
             if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
             if(json.contentCount !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json.contentCount,false,'Documents Available')+'</div>');
-            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, false));
+            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, true));
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
@@ -430,7 +430,7 @@ function JSON2HTML(url){
             rows.push('<input class="submit" type="submit" value="Log in" />');
             rows.push('</form>');
             }
-            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, false));
+            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, true));
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
@@ -452,21 +452,20 @@ function JSON2HTML(url){
         getMediaHTML: function(json){
             return ' <div class="media">\n'+
                    '  <img class="media-img" src="'+json.url+'" />\n'+
-                   '  <div class="media-text"><p>\n'+this.ONMLString2HTML(json.text)+'</p>\n</div>\n'+
+                   '  <div class="media-text"><p>\n'+this.markupString2HTML(json.text)+'</p>\n</div>\n'+
                    ' </div>\n';
         },
         // ------------------------------------------------
-        ONMLString2HTML: function(text){
+        markupString2HTML: function(text){
             if(!text) return '';
             text=text.replace(/&#39;/g,'\'');
             text=text.replace(/&quot;/g,'"');
             text=text.htmlEscape();
+            text=text.replace(/\|\[/g,'</p><pre>');
+            text=text.replace(/\]\|/g,'</pre><p>');
             text=text.replace(linkre, '<a href="$2">$1</a>');
             text=text.replace(boldre, '<b>$1</b>');
             text=text.replace(italre, '<i>$1</i>');
-            if(text.startethWith('|[') && text.endethWith(']|')){
-                 text='<pre>'+text.substring(2, text.length-2)+'</pre>';
-            }
             text=text.replace(codere, '<code>$1</code>');
             return text;
         },

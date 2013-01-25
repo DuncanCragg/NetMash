@@ -41,6 +41,7 @@ textarea.cyrus-raw{
     width: 100%;
     border: 1px solid #ddd;
     padding: 0.5em;
+    line-height: 14pt;
 }
 
 pre.cyrus{
@@ -140,6 +141,10 @@ label.login-label{
     display: table-cell;
 }
 
+pre p.list {
+    margin-top: -5pt;
+    margin-bottom: -5pt;
+}
 
 p.list{
     margin: 10px 0px 0px 0px;
