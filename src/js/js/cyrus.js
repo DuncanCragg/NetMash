@@ -131,13 +131,14 @@ function JSON2HTML(url){
     var codere=/\|\[(.+?)\]\|/g;
 
     return {
-        getHTML: function(url,json,closed){
+        getHTML: function(url,json,closed,raw){
             if(!json) return '<div><div>No object!</div><div>'+'<a href="'+url+'">'+url+'</a></div></div>';
             if(json.constructor===String){
                 if(url.endethWith('.cyr'))      return this.getCyrusTextHTML(url,json,closed);
                 return '<div><div>Not Cyrus text!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
             }
             if(json.constructor!==Object) return '<div><div>Not an object!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
+            if(raw)                             return this.getCyrusTextHTML(url,json,closed);
             if(this.isA('gui',     json))       return this.getGUIHTML(url,json,closed);
             if(this.isA('contact', json))       return this.getContactHTML(url,json,closed);
             if(this.isA('event',   json))       return this.getEventHTML(url,json,closed);
@@ -147,7 +148,7 @@ function JSON2HTML(url){
             if(this.isA('article', json, true)) return this.getDocumentListHTML(url,json,closed);
             if(this.isA('document',json, true)) return this.getDocumentListHTML(url,json,closed);
             if(this.isA('media',   json, true)) return this.getMediaListHTML(url,json,closed);
-            return this.getObjectHTML(url,json,closed);
+            return this.getCyrusTextHTML(url,json,closed);
         },
         getAnyHTML: function(a,closed){
             if(!a) return '';
@@ -169,14 +170,15 @@ function JSON2HTML(url){
                         '<pre class="cyrus">\n'+JSON.stringify(json)+'\n</pre>';
         },
         getCyrusTextHTML: function(url,item,closed){
+            if(item.constructor!==String) return this.getCyrusTextHTML(url,this.toCyrus(item),closed);
             if(item.indexOf('editable')!= -1)
-                 return this.getObjectHeadHTML('Cyrus Code',url,false,closed)+
+                 return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
                         '<form class="cyrus-form">\n'+
                         '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
                         '<textarea class="cyrus-raw" rows="14">\n'+item+'\n</textarea>\n'+
                         '<input class="submit" type="submit" value="Update" />\n'+
                         '</form>';
-            else return this.getObjectHeadHTML('Cyrus Code',url,false,closed)+
+            else return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
                         '<pre class="cyrus">\n'+item+'\n</pre>';
         },
         getListHTML: function(l){
@@ -342,15 +344,11 @@ function JSON2HTML(url){
                         if(!horizontal) rows.push('</tr>');
                     }
                     else
-                    if(this.isOrContains(item.view, 'raw')){
-                        if(!horizontal) rows.push('<tr>');
-                        rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !this.isOrContains(item.view,'open'))+'</td>');
-                        if(!horizontal) rows.push('</tr>');
-                    }
-                    else
                     if(item.view){
+                        var open=this.isOrContains(item.view,'open');
+                        var raw =this.isOrContains(item.view,'raw');
                         if(!horizontal) rows.push('<tr>');
-                        rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !this.isOrContains(item.view,'open'))+'</td>');
+                        rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !open, null, raw)+'</td>');
                         if(!horizontal) rows.push('</tr>');
                     }
                 }
@@ -479,9 +477,9 @@ function JSON2HTML(url){
         getDateSpan: function(clss, date){
             return '<span class="'+clss+'" title="'+makeISODate(date)+'">'+makeNiceDate(date)+'</span>';
         },
-        getObjectHeadHTML: function(title, url, place, closed, icon){
+        getObjectHeadHTML: function(title, url, place, closed, icon, raw){
             if(!this.isObjectURL(url) && place) return this.getAnyHTML(url);
-            return '<div class="object-head'+(closed? '':' open')+'">'+
+            return '<div class="object-head'+(closed? '':' open')+(raw? ' raw':'')+'">'+
                                                     this.getAnyHTML(url)+
                                                   ' <span class="open-close">+/-</span>'+
                                              (url?' <a href="'+url+'" class="object'+(place? '-place': '')+'">{..}</a>':'')+
@@ -526,6 +524,9 @@ function JSON2HTML(url){
             if(x.constructor===String && x==s) return true;
             if(x.constructor===Array  && x.indexOf(s)!= -1) return true;
             return false;
+        },
+        toCyrus: function(o){
+            return JSON.stringify(o).replace(/,/g,' ').replace(/"/g,'').replace(/\[/g,'(').replace(/\]/g,')');
         }
     };
 };
@@ -587,16 +588,13 @@ function Cyrus(){
                 moreOf[url]=undefined;
                 return;
             }
-            var htmlopen;
-            var htmlclosed;
             $('a.object-place, a.object').each(function(n,ae){ var a=$(ae);
                 if(a.attr('href')!=url) return;
                 var open=a.parent().hasClass('open');
-                if(open){ if(!htmlopen)   htmlopen   = json2html.getHTML(url, obj, false); }
-                else    { if(!htmlclosed) htmlclosed = json2html.getHTML(url, obj, true); }
+                var raw =a.parent().hasClass('raw');
                 var objhead = a.parent();
                 objhead.next().remove();
-                objhead.replaceWith(open? htmlopen: htmlclosed);
+                objhead.replaceWith(json2html.getHTML(url, obj, !open, raw));
             });
             me.setUpHTMLEvents();
             setTimeout(function(){
@@ -647,7 +645,7 @@ function Cyrus(){
             $('.cyrus-form').unbind().submit(function(e){
                 if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                 var targetURL=$(this).find('.cyrus-target').val();
-                var cyrus=targetURL.endethWith('.cyr');
+                var cyrus=true;
                 var cytext=$(this).find('.cyrus-raw').val().trim();
                 var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert('Syntax: '+e); }
                 if(!cy){ e.preventDefault(); return; }

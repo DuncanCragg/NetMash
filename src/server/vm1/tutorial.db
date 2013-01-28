@@ -4,7 +4,7 @@
   view:
     { is: style direction: horizontal }
     { view: open     item: uid-2dd4-fabc-223a-5152 }
-    { view: open raw item: uid-27c9-154b-c4bf-0453.cyr  }
+    { view: open raw item: uid-27c9-154b-c4bf-0453 }
     { view: open     item: uid-27c9-154b-c4bf-0453 }
 }
 
