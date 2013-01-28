@@ -32,12 +32,13 @@ function Network(){
                         me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
-                        delete obj.Notify;
-                        if(useLocalStorage){ try{ localStorage.setItem('objects:'+url, JSON.stringify(obj));
-                                                  if(etag) localStorage.setItem('versions:'+getUID(url), etag);
-                                            }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
+                        if(obj) delete obj.Notify;
+                        if(url && obj && useLocalStorage){ try{
+                            localStorage.setItem('objects:'+url, JSON.stringify(obj));
+                            if(etag) localStorage.setItem('versions:'+getUID(url), etag);
+                            }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
                         } else { localObjects[url]=obj; localVersions[url]=etag; }
-if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+getUID(url), etag);
+if(url && etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+getUID(url), etag);
                         ok(url,obj,s,x);
                     },
                     error: function(x,s,e){
@@ -171,15 +172,9 @@ function JSON2HTML(url){
         },
         getCyrusTextHTML: function(url,item,closed){
             if(item.constructor!==String) return this.getCyrusTextHTML(url,this.toCyrusHash(item),closed);
-            if(item.indexOf('editable')!= -1)
-                 return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
-                        '<form class="cyrus-form">\n'+
-                        '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                        '<textarea class="cyrus-raw" rows="14">\n'+item+'\n</textarea>\n'+
-                        '<input class="submit" type="submit" value="Update" />\n'+
-                        '</form>';
-            else return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
-                        '<pre class="cyrus">\n'+item+'\n</pre>';
+            return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
+                   '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
+                   '<pre class="cyrus-readonly">\n'+this.createLinks(item)+'\n</pre>';
         },
         getListHTML: function(l){
             var that = this;
@@ -525,6 +520,10 @@ function JSON2HTML(url){
             if(x.constructor===Array  && x.indexOf(s)!= -1) return true;
             return false;
         },
+        createLinks: function(s){
+            return s.replace(/(http:\/\/.*\/uid-[-0-9a-zA-Z]*.json)/g, '<a href="$1">$1</a>')
+                    .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,              '<a href="$1.json">$1</a>');
+        },
         toCyrusObject: function(o,nobrackets){
             if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';
             if(o.constructor===Object) return this.toCyrusHash(o);
@@ -622,7 +621,7 @@ function Cyrus(){
             retryDelay=100;
         },
         objectFail: function(url,err,s,x){
-            console.log('objectFail '+url+' '+err+' '+s+' '+(x && x.getResponseHeader('Cache-Notify')));
+            console.log('objectFail '+url+' '+err+' '+x.status+' '+s+' '+(x && x.getResponseHeader('Cache-Notify')));
             var isCN=url.indexOf('/c-n-')!= -1;
             retryDelay*=2;
             if(isCN) setTimeout(function(){ network.longGetJSON(url,me.getCreds(url),me.someObjectIn,me.objectFail); }, retryDelay);
@@ -658,6 +657,18 @@ function Cyrus(){
                 mediaList.find(':nth-child('+mediaIndex+')').show();
                 mediaList.find(':nth-child('+mediaIndex+')').children().show();
                 mediaList.find(':nth-child('+mediaIndex+')').children().children().show();
+            });
+            $('.cyrus-readonly').unbind().click(function(e){
+            //   if(item.indexOf('editable')!= -1)
+                var url =$(this).parent().find('.cyrus-target').val();
+                var item=$(this).text();
+                var h='<form class="cyrus-form">\n'+
+                      '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
+                      '<textarea class="cyrus-raw" rows="14">\n'+item+'\n</textarea>\n'+
+                      '<input class="submit" type="submit" value="Update" />\n'+
+                      '</form>';
+                $(this).replaceWith(h);
+                me.setUpHTMLEvents();
             });
             $('.cyrus-form').unbind().submit(function(e){
                 if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
