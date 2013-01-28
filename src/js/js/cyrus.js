@@ -170,7 +170,7 @@ function JSON2HTML(url){
                         '<pre class="cyrus">\n'+JSON.stringify(json)+'\n</pre>';
         },
         getCyrusTextHTML: function(url,item,closed){
-            if(item.constructor!==String) return this.getCyrusTextHTML(url,this.toCyrus(item),closed);
+            if(item.constructor!==String) return this.getCyrusTextHTML(url,this.toCyrusHash(item),closed);
             if(item.indexOf('editable')!= -1)
                  return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
                         '<form class="cyrus-form">\n'+
@@ -525,8 +525,25 @@ function JSON2HTML(url){
             if(x.constructor===Array  && x.indexOf(s)!= -1) return true;
             return false;
         },
-        toCyrus: function(o){
-            return JSON.stringify(o).replace(/,/g,' ').replace(/"/g,'').replace(/\[/g,'(').replace(/\]/g,')');
+        toCyrusObject: function(o,nobrackets){
+            if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';
+            if(o.constructor===Object) return this.toCyrusHash(o);
+            if(o.constructor===Array)  return this.toCyrusList(o,nobrackets);
+            return '"'+o+'"';
+        },
+        toCyrusHash: function(o){
+            if(!o || o.constructor!==Object) return '??';
+            var r='{\n';
+            for(tag in o){ r+=' '+tag+': '+this.toCyrusObject(o[tag],true)+'\n'; }
+            r+='}';
+            return r;
+        },
+        toCyrusList: function(o,nobrackets){
+            if(!o || o.constructor!==Array) return '??';
+            var r=nobrackets? '': '( ';
+            for(i in o){ r+=this.toCyrusObject(o[i])+' '; }
+            r+=nobrackets? '': ' )';
+            return r;
         }
     };
 };
