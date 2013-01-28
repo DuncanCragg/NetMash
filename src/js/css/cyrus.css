@@ -5,18 +5,12 @@ body {
 
 form{
     padding: 0px;
+    margin: 5px;
 }
 
 div {
     margin: 0px;
     padding: 0px;
-}
-
-table {
-    border-top: 1px solid #aaa;
-    border-left: 1px solid #aaa;
-    border-right: 1px solid #888;
-    border-bottom: 1px solid #888;
 }
 
 table.json{
@@ -30,6 +24,7 @@ table.grid{
 
 td.grid-col{
     vertical-align: top;
+    padding: 2pt;
 }
 
 form.cyrus-form{
@@ -46,7 +41,7 @@ textarea.cyrus-raw{
 }
 
 pre.cyrus-readonly{
-    background-color: #ffffee;
+    background-color: #fafaff;
     border: 1px solid #ddd;
     padding: 0.5em;
     margin: 7pt;
@@ -102,12 +97,8 @@ h2, h3 {
 }
 
 ul {
-    margin: 8px 0px 8px 0px;
+    margin: 0px;
     padding: 0px;
-    border-top: 1px solid #aaa;
-    border-left: 1px solid #aaa;
-    border-right: 1px solid #888;
-    border-bottom: 1px solid #888;
 }
 
 li {
@@ -143,7 +134,7 @@ input.text{
 
 input.submit{
     font-size: 1em;
-    margin-left: 0;
+    margin: 5pt 0;
 }
 
 label.login-label{
@@ -206,20 +197,15 @@ body{
     border-left: 1px solid #aaa;
     border-right: 1px solid #888;
     border-bottom: 1px solid #888;
+    background-color: #fdfdff;
 }
 
 .object-body .object-body {
     overflow: auto;
-    height: 480px;
-}
-
-.object-body .object-body .object-body {
-    overflow: auto;
-    height: 420px;
 }
 
 div.vcard, div.vevent, div.document, div.plain-list, div.document-list {
-    padding: 5px 5px 5px 20px;
+    padding: 2pt 0.5em;
 }
 
 div.left{

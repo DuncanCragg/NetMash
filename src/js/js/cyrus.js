@@ -164,7 +164,7 @@ function JSON2HTML(url){
                  return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
                         '<form class="cyrus-form">\n'+
                         '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                        '<textarea class="cyrus-raw" rows="14">\n'+JSON.stringify(json)+'\n</textarea>\n'+
+                        '<textarea class="cyrus-raw" rows="24">\n'+JSON.stringify(json)+'\n</textarea>\n'+
                         '<input class="submit" type="submit" value="Update" />\n'+
                         '</form>';
             else return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
@@ -312,7 +312,7 @@ function JSON2HTML(url){
             return rows.join('\n')+'\n';
         },
         createGUI: function(guilist,rows){
-            if(guilist.constructor===String){ rows.push(guilist); return; }
+            if(guilist.constructor===String){ rows.push('<tr><td>'+guilist+'</td></tr>'); return; }
             var horizontal=false;
             for(i in guilist){ var item=guilist[i];
                 if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');

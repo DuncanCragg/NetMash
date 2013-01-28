@@ -6,20 +6,17 @@ To Do
  - cyrus.js tutorials and demos
  - doc/local/demodb.json; src/server/vm?/test.db
 --------------------------------------------------------
- - pull edit in JSON, return in Cyrus
-    - checkbox for editing or not
-    - enable links when not
+ - change 'gui' to 'layout' or '2d place': notice is what?
  - new dibdab for replacing parent (temporarily in view)
     - remember if open and parent replace, though
- - change 'gui' to 'layout' or '2d place': notice is what?
  - fix
     - <pre> and <p> thing
     - padding on buttons and when 'Hello'
     - height/scroll thing
     - submit when no fields
- - fix Firefox
- - something with my blog feed for the link bit
+    - Firefox
  - 204 detection so not error
+ - something with my blog feed for the link bit
 --------------------------------------------------------
 
 
