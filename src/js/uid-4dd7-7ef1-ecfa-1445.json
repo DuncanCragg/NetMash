@@ -6,5 +6,5 @@
   "location": "http://forest-roa.org/456-789.json",
   "organiser": [ "http://netmash.net/789-123.json" ],
   "attendees": [ "http://duncan-cragg.org/777-777.json", "http://netmash.net/789-123.json" ],
-  "%more": "http://api2.the-object.net/lanyrd/2012/over-the-air.json"
+  "More": "http://api2.the-object.net/lanyrd/2012/over-the-air.json"
 }

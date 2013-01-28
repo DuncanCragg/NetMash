@@ -3,12 +3,30 @@ To Do
 -----
 
 --------------------------------------------------------
- - Cyrus.js tutorials and demos
- - doc/local/demodb.json
+ - cyrus.js tutorials and demos
+ - doc/local/demodb.json; src/server/vm?/test.db
 --------------------------------------------------------
- - Xmas Demo
- - Productionise on-device programming
- - Productionise distributed system
+ - pull edit in JSON, return in Cyrus
+    - checkbox for editing or not
+    - enable links when not
+ - new dibdab for replacing parent (temporarily in view)
+    - remember if open and parent replace, though
+ - change 'gui' to 'layout' or '2d place': notice is what?
+ - fix
+    - <pre> and <p> thing
+    - padding on buttons and when 'Hello'
+    - height/scroll thing
+    - submit when no fields
+ - fix Firefox
+ - something with my blog feed for the link bit
+ - 204 detection so not error
+--------------------------------------------------------
+
+
+--------------------------------------------------------
+ - room demo
+ - productionise on-device programming
+ - productionise distributed system
 --------------------------------------------------------
 Separate out P3/home 3D/kids/teaching programming
 from         P2/work 2D/Rules/EUP/Languages/FP/Prototyping(APIs/Mobile)
@@ -17,7 +35,7 @@ from         P2/work 2D/Rules/EUP/Languages/FP/Prototyping(APIs/Mobile)
 
 
 --------------------------------------------------------
-Xmas demo
+room demo
  - -----------------------------------------------------
  - on-device, controlled
  - get some early feedback and ideas
