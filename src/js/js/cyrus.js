@@ -162,11 +162,7 @@ function JSON2HTML(url){
         getObjectHTML: function(url,json,closed,title){
             if(this.isA('editable', json))
                  return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
-                        '<form class="cyrus-form">\n'+
-                        '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                        '<textarea class="cyrus-raw" rows="24">\n'+JSON.stringify(json)+'\n</textarea>\n'+
-                        '<input class="submit" type="submit" value="Update" />\n'+
-                        '</form>';
+                        this.cyrusForm(url,JSON.stringify(json));
             else return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
                         '<pre class="cyrus">\n'+JSON.stringify(json)+'\n</pre>';
         },
@@ -175,6 +171,13 @@ function JSON2HTML(url){
             return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
                    '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
                    '<pre class="cyrus-readonly">\n'+this.createLinks(item)+'\n</pre>';
+        },
+        cyrusForm: function(url,item){
+            return '<form class="cyrus-form">\n'+
+                   '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
+                   '<textarea class="cyrus-raw" rows="24">\n'+item+'\n</textarea>\n'+
+                   '<input class="submit" type="submit" value="Update" />\n'+
+                   '</form>';
         },
         getListHTML: function(l){
             var that = this;
@@ -282,8 +285,9 @@ function JSON2HTML(url){
                 rows.push('<input class="rsvp-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="rsvp-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
-                this.createGUI(json['review-template'],rows);
+                var submittable=this.createGUI(json['review-template'],rows);
                 rows.push('</table>');
+                if(submittable)
                 rows.push('<input class="submit" type="submit" value="Update" />');
                 rows.push('</form>');
             }
@@ -305,14 +309,16 @@ function JSON2HTML(url){
             rows.push('<form class="gui-form">');
             rows.push('<input class="form-target" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
-            this.createGUI(json.view,rows);
+            var submittable=this.createGUI(json.view,rows);
             rows.push('</table>');
+            if(submittable)
             rows.push('<input class="submit" type="submit" value="Submit" />');
             rows.push('</form>');
             return rows.join('\n')+'\n';
         },
         createGUI: function(guilist,rows){
-            if(guilist.constructor===String){ rows.push('<tr><td>'+guilist+'</td></tr>'); return; }
+            var submittable=false;
+            if(guilist.constructor===String){ rows.push('<tr><td>'+guilist+'</td></tr>'); return false; }
             var horizontal=false;
             for(i in guilist){ var item=guilist[i];
                 if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
@@ -330,11 +336,13 @@ function JSON2HTML(url){
                         if(input=='textfield'){
                             rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
                             rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
+                            submittable=true;
                         }
                         else
                         if(input=='rating'){
                             rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
                             rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
+                            submittable=true;
                         }
                         if(!horizontal) rows.push('</tr>');
                     }
@@ -366,6 +374,7 @@ function JSON2HTML(url){
                 }
             }
             if(horizontal) rows.push('</tr>');
+            return submittable;
         },
         // ------------------------------------------------
         getArticleHTML: function(url,json,closed){
@@ -541,7 +550,7 @@ function JSON2HTML(url){
         toCyrusList: function(o,i,nobrackets){
             if(!o || o.constructor!==Array) return '??';
             var r=nobrackets? '': '( ';
-            for(i in o){ r+=this.toCyrusObject(o[i],i)+' '; }
+            for(x in o){ r+=this.toCyrusObject(o[x],i)+' '; }
             r+=nobrackets? '': ' )';
             return r;
         },
@@ -666,11 +675,7 @@ function Cyrus(){
             //   if(item.indexOf('editable')!= -1)
                 var url =$(this).parent().find('.cyrus-target').val();
                 var item=$(this).text();
-                var h='<form class="cyrus-form">\n'+
-                      '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                      '<textarea class="cyrus-raw" rows="14">\n'+item+'\n</textarea>\n'+
-                      '<input class="submit" type="submit" value="Update" />\n'+
-                      '</form>';
+                var h=json2html.cyrusForm(url,item);
                 $(this).replaceWith(h);
                 me.setUpHTMLEvents();
             });

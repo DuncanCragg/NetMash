@@ -11,9 +11,7 @@ To Do
     - remember if open and parent replace, though
  - fix
     - <pre> and <p> thing
-    - padding on buttons and when 'Hello'
     - height/scroll thing
-    - submit when no fields
     - Firefox
  - 204 detection so not error
  - something with my blog feed for the link bit
