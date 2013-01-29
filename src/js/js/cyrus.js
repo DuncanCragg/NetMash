@@ -524,25 +524,29 @@ function JSON2HTML(url){
             return s.replace(/(http:\/\/.*\/uid-[-0-9a-zA-Z]*.json)/g, '<a href="$1">$1</a>')
                     .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,              '<a href="$1.json">$1</a>');
         },
-        toCyrusObject: function(o,nobrackets){
+        toCyrusObject: function(o,i,nobrackets){
             if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';
-            if(o.constructor===Object) return this.toCyrusHash(o);
-            if(o.constructor===Array)  return this.toCyrusList(o,nobrackets);
+            if(o.constructor===Object) return this.toCyrusHash(o,i);
+            if(o.constructor===Array)  return this.toCyrusList(o,i,nobrackets);
             return '"'+o+'"';
         },
-        toCyrusHash: function(o){
+        toCyrusHash: function(o,i){
             if(!o || o.constructor!==Object) return '??';
+            if(!i) i=2; else i+=2;
             var r='{\n';
-            for(tag in o){ r+=' '+tag+': '+this.toCyrusObject(o[tag],true)+'\n'; }
-            r+='}';
+            for(tag in o){ r+=this.indent(i)+tag+': '+this.toCyrusObject(o[tag],i,true)+'\n'; }
+            r+=this.indent(i-2)+'}';
             return r;
         },
-        toCyrusList: function(o,nobrackets){
+        toCyrusList: function(o,i,nobrackets){
             if(!o || o.constructor!==Array) return '??';
             var r=nobrackets? '': '( ';
-            for(i in o){ r+=this.toCyrusObject(o[i])+' '; }
+            for(i in o){ r+=this.toCyrusObject(o[i],i)+' '; }
             r+=nobrackets? '': ' )';
             return r;
+        },
+        indent: function(i){
+            return '                                                            '.substring(0,i);
         }
     };
 };
