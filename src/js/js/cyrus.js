@@ -146,6 +146,7 @@ function JSON2HTML(url){
             if(this.isA('article', json))       return this.getArticleHTML(url,json,closed);
             if(this.isA('chapter', json))       return this.getArticleHTML(url,json,closed);
             if(this.isA('list',    json))       return this.getPlainListHTML(url,json,closed);
+            if(this.isA('contact', json, true)) return this.getContactListHTML(url,json,closed);
             if(this.isA('article', json, true)) return this.getDocumentListHTML(url,json,closed);
             if(this.isA('document',json, true)) return this.getDocumentListHTML(url,json,closed);
             if(this.isA('media',   json, true)) return this.getMediaListHTML(url,json,closed);
@@ -172,11 +173,13 @@ function JSON2HTML(url){
                    '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
                    '<pre class="cyrus-readonly">\n'+this.createLinks(item)+'\n</pre>';
         },
-        cyrusForm: function(url,item){
+        cyrusForm: function(url,item,queryable,action,rows){
             return '<form class="cyrus-form">\n'+
+                   (queryable?
+                   '<input class="cyrus-type"   type="hidden" value="queryable" />\n':'')+
                    '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                   '<textarea class="cyrus-raw" rows="24">\n'+item+'\n</textarea>\n'+
-                   '<input class="submit" type="submit" value="Update" />\n'+
+                   '<textarea class="cyrus-raw" rows="'+(rows? rows: 24)+'">\n'+item+'\n</textarea>\n'+
+                   '<input class="submit" type="submit" value="'+(action? action: 'Update')+'" />\n'+
                    '</form>';
         },
         getListHTML: function(l){
@@ -409,6 +412,18 @@ function JSON2HTML(url){
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
+        getContactListHTML: function(url,json,closed){
+            var rows=[];
+            rows.push(this.getObjectHeadHTML(this.getTitle(json,'Contacts'), url, false, closed));
+            rows.push('<div class="contact-list">');
+            if(this.isA('queryable', json, true)){
+            var query='  full-name: xx\n  email: x@x\n';
+            rows.push(this.cyrusForm(url,query,true,'Query',4));
+            }
+            if(json.list !== undefined) rows.push(this.getObjectListHTML(null, 'contact', json.list, true));
+            rows.push('</div></div>');
+            return rows.join('\n')+'\n';
+        },
         getDocumentListHTML: function(url,json,closed){
             var rows=[];
             rows.push(this.getObjectHeadHTML(this.getTitle(json,'Documents'), url, false, closed, json.icon));
@@ -416,7 +431,7 @@ function JSON2HTML(url){
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
             if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
             if(json['content-count'] !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json['content-count'],false,'Documents Available')+'</div>');
-            if(this.isA('searchable', json, true)){
+            if(this.isA('queryable', json, true)){
             rows.push('<form id="query-form">');
             rows.push('<label for="query">Search these documents:</label>');
             rows.push('<input id="query" class="text" type="text" />');
@@ -694,8 +709,13 @@ function Cyrus(){
                 if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
                 var uidver=me.getUIDandVer(targetURL,cyrus);
                 if(cyrus){
-                    var cyr = '{ '+uidver+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ""\n  ';
-                    network.postJSON(targetURL, me.makeCyrusEditRule(cyr,ver,cy), true, me.getCreds(targetURL), null, null);
+                    if($(this).find('.cyrus-type').val()!='queryable'){
+                        var cyr = '{ '+uidver+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ""\n  ';
+                        network.postJSON(targetURL, me.makeCyrusEditRule(cyr,ver,cy), true, me.getCreds(targetURL), null, null);
+                    }else{
+                        var cyr = '{ '+uidver+'\n  is: contact query\n  list: '+targetURL+'\n  user: ""\n  ';
+                        network.postJSON(targetURL, me.makeCyrusQuery(cyr,cy),        true, me.getCreds(targetURL), me.topObjectIn, me.topObjectFail);
+                    }
                 }else{
                     var json = '{ '+uidver+', "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';
                     network.postJSON(targetURL, me.makeJSONEditRule(json,ver,cy), false, me.getCreds(targetURL), null, null);
@@ -827,6 +847,9 @@ function Cyrus(){
         },
         makeCyrusEditRule: function(cyr,ver,val){
             return cyr+': { Version: '+ver+' } => as-is\n'+val+'\n}';
+        },
+        makeCyrusQuery: function(cyr,val){
+            return cyr+val+'\n}';
         },
         makeJSONEditRule: function(json,ver,val){
             var j=JSON.parse(json);
