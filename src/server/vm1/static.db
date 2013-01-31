@@ -1,10 +1,31 @@
 { UID: uid-b712-2250-dac0-a228
+  Rules: uid-893a-d617-3dab-16e3
   is: queryable license contact list
   title: "Internal list of licences"
   list:
     uid-0461-a7e5-636f-a0c3
     uid-5b80-c7cd-d680-42ae
     uid-688f-cc96-a532-707f
+}
+
+{ UID: uid-893a-d617-3dab-16e3
+  is: contact list rule
+  when: "query posted grab it and begin response"
+  Alerted: { is: contact query list: @ }
+  query: # => @Alerted
+  response: # => { UID: new
+                   Rules: uid-c739-64e6-c38c-3ff9
+                   is: contact list
+                   query: @query
+                 }
+}
+
+{ UID: uid-c739-64e6-c38c-3ff9
+  is: contact list rule
+  when: "new response notify query"
+  title: # => "Query results"
+  list: # => @query:list:list
+  Notifying: => @. with @query
 }
 
 { UID: uid-0461-a7e5-636f-a0c3

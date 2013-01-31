@@ -32,7 +32,6 @@ function Network(){
                         me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
-                        if(obj) delete obj.Notify;
                         if(url && obj && useLocalStorage){ try{
                             localStorage.setItem('objects:'+url, JSON.stringify(obj));
                             if(etag) localStorage.setItem('versions:'+getUID(url), etag);
@@ -173,10 +172,9 @@ function JSON2HTML(url){
                    '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
                    '<pre class="cyrus-readonly">\n'+this.createLinks(item)+'\n</pre>';
         },
-        cyrusForm: function(url,item,queryable,action,rows){
+        cyrusForm: function(url,item,type,action,rows){
             return '<form class="cyrus-form">\n'+
-                   (queryable?
-                   '<input class="cyrus-type"   type="hidden" value="queryable" />\n':'')+
+            (type? '<input class="cyrus-type"   type="hidden" value="'+type+'" />\n':'')+
                    '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
                    '<textarea class="cyrus-raw" rows="'+(rows? rows: 24)+'">\n'+item+'\n</textarea>\n'+
                    '<input class="submit" type="submit" value="'+(action? action: 'Update')+'" />\n'+
@@ -418,7 +416,7 @@ function JSON2HTML(url){
             rows.push('<div class="contact-list">');
             if(this.isA('queryable', json, true)){
             var query='  full-name: xx\n  email: x@x\n';
-            rows.push(this.cyrusForm(url,query,true,'Query',4));
+            rows.push(this.cyrusForm(url,query,'contact query','Query',4));
             }
             if(json.list !== undefined) rows.push(this.getObjectListHTML(null, 'contact', json.list, true));
             rows.push('</div></div>');
@@ -655,6 +653,15 @@ function Cyrus(){
             if(isCN) setTimeout(function(){ network.longGetJSON(url,me.getCreds(url),me.someObjectIn,me.objectFail); }, retryDelay);
         },
         someObjectIn: function(url,obj,s,x){
+            if(obj){
+                var notify=obj.Notify;
+                delete obj.Notify;
+                if(notify && notify.length && localStorage.getItem('responses:'+getUID(notify[0]))){
+                    me.getTopObject(url,true);
+                    history.pushState(null,null,getMashURL(url));
+                    return;
+                }
+            }
             if(url==topObjectURL) me.topObjectIn(url,obj,s,x);
             else                     me.objectIn(url,obj,s,x);
         },
@@ -696,7 +703,6 @@ function Cyrus(){
             });
             $('.cyrus-form').unbind().submit(function(e){
                 if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
-                var targetURL=$(this).find('.cyrus-target').val();
                 var cyrus=true;
                 var cytext=$(this).find('.cyrus-raw').val().trim();
                 var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert('Syntax: '+e); }
@@ -705,15 +711,17 @@ function Cyrus(){
                     if(cy.is.constructor==String) cy.is=[ cy.is, 'editable' ];
                     if(cy.is.constructor==Array && cy.is.indexOf('editable')== -1) cy.is.push('editable');
                 }
+                var targetURL=$(this).find('.cyrus-target').val();
                 var ver=localStorage.getItem('versions:'+getUID(targetURL));
                 if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
                 var uidver=me.getUIDandVer(targetURL,cyrus);
                 if(cyrus){
-                    if($(this).find('.cyrus-type').val()!='queryable'){
+                    var type=$(this).find('.cyrus-type').val();
+                    if(!type){
                         var cyr = '{ '+uidver+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ""\n  ';
                         network.postJSON(targetURL, me.makeCyrusEditRule(cyr,ver,cy), true, me.getCreds(targetURL), null, null);
                     }else{
-                        var cyr = '{ '+uidver+'\n  is: contact query\n  list: '+targetURL+'\n  user: ""\n  ';
+                        var cyr = '{ '+uidver+'\n  is: '+type+'\n  list: '+targetURL+'\n  user: ""\n  ';
                         network.postJSON(targetURL, me.makeCyrusQuery(cyr,cy),        true, me.getCreds(targetURL), me.topObjectIn, me.topObjectFail);
                     }
                 }else{
@@ -782,9 +790,9 @@ function Cyrus(){
                 me.getTopObject(window.location);
             });
         },
-        getTopObject: function(mashURL){
+        getTopObject: function(url,notmash){
             var previousObjectURL = topObjectURL;
-            topObjectURL = me.getFullObjectURL(mashURL);
+            topObjectURL = notmash? url: me.getFullObjectURL(url);
             if(!topObjectURL || topObjectURL==previousObjectURL) return;
             json2html = new JSON2HTML(topObjectURL.substring(0,topObjectURL.lastIndexOf('/')+1));
             network.getJSON(topObjectURL, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
@@ -792,8 +800,10 @@ function Cyrus(){
         getUIDandVer: function(url,cyrus){
             var uidver=localStorage.getItem('responses:'+url);
             if(!uidver){
-                if(cyrus) uidver= 'UID: '  +generateUID('uid')+' Version: ' +1;
-                else      uidver='"UID": "'+generateUID('uid')+'", "Version": '+1;
+                var uid=generateUID('uid');
+                localStorage.setItem('responses:'+uid, "true");
+                if(cyrus) uidver= 'UID: '  +uid+' Version: ' +1;
+                else      uidver='"UID": "'+uid+'", "Version": '+1;
             }else{
                 var re;
                 if(cyrus) re=RegExp('(.*Version: )(.*)').exec(uidver);
