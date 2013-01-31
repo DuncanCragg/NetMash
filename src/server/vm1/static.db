@@ -1,3 +1,33 @@
+{ UID: uid-b712-2250-dac0-a228
+  is: queryable license contact list
+  title: "Internal list of licences"
+  list:
+    uid-0461-a7e5-636f-a0c3
+    uid-5b80-c7cd-d680-42ae
+    uid-688f-cc96-a532-707f
+}
+
+{ UID: uid-0461-a7e5-636f-a0c3
+  is: license contact
+  full-name: "Joe"
+  email: joe@here.com
+  license-number: 1111-1111
+}
+
+{ UID: uid-5b80-c7cd-d680-42ae
+  is: license contact
+  full-name: "Sam"
+  email: sam@there.com
+  license-number: 2222-2222
+}
+
+{ UID: uid-688f-cc96-a532-707f
+  is: license contact
+  full-name: "Bob"
+  email: bob@here.com
+  license-number: 3333-3333
+}
+
 { UID: uid-26bc-8ee9-5443-851a
   Rules: uid-16f2-2db0-e9fe-1d7d
   is: demo editable

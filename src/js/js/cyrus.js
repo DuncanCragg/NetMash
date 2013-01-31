@@ -214,7 +214,7 @@ function JSON2HTML(url){
             var rows=[];
             rows.push(this.getObjectHeadHTML('Contact: '+this.getTitle(json), url, false, closed));
             rows.push('<div class="vcard">');
-            if(json.fullName     !== undefined) rows.push('<h2 class="fn">'+this.getAnyHTML(json.fullName)+'</h2>');
+            if(json['full-name'] !== undefined) rows.push('<h2 class="fn">'+this.getAnyHTML(json['full-name'])+'</h2>');
             if(json.address      !== undefined) rows.push(this.getContactAddressHTML(json.address));
             if(json.phone        !== undefined) rows.push(this.getContactPhoneHTML(json.phone));
             if(json.email        !== undefined) rows.push('<div class="info-item">Email: <span class="email">'+this.getAnyHTML(json.email)+'</span></div>');
@@ -383,7 +383,7 @@ function JSON2HTML(url){
             rows.push('<div class="document left">');
             if(json.title        !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
             if(json.publisher    !== undefined) rows.push('<div class="info-item">Publisher: '+this.getAnyHTML(json.publisher)+'</div>');
-            if(json.journalTitle !== undefined) rows.push('<div class="info-item">Journal: '+this.getAnyHTML(json.journalTitle)+'</div>');
+            if(json['journal-title'] !== undefined) rows.push('<div class="info-item">Journal: '+this.getAnyHTML(json['journal-title'])+'</div>');
             if(json.volume       !== undefined) rows.push('<div class="info-item">Volume: '+this.getAnyHTML(json.volume)+'</div>');
             if(json.issue        !== undefined) rows.push('<div class="info-item">Issue: '+this.getAnyHTML(json.issue)+'</div>');
             if(json.published    !== undefined) rows.push('<div class="info-item">Published: '+this.getDateSpan('published', json.published)+'</div>');
@@ -403,7 +403,7 @@ function JSON2HTML(url){
             rows.push('<div class="plain-list">');
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
             if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
-            if(json.contentCount !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json.contentCount,false,'Documents Available')+'</div>');
+            if(json['content-count'] !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json['content-count'],false,'Documents Available')+'</div>');
             if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, true));
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
             rows.push('</div></div>');
@@ -415,7 +415,7 @@ function JSON2HTML(url){
             rows.push('<div class="document-list">');
             if(json.logo         !== undefined) rows.push('<div class="logo">'+this.getAnyHTML(json.logo)+'</div>');
             if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
-            if(json.contentCount !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json.contentCount,false,'Documents Available')+'</div>');
+            if(json['content-count'] !== undefined) rows.push('<div class="info-item">'+this.getObjectHTML(null,json['content-count'],false,'Documents Available')+'</div>');
             if(this.isA('searchable', json, true)){
             rows.push('<form id="query-form">');
             rows.push('<label for="query">Search these documents:</label>');
@@ -474,8 +474,8 @@ function JSON2HTML(url){
         // ---------------------------------------------------
         getTitle: function(json,elsedefault){
             if(!json || json.constructor!==Object) return '';
-            if(json.fullName !== undefined) return this.getAnyHTML(json.fullName);
-            if(json.title    !== undefined) return this.getAnyHTML(json.title);
+            if(json['full-name'] !== undefined) return this.getAnyHTML(json['full-name']);
+            if(json.title        !== undefined) return this.getAnyHTML(json.title);
             return elsedefault? elsedefault: deCameliseList(json.is);
         },
         getDateSpan: function(clss, date){
@@ -530,8 +530,8 @@ function JSON2HTML(url){
             return false;
         },
         createLinks: function(s){
-            return s.replace(/(http:\/\/.*\/uid-[-0-9a-zA-Z]*.json)/g, '<a href="$1">$1</a>')
-                    .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,              '<a href="$1.json">$1</a>');
+            return s.replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.json)/g, '<a href="#$1">$1</a>')
+                    .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,                 '<a href="#$1.json">$1</a>');
         },
         toCyrusObject: function(o,i,nobrackets){
             if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';

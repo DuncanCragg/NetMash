@@ -6,14 +6,15 @@ To Do
  - cyrus.js tutorials and demos
  - doc/local/demodb.json; src/server/vm?/test.db
 --------------------------------------------------------
- - change 'gui' to 'layout' or '2d place': notice is what?
  - new dibdab for replacing parent (temporarily in view)
-    - remember if open and parent replace, though
- - fix
+ - remember open and parent replace state
+ - new dibdab for raw view
+ - fix:
     - <pre> and <p> thing
     - height/scroll thing
     - Firefox
- - 204 detection so not error
+ - change 'gui' to 'layout' or '2d place': notice is what?
+ - 204 detection so not error and delay
  - something with my blog feed for the link bit
 --------------------------------------------------------
 
