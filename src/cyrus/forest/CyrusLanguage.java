@@ -318,6 +318,7 @@ public class CyrusLanguage extends WebObject {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Object eval(LinkedList ll){ try{
         if(ll.size()==0) return null;
    //   if(ll.size()==1) return copyFindObject(ll.get(0));
@@ -348,6 +349,7 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "<".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) < findDouble(ll.get(2)));
         if(ll.size()==3 && ">".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) > findDouble(ll.get(2)));
         if(ll.size()==3 && "select".equals(ll1))  return copyFindObject(findHashOrListAndGet(ll.get(0),ll.get(2)));
+        if(ll.size()==3 && "delete".equals(ll1))  return copyDeleteHash(findHash(ll.get(0)),findHash(ll.get(2)));
         return copyFindEach(ll);
     }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
 
@@ -503,7 +505,7 @@ public class CyrusLanguage extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    public Object copyObject(Object o, boolean asis){
+    private Object copyObject(Object o, boolean asis){
         if(o==null) return null;
         if(o instanceof String)  return ((String)o).equals("uid-new")? spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }")): o;
         if(o instanceof Number)  return o;
@@ -514,7 +516,7 @@ public class CyrusLanguage extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    public Object copyHash(LinkedHashMap<String,Object> hm, boolean asis){
+    private Object copyHash(LinkedHashMap<String,Object> hm, boolean asis){
         boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
         for(Map.Entry<String,Object> entry: hm.entrySet()){
@@ -528,13 +530,48 @@ public class CyrusLanguage extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    public LinkedList copyList(LinkedList ll, boolean asis){
+    private Object copyList(LinkedList ll, boolean asis){
         LinkedList r=new LinkedList();
         for(Object o: ll) r.add(asis? copyObject(o,true): copyFindObject(o));
         return r;
     }
 
     // ----------------------------------------------------
+
+    @SuppressWarnings("unchecked")
+    private Object copyDeleteObject(Object o, Object d){
+        if(o==null) return null;
+        if(o instanceof String)  return o;
+        if(o instanceof Number)  return o;
+        if(o instanceof Boolean) return o;
+        if(o instanceof LinkedHashMap) return copyDeleteHash(((LinkedHashMap)o),(d!=null && d instanceof LinkedHashMap)? (LinkedHashMap)d: null);
+        if(o instanceof LinkedList)    return copyDeleteList(((LinkedList)o),d);
+        return o;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object copyDeleteHash(LinkedHashMap<String,Object> hm, LinkedHashMap dl){
+        LinkedHashMap r=new LinkedHashMap();
+        for(Map.Entry<String,Object> entry: hm.entrySet()){
+            String k=entry.getKey();
+            Object o=entry.getValue();
+            Object d=(dl!=null)? dl.get(k): null;
+            if(d!=null && d instanceof String && (((String)d).equals("*") || o.equals(d))) continue;
+            r.put(k, copyDeleteObject(o,d));
+        }
+        return r;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object copyDeleteList(LinkedList ll, Object d){
+        LinkedList r=new LinkedList();
+        for(Object o: ll){
+            if(d!=null && d instanceof String && (((String)d).equals("*") || o.equals(d))) continue;
+            if(d!=null && d instanceof LinkedList && (((LinkedList)d).contains(o))) continue;
+            r.add(copyDeleteObject(o,null));
+        }
+        return r;
+    }
 }
 
 
