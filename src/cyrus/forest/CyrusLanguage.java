@@ -282,14 +282,14 @@ public class CyrusLanguage extends WebObject {
             currentRewritePath=entry.getKey();
             LinkedList ll=entry.getValue();
             if(ll.size()==0) continue;
-            if(ll.size() >=3 && ll.get(0).equals("@.") && ll.get(1).equals("with")){
+            if(ll.size() >=3 && "@.".equals(ll.get(0)) && "with".equals(ll.get(1))){
                 LinkedList e=copyFindEach(ll.subList(2,ll.size()));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) notifying(o.toString());
                 else contentSetAddAll(currentRewritePath, e);
             }
             else
-            if(ll.size() >=3 && ll.get(0).equals("@.") && ll.get(1).equals("without")){
+            if(ll.size() >=3 && "@.".equals(ll.get(0)) && "without".equals(ll.get(1))){
                 LinkedList e=findEach(ll.subList(2,ll.size()));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) unnotifying(o.toString());

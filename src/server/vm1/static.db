@@ -12,19 +12,20 @@
   is: contact list rule
   when: "query posted grab it and begin response"
   Alerted: { is: contact query list: @ }
-  query: # => @Alerted
   response: # => { UID: new
                    Rules: uid-c739-64e6-c38c-3ff9
                    is: contact list
-                   query: @query
+                   title: "Query results"
+                   query: @Alerted
+                   qlist: uid-b712-2250-dac0-a228
                  }
 }
 
 { UID: uid-c739-64e6-c38c-3ff9
   is: contact list rule
-  when: "new response notify query"
-  title: # => "Query results"
-  list: # => @query:list:list
+  when: "new query, get results and notify"
+  qlist: { list: { email: /@here.com/ } }
+  list: # => @=qlist:list
   Notifying: => @. with @query
 }
 
