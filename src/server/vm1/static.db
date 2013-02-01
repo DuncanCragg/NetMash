@@ -24,7 +24,7 @@
 { UID: uid-c739-64e6-c38c-3ff9
   is: contact list rule
   when: "new query, get results and notify"
-  qlist: { list: { email: /@here.com/ } }
+  qlist: { list: @query:# }
   list: # => @=qlist:list
   Notifying: => @. with @query
 }
