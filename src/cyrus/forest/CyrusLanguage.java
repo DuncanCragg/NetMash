@@ -259,16 +259,10 @@ public class CyrusLanguage extends WebObject {
         boolean var=vs.startsWith("@");
         boolean nov=vs.startsWith("!@");
         if(!var && !nov) return false;
-        Object pko=contentObject(pk);
         Object vso;
         if(var) vso=findObject(vs);
         else    vso=findObject(vs.substring(1));
-        if(vso==null) return false;
-        if(vso.equals(pko)) return var;
-        if(pko instanceof Number && vso instanceof Number){
-            return (((Number)pko).doubleValue()==((Number)vso).doubleValue())? var: nov;
-        }
-        return false;
+        return scanType(vso,pk)? var: nov;
     }
 
     // ----------------------------------------------------

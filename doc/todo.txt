@@ -6,6 +6,10 @@ To Do
  - cyrus.js tutorials and demos
  - doc/local/demodb.json; src/server/vm?/test.db
 --------------------------------------------------------
+ - have @ =>, so implement => @
+ - implement as-is so it only runs once copying not evalling when nested (and/or make sure nesting doesn't mean multiple copies)
+ - Notifying not Notify; Observing not Observe?
+ - think about zero-match in list case: 'default' (3d game; CAP)
  - new dibdab for replacing parent (temporarily in view)
  - remember open and parent replace state
  - new dibdab for raw view
