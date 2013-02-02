@@ -98,7 +98,7 @@ public class CyrusLanguage extends WebObject {
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
         ; if(ok && anylogging) log("Rule fired: \""+when+"\"");
-        ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+"\n"+rule+"\n"+contentHash("#")+"\n===========");
+        ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+"\n"+rule+"\n====\n"+contentHash("#")+"\n===========");
         if(alerted!=null && contentIs("Alerted",alerted)) contentTemp("Alerted",null);
     }
 
@@ -145,6 +145,11 @@ public class CyrusLanguage extends WebObject {
             double d=findDouble(list.get(1));
             LinkedList ll=contentList(path);
             return (ll!=null && ll.size()==(int)d);
+        }
+        if(list.size()==1 && list.get(0).equals("#")){
+            boolean ok=!contentSet(path);
+            if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
         }
         if(list.size()==2 && list.get(1).equals("**")){
             boolean ok=scanType(list.get(0),path+":0");
@@ -219,6 +224,7 @@ public class CyrusLanguage extends WebObject {
     private boolean scanString(String v, String pk){
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         if(contentIs(pk,v)) return true;
+        if(contentIsMayJump(pk,v)) return true;
         if(v.equals("*")) return  contentSet(pk);
         if(v.equals("#")) return !contentSet(pk);
         if(v.equals("@"))       return contentIsThis(pk);
@@ -242,9 +248,16 @@ public class CyrusLanguage extends WebObject {
     }
 
     private boolean scanListFromSingleIfNotAlready(Object v, String pk){
-        String[] parts=pk.split(":");
-        if(isNumber(parts[parts.length-1])) return false;
+        if(indexingPath(pk)) return false;
         return scanList(list(v),pk,null);
+    }
+
+    private boolean indexingPath(String path){
+        if(path.endsWith(":")) path=path.substring(0,path.length()-1);
+        int c=path.lastIndexOf(":");
+        if(c== -1) return false;
+        String post=path.substring(c+1);
+        return isNumber(post);
     }
 
     private boolean regexMatch(String regex, String pk){

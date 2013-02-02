@@ -74,7 +74,7 @@
   when: "-------------- Test 3"
   a: @x:0 @
   f: 3 + 4
-  z: number (number => 111 { UID: new a: @a })(> 289)
+  z: number (number => 111 { UID: new a: @a list: s r })(> 289)
   o: { a: 2 => 12 } { a: 4 => 14 }
   m: 4 boolean number => @. with (format %s%s 7.5 1.0)
   l1: => ok
@@ -94,6 +94,7 @@
   vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
   vc: 6 4 5 => @. v+v @vo
   cc: { z: e g } !=> @.
+  uu: # => @z:1:1
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -116,8 +117,8 @@
   p: d b
   vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
   vc: within 0.347 of (4.8 4.2 5.2) => (@. v+v @vo) v/s 5
-  uu: # => @z:1:0
-  vv: # => { a: 20 uid-39da-3645-4f58-50cb }
+  uu: s r
+  vv: # => { a: 20 uid-39da-3645-4f58-50cb list: s r }
   cc: { x: list-count 1   z: list-count 1  }
 }
 
@@ -142,6 +143,7 @@
   l8: (12 3)(3 4)
   vo: 0 1 0
   vc: 1 1 1
+  uu: # !=> yay
   vv: @uu:#
   : { la: 8 } => {
     is: test

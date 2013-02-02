@@ -271,11 +271,38 @@ public class WebObject {
         return s==val;
     }
 
+    /** Deal with jumping to x:y:z:N when looking for a string across a link to a list. */
+    public String contentMayJump(String path){
+        if(path.endsWith(":")) path=path.substring(0,path.length()-1);
+        int c=path.lastIndexOf(":");
+        if(c== -1) return content(path);
+        String post=path.substring(c+1);
+        if(!isNumber(post)) return content(path);
+        String pre=path.substring(0,c);
+        String s=content(pre+":list:"+post);
+        if(s!=null) return s;
+        return content(path);
+    }
+
+    /** Deal with jumping to x:y:z:N when looking for a string across a link to a list. */
+    public boolean contentIsMayJump(String path, String val){
+        String s = contentMayJump(path);
+        if(s==null) return val==null;
+        return s.equals(val);
+    }
+
     /** Test if there's a link to this object. */
     public boolean contentIsThis(String path){
         String s = content(path);
         if(s==null) return false;
         return UID.toUID(s).equals(uid);
+    }
+
+    /** Test if the string content is a link or uid. */
+    public boolean contentIsUID(String path){
+        String s = content(path);
+        if(s==null) return false;
+        return UID.isUID(s);
     }
 
     // --------------------------------------------------------------
@@ -457,6 +484,13 @@ public class WebObject {
     /** Returns true if list at path contains the value. */
     public boolean contentListContains(String path, Object val){
         LinkedList list=contentList(path);
+        if(list==null) return false;
+        return list.contains(val);
+    }
+
+    /** Returns true if list at path contains the value, jumping 'list' at end if necessary. */
+    public boolean contentListMayJumpContains(String path, Object val){
+        LinkedList list=contentListMayJump(path);
         if(list==null) return false;
         return list.contains(val);
     }
