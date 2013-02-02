@@ -10,23 +10,29 @@
 
 { UID: uid-893a-d617-3dab-16e3
   is: contact list rule
-  when: "query posted grab it and begin response"
+  when: "query posted, grab it and begin response"
   Alerted: { is: contact query list: @ }
-  response: # => { UID: new
-                   Rules: uid-c739-64e6-c38c-3ff9
-                   is: contact list
-                   title: "Query results"
-                   query: @Alerted
-                   match: @Alerted delete { is: query list: * user: * }
-                   querying: uid-b712-2250-dac0-a228
-                 }
+  response: # => {
+    UID: new
+    Rules: uid-945c-ebd9-3dd4-eb5c uid-c739-64e6-c38c-3ff9
+    is: contact list
+    title: "Query results"
+    query: @Alerted
+    querying: uid-b712-2250-dac0-a228
+  }
+}
+
+{ UID: uid-945c-ebd9-3dd4-eb5c
+  is: contact list rule
+  when: "query notified, set up match"
+  match: => @query delete { is: query list: * user: * }
 }
 
 { UID: uid-c739-64e6-c38c-3ff9
   is: contact list rule
-  when: "new query, get results and notify"
+  when: "query notified, get results and notify back"
   querying: { list: @match }
-  list: # => @=querying:list
+  list: => @=querying:list
   Notifying: => @. with @query
 }
 
