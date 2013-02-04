@@ -128,6 +128,10 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private boolean scanList(LinkedList list, String path, LinkedList rhs){
         if(list.size()==0) return true;
+        if(list.size()==2 && list.get(0).equals("maybe")){
+            scanList(new LinkedList(list.subList(1,list.size())),path,rhs);
+            return true;
+        }
         if(list.size()==2 && list.get(0).equals("<")){
             double d=findDouble(list.get(1));
             return (contentDouble(path) < d);
@@ -141,10 +145,12 @@ public class CyrusLanguage extends WebObject {
             int j=(int)contentDouble(path);
             return ((j % i)==0);
         }
-        if(list.size()==2 && list.get(0).equals("list-count")){
-            double d=findDouble(list.get(1));
+        if(list.size()==2 && (list.get(1).equals("element")|| list.get(1).equals("elements"))){
+            int d=(int)findDouble(list.get(0));
+            if(!contentSet(path) && d==0) return true;
             LinkedList ll=contentList(path);
-            return (ll!=null && ll.size()==(int)d);
+            return (ll==null && contentSet(path) && d==1) ||
+                   (ll!=null && ll.size()==d);
         }
         if(list.size()==1 && list.get(0).equals("#")){
             boolean ok=!contentSet(path);

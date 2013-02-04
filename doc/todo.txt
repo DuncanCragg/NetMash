@@ -9,7 +9,7 @@ To Do
  - have @ =>, so implement => @
  - implement as-is so it only runs once copying not evalling when nested (and/or make sure nesting doesn't mean multiple copies)
  - Notifying not Notify; Observing not Observe?
- - think about zero-match in list case: 'default' (3d game; CAP); 'empty-or' - matches even if list empty
+ - think about zero-match in list case: 'default' (3d game; CAP); 'maybe' - matches even if list empty
  - tutorial as a set of test cases on language
 --------------------------------------------------------
  - new dibdab for replacing parent (temporarily in view)
@@ -23,6 +23,7 @@ To Do
  - change 'gui' to 'layout' or '2d place': notice is what?
  - 204 detection so not error and delay
  - something with my blog feed for the link bit
+ - bug with false matching too eagerly
 --------------------------------------------------------
 
 

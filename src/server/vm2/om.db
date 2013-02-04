@@ -100,7 +100,8 @@
 { UID: uid-d3e7-6831-3804-7cbf
   is: test rule
   when: "-------------- Test 5"
-  m: true { n: 4 } { n: 5 } hi yo { n: 7.51 }
+  m: maybe { n: > 17 }
+  ml: => @=m:n
   o: { a: 3 }
   z: (number *) => (@. select 1) @.0
   l2: => count @=o
@@ -119,7 +120,7 @@
   vc: within 0.347 of (4.8 4.2 5.2) => (@. v+v @vo) v/s 5
   uu: s r
   vv: # => { a: 20 uid-39da-3645-4f58-50cb list: s r }
-  cc: { x: list-count 1   z: list-count 1  }
+  cc: { x: 1 element z: 1 element }
 }
 
 { UID: uid-d039-5967-f60c-70f7
@@ -132,10 +133,11 @@
   l2: 2
   c: < 7.1
   l0: { a: 3 4 }
-  l3: list-count 4
+  l3: 4 elements
   l4: 1
   l5: 4
-  m: true
+  m: true { n: 4 } { n: 5 } hi yo { n: 7.51 }
+  ml: 0 elements
   l6: 49
   l9: -9
   j: x { m: n } eight false
