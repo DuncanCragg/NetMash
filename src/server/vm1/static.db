@@ -1,3 +1,33 @@
+{ UID: uid-459e-4ba6-0b4b-5786
+  Rules: uid-26ce-5542-6e51-2ef4
+  is: queryable license contact list
+  title: "Restricted view of licenses"
+  querying: uid-b712-2250-dac0-a228
+}
+
+{ UID: uid-26ce-5542-6e51-2ef4
+  is: contact list rule
+  when: "query posted, grab it and begin response"
+  Alerted: { is: contact query list: @ }
+  response: # => {
+    UID: new
+    Rules: uid-945c-ebd9-3dd4-eb5c uid-38d3-faad-466c-6d8c
+    is: contact list
+    title: "Restricted query results"
+    query: @Alerted
+    querying: uid-459e-4ba6-0b4b-5786
+  }
+}
+
+{ UID: uid-38d3-faad-466c-6d8c
+  is: contact list rule
+  when: "query notified, get results and notify back"
+  querying: { querying: { list: maybe @match } }
+  list: => @=querying:querying:list
+  content-count: => count @list
+  Notifying: => @. with @query
+}
+
 { UID: uid-b712-2250-dac0-a228
   Rules: uid-893a-d617-3dab-16e3
   is: queryable license contact list
@@ -33,7 +63,7 @@
   when: "query notified, get results and notify back"
   querying: { list: maybe @match }
   list: => @=querying:list
-  count: => count @list
+  content-count: => count @list
   Notifying: => @. with @query
 }
 

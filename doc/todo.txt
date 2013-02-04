@@ -5,12 +5,11 @@ To Do
 --------------------------------------------------------
  - cyrus.js tutorials and demos
  - doc/local/demodb.json; src/server/vm?/test.db
+ - tutorial as a set of test cases on language
 --------------------------------------------------------
  - have @ =>, so implement => @
  - implement as-is so it only runs once copying not evalling when nested (and/or make sure nesting doesn't mean multiple copies)
  - Notifying not Notify; Observing not Observe?
- - think about zero-match in list case: 'default' (3d game; CAP); 'maybe' - matches even if list empty
- - tutorial as a set of test cases on language
 --------------------------------------------------------
  - new dibdab for replacing parent (temporarily in view)
  - new dibdab for raw view
@@ -24,6 +23,7 @@ To Do
  - 204 detection so not error and delay
  - something with my blog feed for the link bit
  - bug with false matching too eagerly
+ - 'maybe' in 3d game, CAP, Reaktion?
 --------------------------------------------------------
 
 
