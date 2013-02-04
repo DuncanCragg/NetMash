@@ -31,8 +31,9 @@
 { UID: uid-c739-64e6-c38c-3ff9
   is: contact list rule
   when: "query notified, get results and notify back"
-  querying: { list: @match }
+  querying: { list: maybe @match }
   list: => @=querying:list
+  count: => count @list
   Notifying: => @. with @query
 }
 

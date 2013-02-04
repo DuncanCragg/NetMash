@@ -310,8 +310,8 @@ public class CyrusLanguage extends WebObject {
             }
             else{
                 Object e=(ll.size()==1)? copyFindObject(ll.get(0)): eval(ll);
-                if(e==null){ log("failed to rewrite "+currentRewritePath); continue; }
-                if("#".equals(e)){
+                if(e==null) log("May delete "+currentRewritePath+" .. but may just be a failed rewrite! "+ll);
+                if(e==null || "#".equals(e)){
                     String[] parts=currentRewritePath.split(":");
                     String lastpart=parts[parts.length-1];
                     if(parts.length==1 || !isNumber(lastpart)) contentRemove(currentRewritePath);
