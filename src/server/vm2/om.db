@@ -44,7 +44,8 @@
   vd: => @. v~v @vc
   ss: @rr => { x: 4 y: @.y }
   tt: # => @=ss
-  cc: # => @bb delete { x: b y: * z: e g }
+  pp: # => @=ss cut-out { y: * }
+  cc: # => @bb cut-out { x: b y: * z: e g }
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -66,6 +67,7 @@
   vd: 5
   ss: { x: 2 y: 22 }{ x: 4 y: 33 }{ x: 6 y: 66 }{ x: 4 y: 333 }
   tt: { x: 4 y: 33 }{ x: 4 y: 333 }
+  pp: { x: 4 y: # }{ x: 4 y: # }
   cc: { x: b } !=> @.
 }
 
@@ -95,6 +97,7 @@
   vc: 6 4 5 => @. v+v @vo
   cc: { z: e g } !=> @.
   uu: # => @z:1:1
+  ff: # => @z:1:1 { a: 40 list: x y }
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -121,6 +124,7 @@
   uu: s r
   vv: # => { a: 20 uid-39da-3645-4f58-50cb list: s r }
   cc: { x: 1 element z: 1 element }
+  gg: # => @ff cut-out { list: * }
 }
 
 { UID: uid-d039-5967-f60c-70f7
@@ -146,6 +150,7 @@
   vo: 0 1 0
   vc: 1 1 1
   uu: # !=> yay
+  gg: { a: 20 list: # } { a: 40 list: # }
   vv: @uu:#
   : { la: 8 } => {
     is: test

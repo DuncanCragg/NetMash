@@ -368,7 +368,7 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "<".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) < findDouble(ll.get(2)));
         if(ll.size()==3 && ">".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) > findDouble(ll.get(2)));
         if(ll.size()==3 && "select".equals(ll1))  return copyFindObject(findHashOrListAndGet(ll.get(0),ll.get(2)));
-        if(ll.size()==3 && "delete".equals(ll1))  return copyDeleteHash(findHash(ll.get(0)),findHash(ll.get(2)));
+        if(ll.size()==3 && "cut-out".equals(ll1)) return copyCutOutHash(ll.get(0),findHash(ll.get(2)));
         return copyFindEach(ll);
     }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
 
@@ -558,36 +558,64 @@ public class CyrusLanguage extends WebObject {
     // ----------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private Object copyDeleteObject(Object o, Object d){
+    private Object copyCutOutObject(Object o, Object d){
         if(o==null) return null;
         if(o instanceof String)  return o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
-        if(o instanceof LinkedHashMap) return copyDeleteHash(((LinkedHashMap)o),(d!=null && d instanceof LinkedHashMap)? (LinkedHashMap)d: null);
-        if(o instanceof LinkedList)    return copyDeleteList(((LinkedList)o),d);
+        if(o instanceof LinkedHashMap) return copyCutOutHash(((LinkedHashMap)o),(d!=null && d instanceof LinkedHashMap)? (LinkedHashMap)d: null);
+        if(o instanceof LinkedList)    return copyCutOutList(((LinkedList)o),d);
         return o;
     }
 
     @SuppressWarnings("unchecked")
-    private Object copyDeleteHash(LinkedHashMap<String,Object> hm, LinkedHashMap dl){
+    private Object copyCutOutHash(Object ll0, LinkedHashMap dl){
+        if(ll0==null) return null;
+        LinkedHashMap hm=findHash(ll0);
+        if(hm!=null) return copyCutOutHash(hm,dl);
+        return listCopyCutOutHash(ll0,dl);
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedList listCopyCutOutHash(Object ll0, LinkedHashMap dl){
+        LinkedList ll=findList(ll0);
+        if(ll==null) return null;
+        LinkedList r=new LinkedList();
+        int i=0;
+        for(Object o: ll){
+            if(o instanceof LinkedHashMap) r.add(copyCutOutHash((LinkedHashMap)o,dl));
+            else
+            if(o instanceof String && UID.isUID((String)o) &&
+             ll0 instanceof String && ((String)ll0).startsWith("@")){
+                LinkedHashMap hm=findHash(ll0+":"+i);
+                if(hm!=null) r.add(copyCutOutHash(hm,dl));
+                else r.add(o);
+            }
+            else r.add(o);
+        i++; }
+        return r;
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedHashMap copyCutOutHash(LinkedHashMap<String,Object> hm, LinkedHashMap dl){
         LinkedHashMap r=new LinkedHashMap();
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String k=entry.getKey();
             Object o=entry.getValue();
             Object d=(dl!=null)? dl.get(k): null;
             if(d!=null && d instanceof String && (((String)d).equals("*") || o.equals(d))) continue;
-            r.put(k, copyDeleteObject(o,d));
+            r.put(k, copyCutOutObject(o,d));
         }
         return r;
     }
 
     @SuppressWarnings("unchecked")
-    private Object copyDeleteList(LinkedList ll, Object d){
+    private Object copyCutOutList(LinkedList ll, Object d){
         LinkedList r=new LinkedList();
         for(Object o: ll){
             if(d!=null && d instanceof String && (((String)d).equals("*") || o.equals(d))) continue;
             if(d!=null && d instanceof LinkedList && (((LinkedList)d).contains(o))) continue;
-            r.add(copyDeleteObject(o,null));
+            r.add(copyCutOutObject(o,null));
         }
         return r;
     }
