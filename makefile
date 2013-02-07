@@ -97,9 +97,9 @@ runrem: kill clean netconfig setvm2remconfig useworlddb run1n2
 
 runcyrus: kill cyrusconfig   setvm2tstconfig usecyrusdb run2
 
-runcap: kill clean netconfig setvm2emuconfig usecapdb  run1n2
+runcap: kill clean netconfig setvm2emuconfig usecapdb  run2
 
-runlap: kill clean netconfig setvm2lanconfig usecapdb  run1n2
+runlap: kill clean netconfig setvm2lanconfig usecapdb  run2
 
 runtut: kill clean           setvmtestconfig usetutordb run1
 
@@ -156,7 +156,6 @@ usecyrusdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db
 
 usecapdb:
-	cp src/server/vm1/cap.db src/server/vm1/cyrus.db
 	cp src/server/vm2/cap.db src/server/vm2/cyrus.db
 
 usetestdb:
