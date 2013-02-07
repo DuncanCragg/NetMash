@@ -163,7 +163,7 @@ public class CyrusLanguage extends WebObject {
             return ok;
         }
         if(list.size()==4 && list.get(0).equals("within")){
-            return withinOf(findDouble(list.get(1)), contentList(path), findList(list.get(3)));
+            return withinOf(findDouble(list.get(1)), contentList(path), findList(list.get(3),"double"));
         }
         int becomes=list.indexOf("=>");
         if(becomes!= -1){
@@ -424,9 +424,11 @@ public class CyrusLanguage extends WebObject {
         return findHashIn(o);
     }
 
-    private LinkedList findList(Object o){
+    private LinkedList findList(Object o){ return findList(o,null); }
+
+    private LinkedList findList(Object o, String type){
         if(o==null) return new LinkedList();
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentList(((String)o).substring(1));
+        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentList(((String)o).substring(1),type);
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findListIn(o);
     }
@@ -445,51 +447,51 @@ public class CyrusLanguage extends WebObject {
 
     private Object eitherBindingOrContentObject(String path){
         if(path.startsWith("."))  return contentObject(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return getBinding(path.substring(1));
+        if(path.startsWith("="))  return getBinding(path.substring(1),"object");
         Object o=contentObject(path);
         if(o!=null) return o;
         return contentAll(path);
     }
 
     private String eitherBindingOrContentString(String path){
-        if(path.startsWith("."))  return content(                currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findStringIn(getBinding(path.substring(1)));
+        if(path.startsWith("."))  return content(      currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
+        if(path.startsWith("="))  return findStringIn(getBinding(path.substring(1),"string"));
         return contentString(path);
     }
 
     private double eitherBindingOrContentDouble(String path){
-        if(path.startsWith("."))  return contentDouble(          currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1)));
+        if(path.startsWith("."))  return contentDouble(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
+        if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1),"double"));
         return contentDouble(path);
     }
 
     private boolean eitherBindingOrContentBool(String path){
-        if(path.startsWith("."))  return contentBool(             currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1)));
+        if(path.startsWith("."))  return contentBool(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
+        if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1),"boolean"));
         return contentBool(path);
     }
 
-    private LinkedList eitherBindingOrContentList(String path){
-        if(path.startsWith("."))  return contentList(          currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findListIn(getBinding(path.substring(1)));
-        LinkedList ll=contentList(path);
+    private LinkedList eitherBindingOrContentList(String path, String type){
+        if(path.startsWith("."))  return contentListMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
+        if(path.startsWith("="))  return findListIn(getBinding(path.substring(1),type));
+        LinkedList ll=contentListMayJump(path);
         if(ll!=null) return ll;
         return contentAll(path);
     }
 
     private LinkedHashMap eitherBindingOrContentHash(String path){
-        if(path.startsWith("."))  return contentHash(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findHashIn(getBinding(path.substring(1)));
+        if(path.startsWith("."))  return contentHashMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
+        if(path.startsWith("="))  return findHashIn(getBinding(path.substring(1),"hash"));
         return contentHashMayJump(path);
     }
 
     // ----------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private Object getBinding(String path){
+    private Object getBinding(String path, String type){
         String pk=path;
         LinkedList<String> ll=bindings.get(pk);
-        if(ll!=null) return objectsAt(ll,null);
+        if(ll!=null) return objectsAt(ll,null,type);
         do{
             int e=pk.lastIndexOf(":");
             if(e== -1) return null;
@@ -497,24 +499,27 @@ public class CyrusLanguage extends WebObject {
             pk=pk.substring(0,e);
             ll=bindings.get(pk);
             if(ll==null) continue;
-
-            int i= -1;
-            try{ i=Integer.parseInt(p); }catch(Throwable t){}
-            if(i>=0 && i<ll.size()) return contentObject(ll.get(i));
-
-            return objectsAt(ll,p);
+            return objectsAt(ll,p,type);
 
         }while(true);
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedList objectsAt(LinkedList<String> ll, String p){
+    private Object objectsAt(LinkedList<String> ll, String p, String type){
         LinkedList r=new LinkedList();
         for(String s: ll){
-            Object o=contentObject(s+(p==null? "": ":"+p));
+            Object o=contentObjectMayJump(s+(p==null? "": ":"+p),type);
             if(o!=null) r.add(o);
         }
-        return r.isEmpty()? null: r;
+        return r.isEmpty()? null: (r.size()==1? r.get(0): r);
+    }
+
+    private Object contentObjectMayJump(String path, String type){
+        Object o=null;
+        if(           "list".equals(type)) o=contentListMayJump(path);
+        if(o==null && "hash".equals(type)) o=contentHashMayJump(path);
+        if(o==null)                        o=contentObject(path);
+        return o;
     }
 
     // ----------------------------------------------------
@@ -578,19 +583,12 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private LinkedList listCopyCutOutHash(Object ll0, LinkedHashMap dl){
-        LinkedList ll=findList(ll0);
+        LinkedList ll=findList(ll0,"hash");
         if(ll==null) return null;
         LinkedList r=new LinkedList();
         int i=0;
         for(Object o: ll){
             if(o instanceof LinkedHashMap) r.add(copyCutOutHash((LinkedHashMap)o,dl));
-            else
-            if(o instanceof String && UID.isUID((String)o) &&
-             ll0 instanceof String && ((String)ll0).startsWith("@")){
-                LinkedHashMap hm=findHash(ll0+":"+i);
-                if(hm!=null) r.add(copyCutOutHash(hm,dl));
-                else r.add(o);
-            }
             else r.add(o);
         i++; }
         return r;

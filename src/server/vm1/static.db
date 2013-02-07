@@ -23,7 +23,7 @@
   is: contact list rule
   when: "query notified, get results and notify back"
   querying: { querying: { list: maybe @match } }
-  list: => @=querying:querying:list
+  list: => @=querying:querying:list cut-out { email: * }
   content-count: => count @list
   Notifying: => @. with @query
 }
@@ -55,7 +55,7 @@
 { UID: uid-945c-ebd9-3dd4-eb5c
   is: contact list rule
   when: "query notified, set up match"
-  match: => @query delete { is: query list: * user: * }
+  match: => @query cut-out { is: query list: * user: * }
 }
 
 { UID: uid-c739-64e6-c38c-3ff9

@@ -97,7 +97,7 @@
   vc: 6 4 5 => @. v+v @vo
   cc: { z: e g } !=> @.
   uu: # => @z:1:1
-  ff: # => @z:1:1 { a: 40 list: x y }
+  ff: # => { a: 200 b: 100 } @z:1:1 { a: 40 list: x y }
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -108,7 +108,6 @@
   o: { a: 3 }
   z: (number *) => (@. select 1) @.0
   l2: => count @=o
-  l0: => @=o:1
   l7: => @o:a
   l8: => @=o:a
   l3: => @o
@@ -124,7 +123,8 @@
   uu: s r
   vv: # => { a: 20 uid-39da-3645-4f58-50cb list: s r }
   cc: { x: 1 element z: 1 element }
-  gg: # => @ff cut-out { list: * }
+  ff: { a: < 200 }
+  gg: # => @=ff cut-out { list: * }
 }
 
 { UID: uid-d039-5967-f60c-70f7
@@ -136,7 +136,6 @@
   l1: ok
   l2: 2
   c: < 7.1
-  l0: { a: 3 4 }
   l3: 4 elements
   l4: 1
   l5: 4

@@ -191,7 +191,7 @@ function JSON2HTML(url){
             if(header) rows.push('<h3>'+header+'</h3>');
             var that = this;
             if(list.constructor===String) list = [ list ];
-            if(list.constructor!==Array) return this.getAnyHTML(list);
+            if(list.constructor!==Array)  list = [ list ];
             if(list.length){
             rows.push('<ul>');
             $.each(list, function(key,item){
