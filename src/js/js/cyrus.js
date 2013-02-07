@@ -485,6 +485,12 @@ function JSON2HTML(url){
             return text;
         },
         // ---------------------------------------------------
+        getTitleString: function(json){
+            if(!json || json.constructor!==Object) return '';
+            if(json['full-name'] !== undefined) return simpleStringFrom(json['full-name']);
+            if(json.title        !== undefined) return simpleStringFrom(json.title);
+            return deCameliseList(json.is);
+        },
         getTitle: function(json,elsedefault){
             if(!json || json.constructor!==Object) return '';
             if(json['full-name'] !== undefined) return this.getAnyHTML(json['full-name']);
@@ -607,7 +613,7 @@ function Cyrus(){
                     else for(i in objMore) moreOf[objMore[i]]=obj;
                 }
             }
-            document.title = json2html.getTitle(obj).htmlUnEscape();
+            document.title = json2html.getTitleString(obj).htmlUnEscape();
             window.scrollTo(0,0);
             $('#content').html(json2html.getHTML(topObjectURL, obj, false));
             me.setUpHTMLEvents();
@@ -1004,11 +1010,19 @@ function makeNiceDate(date){
     return day + ', ' + d.getDate() + ' ' + mon + ' ' + d.getFullYear() + ' at '+d.toLocaleTimeString();
 }
 
-function deCameliseList(is){
-    if(!is) return '';
-    if(is.constructor===String) return deCamelise(is);
-    if(is.constructor!==Array) return deCamelise(''+is);
-    r=''; $.each(is, function(k,s){ r+=deCamelise(s)+' '; });
+function simpleStringFrom(o){
+    if(!o) return '';
+    if(o.constructor===String) return o;
+    if(o.constructor!==Array) return ''+o;
+    r=''; $.each(o, function(k,s){ r+=s+' '; });
+    return r;
+}
+
+function deCameliseList(ll){
+    if(!ll) return '';
+    if(ll.constructor===String) return deCamelise(ll);
+    if(ll.constructor!==Array) return deCamelise(''+ll);
+    r=''; $.each(ll, function(k,s){ r+=deCamelise(s)+' '; });
     return r;
 }
 
