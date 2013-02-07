@@ -87,33 +87,35 @@ reinstalllan: uninstalllan installlan
 
 # -------------------------------------------------------------------
 
-runall: kill clean netconfig setvm2emuconfig usealldbs run1n2
+runall: kill clean netconfig usealldbs setvm3emuconfig run1n2
 
-runemu: kill clean netconfig setvm2emuconfig useworlddb run1n2
+runemu: kill clean netconfig useworlddb setvm3emuconfig run1n2
 
-runlan: kill clean netconfig setvm2lanconfig useworlddb run1n2
+runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
-runrem: kill clean netconfig setvm2remconfig useworlddb run1n2
+runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
-runcyrus: kill cyrusconfig   setvm2tstconfig usecyrusdb run2
+runcyrus: kill cyrusconfig   usecyrusdb setvm2tstconfig run2
 
-runcap: kill clean netconfig setvm2emuconfig usecapdb  run2
+runcars: kill clean netconfig usecarsdb setvm3tstconfig run1n2
 
-runlap: kill clean netconfig setvm2lanconfig usecapdb  run2
+runcap: kill clean netconfig usecapdb  setvm2emuconfig run2
 
-runtut: kill clean           setvmtestconfig usetutordb run1
+runlap: kill clean netconfig usecapdb  setvm2lanconfig run2
 
-runstt: kill clean           setvmtestconfig usestaticdb run1
+runtut: kill clean           usetutordb setvm1tstconfig run1
 
-runsta: kill clean netconfig setvmemuconfig  usestaticdb run1n2
+runstt: kill clean           usestaticdb setvm1tstconfig run1
 
-runcur: kill clean curconfig setvm2tstconfig usetestdb run1n2
+runsta: kill clean netconfig usestaticdb setvm1emuconfig run1
 
-runtst: kill clean tstconfig setvm2tstconfig usetestdb run1n2
+runcur: kill clean curconfig usetestdb setvm3tstconfig run1n2
 
-runone: kill clean           setvmtestconfig usetestdb run1
+runtst: kill clean tstconfig usetestdb setvm3tstconfig run1n2
 
-runtwo: kill clean curconfig setvm2emuconfig usetestdb run1n2
+runone: kill clean           usetestdb setvm1tstconfig run1
+
+runtwo: kill clean curconfig usetestdb setvm3emuconfig run1n2
 
 # -------------------------------------------------------------------
 
@@ -158,6 +160,10 @@ usecyrusdb:
 usecapdb:
 	cp src/server/vm2/cap.db src/server/vm2/cyrus.db
 
+usecarsdb:
+	cp src/server/vm1/cars.db src/server/vm1/cyrus.db
+	cp src/server/vm2/cars.db src/server/vm2/cyrus.db
+
 usetestdb:
 	cp src/server/vm1/test.db src/server/vm1/cyrus.db
 	cp src/server/vm2/test.db src/server/vm2/cyrus.db
@@ -178,17 +184,17 @@ setappemuconfig:
 	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" res/raw/cyrusconfig.db
 	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" res/raw/top.db
 	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" src/android/cyrus/User.java
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" res/raw/top.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/android/cyrus/User.java
+	sed -i"" -e   "s:$(LOCAL_IP):10.0.2.2:g" res/raw/cyrusconfig.db
+	sed -i"" -e   "s:$(LOCAL_IP):10.0.2.2:g" res/raw/top.db
+	sed -i"" -e   "s:$(LOCAL_IP):10.0.2.2:g" src/android/cyrus/User.java
 
 setapplanconfig:
 	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" res/raw/cyrusconfig.db
 	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" res/raw/top.db
 	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" src/android/cyrus/User.java
-	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/cyrusconfig.db
-	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" res/raw/top.db
-	sed -i"" -e    "s:10.0.2.2:$(LOCAL_IP):g" src/android/cyrus/User.java
+	sed -i"" -e      "s:10.0.2.2:$(LOCAL_IP):g" res/raw/cyrusconfig.db
+	sed -i"" -e      "s:10.0.2.2:$(LOCAL_IP):g" res/raw/top.db
+	sed -i"" -e      "s:10.0.2.2:$(LOCAL_IP):g" src/android/cyrus/User.java
 
 setappremconfig:
 	sed -i"" -e    "s:10.0.2.2:the-cyrus.net:g" res/raw/cyrusconfig.db
@@ -198,49 +204,65 @@ setappremconfig:
 	sed -i"" -e "s:$(LOCAL_IP):the-cyrus.net:g" res/raw/top.db
 	sed -i"" -e "s:$(LOCAL_IP):the-cyrus.net:g" src/android/cyrus/User.java
 
-setvmemuconfig:
+setvm1emuconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/static.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/static.db
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/cyrus.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/cyrus.db
 
 setvm2emuconfig:
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/world.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/world.db
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/world.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/world.db
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/cyrus.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/cyrus.db
+
+setvm3emuconfig: setvm1emuconfig setvm2emuconfig
+
+setvm3cleanconfig:
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/cyrusconfig.db
 
 setvm2lanconfig:
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/world.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/world.db
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/world.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/world.db
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrus.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrus.db
+
+setvm3lanconfig:
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrus.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/cyrus.db
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrus.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrus.db
 
 setvm2tstconfig:
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/world.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/world.db
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/world.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/world.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/cyrus.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/cyrus.db
 
-setvm2remconfig:
+setvm3tstconfig:
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrus.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrus.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/cyrus.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/cyrus.db
+
+setvm3remconfig:
 	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/world.db
+	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/cyrus.db
 	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm2/world.db
+	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm2/cyrus.db
 
-setvmtestconfig:
+setvm1tstconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
 
@@ -343,7 +365,7 @@ clean:
 	rm -f  gen/cyrus/gui/R.java
 	rm -f  ,*
 
-veryclean: kill clean setappemuconfig netconfig setvm2emuconfig setemumapkey
+veryclean: kill clean setappemuconfig netconfig setvm3cleanconfig setemumapkey
 	rm -f  src/server/vm[12]/cyrus.log
 	rm -f  src/server/vm[12]/cyrus.db
 	rm -f  src/server/vm2/cyrusconfig.db
