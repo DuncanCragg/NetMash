@@ -193,7 +193,7 @@
   is: payment rule editable
   when: "eligible BP land seen calculate claimable area and multiply by payment per hectare"
   land: { list: { area: * usage: * entitlement: * active: true } }
-  bp-total: => integer ( ( ( + @=land:list:area ) - ( + @=land:list:ineligible-area ) ) * @land:constants:bp-payment-per-ha )
+  bp-total: => ( ( + @=land:list:area ) - ( + @=land:list:ineligible-area ) ) * @land:constants:bp-payment-per-ha
 }
 
 { UID: uid-d958-bf42-c730-8406
@@ -225,9 +225,9 @@
 { UID: uid-9ce9-1bdd-ec05-c8fa
   is: gui rule editable
   when: "payment updates show it"
-  view: { BP: number => @payment:bp-total
-          FC: number => @payment:fc-total
-          NE: number => @payment:ne-total }
+  view: { BP: number => integer @payment:bp-total
+          FC: number => integer @payment:fc-total
+          NE: number => integer @payment:ne-total }
 }
 
 { UID: uid-f1d2-4269-6821-9d7a
