@@ -9,7 +9,7 @@ To Do
 --------------------------------------------------------
  - have @ =>, so implement => @
  - implement as-is so it only runs once copying not evalling when nested (and/or make sure nesting doesn't mean multiple copies)
- - Notifying not Notify; Observing not Observe?
+ - Observing not Observe?
  - shouldn't need list: in match
  - querying: not list: in queries - it's not a list!
 --------------------------------------------------------

@@ -34,7 +34,7 @@
   querying: { list: maybe @match }
   list: => @=querying:list
   content-count: => count @list
-  Notifying: => @. with @query
+  Notify: => @. with @query
 }
 
 { UID: uid-0461-a7e5-636f-a0c3

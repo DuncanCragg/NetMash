@@ -128,7 +128,7 @@
   when: "attendance set each time set rsvp status for event"
   gui: { form:{ form:{ attending: true } } }
   attending: => yes
-  Notifying: => @. with @gui:event
+  Notify: => @. with @gui:event
 }
 
 { UID: uid-939a-8ca9-4845-94cc
@@ -136,7 +136,7 @@
   when: "attendance set each time set rsvp status for event"
   gui: { form: { form: { attending: false } } }
   attending: => no
-  Notifying: => @. with @gui:event
+  Notify: => @. with @gui:event
 }
 
 { UID: uid-b236-2c49-c6f8-fea6
@@ -177,7 +177,7 @@
   when: "new response notify query. 3"
   title: => "Query results"
   list: => @query:list:list
-  Notifying: => @. with @query
+  Notify: => @. with @query
 }
 
 { UID: uid-393e-1881-a861-f0fb
@@ -282,7 +282,7 @@
     is: ( fx ticket rule )
     when: "new ticket set params and notify order. 3"
     params: <#>$:order:params
-    Notifying: <>has($:order)
+    Notify: <>has($:order)
 }
 
 {   UID: uid-bce3-b010-e869-f26e
