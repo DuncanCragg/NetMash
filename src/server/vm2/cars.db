@@ -19,9 +19,13 @@
 
 { UID: uid-543d-4b14-428f-d6b4
   is: contact query rule
-  when: "response received, un-notify"
+  when: "response received, un-notify and spawn copy"
   Alerted: { is: contact list query: @ }
   Notifying: => @. without @list:1
+  response: # => ( @Alerted cut-out { Rules: * } ) with-more {
+    UID: new
+    title: "Restricted"
+  }
 }
 
 { UID: uid-00a9-905b-7fc3-705c
