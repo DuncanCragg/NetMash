@@ -119,21 +119,41 @@ public class WebObject {
 
     /** For spawning. */
     public WebObject(LinkedHashMap hm){
-        funcobs = FunctionalObserver.funcobs;
-        uid = UID.generateUID();
-        etag = 1;
-        publicState = new JSON(hm);
-        updatingState = publicState;
+        construct(hm);
     }
 
     /** For spawning. */
     public WebObject construct(LinkedHashMap hm){
         funcobs = FunctionalObserver.funcobs;
-        uid = UID.generateUID();
-        etag = 1;
+        uid = getStringOr(hm,"UID",UID.generateUID());
+        etag = getIntOr(hm,"Version",1);
+        maxAge = getIntOr(hm,"Max-Age",0);
+        listToSet(notify,  getStringList(hm,"Notify"));
+        listToSet(observe, getStringList(hm,"Observe"));
         publicState = new JSON(hm);
         updatingState = publicState;
         return this;
+    }
+
+    // -------------------
+
+    private String getStringOr(LinkedHashMap hm, String tag, String alt){
+        Object o=hm.get(tag); hm.remove(tag);
+        if(o==null || !(o instanceof String)) return alt;
+        return (String)o;
+    }
+
+    private int getIntOr(LinkedHashMap hm, String tag, int alt){
+        Object o=hm.get(tag); hm.remove(tag);
+        if(o==null || !(o instanceof Number)) return alt;
+        return ((Number)o).intValue();
+    }
+
+    private LinkedList getStringList(LinkedHashMap hm, String tag){
+        Object o=hm.get(tag); hm.remove(tag);
+        if(o==null || !((o instanceof String)||(o instanceof LinkedList))) return null;
+        if(o instanceof String) return list(o);
+        return (LinkedList)o;
     }
 
     public boolean isShell(){

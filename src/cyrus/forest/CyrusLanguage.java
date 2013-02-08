@@ -26,8 +26,6 @@ public class CyrusLanguage extends WebObject {
 
     public CyrusLanguage(String s){ super(s); setLogging(); }
 
-    public CyrusLanguage(LinkedHashMap hm){ super(hm); setLogging(); }
-
     public CyrusLanguage(JSON json){ super(json); setLogging(); }
 
     static int MAX_LOOPS=50;
