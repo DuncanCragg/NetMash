@@ -25,7 +25,7 @@
 { UID: uid-945c-ebd9-3dd4-eb5c
   is: contact list rule
   when: "query notified, set up match"
-  match: => @query cut-out { is: query list: * user: * }
+  match: => @query cut-out { Rules: * is: query list: * user: * }
 }
 
 { UID: uid-c739-64e6-c38c-3ff9

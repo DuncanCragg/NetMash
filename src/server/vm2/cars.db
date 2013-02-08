@@ -1,8 +1,25 @@
 { UID: uid-459e-4ba6-0b4b-5786
-  Rules: uid-26ce-5542-6e51-2ef4
+  Rules: uid-a864-8e60-25c8-8289
   is: queryable license contact list
   title: "Restricted view of licenses"
   querying: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
+}
+
+{ UID: uid-a864-8e60-25c8-8289
+  is: contact list rule
+  when: "query posted, grab it and begin response"
+  Alerted: { is: contact query list: @ }
+  response: # => @Alerted with-more {
+    UID: new
+    Rules: uid-00a9-905b-7fc3-705c
+    list: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
+  }
+}
+
+{ UID: uid-00a9-905b-7fc3-705c
+  is: contact query rule
+  when: "query cloned, adjust list and notify internal list"
+  Notifying: => @. with @list:1
 }
 
 { UID: uid-26ce-5542-6e51-2ef4
