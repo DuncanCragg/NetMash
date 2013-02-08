@@ -367,14 +367,14 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private LinkedList copyFindEach(List ll){
         LinkedList r=new LinkedList();
-        for(Object o: ll) r.add(copyFindObject(o));
+        for(Object o: ll){ Object fo=copyFindObject(o); if(fo!=null) r.add(fo); }
         return r;
     }
 
     @SuppressWarnings("unchecked")
     private LinkedList findEach(List ll){
         LinkedList r=new LinkedList();
-        for(Object o: ll) r.add(findObject(o));
+        for(Object o: ll){ Object fo=findObject(o); if(fo!=null) r.add(fo); }
         return r;
     }
 
