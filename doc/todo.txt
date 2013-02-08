@@ -11,6 +11,7 @@ To Do
  - implement as-is so it only runs once copying not evalling when nested (and/or make sure nesting doesn't mean multiple copies)
  - Notifying not Notify; Observing not Observe?
  - shouldn't need list: in match
+ - querying: not list: in queries - it's not a list!
 --------------------------------------------------------
  - new dibdab for replacing parent (temporarily in view)
  - new dibdab for raw view

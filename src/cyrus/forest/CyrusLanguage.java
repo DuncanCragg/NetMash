@@ -228,6 +228,7 @@ public class CyrusLanguage extends WebObject {
     }
 
     private boolean scanString(String v, String pk){
+        if(v.startsWith("!")) return !scanString(v.substring(1),pk);
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         if(contentIs(pk,v)) return true;
         if(contentIsMayJump(pk,v)) return true;
@@ -237,7 +238,7 @@ public class CyrusLanguage extends WebObject {
         if(v.equals("number"))  return isNumber( contentObject(pk));
         if(v.equals("boolean")) return isBoolean(contentObject(pk));
         if(v.startsWith("/") && v.endsWith("/")) return regexMatch(v.substring(1,v.length()-1),pk);
-        if(foundObjectSameOrNot(pk,v)) return true;
+        if(v.startsWith("@")) return scanType(findObject(v),pk);
         return false;
     }
 
@@ -272,16 +273,6 @@ public class CyrusLanguage extends WebObject {
         Pattern p=Pattern.compile(regex);
         Matcher m=p.matcher(s);
         return m.find();
-    }
-
-    private boolean foundObjectSameOrNot(String pk, String vs){
-        boolean var=vs.startsWith("@");
-        boolean nov=vs.startsWith("!@");
-        if(!var && !nov) return false;
-        Object vso;
-        if(var) vso=findObject(vs);
-        else    vso=findObject(vs.substring(1));
-        return scanType(vso,pk)? var: nov;
     }
 
     // ----------------------------------------------------
@@ -368,7 +359,8 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "<".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) < findDouble(ll.get(2)));
         if(ll.size()==3 && ">".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) > findDouble(ll.get(2)));
         if(ll.size()==3 && "select".equals(ll1))  return copyFindObject(findHashOrListAndGet(ll.get(0),ll.get(2)));
-        if(ll.size()==3 && "cut-out".equals(ll1)) return copyCutOutHash(ll.get(0),findHash(ll.get(2)));
+        if(ll.size()==3 && "cut-out".equals(ll1))   return copyCutOutHash(ll.get(0),findHash(ll.get(2)));
+        if(ll.size()==3 && "with-more".equals(ll1)) return copyWithMoreHash(ll.get(0),findHash(ll.get(2)));
         return copyFindEach(ll);
     }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
 
@@ -546,7 +538,7 @@ public class CyrusLanguage extends WebObject {
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String k=entry.getKey();
             Object o=entry.getValue();
-            if(k.equals("UID") && !asis){ if(o.equals("new")){ spawned=true; }}
+            if(k.equals("UID") && !asis){ if(o.equals("new")) spawned=true; }
             else r.put(k, asis? copyObject(o,true): copyFindObject(o));
         }
         if(spawned) try{ return spawn(getClass().newInstance().construct(r)); } catch(Throwable t){ t.printStackTrace(); }
@@ -615,6 +607,63 @@ public class CyrusLanguage extends WebObject {
             if(d!=null && d instanceof LinkedList && (((LinkedList)d).contains(o))) continue;
             r.add(copyCutOutObject(o,null));
         }
+        return r;
+    }
+
+    // ----------------------------------------------------
+
+    @SuppressWarnings("unchecked")
+    private Object copyWithMoreHash(Object ll0, LinkedHashMap ha){
+        if(ll0==null) return null;
+        LinkedHashMap hm=findHash(ll0);
+        if(hm!=null) return copyWithMoreHash(hm,ha);
+        return null; // listCopyWithMoreHash(ll0,ha);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object copyWithMoreHash(LinkedHashMap<String,Object> hm, LinkedHashMap<String,Object> ha){
+        boolean spawned=false;
+        LinkedHashMap r=new LinkedHashMap();
+        for(Map.Entry<String,Object> entry: hm.entrySet()){
+            String k=entry.getKey();
+            Object o=entry.getValue();
+            Object a=(ha!=null)? ha.get(k): null;
+            if(k.equals("UID")){ if(o.equals("new")) spawned=true; }
+            else r.put(k, copyWithMoreObject(o,a));
+        }
+        if(ha==null) return r;
+        for(Map.Entry<String,Object> entry: ha.entrySet()){
+            String k=entry.getKey();
+            Object a=entry.getValue();
+            if(hm.get(k)!=null) continue;
+            if(k.equals("UID")){ if(a.equals("new")) spawned=true; }
+            else r.put(k, copyWithMoreObject(a,null));
+        }
+        if(spawned) try{ return spawn(getClass().newInstance().construct(r)); } catch(Throwable t){ t.printStackTrace(); }
+        return r;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object copyWithMoreObject(Object o, Object a){
+        if(o==null) return null;
+        if(o instanceof String)  return (a!=null? list(o,a): o);
+        if(o instanceof Number)  return (a!=null? list(o,a): o);
+        if(o instanceof Boolean) return (a!=null? list(o,a): o);
+        if(o instanceof LinkedHashMap) return copyWithMoreHash(((LinkedHashMap)o),(a!=null && a instanceof LinkedHashMap)? (LinkedHashMap)a: null);
+        if(o instanceof LinkedList)    return copyWithMoreList(((LinkedList)o),a);
+        return o;
+    }
+
+    @SuppressWarnings("unchecked")
+    private LinkedList copyWithMoreList(LinkedList ll, Object a){
+        LinkedList r=new LinkedList();
+        for(Object o: ll) r.add(copyWithMoreObject(o,null));
+        if(a==null) return r;
+        if(a instanceof String)        r.add(a);
+        if(a instanceof Number)        r.add(a);
+        if(a instanceof Boolean)       r.add(a);
+        if(a instanceof LinkedHashMap) r.add(copyWithMoreHash(((LinkedHashMap)a),null));
+        if(a instanceof LinkedList)    r.addAll(copyWithMoreList(((LinkedList)a),null));
         return r;
     }
 }
