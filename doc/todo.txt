@@ -8,6 +8,7 @@ To Do
  - tutorial as a set of test cases on language
 --------------------------------------------------------
  - have @ =>, so implement => @
+ - "" => won't rewrite?
  - implement as-is so it only runs once copying not evalling when nested (and/or make sure nesting doesn't mean multiple copies)
  - Notifying not Notify; Observing not Observe?
  - shouldn't need list: in match

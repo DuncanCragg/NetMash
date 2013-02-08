@@ -191,6 +191,7 @@ public class FunctionalObserver implements Module {
         for(WebObject n: w.spawned){
             evaluatable(n);
             persistence.save(n);
+            notifyUpdated(n, true);
         }
     }
 

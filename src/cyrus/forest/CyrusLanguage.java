@@ -629,8 +629,7 @@ public class CyrusLanguage extends WebObject {
             if(k.equals("UID")){ if(o.equals("new")) spawned=true; }
             else r.put(k, copyWithMoreObject(o,a));
         }
-        if(ha==null) return r;
-        for(Map.Entry<String,Object> entry: ha.entrySet()){
+        if(ha!=null) for(Map.Entry<String,Object> entry: ha.entrySet()){
             String k=entry.getKey();
             Object a=entry.getValue();
             if(hm.get(k)!=null) continue;
