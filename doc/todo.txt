@@ -35,7 +35,6 @@ Web Tutorial
     - something with my blog feed for the link bit
  - new dibdab for replacing parent (temporarily in view)
  - fix:
-    - mystery quotes appearing
     - height/scroll thing
     - <pre> and <p> thing
     - Firefox

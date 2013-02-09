@@ -556,7 +556,7 @@ function JSON2HTML(url){
             if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';
             if(o.constructor===Object) return this.toCyrusHash(o,i);
             if(o.constructor===Array)  return this.toCyrusList(o,i,nobrackets);
-            return '"'+o+'"';
+            return ''+o;
         },
         toCyrusHash: function(o,i){
             if(!o || o.constructor!==Object) return '??';
