@@ -220,6 +220,17 @@ public class Utils{
         return false;
     }
 
+    static public boolean isBoolean(Object o){
+        if(o==null) return false;
+        if(o instanceof Boolean) return true;
+        if(o instanceof String){
+            String s=(String)o;
+            if(s.toLowerCase().equals("true" )) return true;
+            if(s.toLowerCase().equals("false")) return true;
+        }
+        return false;
+    }
+
     static public double findNumberIn(Object o){
         if(o==null) return 0;
         if(o instanceof String){
@@ -232,19 +243,10 @@ public class Utils{
     static public boolean isNumber(Object o){
         if(o==null) return false;
         if(o instanceof Number) return true;
-        try{ Double.parseDouble((String)o); } catch(Throwable t){ return false; }
+        String s=o.toString();
+        if(dateFormat.parse(s, new ParsePosition(0))!=null) return true;
+        try{ Double.parseDouble(s); } catch(NumberFormatException e){ return false; }
         return true;
-    }
-
-    static public boolean isBoolean(Object o){
-        if(o==null) return false;
-        if(o instanceof Boolean) return true;
-        if(o instanceof String){
-            String s=(String)o;
-            if(s.toLowerCase().equals("true" )) return true;
-            if(s.toLowerCase().equals("false")) return true;
-        }
-        return false;
     }
 
     static public double tryDouble(Object o, double d){
@@ -294,6 +296,14 @@ public class Utils{
         if(x>hi) return hi;
         if(x<lo) return lo;
         return x;
+    }
+
+    @SuppressWarnings("unchecked")
+    static public LinkedList expandRange(double from, double to){
+        LinkedList r=new LinkedList();
+        if(from<to) for(int i=(int)from; i<=(int)to; i++) r.add(i);
+        else        for(int i=(int)from; i>=(int)to; i--) r.add(i);
+        return r;
     }
 
     static public int sizeOf(LinkedList ll){

@@ -241,14 +241,14 @@ public class CyrusLanguage extends WebObject {
 
     private boolean scanNumber(Number v, String pk){
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
-        if(contentDouble(pk)==v.doubleValue()) return true;
-        return false;
+        Object o=contentObject(pk);
+        return isNumber(o) && findNumberIn(o)==v.doubleValue();
     }
 
     private boolean scanBoolean(Boolean v, String pk){
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
-        if(contentBool(pk)==v) return true;
-        return false;
+        Object o=contentObject(pk);
+        return isBoolean(o) && findBooleanIn(o)==v;
     }
 
     private boolean scanListFromSingleIfNotAlready(Object v, String pk){
@@ -278,9 +278,16 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void doRewrites(){
-        LinkedHashMap<String,Boolean> shufflists=new LinkedHashMap<String,Boolean>();
+        String shufflePath=null;
         for(Map.Entry<String,LinkedList> entry: rewrites.entrySet()){
+
             currentRewritePath=entry.getKey();
+
+            int l=currentRewritePath.lastIndexOf(":");
+            String basePath=(l!= -1)? currentRewritePath.substring(0,l): null;
+            boolean newBasePathAndShufflingToDo=(shufflePath!=null && !shufflePath.equals(basePath));
+            if(newBasePathAndShufflingToDo){ shuffleList(shufflePath); shufflePath=null; }
+
             LinkedList ll=entry.getValue();
             if(ll.size()==0) continue;
             if(ll.size() >=3 && "@.".equals(ll.get(0)) && "with".equals(ll.get(1))){
@@ -303,9 +310,9 @@ public class CyrusLanguage extends WebObject {
                     String[] parts=currentRewritePath.split(":");
                     String lastpart=parts[parts.length-1];
                     if(parts.length==1 || !isNumber(lastpart)) contentRemove(currentRewritePath);
-                    else { String p=currentRewritePath.substring(0,currentRewritePath.lastIndexOf(":"));
-                           if(contentList(p)==null){ if("0".equals(lastpart)) contentRemove(p); else contentRemove(currentRewritePath); }
-                           else{ content(currentRewritePath,"#"); shufflists.put(p,true); }
+                    else {
+                           if(contentList(basePath)==null){ if("0".equals(lastpart)) contentRemove(basePath); else contentRemove(currentRewritePath); }
+                           else{ content(currentRewritePath,"#"); shufflePath=basePath; }
                     }
                 }
                 else
@@ -316,13 +323,15 @@ public class CyrusLanguage extends WebObject {
                 else contentObject(currentRewritePath, e);
             }
         }
-        for(String p: shufflists.keySet()){
-            LinkedList ll=contentList(p);
-            if(ll==null) continue;
-            LinkedList lr=new LinkedList();
-            for(Object o: ll) if(!"#".equals(o)) lr.add(o);
-            contentList(p,lr);
-        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void shuffleList(String path){
+        LinkedList ll=contentList(path);
+        if(ll==null) return;
+        LinkedList lr=new LinkedList();
+        for(Object o: ll) if(!"#".equals(o)) lr.add(o);
+        contentList(path,lr);
     }
 
     @SuppressWarnings("unchecked")
@@ -336,6 +345,7 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "random".equals(ll0))  return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
         if(ll.size()==4 && "clamp".equals(ll0))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
         if(ll.size()==2 && "integer".equals(ll0)) return Integer.valueOf((int)(0.5+findDouble(ll.get(1))));
+        if(ll.size()==3 && "..".equals(ll1))      return expandRange(findDouble(ll.get(0)), findDouble(ll.get(2)));
         if(ll.size()==3 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)));
         if(ll.size()==4 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)), findString(ll.get(3)));
         if(ll.size()==5 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)), findString(ll.get(3)), findString(ll.get(4)));
@@ -443,7 +453,7 @@ public class CyrusLanguage extends WebObject {
     }
 
     private String eitherBindingOrContentString(String path){
-        if(path.startsWith("."))  return content(      currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
+        if(path.startsWith("."))  return contentString(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findStringIn(getBinding(path.substring(1),"string"));
         return contentString(path);
     }
