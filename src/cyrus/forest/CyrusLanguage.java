@@ -38,9 +38,8 @@ public class CyrusLanguage extends WebObject {
         int maxloops=contentInt("MaxLoops"); if(maxloops<=0) maxloops=MAX_LOOPS;
         int i=0; for(; i<maxloops; i++){
             statemod=false;
-            LinkedList rs=contentAsList("Rules");
-            if(i==0){ if(rs!=null) rules.addAll(rs); } else rules=rs; if(extralogging) log("Rules: "+rules);
-            if(rules==null) break;
+            if(!(i==0 && rules.size() >0)) rules=contentAsList("Rules");   if(extralogging) log("Rules: "+rules);
+            if(rules==null || rules.size()==0) break;
             for(Object rule: rules){
                 if(rule instanceof String) contentTempObserve("Rule", (String)rule);
                 else

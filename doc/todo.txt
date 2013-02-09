@@ -3,33 +3,50 @@ To Do
 -----
 
 --------------------------------------------------------
- - cyrus.js tutorials and demos
- - doc/local/demodb.json; src/server/vm?/test.db
- - tutorial as a set of test cases on language
---------------------------------------------------------
+Language
  - have @ =>, so implement => @
  - "" => won't rewrite?
- - implement as-is so it only runs once copying not evalling when nested (and/or make sure nesting doesn't mean multiple copies)
- - Notifying not Notify; Observing not Observe?
- - shouldn't need list: in match
- - querying: not list: in queries - it's not a list!
+ - bug with false matching too eagerly
+ - a: < 10  a: 10  a: !10
+ - ! { .. } as well as "!.."
+ - have both a symbol and a word for everything
+    - not '#' for null? just 'nothing' and 'anything' for '*'
+    - not '#' for hash? or don't need it anyway in Cyrus language
+ - implement as-is so it only runs once copying not evalling when nested
+    - and/or make sure nesting doesn't mean multiple copies
+ - how to get Notify not Notifying; Observe not Observing?
 --------------------------------------------------------
+Queries
+ - shouldn't need list: in a match in a list: querying: { list: maybe @match }
+ - querying: not list: in queries - it's not a list!
+ - query pattern should be: { is: contact query filter: {} page-size:  match: { full-name: email: } xx: yy: }
+ - search results:
+    - full inline, partial based on query filter
+    - modify then spawn, spawn then modify (different threading)
+       - uid => @. with-more { UID: new Rules: } something: x => stop looping
+       - uid => ( @. cut-out { .. } ) with-more { UID: new } something: x => stop looping
+    - filtered/restricted can just add filter to the query, then spawn itself
+ - top item   queries: @Alerted !=> with @Alerted
+--------------------------------------------------------
+Web Tutorial
+ - tutorial as a set of test cases and demos on language
+    - doc/local/demodb.json; src/server/vm?/test.db
+    - 99 bottles of beer text: => 1 .. 99  text: num => format "%s bottles of beer" @.
+    - something with my blog feed for the link bit
  - new dibdab for replacing parent (temporarily in view)
+ - fix:
+    - mystery quotes appearing
+    - height/scroll thing
+    - <pre> and <p> thing
+    - Firefox
  - new dibdab for raw view
  - remember open and parent replace state
- - fix:
-    - <pre> and <p> thing
-    - height/scroll thing
-    - Firefox
---------------------------------------------------------
- - change 'gui' to 'layout' or '2d place': notice is what?
  - 204 detection so not error and delay
- - something with my blog feed for the link bit
- - bug with false matching too eagerly
- - 'maybe' in 3d game, CAP, Reaktion?
 --------------------------------------------------------
- - a: < 10  a: 10  a: !10
- - not '#' for hash? or don't need it anyway in Cyrus language
+Other
+ - change 'gui' to 'layout' or '2d place': notice is what?
+ - implement POST response for return notification
+ - 'maybe' in 3d game, CAP, Reaktion?
 --------------------------------------------------------
 
 
