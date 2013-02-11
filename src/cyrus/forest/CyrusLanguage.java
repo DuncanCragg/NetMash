@@ -108,14 +108,7 @@ public class CyrusLanguage extends WebObject {
         if(hash.isEmpty()) return true;
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=(path.equals("")? "": path+":")+entry.getKey();
-            if(path.equals("")){
-                if(pk.equals("Rules")) continue;
-                if(pk.equals("is")) continue;
-                if(pk.equals("when")) continue;
-                if(pk.equals("watching")) continue;
-                if(pk.equals("editable")) continue;
-                if(pk.equals("user")) continue;
-            }
+            if(ignoreTopLevelNoise(path,pk)) continue;
             Object v=entry.getValue();
             if(!scanType(v,pk)) return false;
         }
@@ -176,7 +169,7 @@ public class CyrusLanguage extends WebObject {
             if(becomes==0) return false;
             LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));
             LinkedList lhs=new LinkedList(list.subList(0,becomes));
-            boolean ok=scanList(lhs,path,null);
+            boolean ok=scanListTryFail(lhs,path);
             if(!ok) rewrites.put(path,rh2);
             return !ok;
         }
@@ -203,13 +196,19 @@ public class CyrusLanguage extends WebObject {
         return true;
     }
 
-    private boolean scanType(Object v, String pk){ return scanType(v,pk,false); }
+    private boolean mayfail=false;
+    private boolean tryfail=false;
 
-    private boolean scanTypeMayFail(Object v, String pk){ return scanType(v,pk,true); }
+    private boolean scanTypeMayFail(Object v, String pk){ boolean m=mayfail; mayfail=true; boolean ok=scanType(v,pk); mayfail=m; return ok; }
 
-    private boolean scanType(Object v, String pk, boolean mayfail){
+    private boolean scanListTryFail(LinkedList ll, String pk){ boolean t=tryfail; tryfail=true; boolean ok=scanList(ll,pk,null); tryfail=t; return ok; }
+
+    private boolean scanStringTryFail(String s, String pk){ boolean t=tryfail; tryfail=true; boolean ok=scanString(s,pk); tryfail=t; return ok; }
+
+    private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
-        if(!r && extralogging && !mayfail) log("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
+        if(!r && extralogging && !tryfail && !mayfail) log("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
+        if( r && extralogging &&  tryfail            ) log("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
         return r;
     }
 
@@ -225,7 +224,7 @@ public class CyrusLanguage extends WebObject {
     }
 
     private boolean scanString(String v, String pk){
-        if(v.startsWith("!")) return !scanString(v.substring(1),pk);
+        if(v.startsWith("!")) return !scanStringTryFail(v.substring(1),pk);
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         if(contentIs(pk,v)) return true;
         if(contentIsMayJump(pk,v)) return true;
@@ -254,6 +253,18 @@ public class CyrusLanguage extends WebObject {
     private boolean scanListFromSingleIfNotAlready(Object v, String pk){
         if(indexingPath(pk)) return false;
         return scanList(list(v),pk,null);
+    }
+
+    private boolean ignoreTopLevelNoise(String path, String pk){
+        if(!path.equals("")) return false;
+        if(pk.equals("Rules")) return true;
+        if(pk.equals("Rule")) return true;
+        if(pk.equals("is")) return true;
+        if(pk.equals("when")) return true;
+        if(pk.equals("watching")) return true;
+        if(pk.equals("editable")) return true;
+        if(pk.equals("user")) return true;
+        return false;
     }
 
     private boolean indexingPath(String path){

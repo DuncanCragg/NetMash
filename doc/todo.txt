@@ -6,7 +6,6 @@ To Do
 Language
  - have @ =>, so implement => @
  - "" => won't rewrite?
- - bug with false matching too eagerly
  - a: < 10  a: 10  a: !10
  - ! { .. } as well as "!.."
  - have both a symbol and a word for everything

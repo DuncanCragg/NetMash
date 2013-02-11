@@ -46,6 +46,7 @@ pre.cyrus-readonly{
     padding: 0.5em;
     margin: 7pt;
     line-height: 12pt;
+    white-space: pre-wrap;
 }
 
 pre.cyrus{
