@@ -14,6 +14,10 @@ Language
  - implement as-is so it only runs once copying not evalling when nested
     - and/or make sure nesting doesn't mean multiple copies
  - how to get Notify not Notifying; Observe not Observing?
+ - separate rulesets for 'functions' - e.g. pluraliser: (pluralise 2 bottle)=>"2 bottles"
+ - name of '@' is 'reference', so links and refs - like psi logic
+    - have internal links in data, not just UIDs? shared internal data structures
+ - ( format ".. %s .. " @x ) --> ( ".. @x .. " )   ".. % .. " % (@x - 1) like Python
 --------------------------------------------------------
 Queries
  - shouldn't need list: in a match in a list: querying: { list: maybe @match }
@@ -30,8 +34,9 @@ Queries
 Web Tutorial
  - tutorial as a set of test cases and demos on language
     - doc/local/demodb.json; src/server/vm?/test.db
-    - 99 bottles of beer text: => 1 .. 99  text: num => format "%s bottles of beer" @.
     - something with my blog feed for the link bit
+ - reference entries for language features
+    -vs- learning entries such as building up 99 bottles in 7 steps and learning about abstraction
  - new dibdab for replacing parent (temporarily in view)
  - fix:
     - height/scroll thing
