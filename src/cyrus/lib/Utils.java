@@ -39,7 +39,7 @@ public class Utils{
     static public String join(LinkedList strings, String joinwith){
         if(strings==null || strings.size()==0) return "";
         StringBuilder sb=new StringBuilder();
-        for(Object o: strings) sb.append(toString(o)+joinwith);
+        for(Object o: strings) sb.append(((o instanceof LinkedList)? join((LinkedList)o,joinwith):  findStringIn(o))+joinwith);
         String all=sb.toString();
         return all.substring(0,all.length()-joinwith.length());
     }
