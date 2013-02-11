@@ -42,6 +42,20 @@
   coordinates: => @. v+v @orientation
 }
 
+{ UID: uid-5eeb-9bff-d369-0520
+  Rules:
+   { is: gui rule view: # => 9 .. 0 }
+   { is: gui rule view: ( > 0 ) => ( @. bottles ) "of beer on the wall," ( @. bottles ) "of beer. Take one down, pass it around,"
+                                   (( @. - 1 ) bottles ) "of beer on the wall." }
+   { is: gui rule view: 0 => "No more bottles of beer on the wall, no more bottles of beer."
+                             "Go to the store, buy some more, 99 bottles of beer on the wall. " }
+   { is: gui rule **: ( > 1) bottles => join " " @. }
+   { is: gui rule **: 1 bottles => "1 bottle" }
+   { is: gui rule **: 0 bottles => "no more bottles" }
+   { is: gui rule view: ( * * ) => join " " @. }
+  is: editable gui
+}
+
 { UID: uid-0112-09a9-3f54-b720
   Rules: uid-5f5d-6d29-64d8-2d8c uid-b3ae-5b55-65ad-a296 uid-701d-7264-39b3-ad65 uid-5c83-67b4-2edf-1474
   is: attendable event

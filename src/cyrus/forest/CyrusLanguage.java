@@ -279,6 +279,7 @@ public class CyrusLanguage extends WebObject {
         if(!path.equals("")) return false;
         if(pk.equals("Rules")) return true;
         if(pk.equals("Rule")) return true;
+        if(pk.equals("Alerted")) return true;
         if(pk.equals("is")) return true;
         if(pk.equals("when")) return true;
         if(pk.equals("watching")) return true;

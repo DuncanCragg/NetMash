@@ -319,6 +319,7 @@ function JSON2HTML(url){
         },
         createGUI: function(guilist,rows){
             var submittable=false;
+            if(!guilist) return;
             if(guilist.constructor===String){ rows.push('<tr><td>'+guilist+'</td></tr>'); return false; }
             var horizontal=false;
             for(i in guilist){ var item=guilist[i];
@@ -366,6 +367,12 @@ function JSON2HTML(url){
                 if(item.constructor===String){
                     if(!horizontal) rows.push('<tr>');
                     rows.push('<td class="grid-col">'+item+'</td>');
+                    if(!horizontal) rows.push('</tr>');
+                }
+                else
+                if(item.constructor===Array){
+                    if(!horizontal) rows.push('<tr>');
+                    rows.push('<td class="grid-col">'+this.getListHTML(item)+'</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
                 else{
