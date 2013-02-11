@@ -110,6 +110,8 @@ public class CyrusLanguage extends WebObject {
             String pk=(path.equals("")? "": path+":")+entry.getKey();
             if(ignoreTopLevelNoise(path,pk)) continue;
             Object v=entry.getValue();
+            if(pk.endsWith("**")){ if(v instanceof LinkedList) scanDeep((LinkedList)v,pk.substring(0,pk.length()-2)); }
+            else
             if(!scanType(v,pk)) return false;
         }
         return true;
@@ -253,6 +255,24 @@ public class CyrusLanguage extends WebObject {
     private boolean scanListFromSingleIfNotAlready(Object v, String pk){
         if(indexingPath(pk)) return false;
         return scanList(list(v),pk,null);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void scanDeep(LinkedList list, String path){
+        LinkedHashMap<String,Object> hm=contentHash(path.equals("")? "#": path);
+        if(hm==null) return;
+        for(Map.Entry<String,Object> entry: hm.entrySet()){
+            String pk=(path.equals("")? "": path+":")+entry.getKey();
+            if(ignoreTopLevelNoise(path,pk)) continue;
+            scanListDeep(list,pk);
+        }
+    }
+
+    private void scanListDeep(LinkedList list, String path){
+        scanList(list,path,null);
+        LinkedList ll=contentList(path);
+        if(ll!=null) for(int i=0; i<ll.size(); i++) scanListDeep(list,path+":"+i);
+        else scanDeep(list,path);
     }
 
     private boolean ignoreTopLevelNoise(String path, String pk){

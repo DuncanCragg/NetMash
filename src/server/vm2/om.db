@@ -22,6 +22,7 @@
   rr: { x: 3 y: < 334 }
   ss: { x: 2 y: 22 }{ x: 3 y: 33 }{ x: 6 y: 66 }{ x: 3 y: 333 }
   bb: { x: a b  y: c d  z: e f g  p: q }
+  ll: ( c 1 s ) { x: ( 1 c s ) } ( y ( 1 s c ))
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -48,6 +49,7 @@
   pp: # => @=ss cut-out { y: * }
   cc: # => @bb cut-out { x: b y: * z: e g }
   dd: # => @bb with-more { UID: new  y: j k  q: h i  p: r }
+  **: 1 s => 1 b
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -73,6 +75,7 @@
   pp: { x: 4 y: # }{ x: 4 y: # }
   cc: { x: b } !=> @.
   dd: { UID: /uid-/  x: a b  y: c d j k  z: e f g  q: h i  p: q r }
+  ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
 }
 
 { UID: uid-1de5-4d69-667a-56e4
