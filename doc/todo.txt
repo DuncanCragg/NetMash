@@ -18,6 +18,14 @@ Language
  - name of '@' is 'reference', so links and refs - like psi logic
     - have internal links in data, not just UIDs? shared internal data structures
  - ( format ".. %s .. " @x ) --> ( ".. @x .. " )   ".. % .. " % (@x - 1) like Python
+ - efficiency:
+    - collect all changed paths by accumulating rewrites paths
+    - roll up to base paths - may roll up to top
+    - just "" base path on Ver 1
+    - only do ** on that collection downwards: on the new stuff
+    - not sure about uids and snapshot of other items
+ - ** needs to be bottom-up not top-down, so check order of rewrites (join bottles before verses)
+ - 'list' means sub-list "x: list" matches  "x: a ( b ) c" not "x: a b c"
 --------------------------------------------------------
 Queries
  - shouldn't need list: in a match in a list: querying: { list: maybe @match }

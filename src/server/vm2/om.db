@@ -23,6 +23,7 @@
   ss: { x: 2 y: 22 }{ x: 3 y: 33 }{ x: 6 y: 66 }{ x: 3 y: 333 }
   bb: { x: a b  y: c d  z: e f g  p: q }
   ll: ( c 1 s ) { x: ( 1 c s ) } ( y ( 1 s c ))
+  fb: fib 5
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -76,6 +77,7 @@
   cc: { x: b } !=> @.
   dd: { UID: /uid-/  x: a b  y: c d j k  z: e f g  q: h i  p: q r }
   ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
+  **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
 }
 
 { UID: uid-1de5-4d69-667a-56e4
@@ -92,6 +94,7 @@
   vc: 6 5 5 => @. v+v @vo
   cc: { y: * } !=> @.
   xx: #
+  **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
 }
 
 { UID: uid-61d6-65c9-2931-505b
@@ -106,6 +109,7 @@
   cc: { z: e g } !=> @.
   uu: # => @z:1:1
   ff: # => { a: 200 b: 100 } @z:1:1 { a: 40 list: x y }
+  **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -133,6 +137,7 @@
   cc: { x: 1 element z: 1 element }
   ff: { a: < 200 }
   gg: # => @=ff cut-out { list: * }
+  **: fib ( <= 2 ) => 1
 }
 
 { UID: uid-d039-5967-f60c-70f7
@@ -159,6 +164,7 @@
   uu: # !=> yay
   gg: { a: 20 list: # } { a: 40 list: # }
   vv: @uu:#
+  fb: 5
   : { la: 8 } => {
     is: test
     title: "Test Complete"

@@ -126,16 +126,34 @@ public class CyrusLanguage extends WebObject {
         }
         if(list.size()==2 && list.get(0).equals("<")){
             double d=findDouble(list.get(1));
-            return (contentDouble(path) < d);
+            boolean ok = (contentDouble(path) < d);
+       //   if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
         }
         if(list.size()==2 && list.get(0).equals(">")){
             double d=findDouble(list.get(1));
-            return (contentDouble(path) > d);
+            boolean ok = (contentDouble(path) > d);
+       //   if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
+        }
+        if(list.size()==2 && list.get(0).equals("<=")){
+            double d=findDouble(list.get(1));
+            boolean ok = (contentDouble(path) <= d);
+       //   if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
+        }
+        if(list.size()==2 && list.get(0).equals(">=")){
+            double d=findDouble(list.get(1));
+            boolean ok = (contentDouble(path) >= d);
+       //   if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
         }
         if(list.size()==2 && list.get(0).equals("divisible-by")){
             int i=(int)findDouble(list.get(1));
             int j=(int)contentDouble(path);
-            return ((j % i)==0);
+            boolean ok = ((j % i)==0);
+       //   if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
         }
         if(list.size()==2 && (list.get(1).equals("element")|| list.get(1).equals("elements"))){
             int d=(int)findDouble(list.get(0));
@@ -279,7 +297,6 @@ public class CyrusLanguage extends WebObject {
         if(!path.equals("")) return false;
         if(pk.equals("Rules")) return true;
         if(pk.equals("Rule")) return true;
-        if(pk.equals("Alerted")) return true;
         if(pk.equals("is")) return true;
         if(pk.equals("when")) return true;
         if(pk.equals("watching")) return true;
@@ -314,6 +331,7 @@ public class CyrusLanguage extends WebObject {
         for(Map.Entry<String,LinkedList> entry: rewrites.entrySet()){
 
             currentRewritePath=entry.getKey();
+            if(currentRewritePath.equals("Alerted")) continue;
 
             int l=currentRewritePath.lastIndexOf(":");
             String basePath=(l!= -1)? currentRewritePath.substring(0,l): null;
@@ -355,6 +373,30 @@ public class CyrusLanguage extends WebObject {
                 else contentObject(currentRewritePath, e);
             }
         }
+        if(shufflePath!=null) shuffleList(shufflePath);
+
+        LinkedHashMap<String,Boolean> maybeEvals=new LinkedHashMap<String,Boolean>();
+        for(Map.Entry<String,LinkedList> entry: rewrites.entrySet()){
+            String bp=trimListPaths(entry.getKey());
+            if(bp!=null) maybeEvals.put(bp, true);
+        }
+        for(Map.Entry<String,Boolean> entry: maybeEvals.entrySet()){
+            String p=entry.getKey();
+logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
+            contentObject(p,eval(contentList(p)));
+        }
+    }
+
+    static public String  LISTPATHRE=null;
+    static public Pattern LISTPATHPA=null;
+
+    private String trimListPaths(String path){
+        if(LISTPATHRE==null){
+            LISTPATHRE = "(.*?):[0-9][:0-9]*:[0-9][:0-9]*$";
+            LISTPATHPA = Pattern.compile(LISTPATHRE);
+        }
+        Matcher m = LISTPATHPA.matcher(path);
+        return (m.matches())? m.group(1): null;
     }
 
     @SuppressWarnings("unchecked")
@@ -386,7 +428,9 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "join".equals(ll0))    return join(findList(ll.get(2)), findString(ll.get(1)));
         if(ll.size()==2 && "+".equals(ll0))       return Double.valueOf(sumAll(findList(ll.get(1))));
         if(ll.size()==3 && "-".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
-        if(ll.size()==3 && "+".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
+        if(ll.size()==3 && "+".equals(ll1) && findDouble2(ll.get(0))!=null && findDouble2(ll.get(2))!=null){
+                return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
+        }
         if(ll.size()==3 && "×".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
         if(ll.size()==3 && "*".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
         if(ll.size()==3 && "÷".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
@@ -397,6 +441,8 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "v/s".equals(ll1))     return vsdiv(findList(ll.get(0)), findDouble(ll.get(2)));
         if(ll.size()==3 && "<".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) < findDouble(ll.get(2)));
         if(ll.size()==3 && ">".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) > findDouble(ll.get(2)));
+        if(ll.size()==3 && "<=".equals(ll1))      return Boolean.valueOf(findDouble(ll.get(0)) <= findDouble(ll.get(2)));
+        if(ll.size()==3 && ">=".equals(ll1))      return Boolean.valueOf(findDouble(ll.get(0)) >= findDouble(ll.get(2)));
         if(ll.size()==3 && "select".equals(ll1))  return copyFindObject(findHashOrListAndGet(ll.get(0),ll.get(2)));
         if(ll.size()==3 && "cut-out".equals(ll1))   return copyCutOutHash(ll.get(0),findHash(ll.get(2)));
         if(ll.size()==3 && "with-more".equals(ll1)) return copyWithMoreHash(ll.get(0),findHash(ll.get(2)));
@@ -438,7 +484,14 @@ public class CyrusLanguage extends WebObject {
         if(o==null) return 0;
         if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentDouble(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
-        return findNumberIn(o);
+        return isNumber(o)? findNumberIn(o): null;
+    }
+
+    private Double findDouble2(Object o){
+        if(o==null) return null;
+        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentDouble(((String)o).substring(1));
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
+        return isNumber(o)? findNumberIn(o): null;
     }
 
     private boolean findBoolean(Object o){
