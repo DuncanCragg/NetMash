@@ -560,7 +560,7 @@ function JSON2HTML(url){
                     .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,                 '<a href="#$1.json">$1</a>');
         },
         toCyrusObject: function(o,i,nobrackets){
-            if(!o) return '';
+            if(o===undefined || o===null) return '';
             if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';
             if(o.constructor===Object) return this.toCyrusHash(o,i);
             if(o.constructor===Array)  return this.toCyrusList(o,i,nobrackets);
