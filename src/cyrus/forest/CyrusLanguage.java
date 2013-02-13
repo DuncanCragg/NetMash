@@ -545,7 +545,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
                 if(lr!=null) return lr;
             }
         }
-        if(ll.size()==3 && "v~v".equals(s1)){
+        if(ll.size()==3 && "~".equals(s1)){
             if(l0==null) l0=findList(ll.get(0));
             if(l2==null) l2=findList(ll.get(2));
             if(l0!=null && l2!=null) return vvdist(l0, l2);
