@@ -560,6 +560,7 @@ function JSON2HTML(url){
                     .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,                 '<a href="#$1.json">$1</a>');
         },
         toCyrusObject: function(o,i,nobrackets){
+            if(!o) return '';
             if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';
             if(o.constructor===Object) return this.toCyrusHash(o,i);
             if(o.constructor===Array)  return this.toCyrusList(o,i,nobrackets);
@@ -731,11 +732,12 @@ function Cyrus(){
                 if(cyrus){
                     var type=$(this).find('.cyrus-type').val();
                     if(!type){
-                        var cyr = '{ '+uidver+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ""\n  ';
-                        network.postJSON(targetURL, me.makeCyrusEditRule(cyr,ver,cy), true, me.getCreds(targetURL), null, null);
+                        var cyr = '{ '+uidver+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ".."\n  '+
+                                    ': { Version: '+ver+' } => as-is\n'+cy+'\n}';
+                        network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
                     }else{
-                        var cyr = '{ '+uidver+'\n  is: '+type+'\n  list: '+targetURL+'\n  user: ""\n  ';
-                        network.postJSON(targetURL, me.makeCyrusQuery(cyr,cy),        true, me.getCreds(targetURL), me.topObjectIn, me.topObjectFail);
+                        var cyr = '{ '+uidver+'\n  is: '+type+'\n  querying: '+targetURL+'\n  user: ".."\n  match: {\n'+cy+'\n  }\n}';
+                        network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), me.topObjectIn, me.topObjectFail);
                     }
                 }else{
                     var json = '{ '+uidver+', "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';
@@ -782,7 +784,7 @@ function Cyrus(){
             $('#query').focus();
             $('#query-form').unbind().submit(function(e){
                 var q=$('#query').val();
-                var json = '{ "is": [ "document", "query" ], "text": "<hasWords('+q.jsonEscape()+')>" }';
+                var json = '{ "is": [ "document", "query" ], "text": [ "has-words", "'+q.jsonEscape()+'" ] }';
                 network.postJSON(topObjectURL, json, false, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
                 e.preventDefault();
             });
@@ -867,12 +869,6 @@ function Cyrus(){
             var domain = getDomain(requestURL);
             if(useLocalStorage) return JSON.parse(localStorage.getItem('credsOfSite:'+domain));
             return '';
-        },
-        makeCyrusEditRule: function(cyr,ver,val){
-            return cyr+': { Version: '+ver+' } => as-is\n'+val+'\n}';
-        },
-        makeCyrusQuery: function(cyr,val){
-            return cyr+val+'\n}';
         },
         makeJSONEditRule: function(json,ver,val){
             var j=JSON.parse(json);

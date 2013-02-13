@@ -11,10 +11,10 @@
 { UID: uid-893a-d617-3dab-16e3
   is: contact list rule
   when: "query posted, grab it and begin response"
-  Alerted: { is: contact query list: @ }
+  Alerted: { is: contact query querying: @ }
   response: # => {
     UID: new
-    Rules: uid-945c-ebd9-3dd4-eb5c uid-c739-64e6-c38c-3ff9
+    Rules: uid-c739-64e6-c38c-3ff9
     is: contact list
     title: "Query results"
     query: @Alerted
@@ -22,17 +22,11 @@
   }
 }
 
-{ UID: uid-945c-ebd9-3dd4-eb5c
-  is: contact list rule
-  when: "query notified, set up match"
-  match: => @query cut-out { Rules: * is: query list: * user: * }
-}
-
 { UID: uid-c739-64e6-c38c-3ff9
   is: contact list rule
-  when: "query notified, get results and notify back"
-  querying: { list: maybe @match }
-  list: => @=querying:list
+  when: "query created, get results and notify back"
+  querying: { list: maybe @query:match }
+  list: # => @=querying:list
   content-count: => count @list
   Notifying: => @. with @query
 }
