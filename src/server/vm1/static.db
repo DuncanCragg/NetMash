@@ -1,3 +1,15 @@
+{ UID: uid-f25a-08e1-7d7d-09f8
+  is: gui
+  title: "Cyrus Examples"
+  view:
+    { is: style direction: vertical }
+    { view: closed item: uid-26bc-8ee9-5443-851a }
+    { view: closed item: uid-8ed3-ee4a-eeef-0313 }
+    { view: closed item: uid-5eeb-9bff-d369-0520 }
+    { view: closed item: uid-0112-09a9-3f54-b720 }
+    { view: closed item: http://localhost:8083/uid-4dd7-7ef1-ecfa-1445.json }
+}
+
 { UID: uid-26bc-8ee9-5443-851a
   Rules: uid-16f2-2db0-e9fe-1d7d
   is: demo editable

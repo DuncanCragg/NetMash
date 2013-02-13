@@ -27,6 +27,15 @@ lap: androidlan runlap lancat
 
 sta: androidemu runsta logcat
 
+examples: runstt
+	chromium-browser 'http://localhost:8083/#http://localhost:8081/o/uid-f25a-08e1-7d7d-09f8.json'
+
+tutorial: runtut
+	chromium-browser 'http://localhost:8083/#http://localhost:8081/o/uid-7081-c95e-1c04-d7a5.json'
+
+cars: runcars
+	chromium-browser 'http://localhost:8083/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
+
 # -------------------------------------------------------------------
 
 demo: editstaticdb androidemu runquickserver logboth editdynamicfile
