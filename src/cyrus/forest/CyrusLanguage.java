@@ -664,14 +664,20 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     }
 
     private Object findHashOrListAndGet(Object collection, Object index){
+
         if(collection==null || index==null) return null;
+
         LinkedHashMap hm=findHash(collection);
-        if(hm!=null && hm.size() >0) return hm.get(findObject(index));
+        String s=findString(index);
+        if(s==null) return null;
+        if(hm!=null && hm.size() >0) return hm.get(s);
+
         LinkedList    ll=findList(collection);
         Double d=findDouble(index);
         if(d==null) return null;
         int i=d.intValue();
         if(ll!=null && ll.size() >i) return ll.get(i);
+
         return null;
     }
 
