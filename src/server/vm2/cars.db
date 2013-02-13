@@ -2,20 +2,19 @@
   Rules: uid-a864-8e60-25c8-8289
   is: queryable license contact list
   title: "Restricted view of licenses"
-  querying: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
+  source: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
 }
 
 { UID: uid-a864-8e60-25c8-8289
   is: contact list rule
   when: "query posted, grab it and begin response"
-  Alerted: { is: contact query querying: @ }
+  Alerted: { is: contact query target: @ }
   query2: # => @Alerted with-more {
     UID: new
     Rules: uid-543d-4b14-428f-d6b4
     Notify: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
-    querying: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
+    target: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
     original-query: @Alerted
-    original-querying: @Alerted:querying
   }
 }
 
@@ -23,40 +22,35 @@
   is: contact query rule
   when: "response received, un-notify and spawn copy"
   Alerted: { is: contact list query: @ }
-  Notifying: => @. without @querying:1
+  Notifying: => @. without @target:1
   response: # => ( @Alerted cut-out { Rules: * } ) with-more {
     UID: new
     title: "Restricted"
     query: @original-query
-    querying: @original-querying
+    source: @Alerted @target:0
     Notify: @original-query
   }
-}
-
-{ UID: uid-00a9-905b-7fc3-705c
-  is: contact list rule
-  when: "response ready, notify query"
 }
 
 { UID: uid-26ce-5542-6e51-2ef4
   is: contact list rule
   when: "query posted, grab it and begin response"
-  Alerted: { is: contact query list: @ }
+  Alerted: { is: contact query target: @ }
   response: # => {
     UID: new
     Rules: http://10.0.2.2:8081/o/uid-945c-ebd9-3dd4-eb5c.json uid-38d3-faad-466c-6d8c
     is: contact list
     title: "Restricted query results"
     query: @Alerted
-    querying: uid-459e-4ba6-0b4b-5786
+    source: uid-459e-4ba6-0b4b-5786
   }
 }
 
 { UID: uid-38d3-faad-466c-6d8c
   is: contact list rule
   when: "query notified, get results and notify back"
-  querying: { querying: { list: maybe @match } }
-  list: => @=querying:querying:list cut-out { email: * }
+  source: { source: { list: maybe @match } }
+  list: => @=source:source:list cut-out { email: * }
   content-count: => count @list
   Notifying: => @. with @query
 }

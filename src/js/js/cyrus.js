@@ -736,7 +736,7 @@ function Cyrus(){
                                     ': { Version: '+ver+' } => as-is\n'+cy+'\n}';
                         network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
                     }else{
-                        var cyr = '{ '+uidver+'\n  is: '+type+'\n  querying: '+targetURL+'\n  user: ".."\n  match: {\n'+cy+'\n  }\n}';
+                        var cyr = '{ '+uidver+'\n  is: '+type+'\n  target: '+targetURL+'\n  user: ".."\n  match: {\n'+cy+'\n  }\n}';
                         network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), me.topObjectIn, me.topObjectFail);
                     }
                 }else{
