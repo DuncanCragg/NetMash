@@ -250,9 +250,14 @@ public class Utils{
     }
 
     static public double tryDouble(Object o, double d){
-        if(o==null) return d;
+        Double n=tryDouble(o);
+        return n!=null? n: d;
+    }
+
+    static public Double tryDouble(Object o){
+        if(o==null) return null;
         if(o instanceof Number) return ((Number)o).doubleValue();
-        try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return d; }
+        try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return null; }
     }
 
     static public Object makeBestObject(String s){
@@ -311,10 +316,10 @@ public class Utils{
         return ll.size();
     }
 
-    static public double sumAll(LinkedList ll){
-        if(ll==null || ll.isEmpty()) return 0;
+    static public Double sumAll(LinkedList ll){
+        if(ll==null || ll.isEmpty()) return Double.valueOf(0);
         double d=0;
-        for(Object o: ll) d+=tryDouble(o,0);
+        for(Object o: ll){ Double n=tryDouble(o); if(n==null) return null; d+=n; }
         return d;
     }
 

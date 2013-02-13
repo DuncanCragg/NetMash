@@ -125,42 +125,56 @@ public class CyrusLanguage extends WebObject {
             return true;
         }
         if(list.size()==2 && list.get(0).equals("<")){
-            double d=findDouble(list.get(1));
-            boolean ok = (contentDouble(path) < d);
-       //   if(ok && rhs!=null) rewrites.put(path,rhs);
-            return ok;
+            Double d=findDouble(list.get(1));
+            if(d!=null){
+                boolean ok = (contentDouble(path) < d);
+       //       if(ok && rhs!=null) rewrites.put(path,rhs);
+                return ok;
+            }
         }
         if(list.size()==2 && list.get(0).equals(">")){
-            double d=findDouble(list.get(1));
-            boolean ok = (contentDouble(path) > d);
-       //   if(ok && rhs!=null) rewrites.put(path,rhs);
-            return ok;
+            Double d=findDouble(list.get(1));
+            if(d!=null){
+                boolean ok = (contentDouble(path) > d);
+       //       if(ok && rhs!=null) rewrites.put(path,rhs);
+                return ok;
+            }
         }
         if(list.size()==2 && list.get(0).equals("<=")){
-            double d=findDouble(list.get(1));
-            boolean ok = (contentDouble(path) <= d);
-       //   if(ok && rhs!=null) rewrites.put(path,rhs);
-            return ok;
+            Double d=findDouble(list.get(1));
+            if(d!=null){
+                boolean ok = (contentDouble(path) <= d);
+       //       if(ok && rhs!=null) rewrites.put(path,rhs);
+                return ok;
+            }
         }
         if(list.size()==2 && list.get(0).equals(">=")){
-            double d=findDouble(list.get(1));
-            boolean ok = (contentDouble(path) >= d);
-       //   if(ok && rhs!=null) rewrites.put(path,rhs);
-            return ok;
+            Double d=findDouble(list.get(1));
+            if(d!=null){
+                boolean ok = (contentDouble(path) >= d);
+       //       if(ok && rhs!=null) rewrites.put(path,rhs);
+                return ok;
+            }
         }
         if(list.size()==2 && list.get(0).equals("divisible-by")){
-            int i=(int)findDouble(list.get(1));
-            int j=(int)contentDouble(path);
-            boolean ok = ((j % i)==0);
-       //   if(ok && rhs!=null) rewrites.put(path,rhs);
-            return ok;
+            Double d=findDouble(list.get(1));
+            if(d!=null){
+                int i=d.intValue();
+                int j=(int)contentDouble(path);
+                boolean ok = ((j % i)==0);
+       //       if(ok && rhs!=null) rewrites.put(path,rhs);
+                return ok;
+            }
         }
         if(list.size()==2 && (list.get(1).equals("element")|| list.get(1).equals("elements"))){
-            int d=(int)findDouble(list.get(0));
-            if(!contentSet(path) && d==0) return true;
-            LinkedList ll=contentList(path);
-            return (ll==null && contentSet(path) && d==1) ||
-                   (ll!=null && ll.size()==d);
+            Double d=findDouble(list.get(0));
+            if(d!=null){
+                int i=d.intValue();
+                if(!contentSet(path) && i==0) return true;
+                LinkedList ll=contentList(path);
+                return (ll==null && contentSet(path) && i==1) ||
+                       (ll!=null && ll.size()==i);
+            }
         }
         if(list.size()==1 && list.get(0).equals("#")){
             boolean ok=!contentSet(path);
@@ -413,45 +427,163 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         if(ll.size()==0) return null;
    //   if(ll.size()==1) return copyFindObject(ll.get(0));
         if(ll.size()==1) return ll;
-        String ll0=findString(ll.get(0));
-        String ll1=findString(ll.get(1));
-        if(ll.size()==2 && "count".equals(ll0))   return Double.valueOf(sizeOf(findList(ll.get(1))));
-        if(ll.size()==3 && "random".equals(ll0))  return Double.valueOf(random(findDouble(ll.get(1)), findDouble(ll.get(2))));
-        if(ll.size()==4 && "clamp".equals(ll0))   return Double.valueOf(clamp(findDouble(ll.get(1)), findDouble(ll.get(2)), findDouble(ll.get(3))));
-        if(ll.size()==2 && "integer".equals(ll0)) return Integer.valueOf((int)(0.5+findDouble(ll.get(1))));
-        if(ll.size()==3 && "..".equals(ll1))      return expandRange(findDouble(ll.get(0)), findDouble(ll.get(2)));
-        if(ll.size()==3 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)));
-        if(ll.size()==4 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)), findString(ll.get(3)));
-        if(ll.size()==5 && "format".equals(ll0))  return String.format(findString(ll.get(1)), findString(ll.get(2)), findString(ll.get(3)), findString(ll.get(4)));
-        if(ll.size()==6 && "if".equals(ll0))      return findBoolean(ll.get(1))? copyFindObject(ll.get(3)): copyFindObject(ll.get(5));
-        if(ll.size()==2 && "as-is".equals(ll0))   return copyObject(ll.get(1), true);
-        if(ll.size()==3 && "join".equals(ll0))    return join(findList(ll.get(2)), findString(ll.get(1)));
-        if(ll.size()==2 && "+".equals(ll0))       return Double.valueOf(sumAll(findList(ll.get(1))));
-        if(ll.size()==3 && "-".equals(ll1)){
-                Double d0=findDouble2(ll.get(0));
-                Double d2=findDouble2(ll.get(2));
-                if(d0!=null && d2!=null) return Double.valueOf(d0 - d2);
+        String s0=findString(ll.get(0));
+        String s1=findString(ll.get(1));
+        String s2=null;
+        String s3=null;
+        String s4=null;
+        Double d0=null;
+        Double d1=null;
+        Double d2=null;
+        Double d3=null;
+        Boolean b1=null;
+        LinkedList l0=null;
+        LinkedList l1=null;
+        LinkedList l2=null;
+        LinkedHashMap h2=null;
+        if(ll.size()==2 && "count".equals(s0)){
+            if(l1==null) l1=findList(ll.get(1));
+            if(l1!=null) return Double.valueOf(sizeOf(l1));
         }
-        if(ll.size()==3 && "+".equals(ll1)){
-                Double d0=findDouble2(ll.get(0));
-                Double d2=findDouble2(ll.get(2));
-                if(d0!=null && d2!=null) return Double.valueOf(d0 + d2);
+        if(ll.size()==3 && "random".equals(s0)){
+            if(d1==null) d1=findDouble(ll.get(1));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d1!=null && d2!=null) return Double.valueOf(random(d1, d2));
         }
-        if(ll.size()==3 && "×".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
-        if(ll.size()==3 && "*".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
-        if(ll.size()==3 && "÷".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
-        if(ll.size()==3 && "/".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) / findDouble(ll.get(2)));
-        if(ll.size()==3 && "v.m".equals(ll1))     return vmdot(findList(ll.get(0)), findList(ll.get(2)));
-        if(ll.size()==3 && "v+v".equals(ll1))     return vvadd(findList(ll.get(0)), findList(ll.get(2)));
-        if(ll.size()==3 && "v~v".equals(ll1))     return vvdist(findList(ll.get(0)), findList(ll.get(2)));
-        if(ll.size()==3 && "v/s".equals(ll1))     return vsdiv(findList(ll.get(0)), findDouble(ll.get(2)));
-        if(ll.size()==3 && "<".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) < findDouble(ll.get(2)));
-        if(ll.size()==3 && ">".equals(ll1))       return Boolean.valueOf(findDouble(ll.get(0)) > findDouble(ll.get(2)));
-        if(ll.size()==3 && "<=".equals(ll1))      return Boolean.valueOf(findDouble(ll.get(0)) <= findDouble(ll.get(2)));
-        if(ll.size()==3 && ">=".equals(ll1))      return Boolean.valueOf(findDouble(ll.get(0)) >= findDouble(ll.get(2)));
-        if(ll.size()==3 && "select".equals(ll1))  return copyFindObject(findHashOrListAndGet(ll.get(0),ll.get(2)));
-        if(ll.size()==3 && "cut-out".equals(ll1))   return copyCutOutHash(ll.get(0),findHash(ll.get(2)));
-        if(ll.size()==3 && "with-more".equals(ll1)) return copyWithMoreHash(ll.get(0),findHash(ll.get(2)));
+        if(ll.size()==4 && "clamp".equals(s0)){
+            if(d1==null) d1=findDouble(ll.get(1));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d3==null) d3=findDouble(ll.get(3));
+            if(d1!=null && d2!=null && d3!=null) return Double.valueOf(clamp(d1, d2, d3));
+        }
+        if(ll.size()==2 && "integer".equals(s0)){
+            if(d1==null) d1=findDouble(ll.get(1));
+            if(d1!=null) return Integer.valueOf((int)(0.5+d1));
+        }
+        if(ll.size()==3 && "..".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return expandRange(d0,d2);
+        }
+        if(ll.size()==3 && "format".equals(s0)){
+            if(s1==null) s1=findString(ll.get(1));
+            if(s2==null) s2=findString(ll.get(2));
+            if(s1!=null && s2!=null) return String.format(s1, s2);
+        }
+        if(ll.size()==4 && "format".equals(s0)){
+            if(s1==null) s1=findString(ll.get(1));
+            if(s2==null) s2=findString(ll.get(2));
+            if(s3==null) s3=findString(ll.get(3));
+            if(s1!=null && s2!=null && s3!=null) return String.format(s1, s2, s3);
+        }
+        if(ll.size()==5 && "format".equals(s0)){
+            if(s1==null) s1=findString(ll.get(1));
+            if(s2==null) s2=findString(ll.get(2));
+            if(s3==null) s3=findString(ll.get(3));
+            if(s4==null) s4=findString(ll.get(4));
+            if(s1!=null && s2!=null && s3!=null && s4!=null) return String.format(s1, s2, s3, s4);
+        }
+        if(ll.size()==6 && "if".equals(s0)){
+            if(b1==null) b1=findBoolean(ll.get(1));
+            if(b1!=null) return b1? copyFindObject(ll.get(3)): copyFindObject(ll.get(5));
+        }
+        if(ll.size()==2 && "as-is".equals(s0)){
+            return copyObject(ll.get(1), true);
+        }
+        if(ll.size()==3 && "join".equals(s0)){
+            if(l2==null) l2=findList(ll.get(2));
+            if(s1==null) s1=findString(ll.get(1));
+            if(l2!=null && s1!=null) return join(l2, s1);
+        }
+        if(ll.size()==2 && "+".equals(s0)){
+            if(l1==null) l1=findList(ll.get(1));
+            if(l1!=null){
+                Double sl1=sumAll(l1);
+                if(sl1!=null) return Double.valueOf(sl1);
+            }
+        }
+        if(ll.size()==3 && "-".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Double.valueOf(d0 - d2);
+        }
+        if(ll.size()==3 && "+".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Double.valueOf(d0 + d2);
+        }
+        if(ll.size()==3 && "×".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Double.valueOf(d0 * d2);
+        }
+        if(ll.size()==3 && "*".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Double.valueOf(d0 * d2);
+        }
+        if(ll.size()==3 && "÷".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Double.valueOf(d0 / d2);
+        }
+        if(ll.size()==3 && "/".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Double.valueOf(d0 / d2);
+        }
+        if(ll.size()==3 && "v.m".equals(s1)){
+            if(l0==null) l0=findList(ll.get(0));
+            if(l2==null) l2=findList(ll.get(2));
+            if(l0!=null && l2!=null) return vmdot(l0, l2);
+        }
+        if(ll.size()==3 && "v+v".equals(s1)){
+            if(l0==null) l0=findList(ll.get(0));
+            if(l2==null) l2=findList(ll.get(2));
+            if(l0!=null && l2!=null) return vvadd(l0, l2);
+        }
+        if(ll.size()==3 && "v~v".equals(s1)){
+            if(l0==null) l0=findList(ll.get(0));
+            if(l2==null) l2=findList(ll.get(2));
+            if(l0!=null && l2!=null) return vvdist(l0, l2);
+        }
+        if(ll.size()==3 && "v/s".equals(s1)){
+            if(l0==null) l0=findList(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(l0!=null && d2!=null) return vsdiv(l0, d2);
+        }
+        if(ll.size()==3 && "<".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Boolean.valueOf(d0 < d2);
+        }
+        if(ll.size()==3 && ">".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Boolean.valueOf(d0 > d2);
+        }
+        if(ll.size()==3 && "<=".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Boolean.valueOf(d0 <= d2);
+        }
+        if(ll.size()==3 && ">=".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Boolean.valueOf(d0 >= d2);
+        }
+        if(ll.size()==3 && "select".equals(s1)){
+            Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
+            if(o02!=null) return copyFindObject(o02);
+        }
+        if(ll.size()==3 && "cut-out".equals(s1)){
+            if(h2==null) h2=findHash(ll.get(2));
+            if(h2!=null) return copyCutOutHash(ll.get(0),h2);
+        }
+        if(ll.size()==3 && "with-more".equals(s1)){
+            if(h2==null) h2=findHash(ll.get(2));
+            if(h2!=null) return copyWithMoreHash(ll.get(0),h2);
+        }
         return copyFindEach(ll);
     }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
 
@@ -486,25 +618,18 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         return o.toString();
     }
 
-    private double findDouble(Object o){
-        if(o==null) return 0;
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentDouble(((String)o).substring(1));
-        if(o instanceof LinkedList) o=eval((LinkedList)o);
-        return isNumber(o)? findNumberIn(o): 0;
-    }
-
-    private Double findDouble2(Object o){
+    private Double findDouble(Object o){
         if(o==null) return null;
         if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentDouble(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return isNumber(o)? findNumberIn(o): null;
     }
 
-    private boolean findBoolean(Object o){
+    private Boolean findBoolean(Object o){
         if(o==null) return false;
         if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentBool(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
-        return findBooleanIn(o);
+        return isBoolean(o)? findBooleanIn(o): null;
     }
 
     private LinkedHashMap findHash(Object o){
@@ -528,7 +653,9 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         LinkedHashMap hm=findHash(collection);
         if(hm!=null && hm.size() >0) return hm.get(findObject(index));
         LinkedList    ll=findList(collection);
-        int i=(int)findDouble(index);
+        Double d=findDouble(index);
+        if(d==null) return null;
+        int i=d.intValue();
         if(ll!=null && ll.size() >i) return ll.get(i);
         return null;
     }
@@ -549,13 +676,13 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         return contentString(path);
     }
 
-    private double eitherBindingOrContentDouble(String path){
+    private Double eitherBindingOrContentDouble(String path){
         if(path.startsWith("."))  return contentDouble(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1),"double"));
         return contentDouble(path);
     }
 
-    private boolean eitherBindingOrContentBool(String path){
+    private Boolean eitherBindingOrContentBool(String path){
         if(path.startsWith("."))  return contentBool(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1),"boolean"));
         return contentBool(path);
