@@ -787,8 +787,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             if(k.equals("UID") && !asis){ if(o.equals("new")) spawned=true; }
             else r.put(k, asis? copyObject(o,true): copyFindObject(o));
         }
-        if(spawned) try{ return spawn(getClass().newInstance().construct(r)); } catch(Throwable t){ t.printStackTrace(); }
-        return r;
+        return spawned? spawnHash(r): r;
     }
 
     @SuppressWarnings("unchecked")
@@ -884,8 +883,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             if(k.equals("UID")){ if(a.equals("new")) spawned=true; }
             else r.put(k, copyWithMoreObject(a,null));
         }
-        if(spawned) try{ return spawn(getClass().newInstance().construct(r)); } catch(Throwable t){ t.printStackTrace(); }
-        return r;
+        return spawned? spawnHash(r): r;
     }
 
     @SuppressWarnings("unchecked")
@@ -910,6 +908,11 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         if(a instanceof LinkedHashMap) r.add(copyWithMoreHash(((LinkedHashMap)a),null));
         if(a instanceof LinkedList)    r.addAll(copyWithMoreList(((LinkedList)a),null));
         return r;
+    }
+
+    private Object spawnHash(LinkedHashMap hm){
+        try{ return spawn(getClass().newInstance().construct(hm)); } catch(Throwable t){ t.printStackTrace(); }
+        return hm;
     }
 }
 
