@@ -25,14 +25,14 @@
   is: editable mars rover rule
   when: L command, turn left
   commands: ( L => # ) **
-  orientation: => @. v.m ( ( 0 -1 ) ( 1 0 ) )
+  orientation: => @. dot ( ( 0 -1 ) ( 1 0 ) )
 }
 
 { UID: uid-c287-63cf-9c45-1f9f
   is: editable mars rover rule
   when: R command, turn right
   commands: ( R => # ) **
-  orientation: => @. v.m ( ( 0 1 ) ( -1 0 ) )
+  orientation: => @. dot ( ( 0 1 ) ( -1 0 ) )
 }
 
 { UID: uid-4709-6676-f0e2-8054

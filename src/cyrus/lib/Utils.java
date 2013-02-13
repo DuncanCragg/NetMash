@@ -56,21 +56,26 @@ public class Utils{
 
     @SuppressWarnings("unchecked")
     static public LinkedList vmdot(LinkedList v, LinkedList m){
-        if(v==null || m==null) return list();
+        if(v==null || m==null) return null;
         LinkedList r=new LinkedList();
         for(Object o: m){
-            if(!(o instanceof LinkedList)) return list();
+            if(!(o instanceof LinkedList)) return null;
             LinkedList w=(LinkedList)o;
-            r.add(Double.valueOf(vvdot(v,w)));
+            Double d=vvdot(v,w);
+            if(d==null) return null;
+            r.add(d);
         }
         return r;
     }
 
-    static public double vvdot(LinkedList v, LinkedList w){
-        if(w.size()!=v.size()) return 0;
+    static public Double vvdot(LinkedList v, LinkedList w){
+        if(w.size()!=v.size()) return null;
         double r=0;
         int i=0; for(Object p: v){ Object q=w.get(i);
-            r+=tryDouble(p,0)*tryDouble(q,0);
+            Double d1=tryDouble(p);
+            Double d2=tryDouble(q);
+            if(d1==null || d2==null) return null;
+            r+=d1*d2;
         i++; }
         return r;
     }
