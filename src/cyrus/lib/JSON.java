@@ -270,6 +270,12 @@ public class JSON {
         return setBoolPath(tophash, path, value);
     }
 
+    /** Get Number (or null) at given path. */
+    public Number numberPath(String path) throws PathOvershot{
+        ensureContent();
+        return getNumberPath(tophash, path);
+    }
+
     /** Get double (or 0 if not) at given path. */
     public double doublePath(String path) throws PathOvershot{
         ensureContent();
@@ -921,6 +927,10 @@ public class JSON {
 
     private boolean getBoolPath(LinkedHashMap content, String path) throws PathOvershot{
         return findBooleanIn(getObject(content, path));
+    }
+
+    private Number getNumberPath(LinkedHashMap content, String path) throws PathOvershot{
+        return findANumberIn(getObject(content, path));
     }
 
     private double getDoublePath(LinkedHashMap content, String path) throws PathOvershot{

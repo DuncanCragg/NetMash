@@ -87,7 +87,10 @@ public class Utils{
         LinkedList r=new LinkedList();
         int i=0; for(Object o: c){
             Object p=(i< ds)? d.get(i): Double.valueOf(0);
-            r.add(Double.valueOf(tryDouble(o,0)+tryDouble(p,0)));
+            Double d1=tryDouble(o);
+            Double d2=tryDouble(p);
+            if(d1==null || d2==null) return null;
+            r.add(Double.valueOf(d1+d2));
         i++; }
         return r;
     }
@@ -229,6 +232,15 @@ public class Utils{
             if(s.toLowerCase().equals("false")) return true;
         }
         return false;
+    }
+
+    static public Number findANumberIn(Object o){
+        if(o==null) return null;
+        if(o instanceof String){
+            Date d = dateFormat.parse((String)o, new ParsePosition(0));
+            if(d!=null) return Double.valueOf(d.getTime());
+        }
+        return tryDouble(o);
     }
 
     static public double findNumberIn(Object o){

@@ -537,10 +537,13 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             if(l2==null) l2=findList(ll.get(2));
             if(l0!=null && l2!=null) return vmdot(l0, l2);
         }
-        if(ll.size()==3 && "v+v".equals(s1)){
+        if(ll.size()==3 && "+".equals(s1)){
             if(l0==null) l0=findList(ll.get(0));
             if(l2==null) l2=findList(ll.get(2));
-            if(l0!=null && l2!=null) return vvadd(l0, l2);
+            if(l0!=null && l2!=null){
+                LinkedList lr=vvadd(l0, l2);
+                if(lr!=null) return lr;
+            }
         }
         if(ll.size()==3 && "v~v".equals(s1)){
             if(l0==null) l0=findList(ll.get(0));
@@ -619,10 +622,16 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     }
 
     private Double findDouble(Object o){
+        Number n=findNumber(o);
+        if(n==null) return null;
+        return n.doubleValue();
+    }
+
+    private Number findNumber(Object o){
         if(o==null) return null;
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentDouble(((String)o).substring(1));
+        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentNumber(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
-        return isNumber(o)? findNumberIn(o): null;
+        return isNumber(o)? findANumberIn(o): null;
     }
 
     private Boolean findBoolean(Object o){
@@ -676,10 +685,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         return contentString(path);
     }
 
-    private Double eitherBindingOrContentDouble(String path){
-        if(path.startsWith("."))  return contentDouble(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
+    private Number eitherBindingOrContentNumber(String path){
+        if(path.startsWith("."))  return contentNumber(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1),"double"));
-        return contentDouble(path);
+        return contentNumber(path);
     }
 
     private Boolean eitherBindingOrContentBool(String path){

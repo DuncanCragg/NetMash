@@ -402,6 +402,11 @@ public class WebObject {
     }
 
     /** Double value found at path. */
+    public Number contentNumber(String path){
+        return findANumberIn(contentObject(path));
+    }
+
+    /** Double value found at path. */
     public double contentDouble(String path){
         return findNumberIn(contentObject(path));
     }

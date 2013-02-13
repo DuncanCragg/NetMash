@@ -66,7 +66,7 @@
   j: x { m: n } 8
   o: { a: 1 } => #
   vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
-  vc: 5 5 5 => @. v+v @vo
+  vc: 5 5 5 => @. + @vo
   xx: (false !=> #) **
   zz: #
   vd: 5
@@ -91,7 +91,7 @@
   l1: => ok
   j: number => eight
   vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
-  vc: 6 5 5 => @. v+v @vo
+  vc: 6 5 5 => @. + @vo
   cc: { y: * } !=> @.
   xx: #
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
@@ -105,7 +105,7 @@
   z: number * => @.2 @.1 @.0
   p: { c: d } => @.c @.a
   vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
-  vc: 6 4 5 => @. v+v @vo
+  vc: 6 4 5 => @. + @vo
   cc: { z: e g } !=> @.
   uu: # => @z:1:1
   ff: # => { a: 200 b: 100 } @z:1:1 { a: 40 list: x y }
@@ -131,7 +131,7 @@
   j: true => false
   p: d b
   vo: => @. v.m ((0 1 0)(-1 0 0)(0 0 0))
-  vc: within 0.347 of (4.8 4.2 5.2) => (@. v+v @vo) v/s 5
+  vc: within 0.347 of (4.8 4.2 5.2) => (@. + @vo) v/s 5
   uu: s r
   vv: # => { a: 20 uid-39da-3645-4f58-50cb list: s r }
   cc: { x: 1 element z: 1 element }

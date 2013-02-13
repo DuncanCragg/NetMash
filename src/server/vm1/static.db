@@ -39,7 +39,7 @@
   is: editable mars rover rule
   when: M command, move forward
   commands: ( M => # ) **
-  coordinates: => @. v+v @orientation
+  coordinates: => @. + @orientation
 }
 
 { UID: uid-5eeb-9bff-d369-0520
