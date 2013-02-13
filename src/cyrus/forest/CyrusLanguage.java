@@ -427,9 +427,15 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         if(ll.size()==2 && "as-is".equals(ll0))   return copyObject(ll.get(1), true);
         if(ll.size()==3 && "join".equals(ll0))    return join(findList(ll.get(2)), findString(ll.get(1)));
         if(ll.size()==2 && "+".equals(ll0))       return Double.valueOf(sumAll(findList(ll.get(1))));
-        if(ll.size()==3 && "-".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) - findDouble(ll.get(2)));
-        if(ll.size()==3 && "+".equals(ll1) && findDouble2(ll.get(0))!=null && findDouble2(ll.get(2))!=null){
-                return Double.valueOf(findDouble(ll.get(0)) + findDouble(ll.get(2)));
+        if(ll.size()==3 && "-".equals(ll1)){
+                Double d0=findDouble2(ll.get(0));
+                Double d2=findDouble2(ll.get(2));
+                if(d0!=null && d2!=null) return Double.valueOf(d0 - d2);
+        }
+        if(ll.size()==3 && "+".equals(ll1)){
+                Double d0=findDouble2(ll.get(0));
+                Double d2=findDouble2(ll.get(2));
+                if(d0!=null && d2!=null) return Double.valueOf(d0 + d2);
         }
         if(ll.size()==3 && "×".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
         if(ll.size()==3 && "*".equals(ll1))       return Double.valueOf(findDouble(ll.get(0)) * findDouble(ll.get(2)));
@@ -484,7 +490,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         if(o==null) return 0;
         if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentDouble(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
-        return isNumber(o)? findNumberIn(o): null;
+        return isNumber(o)? findNumberIn(o): 0;
     }
 
     private Double findDouble2(Object o){
@@ -737,9 +743,9 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     @SuppressWarnings("unchecked")
     private Object copyWithMoreObject(Object o, Object a){
         if(o==null) return null;
-        if(o instanceof String)  return (a!=null? list(o,a): o);
-        if(o instanceof Number)  return (a!=null? list(o,a): o);
-        if(o instanceof Boolean) return (a!=null? list(o,a): o);
+        if(o instanceof String)  return (a!=null? list(copyFindObject(o),copyFindObject(a)): copyFindObject(o));
+        if(o instanceof Number)  return (a!=null? list(o,copyFindObject(a)): o);
+        if(o instanceof Boolean) return (a!=null? list(o,copyFindObject(a)): o);
         if(o instanceof LinkedHashMap) return copyWithMoreHash(((LinkedHashMap)o),(a!=null && a instanceof LinkedHashMap)? (LinkedHashMap)a: null);
         if(o instanceof LinkedList)    return copyWithMoreList(((LinkedList)o),a);
         return o;
@@ -750,7 +756,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         LinkedList r=new LinkedList();
         for(Object o: ll) r.add(copyWithMoreObject(o,null));
         if(a==null) return r;
-        if(a instanceof String)        r.add(a);
+        if(a instanceof String)        r.add(copyFindObject(a));
         if(a instanceof Number)        r.add(a);
         if(a instanceof Boolean)       r.add(a);
         if(a instanceof LinkedHashMap) r.add(copyWithMoreHash(((LinkedHashMap)a),null));

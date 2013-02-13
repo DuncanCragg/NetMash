@@ -4,6 +4,7 @@ To Do
 
 --------------------------------------------------------
 Language
+ - if all data not available for an operation, leave it alone, don't force the type
  - have @ =>, so implement => @
  - "" => won't rewrite?
  - a: < 10  a: 10  a: !10
@@ -26,6 +27,10 @@ Language
     - not sure about uids and snapshot of other items
  - ** needs to be bottom-up not top-down, so check order of rewrites (join bottles before verses)
  - 'list' means sub-list "x: list" matches  "x: a ( b ) c" not "x: a b c"
+ - commas are whitespace outside of quotes
+--------------------------------------------------------
+Types
+ - source and target as generic links to the source of your state and the target of your state
 --------------------------------------------------------
 Queries
  - shouldn't need list: in a match in a list: querying: { list: maybe @match }
