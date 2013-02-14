@@ -265,9 +265,12 @@ public class Utils{
         if(o==null) return false;
         if(o instanceof Number) return true;
         String s=o.toString();
-        if(dateFormat.parse(s, new ParsePosition(0))!=null) return true;
-        try{ Double.parseDouble(s); } catch(NumberFormatException e){ return false; }
-        return true;
+        if(s.length()==0) return false;
+        try{
+            if(dateFormat.parse(s, new ParsePosition(0))!=null) return true;
+            Double.parseDouble(s);
+            return true;
+        } catch(NumberFormatException e){ return false; }
     }
 
     static public double tryDouble(Object o, double d){
