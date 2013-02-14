@@ -26,7 +26,7 @@
   is: contact list rule
   when: "query created, get results and notify back"
   source: { list: maybe @query:match }
-  list: # => @=source:list
+  list: => @=source:list
   content-count: => count @list
   Notifying: => @. with @query
 }

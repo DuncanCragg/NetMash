@@ -32,26 +32,3 @@
   }
 }
 
-{ UID: uid-26ce-5542-6e51-2ef4
-  is: contact list rule
-  when: "query posted, grab it and begin response"
-  Alerted: { is: contact query target: @ }
-  response: # => {
-    UID: new
-    Rules: http://10.0.2.2:8081/o/uid-945c-ebd9-3dd4-eb5c.json uid-38d3-faad-466c-6d8c
-    is: contact list
-    title: "Restricted query results"
-    query: @Alerted
-    source: uid-459e-4ba6-0b4b-5786
-  }
-}
-
-{ UID: uid-38d3-faad-466c-6d8c
-  is: contact list rule
-  when: "query notified, get results and notify back"
-  source: { source: { list: maybe @match } }
-  list: => @=source:source:list cut-out { email: * }
-  content-count: => count @list
-  Notifying: => @. with @query
-}
-

@@ -449,19 +449,24 @@ abstract class HTTPCommon {
         if(w.maxAge>=0){
         sb.append("Cache-Control: max-age="); sb.append(w.maxAge); sb.append("\r\n");}
         sb.append("Content-Type: "); sb.append(cyrus? "text/cyrus": "application/json"); sb.append("\r\n");
-        String content=rewriteUIDsToURLsIfNotServingCyrus(w.toString(percents,cyrus));
+        String content=rewriteUIDsToURLs(w.toString(percents,cyrus),cyrus);
         sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n\r\n");
         if(!head) sb.append(content);
     }
 
-    private String rewriteUIDsToURLsIfNotServingCyrus(String s){
-        if(httpUserAgent==null ||
-           httpUserAgent.indexOf("Cyrus")!= -1 ||
-           UID.notVisible()) return s;
-        return s.replaceAll("\"(uid-[-a-zA-Z0-9]+.json)\"", "\""+UID.localPrePath()+"$1\"")
-                .replaceAll("\"(uid-[-a-zA-Z0-9]+.cyr)\"",  "\""+UID.localPrePath()+"$1\"")
-                .replaceAll("\"(uid-[^\"]+)\"",             "\""+UID.localPrePath()+"$1.json\"")
-                .replaceAll("10.0.2.2","localhost");
+    private String rewriteUIDsToURLs(String s, boolean cyrus){
+        if(UID.notVisible()) return s;
+        String r;
+        if(cyrus){
+            r=s.replaceAll("(\\s)(uid-[-a-zA-Z0-9]+)(|.json|.cyr)(\\s)",
+                           "$1"+UID.localPrePath()+"$2.cyr$4");
+        }
+        else{
+            r=s.replaceAll("\"(uid-[-a-zA-Z0-9]+)(|.json|.cyr)\"",
+                           "\""+UID.localPrePath()+"$1.json\"");
+        }
+        boolean cyrusAgent=(httpUserAgent!=null && httpUserAgent.indexOf("Cyrus")!= -1);
+        return cyrusAgent? r: r.replaceAll("10.0.2.2","localhost");
     }
 
     protected PostResponse readWebObject(ByteBuffer bytebuffer, int contentLength, String httpNotify, String httpReqURL, WebObject webobject, String param){
