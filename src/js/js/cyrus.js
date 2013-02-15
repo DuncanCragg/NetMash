@@ -718,7 +718,7 @@ function Cyrus(){
             $('.cyrus-form').unbind().submit(function(e){
                 if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                 var cyrus=true;
-                var cytext=$(this).find('.cyrus-raw').val().trim();
+                var cytext=$(this).find('.cyrus-raw').val();
                 var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert('Syntax: '+e); }
                 if(!cy){ e.preventDefault(); return; }
                 if(!cyrus){
@@ -737,7 +737,7 @@ function Cyrus(){
                         network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
                     }else{
                         var cyr = '{ '+uidver+'\n  is: '+type+'\n  target: '+targetURL+'\n  user: ".."\n  match: {\n'+cy+'\n  }\n}';
-                        network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), me.topObjectIn, me.topObjectFail);
+                        network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
                     }
                 }else{
                     var json = '{ '+uidver+', "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';

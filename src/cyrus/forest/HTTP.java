@@ -648,7 +648,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
 
     synchronized public void longRequest(String notifieruid){
         if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid), true, false, false); timer.interrupt(); }
-        else try{ longQ.put(notifieruid); }catch(Exception e){}
+        else try{ if(!longQ.contains(notifieruid)) longQ.put(notifieruid); }catch(Exception e){}
     }
 
     private void readPOST(ByteBuffer bytebuffer, String httpNotify) throws Exception{

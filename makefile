@@ -44,6 +44,14 @@ quickdyn: editquickdb androidemu runquickserver logboth editdynamicfile
 
 # -------------------------------------------------------------------
 
+httplog1:
+	egrep '\------|Cache-Notify:|If-None-Match:|ETag:|Content-Type:|Content-Location:|^ +|^{ |^}|HTTP.1.1' src/server/vm1/cyrus.log
+
+httplog2:
+	egrep '\------|Cache-Notify:|If-None-Match:|ETag:|Content-Type:|Content-Location:|^ +|^{ |^}|HTTP.1.1' src/server/vm2/cyrus.log
+
+# -------------------------------------------------------------------
+
 setlanip: veryclean
 	vi makefile
 
