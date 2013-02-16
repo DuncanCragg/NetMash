@@ -3,28 +3,22 @@
 
 function Network(){
 
-    var useLocalStorage = false;//typeof(localStorage)!=='undefined';
     var getting={};
-    var localObjects = {};
-    var localVersions = {};
     var cacheNotify = null;
 
     var me = {
         getJSON: function(url,creds,ok,err){
             var isCN=url.indexOf('/c-n-')!= -1;
             var obj=null;
-            if(useLocalStorage){
-                var objstr = localStorage.getItem('objects:'+url);
-                if(objstr) obj=JSON.parse(objstr);
-            }
-            //else obj=localObjects[url];
+        /*  var objstr = localStorage.getItem('objects:'+url);
+            if(objstr) obj=JSON.parse(objstr); */
             if(obj){
                 ok(obj,'from-cache',null);
             }else{
                 if(me.isGetting(true,url,isCN)) return;
                 var headers = { 'Cache-Notify': me.getCacheNotify() };
                 if(creds) headers.Authorization = me.buildAuth(creds,'GET',url);
-                if(url.endethWith('.json')||url.indexOf('c-n-')!=-1) $.ajax({
+                if(url.endethWith('.json')||url.indexOf('/c-n-')!=-1) $.ajax({
                     url: url,
                     headers: headers,
                     dataType: 'json',
@@ -32,12 +26,12 @@ function Network(){
                         me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
-                        if(url && obj && useLocalStorage){ try{
-                            localStorage.setItem('objects:'+url, JSON.stringify(obj));
+                        if(url && etag) localStorage.setItem('versions:'+getUID(url), etag);
+                     /* if(url){ try{
+                            if(obj) localStorage.setItem('objects:'+url, JSON.stringify(obj));
                             if(etag) localStorage.setItem('versions:'+getUID(url), etag);
                             }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
-                        } else { localObjects[url]=obj; localVersions[url]=etag; }
-if(url && etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+getUID(url), etag);
+                        }*/
                         ok(url,obj,s,x);
                     },
                     error: function(x,s,e){
@@ -52,7 +46,7 @@ if(url && etag && typeof(localStorage)!=='undefined') localStorage.setItem('vers
                         me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
-if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+getUID(url), etag);
+                        if(url && etag) localStorage.setItem('versions:'+getUID(url), etag);
                         ok(url,obj,s,x);
                     },
                     error: function(x,s,e){
@@ -86,7 +80,7 @@ if(etag && typeof(localStorage)!=='undefined') localStorage.setItem('versions:'+
             });
         },
         longGetJSON: function(cn,creds,ok,err){
-            if(sizeof(getting) >0) return;
+            for(var u in getting) if(u.indexOf("/c-n-")== -1) return;
             me.getJSON(cn,creds,ok,err);
         },
         getCacheNotify: function(){
@@ -233,7 +227,7 @@ function JSON2HTML(url){
         getContactAddressHTML: function(addresses){
             if(addresses.constructor!==Array) addresses = [ addresses ];
             var rows=[];
-            for(i in addresses){ var address = addresses[i];
+            for(var i in addresses){ var address = addresses[i];
             rows.push('<div class="adr">');
             if(address.constructor===String)     rows.push('<p class="address">'         +this.getStringHTML(address)+'</p>'); else{
             if(address.postbox    !== undefined) rows.push('<p class="post-office-box">' +this.getAnyHTML(address.postbox)+'</p>');
@@ -322,12 +316,12 @@ function JSON2HTML(url){
             if(!guilist) return;
             if(guilist.constructor===String){ rows.push('<tr><td>'+guilist+'</td></tr>'); return false; }
             var horizontal=false;
-            for(i in guilist){ var item=guilist[i];
+            for(var i in guilist){ var item=guilist[i];
                 if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
             }
             var tagged=(guilist.constructor===Object);
             if(horizontal) rows.push('<tr>');
-            for(i in guilist){
+            for(var i in guilist){
                 var tag=tagged? i: null;
                 var item=guilist[i];
                 if(item.constructor===Object){
@@ -570,14 +564,14 @@ function JSON2HTML(url){
             if(!o || o.constructor!==Object) return '??';
             if(!i) i=2; else i+=2;
             var r='{\n';
-            for(tag in o){ r+=this.indent(i)+tag+': '+this.toCyrusObject(o[tag],i,true)+'\n'; }
+            for(var tag in o){ r+=this.indent(i)+tag+': '+this.toCyrusObject(o[tag],i,true)+'\n'; }
             r+=this.indent(i-2)+'}';
             return r;
         },
         toCyrusList: function(o,i,nobrackets){
             if(!o || o.constructor!==Array) return '??';
             var r=nobrackets? '': '( ';
-            for(x in o){ r+=this.toCyrusObject(o[x],i)+' '; }
+            for(var x in o){ r+=this.toCyrusObject(o[x],i)+' '; }
             r+=nobrackets? '': ' )';
             return r;
         },
@@ -591,8 +585,6 @@ function JSON2HTML(url){
 
 function Cyrus(){
 
-    var useHistory = typeof(history.pushState)==='function';
-    var useLocalStorage = typeof(localStorage)!=='undefined';
     var network = new Network();
     var json2html;
     var topObjectURL = null;
@@ -603,22 +595,18 @@ function Cyrus(){
     var me = {
         init: function(){
             me.getTopObject(window.location);
-            if(!useHistory) setInterval(function(){ me.getTopObject(window.location); }, 200);
         },
         topObjectIn: function(url,obj,s,x){
-            var newURL = x && x.getResponseHeader('Content-Location');
-            if(false && newURL && newURL!=topObjectURL){
-                topObjectURL = newURL;
+            if(url && url!=topObjectURL){
+                topObjectURL = url;
+                history.pushState(null,null,getMashURL(url));
                 json2html = new JSON2HTML(topObjectURL.substring(0,topObjectURL.lastIndexOf('/')+1));
-                var mashURL = getMashURL(topObjectURL);
-                if(useHistory) history.pushState(null,null,mashURL);
-                else { /* $('#content').html('Reloading  '+mashURL); window.location = mashURL; return; */ }
             }
             if(false && s!='mored'){
                 var objMore=obj.More;
                 if(objMore){
                     if(objMore.constructor===String) moreOf[objMore]=obj;
-                    else for(i in objMore) moreOf[objMore[i]]=obj;
+                    else for(var i in objMore) moreOf[objMore[i]]=obj;
                 }
             }
             document.title = json2html.getTitleString(obj).htmlUnEscape();
@@ -668,11 +656,9 @@ function Cyrus(){
         },
         someObjectIn: function(url,obj,s,x){
             if(obj){
-                var notify=obj.Notify;
-                delete obj.Notify;
+                var notify=obj.Notify; delete obj.Notify;
                 if(notify && notify.length && localStorage.getItem('responses:'+getUID(notify[0]))){
-                    me.getTopObject(url,true);
-                    history.pushState(null,null,getMashURL(url));
+                    me.topObjectIn(url,obj,s,x);
                     return;
                 }
             }
@@ -716,7 +702,6 @@ function Cyrus(){
                 me.setUpHTMLEvents();
             });
             $('.cyrus-form').unbind().submit(function(e){
-                if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                 var cyrus=true;
                 var cytext=$(this).find('.cyrus-raw').val();
                 var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert('Syntax: '+e); }
@@ -746,7 +731,6 @@ function Cyrus(){
                 e.preventDefault();
             });
             $('.gui-form').unbind().submit(function(e){
-                if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                 var targetURL=$(this).find('.form-target').val();
                 var uidver=me.getUIDandVer(targetURL);
                 var json = '{ '+uidver+',\n  "is": "form", "gui": "'+targetURL+'", "user": "",\n  "form": {\n   ';
@@ -759,7 +743,6 @@ function Cyrus(){
             });
             $('.rsvp-form').unbind().submit(function(e){
                 if($(this).find('.rsvp-type').val()=='attendable'){
-                    if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
                     var q=$(this).find('.rsvp-attending').is(':checked');
@@ -768,7 +751,6 @@ function Cyrus(){
                     e.preventDefault();
                 }
                 if($(this).find('.rsvp-type').val()=='reviewable'){
-                    if(!useLocalStorage){ e.preventDefault(); alert('your browser is not new enough to run Cyrus reliably'); return; }
                     var withinURL=$(this).find('.rsvp-within').val();
                     var within=me.getUIDOnly(withinURL);
                     if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
@@ -793,7 +775,6 @@ function Cyrus(){
                 me.setCreds(topObjectURL, creds);
                 e.preventDefault();
             });
-            if(!useHistory) return;
             $('.new-state').unbind().click(function(e){
                 var mashURL = $(this).attr('href');
                 me.getTopObject(mashURL);
@@ -863,12 +844,11 @@ function Cyrus(){
         },
         setCreds: function(siteURL, creds){
             var domain = getDomain(siteURL);
-            if(useLocalStorage) localStorage.setItem('credsOfSite:'+domain, JSON.stringify(creds));
+            localStorage.setItem('credsOfSite:'+domain, JSON.stringify(creds));
         },
         getCreds: function(requestURL){
             var domain = getDomain(requestURL);
-            if(useLocalStorage) return JSON.parse(localStorage.getItem('credsOfSite:'+domain));
-            return '';
+            return JSON.parse(localStorage.getItem('credsOfSite:'+domain));
         },
         makeJSONEditRule: function(json,ver,val){
             var j=JSON.parse(json);
@@ -877,7 +857,7 @@ function Cyrus(){
             return JSON.stringify(j);
         },
         mergeHashes: function(a, b){
-            for(x in b){
+            for(var x in b){
 
                 if(!b[x]) continue;
                 typebx=b[x].constructor;
@@ -927,7 +907,7 @@ function Cyrus(){
             }
         },
         mergeLists: function(a, b){
-            for(x in b){
+            for(var x in b){
                 typebx=b[x].constructor;
                 if(typebx===String) if(a.indexOf(b[x])== -1) a.push(b[x]); else
                 if(typebx===Array)  if(a.indexOf(b[x])== -1) a.push(clone(b[x])); else
@@ -963,7 +943,7 @@ String.prototype.htmlUnEscape = function(){
 
 function clone(o){
   var o = (this instanceof Array)? []: {};
-  for(i in this){
+  for(var i in this){
     if(!(this[i] && this.hasOwnProperty(i))) continue;
     if(typeof this[i]=='object') o[i]=clone(this[i]);
     else o[i]=this[i];
@@ -1044,16 +1024,16 @@ function fourHex(){
 
 function toString(o){
     var r='';
-    if(o.constructor===Array)  for(i in o) r+=o[i]+', ';
+    if(o.constructor===Array)  for(var i in o) r+=o[i]+', ';
     else
-    if(o.constructor===Object) for(i in o) r+=i+': '+o[i]+', ';
+    if(o.constructor===Object) for(var i in o) r+=i+': '+o[i]+', ';
     else r=o;
     return r;
 }
 
 function sizeof(o){
     var i=0;
-    for(x in o) i++;
+    for(var x in o) i++;
     return i;
 }
 
