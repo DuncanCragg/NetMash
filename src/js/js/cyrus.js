@@ -4,6 +4,7 @@
 function Network(){
 
     var getting={};
+    var pendingCN={};
     var cacheNotify = null;
 
     var me = {
@@ -80,8 +81,10 @@ function Network(){
             });
         },
         longGetJSON: function(cn,creds,ok,err){
+            pendingCN[cn]=true;
             for(var u in getting) if(u.indexOf("/c-n-")== -1) return;
-            me.getJSON(cn,creds,ok,err);
+            for(var url in pendingCN) me.getJSON(url,creds,ok,err);
+            pendingCN={};
         },
         getCacheNotify: function(){
             if(cacheNotify) return cacheNotify;
@@ -594,7 +597,7 @@ function Cyrus(){
 
     var me = {
         init: function(){
-            me.getTopObject(window.location);
+            me.getTopObject(""+window.location);
         },
         topObjectIn: function(url,obj,s,x){
             if(url && url!=topObjectURL){
@@ -783,12 +786,12 @@ function Cyrus(){
                 return false;
             });
             $(window).bind('popstate', function() {
-                me.getTopObject(window.location);
+                me.getTopObject(""+window.location);
             });
         },
-        getTopObject: function(url,notmash){
+        getTopObject: function(url){
             var previousObjectURL = topObjectURL;
-            topObjectURL = notmash? url: me.getFullObjectURL(url);
+            topObjectURL = me.getFullObjectURL(url);
             if(!topObjectURL || topObjectURL==previousObjectURL) return;
             json2html = new JSON2HTML(topObjectURL.substring(0,topObjectURL.lastIndexOf('/')+1));
             network.getJSON(topObjectURL, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
