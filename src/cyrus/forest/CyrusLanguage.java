@@ -422,8 +422,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         contentList(path,lr);
     }
 
+    private Object eval(LinkedList ll){ return eval(ll, false); }
+
     @SuppressWarnings("unchecked")
-    private Object eval(LinkedList ll){ try{
+    private Object eval(LinkedList ll, boolean listeval){ try{
         if(ll.size()==0) return null;
    //   if(ll.size()==1) return copyFindObject(ll.get(0));
         if(ll.size()==1) return ll;
@@ -592,24 +594,36 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             if(h2!=null){
                 if(h0==null) h0=findHash(ll.get(0));
                 if(h0!=null) return copyCutOutHash(h0,h2);
-                if(lh0==null)lh0=findList(ll.get(0),"hash");
-                if(lh0!=null)return listCopyCutOutHash(lh0,h2);
             }
         }
         if(ll.size()==3 && "with-more".equals(s1)){
             if(h2==null) h2=findHash(ll.get(2));
             if(h2!=null) return copyWithMoreHash(ll.get(0),h2);
         }
+        if(listeval) return null;
+        Object o0=ll.get(0);
+        if(l0==null) l0=findList(o0);
+        if(l0!=null && l0.size() >1){
+           Object r=list0Eval(o0,l0,ll);
+           if(r!=null) return r;
+        }
         return copyFindEach(ll);
+
     }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
 
     @SuppressWarnings("unchecked")
-    private LinkedList listCopyCutOutHash(LinkedList ll, LinkedHashMap dl){
+    private LinkedList list0Eval(Object o0, LinkedList l0, LinkedList ll){
+        LinkedList lr=new LinkedList(ll.subList(1,ll.size()));
         LinkedList r=new LinkedList();
-        for(Object o: ll){
-            if(o instanceof LinkedHashMap) r.add(copyCutOutHash((LinkedHashMap)o,dl));
-            else r.add(o);
-        }
+        int i=0;
+        for(Object o: l0){
+            if(UID.isUID(o)){ if(!isRef(o0)) return null; o=o0+":"+i; }
+            lr.addFirst(o);
+            Object e=eval(lr,true);
+            if(e==null) return null;
+            r.add(e);
+            lr.remove(0);
+        i++; }
         return r;
     }
 
@@ -631,14 +645,14 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private Object findObject(Object o){
         if(o==null) return null;
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentObject(((String)o).substring(1));
+        if(isRef(o)) return eitherBindingOrContentObject(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return o;
     }
 
     private String findString(Object o){
         if(o==null) return "";
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentString(((String)o).substring(1));
+        if(isRef(o)) return eitherBindingOrContentString(((String)o).substring(1));
         if(o instanceof LinkedList){ o=eval((LinkedList)o); if(o==null) return null; }
         if(o instanceof Number) return toNicerString((Number)o);
         return o.toString();
@@ -652,21 +666,21 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private Number findNumber(Object o){
         if(o==null) return null;
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentNumber(((String)o).substring(1));
+        if(isRef(o)) return eitherBindingOrContentNumber(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return isNumber(o)? findANumberIn(o): null;
     }
 
     private Boolean findBoolean(Object o){
         if(o==null) return false;
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentBool(((String)o).substring(1));
+        if(isRef(o)) return eitherBindingOrContentBool(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return isBoolean(o)? findBooleanIn(o): null;
     }
 
     private LinkedHashMap findHash(Object o){
         if(o==null) return new LinkedHashMap();
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentHash(((String)o).substring(1));
+        if(isRef(o)) return eitherBindingOrContentHash(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findHashIn(o);
     }
@@ -675,7 +689,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private LinkedList findList(Object o, String type){
         if(o==null) return new LinkedList();
-        if(o instanceof String && ((String)o).startsWith("@")) return eitherBindingOrContentList(((String)o).substring(1),type);
+        if(isRef(o)) return eitherBindingOrContentList(((String)o).substring(1),type);
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findListIn(o);
     }
@@ -771,9 +785,9 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private Object contentObjectMayJump(String path, String type){
         Object o=null;
-        if(           "list".equals(type)) o=contentListMayJump(path);
-        if(o==null && "hash".equals(type)) o=contentHashMayJump(path);
-        if(o==null)                        o=contentObject(path);
+        if(o==null) o=contentHashMayJump(path);
+        if(o==null) o=contentListMayJump(path);
+        if(o==null) o=contentObject(path);
         if("string" .equals(type) && !(o instanceof String))        return null;
         if("double" .equals(type) && !(o instanceof Number))        return null;
         if("boolean".equals(type) && !(o instanceof Boolean))       return null;
@@ -914,6 +928,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     private Object spawnHash(LinkedHashMap hm){
         try{ return spawn(getClass().newInstance().construct(hm)); } catch(Throwable t){ t.printStackTrace(); }
         return hm;
+    }
+
+    private boolean isRef(Object o){
+        return (o instanceof String) && ((String)o).startsWith("@");
     }
 }
 
