@@ -419,7 +419,7 @@ function JSON2HTML(url){
             rows.push(this.getObjectHeadHTML(this.getTitle(json,'Contacts'), url, false, closed));
             rows.push('<div class="contact-list">');
             if(this.isA('queryable', json, true)){
-            var query='  full-name: xx\n  email: x@x\n';
+            var query='  full-name: *\n  email: *\n';
             rows.push(this.cyrusForm(url,query,'contact query','Query',4));
             }
             if(json.list !== undefined) rows.push(this.getObjectListHTML(null, 'contact', json.list, true));
