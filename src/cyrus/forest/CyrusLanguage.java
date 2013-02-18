@@ -422,10 +422,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         contentList(path,lr);
     }
 
-    private Object eval(LinkedList ll){ return eval(ll, false); }
+    private Object eval(LinkedList ll){ return eval(ll, null); }
 
     @SuppressWarnings("unchecked")
-    private Object eval(LinkedList ll, boolean listeval){ try{
+    private Object eval(LinkedList ll, String listEvalPath){ try{
         if(ll.size()==0) return null;
    //   if(ll.size()==1) return copyFindObject(ll.get(0));
         if(ll.size()==1) return ll;
@@ -600,10 +600,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             if(h2==null) h2=findHash(ll.get(2));
             if(h2!=null){
                 if(h0==null) h0=findHash(ll.get(0));
-                if(h0!=null) return copyWithMoreHash(h0,h2);
+                if(h0!=null) return copyWithMoreHash(h0,h2,listEvalPath);
             }
         }
-        if(listeval) return null;
+        if(listEvalPath!=null) return null;
         Object o0=ll.get(0);
         if(l0==null) l0=findList(o0);
         if(l0!=null && l0.size() >1){
@@ -616,13 +616,15 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     @SuppressWarnings("unchecked")
     private LinkedList list0Eval(Object o0, LinkedList l0, LinkedList ll){
+        boolean isref=isRef(o0);
         LinkedList lr=new LinkedList(ll.subList(1,ll.size()));
         LinkedList r=new LinkedList();
         int i=0;
         for(Object o: l0){
-            if(UID.isUID(o)){ if(!isRef(o0)) return null; o=o0+":"+i; }
+            String pk=isref? o0+":"+i: "";
+            if(UID.isUID(o) && isref) o=pk;
             lr.addFirst(o);
-            Object e=eval(lr,true);
+            Object e=eval(lr,pk);
             if(e==null) return null;
             r.add(e);
             lr.remove(0);
@@ -633,14 +635,14 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     @SuppressWarnings("unchecked")
     private LinkedList copyFindEach(List ll){
         LinkedList r=new LinkedList();
-        for(Object o: ll){ Object fo=copyFindObject(o); if(fo!=null) r.add(fo); }
+        for(Object o: ll) maybeAdd(r,copyFindObject(o));
         return r;
     }
 
     @SuppressWarnings("unchecked")
     private LinkedList findEach(List ll){
         LinkedList r=new LinkedList();
-        for(Object o: ll){ Object fo=findObject(o); if(fo!=null) r.add(fo); }
+        for(Object o: ll) maybeAdd(r,findObject(o));
         return r;
     }
 
@@ -777,10 +779,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     @SuppressWarnings("unchecked")
     private Object objectsAt(LinkedList<String> ll, String p){
         LinkedList r=new LinkedList();
-        for(String s: ll){
-            Object o=contentObjectMayJump(s+(p==null? "": ":"+p));
-            if(o!=null) r.add(o);
-        }
+        for(String s: ll) maybeAdd(r,contentObjectMayJump(s+(p==null? "": ":"+p)));
         return r.isEmpty()? null: (r.size()==1? r.get(0): r);
     }
 
@@ -817,7 +816,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     @SuppressWarnings("unchecked")
     private Object copyList(LinkedList ll, boolean asis){
         LinkedList r=new LinkedList();
-        for(Object o: ll) r.add(asis? copyObject(o,true): copyFindObject(o));
+        for(Object o: ll) maybeAdd(r,asis? copyObject(o,true): copyFindObject(o));
         return r;
     }
 
@@ -853,7 +852,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         for(Object o: ll){
             if(d!=null && d instanceof String && (((String)d).equals("*") || o.equals(d))) continue;
             if(d!=null && d instanceof LinkedList && (((LinkedList)d).contains(o))) continue;
-            r.add(copyCutOutObject(o,null));
+            maybeAdd(r,copyCutOutObject(o,null));
         }
         return r;
     }
@@ -861,7 +860,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     // ----------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private Object copyWithMoreHash(LinkedHashMap<String,Object> hm, LinkedHashMap<String,Object> ha){
+    private Object copyWithMoreHash(LinkedHashMap<String,Object> hm, LinkedHashMap<String,Object> ha, String lep){
         boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
         for(Map.Entry<String,Object> entry: hm.entrySet()){
@@ -869,39 +868,39 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             Object o=entry.getValue();
             Object a=(ha!=null)? ha.get(k): null;
             if(k.equals("UID")){ if(o.equals("new")) spawned=true; }
-            else r.put(k, copyWithMoreObject(o,a));
+            else maybePut(r, k, copyWithMoreObject(o,a,lep));
         }
         if(ha!=null) for(Map.Entry<String,Object> entry: ha.entrySet()){
             String k=entry.getKey();
             Object a=entry.getValue();
             if(hm.get(k)!=null) continue;
             if(k.equals("UID")){ if(a.equals("new")) spawned=true; }
-            else r.put(k, copyWithMoreObject(a,null));
+            else maybePut(r, k, copyWithMoreObject(a,null,lep));
         }
         return spawned? spawnHash(r): r;
     }
 
     @SuppressWarnings("unchecked")
-    private Object copyWithMoreObject(Object o, Object a){
+    private Object copyWithMoreObject(Object o, Object a, String lep){
         if(o==null) return null;
-        if(o instanceof String)  return (a!=null? list(copyFindObject(o),copyFindObject(a)): copyFindObject(o));
-        if(o instanceof Number)  return (a!=null? list(o,copyFindObject(a)): o);
-        if(o instanceof Boolean) return (a!=null? list(o,copyFindObject(a)): o);
-        if(o instanceof LinkedHashMap) return copyWithMoreHash(((LinkedHashMap)o),(a!=null && a instanceof LinkedHashMap)? (LinkedHashMap)a: null);
-        if(o instanceof LinkedList)    return copyWithMoreList(((LinkedList)o),a);
+        if(o instanceof String)  return (a!=null? list(copyFindObjectFixRefs(o,lep),copyFindObjectFixRefs(a,lep)): copyFindObjectFixRefs(o,lep));
+        if(o instanceof Number)  return (a!=null? list(o,copyFindObjectFixRefs(a,lep)): o);
+        if(o instanceof Boolean) return (a!=null? list(o,copyFindObjectFixRefs(a,lep)): o);
+        if(o instanceof LinkedHashMap) return copyWithMoreHash(((LinkedHashMap)o),(a!=null && a instanceof LinkedHashMap)? (LinkedHashMap)a: null,lep);
+        if(o instanceof LinkedList)    return copyWithMoreList(((LinkedList)o),a,lep);
         return o;
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedList copyWithMoreList(LinkedList ll, Object a){
+    private LinkedList copyWithMoreList(LinkedList ll, Object a, String lep){
         LinkedList r=new LinkedList();
-        for(Object o: ll) r.add(copyWithMoreObject(o,null));
+        for(Object o: ll) maybeAdd(r,copyWithMoreObject(o,null,lep));
         if(a==null) return r;
-        if(a instanceof String)        r.add(copyFindObject(a));
-        if(a instanceof Number)        r.add(a);
-        if(a instanceof Boolean)       r.add(a);
-        if(a instanceof LinkedHashMap) r.add(copyWithMoreHash(((LinkedHashMap)a),null));
-        if(a instanceof LinkedList)    r.addAll(copyWithMoreList(((LinkedList)a),null));
+        if(a instanceof String)        maybeAdd(r,copyFindObjectFixRefs(a,lep));
+        if(a instanceof Number)        maybeAdd(r,a);
+        if(a instanceof Boolean)       maybeAdd(r,a);
+        if(a instanceof LinkedHashMap) maybeAdd(r,copyWithMoreHash(((LinkedHashMap)a),null,lep));
+        if(a instanceof LinkedList)    r.addAll(copyWithMoreList(((LinkedList)a),null,lep));
         return r;
     }
 
@@ -909,6 +908,20 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         try{ return spawn(getClass().newInstance().construct(hm)); } catch(Throwable t){ t.printStackTrace(); }
         return hm;
     }
+
+    private Object copyFindObjectFixRefs(Object o, String lep){
+        if(!(o instanceof String) || lep==null || lep.length()==0) return copyFindObject(o);
+        String s=(String)o;
+        String base=lep.substring(0,lep.lastIndexOf(":"));
+        if(s.startsWith(base)) s=s.replace(base,lep);
+        return copyFindObject(s);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void maybePut(LinkedHashMap hm, String key, Object val){ if(val!=null) hm.put(key,val); }
+
+    @SuppressWarnings("unchecked")
+    private void maybeAdd(LinkedList ll, Object val){ if(val!=null) ll.add(val); }
 
     private boolean isRef(Object o){
         return (o instanceof String) && ((String)o).startsWith("@");
