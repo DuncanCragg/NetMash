@@ -187,7 +187,7 @@ public class CyrusLanguage extends WebObject {
             return ok;
         }
         if(list.size()==4 && list.get(0).equals("within")){
-            return withinOf(findDouble(list.get(1)), contentList(path), findList(list.get(3),"double"));
+            return withinOf(findDouble(list.get(1)), contentList(path), findList(list.get(3)));
         }
         int becomes=list.indexOf("=>");
         if(becomes!= -1){
@@ -685,11 +685,9 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         return findHashIn(o);
     }
 
-    private LinkedList findList(Object o){ return findList(o,null); }
-
-    private LinkedList findList(Object o, String type){
+    private LinkedList findList(Object o){
         if(o==null) return new LinkedList();
-        if(isRef(o)) return eitherBindingOrContentList(((String)o).substring(1),type);
+        if(isRef(o)) return eitherBindingOrContentList(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findListIn(o);
     }
@@ -716,7 +714,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private Object eitherBindingOrContentObject(String path){
         if(path.startsWith("."))  return contentObject(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return getBinding(path.substring(1),"object");
+        if(path.startsWith("="))  return getBinding(path.substring(1));
         Object o=contentObject(path);
         if(o!=null) return o;
         return contentAll(path);
@@ -724,25 +722,25 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private String eitherBindingOrContentString(String path){
         if(path.startsWith("."))  return contentString(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findStringIn(getBinding(path.substring(1),"string"));
+        if(path.startsWith("="))  return findStringIn(getBinding(path.substring(1)));
         return contentString(path);
     }
 
     private Number eitherBindingOrContentNumber(String path){
         if(path.startsWith("."))  return contentNumber(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1),"double"));
+        if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1)));
         return contentNumber(path);
     }
 
     private Boolean eitherBindingOrContentBool(String path){
         if(path.startsWith("."))  return contentBool(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1),"boolean"));
+        if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1)));
         return contentBool(path);
     }
 
-    private LinkedList eitherBindingOrContentList(String path, String type){
+    private LinkedList eitherBindingOrContentList(String path){
         if(path.startsWith("."))  return contentListMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findListIn(getBinding(path.substring(1),type));
+        if(path.startsWith("="))  return findListIn(getBinding(path.substring(1)));
         LinkedList ll=contentListMayJump(path);
         if(ll!=null) return ll;
         return contentAll(path);
@@ -750,17 +748,17 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private LinkedHashMap eitherBindingOrContentHash(String path){
         if(path.startsWith("."))  return contentHashMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findHashIn(getBinding(path.substring(1),"hash"));
+        if(path.startsWith("="))  return findHashIn(getBinding(path.substring(1)));
         return contentHashMayJump(path);
     }
 
     // ----------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private Object getBinding(String path, String type){
+    private Object getBinding(String path){
         String pk=path;
         LinkedList<String> ll=bindings.get(pk);
-        if(ll!=null) return objectsAt(ll,null,type);
+        if(ll!=null) return objectsAt(ll,null);
         do{
             int e=pk.lastIndexOf(":");
             if(e== -1) return null;
@@ -768,32 +766,19 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             pk=pk.substring(0,e);
             ll=bindings.get(pk);
             if(ll==null) continue;
-            return objectsAt(ll,p,type);
+            return objectsAt(ll,p);
 
         }while(true);
     }
 
     @SuppressWarnings("unchecked")
-    private Object objectsAt(LinkedList<String> ll, String p, String type){
+    private Object objectsAt(LinkedList<String> ll, String p){
         LinkedList r=new LinkedList();
         for(String s: ll){
-            Object o=contentObjectMayJump(s+(p==null? "": ":"+p),type);
+            Object o=contentObjectMayJump(s+(p==null? "": ":"+p));
             if(o!=null) r.add(o);
         }
         return r.isEmpty()? null: (r.size()==1? r.get(0): r);
-    }
-
-    private Object contentObjectMayJump(String path, String type){
-        Object o=null;
-        if(o==null) o=contentHashMayJump(path);
-        if(o==null) o=contentListMayJump(path);
-        if(o==null) o=contentObject(path);
-        if("string" .equals(type) && !(o instanceof String))        return null;
-        if("double" .equals(type) && !(o instanceof Number))        return null;
-        if("boolean".equals(type) && !(o instanceof Boolean))       return null;
-        if("hash"   .equals(type) && !(o instanceof LinkedHashMap)) return null;
-        if("list"   .equals(type) && !(o instanceof LinkedList))    return null;
-        return o;
     }
 
     // ----------------------------------------------------

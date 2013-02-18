@@ -213,6 +213,15 @@ public class WebObject {
         }
     }
 
+    /** Get Object at this path, maybe jumping for a hash or list. */
+    public Object contentObjectMayJump(String path){
+        Object o=null;
+        if(o==null) o=contentHashMayJump(path);
+        if(o==null) o=contentListMayJump(path);
+        if(o==null) o=contentObject(path);
+        return o;
+    }
+
     private boolean pathMatches(String path, String match){
         if(path.startsWith(":")) path=path.substring(1);
         if(path.endsWith(  ":")) path=path.substring(0,path.length()-1);
