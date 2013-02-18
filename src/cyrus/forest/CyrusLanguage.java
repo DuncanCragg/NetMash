@@ -438,8 +438,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         Double d3=null;
         Boolean b1=null;
         LinkedList l0=null;
+        LinkedList lh0=null;
         LinkedList l1=null;
         LinkedList l2=null;
+        LinkedHashMap h0=null;
         LinkedHashMap h2=null;
         if(ll.size()==2 && "count".equals(s0)){
             if(l1==null) l1=findList(ll.get(1));
@@ -587,7 +589,12 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         }
         if(ll.size()==3 && "cut-out".equals(s1)){
             if(h2==null) h2=findHash(ll.get(2));
-            if(h2!=null) return copyCutOutHash(ll.get(0),h2);
+            if(h2!=null){
+                if(h0==null) h0=findHash(ll.get(0));
+                if(h0!=null) return copyCutOutHash(h0,h2);
+                if(lh0==null)lh0=findList(ll.get(0),"hash");
+                if(lh0!=null)return listCopyCutOutHash(lh0,h2);
+            }
         }
         if(ll.size()==3 && "with-more".equals(s1)){
             if(h2==null) h2=findHash(ll.get(2));
@@ -595,6 +602,16 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         }
         return copyFindEach(ll);
     }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
+
+    @SuppressWarnings("unchecked")
+    private LinkedList listCopyCutOutHash(LinkedList ll, LinkedHashMap dl){
+        LinkedList r=new LinkedList();
+        for(Object o: ll){
+            if(o instanceof LinkedHashMap) r.add(copyCutOutHash((LinkedHashMap)o,dl));
+            else r.add(o);
+        }
+        return r;
+    }
 
     @SuppressWarnings("unchecked")
     private LinkedList copyFindEach(List ll){
@@ -757,6 +774,11 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         if(           "list".equals(type)) o=contentListMayJump(path);
         if(o==null && "hash".equals(type)) o=contentHashMayJump(path);
         if(o==null)                        o=contentObject(path);
+        if("string" .equals(type) && !(o instanceof String))        return null;
+        if("double" .equals(type) && !(o instanceof Number))        return null;
+        if("boolean".equals(type) && !(o instanceof Boolean))       return null;
+        if("hash"   .equals(type) && !(o instanceof LinkedHashMap)) return null;
+        if("list"   .equals(type) && !(o instanceof LinkedList))    return null;
         return o;
     }
 
@@ -808,27 +830,6 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         if(o instanceof LinkedHashMap) return copyCutOutHash(((LinkedHashMap)o),(d!=null && d instanceof LinkedHashMap)? (LinkedHashMap)d: null);
         if(o instanceof LinkedList)    return copyCutOutList(((LinkedList)o),d);
         return o;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object copyCutOutHash(Object ll0, LinkedHashMap dl){
-        if(ll0==null) return null;
-        LinkedHashMap hm=findHash(ll0);
-        if(hm!=null) return copyCutOutHash(hm,dl);
-        return listCopyCutOutHash(ll0,dl);
-    }
-
-    @SuppressWarnings("unchecked")
-    private LinkedList listCopyCutOutHash(Object ll0, LinkedHashMap dl){
-        LinkedList ll=findList(ll0,"hash");
-        if(ll==null) return null;
-        LinkedList r=new LinkedList();
-        int i=0;
-        for(Object o: ll){
-            if(o instanceof LinkedHashMap) r.add(copyCutOutHash((LinkedHashMap)o,dl));
-            else r.add(o);
-        i++; }
-        return r;
     }
 
     @SuppressWarnings("unchecked")
