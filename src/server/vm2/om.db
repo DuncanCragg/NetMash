@@ -76,7 +76,7 @@
   pp: { x: 4 y: # }{ x: 4 y: # }
   cc: { x: b } !=> @.
   dd: { a: b  z: y } { UID: /uid-/  x: a b  y: c d j k  z: e f g  q: h i  p: q r }
-  ee: # => @dd cut-out { z: * }
+  ee: # => ( @dd cut-out { z: * } ) with-more { zz: aa }
   ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
 }

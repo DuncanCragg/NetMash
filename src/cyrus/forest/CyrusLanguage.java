@@ -598,7 +598,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         }
         if(ll.size()==3 && "with-more".equals(s1)){
             if(h2==null) h2=findHash(ll.get(2));
-            if(h2!=null) return copyWithMoreHash(ll.get(0),h2);
+            if(h2!=null){
+                if(h0==null) h0=findHash(ll.get(0));
+                if(h0!=null) return copyWithMoreHash(h0,h2);
+            }
         }
         if(listeval) return null;
         Object o0=ll.get(0);
@@ -856,14 +859,6 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     }
 
     // ----------------------------------------------------
-
-    @SuppressWarnings("unchecked")
-    private Object copyWithMoreHash(Object ll0, LinkedHashMap ha){
-        if(ll0==null) return null;
-        LinkedHashMap hm=findHash(ll0);
-        if(hm!=null) return copyWithMoreHash(hm,ha);
-        return null; // listCopyWithMoreHash(ll0,ha);
-    }
 
     @SuppressWarnings("unchecked")
     private Object copyWithMoreHash(LinkedHashMap<String,Object> hm, LinkedHashMap<String,Object> ha){
