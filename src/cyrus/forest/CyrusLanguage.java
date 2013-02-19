@@ -422,7 +422,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         contentList(path,lr);
     }
 
-    private Object eval(LinkedList ll){ return eval(ll, null); }
+    private Object eval(LinkedList ll){ Object o=eval(ll, null); /*logXX("eval",System.identityHashCode(ll),ll,"===",o);*/ return o; }
 
     @SuppressWarnings("unchecked")
     private Object eval(LinkedList ll, String listEvalPath){ try{
@@ -779,7 +779,8 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
     @SuppressWarnings("unchecked")
     private Object objectsAt(LinkedList<String> ll, String p){
         LinkedList r=new LinkedList();
-        for(String s: ll) maybeAdd(r,contentObjectMayJump(s+(p==null? "": ":"+p)));
+        String cp=(p==null)? "": ":"+p;
+        for(String s: ll) maybeAdd(r,contentObjectMayJump(s+cp));
         return r.isEmpty()? null: (r.size()==1? r.get(0): r);
     }
 

@@ -40,7 +40,7 @@
 { UID: uid-620a-6b9d-5535-949d
   is: contact list rule
   when: "results list updates, update self"
-  list: => @results:list cut-out { email: * }
+  list: => ( @results:list with-more { More: @results:list:UID } ) cut-out { email: * }
   content-count: => @results:content-count
   title: => "Restricted query results"
   Notifying: => @. with @original-query

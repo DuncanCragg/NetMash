@@ -3,6 +3,10 @@ To Do
 -----
 
 --------------------------------------------------------
+Current
+ - how to determine whether to rewrite to uids or to expand for further reduction?
+ - eval() redundancies: memoise thru' hashcode? esp fib! or findXXX break down and do once
+--------------------------------------------------------
 Language
  - list-at-a-time generic code scans for list of right type (or elements of list of right type?)
  - boolean false is also null/empty/""?
