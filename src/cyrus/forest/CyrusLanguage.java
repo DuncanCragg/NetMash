@@ -422,6 +422,8 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         contentList(path,lr);
     }
 
+    // ----------------------------------------------------
+
     private Object eval(LinkedList ll){ Object o=eval(ll, null); /*logXX("eval",System.identityHashCode(ll),ll,"===",o);*/ return o; }
 
     @SuppressWarnings("unchecked")
@@ -632,6 +634,8 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         return r;
     }
 
+    // ----------------------------------------------------
+
     @SuppressWarnings("unchecked")
     private LinkedList copyFindEach(List ll){
         LinkedList r=new LinkedList();
@@ -645,8 +649,6 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         for(Object o: ll) maybeAdd(r,findObject(o));
         return r;
     }
-
-    // ----------------------------------------------------
 
     private Object findObject(Object o){
         if(o==null) return null;

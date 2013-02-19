@@ -472,10 +472,13 @@ public class WebObject {
         statemod = updatingState.boolPath(path, val) || statemod;
     }
 
-    /** Get hash at path, jumping over uid to next object if necessary. */
+    /** Get hash at path, jumping over uid to next object if necessary, or looking for a
+      * single hash inside a list, or jumping over a uid /and/ a list:. */
     public LinkedHashMap contentHashMayJump(String path){
         LinkedHashMap hm=contentHash(path);
         if(hm!=null) return hm;
+        LinkedList ll=contentListMayJump(path);
+        if(ll!=null && ll.size()==1 && ll.get(0) instanceof LinkedHashMap) return (LinkedHashMap)ll.get(0);
         return contentHash(path+":#");
     }
 
