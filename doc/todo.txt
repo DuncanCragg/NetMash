@@ -9,7 +9,6 @@ Current
 --------------------------------------------------------
 Language
  - list-at-a-time generic code scans for list of right type (or elements of list of right type?)
- - boolean false is also null/empty/""?
  - if all data not available for an operation, leave it alone, don't force the type
  - have @ =>, so implement => @
  - "" => won't rewrite?

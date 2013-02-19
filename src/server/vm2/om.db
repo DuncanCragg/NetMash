@@ -51,6 +51,7 @@
   cc: # => @bb cut-out { x: b y: * z: e g }
   dd: # => { g: b z: y } ( @bb with-more { UID: new  y: j k  q: h i  p: r  g: c } )
   **: 1 s => 1 b
+  bl: false => true
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -79,6 +80,7 @@
   ee: # => ( @dd with-more { u: @dd:UID  h: @dd:g } ) cut-out { z: * }
   ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
+  bl: "true" => "false"
 }
 
 { UID: uid-1de5-4d69-667a-56e4
@@ -97,6 +99,7 @@
   ee: { g: b z: # u: # h: b } { x: b z: # u: /uid-/ h: c }
   xx: #
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
+  bl: false
 }
 
 { UID: uid-61d6-65c9-2931-505b

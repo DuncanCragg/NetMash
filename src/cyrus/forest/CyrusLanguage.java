@@ -267,8 +267,9 @@ public class CyrusLanguage extends WebObject {
         if(v.equals("@"))       return contentIsThis(pk);
         if(v.equals("number"))  return isNumber( contentObject(pk));
         if(v.equals("boolean")) return isBoolean(contentObject(pk));
+        if(isBoolean(v))        return scanBoolean(findBooleanIn(v),pk);
         if(v.startsWith("/") && v.endsWith("/")) return regexMatch(v.substring(1,v.length()-1),pk);
-        if(v.startsWith("@")) return scanType(findObject(v),pk);
+        if(v.startsWith("@"))   return scanType(findObject(v),pk);
         return false;
     }
 
@@ -281,7 +282,7 @@ public class CyrusLanguage extends WebObject {
     private boolean scanBoolean(Boolean v, String pk){
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         Object o=contentObject(pk);
-        return isBoolean(o) && findBooleanIn(o)==v;
+        return o==null || (isBoolean(o) && findBooleanIn(o)==v);
     }
 
     private boolean scanListFromSingleIfNotAlready(Object v, String pk){
