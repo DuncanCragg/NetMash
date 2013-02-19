@@ -721,7 +721,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private Object eitherBindingOrContentObject(String path){
         if(path.startsWith("."))  return contentObject(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return getBinding(path.substring(1));
+        if(path.startsWith("="))  return getBinding(path.substring(1),false);
         Object o=contentObject(path);
         if(o!=null) return o;
         return contentAll(path);
@@ -729,25 +729,25 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private String eitherBindingOrContentString(String path){
         if(path.startsWith("."))  return contentString(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findStringIn(getBinding(path.substring(1)));
+        if(path.startsWith("="))  return findStringIn(getBinding(path.substring(1),true));
         return contentString(path);
     }
 
     private Number eitherBindingOrContentNumber(String path){
         if(path.startsWith("."))  return contentNumber(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1)));
+        if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1),true));
         return contentNumber(path);
     }
 
     private Boolean eitherBindingOrContentBool(String path){
         if(path.startsWith("."))  return contentBool(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1)));
+        if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1),true));
         return contentBool(path);
     }
 
     private LinkedList eitherBindingOrContentList(String path){
         if(path.startsWith("."))  return contentListMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findListIn(getBinding(path.substring(1)));
+        if(path.startsWith("="))  return findListIn(getBinding(path.substring(1),true));
         LinkedList ll=contentListMayJump(path);
         if(ll!=null) return ll;
         return contentAll(path);
@@ -755,17 +755,17 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
 
     private LinkedHashMap eitherBindingOrContentHash(String path){
         if(path.startsWith("."))  return contentHashMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findHashIn(getBinding(path.substring(1)));
+        if(path.startsWith("="))  return findHashIn(getBinding(path.substring(1),true));
         return contentHashMayJump(path);
     }
 
     // ----------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private Object getBinding(String path){
+    private Object getBinding(String path, boolean jump){
         String pk=path;
         LinkedList<String> ll=bindings.get(pk);
-        if(ll!=null) return objectsAt(ll,null);
+        if(ll!=null) return objectsAt(ll,null,jump);
         do{
             int e=pk.lastIndexOf(":");
             if(e== -1) return null;
@@ -773,16 +773,16 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             pk=pk.substring(0,e);
             ll=bindings.get(pk);
             if(ll==null) continue;
-            return objectsAt(ll,p);
+            return objectsAt(ll,p,jump);
 
         }while(true);
     }
 
     @SuppressWarnings("unchecked")
-    private Object objectsAt(LinkedList<String> ll, String p){
+    private Object objectsAt(LinkedList<String> ll, String p, boolean jump){
         LinkedList r=new LinkedList();
         String cp=(p==null)? "": ":"+p;
-        for(String s: ll) maybeAdd(r,contentObjectMayJump(s+cp));
+        for(String s: ll) maybeAdd(r, jump? contentObjectMayJump(s+cp): contentObject(s+cp));
         return r.isEmpty()? null: (r.size()==1? r.get(0): r);
     }
 
