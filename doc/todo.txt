@@ -4,8 +4,12 @@ To Do
 
 --------------------------------------------------------
 Current
- - how to determine whether to rewrite to uids or to expand for further reduction?
- - eval() redundancies: memoise thru' hashcode? esp fib! or findXXX break down and do once
+ - lookup table for derivative query result entries
+    - not @ with-more/ cut-out - impl same mech to iterate
+    - with-more { @Alerted:list:More: @Alerted:list:UID } adds all at once .. or ( @alm :: @alu )/{(@alm): @alu}
+    - then { uid-1: uid-2 } select @..:UID else ( with-more .. new )
+    - use reducible expressions to save partial details
+ - still missing some long poll results
 --------------------------------------------------------
 Language
  - list-at-a-time generic code scans for list of right type (or elements of list of right type?)
@@ -25,6 +29,7 @@ Language
     - have internal links in data, not just UIDs? shared internal data structures
  - ( format ".. %s .. " @x ) --> ( ".. @x .. " )   ".. % .. " % (@x - 1) like Python
  - efficiency:
+    - eval() redundancies: memoise thru' hashcode? esp fib! or findXXX break down and do once
     - collect all changed paths by accumulating rewrites paths
     - roll up to base paths - may roll up to top
     - just "" base path on Ver 1
@@ -45,11 +50,9 @@ Queries
  - search results:
     - full inline, partial based on query filter
     - modify then spawn, spawn then modify (different threading)
-       - uid => @. with-more { UID: new Rules: } something: x => stop looping
+       - uid => @. with-more { UID: new Rules: }             something: x => stop looping
        - uid => ( @. cut-out { .. } ) with-more { UID: new } something: x => stop looping
     - filtered/restricted can just add filter to the query, then spawn itself
-    - can't keep spawning new copies - loops anyway and just wrong
-    - { More: @. } to save the uid not copy?
  - top item   queries: @Alerted !=> with @Alerted
 --------------------------------------------------------
 Web Tutorial

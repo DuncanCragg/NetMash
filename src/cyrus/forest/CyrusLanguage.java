@@ -503,7 +503,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             if(l2!=null && s1!=null) return join(l2, s1);
         }
         if(ll.size() >=2 && "with".equals(s1)){
-            if(l0==null) l0=findList(ll.get(0));
+            if(l0==null) l0=findList(ll.get(0),false);
             if(l0!=null) return listWith(copyFindEach(l0),copyFindEach(ll.subList(2,ll.size())));
         }
         if(ll.size()==2 && "+".equals(s0)){
@@ -596,26 +596,30 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
             if(o02!=null) return copyFindObject(o02);
         }
+        boolean trylist=false;
         if(ll.size()==3 && "cut-out".equals(s1)){
+            if(h0==null) h0=findHash(ll.get(0));
+            if(l0==null) l0=findList(ll.get(0));
+            trylist=(l0!=null && l0.size() >1);
             if(h2==null) h2=findHash(ll.get(2));
-            if(h2!=null){
-                if(h0==null) h0=findHash(ll.get(0));
-                if(h0!=null) return copyCutOutHash(h0,h2);
-            }
+            if(h0==null && !trylist) return null;
+            if(h0!=null && h2==null) return copyObject(h0, false);
+            if(h0!=null && h2!=null) return copyCutOutHash(h0,h2);
         }
         if(ll.size()==3 && "with-more".equals(s1)){
+            if(h0==null) h0=findHash(ll.get(0));
+            if(l0==null) l0=findList(ll.get(0));
+            trylist=(l0!=null && l0.size() >1);
             if(h2==null) h2=findHash(ll.get(2));
-            if(h2!=null){
-                if(h0==null) h0=findHash(ll.get(0));
-                if(h0!=null) return copyWithMoreHash(h0,h2,listEvalPath);
-            }
+            if(h0==null && !trylist) return null;
+            if(h0!=null && h2==null) return copyObject(h0, false);
+            if(h0!=null && h2!=null) return copyWithMoreHash(h0,h2,listEvalPath);
         }
         if(listEvalPath!=null) return null;
-        Object o0=ll.get(0);
-        if(l0==null) l0=findList(o0);
-        if(l0!=null && l0.size() >1){
-           Object r=list0Eval(o0,l0,ll);
-           if(r!=null) return r;
+        if(trylist){
+            Object o0=ll.get(0);
+            Object r=list0Eval(o0,l0,ll);
+            if(r!=null) return r;
         }
         return copyFindEach(ll);
 
@@ -632,8 +636,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             if(UID.isUID(o) && isref) o=pk;
             lr.addFirst(o);
             Object e=eval(lr,pk);
-            if(e==null) return null;
-            r.add(e);
+            if(e!=null) r.add(e);
             lr.remove(0);
         i++; }
         return r;
@@ -697,9 +700,11 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         return findHashIn(o);
     }
 
-    private LinkedList findList(Object o){
+    private LinkedList findList(Object o){ return findList(o,true); }
+
+    private LinkedList findList(Object o, boolean jump){
         if(o==null) return new LinkedList();
-        if(isRef(o)) return eitherBindingOrContentList(((String)o).substring(1));
+        if(isRef(o)) return eitherBindingOrContentList(((String)o).substring(1), jump);
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findListIn(o);
     }
@@ -750,9 +755,9 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
         return contentBool(path);
     }
 
-    private LinkedList eitherBindingOrContentList(String path){
+    private LinkedList eitherBindingOrContentList(String path, boolean jump){
         if(path.startsWith("."))  return contentListMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findListIn(getBinding(path.substring(1),true));
+        if(path.startsWith("="))  return findListIn(getBinding(path.substring(1),jump));
         LinkedList ll=contentListMayJump(path);
         if(ll!=null) return ll;
         return contentAll(path);

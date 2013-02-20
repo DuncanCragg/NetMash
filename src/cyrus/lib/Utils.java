@@ -16,7 +16,7 @@ public class Utils{
     static public void log(Object o){ log(enableLogging, o); }
 
     @SuppressWarnings("unchecked")
-    static public void logXX(Object...args){ log(enableLogging, "xxxxxxx "+join(new LinkedList(Arrays.asList(args))," ")); }
+    static public void logXX(Object...args){ log(enableLogging, "xxxxxxx "+join(new LinkedList(Arrays.asList(args))," :: ")); }
 
     static public void logZero(Object o){ firstStamp=System.currentTimeMillis(); lastStamp=firstStamp; log(enableLogging, o); }
 
@@ -218,7 +218,7 @@ public class Utils{
     static public LinkedHashMap findHashIn(Object o){
         if(o==null) return null;
         if(o instanceof LinkedHashMap) return (LinkedHashMap)o;
-        return null;
+        return findHashIn(getAnySingle(o));
     }
 
     static public String findStringIn(Object o){
@@ -289,6 +289,12 @@ public class Utils{
         if(o==null) return null;
         if(o instanceof Number) return ((Number)o).doubleValue();
         try{ return Double.parseDouble(o.toString()); } catch(NumberFormatException e){ return null; }
+    }
+
+    static public Object getAnySingle(Object o){
+        if(!(o instanceof LinkedList)) return null;
+        LinkedList ll=(LinkedList)o;
+        return (ll.size()==1)? ll.get(0): null;
     }
 
     static public Object makeBestObject(String s){
