@@ -355,14 +355,14 @@ public class CyrusLanguage extends WebObject {
 
             LinkedList ll=entry.getValue();
             if(ll.size()==0) continue;
-            if(ll.size() >=3 && "@.".equals(ll.get(0)) && "with".equals(ll.get(1))){
+            if(ll.size() >=2 && "@.".equals(ll.get(0)) && "with".equals(ll.get(1))){
                 LinkedList e=copyFindEach(ll.subList(2,ll.size()));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) notifying(o.toString());
                 else contentSetAddAll(currentRewritePath, e);
             }
             else
-            if(ll.size() >=3 && "@.".equals(ll.get(0)) && "without".equals(ll.get(1))){
+            if(ll.size() >=2 && "@.".equals(ll.get(0)) && "without".equals(ll.get(1))){
                 LinkedList e=findEach(ll.subList(2,ll.size()));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) unnotifying(o.toString());
@@ -501,6 +501,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",eval(contentList(p)));
             if(l2==null) l2=findList(ll.get(2));
             if(s1==null) s1=findString(ll.get(1));
             if(l2!=null && s1!=null) return join(l2, s1);
+        }
+        if(ll.size() >=2 && "with".equals(s1)){
+            if(l0==null) l0=findList(ll.get(0));
+            if(l0!=null) return listWith(copyFindEach(l0),copyFindEach(ll.subList(2,ll.size())));
         }
         if(ll.size()==2 && "+".equals(s0)){
             if(l1==null) l1=findList(ll.get(1));

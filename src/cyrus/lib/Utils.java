@@ -133,6 +133,13 @@ public class Utils{
         return Math.sqrt(r);
     }
 
+    @SuppressWarnings("unchecked")
+    static public LinkedList listWith(LinkedList a, LinkedList b){
+        LinkedList r=(a==null)? new LinkedList(): new LinkedList(a);
+        if(b!=null) for(Object o: b) if(!r.contains(o)) r.add(o);
+        return r;
+    }
+
     // -------------------------------
 
     /** Construct a list utility. */

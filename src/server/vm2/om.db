@@ -52,6 +52,7 @@
   dd: # => { g: b z: y } ( @bb with-more { UID: new  y: j k  q: h i  p: r  g: c } )
   **: 1 s => 1 b
   bl: false => true
+  zp: => @z with 4 2 5
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -81,6 +82,7 @@
   ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
   bl: "true" => "false"
+  zp: 1 2 3 4 5
 }
 
 { UID: uid-1de5-4d69-667a-56e4
