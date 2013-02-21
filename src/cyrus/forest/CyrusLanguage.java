@@ -596,12 +596,13 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
         if(ll.size()==3 && "select".equals(s1)){
             Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
             if(o02!=null) return copyFindObject(o02);
+            return null;
         }
         boolean trylist0=false;
         boolean trylist2=false;
         Object o0=ll.get(0);
-        boolean bailWithNullForSomeReason=(lep!=null);
         if(lep==null && isRef(o0)) lep=(String)o0;
+
         if(ll.size()==3 && "cut-out".equals(s1)){
             if(h0==null) h0=findHash(ll.get(0));
             if(l0==null) l0=findList(ll.get(0));
@@ -631,7 +632,6 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             if(h0!=null && h2==null) return null;
             if(h0!=null && h2!=null) return copyMoreHash(null,h2,lep,false);
         }
-        if(bailWithNullForSomeReason) return null;
         if(trylist0){
             Object r=listEval(ll,0,l0);
             if(r!=null) return r;
@@ -958,16 +958,20 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     }
 
     @SuppressWarnings("unchecked")
-    private LinkedList copyMoreList(LinkedList ll, Object a, String lep, boolean wm){
+    private Object copyMoreList(LinkedList ll, Object a, String lep, boolean wm){
         LinkedList r=new LinkedList();
         for(Object o: ll) maybeAdd(r,copyMoreObject(o,null,lep,wm));
+        Object rr=eval(r,lep);
+        if(a==null) return rr;
+        if(rr instanceof LinkedList) r=(LinkedList)rr;
+        else r=(rr!=null)? list(rr): list();
+        if(a instanceof LinkedList) a=eval((LinkedList)a,lep);
         if(a==null) return r;
-        if(a instanceof String) a=copyFindObjectFixRefs(a,lep);
-        if(a instanceof String)        maybeAddWM(r,a,wm);
-        if(a instanceof Number)        maybeAddWM(r,a,wm);
-        if(a instanceof Boolean)       maybeAddWM(r,a,wm);
-        if(a instanceof LinkedHashMap) maybeAddWM(r,copyMoreHash(((LinkedHashMap)a),null,lep,wm),wm);
-        if(a instanceof LinkedList)    maybeAddAllWM(r,copyMoreList(((LinkedList)a),null,lep,wm),wm);
+        if(a instanceof String)        a=copyFindObjectFixRefs(a,lep);
+        if(a instanceof LinkedList)    a=copyMoreList(((LinkedList)a),null,lep,wm);
+        if(a instanceof LinkedHashMap) a=copyMoreHash((LinkedHashMap)a,null,lep,wm);
+        if(a instanceof LinkedList) maybeAddAllWM(r,(LinkedList)a,wm);
+        else                        maybeAddWM(r,a,wm);
         return r;
     }
 

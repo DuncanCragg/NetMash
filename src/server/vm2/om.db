@@ -50,7 +50,7 @@
   tt: # => @=ss
   pp: # => @=ss cut-out { y: * }
   cc: # => @bb cut-out { x: b y: * z: e g }
-  dd: # => { g: b z: y } ( @bb with-more { UID: new  y: j k  q: h i  p: r  g: c } )
+  dd: # => { g: b z: y n: 3 } ( @bb with-more { UID: new  y: j k  q: h i  p: r  g: c n: 4 } )
   **: 1 s => 1 b
   bl: false => true
   zp: => @z with 4 2 5
@@ -79,9 +79,9 @@
   tt: { x: 4 y: 33 }{ x: 4 y: 333 }
   pp: { x: 4 y: # }{ x: 4 y: # }
   cc: { x: b } !=> @.
-  dd: { g: b  z: y } { UID: /uid-/  x: a b  y: c d j k  z: e f g  q: h i  p: q r  g: c }
+  dd: { g: b  z: y n: 3} { UID: /uid-/  x: a b  y: c d j k  z: e f g  q: h i  p: q r  g: c n: 4}
   ee: # => ( @dd with-more { u: @..:UID  h: @..:g } ) cut-out { z: * }
-  ea: # => @dd each { @..:g: @..:UID }
+  ea: # => @dd each { @..:g: @..:UID e: @..:n + 1 }
   pe: # => @p each { @..:a: @..:c }
   ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
@@ -104,7 +104,7 @@
   vc: 6 5 5 => @. + @vo
   cc: { y: * } !=> @.
   ee: { g: b z: # u: # h: b } { x: b z: # u: /uid-/ h: c }
-  ea: { b: # } { c: /uid-/ }
+  ea: { b: #  e: 4 } { c: /uid-/  e: 5}
   pe: { b: d }
   pa: # => @pe with-more ( { a: @..:b } { e: f } )
   xx: #

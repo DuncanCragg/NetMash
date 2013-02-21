@@ -5,8 +5,6 @@ To Do
 --------------------------------------------------------
 Current
  - lookup table for derivative query result entries
-    - not @ with-more/ cut-out - impl same mech to iterate
-    - with-more { @Alerted:list:More: @Alerted:list:UID } adds all at once
     - then { uid-1: uid-2 } select @..:UID else ( with-more .. new )
     - use reducible expressions to save partial details
  - still missing some long poll results
@@ -15,7 +13,7 @@ Language
  - list-at-a-time generic code scans for list of right type (or elements of list of right type?)
  - if all data not available for an operation, leave it alone, don't force the type
  - have @ =>, so implement => @
- - "" => won't rewrite?
+ - "" => won't rewrite? "", null, () should vanish everywhere
  - a: < 10  a: 10  a: !10
  - ! { .. } as well as "!.."
  - have both a symbol and a word for everything
