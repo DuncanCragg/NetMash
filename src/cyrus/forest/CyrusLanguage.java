@@ -616,6 +616,15 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             if(h0!=null && h2==null) return copyObject(h0, false);
             if(h0!=null && h2!=null) return copyMoreHash(h0,h2,listEvalPath,"with-more".equals(s1));
         }
+        if(ll.size()==3 && "each".equals(s1)){
+            if(h0==null) h0=findHash(ll.get(0));
+            if(l0==null) l0=findList(ll.get(0));
+            trylist=(l0!=null && l0.size() >1);
+            if(h2==null) h2=findHash(ll.get(2));
+            if(h0==null && !trylist) return null;
+            if(h0!=null && h2==null) return null;
+            if(h0!=null && h2!=null) return copyMoreHash(null,h2,listEvalPath,false);
+        }
         if(listEvalPath!=null) return null;
         if(trylist){
             Object o0=ll.get(0);
@@ -880,11 +889,13 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
         LinkedHashMap<String,Object> hx=new LinkedHashMap<String,Object>();
         if(ha!=null) for(Map.Entry<String,Object> entry: ha.entrySet()){
             String k=entry.getKey();
-            if(isRef(k)) maybePut(hx, findString(k), entry.getValue());
+            if(!isRef(k)) continue;
+            Object rf=copyFindObjectFixRefs(k,lep);
+            if(rf instanceof String) maybePut(hx, (String)rf, entry.getValue());
         }
         if(hx.size()!=0) ha=new LinkedHashMap<String,Object>(ha);
         for(Map.Entry<String,Object> entry: hx.entrySet()) ha.put(entry.getKey(),entry.getValue());
-        for(Map.Entry<String,Object> entry: hm.entrySet()){
+        if(hm!=null) for(Map.Entry<String,Object> entry: hm.entrySet()){
             String k=entry.getKey();
             Object o=entry.getValue();
             Object a=(ha!=null)? ha.get(k): null;
@@ -895,7 +906,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             String k=entry.getKey();
             if(isRef(k)) continue;
             Object a=entry.getValue();
-            if(hm.get(k)!=null) continue;
+            if(hm!=null && hm.get(k)!=null) continue;
             if(k.equals("UID")){ if(a.equals("new")) spawned=true; }
             else maybePut(r, k, copyMoreObject(a,null,lep,wm));
         }
@@ -935,8 +946,9 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     }
 
     private Object copyFindObjectFixRefs(Object o, String lep){
-        if(!(o instanceof String) || lep==null || lep.length()==0) return copyFindObject(o);
+        if(!(o instanceof String) || !isRef(o)) return copyFindObject(o);
         String s=(String)o;
+        if(lep==null || lep.length()==0) return copyFindObject(o);
         String base=lep.substring(0,lep.lastIndexOf(":"));
         if(s.startsWith(base)) s=s.replace(base,lep);
         return copyFindObject(s);
