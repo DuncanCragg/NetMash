@@ -969,12 +969,9 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     }
 
     private Object copyFindObjectFixRefs(Object o, String lep){
-        if(!(o instanceof String) || !isRef(o)) return copyFindObject(o);
-        String s=(String)o;
+        if(!(o instanceof String) || !((String)o).startsWith("@..")) return copyFindObject(o);
         if(lep==null || lep.length()==0) return copyFindObject(o);
-        String base=lep.substring(0,lep.lastIndexOf(":"));
-        if(s.startsWith(base)) s=s.replace(base,lep);
-        return copyFindObject(s);
+        return copyFindObject(((String)o).replace("@..",lep));
     }
 
     private Object listWM(Object a, Object b, boolean wm){
