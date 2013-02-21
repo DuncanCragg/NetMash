@@ -599,6 +599,8 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
         }
         boolean trylist0=false;
         boolean trylist2=false;
+        Object o0=ll.get(0);
+        String lep=(listEvalPath==null && isRef(o0))? (String)o0: listEvalPath;
         if(ll.size()==3 && "cut-out".equals(s1)){
             if(h0==null) h0=findHash(ll.get(0));
             if(l0==null) l0=findList(ll.get(0));
@@ -617,7 +619,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             trylist2=(l2!=null && l2.size() >1);
             if(h0==null && !trylist0) return null;
             if(h0!=null && h2==null && !trylist2) return copyObject(h0, false);
-            if(h0!=null && h2!=null) return copyMoreHash(h0,h2,listEvalPath,"with-more".equals(s1));
+            if(h0!=null && h2!=null) return copyMoreHash(h0,h2,lep,"with-more".equals(s1));
         }
         if(ll.size()==3 && "each".equals(s1)){
             if(h0==null) h0=findHash(ll.get(0));
@@ -626,7 +628,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             if(h2==null) h2=findHash(ll.get(2));
             if(h0==null && !trylist0) return null;
             if(h0!=null && h2==null) return null;
-            if(h0!=null && h2!=null) return copyMoreHash(null,h2,listEvalPath,false);
+            if(h0!=null && h2!=null) return copyMoreHash(null,h2,lep,false);
         }
         if(listEvalPath!=null) return null;
         if(trylist0){
