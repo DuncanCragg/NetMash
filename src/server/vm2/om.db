@@ -24,6 +24,7 @@
   bb: { x: a b  y: c d  z: e f g  p: q }
   ll: ( c 1 s ) { x: ( 1 c s ) } ( y ( 1 s c ))
   fb: fib 5
+  lu: {}
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -53,6 +54,7 @@
   **: 1 s => 1 b
   bl: false => true
   zp: => @z with 4 2 5
+  lu: => @. with-more { @xx: @x }
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -83,6 +85,7 @@
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
   bl: "true" => "false"
   zp: 1 2 3 4 5
+  lu: { qq: 20 } => @. add-more { c: d qq: 20 30 }
 }
 
 { UID: uid-1de5-4d69-667a-56e4
@@ -102,6 +105,7 @@
   xx: #
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
   bl: false
+  lu: { c: d qq: 20 20 30 } => @. with-more { qq: 30 40 }
 }
 
 { UID: uid-61d6-65c9-2931-505b
@@ -117,6 +121,7 @@
   uu: # => @z:1:1
   ff: # => { a: 200 b: 100 } @z:1:1 { a: 40 list: x y }
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
+  lu: { c: d qq: 20 20 30 40 }
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -141,10 +146,11 @@
   vc: within 0.347 of (4.8 4.2 5.2) => (@. + @vo) / 5
   uu: s r
   vv: # => { a: 20 uid-39da-3645-4f58-50cb list: s r }
-  cc: { x: 1 element z: 1 element }
+  cc: { x: count 1 z: count 1 }
   ff: { a: < 200 }
   gg: # => @=ff cut-out { list: * }
   **: fib ( <= 2 ) => 1
+  lu: { c: d qq: count 4 }
 }
 
 { UID: uid-d039-5967-f60c-70f7
@@ -156,11 +162,11 @@
   l1: ok
   l2: 2
   c: < 7.1
-  l3: 4 elements
+  l3: count 4
   l4: 1
   l5: 4
   m: true { n: 4 } { n: 5 } hi yo { n: 7.51 }
-  ml: 0 elements
+  ml: count 0
   l6: 49
   l9: -9
   j: x { m: n } eight false
