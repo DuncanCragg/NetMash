@@ -429,7 +429,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     private Object eval(LinkedList ll){ Object o=eval(ll, null); /*logXX("eval",System.identityHashCode(ll),ll,"===",o);*/ return o; }
 
     @SuppressWarnings("unchecked")
-    private Object eval(LinkedList ll, String listEvalPath){ try{
+    private Object eval(LinkedList ll, String lep){ try{
         if(ll.size()==0) return null;
    //   if(ll.size()==1) return copyFindObject(ll.get(0));
         if(ll.size()==1) return ll;
@@ -600,7 +600,8 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
         boolean trylist0=false;
         boolean trylist2=false;
         Object o0=ll.get(0);
-        String lep=(listEvalPath==null && isRef(o0))? (String)o0: listEvalPath;
+        boolean bailWithNullForSomeReason=(lep!=null);
+        if(lep==null && isRef(o0)) lep=(String)o0;
         if(ll.size()==3 && "cut-out".equals(s1)){
             if(h0==null) h0=findHash(ll.get(0));
             if(l0==null) l0=findList(ll.get(0));
@@ -630,7 +631,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             if(h0!=null && h2==null) return null;
             if(h0!=null && h2!=null) return copyMoreHash(null,h2,lep,false);
         }
-        if(listEvalPath!=null) return null;
+        if(bailWithNullForSomeReason) return null;
         if(trylist0){
             Object r=listEval(ll,0,l0);
             if(r!=null) return r;
@@ -651,10 +652,10 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
         LinkedList r=new LinkedList();
         int i=0;
         for(Object o: ln){
-            String pk=isref? on+":"+i: "";
-            if(UID.isUID(o) && isref) o=pk;
+            String lep=isref? on+":"+i: "";
+            if(UID.isUID(o) && isref) o=lep;
             lr.set(n,o);
-            Object e=eval(lr,pk);
+            Object e=eval(lr,lep);
             if(e!=null) r.add(e);
         i++; }
         return r;
@@ -662,17 +663,16 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
 
     @SuppressWarnings("unchecked")
     private Object listEvalAccum(LinkedList ll, int m, int n, LinkedList ln){
-        Object e =ll.get(m);
-        Object on=ll.get(n);
-        boolean isref=isRef(on);
+        Object om=ll.get(m);
+        boolean isref=isRef(om);
         LinkedList lr=new LinkedList(ll);
+        Object e=om;
         int i=0;
         for(Object o: ln){
-            String pk=isref? on+":"+i: "";
-            if(UID.isUID(o) && isref) o=pk;
+            String lep=isref? (String)om: "";
             lr.set(m,e);
             lr.set(n,o);
-            e=eval(lr,pk);
+            e=eval(lr,lep);
         i++; }
         return e;
     }
@@ -765,6 +765,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     // ----------------------------------------------------
 
     private Object eitherBindingOrContentObject(String path){
+        if(path.startsWith("..")) return "@"+path;
         if(path.startsWith("."))  return contentObject(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return getBinding(path.substring(1),false);
         Object o=contentObject(path);
@@ -773,24 +774,28 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     }
 
     private String eitherBindingOrContentString(String path){
+        if(path.startsWith("..")) return "@"+path;
         if(path.startsWith("."))  return contentString(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findStringIn(getBinding(path.substring(1),true));
         return contentString(path);
     }
 
     private Number eitherBindingOrContentNumber(String path){
+        if(path.startsWith("..")) return null;
         if(path.startsWith("."))  return contentNumber(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findNumberIn(getBinding(path.substring(1),true));
         return contentNumber(path);
     }
 
     private Boolean eitherBindingOrContentBool(String path){
+        if(path.startsWith("..")) return null;
         if(path.startsWith("."))  return contentBool(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1),true));
         return contentBool(path);
     }
 
     private LinkedList eitherBindingOrContentList(String path, boolean jump){
+        if(path.startsWith("..")) return null;
         if(path.startsWith("."))  return contentListMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findListIn(getBinding(path.substring(1),jump));
         LinkedList ll=contentListMayJump(path);
@@ -799,6 +804,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     }
 
     private LinkedHashMap eitherBindingOrContentHash(String path){
+        if(path.startsWith("..")) return null;
         if(path.startsWith("."))  return contentHashMayJump(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
         if(path.startsWith("="))  return findHashIn(getBinding(path.substring(1),true));
         return contentHashMayJump(path);

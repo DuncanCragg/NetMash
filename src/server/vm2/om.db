@@ -106,7 +106,7 @@
   ee: { g: b z: # u: # h: b } { x: b z: # u: /uid-/ h: c }
   ea: { b: # } { c: /uid-/ }
   pe: { b: d }
-  pa: # => @pe with-more ( { a: c } { e: f } )
+  pa: # => @pe with-more ( { a: @..:b } { e: f } )
   xx: #
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
   bl: false
@@ -126,7 +126,7 @@
   uu: # => @z:1:1
   ff: # => { a: 200 b: 100 } @z:1:1 { a: 40 list: x y }
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
-  pa: { b: d a: c e: f}
+  pa: { b: d a: d e: f}
   lu: { c: d qq: 20 20 30 40 50 }
 }
 
@@ -141,8 +141,8 @@
   l7: => @o:a
   l8: => @=o:a
   l3: => @o
-  l4: => 1 2 select @m:0
-  l5: => 3 4 select @m:2
+  l4: => if @m:0 then 1 else 2
+  l5: => if @m:2 then 3 else 4
   l6: => @a:0 (if @m:0 then + else *) @b
   l9: => @a:0 ({ ha: + hi: - } select @m:4) @b
   la: => integer @m:6:n
@@ -169,8 +169,8 @@
   l2: 2
   c: < 7.1
   l3: count 4
-  l4: 1
-  l5: 4
+  l4: !2
+  l5: !3
   m: true { n: 4 } { n: 5 } hi yo { n: 7.51 }
   ml: count 0
   l6: 49
