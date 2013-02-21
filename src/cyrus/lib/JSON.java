@@ -590,7 +590,7 @@ public class JSON {
                 else continue;
             }
             if(!doval){
-                if(chars[chp]==':'){
+                if(chars[chp]==':' && chp+1<chars.length && (chars[chp+1]<=' '||chars[chp+1]=='{'||chars[chp+1]=='('||chars[chp+1]=='"')){
                     tag = new String(buf); buf = new StringBuilder();
                     doval=true;
                     continue;
@@ -1470,7 +1470,7 @@ public class JSON {
     }
 
     @SuppressWarnings("unchecked")
-    static public void logXX(Object...args){ log(enableLogging, "xxxxxxx "+join(new LinkedList(Arrays.asList(args))," ")); }
+    static public void logXX(Object...args){ log(enableLogging, "xxxxxxx "+join(new LinkedList(Arrays.asList(args))," :: ")); }
 
     static public void log(boolean doit, Object o){
         if(!doit) return;

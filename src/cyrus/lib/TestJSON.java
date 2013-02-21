@@ -148,12 +148,13 @@ public class TestJSON {
         JSON m=new JSON(
             " \t\n \n { kernel:{modules:{cache: cyrus.cache.JSONCache\n"+
             "                            http: cyrus.drivers.HTTP\n"+
+            "                            @a:b:c: @d:e:f\n"+
             "                            logic: cyrus.drivers.TestDriver}}\n"+
             "           modules:{cache:{funky: \""+funkychars+"\"}\n"+
             "                    http:{port: 8080}\n"+
             "                    logic: true false{foo: null null}(true false((null stringnospaces))\"string with  spaces\")\n"+
             "                    bits: \"string with  (double ) spaces:\" b: (c \"d)e\")\n"+
-            "                    more: true(35392743408672770{a:-2147483649 b: 2147483648 \"d:\" c:(-2147483648 2147483647 y: a:b 1.000)x}false)null\n"+
+            "                    more: true(35392743408672770{a: -2147483649 b: 2147483648 \"d:\" c:(-2147483648 2147483647 y: a:b 1.000)x}false)null\n"+
             "           }\n"+
             "      }\n", true);
 
@@ -163,6 +164,7 @@ public class TestJSON {
             "    modules: {\n"+
             "      cache: cyrus.cache.JSONCache\n"+
             "      http: cyrus.drivers.HTTP\n"+
+            "      @a:b:c: @d:e:f\n"+
             "      logic: cyrus.drivers.TestDriver\n"+
             "    }\n"+
             "  }\n"+
