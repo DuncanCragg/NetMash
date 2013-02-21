@@ -597,38 +597,44 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
             if(o02!=null) return copyFindObject(o02);
         }
-        boolean trylist=false;
+        boolean trylist0=false;
+        boolean trylist2=false;
         if(ll.size()==3 && "cut-out".equals(s1)){
             if(h0==null) h0=findHash(ll.get(0));
             if(l0==null) l0=findList(ll.get(0));
-            trylist=(l0!=null && l0.size() >1);
+            trylist0=(l0!=null && l0.size() >1);
             if(h2==null) h2=findHash(ll.get(2));
-            if(h0==null && !trylist) return null;
+            if(h0==null && !trylist0) return null;
             if(h0!=null && h2==null) return copyObject(h0, false);
             if(h0!=null && h2!=null) return copyLessHash(h0,h2);
         }
         if(ll.size()==3 && ("with-more".equals(s1)||"add-more".equals(s1))){
             if(h0==null) h0=findHash(ll.get(0));
             if(l0==null) l0=findList(ll.get(0));
-            trylist=(l0!=null && l0.size() >1);
+            trylist0=(l0!=null && l0.size() >1);
             if(h2==null) h2=findHash(ll.get(2));
-            if(h0==null && !trylist) return null;
-            if(h0!=null && h2==null) return copyObject(h0, false);
+            if(l2==null) l2=findList(ll.get(2));
+            trylist2=(l2!=null && l2.size() >1);
+            if(h0==null && !trylist0) return null;
+            if(h0!=null && h2==null && !trylist2) return copyObject(h0, false);
             if(h0!=null && h2!=null) return copyMoreHash(h0,h2,listEvalPath,"with-more".equals(s1));
         }
         if(ll.size()==3 && "each".equals(s1)){
             if(h0==null) h0=findHash(ll.get(0));
             if(l0==null) l0=findList(ll.get(0));
-            trylist=(l0!=null && l0.size() >1);
+            trylist0=(l0!=null && l0.size() >1);
             if(h2==null) h2=findHash(ll.get(2));
-            if(h0==null && !trylist) return null;
+            if(h0==null && !trylist0) return null;
             if(h0!=null && h2==null) return null;
             if(h0!=null && h2!=null) return copyMoreHash(null,h2,listEvalPath,false);
         }
         if(listEvalPath!=null) return null;
-        if(trylist){
-            Object o0=ll.get(0);
-            Object r=list0Eval(o0,l0,ll);
+        if(trylist0){
+            Object r=listEval(ll,0,l0);
+            if(r!=null) return r;
+        }
+        if(trylist2){
+            Object r=listEvalAccum(ll,0,2,l2);
             if(r!=null) return r;
         }
         return copyFindEach(ll);
@@ -636,20 +642,37 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     }catch(Throwable t){ t.printStackTrace(); log("something failed here: "+ll); return ll; } }
 
     @SuppressWarnings("unchecked")
-    private LinkedList list0Eval(Object o0, LinkedList l0, LinkedList ll){
-        boolean isref=isRef(o0);
-        LinkedList lr=new LinkedList(ll.subList(1,ll.size()));
+    private LinkedList listEval(LinkedList ll, int n, LinkedList ln){
+        Object on=ll.get(n);
+        boolean isref=isRef(on);
+        LinkedList lr=new LinkedList(ll);
         LinkedList r=new LinkedList();
         int i=0;
-        for(Object o: l0){
-            String pk=isref? o0+":"+i: "";
+        for(Object o: ln){
+            String pk=isref? on+":"+i: "";
             if(UID.isUID(o) && isref) o=pk;
-            lr.addFirst(o);
+            lr.set(n,o);
             Object e=eval(lr,pk);
             if(e!=null) r.add(e);
-            lr.remove(0);
         i++; }
         return r;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object listEvalAccum(LinkedList ll, int m, int n, LinkedList ln){
+        Object e =ll.get(m);
+        Object on=ll.get(n);
+        boolean isref=isRef(on);
+        LinkedList lr=new LinkedList(ll);
+        int i=0;
+        for(Object o: ln){
+            String pk=isref? on+":"+i: "";
+            if(UID.isUID(o) && isref) o=pk;
+            lr.set(m,e);
+            lr.set(n,o);
+            e=eval(lr,pk);
+        i++; }
+        return e;
     }
 
     // ----------------------------------------------------

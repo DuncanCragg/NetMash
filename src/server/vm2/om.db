@@ -107,7 +107,7 @@
   xx: #
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
   bl: false
-  lu: { c: d qq: 20 20 30 } => @. with-more { qq: 30 40 }
+  lu: { c: d qq: 20 20 30 } => @. with-more ({ qq: 30 40 } { qq: 50 20 })
 }
 
 { UID: uid-61d6-65c9-2931-505b
@@ -123,7 +123,7 @@
   uu: # => @z:1:1
   ff: # => { a: 200 b: 100 } @z:1:1 { a: 40 list: x y }
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
-  lu: { c: d qq: 20 20 30 40 }
+  lu: { c: d qq: 20 20 30 40 50 }
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -152,7 +152,7 @@
   ff: { a: < 200 }
   gg: # => @=ff cut-out { list: * }
   **: fib ( <= 2 ) => 1
-  lu: { c: d qq: count 4 }
+  lu: { qq: count 5 }
 }
 
 { UID: uid-d039-5967-f60c-70f7
