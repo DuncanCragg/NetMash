@@ -877,12 +877,13 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
     private Object copyMoreHash(LinkedHashMap<String,Object> hm, LinkedHashMap<String,Object> ha, String lep, boolean wm){
         boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
-        LinkedHashMap<String,Object> x=new LinkedHashMap<String,Object>();
+        LinkedHashMap<String,Object> hx=new LinkedHashMap<String,Object>();
         if(ha!=null) for(Map.Entry<String,Object> entry: ha.entrySet()){
             String k=entry.getKey();
-            if(isRef(k)) maybePut(x, findString(k), entry.getValue());
+            if(isRef(k)) maybePut(hx, findString(k), entry.getValue());
         }
-        for(Map.Entry<String,Object> entry: x.entrySet()) ha.put(entry.getKey(),entry.getValue());
+        if(hx.size()!=0) ha=new LinkedHashMap<String,Object>(ha);
+        for(Map.Entry<String,Object> entry: hx.entrySet()) ha.put(entry.getKey(),entry.getValue());
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String k=entry.getKey();
             Object o=entry.getValue();

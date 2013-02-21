@@ -6,7 +6,7 @@ To Do
 Current
  - lookup table for derivative query result entries
     - not @ with-more/ cut-out - impl same mech to iterate
-    - with-more { @Alerted:list:More: @Alerted:list:UID } adds all at once .. or ( @alm :: @alu )/{(@alm): @alu}
+    - with-more { @Alerted:list:More: @Alerted:list:UID } adds all at once
     - then { uid-1: uid-2 } select @..:UID else ( with-more .. new )
     - use reducible expressions to save partial details
  - still missing some long poll results
