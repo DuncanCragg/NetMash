@@ -40,7 +40,7 @@
   s: # => + @o:a:1
   o: { a: 5 } !=> @. with { a: 1 5 } { a: 1 1 } { a: 5 9 }
   z: ((< 1) => #) **
-  la: => (@m select @z:2)(@m select @z:1)(@m select @z:0)
+  la: => (@m select @z:2)(@m select @z:1)(@m select @z:0)(@m select bah else yay)
   j: y => { m: n }
   xx: 0 !=> qq
   zz: oo => #
@@ -60,7 +60,7 @@
 { UID: uid-40fb-5964-b385-c922
   is: test rule
   when: "-------------- Test 2"
-  la: (divisible-by 5) false (divisible-by 2)
+  la: (divisible-by 5) false (divisible-by 2) yay
   a: @x:0 { UID: @ is: test x: 20 }
   : { d: 19 }
   f: 21 => as-is (3 + 4)

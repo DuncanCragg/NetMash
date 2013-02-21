@@ -491,10 +491,6 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             if(s4==null) s4=findString(ll.get(4));
             if(s1!=null && s2!=null && s3!=null && s4!=null) return String.format(s1, s2, s3, s4);
         }
-        if(ll.size()==6 && "if".equals(s0)){
-            if(b1==null) b1=findBoolean(ll.get(1));
-            if(b1!=null) return b1? copyFindObject(ll.get(3)): copyFindObject(ll.get(5));
-        }
         if(ll.size()==2 && "as-is".equals(s0)){
             return copyObject(ll.get(1), true);
         }
@@ -593,10 +589,26 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             if(d2==null) d2=findDouble(ll.get(2));
             if(d0!=null && d2!=null) return Boolean.valueOf(d0 >= d2);
         }
+        if(ll.size()==6 && "if".equals(s0)){
+            if(s2==null) s2=findString(ll.get(2));
+            if(s4==null) s4=findString(ll.get(4));
+            if("then".equals(s2) && "else".equals(s4)){
+                if(b1==null) b1=findBoolean(ll.get(1));
+                if(b1!=null) return b1? copyFindObject(ll.get(3)): copyFindObject(ll.get(5));
+            }
+        }
         if(ll.size()==3 && "select".equals(s1)){
             Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
             if(o02!=null) return copyFindObject(o02);
             return null;
+        }
+        if(ll.size()==5 && "select".equals(s1)){
+            if(s3==null) s3=findString(ll.get(3));
+            if("else".equals(s3)){
+                Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
+                if(o02!=null) return copyFindObject(o02);
+                return copyFindObject(ll.get(4));
+            }
         }
         boolean trylist0=false;
         boolean trylist2=false;
