@@ -45,10 +45,10 @@ quickdyn: editquickdb androidemu runquickserver logboth editdynamicfile
 # -------------------------------------------------------------------
 
 httplog1:
-	egrep '\------|Cache-Notify:|If-None-Match:|ETag:|Content-Type:|Content-Location:|^ +|^{ |^}|HTTP.1.1' src/server/vm1/cyrus.log
+	tail -999f src/server/vm1/cyrus.log | egrep '\------|Cache-Notify:|If-None-Match:|ETag:|Content-Type:|Content-Location:|^ +|^{ |^}|HTTP.1.1'
 
 httplog2:
-	egrep '\------|Cache-Notify:|If-None-Match:|ETag:|Content-Type:|Content-Location:|^ +|^{ |^}|HTTP.1.1' src/server/vm2/cyrus.log
+	tail -999f src/server/vm2/cyrus.log | egrep '\------|Cache-Notify:|If-None-Match:|ETag:|Content-Type:|Content-Location:|^ +|^{ |^}|HTTP.1.1'
 
 # -------------------------------------------------------------------
 

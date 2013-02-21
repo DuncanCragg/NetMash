@@ -629,6 +629,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(longQ==null) longQ=new LinkedBlockingQueue<String>();
         funcobs.http.putLongPusher(httpCacheNotify, this);
         longPending=longQ.isEmpty();
+logXX("incoming Cache-Notify: longQ=",longQ);
         if(longPending){
             timer=new Thread(){ public void run(){
                 Kernel.sleep(LONG_POLL_TIMEOUT);
@@ -647,6 +648,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     }
 
     synchronized public void longRequest(String notifieruid){
+logXX("outgoing Cache-Notify:",notifieruid);
         if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid), true, false, false); timer.interrupt(); }
         else try{ if(!longQ.contains(notifieruid)) longQ.put(notifieruid); }catch(Exception e){}
     }

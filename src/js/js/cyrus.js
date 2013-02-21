@@ -10,6 +10,7 @@ function Network(){
     var me = {
         getJSON: function(url,creds,ok,err){
             var isCN=url.indexOf('/c-n-')!= -1;
+if(isCN) console.log("maybe Cache-Notify:",url);
             var obj=null;
         /*  var objstr = localStorage.getItem('objects:'+url);
             if(objstr) obj=JSON.parse(objstr); */
@@ -17,6 +18,7 @@ function Network(){
                 ok(obj,'from-cache',null);
             }else{
                 if(me.isGetting(true,url,isCN)) return;
+if(isCN) console.log("get Cache-Notify:",url);
                 var headers = { 'Cache-Notify': me.getCacheNotify() };
                 if(creds) headers.Authorization = me.buildAuth(creds,'GET',url);
                 if(url.endethWith('.json')||url.indexOf('/c-n-')!=-1) $.ajax({
@@ -26,6 +28,7 @@ function Network(){
                     success: function(obj,s,x){
                         me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
+if(isCN) console.log("got Cache-Notify:",url);
                         var etag = x && x.getResponseHeader('ETag');
                         if(url && etag) localStorage.setItem('versions:'+getUID(url), etag);
                      /* if(url){ try{
