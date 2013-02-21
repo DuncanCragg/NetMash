@@ -13,7 +13,7 @@
     UID: new
     Rules: uid-f0c6-03a9-f469-a6ae uid-543d-4b14-428f-d6b4
     target: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
-    original-query: @Alerted
+    original-query: @..
   }
 }
 
@@ -42,8 +42,19 @@
   is: contact list rule
   when: "results list updates, update self"
   v: !@results:Version => @results:Version
-  list: => ( ( @results:list with-more { More: @results:list:UID } ) cut-out { email: * } ) with-more { UID: new }
+  list: => ( ( @results:list with-more { More: @..:UID } ) cut-out { email: * } ) with-more { UID: new }
   content-count: => @results:content-count
-  Notifying: => @. with @original-query
+  Notifying: => @. with @original-query uid-b341-6825-e32e-764b
+}
+
+{ UID: uid-b341-6825-e32e-764b
+  is: look-up
+  table: {}
+  Rules: {
+    is: look-up rule
+    when: "contact list notified, add to list"
+    Alerted: { is: contact list }
+    table: => @. with-more ( @Alerted:list each { @..:More: @..:UID } )
+  }
 }
 
