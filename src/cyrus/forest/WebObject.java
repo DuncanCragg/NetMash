@@ -160,10 +160,6 @@ public class WebObject {
         return shellstate != ShellState.FOUND;
     }
 
-    public boolean isLocal(){
-        return uid.startsWith("uid-") && cacheNotify==null;
-    }
-
     public boolean isVisibleRemote(){
         return uid.startsWith("http://");
     }
@@ -775,7 +771,7 @@ public class WebObject {
     }
 
     /** Don't use this unless you're handing the thread over to an object that's responsible and local. */
-    public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheOrPersistenceGet(UID.toUID(uid)); }
+    public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheOrPersistenceGet(uid); }
 
     /** Simple logger for ya. */
     static public void log(Object o){ Utils.log(o); }

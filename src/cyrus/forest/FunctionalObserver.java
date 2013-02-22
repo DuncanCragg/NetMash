@@ -53,7 +53,7 @@ public class FunctionalObserver implements Module {
         Enumeration<WebObject> e = cache.elements();
         while(e.hasMoreElements()){
            WebObject w=e.nextElement();
-           if(w.isLocal()) evaluatable(w);
+           if(w.oneOfOurs()) evaluatable(w);
         }
     }
 
@@ -104,6 +104,7 @@ public class FunctionalObserver implements Module {
 
     WebObject cacheOrPersistenceGet(String uid){
         synchronized(cache){
+            uid=UID.toUID(uid);
             WebObject w=cache.get(uid);
             if(w!=null) return w;
             w=persistence.cache(uid);
@@ -112,6 +113,17 @@ public class FunctionalObserver implements Module {
             w.handleEval();
             return w;
         }
+    }
+
+    WebObject cacheGetTryOurs(String uid){
+        WebObject w=cacheOrPersistenceGet(uid);
+        if(w!=null && !w.isShell() && w.cacheNotify==null) return w;
+        return cacheGet(uid);
+    }
+
+    public boolean oneOfOurs(String uid){
+        WebObject w=cacheOrPersistenceGet(uid);
+        return w!=null && !w.isShell() && w.cacheNotify==null;
     }
 
     void dumpCache(){
@@ -143,7 +155,7 @@ public class FunctionalObserver implements Module {
 
     void dropNotifies(WebObject w){
         for(String remuid: w.remalert){
-            if(!cacheGet(remuid).isLocal()) w.notify.remove(remuid);
+            if(!cacheGet(remuid).oneOfOurs()) w.notify.remove(remuid);
         }
     }
 
@@ -208,7 +220,7 @@ public class FunctionalObserver implements Module {
 
     private void notifyUpdated(WebObject notifier, boolean realupdate){
         for(String notifieduid: notifier.notify){
-            WebObject notified = cacheGet(notifieduid);
+            WebObject notified = cacheGetTryOurs(notifieduid);
             if(tryOutEagerAlertingForABit || !notified.observe.contains(notifier.uid)){
                 notified.alertedin.add(notifier.uid);
             }
@@ -229,7 +241,7 @@ public class FunctionalObserver implements Module {
 
     private void alertFirst(WebObject notifier){
         for(String alertuid: notifier.newalert){
-            WebObject alerted = cacheGet(alertuid);
+            WebObject alerted = cacheGetTryOurs(alertuid);
             if(tryOutEagerAlertingForABit || !alerted.observe.contains(notifier.uid)){
                 alerted.alertedin.add(notifier.uid);
                 evaluatableOrPush(alerted, true);
@@ -284,6 +296,7 @@ public class FunctionalObserver implements Module {
         return location;
     }
 
+    @SuppressWarnings("unchecked")
     private void sanitiseNotifications(WebObject w){
         LinkedList sanitised=new LinkedList();
         for(String notifieduid: w.notify) if(!oneOfOurs(notifieduid)) sanitised.add(notifieduid);
@@ -315,7 +328,7 @@ public class FunctionalObserver implements Module {
         cachePut(w);
         transferNotifyAndAlerted(s,w);
         saveAndNotifyUpdated(w, false);
-        if(w.isLocal()){
+        if(w.oneOfOurs()){
             w.handleEval();
         }
         else{
@@ -342,11 +355,6 @@ public class FunctionalObserver implements Module {
                 w.alertedin.add(notifieruid);
             }
         }
-    }
-
-    public boolean oneOfOurs(String uid){
-        WebObject w=cacheOrPersistenceGet(UID.toUID(uid));
-        return w!=null && !w.isShell();
     }
 
     // -------------------------------
