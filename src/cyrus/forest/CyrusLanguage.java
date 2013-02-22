@@ -9,7 +9,7 @@ import cyrus.lib.JSON;
 
 import static cyrus.lib.Utils.*;
 
-/** Object Mash Language.
+/** Cyrus Language.
   */
 public class CyrusLanguage extends WebObject {
 
@@ -600,7 +600,6 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
         if(ll.size()==3 && "select".equals(s1)){
             Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
             if(o02!=null) return copyFindObject(o02);
-            return null;
         }
         if(ll.size()==5 && "select".equals(s1)){
             if(s3==null) s3=findString(ll.get(3));

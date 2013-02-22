@@ -41,14 +41,14 @@
 { UID: uid-5b80-c7cd-d680-42ae
   is: license contact
   full-name: "Sam"
-  email: sam@there.com
+  email: sam@here.com
   license-number: 2222-2222
 }
 
 { UID: uid-688f-cc96-a532-707f
   is: license contact
   full-name: "Bob"
-  email: bob@here.com
+  email: bob@there.com
   license-number: 3333-3333
 }
 
