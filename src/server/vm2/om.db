@@ -83,6 +83,7 @@
   ee: # => ( @dd with-more { u: @..:UID  h: @..:g } ) cut-out { z: * }
   ea: # => @dd each { @..:g: @..:UID e: @..:n + 1 }
   pe: # => @p each { @..:a: @..:c }
+  pl: # => @p each ( @..:a @..:c )
   ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )
   bl: "true" => "false"
@@ -106,6 +107,7 @@
   ee: { g: b z: # u: # h: b } { x: b z: # u: /uid-/ h: c }
   ea: { b: #  e: 4 } { c: /uid-/  e: 5}
   pe: { b: d }
+  pl: ( b d )
   pa: # => @pe with-more ( { a: @..:b } { e: f } )
   xx: #
   **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) )

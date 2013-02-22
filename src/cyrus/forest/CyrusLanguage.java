@@ -639,10 +639,8 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             if(h0==null) h0=findHash(ll.get(0));
             if(l0==null) l0=findList(ll.get(0));
             trylist0=(l0!=null && l0.size() >1);
-            if(h2==null) h2=findHash(ll.get(2));
             if(h0==null && !trylist0) return null;
-            if(h0!=null && h2==null) return null;
-            if(h0!=null && h2!=null) return copyMoreHash(null,h2,lep,false);
+            if(h0!=null) return copyMoreObject(ll.get(2),lep);
         }
         if(trylist0){
             Object r=listEval(ll,0,l0);
@@ -953,6 +951,18 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             else maybePut(r, k, copyMoreObject(a,null,lep,wm,false));
         }
         return spawned? spawnHash(r): r;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object copyMoreObject(Object o, String lep){
+        if(o==null) return null;
+        if(o instanceof String) o=copyFindObjectFixRefs(o,lep,false);
+        if(o instanceof String)  return o;
+        if(o instanceof Number)  return o;
+        if(o instanceof Boolean) return o;
+        if(o instanceof LinkedHashMap) return copyMoreHash(null,((LinkedHashMap)o),lep,false);
+        if(o instanceof LinkedList)    return copyMoreList(((LinkedList)o),null,lep,false);
+        return o;
     }
 
     @SuppressWarnings("unchecked")
