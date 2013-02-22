@@ -6,10 +6,11 @@ To Do
 Current
  - Android demos not working
  - still missing some long poll results
+ - ** needs to be bottom-up not top-down, so check order of rewrites (join bottles before verses)
+ - what to do about lack of defaults and (+ @list) stuff in CAP
 --------------------------------------------------------
 Language
- - list-at-a-time generic code scans for list of right type (or elements of list of right type?)
- - if all data not available for an operation, leave it alone, don't force the type
+ - @. and @.. - @ something else?
  - have @ =>, so implement => @
  - "" => won't rewrite? "", null, () should vanish everywhere
  - a: < 10  a: 10  a: !10
@@ -31,7 +32,6 @@ Language
     - just "" base path on Ver 1
     - only do ** on that collection downwards: on the new stuff
     - not sure about uids and snapshot of other items
- - ** needs to be bottom-up not top-down, so check order of rewrites (join bottles before verses)
  - 'list' means sub-list "x: list" matches  "x: a ( b ) c" not "x: a b c"
     - why didn't ( * * ) match outer list?
  - commas are whitespace outside of quotes

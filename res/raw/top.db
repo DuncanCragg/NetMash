@@ -80,6 +80,7 @@
   rotation: 0 45 0
   scale: 0.3 0.5 0.3
   light: 2 2 2
+  v: 0
 }
 
 { UID: uid-e6e9-df58-ddab-6eb9
@@ -106,6 +107,7 @@
   numerator: 2
   status: creating
   lit: 0
+  v: 0
 }
 
 { UID: uid-8f4e-551c-858b-d345
