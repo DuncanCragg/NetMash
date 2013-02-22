@@ -34,6 +34,7 @@
     original-query: @original-query
     results: @Alerted
     title: "Restricted query results"
+    look-up: uid-b341-6825-e32e-764b
   }
   Notifying: => @. without @target:1
 }
@@ -42,19 +43,19 @@
   is: contact list rule
   when: "results list updates, update self"
   v: !@results:Version => @results:Version
-  list: => ( ( @results:list with-more { More: @..:UID } ) cut-out { email: * } ) with-more { UID: new }
+  list: => @results:list each ( @look-up:table select @..:UID else ((( @.. with-more { More: @..:UID } ) cut-out { email: * } ) with-more { UID: new } ))
   content-count: => @results:content-count
-  Notifying: => @. with @original-query uid-b341-6825-e32e-764b
+  Notifying: => @. with @original-query @look-up
 }
 
 { UID: uid-b341-6825-e32e-764b
   is: look-up
-  table: {}
   Rules: {
     is: look-up rule
     when: "contact list notified, add to list"
     Alerted: { is: contact list }
     table: => @. with-more ( @Alerted:list each { @..:More: @..:UID } )
   }
+  table: {}
 }
 
