@@ -150,7 +150,7 @@ public class Mesh {
         Object f=ll.get(i);
         if(f==null) return d;
         if(f instanceof Number) return ((Number)f).floatValue();
-        if(f instanceof String) return Float.parseFloat((String)f);
+        if(f instanceof String) try{ return Float.parseFloat((String)f); }catch(Throwable t){}
         return d;
     }
 

@@ -238,7 +238,7 @@ public class FunctionalObserver implements Module {
     }
 
     private void evaluatableOrPush(WebObject notified, boolean realupdate){
-        if(notified.isLocal())           {                evaluatable(notified);   } else
+        if(notified.oneOfOurs())         {                evaluatable(notified);   } else
         if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); } else
         if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); }
         else                             { if(realupdate) http.push(notified);     }
@@ -276,11 +276,18 @@ public class FunctionalObserver implements Module {
         WebObject s=cacheGet(w.uid);  // must look in db
         if(!w.isVisibleRemote() && s.isShell()) location=UID.toURL(w.uid);
         if(w.etag>0 && !(w.etag>s.etag) && w.notify.isEmpty()){ log(":\n"+w+"\nnot newer than:\n"+s+"\n"); return location; }
+        sanitiseNotifications(w);
         cachePut(w);
         transferNotifyAndAlerted(s,w);
         if(w.isVisibleRemote()) addToPolling(w);
         saveAndNotifyUpdated(w, !s.isShell());
         return location;
+    }
+
+    private void sanitiseNotifications(WebObject w){
+        LinkedList sanitised=new LinkedList();
+        for(String notifieduid: w.notify) if(!oneOfOurs(notifieduid)) sanitised.add(notifieduid);
+        w.notify.removeAll(sanitised);
     }
 
     private void handleShell(WebObject s){
@@ -335,6 +342,11 @@ public class FunctionalObserver implements Module {
                 w.alertedin.add(notifieruid);
             }
         }
+    }
+
+    public boolean oneOfOurs(String uid){
+        WebObject w=cacheOrPersistenceGet(UID.toUID(uid));
+        return w!=null && !w.isShell();
     }
 
     // -------------------------------

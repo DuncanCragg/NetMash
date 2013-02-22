@@ -764,10 +764,10 @@ public class WebObject {
     }
 
     /** See if it's one of ours, even if it's got a full URL. */
-    public boolean oneOfOurs(String uid){
-        WebObject w=funcobs.cacheOrPersistenceGet(UID.toUID(uid));
-        return w!=null && !w.isShell();
-    }
+    public boolean oneOfOurs(String uid){ return funcobs.oneOfOurs(uid); }
+
+    /** See if this WebObject is one of ours, even if it's got a full URL. */
+    public boolean oneOfOurs(){ return funcobs.oneOfOurs(uid); }
 
     /** Only normalise if it's not ours. */
     public String normaliseUIDIfNotOurs(String baseurl, String uid){

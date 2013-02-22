@@ -4,9 +4,7 @@ To Do
 
 --------------------------------------------------------
 Current
- - lookup table for derivative query result entries
-    - then { uid-1: uid-2 } select @..:UID else ( with-more .. new )
-    - use reducible expressions to save partial details
+ - Android demos not working
  - still missing some long poll results
 --------------------------------------------------------
 Language
