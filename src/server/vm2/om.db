@@ -31,6 +31,8 @@
   is: test rule
   when: "-------------- Test 1"
   title: "/est Ru/"
+  bf: false
+  bt: !true
   a: # => @x @h:0:x:h:x
   d: # => clamp 14 19 @x
   f: # => clamp 21 40 @x

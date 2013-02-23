@@ -297,7 +297,7 @@ public class CyrusLanguage extends WebObject {
     private boolean scanBoolean(Boolean v, String pk){
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         Object o=contentObject(pk);
-        return o==null || (isBoolean(o) && findBooleanIn(o)==v);
+        return (o==null && v==false) || (o!=null && isBoolean(o) && findBooleanIn(o)==v);
     }
 
     private boolean scanListFromSingleIfNotAlready(Object v, String pk){
