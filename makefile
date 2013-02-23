@@ -7,26 +7,6 @@ LOCAL_IP=192.168.0.6
 #
 ################################################################################
 
-all: androidemu runall logcat
-
-loc: androidemu        logcat
-
-emu: androidemu runemu logcat
-
-lan: androidlan runlan lancat
-
-rem: androidrem
-
-tests: json uid cyrus
-
-cyrus: runcyrus showtestresults
-
-cap: androidemu runcap logcat
-
-lap: androidlan runlap lancat
-
-sta: androidemu runsta logcat
-
 examples: runstt
 	chromium-browser 'http://localhost:8083/#http://localhost:8081/o/uid-f25a-08e1-7d7d-09f8.json'
 
@@ -35,6 +15,32 @@ tutorial: runtut
 
 cars: runcars
 	chromium-browser 'http://localhost:8083/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
+
+####################
+
+emu: androidemu runemu logcat
+
+lan: androidlan runlan lancat
+
+cap: androidemu runcap logcat
+
+####################
+
+tests: json uid cyrus
+
+cyrus: runcyrus showtestresults
+
+####################
+
+all: androidemu runall logcat
+
+loc: androidemu        logcat
+
+rem: androidrem
+
+lap: androidlan runlap lancat
+
+sta: androidemu runsta logcat
 
 # -------------------------------------------------------------------
 

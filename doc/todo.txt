@@ -4,13 +4,14 @@ To Do
 
 --------------------------------------------------------
 Current
- - choosing to return uid or full object or reference..?
- - what to do about lack of defaults and (+ @list) stuff in CAP
- - ** needs to be bottom-up not top-down, so check order of rewrites (join bottles before verses)
- - still missing some long poll results on browser
 --------------------------------------------------------
 Language
- - bin !=> - it's too hard to spot
+ - choosing to return uid or full object or reference..? select from list won't jump .. why not?
+ - functional stuff:
+    - what to do about lack of defaults, (+ @list)->(+), etc?
+    - goal: never return un-reduced tree
+    - '**:' needs to be bottom-up not top-down, so check order of rewrites (join bottles before verses)
+ - drop !=> - it's too hard to spot
  - @. and @.. - @ something else?
  - have @ =>, so implement => @
  - "" => won't rewrite? "", null, () should vanish everywhere
@@ -56,7 +57,8 @@ Queries
 --------------------------------------------------------
 Web Tutorial
  - tutorial as a set of test cases and demos on language
-    - doc/local/demodb.json; src/server/vm?/test.db
+    - doc/local/demodb.json; src/server/vm[12]/test.db
+    - AwayDay examples & Equity Instruments and FX again
     - something with my blog feed for the link bit
  - reference entries for language features
     -vs- learning entries such as building up 99 bottles in 7 steps and learning about abstraction
@@ -67,8 +69,8 @@ Web Tutorial
     - Firefox
  - new dibdab for raw view
  - remember open and parent replace state
- - 204 detection so not error and delay
  - make sure CAP demo guis and land renders, even without maps
+ - still missing some long poll results on browser
 --------------------------------------------------------
 Other
  - change 'gui' to 'layout' or '2d place': notice is what?
@@ -310,7 +312,6 @@ Stuff
 
  - GUIs
     - gui format
-    - see src/server/vm1/static.db res/raw/demodb.json AwayDay examples & src/server/vm[12]/test.db FX/Equity
     - fill in all other form type values
     - cyrus.js vs gui
 --------------------------------------------------------
