@@ -235,7 +235,7 @@ public class CyrusLanguage extends WebObject {
         for(Object v: list){
             boolean ok=false;
             for(; i<ll.size(); i++){
-                String pk=String.format("%s:%d",path,i);
+                String pk=path+":"+i;
                 if(scanTypeMayFail(v,pk)){ ok=true; bl.add(pk); if(matchEach) break; if(rhs!=null) rewrites.put(pk,rhs); }
             }
             if(!ok) return false;
