@@ -116,7 +116,7 @@ runcyrus: kill cyrusconfig   usecyrusdb setvm2tstconfig run2
 
 runcars: kill clean netconfig usecarsdb setvm3tstconfig run1n2
 
-runcap: kill clean netconfig usecapdb  setvm2emuconfig run2
+runcap: kill clean netconfig useworlddb usecapdb setvm3emuconfig run1n2
 
 runlap: kill clean netconfig usecapdb  setvm2lanconfig run2
 
