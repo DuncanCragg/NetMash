@@ -186,8 +186,14 @@ public class CyrusLanguage extends WebObject {
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        if(list.size()==4 && list.get(0).equals("within")){
-            return withinOf(findDouble(list.get(1)), contentList(path), findList(list.get(3)));
+        if(list.size()==4 && list.get(0).equals("within") && list.get(2).equals("of")){
+            Double d=findDouble(list.get(1));
+            if(d==null) return false;
+            LinkedList a=contentList(path);
+            if(a==null || a.size()==0 || !(a.get(0) instanceof Number)) return false;
+            LinkedList b=findList(list.get(3));
+            if(b==null || b.size()==0 || !(b.get(0) instanceof Number)) return false;
+            return withinOf(d, a, b);
         }
         int becomes=list.indexOf("=>");
         if(becomes!= -1){
@@ -760,9 +766,9 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
         LinkedHashMap hm=findHash(collection);
         String s=findString(index);
         if(s==null) return null;
-        if(hm!=null && hm.size() >0) return hm.get(s);
+        if(hm!=null && hm.size() >0){ Object o=hm.get(s); if(o!=null) return o; }
 
-        LinkedList    ll=findList(collection);
+        LinkedList    ll=findList(collection,false);
         Double d=findDouble(index);
         if(d==null) return null;
         int i=d.intValue();

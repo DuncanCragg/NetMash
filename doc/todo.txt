@@ -4,10 +4,10 @@ To Do
 
 --------------------------------------------------------
 Current
- - Android demos not working
- - still missing some long poll results
- - ** needs to be bottom-up not top-down, so check order of rewrites (join bottles before verses)
+ - choosing to return uid or full object or reference..?
  - what to do about lack of defaults and (+ @list) stuff in CAP
+ - ** needs to be bottom-up not top-down, so check order of rewrites (join bottles before verses)
+ - still missing some long poll results on browser
 --------------------------------------------------------
 Language
  - bin !=> - it's too hard to spot
