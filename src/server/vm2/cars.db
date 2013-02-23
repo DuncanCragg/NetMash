@@ -42,9 +42,10 @@
 { UID: uid-620a-6b9d-5535-949d
   is: contact list rule
   when: "results list updates, update self"
+  results: { content-count: count @results:list:is }
   v: !@results:Version => @results:Version
   list: => @results:list each ( @look-up:table select @..:UID else ((( @.. with-more { More: @..:UID } ) cut-out { email: * } ) with-more { UID: new } ))
-  content-count: => @results:content-count
+  content-count: => count @list
   Notifying: => @. with @original-query @look-up
 }
 

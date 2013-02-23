@@ -35,14 +35,16 @@ Language
     - not sure about uids and snapshot of other items
  - 'list' means sub-list "x: list" matches  "x: a ( b ) c" not "x: a b c"
     - why didn't ( * * ) match outer list?
+    - maybe don't have join recurse
  - commas are whitespace outside of quotes
 --------------------------------------------------------
 Types
  - source and target as generic links to the source of your state and the target of your state
+    - try again to get source/target right in cars example
 --------------------------------------------------------
 Queries
  - shouldn't need list: in a match in a list: querying: { list: maybe @match }
- - querying: not list: in queries - it's not a list!
+ - 'querying:' not 'list:' in queries - it's not a list!
  - query pattern should be: { is: contact query filter: {} page-size:  match: { full-name: email: } xx: yy: }
  - search results:
     - full inline, partial based on query filter
@@ -66,6 +68,7 @@ Web Tutorial
  - new dibdab for raw view
  - remember open and parent replace state
  - 204 detection so not error and delay
+ - make sure CAP demo guis and land renders, even without maps
 --------------------------------------------------------
 Other
  - change 'gui' to 'layout' or '2d place': notice is what?
