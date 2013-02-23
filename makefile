@@ -380,10 +380,11 @@ clean:
 	rm -rf bin/classes bin/classes.dex
 	rm -f  bin/Cyrus.ap_ bin/Cyrus*un*ed.apk
 	rm -f  gen/cyrus/gui/R.java
+	-mv ,l* doc/local
 	rm -f  ,*
 
 veryclean: kill clean setappemuconfig netconfig setvm3cleanconfig setemumapkey
-	rm -f  src/server/vm[12]/cyrus.log
+	-mv    src/server/vm[12]/cyrus.log doc/local
 	rm -f  src/server/vm[12]/cyrus.db
 	rm -f  src/server/vm2/cyrusconfig.db
 	rm -rf bin gen

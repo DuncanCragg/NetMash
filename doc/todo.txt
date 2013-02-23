@@ -10,6 +10,7 @@ Current
  - what to do about lack of defaults and (+ @list) stuff in CAP
 --------------------------------------------------------
 Language
+ - bin !=> - it's too hard to spot
  - @. and @.. - @ something else?
  - have @ =>, so implement => @
  - "" => won't rewrite? "", null, () should vanish everywhere

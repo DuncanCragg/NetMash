@@ -62,12 +62,14 @@
 { UID: uid-83a6-53ef-9f44-43bd
   is:  3d cuboid editable rule
   when: "user position changes, set target position to just in front"
+  target-user: { position: * }
   target-position: => @target-user:position + ( 2 1 -3 )
 }
 
 { UID: uid-101b-2c33-9fd6-96a1
   is:  3d cuboid editable rule
   when: "time passes, set position to half way to target"
+  target-position: ( number number number )
   position: within 0.5 of @target-position !=> ( @. + @target-position ) / 2
   time: { timestamp: > @next-time }
   next-time: => @time:timestamp + 1000
