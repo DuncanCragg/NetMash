@@ -168,7 +168,7 @@
   a: 20
   b: 29
   l1: ok
-  l2: 2
+  l2: count @l8
   c: < 7.1
   l3: count 4
   l4: !2

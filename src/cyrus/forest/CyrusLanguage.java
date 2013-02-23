@@ -176,6 +176,15 @@ public class CyrusLanguage extends WebObject {
                        (ll!=null && ll.size()==i);
             }
         }
+        if(list.size()==2 && (list.get(0).equals("count"))){
+            Double d=contentDouble(path);
+            if(d!=null){
+                int i=d.intValue();
+                LinkedList ll=findList(list.get(1));
+                return (ll==null && i==0) ||
+                       (ll!=null && ll.size()==i);
+            }
+        }
         if(list.size()==1 && list.get(0).equals("#")){
             boolean ok=!contentSet(path);
             if(ok && rhs!=null) rewrites.put(path,rhs);
