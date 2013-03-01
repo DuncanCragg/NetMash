@@ -604,6 +604,11 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
             if(d2==null) d2=findDouble(ll.get(2));
             if(d0!=null && d2!=null) return Boolean.valueOf(d0 >= d2);
         }
+        if(ll.size()==3 && "==".equals(s1)){
+            if(d0==null) d0=findDouble(ll.get(0));
+            if(d2==null) d2=findDouble(ll.get(2));
+            if(d0!=null && d2!=null) return Boolean.valueOf(d0.doubleValue() == d2.doubleValue());
+        }
         if(ll.size()==6 && "if".equals(s0)){
             if(s2==null) s2=findString(ll.get(2));
             if(s4==null) s4=findString(ll.get(4));

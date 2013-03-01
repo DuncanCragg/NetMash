@@ -6,25 +6,26 @@ To Do
 Browser: Web tutorial / cyrus.js
  - still missing some long poll results on browser?
  - gui/layout fixes: make sure CAP demo guis and land renders, even without maps
+ - reference entries for language features
+    -vs- learning entries such as building up 99 bottles in 7 steps and learning about abstraction
+    - see cyrus-tutorial.txt
  - tutorial as a set of test cases and demos on language
     - doc/local/demodb.json; src/server/vm[12]/test.db
     - AwayDay examples & Equity Instruments and FX again
     - something with my blog feed for the link bit
- - reference entries for language features
-    -vs- learning entries such as building up 99 bottles in 7 steps and learning about abstraction
  - new dibdab for replacing parent (temporarily in view)
+ - remember open and parent replace state
  - fix:
     - height/scroll thing
     - <pre> and <p> thing
     - Firefox
- - new dibdab for raw view
- - remember open and parent replace state
+ - new dibdab for raw view <- was that JSONViewish?
 --------------------------------------------------------
-Other
+
+--------------------------------------------------------
  - implement POST response for return notification
  - 'maybe' in 3d game, CAP, Reaktion?
 --------------------------------------------------------
-
 
 --------------------------------------------------------
  - room demo
