@@ -3,6 +3,11 @@ To Do
 -----
 
 --------------------------------------------------------
+CyrusLanguage:
+ - use findXXX not contentXXX on LHS scanXXX
+--------------------------------------------------------
+
+--------------------------------------------------------
 Browser: Web tutorial / cyrus.js
  - still missing some long poll results on browser?
  - gui/layout fixes: make sure CAP demo guis and land renders, even without maps
