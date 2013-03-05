@@ -369,6 +369,16 @@ public class Utils{
         }
         return r;
     }
+
+    @SuppressWarnings("unchecked")
+    static public LinkedList subList(LinkedList ll, int s){
+        return new LinkedList(ll.subList(s,ll.size()));
+    }
+
+    @SuppressWarnings("unchecked")
+    static public LinkedList subList(LinkedList ll, int s, int e){
+        return new LinkedList(ll.subList(s,e));
+    }
 }
 
 
