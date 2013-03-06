@@ -371,14 +371,14 @@ public class CyrusLanguage extends WebObject {
             LinkedList rhs=entry.getValue();
             if(rhs.size()==0) continue;
             if(rhs.size() >=2 && "@.".equals(rhs.get(0)) && "with".equals(rhs.get(1))){
-                LinkedList e=copyFindEach(rhs.subList(2,rhs.size()));
+                LinkedList e=copyFindEach(subList(rhs,2));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) notifying(o.toString());
                 else contentSetAddAll(currentRewritePath, e);
             }
             else
             if(rhs.size() >=2 && "@.".equals(rhs.get(0)) && "without".equals(rhs.get(1))){
-                LinkedList e=findEach(rhs.subList(2,rhs.size()));
+                LinkedList e=findEach(subList(rhs,2));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) unnotifying(o.toString());
                 else contentListRemoveAll(currentRewritePath, e);
@@ -536,7 +536,7 @@ public class CyrusLanguage extends WebObject {
         }
         if(ll.size() >=2 && "with".equals(s1)){
             if(l0==null) l0=findList(ll.get(0),false);
-            if(l0!=null) return listWith(copyFindEach(l0),copyFindEach(ll.subList(2,ll.size())));
+            if(l0!=null) return listWith(copyFindEach(l0),copyFindEach(subList(ll,2)));
         }
         if(ll.size()==2 && "+".equals(s0)){
             if(l1==null) l1=findList(ll.get(1));
