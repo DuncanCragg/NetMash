@@ -368,24 +368,24 @@ public class CyrusLanguage extends WebObject {
             boolean newBasePathAndShufflingToDo=(shufflePath!=null && !shufflePath.equals(basePath));
             if(newBasePathAndShufflingToDo){ shuffleList(shufflePath); shufflePath=null; }
 
-            LinkedList ll=entry.getValue();
-            if(ll.size()==0) continue;
-            if(ll.size() >=2 && "@.".equals(ll.get(0)) && "with".equals(ll.get(1))){
-                LinkedList e=copyFindEach(ll.subList(2,ll.size()));
+            LinkedList rhs=entry.getValue();
+            if(rhs.size()==0) continue;
+            if(rhs.size() >=2 && "@.".equals(rhs.get(0)) && "with".equals(rhs.get(1))){
+                LinkedList e=copyFindEach(rhs.subList(2,rhs.size()));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) notifying(o.toString());
                 else contentSetAddAll(currentRewritePath, e);
             }
             else
-            if(ll.size() >=2 && "@.".equals(ll.get(0)) && "without".equals(ll.get(1))){
-                LinkedList e=findEach(ll.subList(2,ll.size()));
+            if(rhs.size() >=2 && "@.".equals(rhs.get(0)) && "without".equals(rhs.get(1))){
+                LinkedList e=findEach(rhs.subList(2,rhs.size()));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) unnotifying(o.toString());
                 else contentListRemoveAll(currentRewritePath, e);
             }
             else{
-                Object e=(ll.size()==1)? copyFindObject(ll.get(0)): eval(ll);
-                if(e==null) log("May delete "+currentRewritePath+" .. but may just be a failed rewrite! "+ll);
+                Object e=(rhs.size()==1)? copyFindObject(rhs.get(0)): eval(rhs);
+                if(e==null) log("May delete "+currentRewritePath+" .. but may just be a failed rewrite! "+rhs);
                 if(e==null || "#".equals(e)){
                     String[] parts=currentRewritePath.split(":");
                     String lastpart=parts[parts.length-1];
