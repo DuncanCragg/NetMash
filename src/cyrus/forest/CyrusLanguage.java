@@ -402,32 +402,52 @@ public class CyrusLanguage extends WebObject {
                 }
                 else contentObject(currentRewritePath, e);
             }
+            String p=trimListPath(currentRewritePath);
+            if(!currentRewritePath.equals(p)) contentObject(p,deepEval(contentList(p)));
         }
         if(shufflePath!=null) shuffleList(shufflePath);
-
-        LinkedHashMap<String,Boolean> maybeEvals=new LinkedHashMap<String,Boolean>();
-        for(Map.Entry<String,LinkedList> entry: rewrites.entrySet()){
-            String bp=trimListPaths(entry.getKey());
-            if(bp!=null) maybeEvals.put(bp, true);
-        }
-        for(Map.Entry<String,Boolean> entry: maybeEvals.entrySet()){
-            String p=entry.getKey();
-            Object e=eval(contentList(p));
-logXX("deep list eval: @",p,contentList(p)," => ",e);
-            contentObject(p,e);
-        }
     }
 
     static public String  LISTPATHRE=null;
     static public Pattern LISTPATHPA=null;
 
-    private String trimListPaths(String path){
+    private String trimListPath(String path){
         if(LISTPATHRE==null){
-            LISTPATHRE = "(.*?):[0-9][:0-9]*:[0-9][:0-9]*$";
+            LISTPATHRE = "(.*?):[0-9][:0-9]*$";
             LISTPATHPA = Pattern.compile(LISTPATHRE);
         }
         Matcher m = LISTPATHPA.matcher(path);
-        return (m.matches())? m.group(1): null;
+        return (m.matches())? m.group(1): path;
+    }
+
+    @SuppressWarnings("unchecked")
+    Object deepEval(LinkedList ll){ return deepEvalObject(eval(ll)); }
+
+    @SuppressWarnings("unchecked")
+    Object deepEvalObject(Object o){
+        if(o instanceof LinkedList   ) return deepEvalList((LinkedList)o);
+        if(o instanceof LinkedHashMap) return deepEvalHash((LinkedHashMap)o);
+        return copyFindObject(o);
+    }
+
+    @SuppressWarnings("unchecked")
+    Object deepEvalList(LinkedList ll){
+        LinkedList r=new LinkedList();
+        for(Object o: ll){
+            maybeAdd(r,deepEvalObject(o)); ;
+        }
+        return eval(r);
+    }
+
+    @SuppressWarnings("unchecked")
+    Object deepEvalHash(LinkedHashMap<String,Object> hm){
+        LinkedHashMap r=new LinkedHashMap();
+        for(Map.Entry<String,Object> entry: hm.entrySet()){
+            String k=entry.getKey();
+            Object o=entry.getValue();
+            maybePut(r,k,deepEvalObject(o));
+        }
+        return r;
     }
 
     @SuppressWarnings("unchecked")
@@ -445,7 +465,7 @@ logXX("deep list eval: @",p,contentList(p)," => ",e);
 
     @SuppressWarnings("unchecked")
     private Object eval(LinkedList ll, String lep){ try{
-        if(ll.size()==0) return null;
+        if(ll==null || ll.size()==0) return null;
    //   if(ll.size()==1) return copyFindObject(ll.get(0));
         if(ll.size()==1) return ll;
         String s0=findString(ll.get(0));
