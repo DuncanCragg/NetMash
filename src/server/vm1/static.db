@@ -61,8 +61,8 @@
                                    (( @. - 1 ) bottles ) "of beer on the wall." }
    { is: gui rule view: 0 => "No more bottles of beer on the wall, no more bottles of beer."
                              "Go to the store, buy some more, 99 bottles of beer on the wall. " }
-   { is: gui rule **: 1 bottles => "1 bottle" }
-   { is: gui rule **: 0 bottles => "no more bottles" }
+   { is: gui rule view: { **: 1 bottles => "1 bottle" }}
+   { is: gui rule view: { **: 0 bottles => "no more bottles" }}
    { is: gui rule view: ( * * ) => join " " @. }
   is: editable gui
 }

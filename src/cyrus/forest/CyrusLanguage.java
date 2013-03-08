@@ -103,16 +103,13 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanHash(LinkedHashMap<String,Object> hash, String path){
-        LinkedHashMap hm=contentHashMayJump(path);
-        if(hm==null){ if(contentListMayJump(path)==null) return false; return scanList(list(hash), path, null); }
+        if(hash.get("**")!=null){ scanDeep(hash.get("**"),path); if(hash.size()==1) return true; }
+        if(contentHashMayJump(path)==null) return contentListMayJump(path)!=null && scanList(list(hash), path, null);
         if(hash.isEmpty()) return true;
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=(path.equals("")? "": path+":")+entry.getKey();
-            if(ignoreTopLevelNoise(path,pk)) continue;
-            Object v=entry.getValue();
-            if(pk.endsWith("**")){ if(v instanceof LinkedList) scanDeep((LinkedList)v,pk.substring(0,pk.length()-2)); }
-            else
-            if(!scanType(v,pk)) return false;
+            if(pk.endsWith("**")|| ignoreTopLevelNoise(path,pk)) continue;
+            if(!scanType(entry.getValue(),pk)) return false;
         }
         return true;
     }
@@ -306,21 +303,26 @@ public class CyrusLanguage extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    private void scanDeep(LinkedList list, String path){
+    private void scanDeep(Object o, String path){
+        if(!(o instanceof LinkedList)) return;
+        LinkedList list=(LinkedList)o;
+        scanList(list,path,null);
         LinkedHashMap<String,Object> hm=contentHash(path.equals("")? "#": path);
-        if(hm==null) return;
+        if(hm!=null){ scanHashDeep(list,hm,path); return; }
+        LinkedList ll=contentList(path);
+        if(ll!=null){ scanListDeep(list,ll,path); return; }
+    }
+
+    private void scanHashDeep(LinkedList list, LinkedHashMap<String,Object> hm, String path){
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String pk=(path.equals("")? "": path+":")+entry.getKey();
             if(ignoreTopLevelNoise(path,pk)) continue;
-            scanListDeep(list,pk);
+            scanDeep(list,pk);
         }
     }
 
-    private void scanListDeep(LinkedList list, String path){
-        scanList(list,path,null);
-        LinkedList ll=contentList(path);
-        if(ll!=null) for(int i=0; i<ll.size(); i++) scanListDeep(list,path+":"+i);
-        else scanDeep(list,path);
+    private void scanListDeep(LinkedList list, LinkedList ll, String path){
+        for(int i=0; i<ll.size(); i++) scanDeep(list,path+":"+i);
     }
 
     private boolean ignoreTopLevelNoise(String path, String pk){
@@ -359,7 +361,6 @@ public class CyrusLanguage extends WebObject {
     private void doRewrites(){
         String shufflePath=null;
         for(Map.Entry<String,LinkedList> entry: rewrites.entrySet()){
-
             currentRewritePath=entry.getKey();
             if(currentRewritePath.equals("Alerted")) continue;
 
