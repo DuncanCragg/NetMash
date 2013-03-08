@@ -4,7 +4,11 @@ To Do
 
 --------------------------------------------------------
 CyrusLanguage:
+ - still need ref check before list?
+ - merge in @. with/out
  - use findXXX not contentXXX on LHS scanXXX
+ - x:** for lots of tests
+ - Reductions: .. as well as Rules: .. ?
 --------------------------------------------------------
 
 --------------------------------------------------------

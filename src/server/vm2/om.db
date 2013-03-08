@@ -25,6 +25,7 @@
   ll: ( c 1 s ) { x: ( 1 c s ) } ( y ( 1 s c ))
   fb: fib 5
   lu: {}
+  ls: {s: 2}{s: 1}{t: 4}{s: 3}
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -57,6 +58,8 @@
   bl: false => true
   zp: => @z with 4 2 5
   lu: => @. with-more { @xx: @x }
+  ls: {s: *}
+  tx: => join , (x (@=ls:s select (random 0 (( count @=ls ) - 1))))
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -91,6 +94,7 @@
   bl: "true" => "false"
   zp: 1 2 3 4 5
   lu: { qq: 20 } => @. add-more { c: d qq: 20 30 }
+  tx: /x,[123]/
 }
 
 { UID: uid-1de5-4d69-667a-56e4
