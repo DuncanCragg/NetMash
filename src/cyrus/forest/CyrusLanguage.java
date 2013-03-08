@@ -425,17 +425,9 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private Object deepEvalObject(Object o){
-        if(o instanceof LinkedList   ) return deepEvalList((LinkedList)o);
         if(o instanceof LinkedHashMap) return deepEvalHash((LinkedHashMap)o);
+        if(o instanceof LinkedList   ) return deepEvalList((LinkedList)o);
         return o;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object deepEvalList(LinkedList ll){
-        if(ll.size()==2 && "as-is".equals(ll.get(0))) return ll;
-        LinkedList r=new LinkedList();
-        for(Object o: ll) maybeAdd(r,deepEvalObject(o)); ;
-        return eval(r);
     }
 
     @SuppressWarnings("unchecked")
@@ -447,6 +439,14 @@ public class CyrusLanguage extends WebObject {
             maybePut(r,k,deepEvalObject(o));
         }
         return r;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object deepEvalList(LinkedList ll){
+        if(ll.size()==2 && "as-is".equals(ll.get(0))) return ll;
+        LinkedList r=new LinkedList();
+        for(Object o: ll) maybeAdd(r,deepEvalObject(o)); ;
+        return eval(r);
     }
 
     @SuppressWarnings("unchecked")
