@@ -4,8 +4,8 @@ To Do
 
 --------------------------------------------------------
 CyrusLanguage:
- - x:** for lots of tests
- - Reductions: .. as well as Rules: .. ?
+ - do lots of ** tests
+ - or Reductions: .. as well as Rules: .. ?
  - merge in @. with/out
  - use findXXX not contentXXX on LHS scanXXX
 --------------------------------------------------------

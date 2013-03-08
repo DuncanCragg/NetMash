@@ -461,12 +461,11 @@ public class CyrusLanguage extends WebObject {
 
     // ----------------------------------------------------
 
-    private Object eval(LinkedList ll){ Object o=eval(ll, null); /*logXX("eval",System.identityHashCode(ll),ll.hashCode(),ll,"===",o);*/ return o; }
+    private Object eval(LinkedList ll){ return eval(ll, null); }
 
     @SuppressWarnings("unchecked")
     private Object eval(LinkedList ll, String lep){ try{
         if(ll==null || ll.size()==0) return null;
-   //   if(ll.size()==1) return copyFindObject(ll.get(0));
         if(ll.size()==1) return ll;
         String s0=findString(ll.get(0));
         String s1=findString(ll.get(1));
