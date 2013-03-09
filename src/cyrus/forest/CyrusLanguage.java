@@ -532,11 +532,11 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "join".equals(s0)){
             if(l2==null) l2=findList(ll.get(2));
             if(s1==null) s1=findString(ll.get(1));
-            if(l2!=null && s1!=null) return join(l2, s1);
+            if(l2!=null && s1!=null) return join(findEach(l2), s1);
         }
         if(ll.size() >=2 && "with".equals(s1)){
             if(l0==null) l0=findList(ll.get(0),false);
-            if(l0!=null) return listWith(copyFindEach(l0),copyFindEach(subList(ll,2)));
+            if(l0!=null) return listWith(findEach(l0),findEach(subList(ll,2)));
         }
         if(ll.size()==2 && "+".equals(s0)){
             if(l1==null) l1=findList(ll.get(1));
@@ -634,19 +634,19 @@ public class CyrusLanguage extends WebObject {
             if(s4==null) s4=findString(ll.get(4));
             if("then".equals(s2) && "else".equals(s4)){
                 if(b1==null) b1=findBoolean(ll.get(1));
-                if(b1!=null) return b1? copyFindObject(ll.get(3)): copyFindObject(ll.get(5));
+                if(b1!=null) return b1? findObject(ll.get(3)): findObject(ll.get(5));
             }
         }
         if(ll.size()==3 && "select".equals(s1)){
             Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
-            if(o02!=null) return copyFindObject(o02);
+            if(o02!=null) return findObject(o02);
         }
         if(ll.size()==5 && "select".equals(s1)){
             if(s3==null) s3=findString(ll.get(3));
             if("else".equals(s3)){
                 Object o02=findHashOrListAndGet(ll.get(0),ll.get(2));
-                if(o02!=null) return copyFindObject(o02);
-                return copyFindObject(ll.get(4));
+                if(o02!=null) return findObject(o02);
+                return findObject(ll.get(4));
             }
         }
         boolean trylist0=false;
@@ -726,13 +726,6 @@ public class CyrusLanguage extends WebObject {
     }
 
     // ----------------------------------------------------
-
-    @SuppressWarnings("unchecked")
-    private LinkedList copyFindEach(List ll){
-        LinkedList r=new LinkedList();
-        for(Object o: ll) maybeAdd(r,copyFindObject(o));
-        return r;
-    }
 
     @SuppressWarnings("unchecked")
     private LinkedList findEach(List ll){
@@ -887,6 +880,13 @@ public class CyrusLanguage extends WebObject {
 
     // ----------------------------------------------------
 
+    @SuppressWarnings("unchecked")
+    private LinkedList copyFindEach(List ll){
+        LinkedList r=new LinkedList();
+        for(Object o: ll) maybeAdd(r,copyFindObject(o));
+        return r;
+    }
+
     private Object copyFindObject(Object o){
         return copyObject(findObject(o), false);
     }
@@ -970,7 +970,7 @@ public class CyrusLanguage extends WebObject {
         if(ha!=null) for(Map.Entry<String,Object> entry: ha.entrySet()){
             String k=entry.getKey();
             if(!isRef(k)) continue;
-            Object rf=copyFindObjectFixRefs(k,lep,false);
+            Object rf=findObjectFixRefs(k,lep,false);
             if(rf instanceof String) maybePut(hx, (String)rf, entry.getValue());
         }
         if(hx.size()!=0) ha=new LinkedHashMap<String,Object>(ha);
@@ -995,7 +995,7 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private Object copyMoreObject(Object o, String lep){
         if(o==null) return null;
-        if(o instanceof String) o=copyFindObjectFixRefs(o,lep,false);
+        if(o instanceof String) o=findObjectFixRefs(o,lep,false);
         if(o instanceof String)  return o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
@@ -1007,8 +1007,8 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private Object copyMoreObject(Object o, Object a, String lep, boolean wm, boolean justref){
         if(o==null) return null;
-        if(o instanceof String) o=copyFindObjectFixRefs(o,lep,justref);
- //     if(a instanceof String) a=copyFindObjectFixRefs(a,lep);
+        if(o instanceof String) o=findObjectFixRefs(o,lep,justref);
+ //     if(a instanceof String) a=findObjectFixRefs(a,lep);
         if(o instanceof String)  return listWM(o,a,wm);
         if(o instanceof Number)  return listWM(o,a,wm);
         if(o instanceof Boolean) return listWM(o,a,wm);
@@ -1022,7 +1022,7 @@ public class CyrusLanguage extends WebObject {
         LinkedList r=new LinkedList();
         for(Object o: ll) maybeAdd(r,copyMoreObject(o,null,lep,wm,true));
         if(a==null) return r;
-   //   if(a instanceof String)        a=copyFindObjectFixRefs(a,lep);
+   //   if(a instanceof String)        a=findObjectFixRefs(a,lep);
         if(a instanceof LinkedList)    a=copyMoreList(((LinkedList)a),null,lep,wm);
         if(a instanceof LinkedHashMap) a=copyMoreHash((LinkedHashMap)a,null,lep,wm);
         if(a instanceof LinkedList) maybeAddAllWM(r,(LinkedList)a,wm);
@@ -1035,11 +1035,11 @@ public class CyrusLanguage extends WebObject {
         return hm;
     }
 
-    private Object copyFindObjectFixRefs(Object o, String lep, boolean justref){
-        if(!(o instanceof String) || !((String)o).startsWith("@..")) return copyFindObject(o);
-        if(lep==null || lep.length()==0) return copyFindObject(o);
+    private Object findObjectFixRefs(Object o, String lep, boolean justref){
+        if(!(o instanceof String) || !((String)o).startsWith("@..")) return findObject(o);
+        if(lep==null || lep.length()==0) return findObject(o);
         String p=((String)o).replace("@..",lep);
-        return justref? p: copyFindObject(p);
+        return justref? p: findObject(p);
     }
 
     private Object listWM(Object a, Object b, boolean wm){

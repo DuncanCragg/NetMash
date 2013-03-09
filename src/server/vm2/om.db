@@ -60,6 +60,7 @@
   lu: => @. with-more { @xx: @x }
   ls: {s: *}
   tx: => join , (x (@=ls:s select (random 0 (( count @=ls ) - 1))))
+  jt: => join / ( @is @x )
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -95,6 +96,7 @@
   zp: 1 2 3 4 5
   lu: { qq: 20 } => @. add-more { c: d qq: 20 30 }
   tx: /x,[123]/
+  jt: test/20
 }
 
 { UID: uid-1de5-4d69-667a-56e4

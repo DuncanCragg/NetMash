@@ -307,7 +307,7 @@ setup:
 	vim -o -N res/raw/cyrusconfig.db res/raw/top.db src/server/vm1/cyrusconfig.db src/server/vm1/test.db src/server/vm2/curconfig.db src/server/vm2/allconfig.db src/server/vm2/test.db
 
 showtestresults:
-	tail -f src/server/vm2/cyrus.log | egrep -i 'running rule|scan|failed|error|exception|fired'
+	tail -f src/server/vm2/cyrus.log | egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx'
 
 showtestresults2:
 	sleep 1
