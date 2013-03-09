@@ -784,10 +784,6 @@ public class WebObject {
         }
     }
 
-    static public void whereAmI(Object message){
-        try{ throw new Exception(); } catch(Exception e){ log(message+": "+Arrays.asList(e.getStackTrace())); }
-    }
-
     /* ---------------------------------------------------- */
 
     private WebObject observing(String baseurl, String uid, String path){

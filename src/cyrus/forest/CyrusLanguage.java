@@ -360,6 +360,7 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private void doRewrites(){
         String shufflePath=null;
+        LinkedHashMap<String,Boolean> topDowners=new LinkedHashMap<String,Boolean>();
         for(Map.Entry<String,LinkedList> entry: rewrites.entrySet()){
             currentRewritePath=entry.getKey();
             if(currentRewritePath.equals("Alerted")) continue;
@@ -385,7 +386,7 @@ public class CyrusLanguage extends WebObject {
                 else contentListRemoveAll(currentRewritePath, e);
             }
             else{
-                Object e=(rhs.size()==1)? copyFindObject(rhs.get(0)): deepEval(rhs);
+                Object e=copyFindObject((rhs.size()==1)? rhs.get(0): deepEval(rhs));
                 if(e==null) log("May delete "+currentRewritePath+" .. but may just be a failed rewrite! "+rhs);
                 if(e==null || "#".equals(e)){
                     String[] parts=currentRewritePath.split(":");
@@ -403,10 +404,13 @@ public class CyrusLanguage extends WebObject {
                 }
                 else contentObject(currentRewritePath, e);
             }
-            String p=trimListPath(currentRewritePath);
-            if(!currentRewritePath.equals(p)) contentObject(p,deepEval(contentList(p)));
+            maybePut(topDowners,trimListPath(currentRewritePath),true);
         }
         if(shufflePath!=null) shuffleList(shufflePath);
+        for(String p: topDowners.keySet()){
+            LinkedList ll=contentList(p);
+            if(ll!=null) contentObject(p,copyFindObject(deepEval(ll)));
+        }
     }
 
     static public String  LISTPATHRE=null;
@@ -418,11 +422,11 @@ public class CyrusLanguage extends WebObject {
             LISTPATHPA = Pattern.compile(LISTPATHRE);
         }
         Matcher m = LISTPATHPA.matcher(path);
-        return (m.matches())? m.group(1): path;
+        return (m.matches())? m.group(1): null;
     }
 
     @SuppressWarnings("unchecked")
-    private Object deepEval(LinkedList ll){ return copyFindObject(deepEvalObject(eval(ll))); }
+    private Object deepEval(LinkedList ll){ return deepEvalObject(eval(ll)); }
 
     @SuppressWarnings("unchecked")
     private Object deepEvalObject(Object o){

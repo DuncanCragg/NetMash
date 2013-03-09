@@ -31,7 +31,9 @@ public class Utils{
     }
 
     static public void whereAmI(Object message){
-        try{ throw new Exception(); } catch(Exception e){ log(message+": "+Arrays.asList(e.getStackTrace())); }
+        try{ throw new Exception(); } catch(Exception e){
+            logXX(message); for(Object o: e.getStackTrace()) logXX(o.toString());
+        }
     }
 
     // -------------------------------
