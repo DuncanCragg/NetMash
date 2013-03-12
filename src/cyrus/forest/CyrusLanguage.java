@@ -272,8 +272,8 @@ public class CyrusLanguage extends WebObject {
 
     private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
-        if(!r && extralogging && !tryfail && !mayfail) log("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
-        if( r && extralogging &&  tryfail            ) log("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
+        if(!r && extralogging && !tryfail && !mayfail) log("Failed to match "           +v+" at: "+pk+" "+contentObject(pk));
+        if( r && extralogging &&  tryfail            ) log("Trying to fail but matched "+v+" at: "+pk+" "+contentObject(pk));
         return r;
     }
 
@@ -290,11 +290,11 @@ public class CyrusLanguage extends WebObject {
 
     private boolean scanString(String v, String pk){
         if(v.startsWith("!")) return !scanStringTryFail(v.substring(1),pk);
+        if(v.equals("*")) return  contentSet(pk);
+        if(v.equals("#")) return !contentSet(pk);
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         if(contentIs(pk,v)) return true;
         if(contentIsMayJump(pk,v)) return true;
-        if(v.equals("*")) return  contentSet(pk);
-        if(v.equals("#")) return !contentSet(pk);
         if(v.equals("@"))       return contentIsThis(pk);
         if(v.equals("number"))  return isNumber( contentObject(pk));
         if(v.equals("boolean")) return isBoolean(contentObject(pk));
@@ -920,7 +920,7 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private Object copyObject(Object o, boolean asis){
         if(o==null) return null;
-        if(o instanceof String)  return ((String)o).equals("uid-new")? spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }")): ((String)o).equals("#")? null: o;
+        if(o instanceof String)  return asis? o: ((String)o).equals("uid-new")? spawnEd(): ((String)o).equals("#")? null: o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o), asis);
@@ -1059,6 +1059,10 @@ public class CyrusLanguage extends WebObject {
     private Object spawnHash(LinkedHashMap hm){
         try{ return spawn(getClass().newInstance().construct(hm)); } catch(Throwable t){ t.printStackTrace(); }
         return hm;
+    }
+
+    private String spawnEd(){
+        return spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }"));
     }
 
     private Object findObjectFixRefs(Object o, String lep, boolean justref){
