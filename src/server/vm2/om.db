@@ -26,6 +26,7 @@
   fb: fib 5
   lu: {}
   ls: {s: 2}{s: 1}{t: 4}{s: 3}
+  st: qs (5 9 2 8 3 1)
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -61,6 +62,7 @@
   ls: {s: *}
   tx: => join , (x (@=ls:s select (random 0 (( count @=ls ) - 1))))
   jt: => join / ( @is @x )
+  st: { **: qs (* * **) => (qs (@.1 each (if (@.. < @.1:0) then @.. else #))) @.1:0 (qs (@.1 each (if (@.. > @.1:0) then @.. else #))) }
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -97,6 +99,7 @@
   lu: { qq: 20 } => @. add-more { c: d qq: 20 30 }
   tx: /x,[123]/
   jt: test/20
+  st: { **: qs (* * **) => (qs (@.1 each (if (@.. < @.1:0) then @.. else #))) @.1:0 (qs (@.1 each (if (@.. > @.1:0) then @.. else #))) }
 }
 
 { UID: uid-1de5-4d69-667a-56e4
@@ -121,6 +124,7 @@
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   bl: false
   lu: { c: d qq: 20 20 30 } => @. with-more ({ qq: 30 40 } { qq: 50 20 })
+  st: { **: qs (count 1) => @.1:0 }
 }
 
 { UID: uid-61d6-65c9-2931-505b
@@ -138,6 +142,7 @@
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   pa: { b: d a: d e: f}
   lu: { c: d qq: 20 20 30 40 50 }
+  st: { **: qs ## => # }
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -167,6 +172,7 @@
   gg: # => @=ff cut-out { list: * }
   fb: { **: fib ( <= 2 ) => 1 }
   lu: { qq: count 5 }
+  st: { **: (qs *) } !=> flatten @.
 }
 
 { UID: uid-d039-5967-f60c-70f7
@@ -193,6 +199,7 @@
   uu: # !=> yay
   gg: { a: 20 list: # } { a: 40 list: # }
   vv: @uu:#
+  st: 1 2 3 5 8 9
   fb: 5
   : { la: 8 } => {
     is: test

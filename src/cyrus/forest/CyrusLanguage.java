@@ -103,7 +103,7 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanHash(LinkedHashMap<String,Object> hash, String path){
-        if(hash.get("**")!=null){ scanDeep(hash.get("**"),path); if(hash.size()==1) return true; }
+        if(hash.get("**")!=null){ if(!scanDeep(hash.get("**"),path)) return false; if(hash.size()==1) return true; }
         if(contentHashMayJump(path)==null) return contentListMayJump(path)!=null && scanList(list(hash), path, null);
         if(hash.isEmpty()) return true;
         for(Map.Entry<String,Object> entry: hash.entrySet()){
@@ -187,8 +187,27 @@ public class CyrusLanguage extends WebObject {
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
+        if(list.size()==2 && list.get(1).equals("##")){
+            boolean ok=scanType(list.get(0),path+":0")
+                             && !contentSet(path+":1");
+            if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
+        }
+        if(list.size()==3 && list.get(2).equals("##")){
+            boolean ok=scanType(list.get(0),path+":0") &&
+                       scanType(list.get(1),path+":1")
+                             && !contentSet(path+":2");
+            if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
+        }
         if(list.size()==2 && list.get(1).equals("**")){
             boolean ok=scanType(list.get(0),path+":0");
+            if(ok && rhs!=null) rewrites.put(path,rhs);
+            return ok;
+        }
+        if(list.size()==3 && list.get(2).equals("**")){
+            boolean ok=scanType(list.get(0),path+":0") &&
+                       scanType(list.get(1),path+":1");
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
@@ -303,26 +322,31 @@ public class CyrusLanguage extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    private void scanDeep(Object o, String path){
-        if(!(o instanceof LinkedList)) return;
+    private boolean scanDeep(Object o, String path){
+        if(!(o instanceof LinkedList)) return false;
         LinkedList list=(LinkedList)o;
-        scanList(list,path,null);
+        boolean ok=scanTypeMayFail(list,path);
         LinkedHashMap<String,Object> hm=contentHash(path.equals("")? "#": path);
-        if(hm!=null){ scanHashDeep(list,hm,path); return; }
+        if(hm!=null) return scanHashDeep(list,hm,path) || ok;
         LinkedList ll=contentList(path);
-        if(ll!=null){ scanListDeep(list,ll,path); return; }
+        if(ll!=null) return scanListDeep(list,ll,path) || ok;
+        return ok;
     }
 
-    private void scanHashDeep(LinkedList list, LinkedHashMap<String,Object> hm, String path){
+    private boolean scanHashDeep(LinkedList list, LinkedHashMap<String,Object> hm, String path){
+        boolean ok=false;
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String pk=(path.equals("")? "": path+":")+entry.getKey();
             if(ignoreTopLevelNoise(path,pk)) continue;
-            scanDeep(list,pk);
+            ok=scanDeep(list,pk) || ok;
         }
+        return ok;
     }
 
-    private void scanListDeep(LinkedList list, LinkedList ll, String path){
-        for(int i=0; i<ll.size(); i++) scanDeep(list,path+":"+i);
+    private boolean scanListDeep(LinkedList list, LinkedList ll, String path){
+        boolean ok=false;
+        for(int i=0; i<ll.size(); i++) ok=scanDeep(list,path+":"+i) || ok;
+        return ok;
     }
 
     private boolean ignoreTopLevelNoise(String path, String pk){
@@ -387,8 +411,8 @@ public class CyrusLanguage extends WebObject {
             }
             else{
                 Object e=copyFindObject((rhs.size()==1)? rhs.get(0): deepEval(rhs));
-                if(e==null) log("May delete "+currentRewritePath+" .. but may just be a failed rewrite! "+rhs);
-                if(e==null || "#".equals(e)){
+                if(e==null){
+                    logXX("Deleting "+currentRewritePath+" "+rhs);
                     String[] parts=currentRewritePath.split(":");
                     String lastpart=parts[parts.length-1];
                     if(parts.length==1 || !isNumber(lastpart)) contentRemove(currentRewritePath);
@@ -534,6 +558,10 @@ public class CyrusLanguage extends WebObject {
             if(s1==null) s1=findString(ll.get(1));
             if(l2!=null && s1!=null) return join(findEach(l2), s1);
         }
+        if(ll.size()==2 && "flatten".equals(s0)){
+            if(l1==null) l1=findList(ll.get(1));
+            if(l1!=null) return flatten(l1,new LinkedList());
+        }
         if(ll.size() >=2 && "with".equals(s1)){
             if(l0==null) l0=findList(ll.get(0),false);
             if(l0!=null) return listWith(findEach(l0),findEach(subList(ll,2)));
@@ -674,11 +702,9 @@ public class CyrusLanguage extends WebObject {
             if(h0!=null && h2!=null) return copyMoreHash(h0,h2,lep,"with-more".equals(s1));
         }
         if(ll.size()==3 && "each".equals(s1)){
-            if(h0==null) h0=findHash(ll.get(0));
             if(l0==null) l0=findList(ll.get(0));
             trylist0=(l0!=null && l0.size() >1);
-            if(h0==null && !trylist0) return null;
-            if(h0!=null) return copyMoreObject(ll.get(2),lep);
+            if(!trylist0) return copyMoreObject(ll.get(2),lep);
         }
         if(trylist0){
             Object r=listEval(ll,0,l0);
@@ -894,7 +920,7 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private Object copyObject(Object o, boolean asis){
         if(o==null) return null;
-        if(o instanceof String)  return ((String)o).equals("uid-new")? spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }")): o;
+        if(o instanceof String)  return ((String)o).equals("uid-new")? spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }")): ((String)o).equals("#")? null: o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o), asis);

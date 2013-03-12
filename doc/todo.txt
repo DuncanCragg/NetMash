@@ -4,6 +4,7 @@ To Do
 
 --------------------------------------------------------
 CyrusLanguage:
+ - not @.. - use @.1..3 for slicing lists
  - do lots of ** tests
  - or Reductions: .. as well as Rules: .. ?
  - merge in @. with/out

@@ -46,6 +46,13 @@ public class Utils{
         return all.substring(0,all.length()-joinwith.length());
     }
 
+    @SuppressWarnings("unchecked")
+    static public LinkedList flatten(LinkedList ll, LinkedList r){
+        if(ll==null||ll.size()==0) return null;
+        for(Object o: ll) if(!(o instanceof LinkedList)) r.add(o); else flatten((LinkedList)o,r);
+        return r;
+    }
+
     static public String toString(Object o){
         if(o==null) return "null";
         if(o instanceof float[]){ float[] fa=(float[])o; String r="[ "; for(int i=0; i<fa.length; i++) r+=fa[i]+" "; return r+" ]"; }
