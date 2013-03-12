@@ -6,6 +6,7 @@
     { view: closed item: uid-26bc-8ee9-5443-851a }
     { view: closed item: uid-8ed3-ee4a-eeef-0313 }
     { view: closed item: uid-5eeb-9bff-d369-0520 }
+    { view: closed item: uid-4b05-3181-d424-eaef }
     { view: closed item: uid-0112-09a9-3f54-b720 }
     { view: closed item: http://localhost:8083/uid-4dd7-7ef1-ecfa-1445.json }
 }
@@ -65,6 +66,18 @@
    { is: gui rule view: { **: 0 bottles => "no more bottles" }}
    { is: gui rule view: ( * * ) => join " " @. }
   is: editable gui
+  title: "9 bottles"
+}
+
+{ UID: uid-4b05-3181-d424-eaef
+  Rules:
+   { is: gui rule view: { **: qs (* * **) => (qs (@.1 filter (@.. < @.1:0))) @.1:0 (qs (@.1 filter (@.. > @.1:0))) } }
+   { is: gui rule view: { **: qs (count 1) => @.1:0 } }
+   { is: gui rule view: { **: qs ## => # } }
+   { is: gui rule view: { **: (qs *) } !=> flatten @.  }
+  is: editable gui
+  title: "Quicksort, sort-of"
+  view: qs (5 9 2 8 3 1)
 }
 
 { UID: uid-0112-09a9-3f54-b720

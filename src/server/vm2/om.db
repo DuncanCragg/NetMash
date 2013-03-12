@@ -62,7 +62,7 @@
   ls: {s: *}
   tx: => join , (x (@=ls:s select (random 0 (( count @=ls ) - 1))))
   jt: => join / ( @is @x )
-  st: { **: qs (* * **) => (qs (@.1 each (if (@.. < @.1:0) then @.. else #))) @.1:0 (qs (@.1 each (if (@.. > @.1:0) then @.. else #))) }
+  st: { **: qs (* * **) => (qs (@.1 filter (@.. < @.1:0))) @.1:0 (qs (@.1 filter (@.. > @.1:0))) }
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -99,7 +99,7 @@
   lu: { qq: 20 } => @. add-more { c: d qq: 20 30 }
   tx: /x,[123]/
   jt: test/20
-  st: { **: qs (* * **) => (qs (@.1 each (if (@.. < @.1:0) then @.. else #))) @.1:0 (qs (@.1 each (if (@.. > @.1:0) then @.. else #))) }
+  st: { **: qs (* * **) => (qs (@.1 filter (@.. < @.1:0))) @.1:0 (qs (@.1 filter (@.. > @.1:0))) }
 }
 
 { UID: uid-1de5-4d69-667a-56e4

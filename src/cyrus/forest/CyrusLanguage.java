@@ -505,6 +505,7 @@ public class CyrusLanguage extends WebObject {
         Double d2=null;
         Double d3=null;
         Boolean b1=null;
+        Boolean b2=null;
         LinkedList l0=null;
         LinkedList lh0=null;
         LinkedList l1=null;
@@ -705,6 +706,14 @@ public class CyrusLanguage extends WebObject {
             if(l0==null) l0=findList(ll.get(0));
             trylist0=(l0!=null && l0.size() >1);
             if(!trylist0) return copyMoreObject(ll.get(2),lep);
+        }
+        if(ll.size()==3 && "filter".equals(s1)){
+            if(l0==null) l0=findList(ll.get(0));
+            trylist0=(l0!=null && l0.size() >1);
+            if(!trylist0){
+                if(b2==null) b2=findBoolean(copyMoreObject(ll.get(2),lep));
+                if(b2!=null) return b2? findObject(ll.get(0)): null;
+            }
         }
         if(trylist0){
             Object r=listEval(ll,0,l0);
