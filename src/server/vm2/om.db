@@ -97,7 +97,7 @@
   ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   bl: "true" => "false"
-  zp: 1 2 3 4 5
+  zp: 1 2 3 4 5 => @. filter (@.. <= 3)
   lu: { qq: 20 } => @. add-more { c: d qq: 20 30 }
   tx: /x,[123]/
   jt: test/20
@@ -127,6 +127,7 @@
   xx: #
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   bl: false
+  zp: 1 2 3 ##
   lu: { c: d qq: 20 20 30 } => @. with-more ({ qq: 30 40 } { qq: 50 20 })
   st: { **: qs (count 1) => @.1:0 }
 }

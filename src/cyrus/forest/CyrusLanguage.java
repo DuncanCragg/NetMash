@@ -121,6 +121,24 @@ public class CyrusLanguage extends WebObject {
             scanList(new LinkedList(list.subList(1,list.size())),path,rhs);
             return true;
         }
+        int becomes=list.indexOf("=>");
+        if(becomes!= -1){
+            LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));
+            if(becomes==0){ rewrites.put(path,rh2); return true; }
+            LinkedList lhs=new LinkedList(list.subList(0,becomes));
+            boolean ok=scanList(lhs,path,rh2);
+            if(ok && becomes>1) rewrites.put(path,rh2);
+            return ok;
+        }
+        becomes=list.indexOf("!=>");
+        if(becomes!= -1){
+            if(becomes==0) return false;
+            LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));
+            LinkedList lhs=new LinkedList(list.subList(0,becomes));
+            boolean ok=scanListTryFail(lhs,path);
+            if(!ok) rewrites.put(path,rh2);
+            return !ok;
+        }
         if(list.size()==2 && list.get(0).equals("<")){
             Double d=findDouble(list.get(1));
             if(d!=null){
@@ -193,10 +211,10 @@ public class CyrusLanguage extends WebObject {
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        if(list.size()==3 && list.get(2).equals("##")){
-            boolean ok=scanType(list.get(0),path+":0") &&
-                       scanType(list.get(1),path+":1")
-                             && !contentSet(path+":2");
+        if("##".equals(list.get(list.size()-1))){
+            LinkedList ll=contentList(path);
+            boolean ok=(ll!=null && ll.size()==list.size()-1) &&
+                        scanList(new LinkedList(list.subList(0,list.size()-1)),path,rhs);
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
@@ -219,24 +237,6 @@ public class CyrusLanguage extends WebObject {
             LinkedList b=findList(list.get(3));
             if(b==null || b.size()==0 || !(b.get(0) instanceof Number)) return false;
             return withinOf(d, a, b);
-        }
-        int becomes=list.indexOf("=>");
-        if(becomes!= -1){
-            LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));
-            if(becomes==0){ rewrites.put(path,rh2); return true; }
-            LinkedList lhs=new LinkedList(list.subList(0,becomes));
-            boolean ok=scanList(lhs,path,rh2);
-            if(ok && becomes>1) rewrites.put(path,rh2);
-            return ok;
-        }
-        becomes=list.indexOf("!=>");
-        if(becomes!= -1){
-            if(becomes==0) return false;
-            LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));
-            LinkedList lhs=new LinkedList(list.subList(0,becomes));
-            boolean ok=scanListTryFail(lhs,path);
-            if(!ok) rewrites.put(path,rh2);
-            return !ok;
         }
         LinkedList ll=contentListMayJump(path);
         boolean matchEach=list.size()!=1;
@@ -733,15 +733,17 @@ public class CyrusLanguage extends WebObject {
         boolean isref=isRef(on);
         LinkedList lr=new LinkedList(ll);
         LinkedList r=new LinkedList();
+        boolean failed=false;
         int i=0;
         for(Object o: ln){
-            String lep=isref? on+":"+i: "";
+            String lep=isref? on+("@.".equals(on)? "": ":")+i: "";
             if(UID.isUID(o) && isref) o=lep;
             lr.set(n,o);
             Object e=eval(lr,lep);
-            if(e!=null) r.add(e);
+            failed=(e==lr);
+            if(!(e==null || failed)) r.add(e);
         i++; }
-        return r;
+        return failed && r.size()==0? ll: r;
     }
 
     @SuppressWarnings("unchecked")
