@@ -92,6 +92,8 @@
   ea: # => @dd each { @..:g: @..:UID e: @..:n + 1 }
   pe: # => @p each { @..:a: @..:c }
   pl: # => @p each ( @..:a @..:c )
+  ne: => ((1 2 3) each (@.. + 1)) filter (@.. < 4)
+  he: => ((({a: 1}{a: 2}{a: 3}) filter (@..:a < 3)) with-more {b: (@..:a * 2)}) each (@..:a + @..:b)
   ll: ( 1 b ) { x: ( 1 b ) } ( y ( 1 b ))
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   bl: "true" => "false"
@@ -119,6 +121,8 @@
   ea: { b: #  e: 4 } { c: /uid-/  e: 5}
   pe: { b: d }
   pl: ( b d )
+  ne: 2 3 ##
+  he: 3 6 ##
   pa: # => @pe with-more ( { a: @..:b } { e: f } )
   xx: #
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }

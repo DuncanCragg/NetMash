@@ -412,7 +412,7 @@ public class CyrusLanguage extends WebObject {
             else{
                 Object e=copyFindObject((rhs.size()==1)? rhs.get(0): deepEval(rhs));
                 if(e==null){
-                    logXX("Deleting "+currentRewritePath+" "+rhs);
+                    if(extralogging) log("Deleting "+currentRewritePath+" "+rhs);
                     String[] parts=currentRewritePath.split(":");
                     String lastpart=parts[parts.length-1];
                     if(parts.length==1 || !isNumber(lastpart)) contentRemove(currentRewritePath);
@@ -700,18 +700,18 @@ public class CyrusLanguage extends WebObject {
             trylist2=(l2!=null && l2.size() >1);
             if(h0==null && !trylist0) return null;
             if(h0!=null && h2==null && !trylist2) return copyObject(h0, false);
-            if(h0!=null && h2!=null) return copyMoreHash(h0,h2,lep,"with-more".equals(s1));
+            if(h0!=null && h2!=null) return copyMoreHash(h0,h2,lep,null,"with-more".equals(s1));
         }
         if(ll.size()==3 && "each".equals(s1)){
             if(l0==null) l0=findList(ll.get(0));
             trylist0=(l0!=null && l0.size() >1);
-            if(!trylist0) return copyMoreObject(ll.get(2),lep);
+            if(!trylist0) return copyMoreObject(ll.get(2),lep,findObject(ll.get(0)));
         }
         if(ll.size()==3 && "filter".equals(s1)){
             if(l0==null) l0=findList(ll.get(0));
             trylist0=(l0!=null && l0.size() >1);
             if(!trylist0){
-                if(b2==null) b2=findBoolean(copyMoreObject(ll.get(2),lep));
+                if(b2==null) b2=findBoolean(copyMoreObject(ll.get(2),lep,findObject(ll.get(0))));
                 if(b2!=null) return b2? findObject(ll.get(0)): null;
             }
         }
@@ -998,14 +998,14 @@ public class CyrusLanguage extends WebObject {
     // ----------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private Object copyMoreHash(LinkedHashMap<String,Object> hm, LinkedHashMap<String,Object> ha, String lep, boolean wm){
+    private Object copyMoreHash(LinkedHashMap<String,Object> hm, LinkedHashMap<String,Object> ha, String lep, Object lev, boolean wm){
         boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
         LinkedHashMap<String,Object> hx=new LinkedHashMap<String,Object>();
         if(ha!=null) for(Map.Entry<String,Object> entry: ha.entrySet()){
             String k=entry.getKey();
             if(!isRef(k)) continue;
-            Object rf=findObjectFixRefs(k,lep,false);
+            Object rf=findObjectFixRefs(k,lep,lev,false);
             if(rf instanceof String) maybePut(hx, (String)rf, entry.getValue());
         }
         if(hx.size()!=0) ha=new LinkedHashMap<String,Object>(ha);
@@ -1014,7 +1014,7 @@ public class CyrusLanguage extends WebObject {
             String k=entry.getKey();
             Object o=entry.getValue();
             Object a=(ha!=null)? ha.get(k): null;
-            maybePut(r, k, copyMoreObject(o,a,lep,wm,false));
+            maybePut(r, k, copyMoreObject(o,a,lep,lev,wm,false));
         }
         if(ha!=null) for(Map.Entry<String,Object> entry: ha.entrySet()){
             String k=entry.getKey();
@@ -1022,44 +1022,44 @@ public class CyrusLanguage extends WebObject {
             Object a=entry.getValue();
             if(hm!=null && hm.get(k)!=null) continue;
             if(k.equals("UID")){ if(a.equals("new")) spawned=true; }
-            else maybePut(r, k, copyMoreObject(a,null,lep,wm,false));
+            else maybePut(r, k, copyMoreObject(a,null,lep,lev,wm,false));
         }
         return spawned? spawnHash(r): r;
     }
 
     @SuppressWarnings("unchecked")
-    private Object copyMoreObject(Object o, String lep){
+    private Object copyMoreObject(Object o, String lep, Object lev){
         if(o==null) return null;
-        if(o instanceof String) o=findObjectFixRefs(o,lep,false);
+        if(o instanceof String) o=findObjectFixRefs(o,lep,lev,false);
         if(o instanceof String)  return o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
-        if(o instanceof LinkedHashMap) return copyMoreHash(null,((LinkedHashMap)o),lep,false);
-        if(o instanceof LinkedList)    return copyMoreList(((LinkedList)o),null,lep,false);
+        if(o instanceof LinkedHashMap) return copyMoreHash(null,((LinkedHashMap)o),lep,lev,false);
+        if(o instanceof LinkedList)    return copyMoreList(((LinkedList)o),null,lep,lev,false);
         return o;
     }
 
     @SuppressWarnings("unchecked")
-    private Object copyMoreObject(Object o, Object a, String lep, boolean wm, boolean justref){
+    private Object copyMoreObject(Object o, Object a, String lep, Object lev, boolean wm, boolean justref){
         if(o==null) return null;
-        if(o instanceof String) o=findObjectFixRefs(o,lep,justref);
- //     if(a instanceof String) a=findObjectFixRefs(a,lep);
+        if(o instanceof String) o=findObjectFixRefs(o,lep,lev,justref);
+ //     if(a instanceof String) a=findObjectFixRefs(a,lep,lev);
         if(o instanceof String)  return listWM(o,a,wm);
         if(o instanceof Number)  return listWM(o,a,wm);
         if(o instanceof Boolean) return listWM(o,a,wm);
-        if(o instanceof LinkedHashMap) return copyMoreHash(((LinkedHashMap)o),(a!=null && a instanceof LinkedHashMap)? (LinkedHashMap)a: null,lep,wm);
-        if(o instanceof LinkedList)    return copyMoreList(((LinkedList)o),a,lep,wm);
+        if(o instanceof LinkedHashMap) return copyMoreHash(((LinkedHashMap)o),(a!=null && a instanceof LinkedHashMap)? (LinkedHashMap)a: null,lep,lev,wm);
+        if(o instanceof LinkedList)    return copyMoreList(((LinkedList)o),a,lep,lev,wm);
         return o;
     }
 
     @SuppressWarnings("unchecked")
-    private Object copyMoreList(LinkedList ll, Object a, String lep, boolean wm){
+    private Object copyMoreList(LinkedList ll, Object a, String lep, Object lev, boolean wm){
         LinkedList r=new LinkedList();
-        for(Object o: ll) maybeAdd(r,copyMoreObject(o,null,lep,wm,true));
+        for(Object o: ll) maybeAdd(r,copyMoreObject(o,null,lep,lev,wm,true));
         if(a==null) return r;
-   //   if(a instanceof String)        a=findObjectFixRefs(a,lep);
-        if(a instanceof LinkedList)    a=copyMoreList(((LinkedList)a),null,lep,wm);
-        if(a instanceof LinkedHashMap) a=copyMoreHash((LinkedHashMap)a,null,lep,wm);
+   //   if(a instanceof String)        a=findObjectFixRefs(a,lep,lev);
+        if(a instanceof LinkedList)    a=copyMoreList(((LinkedList)a),null,lep,lev,wm);
+        if(a instanceof LinkedHashMap) a=copyMoreHash((LinkedHashMap)a,null,lep,lev,wm);
         if(a instanceof LinkedList) maybeAddAllWM(r,(LinkedList)a,wm);
         else                        maybeAddWM(r,a,wm);
         return r;
@@ -1074,9 +1074,14 @@ public class CyrusLanguage extends WebObject {
         return spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }"));
     }
 
-    private Object findObjectFixRefs(Object o, String lep, boolean justref){
-        if(!(o instanceof String) || !((String)o).startsWith("@..")) return findObject(o);
-        if(lep==null || lep.length()==0) return findObject(o);
+    private Object findObjectFixRefs(Object o, String lep, Object lev, boolean justref){
+        boolean needfix=(o instanceof String) && ((String)o).startsWith("@..");
+        boolean nolep=(lep==null || lep.length()==0);
+        if(needfix && nolep && lev!=null){
+            if(!(lev instanceof LinkedHashMap && ((String)o).startsWith("@..:"))) return lev;
+            return new JSON((LinkedHashMap)lev).objectPathN(((String)o).substring(4));
+        }
+        if(!needfix || nolep) return findObject(o);
         String p=((String)o).replace("@..",lep);
         return justref? p: findObject(p);
     }
