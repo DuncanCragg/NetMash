@@ -712,6 +712,7 @@ public class CyrusLanguage extends WebObject {
             trylist0=(l0!=null && l0.size() >1);
             if(!trylist0){
                 Object fo0=findObject(ll.get(0));
+                if(fo0==null) return null;
                 if(b2==null) b2=findBoolean(copyMoreObject(ll.get(2),lep, fo0));
                 Object fo00=singleElListEl(fo0);
                 if(b2==null && fo00!=null) b2=findBoolean(copyMoreObject(ll.get(2),lep+":0",fo00));
