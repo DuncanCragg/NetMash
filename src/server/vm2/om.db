@@ -27,6 +27,7 @@
   lu: {}
   ls: {s: 2}{s: 1}{t: 4}{s: 3}
   st: qs (5 9 2 8 3 1)
+  of: 4321 5432
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -63,6 +64,7 @@
   tx: => join , (x (@=ls:s select (random 0 (( count @=ls ) - 1))))
   jt: => join / ( @is @x )
   st: { **: qs (* * **) => (qs (@.1 filter (@.. < @.1:0))) @.1:0 (qs (@.1 filter (@.. > @.1:0))) }
+  of: => @.1.. filter (@.. > 5000)
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -102,6 +104,7 @@
   tx: /x,[123]/
   jt: test/20
   st: { **: qs (* * **) => (qs (@.1 filter (@.. < @.1:0))) @.1:0 (qs (@.1 filter (@.. > @.1:0))) }
+  of: 5432
 }
 
 { UID: uid-1de5-4d69-667a-56e4
