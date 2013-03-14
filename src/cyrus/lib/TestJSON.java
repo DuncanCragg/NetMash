@@ -2,7 +2,6 @@
 package cyrus.lib;
 
 import java.util.*;
-import java.util.regex.*;
 import java.io.*;
 import java.nio.*;
 
@@ -34,7 +33,7 @@ public class TestJSON {
             "                   \"modules\":  { \"cache\": { \"funky\": \""+funkychars+"\"},\n"+
             "                                 \"http\": { \"port\": 8080 },\n"+
             "                                 \"logic\": [ true, false, null, true, false, null, \"stringnospaces\", \" string with  spaces \" ],\n"+
-            "                                 \"more\": [ true, 35392743408672770, -2147483649, 2147483648, -2147483648, 2147483647, null, true, false, null ] \n"+
+            "                                 \"more\": [ true, 35392743408672770, -2147483649, 2147483648, [-2147483648, 2147483647, null, true], false, null ] \n"+
             "                   }\n"+
             "      }\n");
 
@@ -59,6 +58,15 @@ public class TestJSON {
         assert "cyrus.cache.JSONCache".equals(modulenames.get("cache")): "kernel:modules:cache should be cyrus.cache.JSONCache, but it's "+
                                                                                                 modulenames.get("cache");
         assert modulenames instanceof LinkedHashMap: "kernel:modules should be ordered hash";
+
+        String liststring=""+m.listPath("modules:more:1..5");
+        assert "[35392743408672770, -2147483649, 2147483648, [-2147483648, 2147483647, null, true], false]".equals(liststring): "sub-list "+liststring;
+
+        liststring=""+m.listPath("modules:more:1..5:2..");
+        assert "[2147483648, [-2147483648, 2147483647, null, true], false]".equals(liststring): "sub-list "+liststring;
+
+        liststring=""+m.listPath("modules:more:1..5:2..:1:..2");
+        assert "[-2147483648, 2147483647, null]".equals(liststring): "sub-list "+liststring;
 
         }
 

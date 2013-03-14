@@ -4,6 +4,7 @@ To Do
 
 --------------------------------------------------------
 CyrusLanguage:
+ - quicksort: => (bubble/splice..) to flatten once done - only bubbles with other bubbles, only already flat lists
  - not @.. - use @.1..3 for slicing lists
  - do lots of ** tests
  - or Reductions: .. as well as Rules: .. ?

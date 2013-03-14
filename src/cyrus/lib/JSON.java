@@ -971,6 +971,12 @@ public class JSON {
         return true;
     }
 
+    static public Pattern RANGEPA=null;
+    static public Pattern RANGEPA(){
+        if(RANGEPA==null) RANGEPA = Pattern.compile("^([0-9]*)\\.\\.([0-9]*)$");
+        return RANGEPA;
+    }
+
     @SuppressWarnings("unchecked")
     static private Object getObjectReal(LinkedHashMap hashmap, String path) throws PathOvershot{
         path=path.trim();
@@ -996,10 +1002,19 @@ public class JSON {
                 while(true){
                     i++;
                     String sx=parts[i];
-                    int x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){}
-                    if(!(sx.equals("0") || x>0)) return null;
-                    if(x>=ll.size()) return null;
-                    o = ll.get(x);
+                    Matcher m = RANGEPA().matcher(sx);
+                    if(m.matches()){
+                        Integer s=0; try{ s = Integer.parseInt(m.group(1)); }catch(Exception t){ s=null; }
+                        Integer e=0; try{ e = Integer.parseInt(m.group(2)); }catch(Exception t){ e=null; }
+                        if(s==null) s=0; if(e==null) e=ll.size()-1;
+                        if(s<0 || e>=ll.size() || e<s) return null;
+                        o = subList(ll,s,e+1);
+                    }
+                    else{
+                        Integer x=0; try{ x = Integer.parseInt(sx); }catch(Exception e){ x=null; }
+                        if(x==null || x<0 || x>=ll.size()) return null;
+                        o = ll.get(x);
+                    }
                     if(o==null) return null;
                     if(i==parts.length-1) return o;
                     if(o instanceof LinkedList){ ll=(LinkedList)o; continue; }
