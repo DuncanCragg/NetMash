@@ -151,6 +151,11 @@ public class Utils{
 
     // -------------------------------
 
+    /** See if there's a list with a single element and return it if so. */
+    static public Object singleElListEl(Object o){
+        return (o instanceof LinkedList && ((LinkedList)o).size()==1)? ((LinkedList)o).get(0): null;
+    }
+
     /** Construct a list utility. */
     @SuppressWarnings("unchecked")
     static public LinkedList list(Object...args){

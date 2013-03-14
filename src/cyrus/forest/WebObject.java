@@ -473,8 +473,8 @@ public class WebObject {
     public LinkedHashMap contentHashMayJump(String path){
         LinkedHashMap hm=contentHash(path);
         if(hm!=null) return hm;
-        LinkedList ll=contentListMayJump(path);
-        if(ll!=null && ll.size()==1 && ll.get(0) instanceof LinkedHashMap) return (LinkedHashMap)ll.get(0);
+        Object o=singleElListEl(contentListMayJump(path));
+        if(o instanceof LinkedHashMap) return (LinkedHashMap)o;
         return contentHash(path+":#");
     }
 
