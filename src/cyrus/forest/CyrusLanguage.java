@@ -705,7 +705,14 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "each".equals(s1)){
             if(l0==null) l0=findList(ll.get(0));
             trylist0=(l0!=null && l0.size() >1);
-            if(!trylist0) return copyMoreObject(ll.get(2),lep,findObject(ll.get(0)));
+            if(!trylist0){
+                Object fo0=findObject(ll.get(0));
+                if(fo0==null) return null;
+                Object fo00=singleElListEl(fo0);
+                Object cmo=findObject(fo00==null? copyMoreObject(ll.get(2),lep,fo0):
+                                                  copyMoreObject(ll.get(2),lep+":0",fo00));
+                if(cmo!=null) return cmo;
+            }
         }
         if(ll.size()==3 && "filter".equals(s1)){
             if(l0==null) l0=findList(ll.get(0));
@@ -713,9 +720,9 @@ public class CyrusLanguage extends WebObject {
             if(!trylist0){
                 Object fo0=findObject(ll.get(0));
                 if(fo0==null) return null;
-                if(b2==null) b2=findBoolean(copyMoreObject(ll.get(2),lep, fo0));
                 Object fo00=singleElListEl(fo0);
-                if(b2==null && fo00!=null) b2=findBoolean(copyMoreObject(ll.get(2),lep+":0",fo00));
+                if(b2==null) b2=findBoolean(fo00==null? copyMoreObject(ll.get(2),lep,fo0):
+                                                        copyMoreObject(ll.get(2),lep+":0",fo00));
                 if(b2!=null) return b2? fo0: null;
             }
         }
