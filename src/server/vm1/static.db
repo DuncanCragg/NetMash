@@ -71,10 +71,9 @@
 
 { UID: uid-4b05-3181-d424-eaef
   Rules:
-   { is: gui rule view: { **: qs (* **) => (qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0))) } }
-   { is: gui rule view: { **: qs ## => # } }
-   { is: gui rule view: { **: (qs *) } !=> flatten @. }
-  is: editable gui
+   { is: quicksort rule view: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }}
+   { is: quicksort rule view: { **: qs ** } !=> flatten @. }
+  is: editable quicksort
   title: "Quicksort"
   view: qs (5 9 2 8 3 1 1 6 3 21 3 5 8 98 75 4 33 2 4 5 8 9 0 4 3 2 7 11)
 }
