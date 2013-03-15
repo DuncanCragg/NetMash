@@ -514,7 +514,7 @@ public class CyrusLanguage extends WebObject {
         LinkedHashMap h2=null;
         if(ll.size()==2 && "count".equals(s0)){
             if(l1==null) l1=findList(ll.get(1));
-            if(l1!=null) return Double.valueOf(sizeOf(l1));
+            return Double.valueOf(sizeOf(l1));
         }
         if(ll.size()==3 && "random".equals(s0)){
             if(d1==null) d1=findDouble(ll.get(1));
@@ -557,22 +557,20 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==3 && "join".equals(s0)){
             if(l2==null) l2=findList(ll.get(2));
             if(s1==null) s1=findString(ll.get(1));
-            if(l2!=null && s1!=null) return join(findEach(l2), s1);
+            return join(findEach(l2), s1);
         }
         if(ll.size()==2 && "flatten".equals(s0)){
             if(l1==null) l1=findList(ll.get(1));
-            if(l1!=null) return flatten(l1,new LinkedList());
+            return flatten(l1,new LinkedList());
         }
         if(ll.size() >=2 && "with".equals(s1)){
             if(l0==null) l0=findList(ll.get(0),false);
-            if(l0!=null) return listWith(findEach(l0),findEach(subList(ll,2)));
+            return listWith(findEach(l0),findEach(subList(ll,2)));
         }
         if(ll.size()==2 && "+".equals(s0)){
             if(l1==null) l1=findList(ll.get(1));
-            if(l1!=null){
-                Double sl1=sumAll(l1);
-                if(sl1!=null) return Double.valueOf(sl1);
-            }
+            Double sl1=sumAll(l1);
+            if(sl1!=null) return sl1;
         }
         if(ll.size()==3 && "-".equals(s1)){
             if(d0==null) d0=findDouble(ll.get(0));
@@ -777,6 +775,7 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private LinkedList findEach(List ll){
+        if(ll==null) return null;
         LinkedList r=new LinkedList();
         for(Object o: ll) maybeAdd(r,findObject(o));
         return r;
