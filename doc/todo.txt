@@ -3,30 +3,10 @@ To Do
 -----
 
 --------------------------------------------------------
-CyrusLanguage:
- - any list cope with zero-element/null/not-found or one-element
- - quicksort:
-    - flat-down and flat-up - only splice upward already flat lists
-    - comparison function
-    - non-numeric
- - not @..
- - do lots of ** tests
- - or Reductions: .. as well as Rules: .. ?
- - merge in @. with/out
- - use findXXX not contentXXX on LHS scanXXX
---------------------------------------------------------
-
---------------------------------------------------------
-Browser: Web tutorial / cyrus.js
+Browser: cyrus.js
+ + gui/layout fixes: make sure CAP demo guis and land renders, even without maps
+ - ------------------
  - still missing some long poll results on browser?
- - gui/layout fixes: make sure CAP demo guis and land renders, even without maps
- - reference entries for language features
-    -vs- learning entries such as building up 99 bottles in 7 steps and learning about abstraction
-    - see cyrus-tutorial.txt
- - tutorial as a set of test cases and demos on language
-    - doc/local/demodb.json; src/server/vm[12]/test.db
-    - AwayDay examples & Equity Instruments and FX again
-    - something with my blog feed for the link bit
  - new dibdab for replacing parent (temporarily in view)
  - remember open and parent replace state
  - fix:
@@ -34,6 +14,22 @@ Browser: Web tutorial / cyrus.js
     - <pre> and <p> thing
     - Firefox
  - new dibdab for raw view <- was that JSONViewish?
+--------------------------------------------------------
+Web tutorial
+ - tutorial as a set of test cases and demos on language
+    - doc/local/demodb.json; src/server/vm[12]/test.db
+    - AwayDay examples & Equity Instruments and FX again
+    - something with my blog feed for the link bit
+ - reference entries for language features
+    -vs- learning entries such as building up 99 bottles in 7 steps and learning about abstraction
+    - see cyrus-tutorial.txt
+--------------------------------------------------------
+
+--------------------------------------------------------
+CyrusLanguage:
+ - any list cope with zero-element()/null/""/not-found or one-element
+ - merge in @. with/out code
+ - use findXXX not contentXXX on LHS scanXXX
 --------------------------------------------------------
 
 --------------------------------------------------------

@@ -257,75 +257,67 @@
      {}
 }
 
-{   UID: uid-424d-01c5-ee08-2ec9
-    is: ( fx dealer rule )
-    when: "FX order comes in start building ticket. 1"
-    Alerted: { is: order ticket: <#> }
-    ticketfor: <#>Alerted
-    ticket: <#>{}
+{ UID: uid-ba2b-8619-fdea-8c2c
+  Class: FXDealerTicket
+  Rules: uid-424d-01c5-ee08-2ec9
+  is: fx dealer
 }
 
-{   UID: uid-e772-4f4f-f981-0cea
-    is: ( fx dealer rule )
-    when: "FX order comes in spawn and add ticket to tickets list. 2"
-    ticket: {  Rules: "<#>list(uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377)"
-                 is: "<#>list(fx ticket)"
-                 order: <#>$:ticketfor
-                 ask: <#>81.9
-                 status: <#>waiting
-                 UID: <#>new
-    }
-    tickets: <>has($:ticket)
-}
-
-{   UID: uid-05cf-8cb9-7b52-db80
-    is: ( fx ticket rule )
-    when: "new ticket set params and notify order. 3"
-    params: <#>$:order:params
-    Notifying: <>has($:order)
-}
-
-{   UID: uid-bce3-b010-e869-f26e
-    is: ( fx ticket rule )
-    when: "waiting if order params change update ticket params. 4"
+{ UID: uid-424d-01c5-ee08-2ec9
+  is: fx dealer rule
+  when: "FX order comes in start building ticket. spawn and add ticket to tickets list"
+  Alerted: { is: fx order ticket: # }
+  tickets: => @. with {
+    UID: new
+    Rules: uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377
+    is: fx ticket
+    order: @Alerted
+    ask: 81.9
     status: waiting
-    params: <{}>$:order:params
+  }
 }
 
-{   UID: uid-4f84-6624-1781-3377
-    is: ( fx ticket rule )
-    when: "ask goes below price of ticket set to filled. 4.5"
-    ask: <lt($:params:price)>
-    status: <waiting>filled
+{ UID: uid-05cf-8cb9-7b52-db80
+  is: fx ticket rule
+  when: "new ticket, set params and notify order"
+  params: # => @order:params
+  Notifying: => @. with @order
 }
 
-{   UID: uid-1b6c-16b6-64aa-8d48
-    is: ( fx ticket rule )
-    when: "order differs once ticket filled flag with not-as-ordered. 5"
-    params: <!$:order:params>
-    status: <filled>has(not-as-ordered)
+{ UID: uid-bce3-b010-e869-f26e
+  is: fx ticket rule
+  when: "waiting if order params change update ticket params"
+  status: waiting
+  params: {} => @order:params
 }
 
-{   UID: uid-a36b-54ea-7dd6-2626
-    is: ( fx ticket rule )
-    when: "order matches once ticket filled remove not-as-ordered. 6"
-    params: <$:order:params>
-    status: <filled>hasno(not-as-ordered)
+{ UID: uid-4f84-6624-1781-3377
+  is: fx ticket rule
+  when: "ask goes below price of ticket set to filled"
+  ask: < @params:price
+  status: waiting => filled
 }
 
-{   UID: uid-913e-f82c-7198-165b
-    is: ( fx ticket rule )
-    when: "correct payment arrives set status to paid. 7"
-    order: { payment: { amount: "<prod($:ask $:params:investment)>" } }
-    status: <filled>paid
-    payment: <#>$:order:payment
+{ UID: uid-1b6c-16b6-64aa-8d48
+  is: fx ticket rule
+  when: "order differs once ticket filled flag with not-as-ordered"
+  params: !@order:params
+  status: filled => @. with not-as-ordered
 }
 
-{   UID: uid-ba2b-8619-fdea-8c2c
-    Class: FXDealerTicket
-    Rules: uid-424d-01c5-ee08-2ec9 uid-e772-4f4f-f981-0cea
-    is: fx dealer
-    tickets: ( )
+{ UID: uid-a36b-54ea-7dd6-2626
+  is: fx ticket rule
+  when: "order matches once ticket filled remove not-as-ordered. 6"
+  params: @order:params
+  status: filled => without not-as-ordered
+}
+
+{ UID: uid-913e-f82c-7198-165b
+  is: fx ticket rule
+  when: "correct payment arrives set status to paid"
+  order: { payment: { amount: (@ask * @params:investment) } }
+  status: filled => paid
+  payment: # => @order:payment
 }
 
 {   UID: uid-c47f-5e67-9fc8-b842
@@ -337,7 +329,7 @@
 
 {   UID: uid-4574-a96f-f796-c5fb
     Class: HRLeavePeriods
-    is: ( hr leave-record )
+    is: hr leave-record
     employee: /employees/1233123
     organisation: /..
     daysAllocated: 23
@@ -348,29 +340,29 @@
 
 {   UID: uid-2161-baf3-858b-858c
     Class: server.types.Twitter
-    is: ( twitter )
+    is: twitter
     title: "Twitter Gateway"
     types: {
-        twitter-user:      { is: ( twitter user )
+        twitter-user:      { is: twitter user
                                id: /string/
                                id2: /int/
                                location: /geo/
                                contacts: { following: /uid;twitter-following/ followers: /uid;twitter-followers/ }
                                posts: /uid;twitter-postlist/
         }
-        twitter-following: { is: ( twitter following )
+        twitter-following: { is: twitter following
                                user: /uid;twitter-user/
                                list: /uid-list;twitter-user/
         }
-        twitter-followers: { is: ( twitter followers )
+        twitter-followers: { is: twitter followers
                                user: /uid;twitter-user/
                                list: /uid-list;twitter-user/
         }
-        twitter-postlist: {  is: ( twitter postlist )
+        twitter-postlist: {  is: twitter postlist
                                user: /uid;twitter-user/
                                list: /uid-list;twitter-post/
         }
-        twitter-post: {      is: ( twitter post )
+        twitter-post: {      is: twitter post
                                text: /string/
                                location: /geo/
                                user: /uid;twitter-user/
@@ -390,7 +382,7 @@
 
 {   UID: uid-f3fd-b3a5-a88c-8dd7
     Class: ""
-    is: ( contact list )
+    is: contact list
     title: "Enterprise Locations NorthWest"
     list: (
         uid-4c3f-9b0f-3bf3-abe6
@@ -409,7 +401,7 @@
 
 {   UID: uid-4c3f-9b0f-3bf3-abe6
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise - Head Office"
     address: {
       street: ( "Gordon House"
@@ -424,7 +416,7 @@
 
 {   UID: uid-05cc-e687-907f-cf7b
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise - Central"
     address: {
       street: ( "Lancaster House"
@@ -439,7 +431,7 @@
 
 {   UID: uid-691a-dd2e-2512-902e
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise - Energy (Power)"
     address: {
       street: ( "Unit B2 Redscar Industrial Estate" 
@@ -455,7 +447,7 @@
 
 {   UID: uid-836b-7ca9-0e54-613a
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise - Customer Contact Centre"
     address: {
       street: ( "The Matchworks"
@@ -471,7 +463,7 @@
 
 {   UID: uid-fe83-20d2-9fe7-47bd
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise - Environmental"
     address: {
       street: ( "Moss Side Depot"
@@ -486,7 +478,7 @@
 
 {   UID: uid-8531-41a0-5a6c-172f
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise - Energy (Gas)"
     address: {
       street: ( "Building 005"
@@ -502,7 +494,7 @@
 
 {   UID: uid-178e-2950-002f-1c03
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise Liverpool - Environmental"
     address: {
       street: ( "Moorgate Point"
@@ -516,7 +508,7 @@
 
 {   UID: uid-2622-e06c-bf3b-62b4
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise - Environmental"
     address: {
       street: ( "20 Old London Road Depot" )
@@ -529,7 +521,7 @@
 
 {   UID: uid-543f-d8a4-bcbd-88d5
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise Liverpool - Environmental"
     address: {
       street: ( "Newton Road Depot"
@@ -544,7 +536,7 @@
 
 {   UID: uid-b32e-52a8-130f-6ce7
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise - Highways"
     address: {
       street: ( "Holmesfield Road" )
@@ -558,7 +550,7 @@
 
 {   UID: uid-f857-3568-b57e-89b9
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Enterprise Manchester - Environmental"
     address: {
       street: ( "c/o Manchester City Council"
@@ -574,7 +566,7 @@
 
 {   UID: uid-76b8-8502-45d3-0543
     Class: MeetUsUp
-    is: ( meetusup contact list )
+    is: meetusup contact list
     title: "MeetUsUp List"
     venue: uid-fc61-ba84-a7d8-9874
     organiser: uid-1b84-142d-4f34-3734
@@ -590,7 +582,7 @@
 }
 
 {   UID: uid-35ad-af7a-93fb-896d
-    is: ( contact editable )
+    is: contact editable
     full-name: "Brian Rock"
     name: {
       given:  Brian
@@ -614,7 +606,7 @@
 
 {   UID: uid-1b84-142d-4f34-3734
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Duncan Cragg"
     email: someone@thoughtworks.com
     address: {
@@ -628,7 +620,7 @@
 
 {   UID: uid-a0b2-0521-d5f1-b994
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Joe Test"
     email: joe.test@testing.com
     phone: { mobile: "0777 88 77 555" }
@@ -636,35 +628,35 @@
 
 {   UID: uid-b4b3-586c-88e5-05ae
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Sam Bloggs"
     email: sam.bloggs@aol.com
 }
 
 {   UID: uid-6eab-8bc0-10a8-db4e
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Jack Bloggs"
     email: jack.bloggs@aol.com
 }
 
 {   UID: uid-bb90-d577-703b-e7a9
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Bobby Bloggs"
     email: bob.bloggs@aol.com
 }
 
 {   UID: uid-f95d-8864-a3ef-7604
     Class: ""
-    is: ( contact )
+    is: contact
     full-name: "Janice Bloggs"
     email: jan.bloggs@aol.com
 }
 
 {   UID: uid-7235-60ba-d323-d5d6
     Class: DynamicPage
-    is: ( gui )
+    is: gui
     title: "Demo of Dynamic GUI and Remote App"
     view: {
         style: { is: style direction: vertical colours: "lightturquoise lightblue" }
@@ -687,20 +679,19 @@
 
 {   UID: uid-6332-84e1-c1de-3364
     Class: server.types.UserHome
-    is: ( userhome user list )
+    is: userhome user list
     title: "User Home"
     list: ( )
 }
 
 {   UID: uid-4b71-f8d4-c761-be2d
-    is: ( link list )
+    is: link list
     title: "Random Collection of Links"
-    list : ( http://the-cyrus.net:8081/o/uid-6332-84e1-c1de-3364.json
-             http://the-cyrus.net:8081/o/uid-7235-60ba-d323-d5d6.json
-             http://the-cyrus.net:8081/o/uid-35ad-af7a-93fb-896d.json
-             http://the-cyrus.net:8081/o/uid-76b8-8502-45d3-0543.json
-             http://the-cyrus.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json
-             http://the-cyrus.net:8081/o/uid-2161-baf3-858b-858c.json
-    )
+    list : http://the-cyrus.net:8081/o/uid-6332-84e1-c1de-3364.json
+           http://the-cyrus.net:8081/o/uid-7235-60ba-d323-d5d6.json
+           http://the-cyrus.net:8081/o/uid-35ad-af7a-93fb-896d.json
+           http://the-cyrus.net:8081/o/uid-76b8-8502-45d3-0543.json
+           http://the-cyrus.net:8081/o/uid-f3fd-b3a5-a88c-8dd7.json
+           http://the-cyrus.net:8081/o/uid-2161-baf3-858b-858c.json
 }
 
