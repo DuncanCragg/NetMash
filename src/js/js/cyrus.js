@@ -279,15 +279,11 @@ function JSON2HTML(url){
         },
         getLandTemplateHTML: function(url,json,closed){
             var rows=[];
-            rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
-            rows.push('<form class="land-form">');
-            rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
             var submittable=this.createGUI(json,rows);
             rows.push('</table>');
             if(submittable)
             rows.push('<input class="submit" type="submit" value="Create" />');
-            rows.push('</form>');
             return rows.join('\n')+'\n';
         },
         // ------------------------------------------------
@@ -822,6 +818,17 @@ function Cyrus(){
                 network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                 e.preventDefault();
             });
+            $('.land-form').unbind().submit(function(e){
+                var targetURL=$(this).find('.land-target').val();
+                var uidver=me.getUIDandVer(targetURL);
+                var json = '{ '+uidver+',\n  "is": [ "land" ], "within": "'+targetURL+'", "user": "",\n  ';
+                var fields = [];
+                me.getFormFields($(this),fields);
+                json+=fields.join(',\n  ');
+                json+='\n}\n';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
             $('.rsvp-form').unbind().submit(function(e){
                 if($(this).find('.rsvp-type').val()=='attendable'){
                     var targetURL=$(this).find('.rsvp-target').val();
@@ -840,7 +847,7 @@ function Cyrus(){
                     var json = '{ '+uidver+',\n  "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'",\n   ';
                     var fields = [];
                     me.getFormFields($(this),fields);
-                    json+=fields.join(',\n   ');
+                    json+=fields.join(',\n  ');
                     json+=' }';
                     network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
@@ -872,7 +879,10 @@ function Cyrus(){
         getFormFields: function(form,fields){
             form.find('.form-field').each(function(n,i){
                 var idOrName=i.getAttribute('id') || i.getAttribute('name');
-                if($(i).attr('type')!="radio" || $(i).is(':checked')) fields.push('"'+idOrName+'": "'+$(i).val()+'"');
+                var intype=$(i).attr('type');
+                if(intype=='checkbox') fields.push('"'+idOrName+'": '+$(i).is(':checked'));
+                else
+                if(!(intype=='radio' && !$(i).is(':checked'))) fields.push('"'+idOrName+'": "'+$(i).val()+'"');
             });
         },
         getTopObject: function(url){
