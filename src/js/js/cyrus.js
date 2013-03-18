@@ -141,6 +141,9 @@ function JSON2HTML(url){
             if(raw)                             return this.getCyrusTextHTML(url,json,closed);
             if(this.isA('gui',     json))       return this.getGUIHTML(url,json,closed);
             if(this.isA('contact', json))       return this.getContactHTML(url,json,closed);
+            if(this.isA('land',    json) &&
+               this.isA('template',json)    )   return this.getLandTemplateHTML(url,json,closed);
+            if(this.isA('land',    json))       return this.getLandHTML(url,json,closed);
             if(this.isA('event',   json))       return this.getEventHTML(url,json,closed);
             if(this.isA('article', json))       return this.getArticleHTML(url,json,closed);
             if(this.isA('chapter', json))       return this.getArticleHTML(url,json,closed);
@@ -258,6 +261,39 @@ function JSON2HTML(url){
             return rows.join('\n')+'\n';
         },
         // ------------------------------------------------
+        getLandHTML: function(url,json,closed){
+            var rows=[];
+            rows.push(this.getObjectHeadHTML('Land: '+this.getTitle(json), url, false, closed));
+            rows.push('<div class="vcard">');
+            if(this.isA('updatable', json)){
+                rows.push('<form class="land-form">');
+                rows.push('<input class="land-type"   type="hidden" value="updatable" />');
+                rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
+                rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
+                rows.push('<table class="grid">');
+                var submittable=this.createGUI(json['update-template'],rows);
+                rows.push('</table>');
+                if(submittable)
+                rows.push('<input class="submit" type="submit" value="Create" />');
+                rows.push('</form>');
+            }
+            rows.push('</div></div>');
+            return rows.join('\n')+'\n';
+        },
+        getLandTemplateHTML: function(url,json,closed){
+            var rows=[];
+            rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
+            rows.push('<form class="land-form">');
+            rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
+            rows.push('<table class="grid">');
+            var submittable=this.createGUI(json,rows);
+            rows.push('</table>');
+            if(submittable)
+            rows.push('<input class="submit" type="submit" value="Create" />');
+            rows.push('</form>');
+            return rows.join('\n')+'\n';
+        },
+        // ------------------------------------------------
         getEventHTML: function(url,json,closed){
             var rows=[];
             rows.push(this.getObjectHeadHTML('Event: '+this.getTitle(json), url, false, closed));
@@ -318,17 +354,28 @@ function JSON2HTML(url){
             return rows.join('\n')+'\n';
         },
         createGUI: function(guilist,rows){
-            var submittable=false;
             if(!guilist) return;
-            if(guilist.constructor===String){ rows.push('<tr><td>'+guilist+'</td></tr>'); return false; }
+            if(this.isONLink(guilist)){
+                rows.push('<tr>');
+                rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, guilist, true, true)+'</td>');
+                rows.push('</tr>');
+                return false;
+            }
+            else
+            if(guilist.constructor===String){
+                rows.push('<tr><td>'+guilist+'</td></tr>');
+                return false;
+            }
             var horizontal=false;
             for(var i in guilist){ var item=guilist[i];
                 if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
             }
             var tagged=(guilist.constructor===Object);
+            var submittable=false;
             if(horizontal) rows.push('<tr>');
             for(var i in guilist){
                 var tag=tagged? i: null;
+                if(tag=="Rules" || tag=="is" || tag=="title" || tag=="update-template") continue;
                 var item=guilist[i];
                 if(item.constructor===Object) submittable=this.objectGUI(tag,item,rows,horizontal) || submittable;
                 else
@@ -363,9 +410,19 @@ function JSON2HTML(url){
         objectGUI: function(tag,guilist,rows,horizontal){
             var submittable=false;
             if(guilist.input){
-                input=guilist.input;
-                label=guilist.label;
+                var input=guilist.input;
+                var label=guilist.label;
+                var range=guilist.range;
                 if(!horizontal) rows.push('<tr>');
+                if(input=='chooser'){
+                    rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><select id="'+tag+'" class="form-field">');
+                    for(var o in range){
+                    rows.push('<option value="'+o+'" >'+range[o]+'</option>');
+                    }
+                    rows.push('</select></td>');
+                    submittable=true;
+                }
                 if(input=='textfield'){
                     rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
                     rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
