@@ -16,6 +16,9 @@ tutorial: runtut
 cars: runcars
 	chromium-browser 'http://localhost:8083/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
 
+capweb: runcap
+	chromium-browser 'http://localhost:8083/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
+
 ####################
 
 emu: androidemu runemu logcat
@@ -393,7 +396,8 @@ clean:
 	rm -f  ,*
 
 veryclean: kill clean setappemuconfig netconfig setvm3cleanconfig setemumapkey
-	-mv    src/server/vm[12]/cyrus.log doc/local
+	-mv    src/server/vm1/cyrus.log doc/local/cyrus1.log
+	-mv    src/server/vm2/cyrus.log doc/local/cyrus2.log
 	rm -f  src/server/vm[12]/cyrus.db
 	rm -f  src/server/vm2/cyrusconfig.db
 	rm -rf bin gen

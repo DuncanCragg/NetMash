@@ -310,7 +310,7 @@ function JSON2HTML(url){
             rows.push('<form class="gui-form">');
             rows.push('<input class="form-target" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
-            var submittable=this.createGUI(json.view,rows);
+            var submittable=json.view? this.createGUI(json.view,rows): false;
             rows.push('</table>');
             if(submittable)
             rows.push('<input class="submit" type="submit" value="Submit" />');
@@ -330,33 +330,7 @@ function JSON2HTML(url){
             for(var i in guilist){
                 var tag=tagged? i: null;
                 var item=guilist[i];
-                if(item.constructor===Object){
-                    if(item.input){
-                        input=item.input;
-                        label=item.label;
-                        if(!horizontal) rows.push('<tr>');
-                        if(input=='textfield'){
-                            rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                            rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
-                            submittable=true;
-                        }
-                        else
-                        if(input=='rating'){
-                            rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                            rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
-                            submittable=true;
-                        }
-                        if(!horizontal) rows.push('</tr>');
-                    }
-                    else
-                    if(item.view){
-                        var open=this.isOrContains(item.view,'open');
-                        var raw =this.isOrContains(item.view,'raw');
-                        if(!horizontal) rows.push('<tr>');
-                        rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item.item, true, !open, null, raw)+'</td>');
-                        if(!horizontal) rows.push('</tr>');
-                    }
-                }
+                if(item.constructor===Object) submittable=this.objectGUI(tag,item,rows,horizontal) || submittable;
                 else
                 if(this.isONLink(item)){
                     if(!horizontal) rows.push('<tr>');
@@ -366,13 +340,15 @@ function JSON2HTML(url){
                 else
                 if(item.constructor===String){
                     if(!horizontal) rows.push('<tr>');
-                    rows.push('<td class="grid-col">'+item+'</td>');
+                    rows.push('<td class="grid-col">'+this.getStringHTML(item)+'</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
                 else
                 if(item.constructor===Array){
                     if(!horizontal) rows.push('<tr>');
-                    rows.push('<td class="grid-col">'+this.getListHTML(item)+'</td>');
+                    rows.push('<td class="grid-col">');
+                    this.createGUI(item,rows);
+                    rows.push('</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
                 else{
@@ -382,6 +358,39 @@ function JSON2HTML(url){
                 }
             }
             if(horizontal) rows.push('</tr>');
+            return submittable;
+        },
+        objectGUI: function(tag,guilist,rows,horizontal){
+            var submittable=false;
+            if(guilist.input){
+                input=guilist.input;
+                label=guilist.label;
+                if(!horizontal) rows.push('<tr>');
+                if(input=='textfield'){
+                    rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
+                    submittable=true;
+                }
+                else
+                if(input=='rating'){
+                    rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
+                    submittable=true;
+                }
+                else
+                if(input=='button'){
+                    rows.push('<td><input id="'+tag+'" class="form-field" type="submit" value="'+label+'" />');
+                }
+                if(!horizontal) rows.push('</tr>');
+            }
+            else
+            if(guilist.view){
+                var open=this.isOrContains(guilist.view,'open');
+                var raw =this.isOrContains(guilist.view,'raw');
+                if(!horizontal) rows.push('<tr>');
+                rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, guilist.item, true, !open, null, raw)+'</td>');
+                if(!horizontal) rows.push('</tr>');
+            }
             return submittable;
         },
         // ------------------------------------------------
