@@ -10,7 +10,6 @@ function Network(){
     var me = {
         getJSON: function(url,creds,ok,err){
             var isCN=url.indexOf('/c-n-')!= -1;
-if(isCN) console.log("maybe Cache-Notify:",url);
             var obj=null;
         /*  var objstr = localStorage.getItem('objects:'+url);
             if(objstr) obj=JSON.parse(objstr); */
@@ -18,7 +17,6 @@ if(isCN) console.log("maybe Cache-Notify:",url);
                 ok(obj,'from-cache',null);
             }else{
                 if(me.isGetting(true,url,isCN)) return;
-if(isCN) console.log("get Cache-Notify:",url);
                 var headers = { 'Cache-Notify': me.getCacheNotify() };
                 if(creds) headers.Authorization = me.buildAuth(creds,'GET',url);
                 if(url.endethWith('.json')||url.indexOf('/c-n-')!=-1) $.ajax({
@@ -28,7 +26,6 @@ if(isCN) console.log("get Cache-Notify:",url);
                     success: function(obj,s,x){
                         me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
-if(isCN) console.log("got Cache-Notify:",url);
                         var etag = x && x.getResponseHeader('ETag');
                         if(url && etag) localStorage.setItem('versions:'+getUID(url), etag);
                      /* if(url){ try{
@@ -414,6 +411,12 @@ function JSON2HTML(url){
                 var label=guilist.label;
                 var range=guilist.range;
                 if(!horizontal) rows.push('<tr>');
+                if(input=='checkbox'){
+                    rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><input type="checkbox" id="'+tag+'" class="form-field" value="'+tag+'"/></td>');
+                    submittable=true;
+                }
+                else
                 if(input=='chooser'){
                     rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
                     rows.push('<td><select id="'+tag+'" class="form-field">');
@@ -423,15 +426,21 @@ function JSON2HTML(url){
                     rows.push('</select></td>');
                     submittable=true;
                 }
+                else
                 if(input=='textfield'){
                     rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
+                    rows.push('<td><input type="text" id="'+tag+'" class="form-field" /></td>');
                     submittable=true;
                 }
                 else
                 if(input=='rating'){
                     rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input id="'+tag+'" class="form-field" type="text" /></td>');
+                    rows.push('<td><input type="radio" name="'+tag+'" class="form-field" value="0">0');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="1">1');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="2">2');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="3">3');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="4">4');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="5">5</td>');
                     submittable=true;
                 }
                 else
@@ -807,7 +816,7 @@ function Cyrus(){
                 var uidver=me.getUIDandVer(targetURL);
                 var json = '{ '+uidver+',\n  "is": "form", "gui": "'+targetURL+'", "user": "",\n  "form": {\n   ';
                 var fields = [];
-                $(this).find('.form-field').each(function(n,i){ fields.push('"'+i.getAttribute('id')+'": "'+$(i).val()+'"'); });
+                me.getFormFields($(this),fields);
                 json+=fields.join(',\n   ');
                 json+='\n }\n}';
                 network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
@@ -828,8 +837,10 @@ function Cyrus(){
                     if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
-                    var json = '{ '+uidver+', "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'"';
-                    $(this).find('.form-field').each(function(n,i){ json+=', "'+i.getAttribute('id')+'": "'+$(i).val()+'"'; });
+                    var json = '{ '+uidver+',\n  "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'",\n   ';
+                    var fields = [];
+                    me.getFormFields($(this),fields);
+                    json+=fields.join(',\n   ');
                     json+=' }';
                     network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
@@ -856,6 +867,12 @@ function Cyrus(){
             });
             $(window).bind('popstate', function() {
                 me.getTopObject(""+window.location);
+            });
+        },
+        getFormFields: function(form,fields){
+            form.find('.form-field').each(function(n,i){
+                var idOrName=i.getAttribute('id') || i.getAttribute('name');
+                if($(i).attr('type')!="radio" || $(i).is(':checked')) fields.push('"'+idOrName+'": "'+$(i).val()+'"');
             });
         },
         getTopObject: function(url){
