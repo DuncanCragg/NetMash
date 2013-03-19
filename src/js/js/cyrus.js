@@ -270,9 +270,8 @@ function JSON2HTML(url){
                 rows.push('<table class="grid">');
                 this.addIfPresent(json, "title", { "input": "textfield" }, rows);
                 this.addIfPresent(json, "area",  { "input": "textfield", "label": "Area (ha):" }, rows);
-                var submittable=this.createGUI(json['update-template'],rows);
+                this.createGUI(json['update-template'],rows);
                 rows.push('</table>');
-                if(submittable)
                 rows.push('<input class="submit" type="submit" value="Create" />');
                 rows.push('</form>');
             }
@@ -282,10 +281,8 @@ function JSON2HTML(url){
         getLandTemplateHTML: function(url,json,closed){
             var rows=[];
             rows.push('<table class="grid">');
-            var submittable=this.createGUI(json,rows);
+            this.createGUI(json,rows);
             rows.push('</table>');
-            if(submittable)
-            rows.push('<input class="submit" type="submit" value="Create" />');
             return rows.join('\n')+'\n';
         },
         // ------------------------------------------------
@@ -389,7 +386,7 @@ function JSON2HTML(url){
                 if(item.constructor===Array){
                     if(!horizontal) rows.push('<tr>');
                     rows.push('<td class="grid-col">');
-                    this.createGUI(item,rows);
+                    submittable=this.createGUI(item,rows) || submittable;
                     rows.push('</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
@@ -404,7 +401,7 @@ function JSON2HTML(url){
         },
         addIfPresent: function(json,tag,widget,rows){
             var value=json[tag];
-            if(value) this.objectGUI(tag,widget,rows,false,value)
+            if(value) return this.objectGUI(tag,widget,rows,false,value)
         },
         objectGUI: function(tag,guilist,rows,horizontal,value){
             var submittable=false;
