@@ -11,7 +11,7 @@ function Network(){
         getJSON: function(url,creds,ok,err){
             var isCN=url.indexOf('/c-n-')!= -1;
             var obj=null;
-        /*  var objstr = localStorage.getItem('objects:'+url);
+        /*  var objstr = localStorage.getItem('objects:'+getUID(url));
             if(objstr) obj=JSON.parse(objstr); */
             if(obj){
                 ok(obj,'from-cache',null);
@@ -27,12 +27,10 @@ function Network(){
                         me.isGetting(false,url,isCN);
                         if(isCN) url = x && x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
-                        if(url && etag) localStorage.setItem('versions:'+getUID(url), etag);
-                     /* if(url){ try{
-                            if(obj) localStorage.setItem('objects:'+url, JSON.stringify(obj));
+                        if(url){ try{
+                            if(obj)  localStorage.setItem('objects:'+getUID(url), JSON.stringify(obj));
                             if(etag) localStorage.setItem('versions:'+getUID(url), etag);
-                            }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); } }
-                        }*/
+                        }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); }}}
                         ok(url,obj,s,x);
                     },
                     error: function(x,s,e){
@@ -265,6 +263,7 @@ function JSON2HTML(url){
             rows.push('<table class="grid">');
             this.addIfPresent(json, 'title', { 'input': 'textfield' }, rows);
             this.addIfPresent(json, 'area',  { 'input': 'textfield', 'label': 'Area (ha):' }, rows);
+            this.createGUI(this.getViaLinksRefactorMe(json,['within','update-template']),rows);
             rows.push('</table>');
             if(json.list !== undefined) rows.push(this.getObjectListHTML('Land Parcels', 'land-parcel', json.list, false));
             if(this.isA('updatable', json)){
@@ -352,7 +351,7 @@ function JSON2HTML(url){
             return rows.join('\n')+'\n';
         },
         createGUI: function(guilist,rows){
-            if(!guilist) return;
+            if(!guilist) return false;
             if(this.isONLink(guilist)){
                 rows.push('<tr>');
                 rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, guilist, true, true)+'</td>');
@@ -601,6 +600,22 @@ function JSON2HTML(url){
                                             (icon? '<span class="icon">'+this.getAnyHTML(icon)+'</span>':'')+
                                                    '<span class="object-title">'+(title? title: '...')+'&nbsp;</span>'+
                    '</div>'+(!place? '<div class="object-body" '+(closed? 'style="display: none"':'')+'>': '');
+        },
+        getViaLinksRefactorMe: function(o1,l){
+            var s1=l[0];
+            var url1=o1[s1];
+            if(!url1) return null;
+            var str1 = localStorage.getItem('objects:'+getUID(url1));
+            if(!str1) return null;
+            var o2=JSON.parse(str1);
+            if(!o2) return null;
+
+            var s2=l[1];
+            var url2=o2[s2];
+            if(!url2) return null;
+            var str2 = localStorage.getItem('objects:'+getUID(url2));
+            if(!str2) return null;
+            return JSON.parse(str2);
         },
         isA: function(type, json, list){
             if(!json.is) return false;
