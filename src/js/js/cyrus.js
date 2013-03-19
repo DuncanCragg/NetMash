@@ -268,6 +268,8 @@ function JSON2HTML(url){
                 rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
+                this.addIfPresent(json, "title", { "input": "textfield" }, rows);
+                this.addIfPresent(json, "area",  { "input": "textfield", "label": "Area (ha):" }, rows);
                 var submittable=this.createGUI(json['update-template'],rows);
                 rows.push('</table>');
                 if(submittable)
@@ -400,7 +402,11 @@ function JSON2HTML(url){
             if(horizontal) rows.push('</tr>');
             return submittable;
         },
-        objectGUI: function(tag,guilist,rows,horizontal){
+        addIfPresent: function(json,tag,widget,rows){
+            var value=json[tag];
+            if(value) this.objectGUI(tag,widget,rows,false,value)
+        },
+        objectGUI: function(tag,guilist,rows,horizontal,value){
             var submittable=false;
             if(guilist.input){
                 var input=guilist.input;
@@ -424,8 +430,11 @@ function JSON2HTML(url){
                 }
                 else
                 if(input=='textfield'){
-                    rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="text" id="'+tag+'" class="form-field" /></td>');
+                    if(label)           rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
+                    if(value && !label) rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="form-field" value="'+value+'" /></td>');
+                    else
+                    if(value)           rows.push('<td>            <input type="text" id="'+tag+'" class="form-field" value="'+value+'" /></td>');
+                    else                rows.push('<td>            <input type="text" id="'+tag+'" class="form-field"                   /></td>');
                     submittable=true;
                 }
                 else
