@@ -134,6 +134,7 @@ select.chooser{
     border: 1px solid #ccc;
     padding: 3px;
     font-size: 1.0em;
+    width: 100%;
 }
 
 input.textfield{

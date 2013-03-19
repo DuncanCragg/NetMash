@@ -16,7 +16,7 @@ tutorial: runtut
 cars: runcars
 	chromium-browser 'http://localhost:8083/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
 
-capweb: runcap
+capweb: runcapw
 	chromium-browser 'http://localhost:8083/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
 
 ####################
@@ -126,6 +126,8 @@ runcyrus: kill cyrusconfig   usecyrusdb setvm2tstconfig run2
 runcars: kill clean netconfig usecarsdb setvm3tstconfig run1n2
 
 runcap: kill clean netconfig useworlddb usecapdb setvm3emuconfig run1n2
+
+runcapw: kill clean netconfig useworlddb usecapdb setvm3tstconfig run1n2
 
 runlap: kill clean netconfig usecapdb  setvm2lanconfig run2
 

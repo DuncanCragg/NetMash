@@ -272,7 +272,7 @@ function JSON2HTML(url){
                 rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
-                rows.push('<h3>Create new land parcel</h3>');
+                rows.push('<tr><td colspan="2"><h3>Create new land parcel</h3></td></tr>');
                 this.objectGUI('title',{ 'input': 'textfield', 'label': 'Title:'     },rows,false);
                 this.objectGUI('area', { 'input': 'textfield', 'label': 'Area (ha):' },rows,false);
                 this.createGUI(json['update-template'],rows);
@@ -850,7 +850,7 @@ function Cyrus(){
             $('.land-form').unbind().submit(function(e){
                 var targetURL=$(this).find('.land-target').val();
                 var uidver=me.getUIDandVer(targetURL);
-                var json = '{ '+uidver+',\n  "is": [ "land" ], "within": "'+targetURL+'", "user": "",\n  ';
+                var json = '{ '+uidver+',\n  "is": [ "updatable", "land" ], "within": "'+targetURL+'", "user": "",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n  ');
