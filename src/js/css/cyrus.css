@@ -25,7 +25,7 @@ table.json{
 
 table.grid{
     width: 100%;
-    max-width: 30em;
+    max-width: 40em;
     table-layout: fixed;
 }
 
@@ -107,7 +107,7 @@ a {
 }
 
 h2, h3 {
-    margin: 8px 0px 3px 0px;
+    margin: 8px 0px 3px 8px;
 }
 
 ul {
@@ -167,9 +167,15 @@ input.text{
     font-size: 1.3em;
 }
 
-input.submit{
+input.button, input.submit{
     font-size: 1em;
     margin: 5pt 0;
+}
+
+input.checkbox{
+    -moz-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    margin-left: 15pt;
 }
 
 label.login-label{

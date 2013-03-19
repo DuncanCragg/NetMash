@@ -82,7 +82,7 @@ function Network(){
         },
         longGetJSON: function(cn,creds,ok,err){
             pendingCN[cn]=true;
-            for(var u in getting) if(u.indexOf("/c-n-")== -1) return;
+            for(var u in getting) if(u.indexOf('/c-n-')== -1) return;
             for(var url in pendingCN) me.getJSON(url,creds,ok,err);
             pendingCN={};
         },
@@ -263,8 +263,8 @@ function JSON2HTML(url){
             rows.push(this.getObjectHeadHTML('Land: '+this.getTitle(json), url, false, closed));
             rows.push('<div class="vcard">');
             rows.push('<table class="grid">');
-            this.addIfPresent(json, "title", { "input": "textfield" }, rows);
-            this.addIfPresent(json, "area",  { "input": "textfield", "label": "Area (ha):" }, rows);
+            this.addIfPresent(json, 'title', { 'input': 'textfield' }, rows);
+            this.addIfPresent(json, 'area',  { 'input': 'textfield', 'label': 'Area (ha):' }, rows);
             rows.push('</table>');
             if(json.list !== undefined) rows.push(this.getObjectListHTML('Land Parcels', 'land-parcel', json.list, false));
             if(this.isA('updatable', json)){
@@ -273,8 +273,9 @@ function JSON2HTML(url){
                 rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
-                this.objectGUI("title",{ "input": "textfield", "label": "Title:"     },rows,false);
-                this.objectGUI("area", { "input": "textfield", "label": "Area (ha):" },rows,false);
+                rows.push('<h3>Create new land parcel</h3>');
+                this.objectGUI('title',{ 'input': 'textfield', 'label': 'Title:'     },rows,false);
+                this.objectGUI('area', { 'input': 'textfield', 'label': 'Area (ha):' },rows,false);
                 this.createGUI(json['update-template'],rows);
                 rows.push('</table>');
                 rows.push('<input class="submit" type="submit" value="Create" />');
@@ -372,7 +373,7 @@ function JSON2HTML(url){
             if(horizontal) rows.push('<tr>');
             for(var i in guilist){
                 var tag=tagged? i: null;
-                if(tag=="Rules" || tag=="is" || tag=="title" || tag=="update-template") continue;
+                if(tag=='Rules' || tag=='is' || tag=='title' || tag=='update-template') continue;
                 var item=guilist[i];
                 if(item.constructor===Object) submittable=this.objectGUI(tag,item,rows,horizontal) || submittable;
                 else
@@ -684,7 +685,7 @@ function Cyrus(){
 
     var me = {
         init: function(){
-            me.getTopObject(""+window.location);
+            me.getTopObject(''+window.location);
         },
         topObjectIn: function(url,obj,s,x){
             if(url && url!=topObjectURL){
@@ -886,7 +887,7 @@ function Cyrus(){
                 return false;
             });
             $(window).bind('popstate', function() {
-                me.getTopObject(""+window.location);
+                me.getTopObject(''+window.location);
             });
         },
         getFormFields: function(form,fields){
@@ -909,7 +910,7 @@ function Cyrus(){
             var uidver=localStorage.getItem('responses:'+url);
             if(!uidver){
                 var uid=generateUID('uid');
-                localStorage.setItem('responses:'+uid, "true");
+                localStorage.setItem('responses:'+uid, 'true');
                 if(cyrus) uidver= 'UID: '  +uid+' Version: ' +1;
                 else      uidver='"UID": "'+uid+'", "Version": '+1;
             }else{
