@@ -262,14 +262,19 @@ function JSON2HTML(url){
             var rows=[];
             rows.push(this.getObjectHeadHTML('Land: '+this.getTitle(json), url, false, closed));
             rows.push('<div class="vcard">');
+            rows.push('<table class="grid">');
+            this.addIfPresent(json, "title", { "input": "textfield" }, rows);
+            this.addIfPresent(json, "area",  { "input": "textfield", "label": "Area (ha):" }, rows);
+            rows.push('</table>');
+            if(json.list !== undefined) rows.push(this.getObjectListHTML('Land Parcels', 'land-parcel', json.list, false));
             if(this.isA('updatable', json)){
                 rows.push('<form class="land-form">');
                 rows.push('<input class="land-type"   type="hidden" value="updatable" />');
                 rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
-                this.addIfPresent(json, "title", { "input": "textfield" }, rows);
-                this.addIfPresent(json, "area",  { "input": "textfield", "label": "Area (ha):" }, rows);
+                this.objectGUI("title",{ "input": "textfield", "label": "Title:"     },rows,false);
+                this.objectGUI("area", { "input": "textfield", "label": "Area (ha):" },rows,false);
                 this.createGUI(json['update-template'],rows);
                 rows.push('</table>');
                 rows.push('<input class="submit" type="submit" value="Create" />');
@@ -349,7 +354,7 @@ function JSON2HTML(url){
             if(!guilist) return;
             if(this.isONLink(guilist)){
                 rows.push('<tr>');
-                rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, guilist, true, true)+'</td>');
+                rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, guilist, true, true)+'</td>');
                 rows.push('</tr>');
                 return false;
             }
@@ -386,7 +391,9 @@ function JSON2HTML(url){
                 if(item.constructor===Array){
                     if(!horizontal) rows.push('<tr>');
                     rows.push('<td class="grid-col">');
+                    rows.push('<table class="grid">');
                     submittable=this.createGUI(item,rows) || submittable;
+                    rows.push('</table>');
                     rows.push('</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
@@ -411,14 +418,14 @@ function JSON2HTML(url){
                 var range=guilist.range;
                 if(!horizontal) rows.push('<tr>');
                 if(input=='checkbox'){
-                    rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="checkbox" id="'+tag+'" class="form-field" value="'+tag+'"/></td>');
+                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+'"/></td>');
                     submittable=true;
                 }
                 else
                 if(input=='chooser'){
-                    rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><select id="'+tag+'" class="form-field">');
+                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><select id="'+tag+'" class="chooser form-field">');
                     for(var o in range){
                     rows.push('<option value="'+o+'" >'+range[o]+'</option>');
                     }
@@ -427,27 +434,27 @@ function JSON2HTML(url){
                 }
                 else
                 if(input=='textfield'){
-                    if(label)           rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                    if(value && !label) rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="form-field" value="'+value+'" /></td>');
+                    if(label)           rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                    if(value && !label) rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
                     else
-                    if(value)           rows.push('<td>            <input type="text" id="'+tag+'" class="form-field" value="'+value+'" /></td>');
-                    else                rows.push('<td>            <input type="text" id="'+tag+'" class="form-field"                   /></td>');
+                    if(value)           rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
+                    else                rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
                     submittable=true;
                 }
                 else
                 if(input=='rating'){
-                    rows.push('<td><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="radio" name="'+tag+'" class="form-field" value="0">0');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="1">1');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="2">2');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="3">3');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="4">4');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="form-field" value="5">5</td>');
+                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><input type="radio" name="'+tag+'" class="rating form-field" value="0">0');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="1">1');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="2">2');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="3">3');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="4">4');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="5">5</td>');
                     submittable=true;
                 }
                 else
                 if(input=='button'){
-                    rows.push('<td><input id="'+tag+'" class="form-field" type="submit" value="'+label+'" />');
+                    rows.push('<td><input id="'+tag+'" class="button form-field" type="submit" value="'+label+'" />');
                 }
                 if(!horizontal) rows.push('</tr>');
             }

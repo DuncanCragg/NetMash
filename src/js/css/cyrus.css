@@ -8,6 +8,12 @@ form{
     margin: 5px;
 }
 
+form.land-form{
+    background-color: #fff7f7;
+    padding: 7px;
+    border: 1px solid #9cc;
+}
+
 div {
     margin: 0px;
     padding: 0px;
@@ -19,12 +25,19 @@ table.json{
 
 table.grid{
     width: 100%;
+    max-width: 30em;
     table-layout: fixed;
 }
 
 td.grid-col{
     vertical-align: top;
     padding: 2pt;
+}
+
+td.label{
+    text-align: right;
+    padding-right: 8pt;
+    width: 33%;
 }
 
 form.cyrus-form{
@@ -115,6 +128,27 @@ p {
 
 img {
     max-width: 100%;
+}
+
+select.chooser{
+    border: 1px solid #ccc;
+    padding: 3px;
+    font-size: 1.0em;
+}
+
+input.textfield{
+    border-top: 1px solid #aaa;
+    border-left: 1px solid #aaa;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding-left: 0.4em;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+    background-color: #ffffff;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    font-size: 1.0em;
 }
 
 input.text{
