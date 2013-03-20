@@ -8,7 +8,7 @@ form{
     margin: 0px;
 }
 
-form.land-form{
+form.new-land-form{
     background-color: #fff7f7;
     padding: 10px;
 }
@@ -116,6 +116,7 @@ h2, h3 {
 ul {
     margin: 0px;
     padding: 0px;
+    border: 1px solid #ddf;
 }
 
 li {
@@ -173,7 +174,7 @@ input.text{
 
 input.button, input.submit{
     font-size: 1em;
-    margin: 5pt 0;
+    margin: 0 0 7pt 5pt;
 }
 
 input.checkbox{

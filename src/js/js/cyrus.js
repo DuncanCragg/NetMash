@@ -257,20 +257,25 @@ function JSON2HTML(url){
         },
         // ------------------------------------------------
         getLandHTML: function(url,json,closed){
+            var up=this.isA('updatable', json);
             var rows=[];
             rows.push(this.getObjectHeadHTML('Land: '+this.getTitle(json), url, false, closed));
             rows.push('<div class="vcard">');
+            if(up){
+                rows.push('<form class="land-form">');
+                rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
+            }
             rows.push('<table class="grid">');
             this.addIfPresent(json, 'title', { 'input': 'textfield' }, rows, false);
             this.addIfPresent(json, 'area',  { 'input': 'textfield', 'label': 'Area (ha):' }, rows, false);
             this.createGUI(this.getViaLinksRefactorMe(json,['within','update-template']),rows,json);
             rows.push('</table>');
-            if(this.isA('updatable', json)){
+            if(up){
+                rows.push('<input class="submit" type="submit" value="Update" />');
+                rows.push('</form>');
                 rows.push(this.getObjectHeadHTML('Create new land parcel', null, false, true));
-                rows.push('<form class="land-form">');
-                rows.push('<input class="land-type"   type="hidden" value="updatable" />');
+                rows.push('<form class="new-land-form">');
                 rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
-                rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
                 this.objectGUI('title',{ 'input': 'textfield', 'label': 'Title:'     },rows,false);
                 this.objectGUI('area', { 'input': 'textfield', 'label': 'Area (ha):' },rows,false);
@@ -374,7 +379,8 @@ function JSON2HTML(url){
             if(horizontal) rows.push('<tr>');
             for(var i in guilist){
                 var tag=tagged? i: null;
-                if(tag=='Rules' || tag=='is' || tag=='title' || tag=='update-template') continue;
+                if(/^[A-Z]/.test(tag)) continue;
+                if(tag=='is' || tag=='title' || tag=='update-template') continue;
                 var item=guilist[i];
                 if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal) || submittable;
                 else
@@ -826,7 +832,7 @@ function Cyrus(){
                 var targetURL=$(this).find('.cyrus-target').val();
                 var ver=localStorage.getItem('versions:'+getUID(targetURL));
                 if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
-                var uidver=me.getUIDandVer(targetURL,cyrus);
+                var uidver=me.getUIDandVer(targetURL,false,cyrus);
                 if(cyrus){
                     var type=$(this).find('.cyrus-type').val();
                     if(!type){
@@ -857,6 +863,17 @@ function Cyrus(){
             $('.land-form').unbind().submit(function(e){
                 var targetURL=$(this).find('.land-target').val();
                 var uidver=me.getUIDandVer(targetURL);
+                var json = '{ '+uidver+',\n  "is": [ "updatable", "land" ], "within": "'+targetURL+'", "user": "",\n  ';
+                var fields = [];
+                me.getFormFields($(this),fields);
+                json+=fields.join(',\n  ');
+                json+='\n}\n';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
+            $('.new-land-form').unbind().submit(function(e){
+                var targetURL=$(this).find('.land-target').val();
+                var uidver=me.getUIDandVer(targetURL,true);
                 var json = '{ '+uidver+',\n  "is": [ "updatable", "land" ], "within": "'+targetURL+'", "user": "",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
@@ -928,8 +945,8 @@ function Cyrus(){
             json2html = new JSON2HTML(topObjectURL.substring(0,topObjectURL.lastIndexOf('/')+1));
             network.getJSON(topObjectURL, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
         },
-        getUIDandVer: function(url,cyrus){
-            var uidver=localStorage.getItem('responses:'+url);
+        getUIDandVer: function(url,newone,cyrus){
+            var uidver=newone? null: localStorage.getItem('responses:'+url);
             if(!uidver){
                 var uid=generateUID('uid');
                 localStorage.setItem('responses:'+uid, 'true');
