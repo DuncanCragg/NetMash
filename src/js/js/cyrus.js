@@ -261,9 +261,9 @@ function JSON2HTML(url){
             rows.push(this.getObjectHeadHTML('Land: '+this.getTitle(json), url, false, closed));
             rows.push('<div class="vcard">');
             rows.push('<table class="grid">');
-            this.addIfPresent(json, 'title', { 'input': 'textfield' }, rows);
-            this.addIfPresent(json, 'area',  { 'input': 'textfield', 'label': 'Area (ha):' }, rows);
-            this.createGUI(this.getViaLinksRefactorMe(json,['within','update-template']),rows);
+            this.addIfPresent(json, 'title', { 'input': 'textfield' }, rows, false);
+            this.addIfPresent(json, 'area',  { 'input': 'textfield', 'label': 'Area (ha):' }, rows, false);
+            this.createGUI(this.getViaLinksRefactorMe(json,['within','update-template']),rows,json);
             rows.push('</table>');
             if(json.list !== undefined) rows.push(this.getObjectListHTML('Land Parcels', 'land-parcel', json.list, false));
             if(this.isA('updatable', json)){
@@ -350,7 +350,7 @@ function JSON2HTML(url){
             rows.push('</form>');
             return rows.join('\n')+'\n';
         },
-        createGUI: function(guilist,rows){
+        createGUI: function(guilist,rows,json){
             if(!guilist) return false;
             if(this.isONLink(guilist)){
                 rows.push('<tr>');
@@ -374,7 +374,7 @@ function JSON2HTML(url){
                 var tag=tagged? i: null;
                 if(tag=='Rules' || tag=='is' || tag=='title' || tag=='update-template') continue;
                 var item=guilist[i];
-                if(item.constructor===Object) submittable=this.objectGUI(tag,item,rows,horizontal) || submittable;
+                if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal) || submittable;
                 else
                 if(this.isONLink(item)){
                     if(!horizontal) rows.push('<tr>');
@@ -406,11 +406,14 @@ function JSON2HTML(url){
             if(horizontal) rows.push('</tr>');
             return submittable;
         },
-        addIfPresent: function(json,tag,widget,rows){
+        addIfPresent: function(json,tag,widget,rows,horizontal){
+            if(!json) return this.objectGUI(tag,widget,rows,horizontal);
             var value=json[tag];
-            if(value) return this.objectGUI(tag,widget,rows,false,value)
+            if(value===undefined) return false;
+            return this.objectGUI(tag,widget,rows,horizontal,value);
         },
         objectGUI: function(tag,guilist,rows,horizontal,value){
+            var val=(value!==undefined);
             var submittable=false;
             if(guilist.input){
                 var input=guilist.input;
@@ -419,7 +422,7 @@ function JSON2HTML(url){
                 if(!horizontal) rows.push('<tr>');
                 if(input=='checkbox'){
                     rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+'"/></td>');
+                    rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(value? '" checked="true':'')+'"/></td>');
                     submittable=true;
                 }
                 else
@@ -435,9 +438,9 @@ function JSON2HTML(url){
                 else
                 if(input=='textfield'){
                     if(label)           rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    if(value && !label) rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
+                    if(val && !label)   rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
                     else
-                    if(value)           rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
+                    if(val)             rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
                     else                rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
                     submittable=true;
                 }
