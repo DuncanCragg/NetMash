@@ -160,15 +160,15 @@ function JSON2HTML(url){
         getObjectHTML: function(url,json,closed,title){
             if(this.isA('editable', json))
                  return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
-                        this.cyrusForm(url,JSON.stringify(json));
+                        this.cyrusForm(url,JSON.stringify(json))+'</div>';
             else return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
-                        '<pre class="cyrus">\n'+JSON.stringify(json)+'\n</pre>';
+                        '<pre class="cyrus">\n'+JSON.stringify(json)+'\n</pre></div>';
         },
         getCyrusTextHTML: function(url,item,closed){
             if(item.constructor!==String) return this.getCyrusTextHTML(url,this.toCyrusHash(item),closed);
             return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
                    '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                   '<pre class="cyrus-readonly">\n'+this.createLinks(item)+'\n</pre>';
+                   '<pre class="cyrus-readonly">\n'+this.createLinks(item)+'\n</pre></div>';
         },
         cyrusForm: function(url,item,type,action,rows){
             return '<form class="cyrus-form">\n'+
@@ -265,21 +265,22 @@ function JSON2HTML(url){
             this.addIfPresent(json, 'area',  { 'input': 'textfield', 'label': 'Area (ha):' }, rows, false);
             this.createGUI(this.getViaLinksRefactorMe(json,['within','update-template']),rows,json);
             rows.push('</table>');
-            if(json.list !== undefined) rows.push(this.getObjectListHTML('Land Parcels', 'land-parcel', json.list, false));
             if(this.isA('updatable', json)){
+                rows.push(this.getObjectHeadHTML('Create new land parcel', null, false, true));
                 rows.push('<form class="land-form">');
                 rows.push('<input class="land-type"   type="hidden" value="updatable" />');
                 rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
-                rows.push('<tr><td colspan="2"><h3>Create new land parcel</h3></td></tr>');
                 this.objectGUI('title',{ 'input': 'textfield', 'label': 'Title:'     },rows,false);
                 this.objectGUI('area', { 'input': 'textfield', 'label': 'Area (ha):' },rows,false);
                 this.createGUI(json['update-template'],rows);
                 rows.push('</table>');
                 rows.push('<input class="submit" type="submit" value="Create" />');
                 rows.push('</form>');
+                rows.push('</div>');
             }
+            if(json.list !== undefined) rows.push(this.getObjectListHTML('Land Parcels', 'land-parcel', json.list, true));
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
@@ -348,6 +349,7 @@ function JSON2HTML(url){
             if(submittable)
             rows.push('<input class="submit" type="submit" value="Submit" />');
             rows.push('</form>');
+            rows.push('</div>');
             return rows.join('\n')+'\n';
         },
         createGUI: function(guilist,rows,json){
@@ -429,8 +431,10 @@ function JSON2HTML(url){
                 if(input=='chooser'){
                     rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
                     rows.push('<td><select id="'+tag+'" class="chooser form-field">');
+                    rows.push('<option value="none">Select..</option>');
                     for(var o in range){
-                    rows.push('<option value="'+o+'" >'+range[o]+'</option>');
+                        if(o==value) rows.push('<option value="'+o+'" selected="true">'+range[o]+'</option>');
+                        else         rows.push('<option value="'+o+'" >'               +range[o]+'</option>');
                     }
                     rows.push('</select></td>');
                     submittable=true;
@@ -594,8 +598,8 @@ function JSON2HTML(url){
         getDateSpan: function(clss, date){
             return '<span class="'+clss+'" title="'+makeISODate(date)+'">'+makeNiceDate(date)+'</span>';
         },
-        getObjectHeadHTML: function(title, url, place, closed, icon, raw){
-            if(!this.isObjectURL(url) && place) return this.getAnyHTML(url);
+        getObjectHeadHTML: function(title, url, place, closed, icon, raw){  // don't forget to close that hanging div if !place
+            if(place && !this.isObjectURL(url)) return this.getAnyHTML(url);
             return '<div class="object-head'+(closed? '':' open')+(raw? ' raw':'')+'">'+
                                                     this.getAnyHTML(url)+
                                                   ' <span class="open-close">+/-</span>'+

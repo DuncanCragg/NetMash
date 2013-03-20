@@ -5,13 +5,16 @@ body {
 
 form{
     padding: 0px;
-    margin: 5px;
+    margin: 0px;
 }
 
 form.land-form{
     background-color: #fff7f7;
-    padding: 7px;
-    border: 1px solid #9cc;
+    padding: 10px;
+}
+
+form.gui-form{
+    padding: 10px;
 }
 
 div {
@@ -266,6 +269,7 @@ div.right.wide{
 }
 
 div.vcard {
+    padding-bottom: 10pt;
     background-color: #eeeeff;
 }
 
