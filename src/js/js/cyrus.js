@@ -263,6 +263,7 @@ function JSON2HTML(url){
             rows.push('<div class="vcard">');
             if(up){
                 rows.push('<form class="land-form">');
+                rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
             }
             rows.push('<table class="grid">');
@@ -275,7 +276,7 @@ function JSON2HTML(url){
                 rows.push('</form>');
                 rows.push(this.getObjectHeadHTML('Create new land parcel', null, false, true));
                 rows.push('<form class="new-land-form">');
-                rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
+                rows.push('<input class="land-within" type="hidden" value="'+url+'" />');
                 rows.push('<table class="grid">');
                 this.objectGUI('title',{ 'input': 'textfield', 'label': 'Title:'     },rows,false);
                 this.objectGUI('area', { 'input': 'textfield', 'label': 'Area (ha):' },rows,false);
@@ -844,7 +845,7 @@ function Cyrus(){
                         network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
                     }
                 }else{
-                    var json = '{ '+uidver+', "is": [ "editable", "rule" ], "when": "edited", "editable": "'+targetURL+'", "user": "" }';
+                    var json = '{ '+uidver+', "is": [ "editable", "rule" ],\n  "when": "edited",\n  "editable": "'+targetURL+'",\n  "user": "" }';
                     network.postJSON(targetURL, me.makeJSONEditRule(json,ver,cy), false, me.getCreds(targetURL), null, null);
                 }
                 e.preventDefault();
@@ -852,7 +853,7 @@ function Cyrus(){
             $('.gui-form').unbind().submit(function(e){
                 var targetURL=$(this).find('.form-target').val();
                 var uidver=me.getUIDandVer(targetURL);
-                var json = '{ '+uidver+',\n  "is": "form", "gui": "'+targetURL+'", "user": "",\n  "form": {\n   ';
+                var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "",\n  "form": {\n   ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n   ');
@@ -860,10 +861,10 @@ function Cyrus(){
                 network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                 e.preventDefault();
             });
-            $('.land-form').unbind().submit(function(e){
-                var targetURL=$(this).find('.land-target').val();
-                var uidver=me.getUIDandVer(targetURL);
-                var json = '{ '+uidver+',\n  "is": [ "updatable", "land" ], "within": "'+targetURL+'", "user": "",\n  ';
+            $('.new-land-form').unbind().submit(function(e){
+                var targetURL=$(this).find('.land-within').val();
+                var uidver=me.getUIDandVer(targetURL,true);
+                var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+targetURL+'",\n  "user": "",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n  ');
@@ -871,10 +872,11 @@ function Cyrus(){
                 network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                 e.preventDefault();
             });
-            $('.new-land-form').unbind().submit(function(e){
+            $('.land-form').unbind().submit(function(e){
+                var withinURL=$(this).find('.land-within').val();
                 var targetURL=$(this).find('.land-target').val();
-                var uidver=me.getUIDandVer(targetURL,true);
-                var json = '{ '+uidver+',\n  "is": [ "updatable", "land" ], "within": "'+targetURL+'", "user": "",\n  ';
+                var uidver=me.getUIDandVer(targetURL);
+                var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+withinURL+'",\n  "land": "'+targetURL+'",\n  "user": "",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n  ');
@@ -887,7 +889,7 @@ function Cyrus(){
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
                     var q=$(this).find('.rsvp-attending').is(':checked');
-                    var json = '{ '+uidver+', "is": "rsvp", "event": "'+targetURL+'", "user": "", "attending": "'+(q? 'yes': 'no')+'" }';
+                    var json = '{ '+uidver+', "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "",\n  "attending": "'+(q? 'yes': 'no')+'"\n}';
                     network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
                 }
@@ -897,7 +899,7 @@ function Cyrus(){
                     if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
-                    var json = '{ '+uidver+',\n  "is": "rsvp", "event": "'+targetURL+'", "user": "", "within": "'+within+'",\n   ';
+                    var json = '{ '+uidver+',\n  "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "",\n  "within": "'+within+'",\n   ';
                     var fields = [];
                     me.getFormFields($(this),fields);
                     json+=fields.join(',\n  ');
@@ -909,7 +911,7 @@ function Cyrus(){
             $('#query').focus();
             $('#query-form').unbind().submit(function(e){
                 var q=$('#query').val();
-                var json = '{ "is": [ "document", "query" ], "text": [ "has-words", "'+q.jsonEscape()+'" ] }';
+                var json = '{ "is": [ "document", "query" ],\n  "text": [ "has-words", "'+q.jsonEscape()+'" ] }';
                 network.postJSON(topObjectURL, json, false, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
                 e.preventDefault();
             });

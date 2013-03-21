@@ -34,7 +34,7 @@
   view: {
     land: # => style "Your Land:"
       { UID: new
-        Rules: uid-0215-038b-7558-041a uid-51b1-5d09-ed2f-519c
+        Rules: uid-cf53-b596-1b34-19c8 uid-0215-038b-7558-041a uid-51b1-5d09-ed2f-519c
         is: updatable land
         title: Holding
         update-template: uid-5c78-11ee-a3c7-ba89
@@ -98,9 +98,9 @@
   is: gui rule editable
   when: "application created create payment summaries and item"
   view: {
-    BP: # => style "Basic Payment (£):" 0
-    FC: # => style "Woodland Payment (£):" 0
-    NE: # => style "Stewardship Payment (£):" 0
+    bp: # => style "Basic Payment (£):" 0
+    fc: # => style "Woodland Payment (£):" 0
+    ne: # => style "Stewardship Payment (£):" 0
   }
   payment: # =>
       { UID: new
@@ -135,9 +135,9 @@
   view: { style:    # => { is: style colours: lightgreen }
           user: style => { is: style direction: horizontal proportions: 75% }
           land: style => { is: style direction: horizontal proportions: 75% }
-          BP:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
-          FC:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
-          NE:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
+          bp:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
+          fc:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
+          ne:   style => { is: style direction: horizontal proportions: 50% colours: lightblue }
   }
 }
 
@@ -148,10 +148,29 @@
   area: => + @=list:area
 }
 
+{ UID: uid-cf53-b596-1b34-19c8
+  is: land rule editable
+  when: "land request notified add to list"
+  Alerted: { is: land request within: @ }
+  list: { request: @Alerted } !=> @. with
+    { UID: new
+      Rules: uid-566e-f0f3-3350-97ea uid-5f28-9174-b47d-2a74 uid-4a47-2cb6-8e99-a178 uid-6419-0368-25da-f91e
+      is: updatable land
+      within: @Alerted:within
+      request: @Alerted
+      title: @Alerted:title
+      area: @Alerted:area
+      usage: @Alerted:usage
+      entitlement: @Alerted:entitlement
+      active: @Alerted:active
+      ineligible-area: @Alerted:ineligible-area
+    }
+}
+
 { UID: uid-0215-038b-7558-041a
   is: land rule editable
   when: "land item notified add to list"
-  Alerted: { is: land within: @ }
+  Alerted: { is: updatable land within: @ }
   list: @Alerted !=> @. with @Alerted
 }
 
@@ -235,9 +254,9 @@
 { UID: uid-9ce9-1bdd-ec05-c8fa
   is: gui rule editable
   when: "payment updates show it"
-  view: { BP: number => integer @payment:bp-total
-          FC: number => integer @payment:fc-total
-          NE: number => integer @payment:ne-total }
+  view: { bp: number => integer @payment:bp-total
+          fc: number => integer @payment:fc-total
+          ne: number => integer @payment:ne-total }
 }
 
 { UID: uid-f1d2-4269-6821-9d7a
