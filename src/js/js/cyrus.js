@@ -263,8 +263,9 @@ function JSON2HTML(url){
             rows.push('<div class="vcard">');
             if(up){
                 rows.push('<form class="land-form">');
-                rows.push('<input class="land-within" type="hidden" value="'+json.within+'" />');
-                rows.push('<input class="land-target" type="hidden" value="'+url+'" />');
+                rows.push('<input class="land-target"  type="hidden" value="'+url+'" />');
+                rows.push('<input class="land-within"  type="hidden" value="'+json.within+'" />');
+                rows.push('<input class="land-request" type="hidden" value="'+json.request+'" />');
             }
             rows.push('<table class="grid">');
             this.addIfPresent(json, 'title', { 'input': 'textfield' }, rows, false);
@@ -833,7 +834,7 @@ function Cyrus(){
                 var targetURL=$(this).find('.cyrus-target').val();
                 var ver=localStorage.getItem('versions:'+getUID(targetURL));
                 if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
-                var uidver=me.getUIDandVer(targetURL,false,cyrus);
+                var uidver=me.getUIDandVer(targetURL,null,cyrus);
                 if(cyrus){
                     var type=$(this).find('.cyrus-type').val();
                     if(!type){
@@ -863,7 +864,7 @@ function Cyrus(){
             });
             $('.new-land-form').unbind().submit(function(e){
                 var targetURL=$(this).find('.land-within').val();
-                var uidver=me.getUIDandVer(targetURL,true);
+                var uidver=me.getUIDandVer();
                 var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+targetURL+'",\n  "user": "",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
@@ -873,9 +874,10 @@ function Cyrus(){
                 e.preventDefault();
             });
             $('.land-form').unbind().submit(function(e){
-                var withinURL=$(this).find('.land-within').val();
-                var targetURL=$(this).find('.land-target').val();
-                var uidver=me.getUIDandVer(targetURL);
+                var targetURL =$(this).find('.land-target').val();
+                var withinURL =$(this).find('.land-within').val();
+                var requestURL=$(this).find('.land-request').val();
+                var uidver=me.getUIDandVer(targetURL,requestURL);
                 var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+withinURL+'",\n  "land": "'+targetURL+'",\n  "user": "",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
@@ -947,10 +949,10 @@ function Cyrus(){
             json2html = new JSON2HTML(topObjectURL.substring(0,topObjectURL.lastIndexOf('/')+1));
             network.getJSON(topObjectURL, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
         },
-        getUIDandVer: function(url,newone,cyrus){
-            var uidver=newone? null: localStorage.getItem('responses:'+url);
+        getUIDandVer: function(url,useuid,cyrus){
+            var uidver=url? localStorage.getItem('responses:'+url): null;
             if(!uidver){
-                var uid=generateUID('uid');
+                var uid=useuid? getUID(useuid): generateUID('uid');
                 localStorage.setItem('responses:'+uid, 'true');
                 if(cyrus) uidver= 'UID: '  +uid+' Version: ' +1;
                 else      uidver='"UID": "'+uid+'", "Version": '+1;
@@ -960,7 +962,7 @@ function Cyrus(){
                 else      re=RegExp('(.*"Version": )(.*)').exec(uidver);
                 uidver=re[1]+(parseInt(re[2])+1);
             }
-            localStorage.setItem('responses:'+url, uidver);
+            if(url) localStorage.setItem('responses:'+url, uidver);
             return uidver;
         },
         getUIDOnly: function(url){

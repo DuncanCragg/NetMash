@@ -279,12 +279,12 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean doScanType(Object v, String pk){
+        if(v==null) return false;
         if(v instanceof String)        return scanString((String)v, pk);
         if(v instanceof Number)        return scanNumber((Number)v, pk);
         if(v instanceof Boolean)       return scanBoolean((Boolean)v, pk);
         if(v instanceof LinkedHashMap) return scanHash((LinkedHashMap<String,Object>)v, pk);
         if(v instanceof LinkedList)    return scanList((LinkedList)v, pk, null);
-        log("oh noes "+v+" "+pk);
         return false;
     }
 

@@ -154,7 +154,7 @@
   Alerted: { is: land request within: @ }
   list: { request: @Alerted } !=> @. with
     { UID: new
-      Rules: uid-566e-f0f3-3350-97ea uid-5f28-9174-b47d-2a74 uid-4a47-2cb6-8e99-a178 uid-6419-0368-25da-f91e
+      Rules: uid-51dd-2560-3c5d-5c64 uid-566e-f0f3-3350-97ea uid-5f28-9174-b47d-2a74 uid-4a47-2cb6-8e99-a178 uid-6419-0368-25da-f91e
       is: updatable land
       within: @Alerted:within
       request: @Alerted
@@ -165,6 +165,19 @@
       active: @Alerted:active
       ineligible-area: @Alerted:ineligible-area
     }
+}
+
+{ UID: uid-51dd-2560-3c5d-5c64
+  is: land rule editable
+  when: "land request notified set values"
+  Alerted: { is: land request within: @within land: @ }
+  request: @Alerted
+  title: => @Alerted:title
+  area: => @Alerted:area
+  usage: => @Alerted:usage
+  entitlement: => @Alerted:entitlement
+  active: => @Alerted:active
+  ineligible-area: => @Alerted:ineligible-area
 }
 
 { UID: uid-0215-038b-7558-041a
