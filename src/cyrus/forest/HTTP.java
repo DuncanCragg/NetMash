@@ -429,7 +429,7 @@ abstract class HTTPCommon {
         sb.append("Connection: "); sb.append(httpConnection); sb.append("\r\n");
         sb.append("Date: "); sb.append(RFC1123.format(new Date())); sb.append("\r\n");
         sb.append("Server: "+Version.NAME+" "+Version.NUMBERS+"\r\n");
-        sb.append("Cache-Notify: "); sb.append(UID.toURL(CacheNotify())); sb.append("\r\n");
+        sb.append("Cache-Notify: "); sb.append(rewrite10022(UID.toURL(CacheNotify()))); sb.append("\r\n");
     }
 
     boolean useBrainDeadSoCalledAccessControlVerboseHeaderCruft=true;
@@ -442,7 +442,7 @@ abstract class HTTPCommon {
         sb.append("Access-Control-Expose-Headers: Content-Location, Location, Cache-Notify, ETag\r\n");
         }
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
-        String cl=(w.url==null? UID.toURL(w.uid): w.url);
+        String cl=rewrite10022(w.url==null? UID.toURL(w.uid): w.url);
         sb.append("Content-Location: "); sb.append(cl); sb.append("\r\n");
         if(Kernel.config.intPathN("network:log")==1) log(cl);
         sb.append("ETag: \""); sb.append(w.etag); sb.append("\"\r\n");
@@ -465,8 +465,12 @@ abstract class HTTPCommon {
             r=s.replaceAll("\"(uid-[-a-zA-Z0-9]+)(|.json|.cyr)\"",
                            "\""+UID.localPrePath()+"$1.json\"");
         }
-        boolean cyrusAgent=(httpUserAgent!=null && httpUserAgent.indexOf("Cyrus")!= -1);
-        return cyrusAgent? r: r.replaceAll("10.0.2.2","localhost");
+        return rewrite10022(r);
+    }
+
+    String rewrite10022(String r){
+        boolean nonCyrusClient=(httpUserAgent!=null && httpUserAgent.indexOf("Cyrus")== -1);
+        return nonCyrusClient? r.replaceAll("10.0.2.2","localhost"): r;
     }
 
     protected PostResponse readWebObject(ByteBuffer bytebuffer, int contentLength, String httpNotify, String httpReqURL, WebObject webobject, String param){
@@ -692,7 +696,7 @@ logXX("outgoing Cache-Notify:",notifieruid);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
     }
 
-    public void send201(String location){ sendNoBody("201 Created", "Location: "+location+"\r\n"); }
+    public void send201(String location){ sendNoBody("201 Created", "Location: "+rewrite10022(location)+"\r\n"); }
 
     public void send204(){ sendNoBody("204 No Content", null); }
 
