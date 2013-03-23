@@ -778,9 +778,9 @@ function Cyrus(){
         someObjectIn: function(url,obj,s,x){
             if(obj){
                 var notify=obj.Notify; delete obj.Notify;
-                if(notify && notify.length && localStorage.getItem('responses:'+getUID(notify[0]))){
-                    me.topObjectIn(url,obj,s,x);
-                    return;
+                var formForCurrentView=me.getUIDOnly(topObjectURL);
+                if(formForCurrentView) for(var i in notify){ var u=notify[i];
+                    if(getUID(u)==formForCurrentView){ me.topObjectIn(url,obj,s,x); return; }
                 }
             }
             if(url==topObjectURL) me.topObjectIn(url,obj,s,x);
@@ -953,7 +953,6 @@ function Cyrus(){
             var uidver=url? localStorage.getItem('responses:'+url): null;
             if(!uidver){
                 var uid=useuid? getUID(useuid): generateUID('uid');
-                localStorage.setItem('responses:'+uid, 'true');
                 if(cyrus) uidver= 'UID: '  +uid+' Version: ' +1;
                 else      uidver='"UID": "'+uid+'", "Version": '+1;
             }else{
@@ -968,7 +967,8 @@ function Cyrus(){
         getUIDOnly: function(url){
             var uidver=localStorage.getItem('responses:'+url);
             if(!uidver) return null;
-            var re=RegExp('"UID": "([^"]*)"').exec(uidver);
+            var     re=RegExp('"UID": "([^"]*)"').exec(uidver);
+            if(!re) re=RegExp('UID: ([^ ]*) ').exec(uidver);
             if(!re) return null;
             return re[1];
         },

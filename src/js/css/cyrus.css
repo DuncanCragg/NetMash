@@ -52,7 +52,7 @@ textarea.cyrus-raw{
     width: 100%;
     border: 1px solid #ddd;
     padding: 0.5em;
-    margin: 0pt;
+    margin: 0pt 0pt 10pt 0pt;
     line-height: 12pt;
 }
 
