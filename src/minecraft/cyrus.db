@@ -1,0 +1,22 @@
+{ UID: uid-fb97-b02c-e69b-90dd
+  is: minecraft spell list
+  list: uid-a70f-cd0b-c257-a901
+}
+
+{ UID: uid-a70f-cd0b-c257-a901
+  is: editable minecraft spell
+  title: "Simplest Spell"
+  Rules: {
+    is: minecraft spell rule
+    when: "created, place cobblestone"
+    Notifying: => @. with @world
+  }
+  world: uid-b1d8-d170-a3d9-e693
+  placing: cobblestone at -476 64 204
+}
+
+{ UID: uid-b1d8-d170-a3d9-e693
+  Class: net.minecraft.src.CyrusWorld
+  is: queryable updatable 3d minecraft block list
+}
+

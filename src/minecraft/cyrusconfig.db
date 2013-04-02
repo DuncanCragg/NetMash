@@ -1,0 +1,13 @@
+{ name: minecraft
+  kernel: { threadpool: 33 }
+  persist: { directory: .
+             db: cyrus.db
+             syncrate: 100
+             preload: ( ) }
+  network: { host: localhost
+             port: 8084
+             pathprefix: /o/
+             cache-notify: c-n-47b0-80c6-b3fc-42c6
+             log: 0 }
+  rules: { log: 2 }
+}

@@ -4,10 +4,18 @@ To Do
 
 --------------------------------------------------------
 Browser: cyrus.js
- + apply on web and check renders in Android
- + add maps: location & shape -> view & edit
- + fix logic bugs, zero lists, updating, etc and check not maxing in the loop
+ - apply on Web and check renders in Android
+ - add maps: location & shape -> view & edit
+ - fix logic bugs, zero lists, updating, etc and check not maxing in the loop
  - ------------------
+Sort out extensions in CAP/land, cars/contacts and Reaktion/events
+ - templates for land (update-template), extended event (review-template)
+ - show hidden, non-standard fields (license-number)
+ - finish rendering Reaktion - rating summary (etc?)
+ - rsvp and 'review' return types? attendable/reviewable
+ - ------------------
+Stuff
+ - 'maybe' in 3d game, CAP, Reaktion
  - new dibdab for replacing parent (temporarily in view)
  - remember open and parent replace state
  - fix:
@@ -36,7 +44,6 @@ CyrusLanguage:
 
 --------------------------------------------------------
  - implement POST response for return notification
- - 'maybe' in 3d game, CAP, Reaktion?
 --------------------------------------------------------
 
 --------------------------------------------------------

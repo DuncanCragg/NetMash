@@ -1,0 +1,78 @@
+
+MCP
+
+ - unzip MCP; rm *.bat
+
+Minecraft
+
+ - run Minecraft; "Options"; "Force update!"
+ - cp lwjgl-*/jar/{jinput.jar,lwjgl.jar,lwjgl_util.jar} ~/.minecraft/bin
+ - cp lwjgl-*/native/linux/* ~/.minecraft/bin/natives
+ - run Minecraft, "Quit Game"
+ - cp -a ~/.minecraft/bin and ~/.minecraft/resources jars
+
+ModLoader
+
+ - jars/bin
+ - extract minecraft.jar
+ - delete META-INF
+ - extract ModLoader into minecraft.jar
+
+Decompile
+
+ - ./updatemcp.sh
+ - ./decompile.sh --client
+ - ls ./src/minecraft/net/minecraft/src/BaseMod.java
+
+
+Edit/Run
+
+ - vi net/Minecraft/src/mod_New.java, etc
+ - ./recompile.sh --client
+ - ./startclient.sh
+
+
+Links to Cyrus
+
+ ./makefile                                        -> .../cyrus/src/minecraft/makefile
+ ./src/minecraft/cyrus                             -> .../cyrus/src/cyrus
+ ./src/minecraft/net/minecraft/src/CyrusWorld.java -> .../cyrus/src/minecraft/CyrusWorld.java
+ ./src/minecraft/net/minecraft/src/mod_Cyrus.java  -> .../cyrus/src/minecraft/mod_Cyrus.java
+ ./jars/cyrusconfig.db                             -> .../cyrus/src/minecraft/cyrusconfig.db
+ ./jars/cyrus.db                                   -> .../cyrus/src/minecraft/cyrus.db
+
+
+Install ModLoader
+
+ - cd ~/.minecraft/bin
+ - mv minecraft.jar minecraft-dist.jar
+ - mkdir repack
+ - cd repack
+ - unzip ../minecraft-dist.jar
+ - rm -rf META-INF
+ - unzip ~/minecraft/mods/ModLoader.zip
+ - jar -cf ../minecraft.jar *
+ - cd ..
+ - rm -rf repack
+
+
+Build for Release
+
+ - ./reobfuscate.sh --client
+ - cd reobf/minecraft/
+ - zip -r ../../cyrus.zip *
+ - mv cyrus.zip ~/.minecraft/mods/
+
+Run
+
+ - java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar ~/minecraft/minecraft.jar
+
+
+
+
+
+
+
+
+
+
