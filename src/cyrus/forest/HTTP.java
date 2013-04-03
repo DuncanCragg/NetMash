@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.concurrent.*;
 import java.net.*;
+import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
@@ -432,6 +433,14 @@ abstract class HTTPCommon {
         sb.append("Cache-Notify: "); sb.append(rewrite10022(UID.toURL(CacheNotify()))); sb.append("\r\n");
     }
 
+    protected void topResponseHeaders(ByteBuffer bb, String responseCode){
+        bb.put((httpProtocol.equals("HTTP/1.1")? "HTTP/1.1 ": "HTTP/1.0 ").getBytes());
+        bb.put(responseCode.getBytes()); bb.put("\r\n".getBytes());
+        bb.put("Connection: ".getBytes()); bb.put(httpConnection.getBytes()); bb.put("\r\n".getBytes());
+        bb.put("Date: ".getBytes()); bb.put(RFC1123.format(new Date()).getBytes()); bb.put("\r\n".getBytes());
+        bb.put(("Server: "+Version.NAME+" "+Version.NUMBERS+"\r\n").getBytes());
+    }
+
     boolean useBrainDeadSoCalledAccessControlVerboseHeaderCruft=true;
 
     protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents, boolean head, boolean cyrus){
@@ -452,6 +461,45 @@ abstract class HTTPCommon {
         String content=rewriteUIDsToURLs(w.toString(percents,cyrus),cyrus);
         sb.append("Content-Length: "); sb.append(content.getBytes().length); sb.append("\r\n\r\n");
         if(!head) sb.append(content);
+    }
+
+    static LinkedHashMap<String,String> mimeTypes=new LinkedHashMap<String,String>(); static { setUpMimeTypes(); }
+
+    @SuppressWarnings("unchecked")
+    static void setUpMimeTypes(){
+        mimeTypes.put(".html",     "text/html");
+        mimeTypes.put(".js",       "application/javascript");
+        mimeTypes.put(".json",     "application/json");
+        mimeTypes.put(".cyr",      "text/cyrus");
+        mimeTypes.put(".db",       "text/cyrus");
+        mimeTypes.put(".css",      "text/css");
+        mimeTypes.put(".appcache", "text/cache-manifest");
+
+        mimeTypes.put(".jpeg", "image/jpeg");
+        mimeTypes.put(".jpg",  "image/jpeg");
+        mimeTypes.put(".gif",  "image/gif");
+        mimeTypes.put(".ico",  "image/x-icon");
+        mimeTypes.put(".png",  "image/png");
+    }
+
+    protected ByteBuffer contentHeadersAndFile(ByteBuffer bb, String path){
+        if(path.indexOf("..")!= -1) return null;
+        if(!path.startsWith("/")) path="/"+path;
+        if( path.endsWith(  "/")) path+="index.html";
+        path="statics"+path;
+        int q=path.indexOf("?"); if(q>=0) path=path.substring(0,q);
+        int i=path.lastIndexOf("."); if(i< 1) return null;
+        String ext=path.substring(i);
+        String ct=mimeTypes.get(ext);
+        if(ct==null) ct="application/octet-stream";
+        if(ct.equals("text/cache-manifest")) bb.put("Cache-Control: no-cache\r\n".getBytes());
+        bb.put("Content-Type: ".getBytes()); bb.put(ct.getBytes()); bb.put("\r\n".getBytes());
+        File f=new File(path);
+        bb.put("Content-Length: ".getBytes()); bb.put((f.length()+"").getBytes()); bb.put("\r\n\r\n".getBytes());
+        try{ bb=Kernel.readFile(f, bb); } catch(Exception e){ log("HTTP: Failed to read file: "+e); return null; }
+        bb.limit(bb.position());
+        bb.position(0);
+        return bb;
     }
 
     private String rewriteUIDsToURLs(String s, boolean cyrus){
@@ -595,7 +643,10 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
             if(httpMethod.equals("HEAD")) readHEAD(uid);
             else
             if(httpMethod.equals("OPTIONS")) readOPTIONS();
-        } else send404();
+        } else {
+            if(httpMethod.equals("GET" )) sendFile();
+            else send404();
+        }
     }
 
     private void readGET(String uid){
@@ -633,7 +684,6 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
         if(longQ==null) longQ=new LinkedBlockingQueue<String>();
         funcobs.http.putLongPusher(httpCacheNotify, this);
         longPending=longQ.isEmpty();
-logXX("incoming Cache-Notify: longQ=",longQ);
         if(longPending){
             timer=new Thread(){ public void run(){
                 Kernel.sleep(LONG_POLL_TIMEOUT);
@@ -652,7 +702,6 @@ logXX("incoming Cache-Notify: longQ=",longQ);
     }
 
     synchronized public void longRequest(String notifieruid){
-logXX("outgoing Cache-Notify:",notifieruid);
         if(longPending){ longPending=false; send200(funcobs.cacheGet(notifieruid), true, false, false); timer.interrupt(); }
         else try{ if(!longQ.contains(notifieruid)) longQ.put(notifieruid); }catch(Exception e){}
     }
@@ -714,6 +763,14 @@ logXX("outgoing Cache-Notify:",notifieruid);
         if(Kernel.config.intPathN("network:log")==1) log(responseCode+"-->"); else
         if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
         Kernel.send(channel, ByteBuffer.wrap(sb.toString().getBytes()));
+    }
+
+    public void sendFile(){
+        ByteBuffer bb=ByteBuffer.allocate(4096);
+        topResponseHeaders(bb, "200 OK");
+        if((bb=contentHeadersAndFile(bb, httpPath))==null){ send404(); return; }
+        if(Kernel.config.intPathN("network:log")>=1) log("200 OK-->");
+        Kernel.send(channel, bb);
     }
 }
 

@@ -8,16 +8,16 @@ LOCAL_IP=192.168.0.6
 ################################################################################
 
 examples: runstt
-	chromium-browser 'http://localhost:8083/#http://localhost:8081/o/uid-f25a-08e1-7d7d-09f8.json'
+	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-f25a-08e1-7d7d-09f8.json'
 
 tutorial: runtut
-	chromium-browser 'http://localhost:8083/#http://localhost:8081/o/uid-7081-c95e-1c04-d7a5.json'
+	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7081-c95e-1c04-d7a5.json'
 
 cars: runcars
-	chromium-browser 'http://localhost:8083/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
+	chromium-browser 'http://localhost:8081/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
 
 capweb: runcapw
-	chromium-browser 'http://localhost:8083/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
+	chromium-browser 'http://localhost:8081/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
 
 ####################
 

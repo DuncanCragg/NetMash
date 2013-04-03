@@ -770,7 +770,7 @@ function Cyrus(){
             retryDelay=100;
         },
         objectFail: function(url,err,s,x){
-            console.log('objectFail '+url+' '+err+' '+x.status+' '+s+' '+(x && x.getResponseHeader('Cache-Notify')));
+            console.log('objectFail '+url+' '+err+' '+(x && x.status)+' '+s+' '+(x && x.getResponseHeader('Cache-Notify')));
             var isCN=url.indexOf('/c-n-')!= -1;
             retryDelay*=2;
             if(isCN) setTimeout(function(){ network.longGetJSON(url,me.getCreds(url),me.someObjectIn,me.objectFail); }, retryDelay);

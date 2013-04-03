@@ -136,6 +136,17 @@ public class Kernel {
         }
     }
 
+    static public ByteBuffer readFile(File file, ByteBuffer bytebuffer) throws Exception{
+        if(!(file.exists() && file.canRead())) throw new Exception("Can't read file "+file.getPath());
+        FileChannel channel = new FileInputStream(file).getChannel();
+        int len=0;
+        while(len!= -1){
+            len=channel.read(bytebuffer);
+            bytebuffer=ensureBufferBigEnough(bytebuffer);
+        }
+        return bytebuffer;
+    }
+
     static public void writeFile(File file, boolean append, ByteBuffer bytebuffer, FileUser fileuser) throws Exception{
         if(!(file.exists() && file.canWrite()))  throw new Exception("Can't write file "+file.getPath());
         FileChannel channel = new FileOutputStream(file, append).getChannel();

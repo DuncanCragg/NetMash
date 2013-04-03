@@ -5,7 +5,6 @@ reading this, you should be reading the code or something. Or contacting me.
 
 Browser:
 
-$ make runode   -- needed first: runs up a little Node server for some statics
 $ make examples -- some examples
 $ make tutorial -- interactive online tutorial (coming soon)
 $ make cars     -- querying a database of driving licences
