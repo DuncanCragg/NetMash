@@ -19,5 +19,7 @@ release:
 runthere:
 	java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar ../../minecraft.jar
 
+editor:
+	chromium-browser 'http://localhost:8084/#http://localhost:8084/o/uid-fb97-b02c-e69b-90dd.json'
 
 

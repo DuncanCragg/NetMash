@@ -40,6 +40,7 @@ Links to Cyrus
  ./src/minecraft/net/minecraft/src/mod_Cyrus.java  -> .../cyrus/src/minecraft/mod_Cyrus.java
  ./jars/cyrusconfig.db                             -> .../cyrus/src/minecraft/cyrusconfig.db
  ./jars/cyrus.db                                   -> .../cyrus/src/minecraft/cyrus.db
+ ./jars/statics                                    -> .../cyrus/src/js/
 
 
 Install ModLoader

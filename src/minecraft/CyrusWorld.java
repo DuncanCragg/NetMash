@@ -9,11 +9,12 @@ import net.minecraft.server.MinecraftServer;
 
 public class CyrusWorld extends WebObject {
 
-    private World world=null;
-
     public CyrusWorld(){ }
 
-    public World world(){ return MinecraftServer.getServer().worldServerForDimension(0); }
+    public World world(){
+        MinecraftServer server=MinecraftServer.getServer();
+        return server==null? null: server.worldServerForDimension(0);
+    }
 
     public void evaluate(){
         super.evaluate();
