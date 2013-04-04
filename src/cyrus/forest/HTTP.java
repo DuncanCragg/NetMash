@@ -482,7 +482,7 @@ abstract class HTTPCommon {
         mimeTypes.put(".png",  "image/png");
     }
 
-    protected ByteBuffer contentHeadersAndFile(ByteBuffer bb, String path){
+    protected ByteBuffer contentHeadersAndFile(ByteBuffer bb, String path){ try{
         if(path.indexOf("..")!= -1) return null;
         if(!path.startsWith("/")) path="/"+path;
         if( path.endsWith(  "/")) path+="index.html";
@@ -495,12 +495,16 @@ abstract class HTTPCommon {
         if(ct.equals("text/cache-manifest")) bb.put("Cache-Control: no-cache\r\n".getBytes());
         bb.put("Content-Type: ".getBytes()); bb.put(ct.getBytes()); bb.put("\r\n".getBytes());
         File f=new File(path);
-        bb.put("Content-Length: ".getBytes()); bb.put((f.length()+"").getBytes()); bb.put("\r\n\r\n".getBytes());
-        try{ bb=Kernel.readFile(f, bb); } catch(Exception e){ log("HTTP: Failed to read file: "+e); return null; }
+        InputStream fileis;
+        if(f.exists()) fileis=new FileInputStream(f);
+        else           fileis=this.getClass().getClassLoader().getResourceAsStream(path);
+        String len=""+fileis.available();
+        bb.put("Content-Length: ".getBytes()); bb.put(len.getBytes()); bb.put("\r\n\r\n".getBytes());
+        bb=Kernel.readFile(fileis, bb);
         bb.limit(bb.position());
         bb.position(0);
         return bb;
-    }
+    } catch(Exception e){ log("HTTP: Failed to read file "+path+" - "+e); return null; }}
 
     private String rewriteUIDsToURLs(String s, boolean cyrus){
         if(UID.notVisible()) return s;

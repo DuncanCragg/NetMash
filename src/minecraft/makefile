@@ -13,10 +13,12 @@ runhere:
 
 release:
 	./reobfuscate.sh --client
-	cp jars/cyrus*db reobf/minecraft
-	mv reobf/minecraft/cyrus.db reobf/minecraft/top.db
+	cp jars/cyrusconfig.db reobf/minecraft
+	cp jars/cyrus.db       reobf/minecraft/top.db
 	sed -i 's:net.minecraft.src.CyrusWorld:CyrusWorld:' reobf/minecraft/top.db
-	rm cyrus.zip
+	mkdir -p reobf/minecraft/statics
+	bash -c "cp -r jars/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
+	rm -f cyrus.zip
 	cd reobf/minecraft/ && zip -r ../../cyrus.zip *
 	cp cyrus.zip ~/.minecraft/mods/
 

@@ -12,7 +12,7 @@ import java.nio.channels.spi.*;
 
 import cyrus.lib.JSON;
 
-/**  This is the runnable container or kernel class. 
+/**  This is the runnable container or kernel class.
   *  Requires cyrusconfig.db giving Threadpool size.
   *  Runs event loop, handles NIO, handles Threadpool
   *  and gives events/callbacks to runmodule.
@@ -147,6 +147,17 @@ public class Kernel {
         return bytebuffer;
     }
 
+    static public ByteBuffer readFile(InputStream is, ByteBuffer bytebuffer) throws Exception{
+        byte[] buffer = new byte[FILEREADBUFFERSIZE];
+        int len=0;
+        while(len!= -1){
+            len=is.read(buffer, 0, bytebuffer.remaining());
+            if(len!= -1) bytebuffer.put(buffer, 0, len);
+            bytebuffer=ensureBufferBigEnough(bytebuffer);
+        }
+        return bytebuffer;
+    }
+
     static public void writeFile(File file, boolean append, ByteBuffer bytebuffer, FileUser fileuser) throws Exception{
         if(!(file.exists() && file.canWrite()))  throw new Exception("Can't write file "+file.getPath());
         FileChannel channel = new FileOutputStream(file, append).getChannel();
@@ -240,7 +251,7 @@ public class Kernel {
     static private void checkSelector(){
 
         Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
-        
+
         while(iterator.hasNext()){
 
             SelectionKey key=null;
