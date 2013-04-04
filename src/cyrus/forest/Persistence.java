@@ -46,7 +46,7 @@ public class Persistence implements FileUser {
            dbfile = new File(directory+"/"+db);
            try{ Kernel.readFile(dbfile, this); }
            catch(Exception e){ FunctionalObserver.log("Persistence: Failure reading DB: "+e.getMessage()); }
-           FunctionalObserver.log("Persistence: Local database at "+directory+"/"+db);
+           FunctionalObserver.log("Persistence: Database at "+directory+"/"+db);
         }
         else{
            try{ Kernel.readFile(topdbis, this); }

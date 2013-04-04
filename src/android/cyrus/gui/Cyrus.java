@@ -27,6 +27,7 @@ import static android.view.ViewGroup.LayoutParams.*;
 
 import com.google.android.maps.*;
 
+import cyrus.Version;
 import cyrus.platform.Kernel;
 import cyrus.lib.*;
 import cyrus.forest.*;
@@ -1139,6 +1140,8 @@ log(show? "show keyboard": "hide keyboard");
 
         workaroundForFroyoBug();
 
+        System.out.println("-------------------");
+        System.out.println(Version.NAME+" "+Version.NUMBERS);
         Kernel.init(config, new FunctionalObserver(topdbis, topdbos));
         Kernel.run();
     }
