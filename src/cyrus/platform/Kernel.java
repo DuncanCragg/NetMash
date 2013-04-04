@@ -129,7 +129,9 @@ public class Kernel {
         ByteBuffer bytebuffer = ByteBuffer.allocate(FILEREADBUFFERSIZE);
         int len=0;
         while(len!= -1){
-            len=is.read(buffer, 0, bytebuffer.remaining());
+            int l=bytebuffer.remaining();
+            if(l>FILEREADBUFFERSIZE) l=FILEREADBUFFERSIZE;
+            len=is.read(buffer, 0, l);
             if(len!= -1) bytebuffer.put(buffer, 0, len);
             fileuser.readable(bytebuffer, len);
             bytebuffer=ensureBufferBigEnough(bytebuffer);
@@ -151,7 +153,9 @@ public class Kernel {
         byte[] buffer = new byte[FILEREADBUFFERSIZE];
         int len=0;
         while(len!= -1){
-            len=is.read(buffer, 0, bytebuffer.remaining());
+            int l=bytebuffer.remaining();
+            if(l>FILEREADBUFFERSIZE) l=FILEREADBUFFERSIZE;
+            len=is.read(buffer, 0, l);
             if(len!= -1) bytebuffer.put(buffer, 0, len);
             bytebuffer=ensureBufferBigEnough(bytebuffer);
         }
