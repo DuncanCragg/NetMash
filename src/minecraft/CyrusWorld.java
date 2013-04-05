@@ -1,21 +1,19 @@
 package net.minecraft.src;
 
 import java.util.*;
+import java.util.concurrent.*;
 import cyrus.forest.WebObject;
 
 import static cyrus.lib.Utils.*;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 
-public class CyrusWorld extends WebObject {
+public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
 
     public CyrusWorld(){
         setUpBlockNames();
-    }
-
-    public World world(){
-        MinecraftServer server=MinecraftServer.getServer();
-        return server==null? null: server.worldServerForDimension(0);
+        mod_Cyrus.modCyrus.registerTicks(this);
     }
 
     public void evaluate(){
@@ -24,41 +22,56 @@ public class CyrusWorld extends WebObject {
             contentTemp("Alerted", alerted);
             if(contentListContainsAll("Alerted:is",list("minecraft","spell"))){
                 LinkedList placing=contentList("Alerted:placing");
-                if(placing!=null){
-                    if(placing.size()==3 && placing.get(1).equals("at")){
-                        //  glass at ( -480 70 202 )
-                        LinkedList at=findListIn(placing.get(2));
-                        if(at!=null && at.size()==3){
-                            int atx=getIntFromList(at,0);
-                            int aty=getIntFromList(at,1);
-                            int atz=getIntFromList(at,2);
-                            String name=placing.get(0).toString();
-                            ensureBlockAt(atx,aty,atz,name);
-                        }
-                    }
-                    else
-                    if(placing.size()==7 && placing.get(1).equals("at") && placing.get(3).equals("for") && placing.get(5).equals("in")){
-                        //  glass at ( -480 70 202 ) for 10 in x
-                        LinkedList at=findListIn(placing.get(2));
-                        if(at!=null && at.size()==3){
-                            int atx=getIntFromList(at,0);
-                            int aty=getIntFromList(at,1);
-                            int atz=getIntFromList(at,2);
-                            String name=placing.get(0).toString();
-                            int len=getIntFromList(placing,4);
-                            if(len>0){
-                                if(len>100) len=100;
-                                Object dirn=placing.get(6);
-                                if("x".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx+i,aty,atz,name);
-                                if("y".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx,aty+i,atz,name);
-                                if("z".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx,aty,atz+i,name);
-                            }
-                        }
-                    }
-                }
+                if(placing!=null){ addForPlacing(placing); }
             }
             contentTemp("Alerted", null);
         }
+    }
+
+    ConcurrentLinkedQueue<LinkedList> placingQ=new ConcurrentLinkedQueue<LinkedList>();
+
+    private void addForPlacing(LinkedList placing){ placingQ.add(placing); }
+
+    public void tick(float var1, Minecraft var2){
+        while(true){ LinkedList placing=placingQ.poll(); if(placing==null) return; doPlacing(placing); }
+    }
+
+    private void doPlacing(LinkedList placing){
+        if(placing.size()==3 && placing.get(1).equals("at")){
+            //  glass at ( -480 70 202 )
+            LinkedList at=findListIn(placing.get(2));
+            if(at!=null && at.size()==3){
+                int atx=getIntFromList(at,0);
+                int aty=getIntFromList(at,1);
+                int atz=getIntFromList(at,2);
+                String name=placing.get(0).toString();
+                ensureBlockAt(atx,aty,atz,name);
+            }
+        }
+        else
+        if(placing.size()==7 && placing.get(1).equals("at") && placing.get(3).equals("for") && placing.get(5).equals("in")){
+            //  glass at ( -480 70 202 ) for 10 in x
+            LinkedList at=findListIn(placing.get(2));
+            if(at!=null && at.size()==3){
+                int atx=getIntFromList(at,0);
+                int aty=getIntFromList(at,1);
+                int atz=getIntFromList(at,2);
+                String name=placing.get(0).toString();
+                int len=getIntFromList(placing,4);
+                if(len>0){
+                    if(len>100) len=100;
+                    Object dirn=placing.get(6);
+                    if("x".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx+i,aty,atz,name);
+                    if("y".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx,aty+i,atz,name);
+                    if("z".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx,aty,atz+i,name);
+                }
+            }
+        }
+    }
+
+    public World world(){
+        MinecraftServer server=MinecraftServer.getServer();
+        return server==null? null: server.worldServerForDimension(0);
     }
 
     private void ensureBlockAt(int x, int y, int z, String name){
