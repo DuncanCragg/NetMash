@@ -9,6 +9,7 @@ compile:
 	./recompile.sh --client
 
 runhere:
+	rm -f jars/cyrus.db
 	./startclient.sh
 
 release:
@@ -19,9 +20,10 @@ release:
 	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrus.zip
 	cd reobf/minecraft/ && zip -r ../../cyrus.zip *
-	cp cyrus.zip ~/.minecraft/mods/
 
 runthere:
+	cp cyrus.zip ~/.minecraft/mods/
+	rm -f ~/.minecraft/cyrus.db
 	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
 
 editor:

@@ -12,7 +12,7 @@
     Notifying: => @. with @world
   }
   world: uid-b1d8-d170-a3d9-e693
-  placing: cobblestone at -476 64 204
+  placing: glass at ( -480 70 202 ) for 10 in x
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
