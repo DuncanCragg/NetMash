@@ -164,7 +164,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             Mesh ms=meshes.get(System.identityHashCode(hm));
             if(ms==null){ ms=new Mesh(hm,cyrus.user); meshes.put(System.identityHashCode(hm),ms); }
             Object subobcrd=subob.get("position");
-            if(subobcrd!=null) drawAMesh(ms, Mesh.getFloatFromList(subobcrd,0,0), Mesh.getFloatFromList(subobcrd,1,0), Mesh.getFloatFromList(subobcrd,2,0));
+            if(subobcrd!=null) drawAMesh(ms, getFloatFromList(subobcrd,0,0), getFloatFromList(subobcrd,1,0), getFloatFromList(subobcrd,2,0));
             else               drawEditMesh(ms);
         }
         drawAMesh(m,0,0,0);
@@ -343,9 +343,9 @@ public class Renderer implements GLSurfaceView.Renderer {
     // -------------------------------------------------------------
 
     public void resetPositionAndView(LinkedList position){
-        float x=Mesh.getFloatFromList(position,0,0);
-        float y=Mesh.getFloatFromList(position,1,0);
-        float z=Mesh.getFloatFromList(position,2,0);
+        float x=getFloatFromList(position,0,0);
+        float y=getFloatFromList(position,1,0);
+        float z=getFloatFromList(position,2,0);
         direction=0;
         eyeX=x;
         eyeY=y;

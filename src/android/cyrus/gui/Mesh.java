@@ -123,43 +123,6 @@ public class Mesh {
     }
 
     public String toString(){ return title+" "+vb+" "+ib+" "+textures+" "+rotationX+" "+rotationY+" "+rotationZ+" subs: "+subObjects.size(); }
-
-    static public LinkedList getListFromHash(LinkedHashMap hm, String tag){
-        Object o=hm.get(tag);
-        if(o==null) return new LinkedList();
-        if(o instanceof LinkedList) return (LinkedList)o;
-        return list(o);
-    }
-
-    static public LinkedHashMap getHashFromHash(LinkedHashMap hm, String tag){
-        Object o=hm.get(tag);
-        if(o==null || !(o instanceof LinkedHashMap)) return new LinkedHashMap();
-        return (LinkedHashMap)o;
-    }
-
-    static public String getStringFromHash(LinkedHashMap hm, String tag, String d){
-        Object o=hm.get(tag);
-        if(o==null || !(o instanceof String) || ((String)o).length()==0) return d;
-        return (String)o;
-    }
-
-    static public Float getFloatFromList(Object o, int i, float d){
-        if(o==null || !(o instanceof LinkedList)) return d;
-        LinkedList ll=((LinkedList)o);
-        if(i>=ll.size()) return d;
-        Object f=ll.get(i);
-        if(f==null) return d;
-        if(f instanceof Number) return ((Number)f).floatValue();
-        if(f instanceof String) try{ return Float.parseFloat((String)f); }catch(Throwable t){}
-        return d;
-    }
-
-    static public String getStringFromList(Object ll, int i, String d){
-        if(!(ll instanceof LinkedList)) return d;
-        Object o=((LinkedList)ll).get(i);
-        if(o==null || !(o instanceof String)) return d;
-        return (String)o;
-    }
 }
 
 

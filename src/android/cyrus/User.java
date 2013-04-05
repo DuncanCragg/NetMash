@@ -280,9 +280,9 @@ public class User extends CyrusLanguage {
             public void evaluate(){
                 if(contentListContainsAll("is", list("editable", "rule"))){
                     LinkedList oldscale=contentList("editable:scale");
-                    LinkedList newscale=list(Mesh.getFloatFromList(oldscale,0,1)*(1f+d/10f),
-                                             Mesh.getFloatFromList(oldscale,1,1)*(1f+d/10f),
-                                             Mesh.getFloatFromList(oldscale,2,1)*(1f+d/10f));
+                    LinkedList newscale=list(getFloatFromList(oldscale,0,1)*(1f+d/10f),
+                                             getFloatFromList(oldscale,1,1)*(1f+d/10f),
+                                             getFloatFromList(oldscale,2,1)*(1f+d/10f));
                     LinkedHashMap rule=makeEditRule("scale",0,newscale);
                     contentMerge(rule);
                     notifying(edituid);
@@ -348,9 +348,9 @@ public class User extends CyrusLanguage {
             String objispath=String.format("within:sub-items:%d:item:is",i);
             if(!contentListContains(objispath,"place")) continue;
             LinkedList placeposn=contentList(String.format("within:sub-items:%d:position",i));
-            float px=Mesh.getFloatFromList(placeposn,0,0);
-            float py=Mesh.getFloatFromList(placeposn,1,0);
-            float pz=Mesh.getFloatFromList(placeposn,2,0);
+            float px=getFloatFromList(placeposn,0,0);
+            float py=getFloatFromList(placeposn,1,0);
+            float pz=getFloatFromList(placeposn,2,0);
             float dx=ux-px; float dy=uy-py; float dz=uz-pz;
             float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
             if(d<10) return list(content(String.format("within:sub-items:%d:item",i)), list(dx,dy,dz));

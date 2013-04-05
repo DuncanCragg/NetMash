@@ -344,6 +344,54 @@ public class Utils{
 
     static public <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
 
+    static public LinkedList getListFromHash(LinkedHashMap hm, String tag){
+        Object o=hm.get(tag);
+        if(o==null) return new LinkedList();
+        if(o instanceof LinkedList) return (LinkedList)o;
+        return list(o);
+    }
+
+    static public LinkedHashMap getHashFromHash(LinkedHashMap hm, String tag){
+        Object o=hm.get(tag);
+        if(o==null || !(o instanceof LinkedHashMap)) return new LinkedHashMap();
+        return (LinkedHashMap)o;
+    }
+
+    static public String getStringFromHash(LinkedHashMap hm, String tag, String d){
+        Object o=hm.get(tag);
+        if(o==null || !(o instanceof String) || ((String)o).length()==0) return d;
+        return (String)o;
+    }
+
+    static public Float getFloatFromList(Object o, int i, float d){
+        if(o==null || !(o instanceof LinkedList)) return d;
+        LinkedList ll=((LinkedList)o);
+        if(i>=ll.size()) return d;
+        Object f=ll.get(i);
+        if(f==null) return d;
+        if(f instanceof Number) return ((Number)f).floatValue();
+        if(f instanceof String) try{ return Float.parseFloat((String)f); }catch(Throwable t){}
+        return d;
+    }
+
+    static public int getIntFromList(Object o, int i){
+        if(o==null || !(o instanceof LinkedList)) return 0;
+        LinkedList ll=((LinkedList)o);
+        if(i>=ll.size()) return 0;
+        Object n=ll.get(i);
+        if(n==null) return 0;
+        if(n instanceof Number) return ((Number)n).intValue();
+        if(n instanceof String) try{ return Integer.parseInt((String)n); }catch(Throwable t){}
+        return 0;
+    }
+
+    static public String getStringFromList(Object ll, int i, String d){
+        if(!(ll instanceof LinkedList)) return d;
+        Object o=((LinkedList)ll).get(i);
+        if(o==null || !(o instanceof String)) return d;
+        return (String)o;
+    }
+
     static public double random(double lo, double hi){
         double x=Math.random();
         return (int)(lo+x*(hi+0.5-lo));
