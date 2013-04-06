@@ -38,7 +38,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
 
     private void doPlacing(LinkedList placing){
         if(placing.size()==3 && placing.get(1).equals("at")){
-            //  glass at ( -480 70 202 )
+            // glass at ( -480 70 202 )
             LinkedList at=findListIn(placing.get(2));
             if(at!=null && at.size()==3){
                 int atx=getIntFromList(at,0);
@@ -49,21 +49,30 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
             }
         }
         else
-        if(placing.size()==7 && placing.get(1).equals("at") && placing.get(3).equals("for") && placing.get(5).equals("in")){
-            //  glass at ( -480 70 202 ) for 10 in x
-            LinkedList at=findListIn(placing.get(2));
-            if(at!=null && at.size()==3){
-                int atx=getIntFromList(at,0);
-                int aty=getIntFromList(at,1);
-                int atz=getIntFromList(at,2);
-                String name=placing.get(0).toString();
-                int len=getIntFromList(placing,4);
-                if(len>0){
-                    if(len>100) len=100;
-                    Object dirn=placing.get(6);
-                    if("x".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx+i,aty,atz,name);
-                    if("y".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx,aty+i,atz,name);
-                    if("z".equals(dirn)) for(int i=0; i<len; i++) ensureBlockAt(atx,aty,atz+i,name);
+        if(placing.size()==5 && placing.get(1).equals("box") && placing.get(3).equals("at")){
+            // glass box ( 4 8 16 ) at ( -480 70 202 )
+            LinkedList shape=findListIn(placing.get(2));
+            LinkedList at   =findListIn(placing.get(4));
+            if(at!=null && at.size()==3 && shape!=null && shape.size()==3){
+                int shx=getIntFromList(shape,0);
+                int shy=getIntFromList(shape,1);
+                int shz=getIntFromList(shape,2);
+                if(shx>0 && shy>0 && shz>0){
+                    int atx=getIntFromList(at,0);
+                    int aty=getIntFromList(at,1);
+                    int atz=getIntFromList(at,2);
+                    String name=placing.get(0).toString();
+                    if(shx>100) shx=100;
+                    if(shy>100) shy=100;
+                    if(shz>100) shz=100;
+                    for(int i=0; i<shx; i++)
+                    for(int j=0; j<shy; j++)
+                    for(int k=0; k<shz; k++){
+                        if(i==0 || i==shx-1 || j==0 || j==shy-1 || k==0 || k==shz-1){
+                            ensureBlockAt(atx+i,aty+j,atz+k,name);
+                        }
+                        else ensureBlockAt(atx+i,aty+j,atz+k,"air");
+                    }
                 }
             }
         }
