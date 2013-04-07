@@ -45,22 +45,26 @@ public class mod_Cyrus extends BaseMod {
         Kernel.run();
     }
 
+    public void onItemPickup(EntityPlayer player, ItemStack itemStack){
+//  EntityPlayerMP['Player212'/200, l='CyrusLand', x=-424.73, y=64.00, z=201.57] :: 0xitem.egg@0
+    }
+
     public void keyboardEvent(KeyBinding var1) {
 logXX("key "+var1);
     }
 
-    public interface Tickable { public void tick(float var1, Minecraft var2); }
+    public interface Tickable { public void tick(float var1, Minecraft minecraft); }
 
     LinkedList<Tickable> tickables=new LinkedList<Tickable>();
 
     public void registerTicks(Tickable tickable){ tickables.add(tickable); }
 
-    public boolean onTickInGame(float var1, Minecraft var2) {
-       for(Tickable tickable: tickables) tickable.tick(var1, var2);
-       return true;
+    public boolean onTickInGame(float var1, Minecraft minecraft){
+        for(Tickable tickable: tickables) tickable.tick(var1, minecraft);
+        return true;
     }
 
-    public boolean onTickInGUI(float var1, Minecraft var2, GuiScreen var3) {
+    public boolean onTickInGUI(float var1, Minecraft minecraft, GuiScreen var3) {
        return true;
     }
 

@@ -32,7 +32,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
 
     private void addForPlacing(LinkedList placing){ placingQ.add(placing); }
 
-    public void tick(float var1, Minecraft var2){
+    public void tick(float var1, Minecraft minecraft){
         while(true){ LinkedList placing=placingQ.poll(); if(placing==null) return; doPlacing(placing); }
     }
 

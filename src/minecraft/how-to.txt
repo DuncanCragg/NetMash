@@ -37,6 +37,7 @@ Links to Cyrus
  ./makefile                                        -> .../cyrus/src/minecraft/makefile
  ./src/minecraft/cyrus                             -> .../cyrus/src/cyrus
  ./src/minecraft/net/minecraft/src/CyrusWorld.java -> .../cyrus/src/minecraft/CyrusWorld.java
+ ./src/minecraft/net/minecraft/src/CyrusUser.java  -> .../cyrus/src/minecraft/CyrusUser.java
  ./src/minecraft/net/minecraft/src/mod_Cyrus.java  -> .../cyrus/src/minecraft/mod_Cyrus.java
  ./lib/cyrusconfig.db                              -> .../cyrus/src/minecraft/cyrusconfig.db
  ./lib/top.db                                      -> .../cyrus/src/minecraft/top.db
