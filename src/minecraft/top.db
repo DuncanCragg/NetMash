@@ -15,7 +15,7 @@
   is: editable minecraft spell rule
   when: "created, set up scanning area and put glass box down near player"
   player: { location: * }
-  scanning: => box ( 8 8 8 ) at ( @player:location + ( -3 -3 -3 ))
+  scanning: => box ( 5 1 5 ) at ( @player:location + ( -2 -2 -2 ))
   placing: => glass box ( 1 1 1 ) at ( @player:location + ( 2 2 2 ))
   Notifying: => @. with @world
 }

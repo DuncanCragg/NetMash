@@ -21,8 +21,8 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentListContainsAll("Alerted:is",list("minecraft","spell"))){
-                addForScanning( contentList("Alerted:scanning"));
-                addForPlacing(contentList("Alerted:placing"));
+                addForScanning(contentList("Alerted:scanning"));
+                addForPlacing( contentList("Alerted:placing"));
             }
             contentTemp("Alerted", null);
         }
@@ -55,11 +55,23 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                     if(shx>10) shx=10;
                     if(shy>10) shy=10;
                     if(shz>10) shz=10;
-                    for(int i=0; i<shx; i++)
-                    for(int j=0; j<shy; j++)
-                    for(int k=0; k<shz; k++){
-                        getBlockAt(atx+i,aty+j,atz+k);
+                    final LinkedList il=new LinkedList();
+                    for(int i=0; i<shx; i++){
+                        LinkedList jl=new LinkedList();
+                        for(int j=0; j<shy; j++){
+                            LinkedList kl=new LinkedList();
+                            for(int k=0; k<shz; k++){
+                                kl.add(getBlockAt(atx+i,aty+j,atz+k));
+                            }
+                            jl.add(kl);
+                        }
+                        il.add(jl);
                     }
+                    new Evaluator(this){ public void evaluate(){
+                        try{
+                            contentList("scan-view",il);
+                        }catch(Exception e){ e.printStackTrace(); refreshObserves(); }
+                    }};
                 }
             }
         }
@@ -122,7 +134,6 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         if(world()==null) return null;
         int id=world().getBlockId(x,y,z);
         if(id<0 || id>=200) return null;
-logXX("getBlock",x,y,z,blockIds.get(id));
         return blockIds.get(id);
     }
 
