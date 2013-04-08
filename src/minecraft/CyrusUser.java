@@ -23,7 +23,7 @@ public class CyrusUser extends WebObject implements mod_Cyrus.Tickable {
             x=px; y=py; z=pz;
             new Evaluator(this){ public void evaluate(){
                 try{
-                    contentList("location",list((int)x,(int)y,(int)z));
+                    contentList("location",list((int)(x+0.5),(int)(y+0.5),(int)(z+0.5)));
                 }catch(Exception e){ e.printStackTrace(); refreshObserves(); }
             }};
         }

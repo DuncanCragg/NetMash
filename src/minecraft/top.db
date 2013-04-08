@@ -8,13 +8,15 @@
   title: "Sample Cyrus Spell"
   Rules: uid-77a8-38ec-e0bc-b5f1
   world: uid-b1d8-d170-a3d9-e693
-  user: uid-06b6-4631-166a-b013
+  player: uid-06b6-4631-166a-b013
 }
 
 { UID: uid-77a8-38ec-e0bc-b5f1
   is: editable minecraft spell rule
-  when: "created, put glass box down near user"
-  placing: # => glass box ( 3 4 5 ) at @user:location
+  when: "created, set up scanning area and put glass box down near player"
+  player: { location: * }
+  scanning: => box ( 8 8 8 ) at ( @player:location + ( -3 -3 -3 ))
+  placing: => glass box ( 1 1 1 ) at ( @player:location + ( 2 2 2 ))
   Notifying: => @. with @world
 }
 
@@ -25,6 +27,6 @@
 
 { UID: uid-06b6-4631-166a-b013
   Class: net.minecraft.src.CyrusUser
-  is: 3d minecraft user
+  is: 3d minecraft player
 }
 
