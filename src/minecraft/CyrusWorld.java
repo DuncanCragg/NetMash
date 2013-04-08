@@ -21,17 +21,27 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentListContainsAll("Alerted:is",list("minecraft","spell"))){
-                addWatchArea( contentList("Alerted:scanning"));
+                addForScanning( contentList("Alerted:scanning"));
                 addForPlacing(contentList("Alerted:placing"));
             }
             contentTemp("Alerted", null);
         }
     }
 
-    // scanning: box ( 50 10 50 ) at ( -500 80 200 )
-    private void addWatchArea(LinkedList scanning){
-        if(scanning==null) return;
+    ConcurrentLinkedQueue<LinkedList> scanningQ=new ConcurrentLinkedQueue<LinkedList>();
+    ConcurrentLinkedQueue<LinkedList> placingQ =new ConcurrentLinkedQueue<LinkedList>();
+
+    private void addForScanning(LinkedList scanning){ if(scanning!=null) scanningQ.add(scanning); }
+    private void addForPlacing( LinkedList placing ){ if(placing !=null) placingQ.add(placing); }
+
+    public void tick(float var1, Minecraft minecraft){
+        while(true){ LinkedList scanning=scanningQ.poll(); if(scanning==null) break; doScanning(scanning); }
+        while(true){ LinkedList placing =placingQ.poll();  if(placing ==null) break; doPlacing(placing); }
+    }
+
+    private void doScanning(LinkedList scanning){
         if(scanning.size()==4 && scanning.get(0).equals("box") && scanning.get(2).equals("at")){
+            // scanning: box ( 50 10 50 ) at ( -500 80 200 )
             LinkedList shape=findListIn(scanning.get(1));
             LinkedList at   =findListIn(scanning.get(3));
             if(at!=null && at.size()==3 && shape!=null && shape.size()==3){
@@ -53,14 +63,6 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                 }
             }
         }
-    }
-
-    ConcurrentLinkedQueue<LinkedList> placingQ=new ConcurrentLinkedQueue<LinkedList>();
-
-    private void addForPlacing(LinkedList placing){ if(placing!=null) placingQ.add(placing); }
-
-    public void tick(float var1, Minecraft minecraft){
-        while(true){ LinkedList placing=placingQ.poll(); if(placing==null) return; doPlacing(placing); }
     }
 
     private void doPlacing(LinkedList placing){
