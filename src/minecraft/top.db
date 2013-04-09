@@ -6,18 +6,31 @@
 { UID: uid-a70f-cd0b-c257-a901
   is: editable minecraft spell
   title: "Sample Cyrus Spell"
-  Rules: uid-77a8-38ec-e0bc-b5f1
+  Rules: uid-77a8-38ec-e0bc-b5f1 uid-df7c-2043-f410-724f uid-f363-ddd9-4da2-4c73
   world: uid-b1d8-d170-a3d9-e693
   player: uid-06b6-4631-166a-b013
 }
 
 { UID: uid-77a8-38ec-e0bc-b5f1
   is: editable minecraft spell rule
-  when: "created, set up scanning area and put glass box down near player"
+  when: "player location set, set scanning box and notify world"
   player: { location: * }
-  scanning: => box ( 5 1 5 ) at ( @player:location + ( -2 -2 -2 ))
-  placing: => glass box ( 1 1 1 ) at ( @player:location + ( 2 2 2 ))
+  scanning: => box ( 5 1 5 ) at ( @player:location + ( -2 0 -2 ))
   Notifying: => @. with @world
+}
+
+{ UID: uid-df7c-2043-f410-724f
+  is: editable minecraft spell rule
+  when: "world-view notified, save"
+  Alerted: { is: minecraft world-view }
+  world-view: # => @Alerted
+}
+
+{ UID: uid-f363-ddd9-4da2-4c73
+  is: editable minecraft spell rule
+  when: "player location set, place a glass box near"
+  player: { location: * }
+  placing: => glass box ( 1 1 1 ) at ( @player:location + ( 2 2 2 ))
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
