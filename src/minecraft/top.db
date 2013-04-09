@@ -22,7 +22,7 @@
 
 { UID: uid-b1d8-d170-a3d9-e693
   Class: net.minecraft.src.CyrusWorld
-  is: queryable updatable 3d minecraft block list
+  is: queryable updatable 3d minecraft world
 }
 
 { UID: uid-06b6-4631-166a-b013

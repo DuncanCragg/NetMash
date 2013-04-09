@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.io.*;
 
 import cyrus.Version;
@@ -55,7 +56,7 @@ logXX("key "+var1);
 
     public interface Tickable { public void tick(float var1, Minecraft minecraft); }
 
-    LinkedList<Tickable> tickables=new LinkedList<Tickable>();
+    CopyOnWriteArrayList<Tickable> tickables=new CopyOnWriteArrayList<Tickable>();
 
     public void registerTicks(Tickable tickable){ tickables.add(tickable); }
 

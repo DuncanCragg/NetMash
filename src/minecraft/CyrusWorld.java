@@ -11,35 +11,62 @@ import net.minecraft.server.MinecraftServer;
 
 public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
 
+    private boolean isWorld=true;
+
     public CyrusWorld(){
         setUpBlockNames();
         mod_Cyrus.modCyrus.registerTicks(this);
     }
 
-    public void evaluate(){
-        super.evaluate();
+    public CyrusWorld(String worlduid, String spelluid){
+        super("{ \"is\": [ \"minecraft\", \"world-view\" ],\n"+
+              "  \"world\": \""+worlduid+"\",\n"+
+              "  \"spell\": \""+spelluid+"\"\n"+
+              "}");
+        isWorld=false;
+        mod_Cyrus.modCyrus.registerTicks(this);
+    }
+
+    public void evaluate(){ if(isWorld) evaluateWorld(); else evaluateWorldView(); }
+
+    private void evaluateWorld(){
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentListContainsAll("Alerted:is",list("minecraft","spell"))){
-                addForScanning(contentList("Alerted:scanning"));
-                addForPlacing( contentList("Alerted:placing"));
+                addForScanning(alerted, contentList("Alerted:scanning"));
+                addForPlacing(          contentList("Alerted:placing"));
             }
             contentTemp("Alerted", null);
         }
     }
 
-    ConcurrentLinkedQueue<LinkedList> scanningQ=new ConcurrentLinkedQueue<LinkedList>();
+    private void addForScanning(String spelluid,LinkedList scanning){
+        if(scanning==null) return;
+        if(contentListContains("scanners", spelluid)) return;
+        contentListAdd(        "scanners", spelluid);
+        contentListAdd("world-views", spawn(new CyrusWorld(uid,spelluid)));
+    }
+
+    private void evaluateWorldView(){
+    }
+
     ConcurrentLinkedQueue<LinkedList> placingQ =new ConcurrentLinkedQueue<LinkedList>();
 
-    private void addForScanning(LinkedList scanning){ if(scanning!=null) scanningQ.add(scanning); }
     private void addForPlacing( LinkedList placing ){ if(placing !=null) placingQ.add(placing); }
 
+    // ------------------------------------
+
     public void tick(float var1, Minecraft minecraft){
-        while(true){ LinkedList scanning=scanningQ.poll(); if(scanning==null) break; doScanning(scanning); }
-        while(true){ LinkedList placing =placingQ.poll();  if(placing ==null) break; doPlacing(placing); }
+
+        if(isWorld) while(true){ LinkedList placing=placingQ.poll(); if(placing==null) return; doPlacing(placing); }
+
+        new Evaluator(this){ public void evaluate(){ try{
+            doScanning(contentList("spell:scanning"));
+        }catch(Exception e){ e.printStackTrace(); }}};
     }
 
     private void doScanning(LinkedList scanning){
+        if(scanning==null) return;
         if(scanning.size()==4 && scanning.get(0).equals("box") && scanning.get(2).equals("at")){
             // scanning: box ( 50 10 50 ) at ( -500 80 200 )
             LinkedList shape=findListIn(scanning.get(1));
@@ -67,11 +94,11 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                         }
                         il.add(jl);
                     }
-                    new Evaluator(this){ public void evaluate(){
-                        try{
-                            contentList("scan-view",il);
-                        }catch(Exception e){ e.printStackTrace(); refreshObserves(); }
-                    }};
+                    if(!il.equals(contentList("scan-view"))){
+logXX("scan-view",il);
+                        contentList("scan-view",il);
+                        notifying(content("spell"));
+                    }
                 }
             }
         }
@@ -119,6 +146,8 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         }
     }
 
+    // ------------------------------------
+
     public World world(){
         MinecraftServer server=MinecraftServer.getServer();
         return server==null? null: server.worldServerForDimension(0);
@@ -137,10 +166,13 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         return blockIds.get(id);
     }
 
-    LinkedHashMap<String,Integer> blockNames = new LinkedHashMap<String,Integer>();
-    ArrayList<String>             blockIds   = new ArrayList<String>(200);
+    // ------------------------------------
 
-    private void setUpBlockNames(){
+    static public LinkedHashMap<String,Integer> blockNames = new LinkedHashMap<String,Integer>();
+    static public ArrayList<String>             blockIds   = new ArrayList<String>(200);
+
+    static private void setUpBlockNames(){
+        if(blockNames.get("air")!=null) return;
         blockNames.put("air", 0); blockIds.add(0, "air");
         blockNames.put("stone", 1); blockIds.add(1, "stone");
         blockNames.put("grass", 2); blockIds.add(2, "grass");
