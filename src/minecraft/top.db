@@ -15,7 +15,7 @@
   is: editable minecraft spell rule
   when: "player location set, set scanning box and notify world"
   player: { location: * }
-  scanning: => box ( 5 1 5 ) at ( @player:location + ( -2 0 -2 ))
+  scanning: => box ( 1 1 1 ) at ( @player:location + ( 0 -20 0 ))
   Notifying: => @. with @world
 }
 
@@ -30,7 +30,7 @@
   is: editable minecraft spell rule
   when: "player location set, place a glass box near"
   player: { location: * }
-  placing: => glass box ( 1 1 1 ) at ( @player:location + ( 2 2 2 ))
+  placing: => @world-view:scan-view:0:0:0 box ( 1 1 1 ) at ( @player:location + ( -2 -3 0 ))
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
