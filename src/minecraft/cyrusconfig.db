@@ -3,7 +3,7 @@
   persist: { directory: .
              db: cyrus.db
              syncrate: 100
-             preload: ( ) }
+             preload: uid-a70f-cd0b-c257-a901 }
   network: { host: localhost
              port: 8084
              pathprefix: /o/
