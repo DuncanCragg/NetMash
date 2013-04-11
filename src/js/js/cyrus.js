@@ -674,11 +674,11 @@ function JSON2HTML(url){
             return s.replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.json)/g, '<a href="#$1">$1</a>')
                     .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,                 '<a href="#$1.json">$1</a>');
         },
-        toCyrusObject: function(o,i,nobrackets){
+        toCyrusObject: function(o,i,tagdelim){
             if(o===undefined || o===null) return '';
             if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';
             if(o.constructor===Object) return this.toCyrusHash(o,i);
-            if(o.constructor===Array)  return this.toCyrusList(o,i,nobrackets);
+            if(o.constructor===Array)  return this.toCyrusList(o,i,tagdelim);
             return ''+o;
         },
         toCyrusHash: function(o,i){
@@ -689,8 +689,9 @@ function JSON2HTML(url){
             r+=this.indent(i-2)+'}';
             return r;
         },
-        toCyrusList: function(o,i,nobrackets){
+        toCyrusList: function(o,i,tagdelim){
             if(!o || o.constructor!==Array) return '??';
+            nobrackets=tagdelim && (o.length!=1 || (o[0].constructor===Array && o[0].length!=1));
             var r=nobrackets? '': '( ';
             for(var x in o){ r+=this.toCyrusObject(o[x],i)+' '; }
             r+=nobrackets? '': ' )';

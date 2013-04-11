@@ -1402,7 +1402,7 @@ public class JSON {
             }
         }
         StringBuilder buf=new StringBuilder();
-        boolean nobrackets=tagdelim && (ll.size()!=1 || ll.get(0) instanceof LinkedList && ((LinkedList)ll.get(0)).size()!=1);
+        boolean nobrackets=tagdelim && (ll.size()!=1 || (ll.get(0) instanceof LinkedList && ((LinkedList)ll.get(0)).size()!=1));
         String ob=cyrus? (nobrackets? "": structured? "(": "( "): "[";
         String cb=cyrus? (nobrackets? "": ")"): "]";
         buf.append(ob); if(structured) buf.append("\n");
