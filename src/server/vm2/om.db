@@ -30,6 +30,7 @@
   li: 4321 5432 6543 7654
   zf: zzz
   ze: zzz
+  nl: ((b b b)(a a e)(a a a))((b a b)(a a b)(c a a))
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -70,6 +71,7 @@
   ze: => @li:4.. each   (@.. > 7000)
   lf: => @li:3.. filter (@.. > 7000)
   le: => @li:3.. each   (@.. > 7000)
+  nl: (((!a => a)))
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -113,6 +115,7 @@
   ze: #
   lf: 7654
   le: true
+  nl: ((!a)) !=> @.
 }
 
 { UID: uid-1de5-4d69-667a-56e4
@@ -141,6 +144,7 @@
   zp: 1 2 3 ##
   lu: { c: d qq: 20 20 30 } => @. with-more ({ qq: 30 40 } { qq: 50 20 })
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
+  nl: ((a a a)(a a a)(a a a))((a a a)(a a a)(a a a))
 }
 
 { UID: uid-61d6-65c9-2931-505b
