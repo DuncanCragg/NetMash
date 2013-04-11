@@ -1,3 +1,13 @@
+{ UID: uid-b1d8-d170-a3d9-e693
+  Class: net.minecraft.src.CyrusWorld
+  is: queryable updatable 3d minecraft world
+}
+
+{ UID: uid-06b6-4631-166a-b013
+  Class: net.minecraft.src.CyrusUser
+  is: 3d minecraft player
+}
+
 { UID: uid-fb97-b02c-e69b-90dd
   is: editable minecraft spell list
   list: uid-a70f-cd0b-c257-a901
@@ -32,15 +42,5 @@
   player: { location: * }
   world-view: { scan-view: ((( /ore/ ))) }
   placing: => @world-view:scan-view:0:0:0 box ( 1 1 1 ) at @player:location )
-}
-
-{ UID: uid-b1d8-d170-a3d9-e693
-  Class: net.minecraft.src.CyrusWorld
-  is: queryable updatable 3d minecraft world
-}
-
-{ UID: uid-06b6-4631-166a-b013
-  Class: net.minecraft.src.CyrusUser
-  is: 3d minecraft player
 }
 
