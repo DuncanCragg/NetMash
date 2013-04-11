@@ -691,7 +691,7 @@ function JSON2HTML(url){
         },
         toCyrusList: function(o,i,tagdelim){
             if(!o || o.constructor!==Array) return '??';
-            nobrackets=tagdelim && (o.length!=1 || (o[0].constructor===Array && o[0].length!=1));
+            var nobrackets=tagdelim && (o.length!=1 || (o[0].constructor===Array && o[0].length!=1));
             var r=nobrackets? '': '( ';
             for(var x in o){ r+=this.toCyrusObject(o[x],i)+' '; }
             r+=nobrackets? '': ' )';
