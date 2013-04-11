@@ -150,6 +150,32 @@ public class TestJSON {
 
         {
 
+        JSON m=new JSON("{ a: b  c: ( d )  e: (( f ))  g: ((( h ))) i: j k  l: ( m ) n ( o p )  q: ( r s ) t: ( u ( v ) ) }", true);
+        String ms=m.toString(true);
+
+        String expected="{\n"+
+                        "  a: b\n"+
+                        "  c: ( d )\n"+
+                        "  e: ( ( f ) )\n"+
+                        "  g: ( ( ( h ) ) )\n"+
+                        "  i: j k\n"+
+                        "  l: ( m ) n ( o p )\n"+
+                        "  q: ( r s )\n"+
+                        "  t: ( u ( v ) )\n"+
+                        "}";
+        assert ms.equals(expected): "nested listed not parsed right: expected:\n"+expected+"\nactual:\n"+m+"\n"+ms;
+
+        JSON n=new JSON(ms, true);
+        String ns=n.toString(true);
+
+        assert ms.equals(ns): "failed to rountrip nested lists in Cyrus format properly: "+ms+"\n"+ns;
+
+        }
+
+        System.out.println("---Test-2-(Cyrus)----------");
+
+        {
+
         String funkychars = JSON.replaceEscapableChars("\"quote\" 'quote' ")+"\\\"\\/\\b\\f\\n\\r\\t\\\\\\\"\\u00a3\u00a3";
         String funkycharsout="\"quote\" 'quote' \"/\b\f\n\r\t\\\"\u00a3\u00a3";
 
@@ -185,14 +211,9 @@ public class TestJSON {
             "      {\n"+
             "        foo: null null\n"+
             "      }\n"+
-            "      (\n"+
-            "        true\n"+
-            "        false\n"+
-            "        ( null stringnospaces )\n"+
-            "        \"string with  spaces\"\n"+
-            "      )\n"+
+            "      ( true false ( ( null stringnospaces ) ) \"string with  spaces\" )\n"+
             "    bits: \"string with  (double ) spaces:\"\n"+
-            "    b: c \"d)e\"\n"+
+            "    b: ( c \"d)e\" )\n"+
             "    more: \n"+
             "      true\n"+
             "      (\n"+

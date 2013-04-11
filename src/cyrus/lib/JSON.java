@@ -542,7 +542,7 @@ public class JSON {
     //----------------------------------
 
     @SuppressWarnings("unchecked")
-    private Object readCyrusObject(boolean terminateOnTag){
+    private Object readCyrusObject(boolean tagdelim){
         LinkedList ll=new LinkedList();
         for(;;chp++){
             while(chp<chars.length && chars[chp]<=' ') chp++;
@@ -556,7 +556,7 @@ public class JSON {
             String s=readCyrusString();
             int chpstringok=chp;
             chp=chpsave;
-            if(s==null || ( terminateOnTag && s.endsWith(":"))){ chp--; chp--; break; }
+            if(s==null || ( tagdelim && s.endsWith(":"))){ chp--; chp--; break; }
             try{ ll.add(readBoolean()); continue; }catch(Exception e){ chp=chpsave; }
             try{ ll.add(readNumber());  continue; }catch(Exception e){ chp=chpsave; }
             try{ ll.add(readNull());    continue; }catch(Exception e){ chp=chpsave; }
@@ -564,7 +564,7 @@ public class JSON {
             ll.add(s);
         }
         if(ll.size()==0) return null;
-        if(ll.size()==1 && terminateOnTag) return ll.get(0);
+        if(tagdelim && ll.size()==1 && !(ll.get(0) instanceof LinkedList && ((LinkedList)ll.get(0)).size()!=1)) return ll.get(0);
         return ll;
     }
 
@@ -1376,7 +1376,6 @@ public class JSON {
     private String listToString(LinkedList ll, int indent, int maxlength, boolean cyrus, boolean tagdelim){
         if(ll==null)  return "null";
         if(ll.size()==0) return cyrus? "( )": "[ ]";
-        if(ll.size()==1 && cyrus) return objectToString(ll.get(0), indent, maxlength, cyrus, false);
         boolean structured=false;
         if(maxlength==0){
             int i=0;
@@ -1389,7 +1388,7 @@ public class JSON {
                     else
                     if(l.size()==2 && (l.get(0) instanceof String) && (l.get(1) instanceof String)) w+=((String)(l.get(0))).length()+((String)(l.get(1))).length();
                     else
-                    if(l.size() >0){ structured=true; break; }
+                    if(l.size() >2){ structured=true; break; }
                 }
                 else
                 if(val instanceof String){
@@ -1403,8 +1402,9 @@ public class JSON {
             }
         }
         StringBuilder buf=new StringBuilder();
-        String ob=cyrus? (tagdelim? "": structured? "(": "( "): "[";
-        String cb=cyrus? (tagdelim? "": ")"): "]";
+        boolean nobrackets=tagdelim && (ll.size()!=1 || ll.get(0) instanceof LinkedList && ((LinkedList)ll.get(0)).size()!=1);
+        String ob=cyrus? (nobrackets? "": structured? "(": "( "): "[";
+        String cb=cyrus? (nobrackets? "": ")"): "]";
         buf.append(ob); if(structured) buf.append("\n");
         int i=0;
         for(Object val: ll){
@@ -1417,7 +1417,7 @@ public class JSON {
         }
         if(cb.length() >0){
             if(structured){ buf.append("\n"); buf.append(indentation(indent-2)); buf.append(cb); }
-            else          { buf.append(" "); buf.append(cb); }
+            else          { buf.append(" ");  buf.append(cb); }
         }
         return buf.toString();
     }
