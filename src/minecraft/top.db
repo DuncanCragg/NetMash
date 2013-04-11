@@ -38,9 +38,9 @@
 
 { UID: uid-f363-ddd9-4da2-4c73
   is: editable minecraft spell rule
-  when: "player location set and ore found, place a box there, copied from scan view"
+  when: "player location set and non-stone found, place dirt all the way down to there"
   player: { location: * }
-  world-view: { scan-view: ((( /ore/ ))) }
-  placing: => @world-view:scan-view:0:0:0 box ( 1 1 1 ) at @player:location )
+  world-view: { scan-view: ((( !stone ))) }
+  placing: => dirt box ( 1 30 1 ) at ( @player:location + ( 0 -29 0 ))
 }
 
