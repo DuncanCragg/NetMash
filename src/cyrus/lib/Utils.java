@@ -374,15 +374,15 @@ public class Utils{
         return d;
     }
 
-    static public int getIntFromList(Object o, int i){
-        if(o==null || !(o instanceof LinkedList)) return 0;
+    static public Integer getIntFromList(Object o, int i){
+        if(o==null || !(o instanceof LinkedList)) return null;
         LinkedList ll=((LinkedList)o);
         if(i>=ll.size()) return 0;
         Object n=ll.get(i);
-        if(n==null) return 0;
-        if(n instanceof Number) return ((Number)n).intValue();
+        if(n==null) return null;
+        if(n instanceof Number) return Integer.valueOf(((Number)n).intValue());
         if(n instanceof String) try{ return Integer.parseInt((String)n); }catch(Throwable t){}
-        return 0;
+        return null;
     }
 
     static public String getStringFromList(Object ll, int i, String d){

@@ -72,13 +72,14 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
             LinkedList shape=findListIn(scanning.get(1));
             LinkedList at   =findListIn(scanning.get(3));
             if(at!=null && at.size()==3 && shape!=null && shape.size()==3){
-                int shx=getIntFromList(shape,0);
-                int shy=getIntFromList(shape,1);
-                int shz=getIntFromList(shape,2);
-                if(shx>0 && shy>0 && shz>0){
-                    int atx=getIntFromList(at,0);
-                    int aty=getIntFromList(at,1);
-                    int atz=getIntFromList(at,2);
+                Integer shx=getIntFromList(shape,0);
+                Integer shy=getIntFromList(shape,1);
+                Integer shz=getIntFromList(shape,2);
+                if(shx!=null && shy!=null && shz!=null && shx>0 && shy>0 && shz>0){
+                    Integer atx=getIntFromList(at,0);
+                    Integer aty=getIntFromList(at,1);
+                    Integer atz=getIntFromList(at,2);
+                    if(atx==null || aty==null || atz==null) return;
                     if(shx>10) shx=10;
                     if(shy>10) shy=10;
                     if(shz>10) shz=10;
@@ -109,9 +110,10 @@ logXX("scan-view",il);
             // glass at ( -480 70 202 )
             LinkedList at=findListIn(placing.get(2));
             if(at!=null && at.size()==3){
-                int atx=getIntFromList(at,0);
-                int aty=getIntFromList(at,1);
-                int atz=getIntFromList(at,2);
+                Integer atx=getIntFromList(at,0);
+                Integer aty=getIntFromList(at,1);
+                Integer atz=getIntFromList(at,2);
+                if(atx==null || aty==null || atz==null) return;
                 String name=placing.get(0).toString();
                 ensureBlockAt(atx,aty,atz,name);
             }
@@ -122,13 +124,14 @@ logXX("scan-view",il);
             LinkedList shape=findListIn(placing.get(2));
             LinkedList at   =findListIn(placing.get(4));
             if(at!=null && at.size()==3 && shape!=null && shape.size()==3){
-                int shx=getIntFromList(shape,0);
-                int shy=getIntFromList(shape,1);
-                int shz=getIntFromList(shape,2);
-                if(shx>0 && shy>0 && shz>0){
-                    int atx=getIntFromList(at,0);
-                    int aty=getIntFromList(at,1);
-                    int atz=getIntFromList(at,2);
+                Integer shx=getIntFromList(shape,0);
+                Integer shy=getIntFromList(shape,1);
+                Integer shz=getIntFromList(shape,2);
+                if(shx!=null && shy!=null && shz!=null && shx>0 && shy>0 && shz>0){
+                    Integer atx=getIntFromList(at,0);
+                    Integer aty=getIntFromList(at,1);
+                    Integer atz=getIntFromList(at,2);
+                    if(atx==null || aty==null || atz==null) return;
                     String name=placing.get(0).toString();
                     if(shx>100) shx=100;
                     if(shy>100) shy=100;
