@@ -139,6 +139,12 @@ public class CyrusLanguage extends WebObject {
             if(!ok) rewrites.put(path,rh2);
             return !ok;
         }
+        if(list.size() >=1 && list.get(0).equals("not")){
+            LinkedList lhs=new LinkedList(list.subList(1,list.size()));
+            boolean ok=scanListTryFail(lhs,path);
+       //   if(!ok && rhs!=null) rewrites.put(path,rhs);
+            return !ok;
+        }
         if(list.size()==2 && list.get(0).equals("<")){
             Double d=findDouble(list.get(1));
             if(d!=null){

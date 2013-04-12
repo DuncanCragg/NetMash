@@ -51,7 +51,7 @@
   la: => (@m select @z:2)(@m select @z:1)(@m select @z:0)(@m select bah else yay)
   j: y => { m: n }
   xx: 0 !=> qq
-  zz: oo => #
+  zz: not ooo => #
   vd: => @. ~ @vc
   vr: # => 33 .. 29
   ss: @rr => { x: 4 y: @.y }
@@ -115,7 +115,7 @@
   ze: #
   lf: 7654
   le: true
-  nl: ((!a)) !=> @.
+  nl: not ((!a))
 }
 
 { UID: uid-1de5-4d69-667a-56e4
@@ -145,6 +145,7 @@
   lu: { c: d qq: 20 20 30 } => @. with-more ({ qq: 30 40 } { qq: 50 20 })
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
   nl: ((a a a)(a a a)(a a a))((a a a)(a a a)(a a a))
+  nt: not *
 }
 
 { UID: uid-61d6-65c9-2931-505b
