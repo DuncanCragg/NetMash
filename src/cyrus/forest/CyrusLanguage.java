@@ -299,7 +299,6 @@ public class CyrusLanguage extends WebObject {
         if(v.startsWith("!")) return !scanStringTryFail(v.substring(1),pk);
         if(v.equals("*")) return  contentSet(pk);
         if(v.equals("#")) return !contentSet(pk);
-        if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         if(contentIs(pk,v)) return true;
         if(contentIsMayJump(pk,v)) return true;
         if(v.equals("@"))       return contentIsThis(pk);
@@ -308,6 +307,7 @@ public class CyrusLanguage extends WebObject {
         if(isBoolean(v))        return scanBoolean(findBooleanIn(v),pk);
         if(isRef(v))            return scanType(findObject(v),pk);
         if(v.startsWith("/") && v.endsWith("/")) return regexMatch(v.substring(1,v.length()-1),pk);
+        if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         return false;
     }
 
