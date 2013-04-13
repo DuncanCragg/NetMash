@@ -16,16 +16,19 @@
 { UID: uid-a70f-cd0b-c257-a901
   is: editable minecraft spell
   title: "Sample Cyrus Spell"
-  Rules: uid-77a8-38ec-e0bc-b5f1 uid-df7c-2043-f410-724f uid-f363-ddd9-4da2-4c73
+  Rules: uid-77a8-38ec-e0bc-b5f1 uid-df7c-2043-f410-724f uid-4506-0c41-ac8e-4084 uid-f363-ddd9-4da2-4c73
   world: uid-b1d8-d170-a3d9-e693
   player: uid-06b6-4631-166a-b013
+  h: 0
+  w: 0
 }
 
 { UID: uid-77a8-38ec-e0bc-b5f1
   is: editable minecraft spell rule
   when: "player location set, set scanning box and notify world"
   player: { location: * }
-  scanning: => box ( 1 1 1 ) at ( @player:location + ( 0 -30 0 ))
+  current-location: => @player:location + (( 8 - (@w / 2)) @h (8 - (@w / 2)))
+  scanning: => box ( @w 1 @w ) at @current-location
   Notifying: => @. with @world
 }
 
@@ -36,11 +39,18 @@
   world-view: # => @Alerted
 }
 
+{ UID: uid-4506-0c41-ac8e-4084
+  is: editable minecraft spell rule
+  when: "no slab there, place it"
+  world-view: { at: @current-location scan-view: ((( !glass ))) }
+  placing: => glass box ( @w 1 @w ) at @current-location
+}
+
 { UID: uid-f363-ddd9-4da2-4c73
   is: editable minecraft spell rule
-  when: "player location set and non-stone found, place dirt all the way down to there"
-  player: { location: * }
-  world-view: { scan-view: ((( !stone ))) }
-  placing: => glass box ( 1 30 1 ) at ( @player:location + ( 0 -29 0 ))
+  when: "slab there, increase height and decrease width at current location"
+  world-view: { at: @current-location scan-view: not ((( !glass ))) }
+  h:     => @h + 1
+  w: > 0 => @w - 2
 }
 

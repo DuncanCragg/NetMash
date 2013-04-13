@@ -80,6 +80,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                     Integer aty=getIntFromList(at,1);
                     Integer atz=getIntFromList(at,2);
                     if(atx==null || aty==null || atz==null) return;
+                    contentList("at", at);
                     if(shx>10) shx=10;
                     if(shy>10) shy=10;
                     if(shz>10) shz=10;
