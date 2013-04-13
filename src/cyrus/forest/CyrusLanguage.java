@@ -32,7 +32,8 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     public void evaluate(){ try{
-        LinkedList rules=getEvalRules(); if(extralogging) log("Running CyrusLanguage on "+uid+": "+contentHash("#"));
+        LinkedList rules=getEvalRules();
+        if(anylogging) System.out.println("==================================================\nRunning CyrusLanguage on "+uid+": "+(extralogging? contentHash("#"): this.toString(true)));
         boolean modified=statemod;
         contentRemove("MaxLoopsReached");
         int maxloops=contentInt("MaxLoops"); if(maxloops<=0) maxloops=MAX_LOOPS;
@@ -58,7 +59,7 @@ public class CyrusLanguage extends WebObject {
             if(!statemod) break;
             modified=true;
         }
-        if(i==maxloops){ contentBool("MaxLoopsReached", true); log("*** Maximum loops reached running rules: use self or mutual observation instead ***"); }
+        if(i==maxloops){ contentBool("MaxLoopsReached", true); log("********* Maximum loops reached running rules: use self or mutual observation instead ***"); }
         statemod=modified;
         contentTemp("Rule",null);
     }catch(Throwable t){ log("exception in evaluate()"); t.printStackTrace(); }}
@@ -88,13 +89,13 @@ public class CyrusLanguage extends WebObject {
     private void runRule(String alerted){
         String when=contentStringOr("Rule:when","");
         if(alerted!=null && !contentSet("Alerted")) contentTemp("Alerted",alerted);
-        ; if(extralogging) log("Running rule \""+when+"\"");
+        ; if(anylogging)   System.out.println("-------------------\nRunning rule \""+when+"\"");
         ; if(extralogging) log("alerted:\n"+contentHash("Alerted:#"));
         rewrites.clear(); bindings.clear();
         LinkedHashMap<String,Object> rule=contentHash("Rule:#");
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
-        ; if(ok && anylogging) log("Rule fired: \""+when+"\"");
+        ; if(ok && anylogging) System.out.println("Rule fired: \""+when+"\"");
         ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+"\n"+rule+"\n====\n"+contentHash("#")+"\n===========");
         if(alerted!=null && contentIs("Alerted",alerted)) contentTemp("Alerted",null);
     }
@@ -278,8 +279,8 @@ public class CyrusLanguage extends WebObject {
 
     private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
-        if(!r && extralogging && !tryfail && !mayfail) log("Failed to match "           +v+" at: "+pk+" "+contentObject(pk));
-        if( r && extralogging &&  tryfail            ) log("Trying to fail but matched "+v+" at: "+pk+" "+contentObject(pk));
+        if(!r && anylogging && !tryfail && !mayfail) System.out.println("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
+        if( r && extralogging && tryfail           ) log(    "Trying to fail but matched "+v+" at: "+pk+" "+contentObject(pk));
         return r;
     }
 
@@ -416,7 +417,13 @@ public class CyrusLanguage extends WebObject {
                 else contentListRemoveAll(currentRewritePath, e);
             }
             else{
-                Object e=copyFindObject((rhs.size()==1)? rhs.get(0): deepEval(rhs));
+                Object e;
+                if(rhs.size()==2 && "as-is".equals(rhs.get(0))){
+                    e=copyObject(rhs.get(1), true);
+                }else{
+                    e=copyFindObject((rhs.size()==1)? rhs.get(0): deepEval(rhs));
+                    if(e instanceof LinkedList) e=eval((LinkedList)e);
+                }
                 if(e==null){
                     if(extralogging) log("Deleting "+currentRewritePath+" "+rhs);
                     String[] parts=currentRewritePath.split(":");

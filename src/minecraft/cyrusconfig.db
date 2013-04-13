@@ -9,5 +9,5 @@
              pathprefix: /o/
              cache-notify: c-n-47b0-80c6-b3fc-42c6
              log: 0 }
-  rules: { log: 2 }
+  rules: { log: 1 }
 }

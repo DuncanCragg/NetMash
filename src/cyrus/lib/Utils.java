@@ -18,6 +18,9 @@ public class Utils{
     @SuppressWarnings("unchecked")
     static public void logXX(Object...args){ log(enableLogging, "xxxxxxx "+join(new LinkedList(Arrays.asList(args))," :: ")); }
 
+    @SuppressWarnings("unchecked")
+    static public void logXXif(boolean doit, Object...args){ log(doit, "xxxxxxx "+join(new LinkedList(Arrays.asList(args))," :: ")); }
+
     static public void logZero(Object o){ firstStamp=System.currentTimeMillis(); lastStamp=firstStamp; log(enableLogging, o); }
 
     static public void log(boolean doit, Object o){
