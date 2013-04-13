@@ -21,6 +21,7 @@
   player: uid-06b6-4631-166a-b013
   h: 0
   w: 0
+  m: stone
 }
 
 { UID: uid-77a8-38ec-e0bc-b5f1
@@ -43,14 +44,14 @@
 { UID: uid-4506-0c41-ac8e-4084
   is: editable minecraft spell rule
   when: "no slab there, place it"
-  world-view: { at: @current-scan scan-view: ((( !glass ))) }
-  placing: => glass box ( @w 4 @w ) at @current-place
+  world-view: { at: @current-scan scan-view: ((( !@m ))) }
+  placing: => @m box ( @w 4 @w ) at @current-place
 }
 
 { UID: uid-f363-ddd9-4da2-4c73
   is: editable minecraft spell rule
   when: "slab there, increase height and decrease width at current location"
-  world-view: { at: @current-scan scan-view: not ((( !glass ))) }
+  world-view: { at: @current-scan scan-view: not ((( !@m ))) }
   h:     => @h + 3
   w: > 0 => @w - 2
 }
