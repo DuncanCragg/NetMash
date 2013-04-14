@@ -20,9 +20,10 @@
   world: uid-b1d8-d170-a3d9-e693
   player: uid-06b6-4631-166a-b013
   shape: pyramid-cast
-  width: 9
-  height: 5
-  material: stone
+  width: 7
+  max-height: 30
+  taper: 1
+  material: stone-double-slab glass stone-double-slab glass stone-double-slab glass stone-double-slab glass
 }
 
 { UID: uid-320d-55ec-ca58-8f71
@@ -31,7 +32,8 @@
   shape: pyramid => pyramid-cast
   h: => 0
   w: => @width
-  m: => @material
+  i: => 0
+  m: => @material:0
 }
 
 { UID: uid-77a8-38ec-e0bc-b5f1
@@ -63,7 +65,9 @@
   is: editable minecraft spell rule
   when: "slab there, increase height and decrease width at current position"
   scan-blocks: { position: @scan-position list: not ((( !@m ))) }
-  h:     => @h + 3
-  w: > 0 => @w - 2
+  h: < @max-height => @h + 3
+  w: > 0 => @w - (2 * @taper)
+  i: => @i + 1
+  m: => @material select @i
 }
 
