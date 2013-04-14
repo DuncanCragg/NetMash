@@ -26,32 +26,32 @@
 
 { UID: uid-77a8-38ec-e0bc-b5f1
   is: editable minecraft spell rule
-  when: "player location set, set scanning box and notify world"
-  player: { location: * }
-  current-place: => @player:location + (( 8 - (@w / 2)) @h (8 - (@w / 2)))
-  current-scan: => @current-place + ( 0 3 0 )
-  scanning: => box ( @w 1 @w ) at @current-scan
+  when: "player position set, set scanning box and notify world"
+  player: { position: * }
+  place-position: => @player:position + (( 8 - (@w / 2)) @h (8 - (@w / 2)))
+  scan-position: => @place-position + ( 0 3 0 )
+  scanning: => box ( @w 1 @w ) at @scan-position
   Notifying: => @. with @world
 }
 
 { UID: uid-df7c-2043-f410-724f
   is: editable minecraft spell rule
-  when: "world-view notified, save"
-  Alerted: { is: minecraft world-view }
-  world-view: # => @Alerted
+  when: "scan blocks notified, save"
+  Alerted: { is: minecraft block list }
+  scan-blocks: # => @Alerted
 }
 
 { UID: uid-4506-0c41-ac8e-4084
   is: editable minecraft spell rule
   when: "no slab there, place it"
-  world-view: { at: @current-scan scan-view: ((( !@m ))) }
-  placing: => @m box ( @w 4 @w ) at @current-place
+  scan-blocks: { position: @scan-position list: ((( !@m ))) }
+  placing: => @m box ( @w 4 @w ) at @place-position
 }
 
 { UID: uid-f363-ddd9-4da2-4c73
   is: editable minecraft spell rule
-  when: "slab there, increase height and decrease width at current location"
-  world-view: { at: @current-scan scan-view: not ((( !@m ))) }
+  when: "slab there, increase height and decrease width at current position"
+  scan-blocks: { position: @scan-position list: not ((( !@m ))) }
   h:     => @h + 3
   w: > 0 => @w - 2
 }

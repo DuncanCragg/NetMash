@@ -19,7 +19,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
     }
 
     public CyrusWorld(String worlduid, String spelluid){
-        super("{ \"is\": [ \"minecraft\", \"world-view\" ],\n"+
+        super("{ \"is\": [ \"minecraft\", \"block\", \"list\" ],\n"+
               "  \"world\": \""+worlduid+"\",\n"+
               "  \"spell\": \""+spelluid+"\"\n"+
               "}");
@@ -44,7 +44,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         if(scanning==null) return;
         if(contentListContains("scanners", spelluid)) return;
         contentListAdd(        "scanners", spelluid);
-        contentListAdd("world-views", spawn(new CyrusWorld(uid,spelluid)));
+        contentListAdd("block-lists", spawn(new CyrusWorld(uid,spelluid)));
     }
 
     private void evaluateWorldView(){
@@ -80,7 +80,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                     Integer aty=getIntFromList(at,1);
                     Integer atz=getIntFromList(at,2);
                     if(atx==null || aty==null || atz==null) return;
-                    contentList("at", at);
+                    contentList("position", at);
                     if(shx>10) shx=10;
                     if(shy>10) shy=10;
                     if(shz>10) shz=10;
@@ -96,9 +96,9 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                         }
                         il.add(jl);
                     }
-                    if(!il.equals(contentList("scan-view"))){
-logXX("scan-view",il);
-                        contentList("scan-view",il);
+                    if(!il.equals(contentList("list"))){
+logXX("scan list",il);
+                        contentList("list",il);
                         notifying(content("spell"));
                     }
                 }
