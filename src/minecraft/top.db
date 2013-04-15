@@ -19,12 +19,15 @@
   Rules: {
     is: minecraft spell rule not
     player: { position: * }
-    scanning: => box ( 2 2 2 ) at (@player:position + ( 2 -2 0))
+    position: # => @player:position + (3 1 0)
+    scanning: => box ( 2 2 2 ) at @position
+    placing: => glass box ( 4 4 4 ) at (@position + (-1 -1 -1))
     Notifying: => @. with @world
   }{
     is: minecraft spell rule
     Alerted: { is: minecraft block list }
-    placing: => @Alerted:list at (@player:position + ( 2 2 0))
+    placing: => @Alerted:list at (@position + (4 0 0))
+    Notifying: => @. with @world
   }
   player: uid-06b6-4631-166a-b013
   world: uid-b1d8-d170-a3d9-e693
