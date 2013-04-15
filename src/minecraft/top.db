@@ -23,13 +23,15 @@
   width: 7
   height: 30
   taper: 1
-  material: stone-double-slab glass
+  material: stone-double-slab glass brick stone
 }
 
 { UID: uid-320d-55ec-ca58-8f71
   is: editable minecraft spell rule
   when: "pyramid constructor filled in, set up to build"
   shape: pyramid => pyramid-cast
+  player: { position: * }
+  position: => @player:position
   h: => 0
   w: => @width
   i: => 0
@@ -38,10 +40,9 @@
 
 { UID: uid-77a8-38ec-e0bc-b5f1
   is: editable minecraft spell rule
-  when: "player position set, set scanning box and notify world"
-  player: { position: * }
+  when: "run, set scanning box and notify world"
   w: *
-  place-position: => @player:position + (( 8 - (@w / 2)) @h (8 - (@w / 2)))
+  place-position: => @position + (( 8 - (@w / 2)) @h (8 - (@w / 2)))
   scan-position: => @place-position + ( 0 3 0 )
   scanning: => box ( @w 1 @w ) at @scan-position
   Notifying: => @. with @world
@@ -65,6 +66,7 @@
   is: editable minecraft spell rule
   when: "slab there, increase height and decrease width at current position"
   scan-blocks: { position: @scan-position list: not ((( !@m ))) }
+  placing: => #
   h: <= @height => @h + 3
   w: > 0 => if (@h <= @height) then (@w - (2 * @taper)) else 0
   i: => @i + 1
