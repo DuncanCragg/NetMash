@@ -109,14 +109,39 @@ logXX("scan list",il);
     private void doPlacing(LinkedList placing){
         if(placing.size()==3 && placing.get(1).equals("at")){
             // glass at ( -480 70 202 )
+            // ((( stone glass )( dirt sand-stone ))(( grass air )( planks sand ))) at ( -480 70 202 )
             LinkedList at=findListIn(placing.get(2));
             if(at!=null && at.size()==3){
                 Integer atx=getIntFromList(at,0);
                 Integer aty=getIntFromList(at,1);
                 Integer atz=getIntFromList(at,2);
                 if(atx==null || aty==null || atz==null) return;
-                String name=placing.get(0).toString();
-                ensureBlockAt(atx,aty,atz,name);
+                Object what=placing.get(0);
+                if(what instanceof String){
+                    String name=(String)what;
+                    ensureBlockAt(atx,aty,atz,name);
+                }
+                else
+                if(what instanceof LinkedList){
+                    int i=0,j=0,k=0;
+                    LinkedList l3=(LinkedList)what;
+                    for(Object o2: l3){
+                        if(o2 instanceof LinkedList){
+                            LinkedList l2=(LinkedList)o2;
+                            for(Object o1: l2){
+                                if(o1 instanceof LinkedList){
+                                    LinkedList l1=(LinkedList)o1;
+                                    for(Object o0: l1){
+                                        if(o0 instanceof String){
+                                            String name=(String)o0;
+                                            ensureBlockAt(atx+i,aty+j,atz+k,name);
+                                        }
+                                    k++; }
+                                }
+                            j++; k=0; }
+                        }
+                    i++; j=0; }
+                }
             }
         }
         else

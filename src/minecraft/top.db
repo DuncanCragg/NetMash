@@ -10,12 +10,29 @@
 
 { UID: uid-fb97-b02c-e69b-90dd
   is: editable minecraft spell list
-  list: uid-a70f-cd0b-c257-a901
+  list: uid-4d0b-47d9-151c-d366 uid-a70f-cd0b-c257-a901
+}
+
+{ UID: uid-4d0b-47d9-151c-d366
+  is: editable minecraft spell
+  title: "Cyrus Spell to lay out specific blocks"
+  Rules: {
+    is: minecraft spell rule not
+    player: { position: * }
+    scanning: => box ( 2 2 2 ) at (@player:position + ( 2 -2 0))
+    Notifying: => @. with @world
+  }{
+    is: minecraft spell rule
+    Alerted: { is: minecraft block list }
+    placing: => @Alerted:list at (@player:position + ( 2 2 0))
+  }
+  player: uid-06b6-4631-166a-b013
+  world: uid-b1d8-d170-a3d9-e693
 }
 
 { UID: uid-a70f-cd0b-c257-a901
   is: editable minecraft spell
-  title: "Sample Cyrus Spell"
+  title: "Cyrus Spell to build Pyramids"
   Rules: uid-320d-55ec-ca58-8f71 uid-77a8-38ec-e0bc-b5f1 uid-df7c-2043-f410-724f uid-4506-0c41-ac8e-4084 uid-f363-ddd9-4da2-4c73
   world: uid-b1d8-d170-a3d9-e693
   player: uid-06b6-4631-166a-b013
