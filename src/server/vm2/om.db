@@ -31,6 +31,7 @@
   zf: zzz
   ze: zzz
   nl: ((b b b)(a a e)(a a a))((b a b)(a a b)(c a a))
+  fl: ((b b b)(a a e)(a a a))((b a b)(a a b)(c a a))
 }
 
 { UID: uid-e164-2547-46b0-f47e
@@ -74,6 +75,7 @@
   lf: => @li:3.. filter (@.. > 7000)
   le: => @li:3.. each   (@.. > 7000)
   nl: (((!a => a)))
+  fl: => @. each (if (@.. == a) then A else a)
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -120,6 +122,7 @@
   lf: 7654
   le: true
   nl: not ((!a))
+  fl: ((a a a)(A A a)(A A A))((a A a)(A A a)(a A A))
 }
 
 { UID: uid-1de5-4d69-667a-56e4
