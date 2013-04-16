@@ -207,6 +207,15 @@ public class CyrusLanguage extends WebObject {
                        (ll!=null && ll.size()==i);
             }
         }
+        if(list.size()==4 && list.get(0).equals("within") && list.get(2).equals("of")){
+            Double d=findDouble(list.get(1));
+            if(d==null) return false;
+            LinkedList a=contentList(path);
+            if(a==null || a.size()==0 || !(a.get(0) instanceof Number)) return false;
+            LinkedList b=findList(list.get(3));
+            if(b==null || b.size()==0 || !(b.get(0) instanceof Number)) return false;
+            return withinOf(d, a, b);
+        }
         if(list.size()==1 && list.get(0).equals("#")){
             boolean ok=!contentSet(path);
             if(ok && rhs!=null) rewrites.put(path,rhs);
@@ -235,15 +244,6 @@ public class CyrusLanguage extends WebObject {
                        scanType(list.get(1),path+":1");
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
-        }
-        if(list.size()==4 && list.get(0).equals("within") && list.get(2).equals("of")){
-            Double d=findDouble(list.get(1));
-            if(d==null) return false;
-            LinkedList a=contentList(path);
-            if(a==null || a.size()==0 || !(a.get(0) instanceof Number)) return false;
-            LinkedList b=findList(list.get(3));
-            if(b==null || b.size()==0 || !(b.get(0) instanceof Number)) return false;
-            return withinOf(d, a, b);
         }
         LinkedList ll=contentListMayJump(path);
         boolean matchEach=list.size()!=1;
