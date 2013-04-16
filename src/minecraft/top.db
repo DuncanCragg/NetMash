@@ -26,7 +26,11 @@
   }{
     is: minecraft spell rule
     Alerted: { is: minecraft block list }
-    placing: => @Alerted:list at (@position + (4 0 0))
+    blocks: => @Alerted:list
+  }{
+    is: minecraft spell rule
+    blocks: (((stone => ore-gold)))
+    placing: => @blocks at @position
     Notifying: => @. with @world
   }
   player: uid-06b6-4631-166a-b013
