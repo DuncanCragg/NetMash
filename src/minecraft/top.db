@@ -18,6 +18,7 @@
   title: "Cyrus Spell to lay out specific blocks"
   Rules: {
     is: minecraft spell rule not
+    when: "run, set scanning box"
     player: { position: * }
     position: # => @player:position + (3 1 0)
     scanning: => box ( 2 2 2 ) at @position
@@ -25,11 +26,9 @@
     Notifying: => @. with @world
   }{
     is: minecraft spell rule
+    when: "block list in, save it, and if certain blocks seen, convert them"
     Alerted: { is: minecraft block list }
-    blocks: => @Alerted:list
-  }{
-    is: minecraft spell rule
-    blocks: (((stone => ore-gold)))
+    blocks: => @Alerted:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)
     placing: => @blocks at @position
     Notifying: => @. with @world
   }
