@@ -418,6 +418,10 @@ public class CyrusLanguage extends WebObject {
             }
             else{
                 Object e;
+                boolean tryNewEvaluator=currentRewritePath.equals("bx");
+                if(tryNewEvaluator){
+                    e=deepCopyObject((rhs.size()==1)? rhs.get(0): evalDeepList(rhs));
+                }else
                 if(rhs.size()==2 && "as-is".equals(rhs.get(0))){
                     e=copyObject(rhs.get(1), true);
                 }else{
@@ -461,6 +465,78 @@ public class CyrusLanguage extends WebObject {
         Matcher m = LISTPATHPA.matcher(path);
         return (m.matches())? m.group(1): null;
     }
+
+    // ------- New Evaluator ---------------------------------------------------
+
+    private Object evalDeepList(LinkedList ll){
+        LinkedList r;
+        Object e=evalShallow(ll);
+        if(!(e instanceof LinkedList)) return evalDeepObject(e);
+        r=new LinkedList();
+        for(Object o: (LinkedList)e) maybeAdd(r,evalDeepObject(o));
+        return evalShallow(r);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object evalDeepObject(Object o){
+        if(isRef(o)) return eitherBindingOrContentObject(((String)o).substring(1));
+        if(o instanceof String)  return o;
+        if(o instanceof Number)  return o;
+        if(o instanceof Boolean) return o;
+        if(o instanceof LinkedList) return evalDeepList((LinkedList)o);
+        if(o instanceof LinkedHashMap) return evalDeepHash((LinkedHashMap)o);
+        return o;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object evalDeepHash(LinkedHashMap<String,Object> hm){
+        LinkedHashMap r=new LinkedHashMap();
+        for(Map.Entry<String,Object> entry: hm.entrySet()){
+            maybePut(r, entry.getKey(), evalDeepObject(entry.getValue()));
+        }
+        return r;
+    }
+
+    private Object evalShallow(LinkedList ll){
+logXXif(false,"eval@",currentRewritePath,ll);
+        if(ll==null || ll.size()==0) return null;
+        if(ll.size()==1) return ll;
+        Object r=eval(ll);
+logXXif(false,"eval=",r);
+        return r;
+    }
+
+    // ---------------------------------------
+
+    @SuppressWarnings("unchecked")
+    private Object deepCopyObject(Object o){
+        if("#".equals(o)) return null;
+        if(o==null) return null;
+        if(o instanceof String)  return o;
+        if(o instanceof Number)  return o;
+        if(o instanceof Boolean) return o;
+        if(o instanceof LinkedHashMap) return deepCopyHash(((LinkedHashMap)o));
+        if(o instanceof LinkedList)    return deepCopyList(((LinkedList)o));
+        return o;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object deepCopyHash(LinkedHashMap<String,Object> hm){
+        LinkedHashMap r=new LinkedHashMap();
+        for(Map.Entry<String,Object> entry: hm.entrySet()){
+            maybePut(r, entry.getKey(), deepCopyObject(entry.getValue()));
+        }
+        return r;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object deepCopyList(LinkedList ll){
+        LinkedList r=new LinkedList();
+        for(Object o: ll) maybeAdd(r, deepCopyObject(o));
+        return r;
+    }
+
+    // -------------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
     private Object deepEval(LinkedList ll){ return deepEvalObject(eval(ll)); }

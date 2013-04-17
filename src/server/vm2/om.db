@@ -74,6 +74,7 @@
   ze: => @li:4.. each   (@.. > 7000)
   lf: => @li:3.. filter (@.. > 7000)
   le: => @li:3.. each   (@.. > 7000)
+  bx: => (@nl each ({ a: d b: e c: f } select @.. else @..)) @xx
   nl: (((!a => a)))
   fl: => @. each (if (@.. == a) then A else a)
 }
@@ -121,6 +122,7 @@
   ze: #
   lf: 7654
   le: true
+  bx: (((e e e)(d d e)(d d d))((e d e)(d d e)(f d d))) qq
   nl: not ((!a))
   fl: ((a a a)(A A a)(A A A))((a A a)(A A a)(a A A))
 }
