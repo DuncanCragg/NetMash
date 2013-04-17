@@ -15,18 +15,20 @@
 
 { UID: uid-4d0b-47d9-151c-d366
   is: editable minecraft spell
-  title: "Cyrus Spell to lay out specific blocks"
+  title: "Cyrus Spell to transform block types"
   Rules: uid-7348-7203-31f7-4a13 uid-df7c-2043-f410-724f uid-af69-1d57-8394-4157
-  player: uid-06b6-4631-166a-b013
+  spell: alchemy
+  casting: false
   world: uid-b1d8-d170-a3d9-e693
-  starting: false
+  player: uid-06b6-4631-166a-b013
 }
 
 { UID: uid-7348-7203-31f7-4a13
   is: minecraft spell rule
   when: "run, set scanning box"
+  spell: alchemy
+  casting: true => false
   player: { position: * }
-  starting: true => false
   position: => @player:position + (3 1 0)
   scanning: => box ( 2 2 2 ) at @position
   placing: => glass box ( 4 4 4 ) at (@position + (-1 -1 -1))
@@ -45,10 +47,10 @@
   is: editable minecraft spell
   title: "Cyrus Spell to build Pyramids"
   Rules: uid-320d-55ec-ca58-8f71 uid-77a8-38ec-e0bc-b5f1 uid-df7c-2043-f410-724f uid-4506-0c41-ac8e-4084 uid-f363-ddd9-4da2-4c73
+  spell: pyramid
+  casting: false
   world: uid-b1d8-d170-a3d9-e693
   player: uid-06b6-4631-166a-b013
-  shape: pyramid
-  starting: false
   width: 7
   height: 30
   taper: 1
@@ -58,9 +60,9 @@
 { UID: uid-320d-55ec-ca58-8f71
   is: editable minecraft spell rule
   when: "pyramid constructor filled in, set up to build"
-  shape: pyramid
+  spell: pyramid
+  casting: true => false
   player: { position: * }
-  starting: true => false
   position: => @player:position
   h: => 0
   w: => @width
