@@ -418,9 +418,10 @@ public class CyrusLanguage extends WebObject {
             }
             else{
                 Object e;
-                boolean tryNewEvaluator=currentRewritePath.equals("bx");
+                boolean tryNewEvaluator=currentRewritePath.startsWith("bx")||
+                                        false;
                 if(tryNewEvaluator){
-                    e=deepCopyObject((rhs.size()==1)? rhs.get(0): evalDeepList(rhs));
+                    e=deepCopyObject(evalDeepList(rhs));
                 }else
                 if(rhs.size()==2 && "as-is".equals(rhs.get(0))){
                     e=copyObject(rhs.get(1), true);
@@ -468,11 +469,12 @@ public class CyrusLanguage extends WebObject {
 
     // ------- New Evaluator ---------------------------------------------------
 
-    private Object evalDeepList(LinkedList ll){
-        LinkedList r;
+    private Object evalDeepList(LinkedList ll){ logXXif(false,currentRewritePath,ll);
+        if(isAsIs(ll)) return ll;
         Object e=evalShallow(ll);
         if(!(e instanceof LinkedList)) return evalDeepObject(e);
-        r=new LinkedList();
+        if(isAsIs(e)) return e;
+        LinkedList r=new LinkedList();
         for(Object o: (LinkedList)e) maybeAdd(r,evalDeepObject(o));
         return evalShallow(r);
     }
@@ -499,8 +501,9 @@ public class CyrusLanguage extends WebObject {
 
     private Object evalShallow(LinkedList ll){
 logXXif(false,"eval@",currentRewritePath,ll);
+        if(isAsIs(ll)) return ll;
         if(ll==null || ll.size()==0) return null;
-        if(ll.size()==1) return ll;
+        if(ll.size()==1) return ll.get(0);
         Object r=eval(ll);
 logXXif(false,"eval=",r);
         return r;
@@ -531,9 +534,14 @@ logXXif(false,"eval=",r);
 
     @SuppressWarnings("unchecked")
     private Object deepCopyList(LinkedList ll){
+        if(isAsIs(ll)) return deepCopyObject(ll.get(1));
         LinkedList r=new LinkedList();
         for(Object o: ll) maybeAdd(r, deepCopyObject(o));
         return r;
+    }
+
+    private boolean isAsIs(Object o){
+        return o instanceof LinkedList && ((LinkedList)o).size()==2 && "as-is".equals(((LinkedList)o).get(0));
     }
 
     // -------------------------------------------------------------------------
