@@ -13,6 +13,13 @@
   list: uid-4d0b-47d9-151c-d366 uid-a70f-cd0b-c257-a901
 }
 
+{ UID: uid-df7c-2043-f410-724f
+  is: editable minecraft spell rule
+  when: "scan blocks notified, save"
+  Alerted: { is: minecraft block list }
+  scan-blocks: # => @Alerted
+}
+
 { UID: uid-4d0b-47d9-151c-d366
   is: editable minecraft spell
   title: "Cyrus Spell to transform block types"
@@ -31,6 +38,7 @@
   player: { position: * }
   position: => @player:position + (3 1 0)
   scanning: => box ( 2 2 2 ) at @position
+  scan-blocks: => #
   placing: => glass box ( 4 4 4 ) at (@position + (-1 -1 -1))
   Notifying: => @. with @world
 }
@@ -38,6 +46,7 @@
 { UID: uid-af69-1d57-8394-4157
   is: minecraft spell rule
   when: "block list updates, if certain blocks seen, convert them"
+  scan-blocks: *
   blocks: => @scan-blocks:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)
   placing: => @blocks at @position
   Notifying: => @. with @world
@@ -78,13 +87,6 @@
   scan-position: => @place-position + ( 0 3 0 )
   scanning: => box ( @w 1 @w ) at @scan-position
   Notifying: => @. with @world
-}
-
-{ UID: uid-df7c-2043-f410-724f
-  is: editable minecraft spell rule
-  when: "scan blocks notified, save"
-  Alerted: { is: minecraft block list }
-  scan-blocks: # => @Alerted
 }
 
 { UID: uid-4506-0c41-ac8e-4084
