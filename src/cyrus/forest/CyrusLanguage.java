@@ -301,12 +301,12 @@ public class CyrusLanguage extends WebObject {
         if(v.equals("#")) return !contentSet(pk);
         if(contentIs(pk,v)) return true;
         if(contentIsMayJump(pk,v)) return true;
-        if(v.equals("@"))       return contentIsThis(pk);
-        if(v.equals("number"))  return isNumber( contentObject(pk));
-        if(v.equals("boolean")) return isBoolean(contentObject(pk));
-        if(isBoolean(v))        return scanBoolean(findBooleanIn(v),pk);
-        if(isRef(v))            return scanType(findObject(v),pk);
-        if(v.startsWith("/") && v.endsWith("/")) return regexMatch(v.substring(1,v.length()-1),pk);
+        if(v.equals("@") && contentIsThis(pk)) return true;
+        if(v.equals("number") && isNumber(contentObject(pk))) return true;
+        if(v.equals("boolean") && isBoolean(contentObject(pk))) return true;
+        if(v.startsWith("/") && v.endsWith("/") && regexMatch(v.substring(1,v.length()-1),pk)) return true;
+        if(isBoolean(v) && scanBoolean(findBooleanIn(v),pk)) return true;
+        if(isRef(v) && scanType(findObject(v),pk)) return true;
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         return false;
     }
@@ -417,18 +417,7 @@ public class CyrusLanguage extends WebObject {
                 else contentListRemoveAll(currentRewritePath, e);
             }
             else{
-                Object e;
-                boolean tryNewEvaluator=currentRewritePath.startsWith("bx")||
-                                        false;
-                if(tryNewEvaluator){
-                    e=deepCopyObject(evalDeepList(rhs));
-                }else
-                if(rhs.size()==2 && "as-is".equals(rhs.get(0))){
-                    e=copyObject(rhs.get(1), true);
-                }else{
-                    e=copyFindObject((rhs.size()==1)? rhs.get(0): deepEval(rhs));
-                    if(e instanceof LinkedList) e=eval((LinkedList)e);
-                }
+                Object e=deepCopyObject(evalDeepList(rhs));
                 if(e==null){
                     if(extralogging) log("Deleting "+currentRewritePath+" "+rhs);
                     String[] parts=currentRewritePath.split(":");
@@ -469,7 +458,7 @@ public class CyrusLanguage extends WebObject {
 
     // ------- New Evaluator ---------------------------------------------------
 
-    private Object evalDeepList(LinkedList ll){ logXXif(false,currentRewritePath,ll);
+    private Object evalDeepList(LinkedList ll){
         if(isAsIs(ll)) return ll;
         Object e=evalShallow(ll);
         if(!(e instanceof LinkedList)) return evalDeepObject(e);
@@ -500,12 +489,10 @@ public class CyrusLanguage extends WebObject {
     }
 
     private Object evalShallow(LinkedList ll){
-logXXif(false,"eval@",currentRewritePath,ll);
         if(isAsIs(ll)) return ll;
         if(ll==null || ll.size()==0) return null;
         if(ll.size()==1) return ll.get(0);
         Object r=eval(ll);
-logXXif(false,"eval=",r);
         return r;
     }
 
@@ -525,11 +512,15 @@ logXXif(false,"eval=",r);
 
     @SuppressWarnings("unchecked")
     private Object deepCopyHash(LinkedHashMap<String,Object> hm){
+        boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
         for(Map.Entry<String,Object> entry: hm.entrySet()){
-            maybePut(r, entry.getKey(), deepCopyObject(entry.getValue()));
+            String k=entry.getKey();
+            Object o=entry.getValue();
+            if(k.equals("UID")){ if(o.equals("new")) spawned=true; }
+            else maybePut(r,k,deepCopyObject(o));
         }
-        return r;
+        return spawned? spawnHash(r): r;
     }
 
     @SuppressWarnings("unchecked")
@@ -610,8 +601,8 @@ logXXif(false,"eval=",r);
         LinkedHashMap h0=null;
         LinkedHashMap h2=null;
         if(ll.size()==2 && "count".equals(s0)){
-            if(l1==null) l1=findList(ll.get(1));
-            return Double.valueOf(sizeOf(l1));
+            Object o1=findObject(ll.get(1));
+            return Double.valueOf(numberOfElements(o1));
         }
         if(ll.size()==3 && "random".equals(s0)){
             if(d1==null) d1=findDouble(ll.get(1));

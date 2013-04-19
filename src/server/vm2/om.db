@@ -172,7 +172,6 @@
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   pa: { b: d a: d e: f}
   lu: { c: d qq: 20 20 30 40 50 }
-  st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
 }
 
 { UID: uid-d3e7-6831-3804-7cbf

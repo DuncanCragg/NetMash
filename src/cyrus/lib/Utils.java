@@ -414,9 +414,10 @@ public class Utils{
         return r;
     }
 
-    static public int sizeOf(LinkedList ll){
-        if(ll==null) return 0;
-        return ll.size();
+    static public int numberOfElements(Object o){
+        if(o==null) return 0;
+        if(!(o instanceof LinkedList)) return 1;
+        return ((LinkedList)o).size();
     }
 
     static public Double sumAll(LinkedList ll){
