@@ -440,7 +440,7 @@ public class CyrusLanguage extends WebObject {
         if(shufflePath!=null) shuffleList(shufflePath);
         for(String p: topDowners.keySet()){
             LinkedList ll=contentList(p);
-            if(ll!=null) contentObject(p,copyFindObject(deepEval(ll)));
+            if(ll!=null) contentObject(p,copyFindObject(eval(ll)));
         }
     }
 
@@ -454,6 +454,15 @@ public class CyrusLanguage extends WebObject {
         }
         Matcher m = LISTPATHPA.matcher(path);
         return (m.matches())? m.group(1): null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void shuffleList(String path){
+        LinkedList ll=contentList(path);
+        if(ll==null) return;
+        LinkedList lr=new LinkedList();
+        for(Object o: ll) if(!"#".equals(o)) lr.add(o);
+        contentList(path,lr);
     }
 
     // ------- New Evaluator ---------------------------------------------------
@@ -492,6 +501,29 @@ public class CyrusLanguage extends WebObject {
         if(isAsIs(ll)) return ll;
         if(ll==null || ll.size()==0) return null;
         if(ll.size()==1) return ll.get(0);
+        Object o0=                 findObject(ll.get(0));
+        Object o1=                 findObject(ll.get(1));
+        Object o2=(ll.size() >=3)? findObject(ll.get(2)): null;
+        Object o3=(ll.size() >=4)? findObject(ll.get(3)): null;
+        Object o4=(ll.size() >=5)? findObject(ll.get(4)): null;
+        if(ll.size()==2 && "count".equals(o0)){
+            return Double.valueOf(numberOfElements(o1));
+        }
+        if(ll.size()==3 && "random".equals(o0)){
+            Double d1=findDouble(o1);
+            Double d2=findDouble(o2);
+            if(d1!=null && d2!=null) return Double.valueOf(random(d1, d2));
+        }
+        if(ll.size()==4 && "clamp".equals(o0)){
+            Double d1=findDouble(o1);
+            Double d2=findDouble(o2);
+            Double d3=findDouble(o3);
+            if(d1!=null && d2!=null && d3!=null) return Double.valueOf(clamp(d1, d2, d3));
+        }
+        if(ll.size()==2 && "integer".equals(o0)){
+            Double d1=findDouble(o1);
+            if(d1!=null) return Integer.valueOf((int)(0.5+d1));
+        }
         Object r=eval(ll);
         return r;
     }
@@ -533,46 +565,6 @@ public class CyrusLanguage extends WebObject {
 
     private boolean isAsIs(Object o){
         return o instanceof LinkedList && ((LinkedList)o).size()==2 && "as-is".equals(((LinkedList)o).get(0));
-    }
-
-    // -------------------------------------------------------------------------
-
-    @SuppressWarnings("unchecked")
-    private Object deepEval(LinkedList ll){ return deepEvalObject(eval(ll)); }
-
-    @SuppressWarnings("unchecked")
-    private Object deepEvalObject(Object o){
-        if(o instanceof LinkedHashMap) return deepEvalHash((LinkedHashMap)o);
-        if(o instanceof LinkedList   ) return deepEvalList((LinkedList)o);
-        return o;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object deepEvalHash(LinkedHashMap<String,Object> hm){
-        LinkedHashMap r=new LinkedHashMap();
-        for(Map.Entry<String,Object> entry: hm.entrySet()){
-            String k=entry.getKey();
-            Object o=entry.getValue();
-            maybePut(r,k,deepEvalObject(o));
-        }
-        return r;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object deepEvalList(LinkedList ll){
-        if(ll.size()==2 && "as-is".equals(ll.get(0))) return ll;
-        LinkedList r=new LinkedList();
-        for(Object o: ll) maybeAdd(r,deepEvalObject(o)); ;
-        return eval(r);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void shuffleList(String path){
-        LinkedList ll=contentList(path);
-        if(ll==null) return;
-        LinkedList lr=new LinkedList();
-        for(Object o: ll) if(!"#".equals(o)) lr.add(o);
-        contentList(path,lr);
     }
 
     // ----------------------------------------------------
@@ -889,7 +881,7 @@ public class CyrusLanguage extends WebObject {
     private String findString(Object o){
         if(o==null) return "";
         if(isRef(o)) return eitherBindingOrContentString(((String)o).substring(1));
-        if(o instanceof LinkedList){ o=deepEval((LinkedList)o); if(o==null) return null; }
+        if(o instanceof LinkedList){ o=eval((LinkedList)o); if(o==null) return null; }
         if(o instanceof Number) return toNicerString((Number)o);
         return o.toString();
     }
@@ -903,21 +895,21 @@ public class CyrusLanguage extends WebObject {
     private Number findNumber(Object o){
         if(o==null) return null;
         if(isRef(o)) return eitherBindingOrContentNumber(((String)o).substring(1));
-        if(o instanceof LinkedList) o=deepEval((LinkedList)o);
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
         return isNumber(o)? findANumberIn(o): null;
     }
 
     private Boolean findBoolean(Object o){
         if(o==null) return false;
         if(isRef(o)) return eitherBindingOrContentBool(((String)o).substring(1));
-        if(o instanceof LinkedList) o=deepEval((LinkedList)o);
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
         return isBoolean(o)? findBooleanIn(o): null;
     }
 
     private LinkedHashMap findHash(Object o){
         if(o==null) return new LinkedHashMap();
         if(isRef(o)) return eitherBindingOrContentHash(((String)o).substring(1));
-        if(o instanceof LinkedList) o=deepEval((LinkedList)o);
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findHashIn(o);
     }
 
@@ -926,7 +918,7 @@ public class CyrusLanguage extends WebObject {
     private LinkedList findList(Object o, boolean jump){
         if(o==null) return new LinkedList();
         if(isRef(o)) return eitherBindingOrContentList(((String)o).substring(1), jump);
-        if(o instanceof LinkedList) o=deepEval((LinkedList)o);
+        if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findListIn(o);
     }
 
