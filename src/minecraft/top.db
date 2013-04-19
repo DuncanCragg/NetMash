@@ -47,8 +47,7 @@
   is: minecraft spell rule
   when: "block list updates, if certain blocks seen, convert them"
   scan-blocks: *
-  blocks: => @scan-blocks:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)
-  placing: => @blocks at @position
+  placing: => (@scan-blocks:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)) at @position
   Notifying: => @. with @world
 }
 
