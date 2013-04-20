@@ -530,36 +530,37 @@ public class CyrusLanguage extends WebObject {
 
     // ---------------------------------------
 
+    private Object deepCopyObject(Object o){ return deepCopyObject(o,false); }
+
     @SuppressWarnings("unchecked")
-    private Object deepCopyObject(Object o){
-        if("#".equals(o)) return null;
+    private Object deepCopyObject(Object o, boolean asis){
         if(o==null) return null;
-        if(o instanceof String)  return o;
+        if(o instanceof String)  return asis? o: ((String)o).equals("uid-new")? spawnEd(): ((String)o).equals("#")? null: o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
-        if(o instanceof LinkedHashMap) return deepCopyHash(((LinkedHashMap)o));
-        if(o instanceof LinkedList)    return deepCopyList(((LinkedList)o));
+        if(o instanceof LinkedHashMap) return deepCopyHash(((LinkedHashMap)o),asis);
+        if(o instanceof LinkedList)    return deepCopyList(((LinkedList)o),asis);
         return o;
     }
 
     @SuppressWarnings("unchecked")
-    private Object deepCopyHash(LinkedHashMap<String,Object> hm){
+    private Object deepCopyHash(LinkedHashMap<String,Object> hm, boolean asis){
         boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
         for(Map.Entry<String,Object> entry: hm.entrySet()){
             String k=entry.getKey();
             Object o=entry.getValue();
-            if(k.equals("UID")){ if(o.equals("new")) spawned=true; }
-            else maybePut(r,k,deepCopyObject(o));
+            if(!asis && k.equals("UID")){ if(o.equals("new")) spawned=true; }
+            else maybePut(r,k,deepCopyObject(o,asis));
         }
         return spawned? spawnHash(r): r;
     }
 
     @SuppressWarnings("unchecked")
-    private Object deepCopyList(LinkedList ll){
-        if(isAsIs(ll)) return deepCopyObject(ll.get(1));
+    private Object deepCopyList(LinkedList ll, boolean asis){
+        if(isAsIs(ll)) return deepCopyObject(ll.get(1),true);
         LinkedList r=new LinkedList();
-        for(Object o: ll) maybeAdd(r, deepCopyObject(o));
+        for(Object o: ll) maybeAdd(r,deepCopyObject(o,asis));
         return r;
     }
 
@@ -776,7 +777,7 @@ public class CyrusLanguage extends WebObject {
             trylist0=(l0!=null && l0.size() >1);
             if(h2==null) h2=findHash(ll.get(2));
             if(h0==null && !trylist0) return null;
-            if(h0!=null && h2==null) return copyObject(h0, false);
+            if(h0!=null && h2==null) return deepCopyObject(h0);
             if(h0!=null && h2!=null) return copyLessHash(h0,h2);
         }
         if(ll.size()==3 && ("with-more".equals(s1)||"add-more".equals(s1))){
@@ -787,7 +788,7 @@ public class CyrusLanguage extends WebObject {
             if(l2==null) l2=findList(ll.get(2));
             trylist2=(l2!=null && l2.size() >1);
             if(h0==null && !trylist0) return null;
-            if(h0!=null && h2==null && !trylist2) return copyObject(h0, false);
+            if(h0!=null && h2==null && !trylist2) return deepCopyObject(h0);
             if(h0!=null && h2!=null) return copyMoreHash(h0,h2,lep,null,"with-more".equals(s1));
         }
         if(ll.size()==3 && "each".equals(s1)){
@@ -1025,39 +1026,7 @@ public class CyrusLanguage extends WebObject {
     }
 
     private Object copyFindObject(Object o){
-        return copyObject(findObject(o), false);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object copyObject(Object o, boolean asis){
-        if(o==null) return null;
-        if(o instanceof String)  return asis? o: ((String)o).equals("uid-new")? spawnEd(): ((String)o).equals("#")? null: o;
-        if(o instanceof Number)  return o;
-        if(o instanceof Boolean) return o;
-        if(o instanceof LinkedHashMap) return copyHash(((LinkedHashMap)o), asis);
-        if(o instanceof LinkedList)    return copyList(((LinkedList)o), asis);
-        return o;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object copyHash(LinkedHashMap<String,Object> hm, boolean asis){
-        boolean spawned=false;
-        LinkedHashMap r=new LinkedHashMap();
-        for(Map.Entry<String,Object> entry: hm.entrySet()){
-            String k=entry.getKey();
-            Object o=entry.getValue();
-            if(k.equals("UID") && !asis){ if(o.equals("new")) spawned=true; }
-            else maybePut(r,k, asis? copyObject(o,true): copyFindObject(o));
-        }
-        return spawned? spawnHash(r): r;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object copyList(LinkedList ll, boolean asis){
-        if(ll.size()==2 && "as-is".equals(ll.get(0))) return copyObject(ll.get(1), true);
-        LinkedList r=new LinkedList();
-        for(Object o: ll) maybeAdd(r,asis? copyObject(o,true): copyFindObject(o));
-        return r;
+        return deepCopyObject(findObject(o));
     }
 
     // ----------------------------------------------------
