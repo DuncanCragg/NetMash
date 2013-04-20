@@ -1162,7 +1162,7 @@ function deCameliseList(ll){
     if(!ll) return '';
     if(ll.constructor===String) return deCamelise(ll);
     if(ll.constructor!==Array) return deCamelise(''+ll);
-    r=''; $.each(ll, function(k,s){ r+=deCamelise(s)+' '; });
+    r=''; $.each(ll, function(k,s){ r+=deCameliseList(s)+' '; });
     return r;
 }
 

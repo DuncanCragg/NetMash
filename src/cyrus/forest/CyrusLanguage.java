@@ -535,7 +535,9 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private Object deepCopyObject(Object o, boolean asis){
         if(o==null) return null;
-        if(o instanceof String)  return asis? o: ((String)o).equals("uid-new")? spawnEd(): ((String)o).equals("#")? null: o;
+        if(o instanceof String && "".equals(o)) return null;
+        if(o instanceof String && "#".equals(o) && !asis) return null;
+        if(o instanceof String)  return ((String)o).equals("uid-new")? spawnEd(): o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedHashMap) return deepCopyHash(((LinkedHashMap)o),asis);
@@ -558,6 +560,7 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private Object deepCopyList(LinkedList ll, boolean asis){
+        if(ll.size()==0) return null;
         if(isAsIs(ll)) return deepCopyObject(ll.get(1),true);
         LinkedList r=new LinkedList();
         for(Object o: ll) maybeAdd(r,deepCopyObject(o,asis));
