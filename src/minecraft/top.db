@@ -31,7 +31,7 @@
 }
 
 { UID: uid-7348-7203-31f7-4a13
-  is: minecraft spell rule
+  is: editable minecraft spell rule
   when: "run, set scanning box"
   spell: alchemy
   casting: true => false
@@ -44,7 +44,7 @@
 }
 
 { UID: uid-af69-1d57-8394-4157
-  is: minecraft spell rule
+  is: editable minecraft spell rule
   when: "block list updates, if certain blocks seen, convert them"
   scan-blocks: *
   placing: => (@scan-blocks:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)) at @position

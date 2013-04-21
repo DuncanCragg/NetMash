@@ -790,7 +790,7 @@ public class WebObject {
         boolean tempObserve = startsWithAnyTemp(path);
         String observeduid=normaliseUIDIfNotOurs(baseurl, uid);
         if(!UID.isUID(observeduid)) return null;
-        obsalmod = true;
+      //obsalmod = true;
         return funcobs.observing(this, observeduid, tempObserve);
     }
 
