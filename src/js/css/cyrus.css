@@ -28,7 +28,6 @@ table.json{
 
 table.grid{
     width: 100%;
-    max-width: 40em;
     table-layout: fixed;
 }
 
@@ -251,7 +250,7 @@ body{
 }
 
 div.vcard, div.vevent, div.document, div.plain-list, div.document-list {
-    padding: 2pt 0.5em;
+    padding: 4pt 0.5em;
 }
 
 div.left{

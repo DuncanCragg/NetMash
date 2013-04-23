@@ -671,8 +671,8 @@ function JSON2HTML(url){
             return false;
         },
         createLinks: function(s){
-            return s.replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.json)/g, '<a href="#$1">$1</a>')
-                    .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,                 '<a href="#$1.json">$1</a>');
+            return s.replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.json)/g, '<a class="replace-up" href="#$1">$1</a>')
+                    .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,                 '<a class="replace-up" href="#$1.json">$1</a>');
         },
         toCyrusObject: function(o,i,tagdelim){
             if(o===undefined || o===null) return '';
@@ -923,16 +923,44 @@ function Cyrus(){
                 me.setCreds(topObjectURL, creds);
                 e.preventDefault();
             });
+            $('.replace-up').unbind().click(function(e){
+                var url = $(this).attr('href').substring(1);
+                me.replaceUp(url,$(this));
+                e.preventDefault();
+                return false;
+            });
             $('.new-state').unbind().click(function(e){
                 var mashURL = $(this).attr('href');
-                me.getTopObject(mashURL);
-                history.pushState(null,null,mashURL);
+                url=mashURL.substring(mashURL.indexOf('#')+1);
+                if(!me.replaceUp(url,$(this))){
+                    me.getTopObject(mashURL);
+                    history.pushState(null,null,mashURL);
+                }
                 e.preventDefault();
                 return false;
             });
             $(window).bind('popstate', function() {
                 me.getTopObject(''+window.location);
             });
+        },
+        replaceUp: function(url, a){
+            var objbody=me.getObjectBodyAbove(a);
+            if(!objbody) return false;
+            var objhead=objbody.prev();
+            var open=objhead.hasClass('open');
+            var raw =objhead.hasClass('raw');
+            objhead.replaceWith(json2html.getObjectHeadHTML(null, url, true, !open, null, raw));
+            objhead=objbody.prev();
+            objbody.remove();
+            me.ensureVisibleObjectsIn(objhead);
+            return true;
+        },
+        getObjectBodyAbove: function(el){
+            for(var i=0; i<20; i++){
+                el=el.parent();
+                if(!el || el.hasClass('object-body')) return el;
+            }
+            return null;
         },
         getFormFields: function(form,fields){
             form.find('.form-field').each(function(n,i){
@@ -988,8 +1016,8 @@ function Cyrus(){
         reflowIfWidthChanged: function(panel){
             $(panel).find('.document.right').each(function(n,r){
                 if(!$(r).is(':visible')) return;
-                if($(r).parent().width() > 400) $(r).addClass('wide');
-                else                            $(r).removeClass('wide');
+                if($(r).parent().width() > 1000) $(r).addClass('wide');
+                else                             $(r).removeClass('wide');
             });
         },
         getFullObjectURL: function(mashURL){
