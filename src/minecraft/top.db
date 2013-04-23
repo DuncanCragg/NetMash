@@ -1,3 +1,118 @@
+{ UID: uid-1044-e6e9-125e-e35c
+  is: gui
+  title: "Cyrus Minecraft Spell Tutorial"
+  view:
+    { is: style direction: horizontal }
+    { view: open     item: uid-5a7a-16e9-508f-2f65 }
+    { view: open raw item: uid-27c9-154b-c4bf-0453 }
+}
+
+{ UID: uid-5a7a-16e9-508f-2f65
+  is: article list
+  title: "Instructions"
+  list: uid-3592-f387-6662-8d44
+        uid-4ee8-9084-8ab0-6a2b
+        uid-1a57-fa37-17a0-8672
+        uid-6672-f066-5321-d37f
+        uid-1f07-587f-92de-7e44
+}
+
+{ UID: uid-3592-f387-6662-8d44
+  is: article
+  title: "Welcome to Cyrus for Minecraft Programming"
+  text: "Cyrus lets you program Minecraft with 'spells'."
+        "On the right you'll see your first Minecraft spell."
+        "It should look something like this:"
+        "|["
+        "{ is: editable minecraft spell"
+        "  title: \"First Cyrus Spell\""
+        "  Rules: {"
+        "  }"
+        "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
+        "  player: http://localhost:8084/o/uid-06b6-4631-166a-b013.json"
+        "}"
+        "]|"
+        "If you hit the link after 'world:', you'll be able to see the state of the world - time of day, raining or snowing."
+        "If you hit the link after 'player:', you'll be able to see your player coordinates in the world. Watch it change as you move around. Copy the three coordinates - you're going to need them in the next step."
+}
+
+{ UID: uid-4ee8-9084-8ab0-6a2b
+  is: article
+  title: "Placing some blocks"
+  text: "Now edit the spell - by selecting the text apart from the links:"
+        "|["
+        "{ is: editable minecraft spell"
+        "  title: \"First Cyrus Spell\""
+        "  Rules: {"
+      "![    is: spell rule]!"
+      "![    placing: => glass box ( 1 1 1 ) at ( x y z )]!"
+      "![    Notifying: => @. with @world]!"
+        " }"
+        "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
+        "  player: http://localhost:8084/o/uid-06b6-4631-166a-b013.json"
+        "}"
+        "]|"
+        "/[Note: you must set the coordinates 'x y z' to your own player coordinates, copied from the player: object.]/"
+        "Press the 'Update' button below this text to make the change. If it doesn't seem to work, hit refresh."
+        "This will place a glass box of size 1x1x1 at the coordinates given."
+        "The Notifying line is to tell the world about this spell."
+        "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sand-stone', 'stone', 'ore-gold', etc"
+        "Note: Edit the rule, not the spell!"
+}
+
+{ UID: uid-1a57-fa37-17a0-8672
+  is: article
+  title: "Glass trails"
+  text: "This is a spell to leave a trail of glass everywhere you go."
+        "It's a bit clumsy, finding and setting the player coordinates ourselves. Let's get the spell to do it for us:"
+        "|["
+        "  Rules: {"
+        "    is: spell rule"
+      "![    placing: => glass box ( 1 1 1 ) at ( @player:position + ( 3 0 3 ))]!"
+        "    Notifying: => @. with @world"
+        "  }"
+        "]|"
+        "We take the player position, push it out three blocks."
+}
+
+{ UID: uid-6672-f066-5321-d37f
+  is: article
+  title: "Scanning the blocks in the world"
+  text: "Now add a scanner to the spell, which tells the world we'd like to be updated on the blocks in some region. The region will be -50 down from where we stand:"
+        "|["
+        " Rules: {"
+        "   is: spell rule"
+        "   placing: => glass box ( 1 1 1 ) at ( @player:position + ( 3 0 3 ))"
+      "![   scanning: =>      box ( 2 3 4 ) at ( @player:position + ( 0 -50 0 ))]!"
+        "   Notifying: => @. with @world"
+        " }"
+        "]|"
+        "If you jump the link after 'world', then the link at 'block-lists', you'll see your results: as you move around, you see different blocks. Try to find some air underground, indicating a cave."
+        "This is a bit inconvenient, and not easy to get to from our spell, Luckily we're told about it in our spell. The other end of 'Notifying' is 'Alerted':"
+        "|["
+      "![ {]!"
+      "![   is: spell rule]!"
+      "![   Alerted: { is: minecraft block list }]!"
+      "![   scan-blocks: # => @Alerted]!"
+      "![ } ]!"
+        "]|"
+        "Now you'll see a link 'scan-blocks:' right in our spell. Much more convenient."
+}
+
+{ UID: uid-1f07-587f-92de-7e44
+  is: article
+  title: "Alchemy spell"
+  text: ""
+}
+
+{ UID: uid-27c9-154b-c4bf-0453
+  is: editable minecraft spell
+  title: "First Cyrus Spell"
+  Rules: {}
+  world: uid-b1d8-d170-a3d9-e693
+  player: uid-06b6-4631-166a-b013
+}
+
 { UID: uid-b1d8-d170-a3d9-e693
   Class: net.minecraft.src.CyrusWorld
   is: queryable updatable 3d minecraft world
