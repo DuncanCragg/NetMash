@@ -55,16 +55,17 @@
         "/[Note: you must set the coordinates 'x y z' to your own player coordinates, copied from the player: object.]/"
         "Press the 'Update' button below this text to make the change. If it doesn't seem to work, hit refresh."
         "This will place a glass box of size 1x1x1 at the coordinates given."
+        "The line 'placing: => ..' in the rule updates the spell with a corresponding 'placing:', which you'll see."
         "The Notifying line is to tell the world about this spell."
         "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sand-stone', 'stone', 'ore-gold', etc"
-        "Note: Edit the rule, not the spell!"
+        "Note: Edit the rule, not the spell! The rule rewrites the spell. This is more powerful than editing directly, as we will see."
 }
 
 { UID: uid-1a57-fa37-17a0-8672
   is: article
   title: "Glass trails"
   text: "This is a spell to leave a trail of glass everywhere you go."
-        "It's a bit clumsy, finding and setting the player coordinates ourselves. Let's get the spell to do it for us:"
+        "You may have thought that it's a bit clumsy finding and setting the player coordinates ourselves. So let's get the spell to do it for us:"
         "|["
         "  Rules: {"
         "    is: spell rule"
@@ -72,23 +73,23 @@
         "    Notifying: => @. with @world"
         "  }"
         "]|"
-        "We take the player position, push it out three blocks."
+        "We take the player position, whatever it's set to or changes to, and add three blocks North and East, for placing."
 }
 
 { UID: uid-6672-f066-5321-d37f
   is: article
   title: "Scanning the blocks in the world"
-  text: "Now add a scanner to the spell, which tells the world we'd like to be updated on the blocks in some region. The region will be -50 down from where we stand:"
+  text: "Now let's add a scanner to the spell, which tells the world we'd like to be updated on the blocks in some region. The region will be -50 down from where we stand:"
         "|["
-        " Rules: {"
-        "   is: spell rule"
-        "   placing: => glass box ( 1 1 1 ) at ( @player:position + ( 3 0 3 ))"
-      "![   scanning: =>      box ( 2 3 4 ) at ( @player:position + ( 0 -50 0 ))]!"
-        "   Notifying: => @. with @world"
-        " }"
+        "  Rules: {"
+        "    is: spell rule"
+        "    placing: => glass box ( 1 1 1 ) at ( @player:position + ( 3 0 3 ))"
+      "![    scanning: =>      box ( 2 3 4 ) at ( @player:position + ( 0 -50 0 ))]!"
+        "    Notifying: => @. with @world"
+        "  }"
         "]|"
-        "If you jump the link after 'world', then the link at 'block-lists', you'll see your results: as you move around, you see different blocks. Try to find some air underground, indicating a cave."
-        "This is a bit inconvenient, and not easy to get to from our spell, Luckily we're told about it in our spell. The other end of 'Notifying' is 'Alerted':"
+        "If you jump the link after 'world', then the link there called 'block-lists', you'll see your results: as you move around, you'll see different blocks. Try to find some air underground, indicating a cave. Then dig down, to see if you find it."
+        "Going to the world object to see our results is a bit inconvenient. Luckily the world tells the spell about them. The other end of 'Notifying' is 'Alerted':"
         "|["
       "![ {]!"
       "![   is: spell rule]!"
@@ -96,13 +97,16 @@
       "![   scan-blocks: # => @Alerted]!"
       "![ } ]!"
         "]|"
-        "Now you'll see a link 'scan-blocks:' right in our spell. Much more convenient."
+        "Add this rule after the one that's there - paste it after the closing brace '}'"
+        "Now, when the world Notifies us of our scan results, we get Alerted, so we check it's a 'minecraft block list' before setting 'scan-blocks' to link to it."
+        "The '#' checks that scan-blocks hasn't already been set, which means this will only be run or triggered once."
+        "Now you'll see the link 'scan-blocks:' right in your spell. Much more convenient."
 }
 
 { UID: uid-1f07-587f-92de-7e44
   is: article
   title: "Alchemy spell"
-  text: ""
+  text: "uid-4d0b-47d9-151c-d366"
 }
 
 { UID: uid-27c9-154b-c4bf-0453
