@@ -182,7 +182,15 @@ function JSON2HTML(url){
             var that = this;
             var rows = [];
             $.each(l, function(key,val){ rows.push(that.getAnyHTML(val)); });
-            return '<div class="list"><p class="list">'+rows.join('</p>\n<p class="list">')+'</p></div>\n';
+            var html='';
+            var inPre=false;
+            for(var s in rows){ var row=rows[s];
+                if(row.containeth('<pre>' )) inPre=true;
+                if(inPre) html+=                   row+    '\n';
+                else      html+='<p class="list">'+row+'</p>\n';
+                if(row.containeth('</pre>')) inPre=false;
+            }
+            return '<div class="list">'+html+'</div>\n';
         },
         getObjectListHTML: function(header,itemclass,list,closed){
             var rows=[];
@@ -582,8 +590,8 @@ function JSON2HTML(url){
             text=text.replace(/&#39;/g,'\'');
             text=text.replace(/&quot;/g,'"');
             text=text.htmlEscape();
-            text=text.replace(/\|\[/g,'</p><pre>');
-            text=text.replace(/\]\|/g,'</pre><p>');
+            text=text.replace(/\|\[/g,'<pre>');
+            text=text.replace(/\]\|/g,'</pre>');
             text=text.replace(linkre, '<a href="$2">$1</a>');
             text=text.replace(boldre, '<b>$1</b>');
             text=text.replace(italre, '<i>$1</i>');
@@ -1121,6 +1129,7 @@ function Cyrus(){
 
 String.prototype.startethWith = function(str){ return this.slice(0, str.length)==str; };
 String.prototype.endethWith   = function(str){ return this.slice(  -str.length)==str; };
+String.prototype.containeth   = function(str){ return this.indexOf(str) != -1; };
 String.prototype.jsonEscape = function(){
     return this.replace(/\\/g, '\\\\')
                .replace(/"/g, '\\"');

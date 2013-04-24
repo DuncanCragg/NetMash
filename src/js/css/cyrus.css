@@ -15,7 +15,7 @@ form.new-land-form{
 }
 
 form.gui-form{
-    padding: 10px;
+    padding: 0px;
 }
 
 div {
@@ -54,6 +54,15 @@ textarea.cyrus-raw{
     padding: 0.5em;
     margin: 0pt 0pt 10pt 0pt;
     line-height: 12pt;
+}
+
+pre {
+    background-color: #fafaff;
+    border: 1px solid #ddd;
+    padding: 0.5em;
+    margin: 7pt;
+    line-height: 12pt;
+    white-space: pre-wrap;
 }
 
 pre.cyrus-readonly{
@@ -122,7 +131,7 @@ ul {
 li {
     list-style-type: none;
     padding: 0px;
-    margin: 8px;
+    margin: 4pt;
 }
 
 p {
@@ -187,11 +196,6 @@ label.login-label{
     display: table-cell;
 }
 
-pre p.list {
-    margin-top: -5pt;
-    margin-bottom: -5pt;
-}
-
 p.list{
     margin: 10px 0px 0px 0px;
 }
@@ -252,7 +256,7 @@ body{
 }
 
 div.vcard, div.vevent, div.document, div.plain-list, div.document-list {
-    padding: 4pt 0.5em;
+    padding: 4pt 4pt;
 }
 
 div.left{
