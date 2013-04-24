@@ -259,7 +259,7 @@ div.vcard, div.vevent, div.document, div.plain-list, div.document-list {
     padding: 4pt 4pt;
 }
 
-div.left{
+div.left.wide{
     display: table-cell;
     width: 50%;
 }

@@ -1028,6 +1028,11 @@ function Cyrus(){
             });
         },
         reflowIfWidthChanged: function(panel){
+            $(panel).find('.document.left').each(function(n,r){
+                if(!$(r).is(':visible')) return;
+                if($(r).parent().width() > 1000) $(r).addClass('wide');
+                else                             $(r).removeClass('wide');
+            });
             $(panel).find('.document.right').each(function(n,r){
                 if(!$(r).is(':visible')) return;
                 if($(r).parent().width() > 1000) $(r).addClass('wide');
