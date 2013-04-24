@@ -395,7 +395,7 @@ public class Utils{
         return (String)o;
     }
 
-    static public double random(double lo, double hi){
+    static public int random(double lo, double hi){
         double x=Math.random();
         return (int)(lo+x*(hi+0.5-lo));
     }

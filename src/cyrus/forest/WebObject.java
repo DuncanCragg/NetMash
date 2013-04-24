@@ -64,7 +64,7 @@ public class WebObject {
         funcobs = FunctionalObserver.funcobs;
         uid     =          json.stringPathN("UID");          json.removePath("UID");
         url     =          json.stringPathN("URL");          json.removePath("URL");
-        etag    =          json.intPathN(   "Version");      json.removePath("Version"); if(etag==0) etag=1;
+        etag    =          json.intPathN(   "Version");      json.removePath("Version"); if(etag==0) etag=UID.generateVersion();
         maxAge  =          json.intPathN(   "Max-Age");      json.removePath("Max-Age");
         listToSet(notify,  json.listPathN(  "Notify"));      json.removePath("Notify");
         listToSet(observe, json.listPathN(  "Observe"));     json.removePath("Observe");
@@ -83,7 +83,7 @@ public class WebObject {
         uid     = (uid       !=null)? uid:        httpReqURL;
         uid     = (uid       !=null)? uid:        UID.generateUID();
         uid     = UID.toUIDifLocal(uid);
-        etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "Version"); json.removePath("Version"); if(etag==0) etag=1;
+        etag    = (httpETag  !=null)? httpetag:   json.intPathN(   "Version"); json.removePath("Version"); if(etag==0) etag=UID.generateVersion();
         maxAge  = (httpMaxAge!=null)? httpmaxage: json.intPathN(   "Max-Age"); json.removePath("Max-Age");
         listToSet(notify,                         json.listPathN(  "Notify")); json.removePath("Notify");
         if(httpNotify!=null && !httpNotify.startsWith("c-n-")) notify.add(httpNotify);
@@ -103,7 +103,7 @@ public class WebObject {
     public WebObject(String jsonstring){
         funcobs = FunctionalObserver.funcobs;
         uid = UID.generateUID();
-        etag = 1;
+        etag = UID.generateVersion();
         publicState = new JSON(jsonstring);
         updatingState = publicState;
     }
@@ -112,7 +112,7 @@ public class WebObject {
     public WebObject(JSON json){
         funcobs = FunctionalObserver.funcobs;
         uid = UID.generateUID();
-        etag = 1;
+        etag = UID.generateVersion();
         publicState = json;
         updatingState = publicState;
     }
@@ -126,7 +126,7 @@ public class WebObject {
     public WebObject construct(LinkedHashMap hm){
         funcobs = FunctionalObserver.funcobs;
         uid = getStringOr(hm,"UID",UID.generateUID());
-        etag = getIntOr(hm,"Version",1);
+        etag = getIntOr(hm,"Version",UID.generateVersion());
         maxAge = getIntOr(hm,"Max-Age",0);
         listToSet(notify,  getStringList(hm,"Notify"));
         listToSet(observe, getStringList(hm,"Observe"));

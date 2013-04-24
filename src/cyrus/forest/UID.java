@@ -9,6 +9,8 @@ import java.util.regex.*;
 
 import cyrus.platform.*;
 
+import static cyrus.lib.Utils.*;
+
 public class UID {
 
     // ----------------------------------------
@@ -28,6 +30,10 @@ public class UID {
     }
 
     // ----------------------------------------
+
+    static public int generateVersion(){
+        return random(10000,100000);
+    }
 
     static public String generateCN(){
         return ("c-n-"+fourHex()+"-"+fourHex()+"-"+fourHex()+"-"+fourHex());
