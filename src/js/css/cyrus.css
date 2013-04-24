@@ -243,10 +243,8 @@ body{
     border-right: 1px solid #888;
     border-bottom: 1px solid #888;
     background-color: #fdfdff;
-}
-
-.object-body .object-body {
     overflow: auto;
+    height: 86%;
 }
 
 div.vcard, div.vevent, div.document, div.plain-list, div.document-list {
@@ -256,11 +254,6 @@ div.vcard, div.vevent, div.document, div.plain-list, div.document-list {
 div.left{
     display: table-cell;
     width: 50%;
-}
-
-div.right{
-    display: block;
-    width: 90%;
 }
 
 div.right.wide{

@@ -692,9 +692,9 @@ function JSON2HTML(url){
         toCyrusList: function(o,i,tagdelim){
             if(!o || o.constructor!==Array) return '??';
             var nobrackets=tagdelim && (o.length!=1 || (o[0].constructor===Array && o[0].length!=1));
-            var r=nobrackets? '': '( ';
+            var r=nobrackets? '': '(';
             for(var x in o){ r+=this.toCyrusObject(o[x],i)+' '; }
-            r+=nobrackets? '': ' )';
+            r=r.trim()+(nobrackets? '': ')');
             return r;
         },
         indent: function(i){
@@ -711,6 +711,7 @@ function Cyrus(){
     var json2html;
     var topObjectURL = null;
     var windowWidth = $(window).width();
+    var windowHeight = $(window).height();
     var moreOf = {};
     var retryDelay=100;
 
@@ -792,6 +793,10 @@ function Cyrus(){
                 if($(window).width() != windowWidth){
                     windowWidth = $(window).width();
                     me.reflowIfWidthChanged($('#content'));
+                }
+                if($(window).height() != windowHeight){
+                    windowHeight = $(window).height();
+                    me.reflowIfHeightChanged($('#content'));
                 }
             });
             $('.open-close').unbind().click(function(e){
@@ -1004,6 +1009,7 @@ function Cyrus(){
         ensureVisibleAndReflow: function(panel){
             me.ensureVisibleObjectsIn(panel);
             me.reflowIfWidthChanged(panel);
+            me.reflowIfHeightChanged(panel);
         },
         ensureVisibleObjectsIn: function(panel){
             $(panel).find('a.object-place').each(function(n,a){
@@ -1018,6 +1024,13 @@ function Cyrus(){
                 if(!$(r).is(':visible')) return;
                 if($(r).parent().width() > 1000) $(r).addClass('wide');
                 else                             $(r).removeClass('wide');
+            });
+        },
+        reflowIfHeightChanged: function(panel){
+            $(panel).find('.object-body .object-body').each(function(n,r){
+                if(!$(r).is(':visible')) return;
+                var outer=$('#content .object-body');
+                $(r).height(outer.height()-70);
             });
         },
         getFullObjectURL: function(mashURL){
