@@ -1,6 +1,7 @@
 
 body {
     font-family: Helvetica, Arial, sans;
+    margin: 6px;
 }
 
 form{
@@ -224,6 +225,7 @@ div.object-head.open{
 body{
     font-size: 1.2em;
     background-color: #ffc;
+    height: 92%;
 }
 
 .object-head a, .object-head span.open-close {
@@ -243,8 +245,10 @@ body{
     border-right: 1px solid #888;
     border-bottom: 1px solid #888;
     background-color: #fdfdff;
+}
+
+.object-body .object-body {
     overflow: auto;
-    height: 86%;
 }
 
 div.vcard, div.vevent, div.document, div.plain-list, div.document-list {
