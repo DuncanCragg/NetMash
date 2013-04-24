@@ -1027,10 +1027,11 @@ function Cyrus(){
             });
         },
         reflowIfHeightChanged: function(panel){
+            var outer=$('#content .object-body');
+            var outerheight=outer.height();
             $(panel).find('.object-body .object-body').each(function(n,r){
                 if(!$(r).is(':visible')) return;
-                var outer=$('#content .object-body');
-                $(r).height(outer.height()-70);
+                $(r).height(outerheight-70);
             });
         },
         getFullObjectURL: function(mashURL){
