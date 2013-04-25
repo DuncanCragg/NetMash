@@ -64,7 +64,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         if(isWorld){
             new Evaluator(this){ public void evaluate(){ try{
                 doStats();
-            }catch(Exception e){ e.printStackTrace(); }}};
+            }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             while(true){
                 LinkedList placing=placingQ.poll();
                 if(placing==null) break;
@@ -74,7 +74,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         else{
             new Evaluator(this){ public void evaluate(){ try{
                 doScanning(contentList("spell:scanning"));
-            }catch(Exception e){ e.printStackTrace(); }}};
+            }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
         }
     }
 
