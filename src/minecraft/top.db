@@ -15,6 +15,7 @@
         uid-1a57-fa37-17a0-8672
         uid-6672-f066-5321-d37f
         uid-1f07-587f-92de-7e44
+        uid-33a7-efb7-aced-d48b
 }
 
 { UID: uid-3592-f387-6662-8d44
@@ -106,7 +107,15 @@
 { UID: uid-1f07-587f-92de-7e44
   is: article
   title: "Alchemy spell"
-  text: "uid-4d0b-47d9-151c-d366"
+  text: "Set 'casting' to 'true' in the following. It creates a glass box inside which stone is turned to gold!"
+         uid-4d0b-47d9-151c-d366
+}
+
+{ UID: uid-33a7-efb7-aced-d48b
+  is: article
+  title: "Pyramid spell"
+  text: "Set 'casting' to 'true' in the following. It creates a pyramid with various parameters you can adjust, for width, height, taper and materials."
+         uid-a70f-cd0b-c257-a901
 }
 
 { UID: uid-27c9-154b-c4bf-0453
