@@ -19,13 +19,11 @@ public class CyrusUser extends WebObject implements mod_Cyrus.Tickable {
         double px=player.posX;
         double py=player.posY;
         double pz=player.posZ;
-        if(vvdist(list(x,y,z),list(px,py,pz)) > 1){
+        cf(vvdist(list(x,y,z),list(px,py,pz)) >= 1){
             x=px; y=py; z=pz;
-            new Evaluator(this){ public void evaluate(){
-                try{
-                    contentList("position",list((int)(x-1.0),(int)(y-2.5),(int)(z-1.0)));
-                }catch(Exception e){ e.printStackTrace(); refreshObserves(); }
-            }};
+            new Evaluator(this){ public void evaluate(){ try{
+                contentList("position",list((int)(x-1.0),(int)(y-2.5),(int)(z-1.0)));
+            }catch(Exception e){ e.printStackTrace(); }}};
         }
     }
 }

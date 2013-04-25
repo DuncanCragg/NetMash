@@ -56,13 +56,39 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
 
     // ------------------------------------
 
+    World world=null;
+
     public void tick(float var1, Minecraft minecraft){
+        world=world();
+        if(world==null) return;
+        if(isWorld){
+            new Evaluator(this){ public void evaluate(){ try{
+                doStats();
+            }catch(Exception e){ e.printStackTrace(); }}};
+            while(true){
+                LinkedList placing=placingQ.poll();
+                if(placing==null) break;
+                doPlacing(placing);
+            }
+        }
+        else{
+            new Evaluator(this){ public void evaluate(){ try{
+                doScanning(contentList("spell:scanning"));
+            }catch(Exception e){ e.printStackTrace(); }}};
+        }
+    }
 
-        if(isWorld) while(true){ LinkedList placing=placingQ.poll(); if(placing==null) return; doPlacing(placing); }
-
-        new Evaluator(this){ public void evaluate(){ try{
-            doScanning(contentList("spell:scanning"));
-        }catch(Exception e){ e.printStackTrace(); }}};
+    private void doStats(){
+        int ts=(int)(5*(world.getTotalWorldTime()/100));
+        int td=(int)(5*(world.getWorldTime()/100));
+        if(contentInt("time-stamp")==ts) return;
+        contentInt(   "time-stamp", ts);
+        contentInt(   "time-of-day",td);
+        contentBool(  "daytime",       world.isDaytime());
+        contentBool(  "raining",       world.isRaining());
+        contentDouble("rain-strength", world.getRainStrength(1));
+        contentBool(  "thundering",    world.isThundering());
+        content(      "seed",       ""+world.getSeed());
     }
 
     private void doScanning(LinkedList scanning){
@@ -183,14 +209,12 @@ logXX("scan list",il);
     }
 
     private void ensureBlockAt(int x, int y, int z, String name){
-        if(world()==null) return;
         Integer id=blockNames.get(name);
-        if(id!=null && id!=world().getBlockId(x,y,z)){ logXX("setBlock",x,y,z,id); world().setBlock(x,y,z, id); }
+        if(id!=null && id!=world.getBlockId(x,y,z)){ logXX("setBlock",x,y,z,id); world.setBlock(x,y,z, id); }
     }
 
     private String getBlockAt(int x, int y, int z){
-        if(world()==null) return null;
-        int id=world().getBlockId(x,y,z);
+        int id=world.getBlockId(x,y,z);
         if(id<0 || id>=200) return null;
         return blockIds.get(id);
     }
