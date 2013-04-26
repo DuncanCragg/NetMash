@@ -33,7 +33,8 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     public void evaluate(){ try{
         LinkedList rules=getEvalRules();
-        if(anylogging) System.out.println("==================================================\nRunning CyrusLanguage on "+uid+": "+(extralogging? contentHash("#"): this.toString(true)));
+        if(anylogging) System.out.println("==================================================\nRunning CyrusLanguage on "
+                                            +uid+(extralogging? ": "+contentHash("#"): ""));
         boolean modified=statemod;
         contentRemove("MaxLoopsReached");
         int maxloops=contentInt("MaxLoops"); if(maxloops<=0) maxloops=MAX_LOOPS;

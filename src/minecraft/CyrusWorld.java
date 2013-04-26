@@ -113,7 +113,6 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
     private void doScanning(LinkedList scanning){
         if(scanning==null) return;
         if(scanning.size()==4 && scanning.get(2).equals("at")){
-            // scanning: blocks ( 5 1 5 ) at ( -500 80 200 )
             String scanfor=scanning.get(0).toString();
             LinkedList shape=findListIn(scanning.get(1));
             LinkedList at   =findListIn(scanning.get(3));
@@ -151,7 +150,6 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
             il.add(jl);
         }
         if(!il.equals(contentList("list"))){
-logXX("block list",il);
             contentList("sub-items", null);
             contentList("list",il);
             notifying(content("scanner"));
@@ -185,7 +183,6 @@ logXX("block list",il);
             }
         }
         if(!ll.equals(contentList("sub-items"))){
-logXX("entities",ll);
             contentList("list",null);
             contentList("sub-items", ll);
             notifying(content("scanner"));
@@ -194,8 +191,6 @@ logXX("entities",ll);
 
     private void doPlacing(LinkedList placing){
         if(placing.size()==3 && placing.get(1).equals("at")){
-            // glass at ( -480 70 202 )
-            // ((( stone glass )( dirt sand-stone ))(( grass air )( planks sand ))) at ( -480 70 202 )
             LinkedList at=findListIn(placing.get(2));
             if(at!=null && at.size()==3){
                 Integer atx=getIntFromList(at,0);
@@ -232,7 +227,6 @@ logXX("entities",ll);
         }
         else
         if(placing.size()==5 && placing.get(1).equals("box") && placing.get(3).equals("at")){
-            // glass box ( 4 8 16 ) at ( -480 70 202 )
             LinkedList shape=findListIn(placing.get(2));
             LinkedList at   =findListIn(placing.get(4));
             if(at!=null && at.size()==3 && shape!=null && shape.size()==3){
@@ -270,7 +264,7 @@ logXX("entities",ll);
 
     private void ensureBlockAt(int x, int y, int z, String name){
         Integer id=blockNames.get(name);
-        if(id!=null && id!=world.getBlockId(x,y,z)){ logXX("setBlock",x,y,z,id); world.setBlock(x,y,z, id); }
+        if(id!=null && id!=world.getBlockId(x,y,z)) world.setBlock(x,y,z, id);
     }
 
     private String getBlockAt(int x, int y, int z){
