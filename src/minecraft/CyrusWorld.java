@@ -11,23 +11,35 @@ import net.minecraft.server.MinecraftServer;
 
 public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
 
-    private boolean isWorld=true;
+    private String hasType="world";
 
     public CyrusWorld(){
         setUpBlockNames();
         mod_Cyrus.modCyrus.registerTicks(this);
     }
 
-    public CyrusWorld(String worlduid, String spelluid){
-        super("{ \"is\": [ \"minecraft\", \"block\", \"list\" ],\n"+
-              "  \"world\": \""+worlduid+"\",\n"+
-              "  \"spell\": \""+spelluid+"\"\n"+
+    public CyrusWorld(String type, String name, LinkedList position){
+        super("{ \"is\": [ \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
+              "  \"name\": \""+name+"\",\n"+
+              "  \"position\": "+nonStringListToListString(position)+"\n"+
               "}");
-        isWorld=false;
+        hasType="entity";
+    }
+
+    public CyrusWorld(String worlduid, String scanneruid){
+        super("{ \"is\": [ \"3d\", \"minecraft\", \"world-view\" ],\n"+
+              "  \"world\": \""+worlduid+"\",\n"+
+              "  \"scanner\": \""+scanneruid+"\"\n"+
+              "}");
+        hasType="worldview";
         mod_Cyrus.modCyrus.registerTicks(this);
     }
 
-    public void evaluate(){ if(isWorld) evaluateWorld(); else evaluateWorldView(); }
+    public void evaluate(){
+        if("world"    .equals(hasType)) evaluateWorld(); else
+        if("worldview".equals(hasType)) evaluateWorldView(); else
+        if("entity"   .equals(hasType)) evaluateEntity();
+    }
 
     private void evaluateWorld(){
         for(String alerted: alerted()){
@@ -40,14 +52,17 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         }
     }
 
-    private void addForScanning(String spelluid,LinkedList scanning){
+    private void addForScanning(String scanneruid,LinkedList scanning){
         if(scanning==null) return;
-        if(contentListContains("scanners", spelluid)) return;
-        contentListAdd(        "scanners", spelluid);
-        contentListAdd("block-lists", spawn(new CyrusWorld(uid,spelluid)));
+        if(contentListContains("scanners", scanneruid)) return;
+        contentListAdd(        "scanners", scanneruid);
+        contentListAdd("scans", spawn(new CyrusWorld(uid,scanneruid)));
     }
 
     private void evaluateWorldView(){
+    }
+
+    private void evaluateEntity(){
     }
 
     ConcurrentLinkedQueue<LinkedList> placingQ =new ConcurrentLinkedQueue<LinkedList>();
@@ -57,11 +72,12 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
     // ------------------------------------
 
     World world=null;
+    int tickNum=0;
 
     public void tick(float var1, Minecraft minecraft){
         world=world();
         if(world==null) return;
-        if(isWorld){
+        if("world".equals(hasType)){
             new Evaluator(this){ public void evaluate(){ try{
                 doStats();
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
@@ -71,10 +87,13 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                 doPlacing(placing);
             }
         }
-        else{
-            new Evaluator(this){ public void evaluate(){ try{
-                doScanning(contentList("spell:scanning"));
-            }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
+        else
+        if("worldview".equals(hasType)){
+            if(++tickNum > 10){ tickNum=0;
+                new Evaluator(this){ public void evaluate(){ try{
+                    doScanning(contentList("scanner:scanning"));
+                }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
+            }
         }
     }
 
@@ -93,8 +112,9 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
 
     private void doScanning(LinkedList scanning){
         if(scanning==null) return;
-        if(scanning.size()==4 && scanning.get(0).equals("box") && scanning.get(2).equals("at")){
-            // scanning: box ( 50 10 50 ) at ( -500 80 200 )
+        if(scanning.size()==4 && scanning.get(2).equals("at")){
+            // scanning: blocks ( 5 1 5 ) at ( -500 80 200 )
+            String scanfor=scanning.get(0).toString();
             LinkedList shape=findListIn(scanning.get(1));
             LinkedList at   =findListIn(scanning.get(3));
             if(at!=null && at.size()==3 && shape!=null && shape.size()==3){
@@ -107,28 +127,68 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                     Integer atz=getIntFromList(at,2);
                     if(atx==null || aty==null || atz==null) return;
                     contentList("position", at);
-                    if(shx>10) shx=10;
-                    if(shy>10) shy=10;
-                    if(shz>10) shz=10;
-                    final LinkedList il=new LinkedList();
-                    for(int i=0; i<shx; i++){
-                        LinkedList jl=new LinkedList();
-                        for(int j=0; j<shy; j++){
-                            LinkedList kl=new LinkedList();
-                            for(int k=0; k<shz; k++){
-                                kl.add(getBlockAt(atx+i,aty+j,atz+k));
-                            }
-                            jl.add(kl);
-                        }
-                        il.add(jl);
-                    }
-                    if(!il.equals(contentList("list"))){
-logXX("scan list",il);
-                        contentList("list",il);
-                        notifying(content("spell"));
-                    }
+                    if("blocks"  .equals(scanfor)) getBlockListAround(atx, aty, atz, shx, shy, shz);
+                    if("entities".equals(scanfor)) getSubItemsAround( atx, aty, atz, shx, shy, shz);
                 }
             }
+        }
+    }
+
+    private void getBlockListAround(int atx, int aty, int atz, int shx, int shy, int shz){
+        if(shx>10) shx=10;
+        if(shy>10) shy=10;
+        if(shz>10) shz=10;
+        final LinkedList il=new LinkedList();
+        for(int i=0; i<shx; i++){
+            LinkedList jl=new LinkedList();
+            for(int j=0; j<shy; j++){
+                LinkedList kl=new LinkedList();
+                for(int k=0; k<shz; k++){
+                    kl.add(getBlockAt(atx+i,aty+j,atz+k));
+                }
+                jl.add(kl);
+            }
+            il.add(jl);
+        }
+        if(!il.equals(contentList("list"))){
+logXX("block list",il);
+            contentList("sub-items", null);
+            contentList("list",il);
+            notifying(content("scanner"));
+        }
+    }
+
+    LinkedHashMap<Integer,String> entityObs=new LinkedHashMap<Integer,String>();
+
+    private void getSubItemsAround(int atx, int aty, int atz, int shx, int shy, int shz){
+        if(shx>100) shx=100;
+        if(shy>100) shy=100;
+        if(shz>100) shz=100;
+        List entities=world.getLoadedEntityList();
+        LinkedList ll=new LinkedList();
+        for(int i=0; i< entities.size(); i++){
+            Entity e=(Entity)entities.get(i);
+            if(e.posX >atx && e.posX<atx+shx &&
+               e.posY >aty && e.posY<aty+shy &&
+               e.posZ >atz && e.posZ<atz+shz   ){
+                int        id  =e.entityId;
+                String     type=e.getEntityName().toLowerCase();
+                String     name=e.getEntityName()+" "+id;
+                LinkedList position=list(e.posX, e.posY, e.posZ);
+                if(type.startsWith("player")){ name=type; type="player"; }
+                String euid=entityObs.get(id);
+                if(euid==null){ euid=spawn(new CyrusWorld(type,name,position)); entityObs.put(id,euid); }
+                LinkedHashMap hm=new LinkedHashMap();
+                hm.put("item", euid);
+                hm.put("position", position);
+                ll.add(hm);
+            }
+        }
+        if(!ll.equals(contentList("sub-items"))){
+logXX("entities",ll);
+            contentList("list",null);
+            contentList("sub-items", ll);
+            notifying(content("scanner"));
         }
     }
 

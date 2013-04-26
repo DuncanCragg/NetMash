@@ -329,6 +329,14 @@ public class Utils{
         return r;
     }
 
+    static public String nonStringListToListString(LinkedList list){
+        if(list.size()==0) return "[ ]";
+        String r="[";
+        for(Object o: list) r+=" "+o+",";
+        r=r.substring(0, r.length()-1);
+        return r+" ]";
+    }
+
     static public String setToListString(Iterable<String> set){ return setToListString(set,false); }
 
     static public String setToListString(Iterable<String> set, boolean cyrus){
