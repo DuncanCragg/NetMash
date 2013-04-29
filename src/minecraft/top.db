@@ -30,17 +30,16 @@
         "  Rules: {"
         "  }"
         "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
-        "  player: http://localhost:8084/o/uid-06b6-4631-166a-b013.json"
         "}"
         "]|"
         "If you hit the link after 'world:', you'll be able to see the state of the world - time of day, raining or snowing."
-        "If you hit the link after 'player:', you'll be able to see your player coordinates in the world. Watch it change as you move around. Copy the three coordinates - you're going to need them in the next step."
+        "If you then hit the link after 'player:', you'll be able to see your player coordinates in the world. Watch it change as you move around. Copy the three coordinates - you're going to need them in the next step. Hit refresh to get back to the top."
 }
 
 { UID: uid-4ee8-9084-8ab0-6a2b
   is: article
   title: "Placing some blocks"
-  text: "Now edit the spell - by selecting the text apart from the links:"
+  text: "Now edit the spell - by hitting the text, apart from the links:"
         "|["
         "{ is: editable minecraft spell"
         "  title: \"First Cyrus Spell\""
@@ -50,7 +49,6 @@
       "![    Notifying: => @. with @world]!"
         " }"
         "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
-        "  player: http://localhost:8084/o/uid-06b6-4631-166a-b013.json"
         "}"
         "]|"
         "/[Note: you must set the coordinates 'x y z' to your own player coordinates, copied from the player: object.]/"
@@ -70,7 +68,7 @@
         "|["
         "  Rules: {"
         "    is: spell rule"
-      "![    placing: => glass box ( 1 1 1 ) at ( @player:position + ( 3 0 3 ))]!"
+      "![    placing: => glass box ( 1 1 1 ) at ( @world:player:position + ( 3 0 3 ))]!"
         "    Notifying: => @. with @world"
         "  }"
         "]|"
@@ -84,8 +82,8 @@
         "|["
         "  Rules: {"
         "    is: spell rule"
-        "    placing: => glass box ( 1 1 1 ) at ( @player:position + ( 3 0 3 ))"
-      "![    scanning: =>      blocks ( 2 3 4 ) at ( @player:position + ( 0 -50 0 ))]!"
+        "    placing: => glass box ( 1 1 1 ) at ( @world:player:position + ( 3 0 3 ))"
+      "![    scanning: =>      blocks ( 2 3 4 ) at ( @world:player:position + ( 0 -50 0 ))]!"
         "    Notifying: => @. with @world"
         "  }"
         "]|"
@@ -123,17 +121,11 @@
   title: "First Cyrus Spell"
   Rules: {}
   world: uid-b1d8-d170-a3d9-e693
-  player: uid-06b6-4631-166a-b013
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
   Class: net.minecraft.src.MinecraftWorld
   is: queryable updatable 3d minecraft world
-}
-
-{ UID: uid-06b6-4631-166a-b013
-  Class: net.minecraft.src.MinecraftEntity
-  is: 3d minecraft player
 }
 
 { UID: uid-fb97-b02c-e69b-90dd
@@ -155,7 +147,6 @@
   spell: alchemy
   casting: false
   world: uid-b1d8-d170-a3d9-e693
-  player: uid-06b6-4631-166a-b013
 }
 
 { UID: uid-7348-7203-31f7-4a13
@@ -163,8 +154,8 @@
   when: "run, set scanning area"
   spell: alchemy
   casting: true => false
-  player: { position: * }
-  position: => @player:position + (3 1 0)
+  world: { player: { position: * }}
+  position: => @world:player:position + (3 1 0)
   scanning: => blocks ( 2 2 2 ) at @position
   scan-blocks: => #
   placing: => glass box ( 4 4 4 ) at (@position + (-1 -1 -1))
@@ -186,7 +177,6 @@
   spell: pyramid
   casting: false
   world: uid-b1d8-d170-a3d9-e693
-  player: uid-06b6-4631-166a-b013
   width: 7
   height: 30
   taper: 1
@@ -198,8 +188,8 @@
   when: "pyramid constructor filled in, set up to build"
   spell: pyramid
   casting: true => false
-  player: { position: * }
-  position: => @player:position
+  world: { player: { position: * }}
+  position: => @world:player:position
   h: => 0
   w: => @width
   i: => 0

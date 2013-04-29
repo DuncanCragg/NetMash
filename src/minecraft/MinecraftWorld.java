@@ -13,10 +13,7 @@ public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
 
     private String hasType="world";
 
-    public MinecraftWorld(){
-        setUpBlockNames();
-        mod_Cyrus.modCyrus.registerTicks(this);
-    }
+    public MinecraftWorld(){}
 
     public MinecraftWorld(String worlduid, String scanneruid){
         super("{ \"is\": [ \"3d\", \"minecraft\", \"world-view\" ],\n"+
@@ -33,6 +30,11 @@ public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
     }
 
     private void evaluateWorld(){
+        if(blockNames.get("air")==null){
+            setUpBlockNames();
+            mod_Cyrus.modCyrus.registerTicks(this);
+            content("player", spawn(new MinecraftEntity()));
+        }
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentListContainsAll("Alerted:is",list("minecraft","spell"))){
@@ -267,7 +269,6 @@ public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
     static public ArrayList<String>             blockIds   = new ArrayList<String>(200);
 
     static private void setUpBlockNames(){
-        if(blockNames.get("air")!=null) return;
         blockNames.put("air", 0); blockIds.add(0, "air");
         blockNames.put("stone", 1); blockIds.add(1, "stone");
         blockNames.put("grass", 2); blockIds.add(2, "grass");

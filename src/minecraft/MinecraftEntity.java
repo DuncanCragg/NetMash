@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 public class MinecraftEntity extends WebObject implements mod_Cyrus.Tickable {
 
     public MinecraftEntity(){
+        super("{ \"is\": [ \"3d\", \"minecraft\", \"player\", \"entity\" ],\n}");
         mod_Cyrus.modCyrus.registerTicks(this);
     }
 
