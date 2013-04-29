@@ -342,15 +342,15 @@ public class Utils{
     static public String setToListString(Iterable<String> set, boolean cyrus){
         String q=cyrus? "": "\"";
         String c=cyrus? "": ",";
-        String s=cyrus? "(": "[";
-        String e=cyrus? ")": "]";
+        String s=cyrus? "": "[";
+        String e=cyrus? "": "]";
         Iterator<String> i = set.iterator();
-        if(!i.hasNext()) return cyrus? "( )": "[ ]";
+        if(!i.hasNext()) return cyrus? "": "[ ]";
         String r = s;
         do{ r+=" "+q+i.next()+q+c; }while(i.hasNext());
         if(!cyrus) r=r.substring(0, r.length()-1);
         r+=" "+e;
-        return r;
+        return r.trim();
     }
 
     static public <T> Iterable<T> in(Iterable<T> l){ return l!=null? l: Collections.<T>emptyList(); }
