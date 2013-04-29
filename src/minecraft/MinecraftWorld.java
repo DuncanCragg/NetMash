@@ -9,16 +9,16 @@ import static cyrus.lib.Utils.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 
-public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
+public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
 
     private String hasType="world";
 
-    public CyrusWorld(){
+    public MinecraftWorld(){
         setUpBlockNames();
         mod_Cyrus.modCyrus.registerTicks(this);
     }
 
-    public CyrusWorld(String type, String name, LinkedList position){
+    public MinecraftWorld(String type, String name, LinkedList position){
         super("{ \"is\": [ \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
               "  \"name\": \""+name+"\",\n"+
               "  \"position\": "+nonStringListToListString(position)+"\n"+
@@ -26,7 +26,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         hasType="entity";
     }
 
-    public CyrusWorld(String worlduid, String scanneruid){
+    public MinecraftWorld(String worlduid, String scanneruid){
         super("{ \"is\": [ \"3d\", \"minecraft\", \"world-view\" ],\n"+
               "  \"world\": \""+worlduid+"\",\n"+
               "  \"scanner\": \""+scanneruid+"\"\n"+
@@ -56,7 +56,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
         if(scanning==null) return;
         if(contentListContains("scanners", scanneruid)) return;
         contentListAdd(        "scanners", scanneruid);
-        contentListAdd("scans", spawn(new CyrusWorld(uid,scanneruid)));
+        contentListAdd("scans", spawn(new MinecraftWorld(uid,scanneruid)));
     }
 
     private void evaluateWorldView(){
@@ -175,7 +175,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
                 LinkedList position=list(e.posX, e.posY, e.posZ);
                 if(type.startsWith("player")){ name=type; type="player"; }
                 String euid=entityObs.get(id);
-                if(euid==null){ euid=spawn(new CyrusWorld(type,name,position)); entityObs.put(id,euid); }
+                if(euid==null){ euid=spawn(new MinecraftWorld(type,name,position)); entityObs.put(id,euid); }
                 LinkedHashMap hm=new LinkedHashMap();
                 hm.put("item", euid);
                 hm.put("position", position);

@@ -6,9 +6,9 @@ import static cyrus.lib.Utils.*;
 
 import net.minecraft.client.Minecraft;
 
-public class CyrusUser extends WebObject implements mod_Cyrus.Tickable {
+public class MinecraftEntity extends WebObject implements mod_Cyrus.Tickable {
 
-    public CyrusUser(){
+    public MinecraftEntity(){
         mod_Cyrus.modCyrus.registerTicks(this);
     }
 

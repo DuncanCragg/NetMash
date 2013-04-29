@@ -127,12 +127,12 @@
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
-  Class: net.minecraft.src.CyrusWorld
+  Class: net.minecraft.src.MinecraftWorld
   is: queryable updatable 3d minecraft world
 }
 
 { UID: uid-06b6-4631-166a-b013
-  Class: net.minecraft.src.CyrusUser
+  Class: net.minecraft.src.MinecraftEntity
   is: 3d minecraft player
 }
 
