@@ -18,27 +18,18 @@ public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
         mod_Cyrus.modCyrus.registerTicks(this);
     }
 
-    public MinecraftWorld(String type, String name, LinkedList position){
-        super("{ \"is\": [ \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
-              "  \"name\": \""+name+"\",\n"+
-              "  \"position\": "+nonStringListToListString(position)+"\n"+
-              "}");
-        hasType="entity";
-    }
-
     public MinecraftWorld(String worlduid, String scanneruid){
         super("{ \"is\": [ \"3d\", \"minecraft\", \"world-view\" ],\n"+
               "  \"world\": \""+worlduid+"\",\n"+
               "  \"scanner\": \""+scanneruid+"\"\n"+
               "}");
-        hasType="worldview";
+        hasType="world-view";
         mod_Cyrus.modCyrus.registerTicks(this);
     }
 
     public void evaluate(){
-        if("world"    .equals(hasType)) evaluateWorld(); else
-        if("worldview".equals(hasType)) evaluateWorldView(); else
-        if("entity"   .equals(hasType)) evaluateEntity();
+        if("world"     .equals(hasType)) evaluateWorld(); else
+        if("world-view".equals(hasType)) evaluateWorldView();
     }
 
     private void evaluateWorld(){
@@ -60,9 +51,6 @@ public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
     }
 
     private void evaluateWorldView(){
-    }
-
-    private void evaluateEntity(){
     }
 
     ConcurrentLinkedQueue<LinkedList> placingQ =new ConcurrentLinkedQueue<LinkedList>();
@@ -88,7 +76,7 @@ public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
             }
         }
         else
-        if("worldview".equals(hasType)){
+        if("world-view".equals(hasType)){
             if(++tickNum > 10){ tickNum=0;
                 new Evaluator(this){ public void evaluate(){ try{
                     doScanning(contentList("scanner:scanning"));
@@ -175,7 +163,7 @@ public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
                 LinkedList position=list(e.posX, e.posY, e.posZ);
                 if(type.startsWith("player")){ name=type; type="player"; }
                 String euid=entityObs.get(id);
-                if(euid==null){ euid=spawn(new MinecraftWorld(type,name,position)); entityObs.put(id,euid); }
+                if(euid==null){ euid=spawn(new MinecraftEntity(type,name,position)); entityObs.put(id,euid); }
                 LinkedHashMap hm=new LinkedHashMap();
                 hm.put("item", euid);
                 hm.put("position", position);

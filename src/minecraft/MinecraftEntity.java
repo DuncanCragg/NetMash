@@ -1,5 +1,8 @@
 package net.minecraft.src;
 
+import java.util.*;
+import java.util.concurrent.*;
+
 import cyrus.forest.WebObject;
 
 import static cyrus.lib.Utils.*;
@@ -10,6 +13,16 @@ public class MinecraftEntity extends WebObject implements mod_Cyrus.Tickable {
 
     public MinecraftEntity(){
         mod_Cyrus.modCyrus.registerTicks(this);
+    }
+
+    public MinecraftEntity(String type, String name, LinkedList position){
+        super("{ \"is\": [ \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
+              "  \"name\": \""+name+"\",\n"+
+              "  \"position\": "+nonStringListToListString(position)+"\n"+
+              "}");
+    }
+
+    public void evaluate(){
     }
 
     private double x=30000000,y=30000000,z=30000000;
