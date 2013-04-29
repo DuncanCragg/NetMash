@@ -32,15 +32,16 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     public void evaluate(){ try{
-        LinkedList rules=getEvalRules();
+        Object am=contentObject("is"); if(am==null) am=contentHash("#");
         if(anylogging) System.out.println("==================================================\nRunning CyrusLanguage on "
-                                            +uid+(extralogging? ": "+contentHash("#"): ""));
+                                            +uid+" "+am+(extralogging? ":\n"+contentHash("#"): ""));
         boolean modified=statemod;
+        LinkedList rules=getEvalRules();
         contentRemove("MaxLoopsReached");
         int maxloops=contentInt("MaxLoops"); if(maxloops<=0) maxloops=MAX_LOOPS;
         int i=0; for(; i<maxloops; i++){
             statemod=false;
-            if(!(i==0 && rules.size() >0)) rules=contentAsList("Rules");   if(extralogging) log("Rules: "+rules);
+            if(!(i==0 && rules.size() >0)) rules=getGlobalAndLocalRules();   if(extralogging) log("Rules: "+rules);
             if(rules==null || rules.size()==0) break;
             for(Object rule: rules){
                 if(rule instanceof String) contentTempObserve("Rule", (String)rule);
@@ -75,6 +76,14 @@ public class CyrusLanguage extends WebObject {
             contentTemp("Temp", null);
         }
         return evalrules;
+    }
+
+    private LinkedList getGlobalAndLocalRules(){
+        if(contentIsOrListContains("is","rule")) return null;
+        LinkedList globlocrules=new LinkedList();
+        maybeAddAll(globlocrules, Kernel.config.listPathN("rules:global-rules"));
+        maybeAddAll(globlocrules, contentAsList("Rules"));
+        return globlocrules;
     }
 
     private void runRule(){
@@ -1178,6 +1187,9 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void maybeAdd(LinkedList ll, Object val){ if(val!=null) ll.add(val); }
+
+    @SuppressWarnings("unchecked")
+    private void maybeAddAll(LinkedList ll, LinkedList la){ if(la!=null) ll.addAll(la); }
 
     @SuppressWarnings("unchecked")
     private void maybeAddWM(LinkedList ll, Object val, boolean wm){ if(val!=null && !(wm && ll.contains(val))) ll.add(val); }
