@@ -12,9 +12,10 @@ import net.minecraft.client.Minecraft;
 
 public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable {
 
-    public MinecraftEntity(){
+    public MinecraftEntity(){}
+
+    public MinecraftEntity(String nothing){
         super("{ \"is\": [ \"3d\", \"minecraft\", \"player\", \"entity\" ],\n}");
-        mod_Cyrus.modCyrus.registerTicks(this);
     }
 
     public MinecraftEntity(String type, String name, LinkedList position){
@@ -22,6 +23,13 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
               "  \"name\": \""+name+"\",\n"+
               "  \"position\": "+nonStringListToListString(position)+"\n"+
               "}");
+    }
+
+    boolean running=false;
+
+    public void evaluate(){
+        super.evaluate();
+        if(!running){ running=true; mod_Cyrus.modCyrus.registerTicks(this); }
     }
 
     private double x=30000000,y=30000000,z=30000000;

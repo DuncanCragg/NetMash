@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import java.util.*;
 import java.util.concurrent.*;
+
+import cyrus.forest.CyrusLanguage;
 import cyrus.forest.WebObject;
 
 import static cyrus.lib.Utils.*;
@@ -9,9 +11,7 @@ import static cyrus.lib.Utils.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 
-public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
-
-    private String hasType="world";
+public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable {
 
     public MinecraftWorld(){}
 
@@ -20,20 +20,26 @@ public class MinecraftWorld extends WebObject implements mod_Cyrus.Tickable {
               "  \"world\": \""+worlduid+"\",\n"+
               "  \"scanner\": \""+scanneruid+"\"\n"+
               "}");
-        hasType="world-view";
-        mod_Cyrus.modCyrus.registerTicks(this);
     }
 
+    private String hasType;
+
+    boolean running=false;
+
     public void evaluate(){
+        if(contentIsOrListContains("is","world"))      hasType="world";
+        if(contentIsOrListContains("is","world-view")) hasType="world-view";
         if("world"     .equals(hasType)) evaluateWorld(); else
         if("world-view".equals(hasType)) evaluateWorldView();
+        super.evaluate();
+        if(!running){ running=true; mod_Cyrus.modCyrus.registerTicks(this); }
     }
 
     private void evaluateWorld(){
         if(blockNames.get("air")==null){
             setUpBlockNames();
             mod_Cyrus.modCyrus.registerTicks(this);
-            content("player", spawn(new MinecraftEntity()));
+            content("player", spawn(new MinecraftEntity("")));
         }
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
