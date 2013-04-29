@@ -1083,7 +1083,6 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private Object copyMoreHash(LinkedHashMap<String,Object> hm, LinkedHashMap<String,Object> ha, String lep, Object lev, boolean wm){
-        boolean spawned=false;
         LinkedHashMap r=new LinkedHashMap();
         LinkedHashMap<String,Object> hx=new LinkedHashMap<String,Object>();
         if(ha!=null) for(Map.Entry<String,Object> entry: ha.entrySet()){
@@ -1105,10 +1104,9 @@ public class CyrusLanguage extends WebObject {
             if(isRef(k)) continue;
             Object a=entry.getValue();
             if(hm!=null && hm.get(k)!=null) continue;
-            if(k.equals("UID")){ if(a.equals("new")) spawned=true; }
-            else maybePut(r, k, copyMoreObject(a,null,lep,lev,wm,false));
+            maybePut(r, k, copyMoreObject(a,null,lep,lev,wm,false));
         }
-        return spawned? spawnHash(r): r;
+        return r;
     }
 
     @SuppressWarnings("unchecked")
