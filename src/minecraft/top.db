@@ -1,3 +1,9 @@
+{ UID: uid-3b90-6720-d64f-a87c
+  is: minecraft player entity rule
+  when: "position updates, set copy of it"
+  pos: => @position
+}
+
 { UID: uid-1044-e6e9-125e-e35c
   is: gui
   title: "Cyrus Minecraft Spell Tutorial"
