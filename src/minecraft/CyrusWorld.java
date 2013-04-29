@@ -75,7 +75,7 @@ public class CyrusWorld extends WebObject implements mod_Cyrus.Tickable {
     int tickNum=0;
 
     public void tick(float var1, Minecraft minecraft){
-        world=world();
+        world=world();  // minecraft.theWorld?
         if(world==null) return;
         if("world".equals(hasType)){
             new Evaluator(this){ public void evaluate(){ try{

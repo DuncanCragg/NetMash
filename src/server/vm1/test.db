@@ -267,7 +267,7 @@
   is: fx dealer rule
   when: "FX order comes in start building ticket. spawn and add ticket to tickets list"
   Alerted: { is: fx order ticket: # }
-  tickets: => @. with {
+  tickets: { order: @Alerted } !=> @. with {
     UID: new
     Rules: uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377
     is: fx ticket
