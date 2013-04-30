@@ -39,7 +39,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         if(blockNames.get("air")==null) setUpBlockNames();
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
-            if(contentListContainsAll("Alerted:is",list("minecraft","spell"))){
+            if(contentIsOrListContains("Alerted:is", "minecraft")){
                 addForScanning(alerted, contentList("Alerted:scanning"));
                 addForPlacing(          contentList("Alerted:placing"));
             }

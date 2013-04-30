@@ -1,16 +1,11 @@
-{ UID: uid-3b90-6720-d64f-a87c
-  is: minecraft cow rule
-  when: "position updates, set copy of it"
-  cow-pos: => @position
-}
-
 { UID: uid-1044-e6e9-125e-e35c
   is: gui
-  title: "Cyrus Minecraft Spell Tutorial"
+  title: "Cyrus Minecraft Tutorial"
   view:
     { is: style direction: horizontal }
     { view: open     item: uid-5a7a-16e9-508f-2f65 }
     { view: open raw item: uid-27c9-154b-c4bf-0453 }
+    { view: open raw item: uid-3b90-6720-d64f-a87c }
 }
 
 { UID: uid-5a7a-16e9-508f-2f65
@@ -28,12 +23,12 @@
 { UID: uid-3592-f387-6662-8d44
   is: article
   title: "Welcome to Cyrus for Minecraft Programming"
-  text: "Cyrus lets you program Minecraft with 'spells'."
-        "On the right you'll see your first Minecraft spell."
+  text: "Cyrus lets you program Minecraft with rules."
+        "On the right you'll see your first Minecraft rule."
         "It should look something like this:"
         "|["
-        "{ is: editable minecraft spell"
-        "  title: \"First Cyrus Spell\""
+        "{ is: editable minecraft"
+        "  title: \"\""
         "  Rules: {"
         "  }"
         "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
@@ -46,12 +41,12 @@
 { UID: uid-4ee8-9084-8ab0-6a2b
   is: article
   title: "Placing some blocks"
-  text: "Now edit the spell - by hitting the text, apart from the links:"
+  text: "Now edit the rule - by hitting the text, apart from the links:"
         "|["
-        "{ is: editable minecraft spell"
-        "  title: \"First Cyrus Spell\""
+        "{ is: editable minecraft"
+        "  title: \"\""
         "  Rules: {"
-      "![    is: spell rule]!"
+      "![    is: minecraft rule]!"
       "![    placing: => glass box ( 1 1 1 ) at ( x y z )]!"
       "![    Notifying: => @. with @world]!"
         " }"
@@ -74,7 +69,7 @@
         "You may have thought that it's a bit clumsy finding and setting the player coordinates ourselves. So let's get the spell to do it for us:"
         "|["
         "  Rules: {"
-        "    is: spell rule"
+        "    is: minecraft rule"
       "![    placing: => glass box ( 1 1 1 ) at ( @world:player:position + ( 3 0 3 ))]!"
         "    Notifying: => @. with @world"
         "  }"
@@ -88,7 +83,7 @@
   text: "Now let's add a scanner to the spell, which tells the world we'd like to be updated on the blocks in some region. The region will be -50 down from where we stand:"
         "|["
         "  Rules: {"
-        "    is: spell rule"
+        "    is: minecraft rule"
         "    placing: => glass box ( 1 1 1 ) at ( @world:player:position + ( 3 0 3 ))"
       "![    scanning: => blocks ( 2 3 4 ) at ( @world:player:position + ( 0 -50 0 ))]!"
         "    Notifying: => @. with @world"
@@ -98,7 +93,7 @@
         "Going to the world object to see our results is a bit inconvenient. Luckily the world tells the spell about them. The other end of 'Notifying' is 'Alerted':"
         "|["
       "![  {]!"
-      "![    is: spell rule]!"
+      "![    is: minecraft rule]!"
       "![    Alerted: { is: minecraft world-view }]!"
       "![    scan: # => @Alerted]!"
       "![  } ]!"
@@ -115,12 +110,12 @@
   text: "Looking for cows, zombies, users:"
         "|["
         "  Rules: {"
-        "    is: spell rule"
+        "    is: minecraft rule"
       "![    scanning: => entities ( 20 3 20 ) at ( @world:player:position + ( -10 -1 -10 ))]!"
         "    Notifying: => @. with @world"
         "  }"
         "  {"
-        "    is: spell rule"
+        "    is: minecraft rule"
         "    Alerted: { is: minecraft world-view }"
         "    scan: # => @Alerted"
         "  }"
@@ -129,23 +124,16 @@
 
 { UID: uid-1f07-587f-92de-7e44
   is: article
-  title: "Alchemy spell"
+  title: "Alchemy"
   text: "Set 'casting' to 'true' in the following. It creates a glass box inside which stone is turned to gold!"
          uid-4d0b-47d9-151c-d366
 }
 
 { UID: uid-33a7-efb7-aced-d48b
   is: article
-  title: "Pyramid spell"
+  title: "Pyramid"
   text: "Set 'casting' to 'true' in the following. It creates a pyramid with various parameters you can adjust, for width, height, taper and materials."
          uid-a70f-cd0b-c257-a901
-}
-
-{ UID: uid-27c9-154b-c4bf-0453
-  is: editable minecraft spell
-  title: "First Cyrus Spell"
-  Rules: {}
-  world: uid-b1d8-d170-a3d9-e693
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
@@ -153,31 +141,39 @@
   is: queryable updatable 3d minecraft world
 }
 
-{ UID: uid-fb97-b02c-e69b-90dd
-  is: editable minecraft spell list
-  list: uid-4d0b-47d9-151c-d366 uid-a70f-cd0b-c257-a901
+{ UID: uid-3b90-6720-d64f-a87c
+  is: minecraft cow rule
+  when: "position updates, set copy of it"
+  cow-pos: => @position
+}
+
+{ UID: uid-27c9-154b-c4bf-0453
+  is: editable minecraft
+  title: ""
+  Rules: {}
+  world: uid-b1d8-d170-a3d9-e693
 }
 
 { UID: uid-df7c-2043-f410-724f
-  is: editable minecraft spell rule
+  is: editable minecraft structure rule
   when: "scan blocks notified, save"
   Alerted: { is: minecraft world-view }
   scan-blocks: # => @Alerted
 }
 
 { UID: uid-4d0b-47d9-151c-d366
-  is: editable minecraft spell
-  title: "Cyrus Spell to transform block types"
+  is: editable minecraft structure
+  title: "Transform block types"
   Rules: uid-7348-7203-31f7-4a13 uid-df7c-2043-f410-724f uid-af69-1d57-8394-4157
-  spell: alchemy
+  structure: alchemy
   casting: false
   world: uid-b1d8-d170-a3d9-e693
 }
 
 { UID: uid-7348-7203-31f7-4a13
-  is: editable minecraft spell rule
+  is: editable minecraft structure rule
   when: "run, set scanning area"
-  spell: alchemy
+  structure: alchemy
   casting: true => false
   world: { player: { position: * }}
   position: => @world:player:position + (3 1 0)
@@ -188,7 +184,7 @@
 }
 
 { UID: uid-af69-1d57-8394-4157
-  is: editable minecraft spell rule
+  is: editable minecraft structure rule
   when: "block list updates, if certain blocks seen, convert them"
   scan-blocks: *
   placing: => (@scan-blocks:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)) at @position
@@ -196,10 +192,10 @@
 }
 
 { UID: uid-a70f-cd0b-c257-a901
-  is: editable minecraft spell
-  title: "Cyrus Spell to build Pyramids"
+  is: editable minecraft structure
+  title: "Build Pyramids"
   Rules: uid-320d-55ec-ca58-8f71 uid-77a8-38ec-e0bc-b5f1 uid-df7c-2043-f410-724f uid-4506-0c41-ac8e-4084 uid-f363-ddd9-4da2-4c73
-  spell: pyramid
+  structure: pyramid
   casting: false
   world: uid-b1d8-d170-a3d9-e693
   width: 7
@@ -209,9 +205,9 @@
 }
 
 { UID: uid-320d-55ec-ca58-8f71
-  is: editable minecraft spell rule
+  is: editable minecraft structure rule
   when: "pyramid constructor filled in, set up to build"
-  spell: pyramid
+  structure: pyramid
   casting: true => false
   world: { player: { position: * }}
   position: => @world:player:position
@@ -222,7 +218,7 @@
 }
 
 { UID: uid-77a8-38ec-e0bc-b5f1
-  is: editable minecraft spell rule
+  is: editable minecraft structure rule
   when: "run, set scanning area and notify world"
   w: *
   place-position: => @position + (( 8 - (@w / 2)) @h (8 - (@w / 2)))
@@ -232,14 +228,14 @@
 }
 
 { UID: uid-4506-0c41-ac8e-4084
-  is: editable minecraft spell rule
+  is: editable minecraft structure rule
   when: "no slab there, place it"
   scan-blocks: { position: @scan-position list: ((( !@m ))) }
   placing: => @m box ( @w 4 @w ) at @place-position
 }
 
 { UID: uid-f363-ddd9-4da2-4c73
-  is: editable minecraft spell rule
+  is: editable minecraft structure rule
   when: "slab there, increase height and decrease width at current position"
   scan-blocks: { position: @scan-position list: not ((( !@m ))) }
   placing: => #
