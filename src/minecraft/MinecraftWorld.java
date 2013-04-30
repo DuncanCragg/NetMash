@@ -190,7 +190,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         String name=e.getEntityName()+" "+id;
         if(type.startsWith("player")){ name=type; type="player"; }
         String euid=entityObs.get(id);
-        if(euid==null){ euid=(e instanceof EntityPlayer)? spawn(new MinecraftEntity("")): spawn(new MinecraftEntity(type,name)); entityObs.put(id,euid); }
+        if(euid==null){ euid=(e instanceof EntityPlayer)? spawn(new MinecraftEntity(e)): spawn(new MinecraftEntity(e,type,name)); entityObs.put(id,euid); }
         return euid;
     }
 

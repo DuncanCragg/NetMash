@@ -14,14 +14,18 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
 
     public MinecraftEntity(){}
 
-    public MinecraftEntity(String nothing){
+    Entity entity;
+
+    public MinecraftEntity(Entity e){
         super("{ \"is\": [ \"3d\", \"minecraft\", \"player\", \"entity\" ],\n}");
+        entity=e;
     }
 
-    public MinecraftEntity(String type, String name){
+    public MinecraftEntity(Entity e, String type, String name){
         super("{ \"is\": [ \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
               "  \"name\": \""+name+"\"\n"+
               "}");
+        entity=e;
     }
 
     boolean running=false;
@@ -34,10 +38,9 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
     private double x=30000000,y=30000000,z=30000000;
 
     public void tick(float var1, Minecraft minecraft){
-        EntityPlayer player=minecraft.thePlayer;
-        double px=player.posX;
-        double py=player.posY;
-        double pz=player.posZ;
+        double px=entity.posX;
+        double py=entity.posY;
+        double pz=entity.posZ;
         if(vvdist(list(x,y,z),list(px,py,pz)) >= 1){
             x=px; y=py; z=pz;
             new Evaluator(this){ public void evaluate(){ try{
