@@ -18,10 +18,9 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
         super("{ \"is\": [ \"3d\", \"minecraft\", \"player\", \"entity\" ],\n}");
     }
 
-    public MinecraftEntity(String type, String name, LinkedList position){
+    public MinecraftEntity(String type, String name){
         super("{ \"is\": [ \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
-              "  \"name\": \""+name+"\",\n"+
-              "  \"position\": "+nonStringListToListString(position)+"\n"+
+              "  \"name\": \""+name+"\"\n"+
               "}");
     }
 
