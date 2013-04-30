@@ -36,10 +36,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     }
 
     private void evaluateWorld(){
-        if(blockNames.get("air")==null){
-            setUpBlockNames();
-            mod_Cyrus.modCyrus.registerTicks(this);
-        }
+        if(blockNames.get("air")==null) setUpBlockNames();
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentListContainsAll("Alerted:is",list("minecraft","spell"))){
@@ -182,15 +179,16 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         }
     }
 
-    LinkedHashMap<Integer,String> entityObs=new LinkedHashMap<Integer,String>();
+    static LinkedHashMap<String,String> entityObs=new LinkedHashMap<String,String>();
 
     private String entityToCyrus(Entity e){
-        int    id  =e.entityId;
-        String type=e.getEntityName().toLowerCase();
-        String name=e.getEntityName()+" "+id;
-        if(type.startsWith("player")){ name=type; type="player"; }
-        String euid=entityObs.get(id);
-        if(euid==null){ euid=(e instanceof EntityPlayer)? spawn(new MinecraftEntity(e)): spawn(new MinecraftEntity(e,type,name)); entityObs.put(id,euid); }
+        String name=e.getEntityName()+"-"+e.entityId;
+        String euid=entityObs.get(name);
+        if(euid==null){
+            String type=(e instanceof EntityPlayer)? "player": e.getEntityName().toLowerCase();
+            euid=spawn(new MinecraftEntity(e,type,name));
+            entityObs.put(name,euid);
+        }
         return euid;
     }
 
