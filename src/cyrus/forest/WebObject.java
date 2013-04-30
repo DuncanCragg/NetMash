@@ -40,6 +40,7 @@ public class WebObject {
 
     private boolean copyshallow = true;
     private LinkedList<String> tempPaths = new LinkedList<String>();
+    public  boolean inevaluate = false;
     public  boolean statemod = false;
     public  boolean obsalmod = false;
     public  boolean refreshobserves = false;
@@ -192,6 +193,7 @@ public class WebObject {
 
     /** Get Object at this path. */
     public Object contentObject(String path){
+        if(!inevaluate) throw new RuntimeException("************** Content API called outside evaluate() **************");
         if(pathMatches(path,"UID"  )) return uid;
         if(pathMatches(path,"Version")) return Integer.valueOf(etag);
         try{ return updatingState.objectPath(path);
@@ -750,6 +752,7 @@ public class WebObject {
 
     /** Call to reset all changes. */
     public void rollback(){
+        inevaluate = false;
         statemod = false;
         obsalmod = false;
         refreshobserves = false;
@@ -808,6 +811,7 @@ public class WebObject {
     }
 
     private void doCopyOnWrite(String path){
+        if(!inevaluate) throw new RuntimeException("************** Content API called outside evaluate() **************");
         boolean pathshallow = !path.contains(":");
         if(updatingState==publicState){
             copyshallow = true;
@@ -833,6 +837,7 @@ public class WebObject {
     }
 
     void evalPre(){
+        inevaluate = true;
         statemod = false;
         obsalmod = false;
         refreshobserves = false;
@@ -847,6 +852,7 @@ public class WebObject {
     public void evaluate(){ }
 
     void evalPost(){
+        inevaluate = false;
         observe.addAll(alerted);
         notify.addAll(newalert);
         funcobs.dropNotifies(this);
