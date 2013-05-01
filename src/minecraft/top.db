@@ -137,12 +137,12 @@
         "Now add the following lines, and remove the 'cow-pos' line."
         "|["
         "{ is: editable minecraft cow rule"
-      "![  when: \"position updates, place yellow flower\"]!"
-      "![  placing: => plant-yellow box (1 1 1) at (@position + (0 3 0))]!"
+      "![  when: \"position updates, place paving slab\"]!"
+      "![  placing: => stone-double-slab box (1 1 1) at (@position + (0 2 0))]!"
       "![  Notifying: => @. with @world]!"
         "}"
         "]|"
-        "Now the cow will leave a trail of yellow flowers behind it."
+        "Now the cow will leave a trail of paving slabs behind it."
 }
 
 { UID: uid-1f07-587f-92de-7e44
