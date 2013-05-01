@@ -73,7 +73,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             new Evaluator(this){ public void evaluate(){ try{
                 if(!contentSet("player")){
                     EntityPlayer e=minecraft.thePlayer;
-                    String playeruid=entityToCyrus(e);
+                    String playeruid=entityToCyrus(e,uid);
                     content("player", playeruid);
                 }
                 doStats();
@@ -164,7 +164,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             if(e.posX >atx && e.posX<atx+shx &&
                e.posY >aty && e.posY<aty+shy &&
                e.posZ >atz && e.posZ<atz+shz   ){
-                String euid=entityToCyrus(e);
+                String euid=entityToCyrus(e,content("world"));
                 LinkedList position=list(e.posX, e.posY, e.posZ);
                 LinkedHashMap hm=new LinkedHashMap();
                 hm.put("item", euid);
@@ -181,12 +181,12 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
 
     static LinkedHashMap<String,String> entityObs=new LinkedHashMap<String,String>();
 
-    private String entityToCyrus(Entity e){
+    private String entityToCyrus(Entity e, String worlduid){
         String name=e.getEntityName()+"-"+e.entityId;
         String euid=entityObs.get(name);
         if(euid==null){
             String type=(e instanceof EntityPlayer)? "player": e.getEntityName().toLowerCase();
-            euid=spawn(new MinecraftEntity(e,type,name,uid));
+            euid=spawn(new MinecraftEntity(e,type,name,worlduid));
             entityObs.put(name,euid);
         }
         return euid;
