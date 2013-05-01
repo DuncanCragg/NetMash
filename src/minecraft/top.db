@@ -14,6 +14,7 @@
         uid-4ee8-9084-8ab0-6a2b
         uid-6672-f066-5321-d37f
         uid-6e91-d824-6fea-ce5c
+        uid-8c1a-79ee-15b5-94ac
         uid-1f07-587f-92de-7e44
         uid-33a7-efb7-aced-d48b
 }
@@ -110,7 +111,38 @@
         "    scan: # => @Alerted"
         "  }"
         "]|"
-        "Spawn some zombies and cows and jump the 'scan:' link to see them"
+        "Spawn some zombies and skeletons and jump the 'scan:' link to see them."
+}
+
+{ UID: uid-8c1a-79ee-15b5-94ac
+  is: article
+  title: "Dowsing the Cowpath Mod"
+  text: "Spawn some cows, then find and jump a cow link. You should see:"
+        "|["
+        "{ is: editable 3d minecraft cow entity"
+        "  name: \"..\""
+        "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
+        "  position: -638 63 -147"
+        "  cow-pos: -638 63 -147"
+        "}"
+        "]|"
+        "See that 'cow-pos' line? That's set by a global cow rule - a rule applied to all cows, not a rule that was inside the object as before."
+        "To see the rule, hit refresh and then the handy link 'global-rules:' in the world object:"
+        "|["
+        "{ is: editable minecraft cow rule"
+        "  when: \"position updates, set copy of it\""
+        "  cow-pos: => @position"
+        "}"
+        "]|"
+        "Now add the following lines, and remove the 'cow-pos' line."
+        "|["
+        "{ is: editable minecraft cow rule"
+      "![  when: \"position updates, place yellow flower\"]!"
+      "![  placing: => plant-yellow box (1 1 1) at (@position + (0 3 0))]!"
+      "![  Notifying: => @. with @world]!"
+        "}"
+        "]|"
+        "Now the cow will leave a trail of yellow flowers behind it."
 }
 
 { UID: uid-1f07-587f-92de-7e44
