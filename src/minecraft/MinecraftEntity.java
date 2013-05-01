@@ -16,9 +16,10 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
 
     Entity entity;
 
-    public MinecraftEntity(Entity e, String type, String name){
-        super("{ \"is\": [ \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
-              "  \"name\": \""+name+"\"\n"+
+    public MinecraftEntity(Entity e, String type, String name, String worlduid){
+        super("{ \"is\": [ \"editable\", \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
+              "  \"name\": \""+name+"\",\n"+
+              "  \"world\": \""+worlduid+"\"\n"+
               "}");
         entity=e;
     }

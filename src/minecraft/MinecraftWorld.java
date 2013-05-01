@@ -40,8 +40,8 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentIsOrListContains("Alerted:is", "minecraft")){
-                addForScanning(alerted, contentList("Alerted:scanning"));
-                addForPlacing(          contentList("Alerted:placing"));
+                if(contentIsOrListContains("is","queryable")) addForScanning(alerted, contentList("Alerted:scanning"));
+                if(contentIsOrListContains("is","updatable")) addForPlacing(          contentList("Alerted:placing"));
             }
             contentTemp("Alerted", null);
         }
@@ -186,7 +186,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         String euid=entityObs.get(name);
         if(euid==null){
             String type=(e instanceof EntityPlayer)? "player": e.getEntityName().toLowerCase();
-            euid=spawn(new MinecraftEntity(e,type,name));
+            euid=spawn(new MinecraftEntity(e,type,name,uid));
             entityObs.put(name,euid);
         }
         return euid;

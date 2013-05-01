@@ -4,8 +4,7 @@
   view:
     { is: style direction: horizontal }
     { view: open     item: uid-5a7a-16e9-508f-2f65 }
-    { view: open raw item: uid-27c9-154b-c4bf-0453 }
-    { view: open raw item: uid-3b90-6720-d64f-a87c }
+    { view: open raw item: uid-b1d8-d170-a3d9-e693 }
 }
 
 { UID: uid-5a7a-16e9-508f-2f65
@@ -13,7 +12,6 @@
   title: "Instructions"
   list: uid-3592-f387-6662-8d44
         uid-4ee8-9084-8ab0-6a2b
-        uid-1a57-fa37-17a0-8672
         uid-6672-f066-5321-d37f
         uid-6e91-d824-6fea-ce5c
         uid-1f07-587f-92de-7e44
@@ -23,85 +21,77 @@
 { UID: uid-3592-f387-6662-8d44
   is: article
   title: "Welcome to Cyrus for Minecraft Programming"
-  text: "Cyrus lets you program Minecraft with rules."
-        "On the right you'll see your first Minecraft rule."
+  text: "Cyrus lets you program Minecraft mods with simple rules."
+        "If you can write HTML or CSS or program formulae in Excel, you won't have any trouble programming Minecraft in Cyrus."
+        "On the right you'll see a Cyrus 'object' representing the Minecraft world."
         "It should look something like this:"
         "|["
-        "{ is: editable minecraft"
-        "  title: \"\""
-        "  Rules: {"
-        "  }"
-        "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
+        "{ is: queryable updatable 3d minecraft world"
+        "  global-rules: http://localhost:8084/o/uid-3b90-6720-d64f-a87c.json"
+        "  player: http://localhost:8084/o/uid-e7ca-3831-5841-f8ea.json"
+        "  time-stamp: 25215"
+        "  time-of-day: 25550"
+        "  daytime: true"
+        "  raining: false"
+        "  rain-strength: 0"
+        "  thundering: false"
+        "  seed: -5563498940576003772"
         "}"
         "]|"
-        "If you hit the link after 'world:', you'll be able to see the state of the world - time of day, raining or snowing."
-        "If you then hit the link after 'player:', you'll be able to see your player coordinates in the world. Watch it change as you move around. Copy the three coordinates - you're going to need them in the next step. Hit refresh to get back to the top."
+        "When you run a Minecraft world, you'll be able to see the state of that world - time of day, raining or snowing."
+        "If you then hit the link after 'player:', you'll be able to see your player coordinates in the world. Watch it change as you move around."
+        "Note that, at any time, you can hit the browser refresh to get back to the top after jumping these links."
 }
 
 { UID: uid-4ee8-9084-8ab0-6a2b
   is: article
-  title: "Placing some blocks"
-  text: "Now edit the rule - by hitting the text, apart from the links:"
+  title: "Placing some blocks: a trail of glass"
+  text: "Now you can edit your player object. Jump the player: link again and hit the text:"
+        "This is a mod to leave a trail of glass everywhere you go."
         "|["
-        "{ is: editable minecraft"
-        "  title: \"\""
-        "  Rules: {"
-      "![    is: minecraft rule]!"
-      "![    placing: => glass box ( 1 1 1 ) at ( x y z )]!"
+        "{ is: editable 3d minecraft player entity"
+        "  name: \"..\""
+        "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
+        "  position: -638 63 -147"
+      "![  Rules: {]!"
+      "![    is: minecraft player rule]!"
+      "![    placing: => glass box (1 1 1) at (@position + (3 0 3))]!"
       "![    Notifying: => @. with @world]!"
         " }"
-        "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
         "}"
         "]|"
-        "/[Note: you must set the coordinates 'x y z' to your own player coordinates, copied from the player: object.]/"
-        "Press the 'Update' button below this text to make the change. If it doesn't seem to work, hit refresh."
-        "This will place a glass box of size 1x1x1 at the coordinates given."
-        "The line 'placing: => ..' in the rule updates the spell with a corresponding 'placing:', which you'll see."
-        "The Notifying line is to tell the world about this spell."
-        "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sand-stone', 'stone', 'ore-gold', etc"
-        "Note: Edit the rule, not the spell! The rule rewrites the spell. This is more powerful than editing directly, as we will see."
-}
-
-{ UID: uid-1a57-fa37-17a0-8672
-  is: article
-  title: "Glass trails"
-  text: "This is a spell to leave a trail of glass everywhere you go."
-        "You may have thought that it's a bit clumsy finding and setting the player coordinates ourselves. So let's get the spell to do it for us:"
-        "|["
-        "  Rules: {"
-        "    is: minecraft rule"
-      "![    placing: => glass box ( 1 1 1 ) at ( @world:player:position + ( 3 0 3 ))]!"
-        "    Notifying: => @. with @world"
-        "  }"
-        "]|"
         "We take the player position, whatever it's set to or changes to, and add three blocks North and East, for placing."
+        "Press the 'Update' button below this text to make the change. If it doesn't seem to work, hit refresh."
+        "This will place a glass box of size 1x1x1 near the coordinates of your player."
+        "The line 'placing: => ..' in the rule updates the object with a corresponding 'placing:', which you'll see."
+        "The Notifying line is to tell the world about this object."
+        "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sand-stone', 'stone', 'ore-gold', etc"
+        "Note: remember to edit the rule, not the object! The rule rewrites the object. This is more powerful than editing directly, as we will see."
 }
 
 { UID: uid-6672-f066-5321-d37f
   is: article
   title: "Scanning the blocks in the world"
-  text: "Now let's add a scanner to the spell, which tells the world we'd like to be updated on the blocks in some region. The region will be -50 down from where we stand:"
+  text: "Now let's add a scanner to the user, which tells the world we'd like to be updated on the blocks in some region."
+        "The region will be -50 down from where we stand:"
         "|["
         "  Rules: {"
-        "    is: minecraft rule"
-        "    placing: => glass box ( 1 1 1 ) at ( @world:player:position + ( 3 0 3 ))"
-      "![    scanning: => blocks ( 2 3 4 ) at ( @world:player:position + ( 0 -50 0 ))]!"
+        "    is: minecraft player rule"
+        "    placing: => glass box (1 1 1) at (@position + (3 0 3))"
+      "![    scanning: => blocks (2 3 4) at (@position + (0 -50 0))]!"
         "    Notifying: => @. with @world"
         "  }"
-        "]|"
-        "If you jump the link after 'world', then the link there called 'scans', you'll see your results: as you move around, you'll see different blocks. Try to find some air underground, indicating a cave. Then dig down, to see if you find it."
-        "Going to the world object to see our results is a bit inconvenient. Luckily the world tells the spell about them. The other end of 'Notifying' is 'Alerted':"
-        "|["
       "![  {]!"
       "![    is: minecraft rule]!"
       "![    Alerted: { is: minecraft world-view }]!"
       "![    scan: # => @Alerted]!"
       "![  } ]!"
         "]|"
-        "Add this rule after the one that's there - paste it after the closing brace '}'"
-        "Now, when the world Notifies us of our scan results, we get Alerted, so we check it's a 'minecraft world-view' before setting 'scan' to link to it."
+        "The world tells the player or scanning object about the scan results: the other end of 'Notifying' is 'Alerted':"
+        "When the world Notifies us of our scan results, we get Alerted, so we check it's a 'minecraft world-view' before setting 'scan' to link to it."
         "The '#' checks that scan hasn't already been set, which means this will only be run or triggered once."
-        "Now you'll see the link 'scan:' right in your spell. Much more convenient."
+        "You'll see your results at the 'scan:' link: as you move around, you'll see different blocks."
+        "Try to find some air underground, indicating a cave. Then dig down, to see if you find it."
 }
 
 { UID: uid-6e91-d824-6fea-ce5c
@@ -110,8 +100,8 @@
   text: "Looking for cows, zombies, users:"
         "|["
         "  Rules: {"
-        "    is: minecraft rule"
-      "![    scanning: => entities ( 20 3 20 ) at ( @world:player:position + ( -10 -1 -10 ))]!"
+        "    is: minecraft player rule"
+      "![    scanning: => entities (20 3 20) at (@position + (-10 -1 -10))]!"
         "    Notifying: => @. with @world"
         "  }"
         "  {"
@@ -120,6 +110,7 @@
         "    scan: # => @Alerted"
         "  }"
         "]|"
+        "Spawn some zombies and cows and jump the 'scan:' link to see them"
 }
 
 { UID: uid-1f07-587f-92de-7e44
@@ -139,19 +130,13 @@
 { UID: uid-b1d8-d170-a3d9-e693
   Class: net.minecraft.src.MinecraftWorld
   is: queryable updatable 3d minecraft world
+  global-rules: uid-3b90-6720-d64f-a87c
 }
 
 { UID: uid-3b90-6720-d64f-a87c
-  is: minecraft cow rule
+  is: editable minecraft cow rule
   when: "position updates, set copy of it"
   cow-pos: => @position
-}
-
-{ UID: uid-27c9-154b-c4bf-0453
-  is: editable minecraft
-  title: ""
-  Rules: {}
-  world: uid-b1d8-d170-a3d9-e693
 }
 
 { UID: uid-df7c-2043-f410-724f
