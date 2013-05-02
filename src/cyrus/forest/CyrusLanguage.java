@@ -43,21 +43,7 @@ public class CyrusLanguage extends WebObject {
             statemod=false;
             if(!(i==0 && rules.size() >0)) rules=getGlobalAndLocalRules();   if(extralogging) log("Rules: "+rules);
             if(rules==null || rules.size()==0) break;
-            for(Object rule: rules){
-                if(rule instanceof String) contentTempObserve("Rule", (String)rule);
-                else
-                if(rule instanceof LinkedHashMap) contentTemp("Rule", rule);
-                else continue;
-                LinkedList ruleis=contentList("Rule:is"); if(extralogging) log("Rule is="+ruleis);
-                if(ruleis==null) continue;
-                boolean ok=true;
-                for(Object is: ruleis){
-                    if("rule".equals(is)) continue;
-                    if("editable".equals(is)) continue;
-                    if(!contentIsOrListContains("is", is.toString())){ ok=false; if(extralogging) log("Rule doesn't apply: "+is+" "+contentString("is")); break; }
-                }
-                if(ok) runRule();
-            }
+            runTheRules(rules);
             if(!statemod) break;
             modified=true;
         }
@@ -65,6 +51,35 @@ public class CyrusLanguage extends WebObject {
         statemod=modified;
         contentTemp("Rule",null);
     }catch(Throwable t){ log("exception in evaluate()"); t.printStackTrace(); }}
+
+    private void runTheRules(LinkedList rules){
+        for(Object rule: rules){
+            if(rule instanceof String){
+                contentTempObserve("Rule", (String)rule);
+                LinkedList rulelist=contentListMayJump("Rule");
+                if(rulelist!=null) runTheRules(rulelist);
+                else runTheRule();
+            }
+            else
+            if(rule instanceof LinkedList) runTheRules((LinkedList)rule);
+            else
+            if(rule instanceof LinkedHashMap){
+                contentTemp("Rule", rule);
+                runTheRule();
+            }
+        }
+    }
+
+    private void runTheRule(){
+        LinkedList ruleis=contentList("Rule:is"); if(extralogging) log("Rule is="+ruleis);
+        if(ruleis==null) return;
+        for(Object is: ruleis){
+            if("rule".equals(is)) continue;
+            if("editable".equals(is)) continue;
+            if(!contentIsOrListContains("is", is.toString())){ if(extralogging) log("Rule doesn't apply: "+is+" "+contentString("is")); return; }
+        }
+        runRule();
+    }
 
     @SuppressWarnings("unchecked")
     private LinkedList getEvalRules(){

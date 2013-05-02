@@ -1,21 +1,38 @@
 { UID: uid-c794-9168-ae93-317f
   is: test rule
-  when: "-------------- Test -2"
-  title: # => "Global rule ran"
+  when: "-------------- Test -4"
+  title: # => "Global rule -4 ran"
 }
 
 { UID: uid-0cf7-8431-7b2f-d834
+  is: rule list
+  list: uid-1161-ef52-c9f4-6cbd
+      ( uid-240c-821a-edad-f4d7
+        { is: test rule
+          when: "-------------- Test -1"
+          title: "Global rule -2 ran" => "Global rule -1 ran"
+        } )
+}
+
+
+{ UID: uid-1161-ef52-c9f4-6cbd
   is: test rule
-  when: "-------------- Test -1"
-  title: "Global rule ran" => "Global rules ran"
+  when: "-------------- Test -3"
+  title: "Global rule -4 ran" => "Global rule -3 ran"
+}
+
+{ UID: uid-240c-821a-edad-f4d7
+  is: test rule
+  when: "-------------- Test -2"
+  title: "Global rule -3 ran" => "Global rule -2 ran"
 }
 
 { UID: uid-39da-3645-4f58-50cb
-  Rules: { is: test rule when: "-------------- Test 0" title: "Global rules ran" =>  "Test Running" }
+  Rules: { is: test rule when: "-------------- Test 0" title: "Global rule -1 ran" =>  "Test Running" }
          uid-e164-2547-46b0-f47e
-         uid-40fb-5964-b385-c922
+       ( uid-40fb-5964-b385-c922
          uid-1de5-4d69-667a-56e4
-         uid-61d6-65c9-2931-505b
+         uid-61d6-65c9-2931-505b )
          uid-d3e7-6831-3804-7cbf
          uid-d039-5967-f60c-70f7
   is: test
