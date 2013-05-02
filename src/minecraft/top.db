@@ -186,7 +186,7 @@
 { UID: uid-adae-7060-6cb1-da1c
   is: editable minecraft cow rule
   when: "something interesting found, set marker on surface"
-  world-view: { list: (((!stone))) }
+  world-view: { list: (((/ore-/))) }
   placing: => stone-double-slab box (1 1 1) at (@position + (0 2 0))
 }
 
