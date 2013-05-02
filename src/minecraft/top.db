@@ -28,7 +28,7 @@
         "It should look something like this:"
         "|["
         "{ is: queryable updatable 3d minecraft world"
-        "  global-rules: http://localhost:8084/o/uid-3b90-6720-d64f-a87c.json"
+        "  global-rules: http://localhost:8084/o/uid-60b6-54d1-3b03-c265.json"
         "  player: http://localhost:8084/o/uid-e7ca-3831-5841-f8ea.json"
         "  time-stamp: 25215"
         "  time-of-day: 25550"
@@ -58,7 +58,7 @@
       "![    is: minecraft player rule]!"
       "![    placing: => glass box (1 1 1) at (@position + (3 0 3))]!"
       "![    Notifying: => @. with @world]!"
-        " }"
+        "  }"
         "}"
         "]|"
         "We take the player position, whatever it's set to or changes to, and add three blocks North and East, for placing."
@@ -78,20 +78,21 @@
         "|["
         "  Rules: {"
         "    is: minecraft player rule"
-        "    placing: => glass box (1 1 1) at (@position + (3 0 3))"
       "![    scanning: => blocks (2 3 4) at (@position + (0 -50 0))]!"
         "    Notifying: => @. with @world"
         "  }"
-      "![  {]!"
-      "![    is: minecraft rule]!"
-      "![    Alerted: { is: minecraft world-view }]!"
-      "![    scan: # => @Alerted]!"
-      "![  } ]!"
+        "A global rule is a rule applied to all objects, not a rule that was inside the object as before."
+        "  {"
+        "    is: minecraft rule"
+        "    when: \"world-view scan results notified, save\""
+        "    Alerted: { is: minecraft world-view }"
+        "    world-view: # => @Alerted"
+        "  }"
         "]|"
         "The world tells the player or scanning object about the scan results: the other end of 'Notifying' is 'Alerted':"
-        "When the world Notifies us of our scan results, we get Alerted, so we check it's a 'minecraft world-view' before setting 'scan' to link to it."
+        "When the world Notifies us of our scan results, we get Alerted, so we check it's a 'minecraft world-view' before setting 'world-view' to link to it."
         "The '#' checks that scan hasn't already been set, which means this will only be run or triggered once."
-        "You'll see your results at the 'scan:' link: as you move around, you'll see different blocks."
+        "You'll see your results at the 'world-view:' link: as you move around, you'll see different blocks."
         "Try to find some air underground, indicating a cave. Then dig down, to see if you find it."
 }
 
@@ -105,44 +106,40 @@
       "![    scanning: => entities (20 3 20) at (@position + (-10 -1 -10))]!"
         "    Notifying: => @. with @world"
         "  }"
-        "  {"
-        "    is: minecraft rule"
-        "    Alerted: { is: minecraft world-view }"
-        "    scan: # => @Alerted"
-        "  }"
         "]|"
-        "Spawn some zombies and skeletons and jump the 'scan:' link to see them."
+        "Spawn some zombies and skeletons and jump the 'world-view:' link to see them."
 }
 
 { UID: uid-8c1a-79ee-15b5-94ac
   is: article
   title: "Dowsing the Cowpath Mod"
-  text: "Spawn some cows, then find and jump a cow link. You should see:"
+  text: "Spawn some cows, then find and jump a cow link. You should see something like:"
         "|["
-        "{ is: editable 3d minecraft cow entity"
-        "  name: \"..\""
+        "{"
+        "  is: editable 3d minecraft cow entity"
+        "  name: Cow-9"
         "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
-        "  position: -638 63 -147"
-        "  cow-pos: -638 63 -147"
+        "  scanning: blocks (1 10 1) at (-552 18 -132)"
+        "  position: -552 68 -132"
+        "  world-view: http://localhost:8084/o/uid-5696-300e-3ba7-e913.json"
+        "  placing: stone-double-slab box (1 1 1) at (-552 70 -132)"
         "}"
         "]|"
-        "See that 'cow-pos' line? That's set by a global cow rule - a rule applied to all cows, not a rule that was inside the object as before."
-        "To see the rule, hit refresh and then the handy link 'global-rules:' in the world object:"
+        "See all that scanning and placing it's doing? That's set by more global rules, just for cows this time."
+        "To see the rules, hit refresh and then jump the 'global-rules:' link in the world object. Jump the second and third links:"
         "|["
         "{ is: editable minecraft cow rule"
-        "  when: \"position updates, set copy of it\""
-        "  cow-pos: => @position"
+        "  when: \"run, scan below ground\""
+        "  scanning: => blocks (1 10 1) at (@position + (0 -50 0))"
+        "  Notifying: => @. with @world"
         "}"
-        "]|"
-        "Now add the following lines, and remove the 'cow-pos' line."
-        "|["
         "{ is: editable minecraft cow rule"
-      "![  when: \"position updates, place paving slab\"]!"
-      "![  placing: => stone-double-slab box (1 1 1) at (@position + (0 2 0))]!"
-      "![  Notifying: => @. with @world]!"
+        "  when: \"something interesting found, set marker on surface\""
+        "  world-view: { list: (((!stone))) }"
+        "  placing: => stone-double-slab box (1 1 1) at (@position + (0 2 0))"
         "}"
         "]|"
-        "Now the cow will leave a trail of paving slabs behind it."
+        "The cow leaves a trail of paving slabs behind it whenever it 'dowses' something interesting below ground."
 }
 
 { UID: uid-1f07-587f-92de-7e44
@@ -162,26 +159,41 @@
 { UID: uid-b1d8-d170-a3d9-e693
   Class: net.minecraft.src.MinecraftWorld
   is: queryable updatable 3d minecraft world
-  global-rules: uid-3b90-6720-d64f-a87c
+  global-rules: uid-60b6-54d1-3b03-c265
+}
+
+{ UID: uid-60b6-54d1-3b03-c265
+  is: editable list
+  list: uid-df7c-2043-f410-724f
+        uid-3b90-6720-d64f-a87c
+        uid-adae-7060-6cb1-da1c
+}
+
+{ UID: uid-df7c-2043-f410-724f
+  is: minecraft rule
+  when: "world-view scan results notified, save"
+  Alerted: { is: minecraft world-view }
+  world-view: # => @Alerted
 }
 
 { UID: uid-3b90-6720-d64f-a87c
   is: editable minecraft cow rule
-  when: "position updates, set copy of it"
-  cow-pos: => @position
+  when: "run, scan below ground"
+  scanning: => blocks (1 10 1) at (@position + (0 -50 0))
+  Notifying: => @. with @world
 }
 
-{ UID: uid-df7c-2043-f410-724f
-  is: editable minecraft structure rule
-  when: "scan blocks notified, save"
-  Alerted: { is: minecraft world-view }
-  scan-blocks: # => @Alerted
+{ UID: uid-adae-7060-6cb1-da1c
+  is: editable minecraft cow rule
+  when: "something interesting found, set marker on surface"
+  world-view: { list: (((!stone))) }
+  placing: => stone-double-slab box (1 1 1) at (@position + (0 2 0))
 }
 
 { UID: uid-4d0b-47d9-151c-d366
   is: editable minecraft structure
   title: "Transform block types"
-  Rules: uid-7348-7203-31f7-4a13 uid-df7c-2043-f410-724f uid-af69-1d57-8394-4157
+  Rules: uid-7348-7203-31f7-4a13 uid-af69-1d57-8394-4157
   structure: alchemy
   casting: false
   world: uid-b1d8-d170-a3d9-e693
@@ -195,7 +207,7 @@
   world: { player: { position: * }}
   position: => @world:player:position + (3 1 0)
   scanning: => blocks ( 2 2 2 ) at @position
-  scan-blocks: => #
+  world-view: => #
   placing: => glass box ( 4 4 4 ) at (@position + (-1 -1 -1))
   Notifying: => @. with @world
 }
@@ -203,15 +215,15 @@
 { UID: uid-af69-1d57-8394-4157
   is: editable minecraft structure rule
   when: "block list updates, if certain blocks seen, convert them"
-  scan-blocks: *
-  placing: => (@scan-blocks:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)) at @position
+  world-view: *
+  placing: => (@world-view:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)) at @position
   Notifying: => @. with @world
 }
 
 { UID: uid-a70f-cd0b-c257-a901
   is: editable minecraft structure
   title: "Build Pyramids"
-  Rules: uid-320d-55ec-ca58-8f71 uid-77a8-38ec-e0bc-b5f1 uid-df7c-2043-f410-724f uid-4506-0c41-ac8e-4084 uid-f363-ddd9-4da2-4c73
+  Rules: uid-320d-55ec-ca58-8f71 uid-77a8-38ec-e0bc-b5f1 uid-4506-0c41-ac8e-4084 uid-f363-ddd9-4da2-4c73
   structure: pyramid
   casting: false
   world: uid-b1d8-d170-a3d9-e693
@@ -247,14 +259,14 @@
 { UID: uid-4506-0c41-ac8e-4084
   is: editable minecraft structure rule
   when: "no slab there, place it"
-  scan-blocks: { position: @scan-position list: ((( !@m ))) }
+  world-view: { position: @scan-position list: ((( !@m ))) }
   placing: => @m box ( @w 4 @w ) at @place-position
 }
 
 { UID: uid-f363-ddd9-4da2-4c73
   is: editable minecraft structure rule
   when: "slab there, increase height and decrease width at current position"
-  scan-blocks: { position: @scan-position list: not ((( !@m ))) }
+  world-view: { position: @scan-position list: not ((( !@m ))) }
   placing: => #
   h: <= @height => @h + 3
   w: > 0 => if (@h <= @height) then (@w - (2 * @taper)) else 0

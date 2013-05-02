@@ -10,6 +10,6 @@
              cache-notify: c-n-47b0-80c6-b3fc-42c6
              log: 0 }
   rules: { log: 1
-           global-rules: uid-3b90-6720-d64f-a87c
+           global-rules: uid-60b6-54d1-3b03-c265
   }
 }
