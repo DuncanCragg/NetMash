@@ -15,7 +15,6 @@
         uid-6672-f066-5321-d37f
         uid-6e91-d824-6fea-ce5c
         uid-8c1a-79ee-15b5-94ac
-        uid-1f07-587f-92de-7e44
         uid-33a7-efb7-aced-d48b
 }
 
@@ -142,13 +141,6 @@
         "The cow leaves a trail of paving slabs behind it whenever it 'dowses' something interesting below ground."
 }
 
-{ UID: uid-1f07-587f-92de-7e44
-  is: article
-  title: "Alchemy"
-  text: "Set 'casting' to 'true' in the following. It creates a glass box inside which stone is turned to gold!"
-         uid-4d0b-47d9-151c-d366
-}
-
 { UID: uid-33a7-efb7-aced-d48b
   is: article
   title: "Pyramid"
@@ -189,36 +181,6 @@
   when: "something interesting found, set marker on surface"
   world-view: { list: (((/ore-/))) }
   placing: => (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) at (@position + (0 -7 0))
-}
-
-{ UID: uid-4d0b-47d9-151c-d366
-  is: editable minecraft structure
-  title: "Transform block types"
-  Rules: uid-7348-7203-31f7-4a13 uid-af69-1d57-8394-4157
-  structure: alchemy
-  casting: false
-  world: uid-b1d8-d170-a3d9-e693
-}
-
-{ UID: uid-7348-7203-31f7-4a13
-  is: editable minecraft structure rule
-  when: "run, set scanning area"
-  structure: alchemy
-  casting: true => false
-  world: { player: { position: * }}
-  position: => @world:player:position + (3 1 0)
-  scanning: => blocks ( 2 2 2 ) at @position
-  world-view: => #
-  placing: => glass box ( 4 4 4 ) at (@position + (-1 -1 -1))
-  Notifying: => @. with @world
-}
-
-{ UID: uid-af69-1d57-8394-4157
-  is: editable minecraft structure rule
-  when: "block list updates, if certain blocks seen, convert them"
-  world-view: *
-  placing: => (@world-view:list each ({ stone: ore-gold sand: glass dirt: ore-coal } select @.. else @..)) at @position
-  Notifying: => @. with @world
 }
 
 { UID: uid-a70f-cd0b-c257-a901
