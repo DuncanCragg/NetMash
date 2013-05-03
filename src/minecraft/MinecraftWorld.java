@@ -67,16 +67,13 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     int tickNum=0;
 
     public void tick(float var1, final Minecraft minecraft){
-        world=world();  // minecraft.theWorld = world client
+        world=world();  // minecraft.theWorld = client world
         if(world==null) return;
         if("world".equals(hasType)){
             new Evaluator(this){ public void evaluate(){ try{
-                if(!contentSet("player")){
-                    EntityPlayer e=minecraft.thePlayer;
-                    String playeruid=entityToCyrus(e,uid);
-                    content("player", playeruid);
-                }
-                doStats();
+                EntityPlayer player=minecraft.thePlayer; // client player? lags server player?
+                if(!contentSet("player")) content("player", entityToCyrus(player,uid));
+                if(doStats()) doEntitiesToCyrus(player);
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             while(true){
                 LinkedList placing=placingQ.poll();
@@ -94,10 +91,10 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         }
     }
 
-    private void doStats(){
+    private boolean doStats(){
         int ts=(int)(5*(world.getTotalWorldTime()/100));
         int td=(int)(5*(world.getWorldTime()/100));
-        if(contentInt("time-stamp")==ts) return;
+        if(contentInt("time-stamp")==ts) return false;
         contentInt(   "time-stamp", ts);
         contentInt(   "time-of-day",td);
         contentBool(  "daytime",       world.isDaytime());
@@ -105,6 +102,21 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         contentDouble("rain-strength", world.getRainStrength(1));
         contentBool(  "thundering",    world.isThundering());
         content(      "seed",       ""+world.getSeed());
+        return true;
+    }
+
+    private void doEntitiesToCyrus(EntityPlayer player){
+        int shx=40; int shy=20; int shz=40;
+        int atx=(int)(player.posX-shx/2); int aty=(int)(player.posY-shy/2); int atz=(int)(player.posZ-shz/2);
+        List entities=world.getLoadedEntityList();
+        for(int i=0; i< entities.size(); i++){
+            Entity e=(Entity)entities.get(i);
+            if(e.posX >atx && e.posX<atx+shx &&
+               e.posY >aty && e.posY<aty+shy &&
+               e.posZ >atz && e.posZ<atz+shz   ){
+                entityToCyrus(e,uid);
+            }
+        }
     }
 
     private void doScanning(LinkedList scanning){
