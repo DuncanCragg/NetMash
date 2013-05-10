@@ -15,7 +15,6 @@
         uid-6672-f066-5321-d37f
         uid-6e91-d824-6fea-ce5c
         uid-8c1a-79ee-15b5-94ac
-        uid-33a7-efb7-aced-d48b
 }
 
 { UID: uid-3592-f387-6662-8d44
@@ -65,22 +64,28 @@
         "This will place a glass box of size 1x1x1 near the coordinates of your player."
         "The line 'placing: => ..' in the rule updates the object with a corresponding 'placing:', which you'll see."
         "The Notifying line is to tell the world about this object."
-        "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sand-stone', 'stone', 'ore-gold', etc"
-        "Note: remember to edit the rule, not the object! The rule rewrites the object. This is more powerful than editing directly, as we will see."
+        "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sand-stone', 'stone', 'ore-gold', etc."
+        "Note: remember to edit the rule, not the object! The rule rewrites the object."
+        "This is more powerful than editing directly, because you can get the position to keep updating for you, like this."
 }
 
 { UID: uid-6672-f066-5321-d37f
   is: article
   title: "Scanning the blocks in the world"
   text: "Now let's add a scanner to the user, which tells the world we'd like to be updated on the blocks in some region."
-        "The region will be -50 down from where we stand:"
+        "The region will be -40 down from where we stand:"
         "|["
         "  Rules: {"
         "    is: minecraft player rule"
-      "![    scanning: => blocks (2 3 4) at (@position + (0 -50 0))]!"
+      "![    scanning: => blocks (2 3 4) at (@position + (0 -40 0))]!"
         "    Notifying: => @. with @world"
         "  }"
         "]|"
+        "As you can see, scanning is similar to placing, except you're just looking, not changing."
+        "You'll see your results at the 'world-view:' link: as you move around, you'll see different blocks."
+        "Try to find some air underground, indicating a cave. Then dig down, to see if you find it."
+        "The 'world-view:' link is set by another, global, rule."
+        "To see the rules, hit refresh and then jump the 'global-rules:' link in the world object, then jump the first link."
         "A global rule is a rule applied to all objects, not a rule that was inside the object as before."
         "|["
         "  {"
@@ -93,8 +98,6 @@
         "The world tells the player or scanning object about the scan results: the other end of 'Notifying' is 'Alerted':"
         "When the world Notifies us of our scan results, we get Alerted, so we check it's a 'minecraft world-view' before setting 'world-view' to link to it."
         "The '#' checks that scan hasn't already been set, which means this will only be run or triggered once."
-        "You'll see your results at the 'world-view:' link: as you move around, you'll see different blocks."
-        "Try to find some air underground, indicating a cave. Then dig down, to see if you find it."
 }
 
 { UID: uid-6e91-d824-6fea-ce5c
@@ -108,13 +111,16 @@
         "    Notifying: => @. with @world"
         "  }"
         "]|"
+        "Changing 'blocks' to 'entities' returns the positions and links of users, cows, zombies, etc."
         "Spawn some zombies and skeletons and jump the 'world-view:' link to see them."
 }
 
 { UID: uid-8c1a-79ee-15b5-94ac
   is: article
   title: "Dowsing the Cowpath Mod"
-  text: "Spawn some cows, then find and jump a cow link. You should see something like:"
+  text: "Spawn some cows, now. They should leave a trail of mainly glass behind whenever they 'dowse' something interesting below ground."
+        "If it finds gold, it leaves a sand marker, if it finds iron, it leaves cobblestone, for coal it leaves wood."
+        "Now find and jump a cow link. You should see something like:"
         "|["
         "{"
         "  is: editable 3d minecraft cow entity"
@@ -127,11 +133,11 @@
         "}"
         "]|"
         "See all that scanning and placing it's doing? That's set by more global rules, just for cows this time."
-        "To see the rules, hit refresh and then jump the 'global-rules:' link in the world object. Jump the second and third links:"
+        "Again, hit refresh and jump the 'global-rules:' link in the world object, then look at the second and third links:"
         "|["
         "{ is: editable minecraft cow rule"
         "  when: \"run, scan below ground\""
-        "  scanning: => blocks (2 10 2) at (@position + (0 -50 0))"
+        "  scanning: => blocks (2 10 2) at (@position + (0 -40 0))"
         "  Notifying: => @. with @world"
         "}"
         "{ is: editable minecraft cow rule"
@@ -140,14 +146,6 @@
         "  placing: => (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) at (@position + (0 -7 0))"
         "}"
         "]|"
-        "The cow leaves a trail of mainly glass behind it whenever it 'dowses' something interesting below ground. If it finds gold, it leaves a sand marker, etc."
-}
-
-{ UID: uid-33a7-efb7-aced-d48b
-  is: article
-  title: "Pyramid"
-  text: "Set 'casting' to 'true' in the following. It creates a pyramid with various parameters you can adjust, for width, height, taper and materials."
-         uid-a70f-cd0b-c257-a901
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
@@ -174,7 +172,7 @@
 { UID: uid-3b90-6720-d64f-a87c
   is: editable minecraft cow rule
   when: "run, scan below ground"
-  scanning: => blocks (2 10 2) at (@position + (0 -50 0))
+  scanning: => blocks (2 10 2) at (@position + (0 -40 0))
   Notifying: => @. with @world
 }
 
@@ -183,59 +181,5 @@
   when: "something interesting found, set marker on surface"
   world-view: { list: (((/ore-/))) }
   placing: => (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) at (@position + (0 -7 0))
-}
-
-{ UID: uid-a70f-cd0b-c257-a901
-  is: editable minecraft structure
-  title: "Build Pyramids"
-  Rules: uid-320d-55ec-ca58-8f71 uid-77a8-38ec-e0bc-b5f1 uid-4506-0c41-ac8e-4084 uid-f363-ddd9-4da2-4c73
-  structure: pyramid
-  casting: false
-  world: uid-b1d8-d170-a3d9-e693
-  width: 7
-  height: 30
-  taper: 1
-  material: stone-double-slab glass brick stone
-}
-
-{ UID: uid-320d-55ec-ca58-8f71
-  is: editable minecraft structure rule
-  when: "pyramid constructor filled in, set up to build"
-  structure: pyramid
-  casting: true => false
-  world: { player: { position: * }}
-  position: => @world:player:position
-  h: => 0
-  w: => @width
-  i: => 0
-  m: => @material:0
-}
-
-{ UID: uid-77a8-38ec-e0bc-b5f1
-  is: editable minecraft structure rule
-  when: "run, set scanning area and notify world"
-  w: *
-  place-position: => @position + (( 8 - (@w / 2)) @h (8 - (@w / 2)))
-  scan-position: => @place-position + ( 0 3 0 )
-  scanning: => blocks ( @w 1 @w ) at @scan-position
-  Notifying: => @. with @world
-}
-
-{ UID: uid-4506-0c41-ac8e-4084
-  is: editable minecraft structure rule
-  when: "no slab there, place it"
-  world-view: { position: @scan-position list: ((( !@m ))) }
-  placing: => @m box ( @w 4 @w ) at @place-position
-}
-
-{ UID: uid-f363-ddd9-4da2-4c73
-  is: editable minecraft structure rule
-  when: "slab there, increase height and decrease width at current position"
-  world-view: { position: @scan-position list: not ((( !@m ))) }
-  placing: => #
-  h: <= @height => @h + 3
-  w: > 0 => if (@h <= @height) then (@w - (2 * @taper)) else 0
-  i: => @i + 1
-  m: => @material select (@i % (count @material))
 }
 
