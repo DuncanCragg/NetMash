@@ -1,4 +1,6 @@
 
+RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/cyrus.zip
+
 cr: compile runhere
 
 
@@ -20,6 +22,7 @@ release:
 	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrus.zip
 	cd reobf/minecraft/ && zip -r ../../cyrus.zip *
+	cp cyrus.zip $(RELEASE_TARGET)
 
 runthere:
 	cp cyrus.zip ~/.minecraft/mods/
