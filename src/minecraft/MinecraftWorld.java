@@ -41,7 +41,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             contentTemp("Alerted", alerted);
             if(contentIsOrListContains("Alerted:is", "minecraft")){
                 if(contentIsOrListContains("is","queryable")) addForScanning(alerted, contentList("Alerted:scanning"));
-                if(contentIsOrListContains("is","updatable")) addForPlacing(          contentList("Alerted:placing"));
+                if(contentIsOrListContains("is","updatable")) addForPlacing(contentHash("Alerted:placing"));
             }
             contentTemp("Alerted", null);
         }
@@ -57,9 +57,9 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     private void evaluateWorldView(){
     }
 
-    ConcurrentLinkedQueue<LinkedList> placingQ =new ConcurrentLinkedQueue<LinkedList>();
+    ConcurrentLinkedQueue<LinkedHashMap> placingQ =new ConcurrentLinkedQueue<LinkedHashMap>();
 
-    private void addForPlacing( LinkedList placing ){ if(placing !=null) placingQ.add(placing); }
+    private void addForPlacing(LinkedHashMap placing){ if(placing !=null) placingQ.add(placing); }
 
     // ------------------------------------
 
@@ -76,7 +76,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                 if(doStats()) doEntitiesToCyrus(player);
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             while(true){
-                LinkedList placing=placingQ.poll();
+                LinkedHashMap placing=placingQ.poll();
                 if(placing==null) break;
                 doPlacing(placing);
             }
@@ -204,68 +204,58 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         return euid;
     }
 
-    private void doPlacing(LinkedList placing){
-        if(placing.size()==3 && placing.get(1).equals("at")){
-            LinkedList at=findListIn(placing.get(2));
-            if(at!=null && at.size()==3){
-                Integer atx=getIntFromList(at,0);
-                Integer aty=getIntFromList(at,1);
-                Integer atz=getIntFromList(at,2);
-                if(atx==null || aty==null || atz==null) return;
-                Object what=placing.get(0);
-                if(what instanceof String){
-                    String name=(String)what;
-                    ensureBlockAt(atx,aty,atz,name);
+    private void doPlacing(LinkedHashMap placing){
+        LinkedList position=getListFromHash(  placing,    "position"); if(position.size()!=3) return;
+        Object     material=                  placing.get("material"); if(material==null) material="air";
+        String     shape=   getStringFromHash(placing,    "shape", null);
+        LinkedList size    =getListFromHash(  placing,    "size");
+        boolean    trail   =getBooleanFrom(   placing,    "trail");
+        Integer psx=getIntFromList(position,0);
+        Integer psy=getIntFromList(position,1);
+        Integer psz=getIntFromList(position,2);
+        if(psx==null || psy==null || psz==null) return;
+        if("box".equals(shape) && material instanceof String){
+            if(size.size()!=3) return;
+            Integer six=getIntFromList(size,0);
+            Integer siy=getIntFromList(size,1);
+            Integer siz=getIntFromList(size,2);
+            if(six==null || siy==null || siz==null) return;
+            if(six<=0)  six=1;   if(siy<=0)  siy=1;   if(siz<=0)  siz=1;
+            if(six>100) six=100; if(siy>100) siy=100; if(siz>100) siz=100;
+            for(int i=0; i<six; i++)
+            for(int j=0; j<siy; j++)
+            for(int k=0; k<siz; k++){
+                if(i==0 || i==six-1 || j==0 || j==siy-1 || k==0 || k==siz-1){
+                     ensureBlockAt(psx+i,psy+j,psz+k,(String)material);
                 }
-                else
-                if(what instanceof LinkedList){
-                    int i=0,j=0,k=0;
-                    LinkedList l3=(LinkedList)what;
-                    for(Object o2: l3){
-                        if(o2 instanceof LinkedList){
-                            LinkedList l2=(LinkedList)o2;
-                            for(Object o1: l2){
-                                if(o1 instanceof LinkedList){
-                                    LinkedList l1=(LinkedList)o1;
-                                    for(Object o0: l1){
-                                        if(o0 instanceof String){
-                                            String name=(String)o0;
-                                            ensureBlockAt(atx+i,aty+j,atz+k,name);
-                                        }
-                                    k++; }
-                                }
-                            j++; k=0; }
-                        }
-                    i++; j=0; }
-                }
+                else ensureBlockAt(psx+i,psy+j,psz+k,"air");
             }
         }
-        else
-        if(placing.size()==5 && placing.get(1).equals("box") && placing.get(3).equals("at")){
-            LinkedList shape=findListIn(placing.get(2));
-            LinkedList at   =findListIn(placing.get(4));
-            if(at!=null && at.size()==3 && shape!=null && shape.size()==3){
-                Integer shx=getIntFromList(shape,0);
-                Integer shy=getIntFromList(shape,1);
-                Integer shz=getIntFromList(shape,2);
-                if(shx!=null && shy!=null && shz!=null && shx>0 && shy>0 && shz>0){
-                    Integer atx=getIntFromList(at,0);
-                    Integer aty=getIntFromList(at,1);
-                    Integer atz=getIntFromList(at,2);
-                    if(atx==null || aty==null || atz==null) return;
-                    String name=placing.get(0).toString();
-                    if(shx>100) shx=100;
-                    if(shy>100) shy=100;
-                    if(shz>100) shz=100;
-                    for(int i=0; i<shx; i++)
-                    for(int j=0; j<shy; j++)
-                    for(int k=0; k<shz; k++){
-                        if(i==0 || i==shx-1 || j==0 || j==shy-1 || k==0 || k==shz-1){
-                            ensureBlockAt(atx+i,aty+j,atz+k,name);
-                        }
-                        else ensureBlockAt(atx+i,aty+j,atz+k,"air");
+        else{
+            if(material instanceof String){
+                String name=(String)material;
+                ensureBlockAt(psx,psy,psz,name);
+            }
+            else
+            if(material instanceof LinkedList){
+                int i=0,j=0,k=0;
+                LinkedList l3=(LinkedList)material;
+                for(Object o2: l3){
+                    if(o2 instanceof LinkedList){
+                        LinkedList l2=(LinkedList)o2;
+                        for(Object o1: l2){
+                            if(o1 instanceof LinkedList){
+                                LinkedList l1=(LinkedList)o1;
+                                for(Object o0: l1){
+                                    if(o0 instanceof String){
+                                        String name=(String)o0;
+                                        ensureBlockAt(psx+i,psy+j,psz+k,name);
+                                    }
+                                k++; }
+                            }
+                        j++; k=0; }
                     }
-                }
+                i++; j=0; }
             }
         }
     }

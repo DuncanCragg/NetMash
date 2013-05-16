@@ -54,7 +54,7 @@
         "  position: -638 63 -147"
       "![  Rules: {]!"
       "![    is: minecraft player rule]!"
-      "![    placing: => glass box (1 1 1) at (@position + (3 0 3))]!"
+      "![    placing: => { material: glass shape: box size: 1 1 1 position: (@position + (3 0 3)) }]!"
       "![    Notifying: => @. with @world]!"
         "  }"
         "}"
@@ -143,7 +143,7 @@
         "{ is: editable minecraft cow rule"
         "  when: \"something interesting found, set marker on surface\""
         "  world-view: { list: (((/ore-/))) }"
-        "  placing: => (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) at (@position + (0 -7 0))"
+        "  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) position: (@position + (0 -7 0))}"
         "}"
         "]|"
 }
@@ -180,6 +180,6 @@
   is: editable minecraft cow rule
   when: "something interesting found, set marker on surface"
   world-view: { list: (((/ore-/))) }
-  placing: => (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) at (@position + (0 -7 0))
+  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) position: (@position + (0 -7 0))}
 }
 
