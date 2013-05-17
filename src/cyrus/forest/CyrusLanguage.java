@@ -33,7 +33,7 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     public void evaluate(){ try{
         Object am=contentObject("is"); if(am==null) am=contentHash("#");
-        if(anylogging) System.out.println("==================================================\nRunning CyrusLanguage on "
+        if(extralogging) System.out.println("==================================================\nRunning CyrusLanguage on "
                                             +uid+" "+am+(extralogging? ":\n"+contentHash("#"): ""));
         boolean modified=statemod;
         LinkedList rules=getEvalRules();
@@ -112,15 +112,15 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private void runRule(String alerted){
-        String when=contentStringOr("Rule:when","");
+        String when=contentStringOr("Rule:when","(no description)");
         if(alerted!=null && !contentSet("Alerted")) contentTemp("Alerted",alerted);
-        ; if(anylogging)   System.out.println("-------------------\nRunning rule \""+when+"\"");
+        ; if(extralogging) System.out.println("-------------------\nRunning rule: \"When "+when+"\"");
         ; if(extralogging) log("alerted:\n"+contentHash("Alerted:#"));
         rewrites.clear(); bindings.clear();
         LinkedHashMap<String,Object> rule=contentHash("Rule:#");
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
-        ; if(ok && anylogging) System.out.println("Rule fired: \""+when+"\"");
+        ; if(ok && anylogging) System.out.println("Rule fired: \"When "+when+"\"");
         ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+"\n"+rule+"\n====\n"+contentHash("#")+"\n===========");
         if(alerted!=null && contentIs("Alerted",alerted)) contentTemp("Alerted",null);
     }
@@ -135,7 +135,7 @@ public class CyrusLanguage extends WebObject {
         for(Map.Entry<String,Object> entry: hash.entrySet()){
             String pk=(path.equals("")? "": path+":")+entry.getKey();
             if(pk.endsWith("**")|| ignoreTopLevelNoise(path,pk)) continue;
-            if(!scanType(entry.getValue(),pk)) return false;
+            if(!scanTypeMayMayFail(entry.getValue(),pk,pk.equals("Alerted"))) return false;
         }
         return true;
     }
@@ -296,6 +296,8 @@ public class CyrusLanguage extends WebObject {
     private boolean mayfail=false;
     private boolean tryfail=false;
 
+    private boolean scanTypeMayMayFail(Object v, String pk, boolean domay){ return domay? scanTypeMayFail(v,pk): scanType(v,pk); }
+
     private boolean scanTypeMayFail(Object v, String pk){ boolean m=mayfail; mayfail=true; boolean ok=scanType(v,pk); mayfail=m; return ok; }
 
     private boolean scanListTryFail(LinkedList ll, String pk){ boolean t=tryfail; tryfail=true; boolean ok=scanList(ll,pk,null); tryfail=t; return ok; }
@@ -304,8 +306,9 @@ public class CyrusLanguage extends WebObject {
 
     private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
-        if(!r && anylogging && !tryfail && !mayfail) System.out.println("Failed to match "+v+" at: "+pk+" "+contentObject(pk));
-        if( r && extralogging && tryfail           ) log(    "Trying to fail but matched "+v+" at: "+pk+" "+contentObject(pk));
+        String when=contentStringOr("Rule:when","(no description)");
+        if(!r && anylogging && !tryfail && !mayfail) System.out.println("When "+when+"\nFailed to match "+v+" at: "+pk+" "+contentObject(pk));
+        if( r && extralogging && tryfail           ) log(    "When "+when+"\nTrying to fail but matched "+v+" at: "+pk+" "+contentObject(pk));
         return r;
     }
 
