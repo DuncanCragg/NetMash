@@ -15,6 +15,7 @@
         uid-6672-f066-5321-d37f
         uid-6e91-d824-6fea-ce5c
         uid-8c1a-79ee-15b5-94ac
+        uid-bce6-6258-53cb-a39a
 }
 
 { UID: uid-3592-f387-6662-8d44
@@ -146,6 +147,29 @@
         "  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) position: (@position + (0 -7 0))}"
         "}"
         "]|"
+}
+
+{ UID: uid-bce6-6258-53cb-a39a
+  is: article
+  title: "Structures"
+  text: "Hit refresh, jump into your player, and type |[ my-box: uid-new ]|."
+        "The my-box: property should now have a link: jump it, and enter this:"
+        "|["
+        "{ is: editable minecraft structure"
+        "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
+        "  Rules: {"
+        "    is: structure rule"
+        "    position:  => @world:player:position + (3 0 3)"
+        "    Notifying: => @. with @world"
+        "  }"
+        "  material: stone-double-slab"
+        "  shape: box"
+        "  size: 7 4 7"
+        "}"
+        "]|"
+        "You should see a stone-built box appear. If you move, it should track you around."
+        "Change the size (not too big! 20 or less), and try different materials."
+        "Try '+ (-3 0 -3)' to build around you, then material: air, to wipe out big chunks of territory!"
 }
 
 { UID: uid-b1d8-d170-a3d9-e693

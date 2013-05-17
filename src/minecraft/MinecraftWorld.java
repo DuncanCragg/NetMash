@@ -40,8 +40,10 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentIsOrListContains("Alerted:is", "minecraft")){
-                if(contentIsOrListContains("is","queryable")) addForScanning(alerted, contentList("Alerted:scanning"));
-                if(contentIsOrListContains("is","updatable")) addForPlacing(contentHash("Alerted:placing"));
+                if(contentIsOrListContains("is","queryable"))              addForScanning(alerted, contentList("Alerted:scanning"));
+                if(contentIsOrListContains("is","updatable")){             addForPlacing(          contentHash("Alerted:placing"));
+                    if(contentIsOrListContains("Alerted:is", "structure")) addForPlacing(          contentHash("Alerted:#"));
+                }
             }
             contentTemp("Alerted", null);
         }
