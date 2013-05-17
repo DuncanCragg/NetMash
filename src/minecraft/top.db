@@ -159,6 +159,7 @@
         "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
         "  Rules: {"
         "    is: structure rule"
+        "    when: \"player moves, set structure position\""
         "    position:  => @world:player:position + (3 0 3)"
         "    Notifying: => @. with @world"
         "  }"
