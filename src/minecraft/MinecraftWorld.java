@@ -41,8 +41,8 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             contentTemp("Alerted", alerted);
             if(contentIsOrListContains("Alerted:is", "minecraft")){
                 if(contentIsOrListContains("is","queryable"))              addForScanning(alerted, contentList("Alerted:scanning"));
-                if(contentIsOrListContains("is","updatable")){             addForPlacing(          contentHash("Alerted:placing"));
-                    if(contentIsOrListContains("Alerted:is", "structure")) addForPlacing(          contentHash("Alerted:#"));
+                if(contentIsOrListContains("is","updatable")){             addForPlacing( alerted, contentHash("Alerted:placing"));
+                    if(contentIsOrListContains("Alerted:is", "structure")) addForPlacing( alerted, contentHash("Alerted:#"));
                 }
             }
             contentTemp("Alerted", null);
@@ -59,9 +59,11 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     private void evaluateWorldView(){
     }
 
-    ConcurrentLinkedQueue<LinkedHashMap> placingQ =new ConcurrentLinkedQueue<LinkedHashMap>();
+    ConcurrentLinkedQueue<LinkedList> placingQ =new ConcurrentLinkedQueue<LinkedList>();
 
-    private void addForPlacing(LinkedHashMap placing){ if(placing !=null) placingQ.add(placing); }
+    private void addForPlacing(String placeruid, LinkedHashMap placing){ if(placing !=null) placingQ.add(list(placeruid,placing)); }
+
+    LinkedHashMap<String,LinkedHashMap> places = new LinkedHashMap<String,LinkedHashMap>();
 
     // ------------------------------------
 
@@ -78,8 +80,20 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                 if(doStats()) doEntitiesToCyrus(player);
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             while(true){
-                LinkedHashMap placing=placingQ.poll();
-                if(placing==null) break;
+                LinkedList uidplacing=placingQ.poll();
+                if(uidplacing==null) break;
+                String        placeruid=(String)       uidplacing.get(0);
+                LinkedHashMap placing  =(LinkedHashMap)uidplacing.get(1);
+                placing=(LinkedHashMap)placing.clone();
+                boolean trail=getBooleanFrom(placing,"trail");
+                if(!trail){
+                    LinkedHashMap oldplacing=places.get(placeruid);
+                    if(oldplacing!=null){
+                        oldplacing.put("material","air");
+                        doPlacing(oldplacing);
+                    }
+                }
+                places.put(placeruid,placing);
                 doPlacing(placing);
             }
         }
@@ -211,7 +225,6 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         Object     material=                  placing.get("material"); if(material==null) material="air";
         String     shape=   getStringFromHash(placing,    "shape", null);
         LinkedList size    =getListFromHash(  placing,    "size");
-        boolean    trail   =getBooleanFrom(   placing,    "trail");
         Integer psx=getIntFromList(position,0);
         Integer psy=getIntFromList(position,1);
         Integer psz=getIntFromList(position,2);
