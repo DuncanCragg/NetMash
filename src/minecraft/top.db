@@ -14,6 +14,7 @@
         uid-4ee8-9084-8ab0-6a2b
         uid-6672-f066-5321-d37f
         uid-6e91-d824-6fea-ce5c
+        uid-2b62-478a-30dd-3bf7
         uid-8c1a-79ee-15b5-94ac
         uid-bce6-6258-53cb-a39a
 }
@@ -116,11 +117,37 @@
         "Spawn some zombies and skeletons and jump the 'world-view:' link to see them."
 }
 
+{ UID: uid-2b62-478a-30dd-3bf7
+  is: article
+  title: "Duplicating stuff"
+  text: "Set this as your player's rules:"
+        "|["
+        "  Rules: {"
+        "    is: minecraft player rule"
+        "    scanning: => {"
+        "      for: blocks"
+        "      size: 5 5 5"
+        "      position: @position + (5 0 5)"
+        "    }"
+        "    Notifying: => @. with @world"
+        "  }{"
+        "    is: minecraft player rule"
+        "    world-view: *"
+        "    placing: => {"
+        "      material: @world-view:list"
+        "      position: @position + (5 0 -10)"
+        "    }"
+        "  }"
+        "]|"
+        "Now, whereever you go, a copy of what's near you appears next to it."
+        "Don't go near things that have too much behaviour, like water, lava, flowers, torches, as Minecraft will crash."
+}
+
 { UID: uid-8c1a-79ee-15b5-94ac
   is: article
   title: "Dowsing the Cowpath Mod"
   text: "Spawn some cows, now. They should leave a trail of mainly glass behind whenever they 'dowse' something interesting below ground."
-        "If it finds gold, it leaves a sand marker, if it finds iron, it leaves cobblestone, for coal it leaves wood."
+        "If a cow finds gold, it leaves a sand marker, if it finds iron, it leaves cobblestone, for coal it leaves wood."
         "Now find and jump a cow link. You should see something like:"
         "|["
         "{"
