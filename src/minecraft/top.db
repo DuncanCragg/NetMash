@@ -144,7 +144,10 @@
         "{ is: editable minecraft cow rule"
         "  when: \"something interesting found, set marker on surface\""
         "  world-view: { list: (((/ore-/))) }"
-        "  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) position: (@position + (0 -7 0))}"
+        "  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass))"
+        "                position: (@position + (0 -7 0))"
+        "                trail: true"
+        "  }"
         "}"
         "]|"
 }
@@ -205,6 +208,9 @@
   is: editable minecraft cow rule
   when: "something interesting found, set marker on surface"
   world-view: { list: (((/ore-/))) }
-  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)) position: (@position + (0 -7 0))}
+  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass))
+                position: (@position + (0 -7 0))
+                trail: true
+  }
 }
 
