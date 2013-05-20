@@ -40,7 +40,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentIsOrListContains("Alerted:is", "minecraft")){
-                if(contentIsOrListContains("is","queryable"))              addForScanning(alerted, contentList("Alerted:scanning"));
+                if(contentIsOrListContains("is","queryable"))              addForScanning(alerted, contentHash("Alerted:scanning"));
                 if(contentIsOrListContains("is","updatable")){             addForPlacing( alerted, contentHash("Alerted:placing"));
                     if(contentIsOrListContains("Alerted:is", "structure")) addForPlacing( alerted, contentHash("Alerted:#"));
                 }
@@ -49,7 +49,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         }
     }
 
-    private void addForScanning(String scanneruid,LinkedList scanning){
+    private void addForScanning(String scanneruid, LinkedHashMap scanning){
         if(scanning==null) return;
         if(contentListContains("scanners", scanneruid)) return;
         contentListAdd(        "scanners", scanneruid);
@@ -100,7 +100,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         if("world-view".equals(hasType)){
             if(++tickNum > 10){ tickNum=0;
                 new Evaluator(this){ public void evaluate(){ try{
-                    doScanning(contentList("scanner:scanning"));
+                    doScanning(contentHash("scanner:scanning"));
                 }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             }
         }
@@ -134,27 +134,26 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         }
     }
 
-    private void doScanning(LinkedList scanning){
+    private void doScanning(LinkedHashMap scanning){
         if(scanning==null) return;
-        if(scanning.size()==4 && scanning.get(2).equals("at")){
-            String scanfor=scanning.get(0).toString();
-            LinkedList shape=findListIn(scanning.get(1));
-            LinkedList at   =findListIn(scanning.get(3));
-            if(at!=null && at.size()==3 && shape!=null && shape.size()==3){
-                Integer shx=getIntFromList(shape,0);
-                Integer shy=getIntFromList(shape,1);
-                Integer shz=getIntFromList(shape,2);
-                if(shx!=null && shy!=null && shz!=null && shx>0 && shy>0 && shz>0){
-                    Integer atx=getIntFromList(at,0);
-                    Integer aty=getIntFromList(at,1);
-                    Integer atz=getIntFromList(at,2);
-                    if(atx==null || aty==null || atz==null) return;
-                    contentList("position", at);
-                    if("blocks"  .equals(scanfor)) getBlockListAround(atx, aty, atz, shx, shy, shz);
-                    if("entities".equals(scanfor)) getSubItemsAround( atx, aty, atz, shx, shy, shz);
-                }
-            }
-        }
+        String     scanfor =getStringFromHash(scanning, "for", "blocks");
+        LinkedList position=getListFromHash(  scanning, "position");
+        LinkedList size    =getListFromHash(  scanning, "size");
+        if(position.size()!=3) return;
+        Integer psx=getIntFromList(position,0);
+        Integer psy=getIntFromList(position,1);
+        Integer psz=getIntFromList(position,2);
+        if(psx==null || psy==null || psz==null) return;
+        if(size.size()!=3) return;
+        Integer six=getIntFromList(size,0);
+        Integer siy=getIntFromList(size,1);
+        Integer siz=getIntFromList(size,2);
+        if(six==null || siy==null || siz==null) return;
+        if(six<=0)  six=1;   if(siy<=0)  siy=1;   if(siz<=0)  siz=1;
+        if(six>100) six=100; if(siy>100) siy=100; if(siz>100) siz=100;
+        contentList("position", position);
+        if("blocks"  .equals(scanfor)) getBlockListAround(psx, psy, psz, six, siy, siz);
+        if("entities".equals(scanfor)) getSubItemsAround( psx, psy, psz, six, siy, siz);
     }
 
     private void getBlockListAround(int atx, int aty, int atz, int shx, int shy, int shz){

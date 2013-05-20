@@ -78,7 +78,7 @@
         "|["
         "  Rules: {"
         "    is: minecraft player rule"
-      "![    scanning: => blocks (2 3 4) at (@position + (0 -40 0))]!"
+      "![    scanning: => { for: blocks size: 2 3 4 position: @position + (0 -40 0) }]!"
         "    Notifying: => @. with @world"
         "  }"
         "]|"
@@ -108,7 +108,7 @@
         "|["
         "  Rules: {"
         "    is: minecraft player rule"
-      "![    scanning: => entities (20 3 20) at (@position + (-10 -1 -10))]!"
+      "![    scanning: => { for: entities size: 20 3 20 position: @position + (-10 -1 -10) }]!"
         "    Notifying: => @. with @world"
         "  }"
         "]|"
@@ -127,7 +127,7 @@
         "  is: editable 3d minecraft cow entity"
         "  name: Cow-9"
         "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
-        "  scanning: blocks (2 10 2) at (-552 18 -132)"
+        "  scanning: { for: blocks size: 2 10 2 position: -552 18 -132 }"
         "  position: -552 68 -132"
         "  world-view: http://localhost:8084/o/uid-5696-300e-3ba7-e913.json"
         "  placing: ... at (-552 61 -132)"
@@ -138,7 +138,7 @@
         "|["
         "{ is: editable minecraft cow rule"
         "  when: \"run, scan below ground\""
-        "  scanning: => blocks (2 10 2) at (@position + (0 -40 0))"
+        "  scanning: => { for: blocks size: 2 10 2 position: @position + (0 -40 0) }"
         "  Notifying: => @. with @world"
         "}"
         "{ is: editable minecraft cow rule"
@@ -200,7 +200,7 @@
 { UID: uid-3b90-6720-d64f-a87c
   is: editable minecraft cow rule
   when: "run, scan below ground"
-  scanning: => blocks (2 10 2) at (@position + (0 -40 0))
+  scanning: => { for: blocks size: 2 10 2 position: @position + (0 -40 0) }
   Notifying: => @. with @world
 }
 
