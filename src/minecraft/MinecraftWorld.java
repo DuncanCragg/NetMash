@@ -89,12 +89,11 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                 if(!trail){
                     LinkedHashMap oldplacing=places.get(placeruid);
                     if(oldplacing!=null){
-                        oldplacing.put("material","air");
-                        doPlacing(oldplacing);
+                        doPlacing(oldplacing, true);
                     }
                 }
                 places.put(placeruid,placing);
-                doPlacing(placing);
+                doPlacing(placing, false);
             }
         }
         else
@@ -220,7 +219,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         return euid;
     }
 
-    private void doPlacing(LinkedHashMap placing){
+    private void doPlacing(LinkedHashMap placing, boolean air){
         LinkedList position=getListFromHash(  placing,    "position"); if(position.size()!=3) return;
         Object     material=                  placing.get("material"); if(material==null) material="air";
         String     shape=   getStringFromHash(placing,    "shape", null);
@@ -240,16 +239,13 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             for(int i=0; i<six; i++)
             for(int j=0; j<siy; j++)
             for(int k=0; k<siz; k++){
-                if(i==0 || i==six-1 || j==0 || j==siy-1 || k==0 || k==siz-1){
-                     ensureBlockAt(psx+i,psy+j,psz+k,(String)material);
-                }
-                else ensureBlockAt(psx+i,psy+j,psz+k,"air");
+                boolean a = air || (i!=0 && i!=six-1 && j!=0 && j!=siy-1 && k!=0 && k!=siz-1);
+                ensureBlockAt(psx+i,psy+j,psz+k, a? "air": (String)material);
             }
         }
         else{
             if(material instanceof String){
-                String name=(String)material;
-                ensureBlockAt(psx,psy,psz,name);
+                ensureBlockAt(psx,psy,psz, air? "air": (String)material);
             }
             else
             if(material instanceof LinkedList){
@@ -263,8 +259,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                                 LinkedList l1=(LinkedList)o1;
                                 for(Object o0: l1){
                                     if(o0 instanceof String){
-                                        String name=(String)o0;
-                                        ensureBlockAt(psx+i,psy+j,psz+k,name);
+                                        ensureBlockAt(psx+i,psy+j,psz+k, air? "air": (String)o0);
                                     }
                                 k++; }
                             }
