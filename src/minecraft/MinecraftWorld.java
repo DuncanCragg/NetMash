@@ -50,12 +50,18 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
 
     private Boolean isRaining=null;
     private Boolean isThundering=null;
+    private Boolean isDaytime=null;
+    private Integer timeOfDay=null;
 
     private void setWorldState(){
         isRaining=null;
         isThundering=null;
+        isDaytime=null;
+        timeOfDay=null;
         if(contentSet("set-raining"))    isRaining   =Boolean.valueOf(contentBool("set-raining"));
         if(contentSet("set-thundering")) isThundering=Boolean.valueOf(contentBool("set-thundering"));
+        if(contentSet("set-daytime"))    isDaytime   =Boolean.valueOf(contentBool("set-daytime"));
+        if(contentSet("set-time-of-day"))timeOfDay   =Integer.valueOf(contentInt( "set-time-of-day"));
     }
 
     private void addForScanning(String scanneruid, LinkedHashMap scanning){
@@ -80,13 +86,17 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     int tickNum=0;
 
     public void tick(float var1, final Minecraft minecraft){
+        if(++tickNum==20) tickNum=0;
         world=world();  // minecraft.theWorld = client world
         if(world==null) return;
         if("world".equals(hasType)){
             new Evaluator(this){ public void evaluate(){ try{
                 EntityPlayer player=minecraft.thePlayer; // client player? lags server player?
                 if(!contentSet("player")) content("player", entityToCyrus(player,uid));
-                if(setAndGetWorldState()) doEntitiesToCyrus(player);
+                if(tickNum==0){
+                    setAndGetWorldState();
+                    doEntitiesToCyrus(player);
+                }
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             while(true){
                 LinkedList uidplacing=placingQ.poll();
@@ -107,29 +117,36 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         }
         else
         if("world-view".equals(hasType)){
-            if(++tickNum > 10){ tickNum=0;
+            if(tickNum==0){
                 new Evaluator(this){ public void evaluate(){ try{
                     doScanning(contentHash("scanner:scanning"));
                 }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             }
         }
     }
-
-    private boolean setAndGetWorldState(){
-        int ts=(int)(5*(world.getTotalWorldTime()/100));
-        int td=(int)(5*(world.getWorldTime()/100));
-        if(contentInt("time-stamp")==ts) return false;
+    private void setAndGetWorldState(){
+        if(isDaytime !=null){
+            if( isDaytime && !isDay()) world.setWorldTime(getDaysIn()*24000+500);
+            if(!isDaytime &&  isDay()) world.setWorldTime(getDaysIn()*24000+12500);
+        }
+        if(timeOfDay !=null) world.setWorldTime(timeOfDay);
         if(isRaining   !=null) world.getWorldInfo().setRaining(   isRaining);
         if(isThundering!=null) world.getWorldInfo().setThundering(isThundering);
-        contentInt(   "time-stamp", ts);
-        contentInt(   "time-of-day",td);
-        contentBool(  "daytime",       world.isDaytime());
+        long ts=100L*(world.getTotalWorldTime()/100L);
+        long td=100L*(world.getWorldTime()/100L);
+        contentInt(   "time-stamp", (int)ts);
+        contentInt(   "time-of-day",(int)td);
+        contentBool(  "daytime",       isDay());
         contentBool(  "raining",       world.isRaining());
         contentDouble("rain-strength", world.getRainStrength(1));
         contentBool(  "thundering",    world.isThundering());
         content(      "seed",       ""+world.getSeed());
-        return true;
     }
+
+    // 0=dawn 6000=midday 12000=dusk 18000=midnight
+    private int getTimeInDay(){ return (int)(world.getWorldTime() % 24000); }
+    private int getDaysIn(){    return (int)(world.getWorldTime() / 24000); }
+    private boolean isDay(){    return getTimeInDay() < 12000; }
 
     private void doEntitiesToCyrus(EntityPlayer player){
         int shx=40; int shy=20; int shz=40;

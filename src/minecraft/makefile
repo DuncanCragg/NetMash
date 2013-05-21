@@ -1,6 +1,14 @@
 
 RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/cyrus.zip
 
+small:
+	sed -i 's/overrideWidth:670/overrideWidth:300/'  jars/options.txt
+	sed -i 's/overrideHeight:800/overrideHeight:200/' jars/options.txt
+
+large:
+	sed -i 's/overrideWidth:300/overrideWidth:670/'  jars/options.txt
+	sed -i 's/overrideHeight:200/overrideHeight:800/' jars/options.txt
+
 cr: compile runhere
 
 

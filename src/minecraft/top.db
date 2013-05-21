@@ -54,11 +54,12 @@
         "{ :"
       "![  set-raining: true]!"
       "![  set-thundering: true]!"
-      "![  set-time-of-day: 0]!"
       "![  set-daytime: false]!"
+      "![  set-time-of-day: 6000]!"
         "  :"
         "}"
         "]|"
+        "Day is 0 to 12000, night 12000 to 24000, plus 24000 * number of days."
 }
 
 { UID: uid-4ee8-9084-8ab0-6a2b
