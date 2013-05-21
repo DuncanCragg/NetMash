@@ -18,6 +18,7 @@
         uid-2b62-478a-30dd-3bf7
         uid-8c1a-79ee-15b5-94ac
         uid-bce6-6258-53cb-a39a
+        uid-3db2-0c18-eaf9-66fb
 }
 
 { UID: uid-3592-f387-6662-8d44
@@ -219,6 +220,27 @@
         "You should see a stone-built box appear. If you move, it should track you around."
         "Change the size (not too big! 20 or less), and try different materials."
         "Try '+ (-3 0 -3)' to build around you, then material: air, to wipe out big chunks of territory!"
+}
+
+{ UID: uid-3db2-0c18-eaf9-66fb
+  is: article
+  title: "Pushing entities"
+  text: "Here, you'll find that cows suddenly move away from you all the time without hitting them:"
+        "|["
+        "  Rules: {"
+        "    is: minecraft player rule"
+        "    scanning: => { for: entities size: 20 3 20 position: @position + (-10 -1 -10) }"
+        "    Notifying: => @. with @world"
+        "  }{"
+        "    is: minecraft player rule"
+        "    world-view: maybe { sub-items: { item: { is: cow }}}"
+        "    pushing: => {"
+        "      entities: @=world-view:sub-items:item"
+        "      speed: 0.5 0.5 0.5"
+        "    }"
+        "  }"
+        "]|"
+        "Try changing that to 'is: chicken' - they fly back down to earth."
 }
 
 { UID: uid-b1d8-d170-a3d9-e693

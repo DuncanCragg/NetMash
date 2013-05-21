@@ -39,9 +39,13 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
             if(contentIsOrListContains("Alerted:is", "minecraft")){
-                if(contentIsOrListContains("is","queryable"))              addForScanning(alerted, contentHash("Alerted:scanning"));
-                if(contentIsOrListContains("is","updatable")){             addForPlacing( alerted, contentHash("Alerted:placing"));
-                    if(contentIsOrListContains("Alerted:is", "structure")) addForPlacing( alerted, contentHash("Alerted:#"));
+                if(contentIsOrListContains("is","queryable")){
+                    addForScanning(alerted, contentHash("Alerted:scanning"));
+                }
+                if(contentIsOrListContains("is","updatable")){
+                    addForPushing(alerted, contentHash("Alerted:pushing"));
+                    addForPlacing(alerted, contentHash("Alerted:placing"));
+                    if(contentIsOrListContains("Alerted:is", "structure")) addForPlacing(alerted, contentHash("Alerted:#"));
                 }
             }
             contentTemp("Alerted", null);
@@ -74,8 +78,10 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     private void evaluateWorldView(){
     }
 
+    ConcurrentLinkedQueue<LinkedList> pushingQ =new ConcurrentLinkedQueue<LinkedList>();
     ConcurrentLinkedQueue<LinkedList> placingQ =new ConcurrentLinkedQueue<LinkedList>();
 
+    private void addForPushing(String pusheruid, LinkedHashMap pushing){ if(pushing !=null) pushingQ.add(list(pusheruid,pushing)); }
     private void addForPlacing(String placeruid, LinkedHashMap placing){ if(placing !=null) placingQ.add(list(placeruid,placing)); }
 
     LinkedHashMap<String,LinkedHashMap> places = new LinkedHashMap<String,LinkedHashMap>();
@@ -98,6 +104,13 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                     doEntitiesToCyrus(player);
                 }
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
+            while(true){
+                LinkedList uidpushing=pushingQ.poll();
+                if(uidpushing==null) break;
+                String        pusheruid=(String)       uidpushing.get(0);
+                LinkedHashMap pushing  =(LinkedHashMap)uidpushing.get(1);
+                doPushing(pusheruid, pushing);
+            }
             while(true){
                 LinkedList uidplacing=placingQ.poll();
                 if(uidplacing==null) break;
@@ -234,6 +247,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     }
 
     static LinkedHashMap<String,String> entityObs=new LinkedHashMap<String,String>();
+    static LinkedHashMap<String,Entity> entityMap=new LinkedHashMap<String,Entity>();
 
     private String entityToCyrus(Entity e, String worlduid){
         String name=e.getEntityName()+"-"+e.entityId;
@@ -242,8 +256,29 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             String type=(e instanceof EntityPlayer)? "player": e.getEntityName().toLowerCase();
             euid=spawn(new MinecraftEntity(e,type,name,worlduid));
             entityObs.put(name,euid);
+            entityMap.put(euid,e);
         }
         return euid;
+    }
+
+    private void doPushing(String pusheruid, LinkedHashMap pushing){
+        Entity pusher=entityMap.get(pusheruid);
+        LinkedList entities=getListFromHash(pushing,"entities");
+        LinkedList speed   =getListFromHash(pushing,"speed");
+        if(entities.size()==0 || speed.size()!=3) return;
+        Float spx=getFloatFromList(speed,0,0);
+        Float spy=getFloatFromList(speed,1,0);
+        Float spz=getFloatFromList(speed,2,0);
+        if(spx==null || spy==null || spz==null) return;
+        if(spx< -1) spx= -1f; if(spy< -1) spy= -1f; if(spz< -1) spz= -1f;
+        if(spx>  1) spx=  1f; if(spy>  1) spy=  1f; if(spz>  1) spz=  1f;
+        for(Object o: entities){ if(!(o instanceof String)) return;
+            Entity e=entityMap.get((String)o);
+            if(e==null) continue;
+            e.motionX+=spx; if(e.motionX>1) e.motionX=1f; if(e.motionX< -1) e.motionX= -1f;
+            e.motionY+=spy; if(e.motionY>1) e.motionY=1f; if(e.motionY< -1) e.motionY= -1f;
+            e.motionZ+=spz; if(e.motionZ>1) e.motionZ=1f; if(e.motionZ< -1) e.motionZ= -1f;
+        }
     }
 
     private void doPlacing(LinkedHashMap placing, boolean air){
