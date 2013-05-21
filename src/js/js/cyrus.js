@@ -722,12 +722,14 @@ function Cyrus(){
     var windowHeight = $(window).height();
     var moreOf = {};
     var retryDelay=100;
+    var lockURL=null;
 
     var me = {
         init: function(){
             me.getTopObject(''+window.location);
         },
         topObjectIn: function(url,obj,s,x){
+            lockURL=null;
             if(url && url!=topObjectURL){
                 topObjectURL = url;
                 history.pushState(null,null,getMashURL(url));
@@ -752,6 +754,7 @@ function Cyrus(){
             retryDelay=100;
         },
         topObjectFail: function(url,err,s,x){
+            lockURL=null;
             $('#content').html('<div>topObjectFail: <a href="'+topObjectURL+'">'+topObjectURL+'</a></div><div>'+s+'; '+err+'</div>');
         },
         objectIn: function(url,obj,s,x){
@@ -768,8 +771,10 @@ function Cyrus(){
                 var open=a.parent().hasClass('open');
                 var raw =a.parent().hasClass('raw');
                 var objhead = a.parent();
-                objhead.next().remove();
-                objhead.replaceWith(json2html.getHTML(url, obj, !open, raw));
+                if(url!=lockURL){
+                    objhead.next().remove();
+                    objhead.replaceWith(json2html.getHTML(url, obj, !open, raw));
+                }
             });
             me.setUpHTMLEvents();
             setTimeout(function(){
@@ -780,6 +785,7 @@ function Cyrus(){
             retryDelay=100;
         },
         objectFail: function(url,err,s,x){
+            lockURL=null;
             console.log('objectFail '+url+' '+err+' '+(x && x.status)+' '+s+' '+(x && x.getResponseHeader('Cache-Notify')));
             var isCN=url && url.indexOf('/c-n-')!= -1;
             retryDelay*=2;
@@ -832,11 +838,13 @@ function Cyrus(){
             //   if(item.indexOf('editable')!= -1)
                 var url =$(this).parent().find('.cyrus-target').val();
                 var item=$(this).text();
+                lockURL=url;
                 var h=json2html.cyrusForm(url,item);
                 $(this).replaceWith(h);
                 me.setUpHTMLEvents();
             });
             $('.cyrus-form').unbind().submit(function(e){
+                lockURL=null;
                 var cyrus=true;
                 var cytext=$(this).find('.cyrus-raw').val();
                 var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert('Syntax: '+e); }
