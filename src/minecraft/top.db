@@ -11,6 +11,7 @@
   is: article list
   title: "Instructions"
   list: uid-3592-f387-6662-8d44
+        uid-490c-22d2-b138-4a43
         uid-4ee8-9084-8ab0-6a2b
         uid-6672-f066-5321-d37f
         uid-6e91-d824-6fea-ce5c
@@ -27,7 +28,7 @@
         "On the right you'll see a Cyrus 'object' representing the Minecraft world."
         "It should look something like this:"
         "|["
-        "{ is: queryable updatable 3d minecraft world"
+        "{ is: editable queryable updatable 3d minecraft world"
         "  global-rules: http://localhost:8084/o/uid-60b6-54d1-3b03-c265.json"
         "  player: http://localhost:8084/o/uid-e7ca-3831-5841-f8ea.json"
         "  time-stamp: 25215"
@@ -42,6 +43,22 @@
         "When you run a Minecraft world, you'll be able to see the state of that world - time of day, raining or snowing."
         "If you then hit the link after 'player:', you'll be able to see your player coordinates in the world. Watch it change as you move around."
         "Note that, at any time, you can hit the browser refresh to get back to the top after jumping these links."
+}
+
+{ UID: uid-490c-22d2-b138-4a43
+  is: article
+  title: "Setting rain and daytime."
+  text: "Hit refresh to get the world back, then try putting in some properties on the world."
+        "You can try 'set-raining' or 'set-time-of-day':"
+        "|["
+        "{ :"
+      "![  set-raining: true]!"
+      "![  set-thundering: true]!"
+      "![  set-time-of-day: 0]!"
+      "![  set-daytime: false]!"
+        "  :"
+        "}"
+        "]|"
 }
 
 { UID: uid-4ee8-9084-8ab0-6a2b
@@ -205,7 +222,7 @@
 
 { UID: uid-b1d8-d170-a3d9-e693
   Class: net.minecraft.src.MinecraftWorld
-  is: queryable updatable 3d minecraft world
+  is: editable queryable updatable 3d minecraft world
   global-rules: uid-60b6-54d1-3b03-c265
 }
 

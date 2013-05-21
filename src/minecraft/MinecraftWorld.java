@@ -29,13 +29,12 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     public void evaluate(){
         if(contentIsOrListContains("is","world"))      hasType="world";
         if(contentIsOrListContains("is","world-view")) hasType="world-view";
-        if("world"     .equals(hasType)) evaluateWorld(); else
-        if("world-view".equals(hasType)) evaluateWorldView();
-        super.evaluate();
+        if("world"     .equals(hasType)){ addScanAndPlace(); super.evaluate(); setWorldState(); } else
+        if("world-view".equals(hasType)){ evaluateWorldView(); super.evaluate(); }
         if(!running){ running=true; mod_Cyrus.modCyrus.registerTicks(this); }
     }
 
-    private void evaluateWorld(){
+    private void addScanAndPlace(){
         if(blockNames.get("air")==null) setUpBlockNames();
         for(String alerted: alerted()){
             contentTemp("Alerted", alerted);
@@ -47,6 +46,16 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             }
             contentTemp("Alerted", null);
         }
+    }
+
+    private Boolean isRaining=null;
+    private Boolean isThundering=null;
+
+    private void setWorldState(){
+        isRaining=null;
+        isThundering=null;
+        if(contentSet("set-raining"))    isRaining   =Boolean.valueOf(contentBool("set-raining"));
+        if(contentSet("set-thundering")) isThundering=Boolean.valueOf(contentBool("set-thundering"));
     }
 
     private void addForScanning(String scanneruid, LinkedHashMap scanning){
@@ -77,7 +86,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             new Evaluator(this){ public void evaluate(){ try{
                 EntityPlayer player=minecraft.thePlayer; // client player? lags server player?
                 if(!contentSet("player")) content("player", entityToCyrus(player,uid));
-                if(doStats()) doEntitiesToCyrus(player);
+                if(setAndGetWorldState()) doEntitiesToCyrus(player);
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             while(true){
                 LinkedList uidplacing=placingQ.poll();
@@ -106,10 +115,12 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         }
     }
 
-    private boolean doStats(){
+    private boolean setAndGetWorldState(){
         int ts=(int)(5*(world.getTotalWorldTime()/100));
         int td=(int)(5*(world.getWorldTime()/100));
         if(contentInt("time-stamp")==ts) return false;
+        if(isRaining   !=null) world.getWorldInfo().setRaining(   isRaining);
+        if(isThundering!=null) world.getWorldInfo().setThundering(isThundering);
         contentInt(   "time-stamp", ts);
         contentInt(   "time-of-day",td);
         contentBool(  "daytime",       world.isDaytime());
