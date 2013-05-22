@@ -41,6 +41,13 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
             x=px; y=py; z=pz;
             new Evaluator(this){ public void evaluate(){ try{
                 contentList("position",list((int)(x-1.0),(int)(y-2.5),(int)(z-1.0)));
+                if(entity instanceof EntityPlayer){
+                    EntityPlayer ep=(EntityPlayer)entity;
+                    if(!contentSet("spawn-position")){
+                        ChunkCoordinates spawnpos=ep.getBedLocation();
+                        contentList("spawn-position",list(spawnpos.posX,spawnpos.posY,spawnpos.posZ));
+                    }
+                }
                 self.evaluate();
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
         }
