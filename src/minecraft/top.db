@@ -75,7 +75,7 @@
         "  position: -638 63 -147"
       "![  Rules: {]!"
       "![    is: minecraft player rule]!"
-      "![    placing: => { material: glass shape: box size: 1 1 1 position: (@position + (3 0 3)) }]!"
+      "![    placing: => { material: glass shape: box size: 1 1 1 position: @position + (3 0 3) }]!"
       "![    Notifying: => @. with @world]!"
         "  }"
         "}"
@@ -176,7 +176,7 @@
         "  scanning: { for: blocks size: 2 10 2 position: -552 18 -132 }"
         "  position: -552 68 -132"
         "  world-view: http://localhost:8084/o/uid-5696-300e-3ba7-e913.json"
-        "  placing: ... at (-552 61 -132)"
+        "  placing: ... position: -552 61 -132"
         "}"
         "]|"
         "See all that scanning and placing it's doing? That's set by more global rules, just for cows this time."
@@ -190,8 +190,8 @@
         "{ is: editable minecraft cow rule"
         "  when: \"something interesting found, set marker on surface\""
         "  world-view: { list: (((/ore-/))) }"
-        "  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass))"
-        "                position: (@position + (0 -7 0))"
+        "  placing: => { material: @world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)"
+        "                position: @position + (0 -7 0)"
         "                trail: true"
         "  }"
         "}"
@@ -275,8 +275,8 @@
   is: editable minecraft cow rule
   when: "something interesting found, set marker on surface"
   world-view: { list: (((/ore-/))) }
-  placing: => { material: (@world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass))
-                position: (@position + (0 -7 0))
+  placing: => { material: @world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)
+                position: @position + (0 -7 0)
                 trail: true
   }
 }
