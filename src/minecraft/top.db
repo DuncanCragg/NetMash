@@ -75,7 +75,7 @@
         "  position: -638 63 -147"
       "![  Rules: {]!"
       "![    is: minecraft player rule]!"
-      "![    placing: => { material: glass shape: box size: 1 1 1 position: @position + (3 0 3) }]!"
+      "![    placing: => { material: glass shape: box size: 2 2 2 position: @position + (3 0 3) }]!"
       "![    Notifying: => @. with @world]!"
         "  }"
         "}"
@@ -94,11 +94,11 @@
   is: article
   title: "Scanning the blocks in the world"
   text: "Now let's add a scanner to the user, which tells the world we'd like to be updated on the blocks in some region."
-        "The region will be -40 down from where we stand:"
+        "The region will be -30 down from where we stand:"
         "|["
         "  Rules: {"
         "    is: minecraft player rule"
-      "![    scanning: => { for: blocks size: 2 3 4 position: @position + (0 -40 0) }]!"
+      "![    scanning: => { for: blocks size: 2 3 4 position: @position + (0 -30 0) }]!"
         "    Notifying: => @. with @world"
         "  }"
         "]|"
@@ -184,14 +184,14 @@
         "|["
         "{ is: editable minecraft cow rule"
         "  when: \"run, scan below ground\""
-        "  scanning: => { for: blocks size: 2 10 2 position: @position + (0 -40 0) }"
+        "  scanning: => { for: blocks size: 2 10 2 position: @position + (0 -30 0) }"
         "  Notifying: => @. with @world"
         "}"
         "{ is: editable minecraft cow rule"
         "  when: \"something interesting found, set marker on surface\""
         "  world-view: { list: (((/ore-/))) }"
         "  placing: => { material: @world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)"
-        "                position: @position + (0 -7 0)"
+        "                position: @position + (0 -10 0)"
         "                trail: true"
         "  }"
         "}"
@@ -267,7 +267,7 @@
 { UID: uid-3b90-6720-d64f-a87c
   is: editable minecraft cow rule
   when: "run, scan below ground"
-  scanning: => { for: blocks size: 2 10 2 position: @position + (0 -40 0) }
+  scanning: => { for: blocks size: 2 10 2 position: @position + (0 -30 0) }
   Notifying: => @. with @world
 }
 
@@ -276,7 +276,7 @@
   when: "something interesting found, set marker on surface"
   world-view: { list: (((/ore-/))) }
   placing: => { material: @world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)
-                position: @position + (0 -7 0)
+                position: @position + (0 -10 0)
                 trail: true
   }
 }
