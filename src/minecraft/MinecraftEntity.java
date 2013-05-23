@@ -57,13 +57,19 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
                 if(entity instanceof EntityPlayer){
                     EntityPlayer player=(EntityPlayer)entity;
                     if(!contentSet("spawn-position") || newplayer[0]){
-                        ChunkCoordinates spawnpos=world().getSpawnPoint();
+                        EntityPlayer player2=otherPlayer(player);
+                        ChunkCoordinates spawnpos=(player2==null)? null: player2.getBedLocation();
                         if(spawnpos!=null) contentList("spawn-position",list(spawnpos.posX,spawnpos.posY,spawnpos.posZ));
                     }
                 }
                 self.evaluate();
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
         }
+    }
+
+    private EntityPlayer otherPlayer(EntityPlayer player){
+        for(Object p: world().playerEntities) if(p.equals(player)) return (EntityPlayer)p;
+        return null;
     }
 
     public World world(){
