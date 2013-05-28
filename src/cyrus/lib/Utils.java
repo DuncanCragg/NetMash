@@ -94,7 +94,13 @@ public class Utils{
     }
 
     @SuppressWarnings("unchecked")
-    static public LinkedList vvadd(LinkedList a, LinkedList b){
+    static public LinkedList vvadd(LinkedList a, LinkedList b){ return vvaddsum(a,b,true); }
+
+    @SuppressWarnings("unchecked")
+    static public LinkedList vvsub(LinkedList a, LinkedList b){ return vvaddsum(a,b,false); }
+
+    @SuppressWarnings("unchecked")
+    static public LinkedList vvaddsum(LinkedList a, LinkedList b, boolean add){
         if(a==null) return b; if(b==null) return a;
         int as=a.size(), bs=b.size();
         if(as==0) return b; if(bs==0) return a;
@@ -108,7 +114,7 @@ public class Utils{
             Double d1=tryDouble(o);
             Double d2=tryDouble(p);
             if(d1==null || d2==null) return null;
-            r.add(Double.valueOf(d1+d2));
+            r.add(Double.valueOf(add? d2+d1: d2-d1));
         i++; }
         return r;
     }

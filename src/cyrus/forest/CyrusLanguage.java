@@ -735,6 +735,14 @@ public class CyrusLanguage extends WebObject {
                 if(lr!=null) return lr;
             }
         }
+        if(ll.size()==3 && "-".equals(s1)){
+            if(l0==null) l0=findList(ll.get(0));
+            if(l2==null) l2=findList(ll.get(2));
+            if(l0!=null && l2!=null){
+                LinkedList lr=vvsub(l0, l2);
+                if(lr!=null) return lr;
+            }
+        }
         if(ll.size()==3 && "~".equals(s1)){
             if(l0==null) l0=findList(ll.get(0));
             if(l2==null) l2=findList(ll.get(2));
