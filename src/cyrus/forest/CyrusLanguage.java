@@ -1030,11 +1030,10 @@ public class CyrusLanguage extends WebObject {
         do{
             int e=pk.lastIndexOf(":");
             if(e== -1) return null;
-            String p=pk.substring(e+1);
             pk=pk.substring(0,e);
             ll=bindings.get(pk);
             if(ll==null) continue;
-            return objectsAt(ll,p,jump);
+            return objectsAt(ll,path.substring(e+1),jump);
 
         }while(true);
     }
