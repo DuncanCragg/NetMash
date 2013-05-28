@@ -102,6 +102,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                 if(tickNum==0){
                     setAndGetWorldState();
                     doEntitiesToCyrus(player);
+                    self.evaluate();
                 }
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             while(true){
@@ -142,7 +143,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             if( isDaytime && !isDay()) world.setWorldTime(getDaysIn()*24000+500);
             if(!isDaytime &&  isDay()) world.setWorldTime(getDaysIn()*24000+12500);
         }
-        if(timeOfDay !=null) world.setWorldTime(timeOfDay);
+        if(timeOfDay   !=null) world.setWorldTime(timeOfDay);
         if(isRaining   !=null) world.getWorldInfo().setRaining(   isRaining);
         if(isThundering!=null) world.getWorldInfo().setThundering(isThundering);
         long ts=100L*(world.getTotalWorldTime()/100L);
