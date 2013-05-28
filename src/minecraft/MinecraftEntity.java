@@ -35,15 +35,17 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
     }
 
     LinkedList newPosition=null;
+    LinkedList newSpeed=null;
 
     private void setOwnState(){
         newPosition=contentList("set-position");
+        newSpeed   =contentList("set-speed");
     }
 
     int tickNum=0;
 
     public void tick(float var1, Minecraft minecraft){
-        if(++tickNum==20) tickNum=0;
+        if(++tickNum==8) tickNum=0;
         if(entity instanceof EntityPlayer) entity2=otherPlayer((EntityPlayer)entity);
         new Evaluator(this){ public void evaluate(){ try{
             if(tickNum==0){
@@ -58,7 +60,21 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
             Integer psx=getIntFromList(newPosition,0);
             Integer psy=getIntFromList(newPosition,1);
             Integer psz=getIntFromList(newPosition,2);
-            if(psx!=null || psy!=null || psz!=null){ ; }
+            if(psx!=null && psy!=null && psz!=null){
+                // setPosition() doesn't seem to work
+            }
+        }
+        if(newSpeed!=null && newSpeed.size()==3){
+            Float spx=getFloatFromList(newSpeed,0,0);
+            Float spy=getFloatFromList(newSpeed,1,0);
+            Float spz=getFloatFromList(newSpeed,2,0);
+            if(spx!=null && spy!=null && spz!=null){
+                if(spx< -1) spx= -1f; if(spy< -1) spy= -1f; if(spz< -1) spz= -1f;
+                if(spx>  1) spx=  1f; if(spy>  1) spy=  1f; if(spz>  1) spz=  1f;
+                entity.motionX+=spx; if(entity.motionX>1) entity.motionX=1f; if(entity.motionX< -1) entity.motionX= -1f;
+                entity.motionY+=spy; if(entity.motionY>1) entity.motionY=1f; if(entity.motionY< -1) entity.motionY= -1f;
+                entity.motionZ+=spz; if(entity.motionZ>1) entity.motionZ=1f; if(entity.motionZ< -1) entity.motionZ= -1f;
+            }
         }
         int ppx=(int)entity.posX;
         int ppy=(int)entity.posY;

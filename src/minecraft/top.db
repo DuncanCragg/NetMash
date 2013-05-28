@@ -19,6 +19,7 @@
         uid-8c1a-79ee-15b5-94ac
         uid-bce6-6258-53cb-a39a
         uid-3db2-0c18-eaf9-66fb
+        uid-290d-5dcf-c778-646c
 }
 
 { UID: uid-3592-f387-6662-8d44
@@ -241,6 +242,28 @@
         "  }"
         "]|"
         "Try changing that to 'is: chicken' - they fly back down to earth."
+}
+
+{ UID: uid-290d-5dcf-c778-646c
+  is: article
+  title: "Pushing yourself - to avoid baddies"
+  text: "When a zombie comes close, you should bounce away automatically:"
+        "|["
+        "  Rules: {"
+        "    is: minecraft player rule"
+        "    scanning: => { for: entities size: 5 5 5 position: @position + (-2 -2 -2) }"
+        "    Notifying: => @. with @world"
+        "  }{"
+        "    is: minecraft player rule"
+        "    world-view: { sub-items: { item: { is: zombie }}}"
+        "    set-speed: => (@position - @=world-view:sub-items:item:position) / 5"
+        "  }{"
+        "    is: minecraft player rule"
+        "    world-view: not { sub-items: { item: { is: zombie }}}"
+        "    set-speed: => #"
+        "  }"
+        "]|"
+        "This only works if there's one zombie, else @=world-view:sub-items:item:position returns a list."
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
