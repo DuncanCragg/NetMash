@@ -166,22 +166,9 @@
 { UID: uid-8c1a-79ee-15b5-94ac
   is: article
   title: "Dowsing the Cowpath Mod"
-  text: "Spawn some cows, now. They should leave a trail of mainly glass behind whenever they 'dowse' something interesting below ground."
-        "If a cow finds gold, it leaves a sand marker, if it finds iron, it leaves cobblestone, for coal it leaves wood."
-        "Now find and jump a cow link. You should see something like:"
-        "|["
-        "{"
-        "  is: editable 3d minecraft cow entity"
-        "  name: Cow-9"
-        "  world: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json"
-        "  scanning: { for: blocks size: 2 10 2 position: -552 18 -132 }"
-        "  position: -552 68 -132"
-        "  world-view: http://localhost:8084/o/uid-5696-300e-3ba7-e913.json"
-        "  placing: ... position: -552 61 -132"
-        "}"
-        "]|"
-        "See all that scanning and placing it's doing? That's set by more global rules, just for cows this time."
-        "Again, hit refresh and jump the 'global-rules:' link in the world object, then look at the second and third links:"
+  text: "We're going to add more global rules, just for cows this time."
+        "Again, hit refresh and jump the 'global-rules:' link in the world object, then type 'uid-new' twice."
+        "Now set the following at the second and third links:"
         "|["
         "{ is: editable minecraft cow rule"
         "  when: \"run, scan below ground\""
@@ -197,6 +184,8 @@
         "  }"
         "}"
         "]|"
+        "Spawn some cows, now. They should leave a trail of mainly glass behind whenever they 'dowse' something interesting below ground."
+        "If a cow finds gold, it leaves a sand marker, if it finds iron, it leaves cobblestone, for coal it leaves wood."
 }
 
 { UID: uid-bce6-6258-53cb-a39a
@@ -225,33 +214,33 @@
 
 { UID: uid-3db2-0c18-eaf9-66fb
   is: article
-  title: "Pushing entities"
-  text: "Here, you'll find that cows suddenly move away from you all the time without hitting them:"
+  title: "Pushing zombies away"
+  text: "Here, you'll find that zombies suddenly move away from you all the time without you hitting them:"
         "|["
         "  Rules: {"
         "    is: minecraft player rule"
-        "    scanning: => { for: entities size: 20 3 20 position: @position + (-10 -2 -10) }"
+        "    scanning: => { for: entities size: 15 5 15 position: @position + (-7 -2 -7) }"
         "    Notifying: => @. with @world"
         "  }{"
         "    is: minecraft player rule"
-        "    world-view: maybe { sub-items: { item: { is: cow }}}"
+        "    world-view: maybe { sub-items: { item: { is: zombie }}}"
         "    pushing: => {"
         "      entities: @=world-view:sub-items:item"
         "      speed: 0.5 0.5 0.5"
         "    }"
         "  }"
         "]|"
-        "Try changing that to 'is: chicken' - they fly back down to earth."
+        "Try changing that to 'is: chicken' - they fly gently back down to earth..."
 }
 
 { UID: uid-290d-5dcf-c778-646c
   is: article
-  title: "Pushing yourself - to avoid baddies"
+  title: "Pushing yourself away from zombies"
   text: "When a zombie comes close, you should bounce away automatically:"
         "|["
         "  Rules: {"
         "    is: minecraft player rule"
-        "    scanning: => { for: entities size: 5 5 5 position: @position + (-2 -2 -2) }"
+        "    scanning: => { for: entities size: 9 5 9 position: @position + (-4 -2 -4) }"
         "    Notifying: => @. with @world"
         "  }{"
         "    is: minecraft player rule"
@@ -276,8 +265,6 @@
   is: editable list
   title: "global rules"
   list: uid-df7c-2043-f410-724f
-        uid-3b90-6720-d64f-a87c
-        uid-adae-7060-6cb1-da1c
 }
 
 { UID: uid-df7c-2043-f410-724f
@@ -285,22 +272,5 @@
   when: "world-view scan results notified, save"
   Alerted: { is: minecraft world-view }
   world-view: # => @Alerted
-}
-
-{ UID: uid-3b90-6720-d64f-a87c
-  is: editable minecraft cow rule
-  when: "run, scan below ground"
-  scanning: => { for: blocks size: 2 10 2 position: @position + (0 -30 0) }
-  Notifying: => @. with @world
-}
-
-{ UID: uid-adae-7060-6cb1-da1c
-  is: editable minecraft cow rule
-  when: "something interesting found, set marker on surface"
-  world-view: { list: (((/ore-/))) }
-  placing: => { material: @world-view:list each ({ ore-gold: sand ore-iron: cobblestone ore-coal: wood } select @.. else glass)
-                position: @position + (0 -10 0)
-                trail: true
-  }
 }
 
