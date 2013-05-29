@@ -484,7 +484,7 @@ public class WebObject {
     public LinkedList contentListMayJump(String path){
         LinkedList ll=contentList(path);
         if(ll!=null) return ll;
-        return contentList(path+":list");
+        return contentAsList(path+":list");
     }
 
     /** Get list at path. */
