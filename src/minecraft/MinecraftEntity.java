@@ -46,7 +46,11 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
 
     public void tick(float var1, Minecraft minecraft){
         if(++tickNum==8) tickNum=0;
-        if(entity instanceof EntityPlayer) entity2=otherPlayer((EntityPlayer)entity);
+        if(entity instanceof EntityPlayer){
+            EntityPlayer player=minecraft.thePlayer;
+            if(entity.equals(player)) entity=player;
+            entity2=otherPlayer((EntityPlayer)entity);
+        }
         new Evaluator(this){ public void evaluate(){ try{
             if(tickNum==0){
                 setAndGetState();
@@ -80,11 +84,18 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
         int ppy=(int)entity.posY;
         int ppz=(int)entity.posZ;
         contentList("position",list(ppx,ppy,ppz));
+        double spx=entity.motionX;
+        double spy=entity.motionY;
+        double spz=entity.motionZ;
+        contentList("speed",list(spx,spy,spz));
+        contentBool("on-ground", entity.onGround);
+        contentBool("collided",  entity.isCollided);
         if(entity instanceof EntityPlayer){
             ChunkCoordinates   spawnpos=(entity2!=null? ((EntityPlayer)entity2).getBedLocation(): null);
             if(spawnpos==null) spawnpos=                ((EntityPlayer)entity ).getBedLocation();
             if(spawnpos!=null) contentList("spawn-position",list(spawnpos.posX,spawnpos.posY,spawnpos.posZ));
         }
+        contentBool("dead", entity.isDead);
     }
 
     private EntityPlayer otherPlayer(EntityPlayer player){
