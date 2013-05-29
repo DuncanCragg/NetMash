@@ -12,6 +12,7 @@
   title: "Instructions"
   list: uid-3592-f387-6662-8d44
         uid-490c-22d2-b138-4a43
+        uid-48c2-9388-264b-d30b
         uid-4ee8-9084-8ab0-6a2b
         uid-6672-f066-5321-d37f
         uid-6e91-d824-6fea-ce5c
@@ -49,7 +50,7 @@
 
 { UID: uid-490c-22d2-b138-4a43
   is: article
-  title: "Setting rain and daytime."
+  title: "Setting rain and daytime"
   text: "Hit refresh to get the world back, then try putting in some properties on the world."
         "You can try 'set-raining' or 'set-time-of-day':"
         "|["
@@ -64,11 +65,36 @@
         "Day is 0 to 12000, night 12000 to 24000, plus 24000 * number of days."
 }
 
+{ UID: uid-48c2-9388-264b-d30b
+  is: article
+  title: "Safer at home"
+  text: "Here, as soon as you stray too far from home, the sky turns dark and stormy."
+        "You need to edit your player object. Jump the player: link again and hit the text."
+        "Put the first rule in your player, the second in the world:"
+        "|["
+        "  Rules: {"
+        "    is: player rule"
+        "    when: \"too far from home, then in danger\""
+        "    distance-from-spawn: => @position ~ @spawn-position"
+        "    danger: => @distance-from-spawn > 20"
+        "  }"
+        " "
+        "  Rules: {"
+        "    is: world rule"
+        "    when: \"in danger, darken the skies...\""
+        "    player: { danger: * }"
+        "    set-daytime: => if @player:danger then false else true"
+        "    set-raining: => @player:danger"
+        "    set-thundering: => @player:danger"
+        "  }"
+        "]|"
+}
+
 { UID: uid-4ee8-9084-8ab0-6a2b
   is: article
   title: "Placing some blocks: a trail of glass"
-  text: "Now you can edit your player object. Jump the player: link again and hit the text:"
-        "This is a mod to leave a trail of glass everywhere you go."
+  text: "This is a mod to leave a trail of glass everywhere you go."
+        "Another player rule:"
         "|["
         "{ is: editable 3d minecraft player entity"
         "  name: \"..\""
