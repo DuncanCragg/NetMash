@@ -270,14 +270,11 @@ public class CyrusLanguage extends WebObject {
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        LinkedList ll=contentListMayJump(path);
         boolean matchEach=list.size()!=1;
-        if(ll==null){
-            if(matchEach) return false;
-            boolean ok=scanType(list.get(0),path);
-            if(ok && rhs!=null) rewrites.put(path,rhs);
-            return ok;
-        }
+        LinkedList ll=contentList(path);
+        if(ll==null && !matchEach && scanType(list.get(0),path)){ if(rhs!=null) rewrites.put(path,rhs); return true; }
+        if(ll==null) ll=contentListMayJump(path);
+        if(ll==null) return false;
         LinkedList<String> bl=new LinkedList<String>();
         int i=0;
         for(Object v: list){
@@ -307,8 +304,8 @@ public class CyrusLanguage extends WebObject {
     private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
         String when=contentStringOr("Rule:when","(no description)");
-        if(!r && anylogging && !tryfail && !mayfail) System.out.println("When "+when+"\nFailed to match "+v+" at: "+pk+" "+contentObject(pk));
-        if( r && extralogging && tryfail           ) log(    "When "+when+"\nTrying to fail but matched "+v+" at: "+pk+" "+contentObject(pk));
+        if(!r && anylogging && !tryfail && !mayfail) System.out.println("When "+when+"\nFailed to match "+v+" @"+pk+"="+contentObject(pk));
+        if( r && extralogging && tryfail           ) log(    "When "+when+"\nTrying to fail but matched "+v+" @"+pk+"="+contentObject(pk));
         return r;
     }
 
