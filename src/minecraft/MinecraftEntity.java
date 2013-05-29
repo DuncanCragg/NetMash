@@ -84,10 +84,10 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
         int ppy=(int)entity.posY;
         int ppz=(int)entity.posZ;
         contentList("position",list(ppx,ppy,ppz));
-        double spx=entity.motionX;
-        double spy=entity.motionY;
-        double spz=entity.motionZ;
-        contentList("speed",list(spx,spy,spz));
+        int spx=(int)(entity.motionX*100);
+        int spy=(int)(entity.motionY*100);
+        int spz=(int)(entity.motionZ*100);
+        contentList("speed",list(spx/100f,spy/100f,spz/100f));
         contentBool("on-ground", entity.onGround);
         contentBool("collided",  entity.isCollided);
         if(entity instanceof EntityPlayer){
@@ -95,7 +95,7 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
             if(spawnpos==null) spawnpos=                ((EntityPlayer)entity ).getBedLocation();
             if(spawnpos!=null) contentList("spawn-position",list(spawnpos.posX,spawnpos.posY,spawnpos.posZ));
         }
-        contentBool("dead", entity.isDead);
+        contentBool("alive", !entity.isDead);
     }
 
     private EntityPlayer otherPlayer(EntityPlayer player){
