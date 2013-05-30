@@ -163,7 +163,6 @@ public class Kernel {
     }
 
     static public void writeFile(File file, boolean append, ByteBuffer bytebuffer, FileUser fileuser) throws Exception{
-        if(!(file.exists() && file.canWrite()))  throw new Exception("Can't write file "+file.getPath());
         FileChannel channel = new FileOutputStream(file, append).getChannel();
         int n=channel.write(bytebuffer);
         fileuser.writable(bytebuffer, n);
@@ -176,7 +175,11 @@ public class Kernel {
     }
 
     static public ByteBuffer chopAtDivider(ByteBuffer bytebuffer, byte[] divider){
-        return doChopAtDivider(bytebuffer, divider);
+        return doChopAtDivider(bytebuffer, divider, false);
+    }
+
+    static public ByteBuffer chopAtDivider(ByteBuffer bytebuffer, byte[] divider, boolean leaveDivider){
+        return doChopAtDivider(bytebuffer, divider, leaveDivider);
     }
 
     static public ByteBuffer chopAtDivider(ByteBuffer bytebuffer, byte[] divider, ByteBuffer bb){
@@ -364,7 +367,7 @@ public class Kernel {
 
     //-----------------------------------------------------
 
-    static private ByteBuffer doChopAtDivider(ByteBuffer bytebuffer, byte[] divider){
+    static private ByteBuffer doChopAtDivider(ByteBuffer bytebuffer, byte[] divider, boolean leaveDivider){
         int len;
         int pos=bytebuffer.position();
         for(len=0; len<=pos-divider.length; len++){
@@ -374,9 +377,11 @@ public class Kernel {
             }
             if(j!=divider.length) continue;
 
-            ByteBuffer bb=ByteBuffer.allocate(len);
+            int cut =len+divider.length;
+            int take=leaveDivider? cut: len;
+            ByteBuffer bb=ByteBuffer.allocate(take);
 
-            return dumpInto(bytebuffer, len, len+divider.length, bb);
+            return dumpInto(bytebuffer, take, cut, bb);
         }
         return null;
     }

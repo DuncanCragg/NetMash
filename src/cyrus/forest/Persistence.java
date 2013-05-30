@@ -23,6 +23,8 @@ public class Persistence implements FileUser {
 
     public  FunctionalObserver funcobs;
 
+    private String directory = null;
+    private String db = null;
     private File dbfile=null;
     private InputStream      topdbis=null;
     private FileOutputStream topdbos=null;
@@ -40,8 +42,8 @@ public class Persistence implements FileUser {
         this.topdbis = topdbis;
         this.topdbos = topdbos;
 
-        String directory = Kernel.config.stringPathN("persist:directory");
-        String db        = Kernel.config.stringPathN("persist:db");
+        directory = Kernel.config.stringPathN("persist:directory");
+        db        = Kernel.config.stringPathN("persist:db");
         if(topdbis==null){
            dbfile = new File(directory+"/"+db);
            try{ Kernel.readFile(dbfile, this); }
@@ -66,18 +68,17 @@ public class Persistence implements FileUser {
         FunctionalObserver.log("Persistence: initialised.");
     }
 
+    boolean isUnix=true;
+
     public void readable(ByteBuffer bytebuffer, int len){
         if(len == -1) return;
-        boolean unix=true;
         while(true){
             ByteBuffer jsonbytes=null;
-            if(unix) jsonbytes = Kernel.chopAtDivider(bytebuffer, "\n\n".getBytes());
-            if(jsonbytes==null){
-                     unix=false;
-                     jsonbytes = Kernel.chopAtDivider(bytebuffer, "\r\n\r\n".getBytes());
-            }
+            if(isUnix) jsonbytes = Kernel.chopAtDivider(bytebuffer, "\n\n".getBytes(), true);
+            boolean unix=jsonbytes!=null;
+            if(!unix)  jsonbytes = Kernel.chopAtDivider(bytebuffer, "\r\n\r\n".getBytes(), true);
             if(jsonbytes==null) return;
-
+            isUnix=unix;
             CharBuffer jsonchars = UTF8.decode(jsonbytes);
             String uid = findUIDAndDetectCyrus(jsonchars);
             if(uid.equals("cyrusconfig")) cyrusconfig = new JSON(jsonchars,cyrus);
@@ -122,7 +123,8 @@ public class Persistence implements FileUser {
     }
 
     private void runSync(int syncrate){
-        while(true){
+        for(int i=0; ; i++){
+            if(i%20==0) writeTheLot();
             for(WebObject w: syncable){
                 syncable.remove(w);
                 CharBuffer jsonchars;
@@ -137,6 +139,16 @@ public class Persistence implements FileUser {
             Kernel.sleep(syncrate!=0? syncrate: 100);
         }
     }
+
+    private void writeTheLot(){ try{
+        File ddbfile = new File(directory+"/snapshot."+db);
+        Kernel.writeFile(ddbfile, false, UTF8.encode(""), this);
+        for(Map.Entry<String,CharBuffer> entry: jsoncache.entrySet()){
+            CharBuffer jsonchars=entry.getValue();
+            jsonchars.position(0);
+            Kernel.writeFile(ddbfile, true, UTF8.encode(jsonchars), this);
+        }
+    }catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); } }
 
     // ----------------------------------------
 
