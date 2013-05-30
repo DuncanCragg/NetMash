@@ -559,7 +559,7 @@ public class JSON {
             if(s==null || ( tagdelim && s.endsWith(":"))){ chp--; chp--; break; }
             try{ ll.add(readBoolean()); continue; }catch(Exception e){ chp=chpsave; }
             try{ ll.add(readNumber());  continue; }catch(Exception e){ chp=chpsave; }
-            try{ ll.add(readNull());    continue; }catch(Exception e){ chp=chpsave; }
+            try{        readNull();     continue; }catch(Exception e){ chp=chpsave; }
             chp=chpstringok;
             ll.add(s);
         }
@@ -606,7 +606,8 @@ public class JSON {
             }
             if(!doobj){
                 if(chars[chp]>' '){
-                    hm.put(tag, readCyrusObject(true));
+                    Object o=readCyrusObject(true);
+                    if(o!=null) hm.put(tag, o);
                     doobj=true;
                 }
                 continue;
@@ -631,7 +632,7 @@ public class JSON {
             if(chars[chp]>' '){
                 Object o=readCyrusObject(false);
                 if(o instanceof LinkedList) ll.addAll((LinkedList)o);
-                else ll.add(o);
+                else if(o!=null) ll.add(o);
                 continue;
             }
         }

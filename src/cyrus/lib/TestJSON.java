@@ -208,10 +208,8 @@ public class TestJSON {
             "    logic: \n"+
             "      true\n"+
             "      false\n"+
-            "      {\n"+
-            "        foo: null null\n"+
-            "      }\n"+
-            "      ( true false ( ( null stringnospaces ) ) \"string with  spaces\" )\n"+
+            "      { }\n"+
+            "      ( true false ( ( stringnospaces ) ) \"string with  spaces\" )\n"+
             "    bits: \"string with  (double ) spaces:\"\n"+
             "    b: ( c \"d)e\" )\n"+
             "    more: \n"+
@@ -227,7 +225,6 @@ public class TestJSON {
             "        }\n"+
             "        false\n"+
             "      )\n"+
-            "      null\n"+
             "  }\n"+
             "}";
 
