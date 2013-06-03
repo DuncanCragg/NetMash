@@ -12,14 +12,19 @@ large:
 cr: compile runhere
 
 
+cer: compile emptydb runhere
+
+
 crr: compile release runthere
 
 
 compile:
 	./recompile.sh --client
 
-runhere:
+emptydb:
 	rm -f jars/cyrus.db
+
+runhere:
 	./startclient.sh
 
 release:

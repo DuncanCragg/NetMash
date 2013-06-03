@@ -24,6 +24,7 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
               "  \"world\": \""+worlduid+"\"\n"+
               "}");
         entity=e;
+        noPersist();
     }
 
     boolean running=false;
@@ -44,15 +45,16 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
 
     int tickNum=0;
 
-    public void tick(float var1, Minecraft minecraft){
-        if(++tickNum==8) tickNum=0;
-        if(entity instanceof EntityPlayer){
-            EntityPlayer player=minecraft.thePlayer;
-            if(entity.equals(player)) entity=player;
-            entity2=otherPlayer((EntityPlayer)entity);
-        }
+    public void tick(float var1, final Minecraft minecraft){
         new Evaluator(this){ public void evaluate(){ try{
-            if(tickNum==0){
+            if(++tickNum==8){ tickNum=0;
+                if(contentIsOrListContains("is","player")){
+                    EntityPlayer player=minecraft.thePlayer;
+                 /* if(entity.equals(player)) */ entity=player;
+                    entity2=otherPlayer((EntityPlayer)entity);
+                    nopersist=false;
+                }
+                if(entity==null) return;
                 setAndGetState();
                 self.evaluate();
             }

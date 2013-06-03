@@ -93,11 +93,11 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
 
     public void tick(float var1, final Minecraft minecraft){
         if(++tickNum==20) tickNum=0;
-        world=world();  // minecraft.theWorld = client world
+        world=world();  // minecraft.theWorld = client world; player.theWorld?
         if(world==null) return;
         if("world".equals(hasType)){
             new Evaluator(this){ public void evaluate(){ try{
-                EntityPlayer player=minecraft.thePlayer; // client player? lags server player?
+                EntityPlayer player=minecraft.thePlayer;
                 if(!contentSet("player")) content("player", entityToCyrus(player,uid));
                 if(tickNum==0){
                     setAndGetWorldState();
@@ -138,6 +138,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             }
         }
     }
+
     private void setAndGetWorldState(){
         if(isDaytime !=null){
             if( isDaytime && !isDay()) world.setWorldTime(getDaysIn()*24000+500);
@@ -171,6 +172,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             if(e.posX >atx && e.posX<atx+shx &&
                e.posY >aty && e.posY<aty+shy &&
                e.posZ >atz && e.posZ<atz+shz   ){
+                if(e instanceof EntityPlayer) continue;
                 entityToCyrus(e,uid);
             }
         }
@@ -225,13 +227,14 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         if(shx>100) shx=100;
         if(shy>100) shy=100;
         if(shz>100) shz=100;
-        List entities=world.getLoadedEntityList();
         LinkedList ll=new LinkedList();
+        List entities=world.getLoadedEntityList();
         for(int i=0; i< entities.size(); i++){
             Entity e=(Entity)entities.get(i);
             if(e.posX >atx && e.posX<atx+shx &&
                e.posY >aty && e.posY<aty+shy &&
                e.posZ >atz && e.posZ<atz+shz   ){
+                if(e instanceof EntityPlayer) continue;
                 String euid=entityToCyrus(e,content("world"));
                 LinkedList position=list(e.posX, e.posY, e.posZ);
                 LinkedHashMap hm=new LinkedHashMap();
