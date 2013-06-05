@@ -286,8 +286,8 @@
 }
 
 { UID: uid-b1d8-d170-a3d9-e693
-  Class: net.minecraft.src.MinecraftWorld
-  is: editable queryable updatable 3d minecraft world
+  Class: net.minecraft.src.MinecraftCyrus
+  is: minecraft
   global-rules: uid-60b6-54d1-3b03-c265
 }
 

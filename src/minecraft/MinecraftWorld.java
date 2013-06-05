@@ -15,6 +15,12 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
 
     public MinecraftWorld(){}
 
+    public MinecraftWorld(String name, World world){
+        super("{ \"is\": [ \"editable\", \"queryable\", \"updatable\", \"3d\", \"minecraft\", \"world\" ],\n"+
+              "  \"name\": \""+name+"\"\n"+
+              "}");
+    }
+
     public MinecraftWorld(String worlduid, String scanneruid){
         super("{ \"is\": [ \"3d\", \"minecraft\", \"world-view\" ],\n"+
               "  \"world\": \""+worlduid+"\",\n"+
@@ -89,14 +95,17 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     // ------------------------------------
 
     World world=null;
+
     int tickNum=0;
 
     public void tick(float var1, final Minecraft minecraft){
         if(++tickNum==20) tickNum=0;
-        world=world();  // minecraft.theWorld = client world; player.theWorld?
-        if(world==null) return;
+        final World  currentworld=world(); if(currentworld==null) return;
+        final String currentname=currentworld.worldInfo.getWorldName();
         if("world".equals(hasType)){
             new Evaluator(this){ public void evaluate(){ try{
+                if(!contentIs("name",currentname)) return;
+                world=currentworld;
                 EntityPlayer player=minecraft.thePlayer;
                 if(!contentSet("player")) content("player", entityToCyrus(player,uid));
                 if(tickNum==0){
@@ -105,6 +114,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                     self.evaluate();
                 }
             }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
+            if(world!=currentworld) return;
             while(true){
                 LinkedList uidpushing=pushingQ.poll();
                 if(uidpushing==null) break;
@@ -133,6 +143,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         if("world-view".equals(hasType)){
             if(tickNum==0){
                 new Evaluator(this){ public void evaluate(){ try{
+                    if(!contentIs("world:name",currentname)) return;
                     doScanning(contentHash("scanner:scanning"));
                 }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             }

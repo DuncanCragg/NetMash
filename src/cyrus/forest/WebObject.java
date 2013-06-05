@@ -448,6 +448,13 @@ public class WebObject {
         return l.isEmpty()? null: l;
     }
 
+    /** See if val is in path, iterating any intervening list. */
+    public boolean contentAllContains(String path, Object val){
+        LinkedList ll=contentAll(path);
+        if(ll==null || ll.size()==0) return val==null;
+        return ll.contains(val);
+    }
+
     private String pathWithIndexIndicator(String[] parts, int x){
         StringBuilder sb=new StringBuilder();
         int p=0;
