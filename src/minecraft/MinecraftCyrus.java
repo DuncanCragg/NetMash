@@ -13,7 +13,9 @@ public class MinecraftCyrus extends WebObject {
 
     public MinecraftCyrus(){ that=this; }
 
-    public void evaluate(){ }
+    public void evaluate(){
+        contentAll("worlds:name");
+    }
 
     static public void newWorld(String worldname, World world){
         if(that==null) return;
