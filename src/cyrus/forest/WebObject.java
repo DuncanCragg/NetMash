@@ -67,8 +67,8 @@ public class WebObject {
         url     =          json.stringPathN("URL");          json.removePath("URL");
         etag    =          json.intPathN(   "Version");      json.removePath("Version"); if(etag==0) etag=UID.generateVersion();
         maxAge  =          json.intPathN(   "Max-Age");      json.removePath("Max-Age");
-        listToSet(notify,  json.listPathN(  "Notify"));      json.removePath("Notify");
-        listToSet(observe, json.listPathN(  "Observe"));     json.removePath("Observe");
+  //    listToSet(notify,  json.listPathN(  "Notify"));      json.removePath("Notify");
+  //    listToSet(observe, json.listPathN(  "Observe"));     json.removePath("Observe");
         cacheNotify =      json.stringPathN("Cache-Notify"); json.removePath("Cache-Notify");
         publicState = json;
         updatingState = publicState;
@@ -882,9 +882,9 @@ public class WebObject {
     /* ---------------------------------------------------- */
 
     public String toString(int maxlength){
-        if(maxlength==0) return toString();
-        if(isShell()) return   "{ \"UID\": \""+uid+
-                             "\", \"Notify\": "+setToListString(notify)+
+        if(maxlength==0) return toStringJSON();
+        if(isShell()) return   "{ \"UID\": \""+uid+"\""+
+                               ", \"Notify\": "+setToListString(notify)+
                                ", \"Alertedin\": "+setToListString(alertedin)+
                                ", \"State\": \""+shellstate+"\"}";
         String r = publicState.toString(
@@ -900,8 +900,10 @@ public class WebObject {
         return r;
     }
 
+    public String toString(){ return toString(true); }
+
     public String toString(boolean cyrus){
-        if(!cyrus) return toString()+"\n";
+        if(!cyrus) return toStringJSON()+"\n";
         if(isShell()) return "{ UID: "+uid+
                            "\n  Notify: "+setToListString(notify, true)+
                            "\n  Alertedin: "+setToListString(alertedin, true)+
@@ -911,17 +913,17 @@ public class WebObject {
               (url!=null?  "\n  URL: "+url: "")+
                            "\n  Version: "+etag+
                            "\n  Max-Age: "+maxAge+
-                           "\n  Notify: "+setToListString(notify, true)+
-                           "\n  Observe: "+setToListString(observe, true)+
+                //         "\n  Notify: "+setToListString(notify, true)+
+                //         "\n  Observe: "+setToListString(observe, true)+
       (cacheNotify!=null?  "\n  Cache-Notify: "+cacheNotify: "")+
                            "\n  Class: "+this.getClass().toString().substring(6)+
                            "\n",true)+"\n\n";
         return r;
     }
 
-    public String toString(){
-        if(isShell()) return "{ \"UID\": \""+uid+
-                        "\",\n  \"Notify\": "+setToListString(notify)+
+    public String toStringJSON(){
+        if(isShell()) return "{ \"UID\": \""+uid+"\""+
+                          ",\n  \"Notify\": "+setToListString(notify)+
                           ",\n  \"Alertedin\": "+setToListString(alertedin)+
                           ",\n  \"State\": \""+shellstate+"\"\n}\n";
         String r = publicState.toString(
@@ -929,8 +931,8 @@ public class WebObject {
             (url!=null? "\",\n  \"URL\": \""+url: "")+
                         "\",\n  \"Version\": "+etag+
                           ",\n  \"Max-Age\": "+maxAge+
-                          ",\n  \"Notify\": "+setToListString(notify)+
-                          ",\n  \"Observe\": "+setToListString(observe)+
+                //        ",\n  \"Notify\": "+setToListString(notify)+
+                //        ",\n  \"Observe\": "+setToListString(observe)+
       (cacheNotify!=null? ",\n  \"Cache-Notify\": \""+cacheNotify+"\"": "")+
                           ",\n  \"Class\": \""+this.getClass().toString().substring(6)+
                         "\",\n")+"\n";
