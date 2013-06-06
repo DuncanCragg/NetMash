@@ -47,13 +47,13 @@ public class Persistence implements FileUser {
         if(topdbis==null){
            dbfile = new File(directory+"/"+db);
            try{ Kernel.readFile(dbfile, this); }
-           catch(Exception e){ FunctionalObserver.log("Persistence: Failure reading DB: "+e.getMessage()); }
-           FunctionalObserver.log("Persistence: Database at "+directory+"/"+db);
+           catch(Exception e){ log("Persistence: Failure reading DB: "+e.getMessage()); }
+           log("Persistence: Database at "+directory+"/"+db);
         }
         else{
            try{ Kernel.readFile(topdbis, this); }
-           catch(Exception e){ FunctionalObserver.log("Persistence: Failure reading DB: "+e.getMessage()); }
-           FunctionalObserver.log("Persistence: Local database at "+db);
+           catch(Exception e){ log("Persistence: Failure reading DB: "+e.getMessage()); }
+           log("Persistence: Local database at "+db);
         }
 
         final int syncrate = Kernel.config.intPathN("persist:syncrate");
@@ -65,7 +65,7 @@ public class Persistence implements FileUser {
             preload(cyrusconfig.listPathN("persist:preload"));
         }
 
-        FunctionalObserver.log("Persistence: initialised.");
+        log("Persistence: initialised.");
     }
 
     boolean isUnix=true;
@@ -110,7 +110,7 @@ public class Persistence implements FileUser {
             w.construct(json);
             return w;
         }catch(Exception e){
-            FunctionalObserver.log("Persistence: Could not build an instance of WebObject ("+uid+" classname="+classname+"):\n"+json);
+            log("Persistence: Could not build an instance of WebObject ("+uid+" classname="+classname+"):\n"+json);
             e.printStackTrace();
         }
         return null;
@@ -134,7 +134,7 @@ public class Persistence implements FileUser {
                 try{
                     if(topdbos==null) Kernel.writeFile(dbfile, true, bytebuffer, this);
                     else              Kernel.writeFile(topdbos,      bytebuffer, this);
-                }catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); }
+                }catch(Exception e){ log("Persistence: Failure writing to DB: "+e.getMessage()); }
             }
             Kernel.sleep(syncrate!=0? syncrate: 100);
         }
@@ -148,7 +148,7 @@ public class Persistence implements FileUser {
             jsonchars.position(0);
             Kernel.writeFile(ddbfile, true, UTF8.encode(jsonchars), this);
         }
-    }catch(Exception e){ FunctionalObserver.log("Persistence: Failure writing to DB: "+e.getMessage()); } }
+    }catch(Exception e){ log("Persistence: Failure writing to DB: "+e.getMessage()); } }
 
     // ----------------------------------------
 

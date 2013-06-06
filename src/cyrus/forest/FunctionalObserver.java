@@ -360,10 +360,5 @@ public class FunctionalObserver implements Module {
     }
 
     // -------------------------------
-
-    static public void log(Object o){ Utils.log(o); }
-
-    // -------------------------------
-
 }
 

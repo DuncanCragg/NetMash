@@ -983,7 +983,7 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         }
     }
 
-    public void log(Object s){ FunctionalObserver.log("HTTPClient["+host+":"+port+"] "+s); }
+    public void log(Object s){ Utils.log("HTTPClient["+host+":"+port+"] "+s); }
 }
 
 

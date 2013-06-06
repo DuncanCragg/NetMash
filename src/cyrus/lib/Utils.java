@@ -16,6 +16,9 @@ public class Utils{
     static public void log(Object o){ log(enableLogging, o); }
 
     @SuppressWarnings("unchecked")
+    static public void log(Object...args){ log(enableLogging, join(new LinkedList(Arrays.asList(args))," :: ")); }
+
+    @SuppressWarnings("unchecked")
     static public void logXX(Object...args){ log(enableLogging, "xxxxxxx "+join(new LinkedList(Arrays.asList(args))," :: ")); }
 
     @SuppressWarnings("unchecked")
