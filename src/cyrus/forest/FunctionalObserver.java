@@ -250,10 +250,11 @@ public class FunctionalObserver implements Module {
     }
 
     private void evaluatableOrPush(WebObject notified, boolean realupdate){
-        if(notified.oneOfOurs())         {                evaluatable(notified);   } else
-        if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); } else
-        if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); }
-        else                             { if(realupdate) http.push(notified);     }
+        if(notified.oneOfOurs())         {                  evaluatable(notified); return; }
+        if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); return; }
+        if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); return; }
+        if(notified.isVisibleRemote())   { if(realupdate) http.push(    notified); return; }
+        log("Not notified: ",notified.uid);
     }
 
     WebObject observing(WebObject observer, String observeduid, boolean tempObserve){
@@ -331,7 +332,8 @@ public class FunctionalObserver implements Module {
         if(w.oneOfOurs()){
             w.handleEval();
         }
-        else{
+        else
+        if(w.isVisibleRemote()){
             if(!w.alertedin.isEmpty()) http.push(w);
             if(!w.notify.isEmpty())  { http.poll(w); addToPolling(w); }
         }
