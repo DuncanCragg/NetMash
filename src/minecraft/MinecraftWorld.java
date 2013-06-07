@@ -144,6 +144,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             if(tickNum==0){
                 new Evaluator(this){ public void evaluate(){ try{
                     if(!contentIs("world:name",currentname)) return;
+                    world=currentworld;
                     doScanning(contentHash("scanner:scanning"));
                 }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
             }
