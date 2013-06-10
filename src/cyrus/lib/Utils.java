@@ -304,7 +304,7 @@ public class Utils{
             if(dateFormat.parse(s, new ParsePosition(0))!=null) return true;
             Double.parseDouble(s);
             return true;
-        } catch(NumberFormatException e){ return false; }
+        } catch(Exception e){ return false; }
     }
 
     static public double tryDouble(Object o, double d){

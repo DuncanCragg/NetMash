@@ -783,9 +783,6 @@ public class WebObject {
     /** Don't use this unless you're handing the thread over to an object that's responsible and local. */
     public WebObject onlyUseThisToHandControlOfThreadToDependent(String uid){ return funcobs.cacheOrPersistenceGet(uid); }
 
-    /** Simple logger for ya. */
-    static public void log(Object o){ Utils.log(o); }
-
     /** Log which rule you're in. */
     static public void logrule(){
         try{ throw new Exception(); } catch(Exception e){

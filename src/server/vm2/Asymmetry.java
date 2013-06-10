@@ -1,6 +1,8 @@
 
 import cyrus.forest.WebObject;
 
+import static cyrus.lib.Utils.*;
+
 public class Asymmetry extends WebObject {
 
     public Asymmetry(){}

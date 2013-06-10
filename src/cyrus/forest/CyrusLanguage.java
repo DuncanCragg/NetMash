@@ -50,7 +50,7 @@ public class CyrusLanguage extends WebObject {
         if(i==maxloops){ contentBool("MaxLoopsReached", true); log("********* Maximum loops reached running rules: use self or mutual observation instead ***"); }
         statemod=modified;
         contentTemp("Rule",null);
-    }catch(Throwable t){ log("exception in evaluate()"); t.printStackTrace(); }}
+    }catch(Throwable t){ log("exception in evaluate()",this); t.printStackTrace(); }}
 
     private void runTheRules(LinkedList rules){
         for(Object rule: rules){
