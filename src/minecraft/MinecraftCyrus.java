@@ -23,10 +23,10 @@ public class MinecraftCyrus extends WebObject {
     }
 
     private void doNewWorld(final String worldname, final World world){
-        new Evaluator(that){ public void evaluate(){ try{
+        new Evaluator(that){ public void evaluate(){
             if(contentAllContains("worlds:name",worldname)) return;
             contentListAdd("worlds", spawn(new MinecraftWorld(worldname,world)));
-        }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
+        }};
     }
 }
 

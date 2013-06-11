@@ -736,7 +736,8 @@ public class WebObject {
             this.self=w;
             synchronized(w){
                 w.evalPre();
-                evaluate();
+                try{ evaluate(); } catch(Throwable t){ t.printStackTrace(); }
+                w.refreshObserves();
                 w.evalPost();
             }
         }

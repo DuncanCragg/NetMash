@@ -103,7 +103,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         final World  currentworld=world(); if(currentworld==null) return;
         final String currentname=currentworld.worldInfo.getWorldName();
         if("world".equals(hasType)){
-            new Evaluator(this){ public void evaluate(){ try{
+            new Evaluator(this){ public void evaluate(){
                 if(!contentIs("name",currentname)) return;
                 world=currentworld;
                 EntityPlayer player=minecraft.thePlayer;
@@ -113,7 +113,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                     doEntitiesToCyrus(player);
                     self.evaluate();
                 }
-            }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
+            }};
             if(world!=currentworld) return;
             while(true){
                 LinkedList uidpushing=pushingQ.poll();
@@ -142,11 +142,11 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         else
         if("world-view".equals(hasType)){
             if(tickNum==0){
-                new Evaluator(this){ public void evaluate(){ try{
+                new Evaluator(this){ public void evaluate(){
                     if(!contentIs("world:name",currentname)) return;
                     world=currentworld;
                     doScanning(contentHash("scanner:scanning"));
-                }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
+                }};
             }
         }
     }

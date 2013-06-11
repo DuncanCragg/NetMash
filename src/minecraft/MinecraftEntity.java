@@ -48,7 +48,7 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
     public void tick(float var1, final Minecraft minecraft){
         World currentworld=world(); if(currentworld==null) return;
         final String currentname=currentworld.worldInfo.getWorldName();
-        new Evaluator(this){ public void evaluate(){ try{
+        new Evaluator(this){ public void evaluate(){
             if(++tickNum==8){ tickNum=0;
                 if(!contentIs("world:name",currentname)) return;
                 if(contentIsOrListContains("is","player")){
@@ -61,7 +61,7 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
                 setAndGetState();
                 self.evaluate();
             }
-        }catch(Exception e){ e.printStackTrace(); } refreshObserves(); }};
+        }};
     }
 
     private void setAndGetState(){
