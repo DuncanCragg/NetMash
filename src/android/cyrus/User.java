@@ -177,7 +177,6 @@ public class User extends CyrusLanguage {
         new Evaluator(this){
             public void evaluate(){
                 showWhatIAmViewing();
-                refreshObserves();
             }
         };
         if(currentlocation!=null) currentlocation.getLocationUpdates();
@@ -200,7 +199,6 @@ public class User extends CyrusLanguage {
                 contentDouble("location:lon", location.getLongitude());
                 contentDouble("location:acc", location.getAccuracy());
                 content(      "location:prv", location.getProvider());
-                refreshObserves();
             }
         };
     }
@@ -250,10 +248,11 @@ public class User extends CyrusLanguage {
         if(objectuid==null) return;
         if(false) log("touched item: "+mesh.get("title")+(edit? " edit": " send")+" uid: "+objectuid+" "+ndx+" "+ndy);
         if(ndx+ndy==0){
-            history.forward();
-            content("private:viewing",objectuid);
-            content("private:viewas", "raw");
-            showWhatIAmViewing();
+// not in Evaluate.
+//          history.forward();
+//          content("private:viewing",objectuid);
+//          content("private:viewas", "raw");
+//          showWhatIAmViewing();
         }
         else if(objectuid.equals("editing")){
             String edituid=content("private:editing");
@@ -270,7 +269,6 @@ public class User extends CyrusLanguage {
                 else{
                     if(!setResponse(objectuid, false, ndx/30, ndy/30)) getObjectUpdating(objectuid).setSwipeVal(objectuid, ndx/30, ndy/30);
                 }
-                refreshObserves();
             }
         };
     }
@@ -286,7 +284,6 @@ public class User extends CyrusLanguage {
                     LinkedHashMap rule=makeEditRule("scale",0,newscale);
                     contentMerge(rule);
                     notifying(edituid);
-                    refreshObserves();
                 }
             }
         };
@@ -298,7 +295,6 @@ public class User extends CyrusLanguage {
                 contentDouble("dx", dx);
                 contentDouble("dy", dy);
                 notifying(objectuid);
-                refreshObserves();
             }
         };
     }
@@ -336,7 +332,6 @@ public class User extends CyrusLanguage {
                     jumpToHereAndShow(newplaceuid,"gui");
                     if(Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetPositionAndView(newposn);
                 }
-                refreshObserves();
             }
         };
     }
@@ -405,7 +400,6 @@ public class User extends CyrusLanguage {
         new Evaluator(this){
             public void evaluate(){
                 jumpToHereAndShow(jumpuid,mode);
-                refreshObserves();
             }
         };
     }
@@ -422,7 +416,6 @@ public class User extends CyrusLanguage {
             public void evaluate(){
                 if(!history.back()) return;
                 showWhatIAmViewing();
-                refreshObserves();
             }
         };
     }
@@ -455,7 +448,6 @@ public class User extends CyrusLanguage {
                         showWhatIAmViewing();
                     break;
                 }
-                refreshObserves();
             }
         };
         return true;
@@ -467,7 +459,6 @@ public class User extends CyrusLanguage {
         new Evaluator(this){
             public void evaluate(){
                 setResponse(guiuid);
-                refreshObserves();
             }
         };
     }
@@ -483,7 +474,6 @@ public class User extends CyrusLanguage {
                    contentList(path,val[0]);
                 }
                 contentList("position", val[0]);
-                refreshObserves();
             }
         };
         return val[0];
@@ -502,7 +492,6 @@ public class User extends CyrusLanguage {
                     val[0]=content("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 }
                 else val[0]=null;
-                refreshObserves();
             }
         };
         return val[0];
@@ -521,7 +510,6 @@ public class User extends CyrusLanguage {
                     val[0]=contentDouble("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 }
                 else val[0]=null;
-                refreshObserves();
             }
         };
         return val[0];
@@ -540,7 +528,6 @@ public class User extends CyrusLanguage {
                     val[0]=contentBool("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 }
                 else val[0]=null;
-                refreshObserves();
             }
         };
         return val[0];
@@ -666,7 +653,6 @@ public class User extends CyrusLanguage {
                 if(contentIsOrListContains("is", "land")){
                     if(!dehash(tag).equals("new")){
                         content(dehash(tag), val);
-                        refreshObserves();
                         if(statemod) self.evaluate();
                         return;
                     }
@@ -686,7 +672,6 @@ public class User extends CyrusLanguage {
                     content("form:"+dehash(tag), val);
                 }
                 notifying(guiuid);
-                refreshObserves();
             }
         };
     }
@@ -716,7 +701,6 @@ public class User extends CyrusLanguage {
                 else
                 if(contentIsOrListContains("is", "land")){
                     contentBool(dehash(tag), val);
-                    refreshObserves();
                     if(statemod) self.evaluate();
                     return;
                 }
@@ -725,7 +709,6 @@ public class User extends CyrusLanguage {
                     contentBool("form:"+dehash(tag), val);
                 }
                 notifying(guiuid);
-                refreshObserves();
             }
         };
     }
@@ -740,7 +723,6 @@ public class User extends CyrusLanguage {
                 else
                 if(contentIsOrListContains("is", "land")){
                     contentInt(dehash(tag), val);
-                    refreshObserves();
                     if(statemod) self.evaluate();
                     return;
                 }
@@ -749,7 +731,6 @@ public class User extends CyrusLanguage {
                     contentInt("form:"+dehash(tag), val);
                 }
                 notifying(guiuid);
-                refreshObserves();
             }
         };
     }
@@ -760,12 +741,10 @@ public class User extends CyrusLanguage {
             public void evaluate(){
                 if(contentIsOrListContains("is", "land")){
                     setNearestShapePointTo(val);
-                    refreshObserves();
                     if(statemod) self.evaluate();
                     return;
                 }
                 notifying(guiuid);
-                refreshObserves();
             }
         };
     }
@@ -844,7 +823,7 @@ public class User extends CyrusLanguage {
         if(o==null) return;
         if(o instanceof User) ((User)o).setUpdateVal(guiuid,tag,val);
         else
-            new Evaluator(o){ public void evaluate(){ try{
+            new Evaluator(o){ public void evaluate(){
                 if(!self.contentIsOrListContains("is", "editable")) return;
                 if(Cyrus.top==null) return;
                 String source=spawnUIDNew(Cyrus.top.getRawSource());
@@ -853,8 +832,7 @@ public class User extends CyrusLanguage {
                 }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1]); }
                 self.contentSetAdd("is", "editable");
                 self.evaluate();
-            }catch(Exception e){ e.printStackTrace();
-            }finally{ refreshObserves(); }}};
+            }};
     }
 
     private String spawnUIDNew(String source){
