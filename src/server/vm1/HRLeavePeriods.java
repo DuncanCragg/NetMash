@@ -65,7 +65,6 @@ public class HRLeavePeriods extends WebObject {
         new Evaluator(this){
             public void evaluate(){ logrule();
                 content("status", status);
-                refreshObserves();
             }
         };
     }

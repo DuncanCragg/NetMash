@@ -13,7 +13,6 @@ public class DynamicPage extends WebObject {
         new Evaluator(this){
             public void evaluate(){
                 contentInt("view:#incre", i);
-                refreshObserves();
             }
         };
     }

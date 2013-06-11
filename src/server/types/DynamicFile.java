@@ -42,8 +42,7 @@ public class DynamicFile extends CyrusLanguage {
                         content("watching", watching);
                         self.evaluate();
                     }
-                    else refreshObserves();
-                }catch(Exception e){ logFail(e); refreshObserves(); }
+                } catch(Exception e){ e.printStackTrace(); }
             }
         };
     }

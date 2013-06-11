@@ -100,7 +100,6 @@ public class FXDealerTicketJava extends WebObject {
                 if(price < contentDouble("params:price")){
                     content("status", "filled");
                 }
-                refreshObserves();
             }
         };
     }
