@@ -17,6 +17,8 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
+import static cyrus.lib.Utils.*;
+
 import cyrus.lib.JSON;
 import cyrus.forest.*;
 import cyrus.platform.Kernel;
@@ -72,7 +74,7 @@ int i=0;
             String emailaddress=getEmailAddress(cr, id);
             String address     =getAddress(cr, id);
             if(phonenumber==null && emailaddress==null && address==null) continue;
-            WebObject.log("Contact: "+id+" "+name+" "+phonenumber+" "+emailaddress+" "+address);
+            log("Contact: "+id+" "+name+" "+phonenumber+" "+emailaddress+" "+address);
             contactslist.add(createContact(user, id, name, phonenumber, emailaddress, address));
 if(++i>10) break;
         } while(concur.moveToNext());
