@@ -176,14 +176,14 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     private boolean isDay(){    return getTimeInDay() < 12000; }
 
     private void doEntitiesToCyrus(EntityPlayer player){
-        int shx=40; int shy=20; int shz=40;
-        int atx=(int)(player.posX-shx/2); int aty=(int)(player.posY-shy/2); int atz=(int)(player.posZ-shz/2);
+        int six=40; int siy=20; int siz=40;
+        int atx=(int)(player.posX-six/2); int aty=(int)(player.posY-siy/2); int atz=(int)(player.posZ-siz/2);
         List entities=world.getLoadedEntityList();
         for(int i=0; i< entities.size(); i++){
             Entity e=(Entity)entities.get(i);
-            if(e.posX >atx && e.posX<atx+shx &&
-               e.posY >aty && e.posY<aty+shy &&
-               e.posZ >atz && e.posZ<atz+shz   ){
+            if(e.posX >atx && e.posX<atx+six &&
+               e.posY >aty && e.posY<aty+siy &&
+               e.posZ >atz && e.posZ<atz+siz   ){
                 if(e instanceof EntityPlayer) continue;
                 entityToCyrus(e,uid);
             }
@@ -212,16 +212,13 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         if("entities".equals(scanfor)) getSubItemsAround( psx, psy, psz, six, siy, siz);
     }
 
-    private void getBlockListAround(int atx, int aty, int atz, int shx, int shy, int shz){
-        if(shx>10) shx=10;
-        if(shy>10) shy=10;
-        if(shz>10) shz=10;
+    private void getBlockListAround(int atx, int aty, int atz, int six, int siy, int siz){
         final LinkedList il=new LinkedList();
-        for(int i=0; i<shx; i++){
+        for(int i=0; i<six; i++){
             LinkedList jl=new LinkedList();
-            for(int j=0; j<shy; j++){
+            for(int j=0; j<siy; j++){
                 LinkedList kl=new LinkedList();
-                for(int k=0; k<shz; k++){
+                for(int k=0; k<siz; k++){
                     kl.add(getBlockAt(atx+i,aty+j,atz+k));
                 }
                 jl.add(kl);
@@ -235,17 +232,14 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         }
     }
 
-    private void getSubItemsAround(int atx, int aty, int atz, int shx, int shy, int shz){
-        if(shx>100) shx=100;
-        if(shy>100) shy=100;
-        if(shz>100) shz=100;
+    private void getSubItemsAround(int atx, int aty, int atz, int six, int siy, int siz){
         LinkedList ll=new LinkedList();
         List entities=world.getLoadedEntityList();
         for(int i=0; i< entities.size(); i++){
             Entity e=(Entity)entities.get(i);
-            if(e.posX >atx && e.posX<atx+shx &&
-               e.posY >aty && e.posY<aty+shy &&
-               e.posZ >atz && e.posZ<atz+shz   ){
+            if(e.posX >atx && e.posX<atx+six &&
+               e.posY >aty && e.posY<aty+siy &&
+               e.posZ >atz && e.posZ<atz+siz   ){
                 if(e instanceof EntityPlayer) continue;
                 String euid=entityToCyrus(e,content("world"));
                 LinkedList position=list(e.posX, e.posY, e.posZ);
