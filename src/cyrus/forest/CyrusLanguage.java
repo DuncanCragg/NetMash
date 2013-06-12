@@ -120,7 +120,7 @@ public class CyrusLanguage extends WebObject {
         LinkedHashMap<String,Object> rule=contentHash("Rule:#");
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
-        ; if(ok && anylogging) System.out.println("Rule fired: \"When "+when+"\"");
+        ; if(ok && anylogging) System.out.println("Rule fired: \"When "+when+"\" "+uid);
         ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+"\n"+rule+"\n====\n"+contentHash("#")+"\n===========");
         if(alerted!=null && contentIs("Alerted",alerted)) contentTemp("Alerted",null);
     }
@@ -142,14 +142,15 @@ public class CyrusLanguage extends WebObject {
 
     @SuppressWarnings("unchecked")
     private boolean scanList(LinkedList list, String path, LinkedList rhs){
-        if(list.size()==0) return true;
-        if(list.size()==2 && list.get(0).equals("maybe")){
-            scanList(new LinkedList(list.subList(1,list.size())),path,rhs);
+        int listsize=list.size();
+        if(listsize==0) return true;
+        if(listsize==2 && list.get(0).equals("maybe")){
+            scanList(new LinkedList(list.subList(1,listsize)),path,rhs);
             return true;
         }
         int becomes=list.indexOf("=>");
         if(becomes!= -1){
-            LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));
+            LinkedList rh2=new LinkedList(list.subList(becomes+1,listsize));
             if(becomes==0){ rewrites.put(path,rh2); return true; }
             LinkedList lhs=new LinkedList(list.subList(0,becomes));
             boolean ok=scanList(lhs,path,rh2);
@@ -159,19 +160,19 @@ public class CyrusLanguage extends WebObject {
         becomes=list.indexOf("!=>");
         if(becomes!= -1){
             if(becomes==0) return false;
-            LinkedList rh2=new LinkedList(list.subList(becomes+1,list.size()));
+            LinkedList rh2=new LinkedList(list.subList(becomes+1,listsize));
             LinkedList lhs=new LinkedList(list.subList(0,becomes));
             boolean ok=scanListTryFail(lhs,path);
             if(!ok) rewrites.put(path,rh2);
             return !ok;
         }
-        if(list.size() >=1 && list.get(0).equals("not")){
-            LinkedList lhs=new LinkedList(list.subList(1,list.size()));
+        if(listsize >=1 && list.get(0).equals("not")){
+            LinkedList lhs=new LinkedList(list.subList(1,listsize));
             boolean ok=scanListTryFail(lhs,path);
        //   if(!ok && rhs!=null) rewrites.put(path,rhs);
             return !ok;
         }
-        if(list.size()==2 && list.get(0).equals("<")){
+        if(listsize==2 && list.get(0).equals("<")){
             Double d=findDouble(list.get(1));
             if(d!=null){
                 boolean ok = (contentDouble(path) < d);
@@ -179,7 +180,7 @@ public class CyrusLanguage extends WebObject {
                 return ok;
             }
         }
-        if(list.size()==2 && list.get(0).equals(">")){
+        if(listsize==2 && list.get(0).equals(">")){
             Double d=findDouble(list.get(1));
             if(d!=null){
                 boolean ok = (contentDouble(path) > d);
@@ -187,7 +188,7 @@ public class CyrusLanguage extends WebObject {
                 return ok;
             }
         }
-        if(list.size()==2 && list.get(0).equals("<=")){
+        if(listsize==2 && list.get(0).equals("<=")){
             Double d=findDouble(list.get(1));
             if(d!=null){
                 boolean ok = (contentDouble(path) <= d);
@@ -195,7 +196,7 @@ public class CyrusLanguage extends WebObject {
                 return ok;
             }
         }
-        if(list.size()==2 && list.get(0).equals(">=")){
+        if(listsize==2 && list.get(0).equals(">=")){
             Double d=findDouble(list.get(1));
             if(d!=null){
                 boolean ok = (contentDouble(path) >= d);
@@ -203,7 +204,7 @@ public class CyrusLanguage extends WebObject {
                 return ok;
             }
         }
-        if(list.size()==2 && list.get(0).equals("divisible-by")){
+        if(listsize==2 && list.get(0).equals("divisible-by")){
             Double d=findDouble(list.get(1));
             if(d!=null){
                 int i=d.intValue();
@@ -213,7 +214,7 @@ public class CyrusLanguage extends WebObject {
                 return ok;
             }
         }
-        if(list.size()==2 && (list.get(0).equals("count"))){
+        if(listsize==2 && (list.get(0).equals("count"))){
             Double d=findDouble(list.get(1));
             if(d!=null){
                 int i=d.intValue();
@@ -223,7 +224,7 @@ public class CyrusLanguage extends WebObject {
                        (ll!=null && ll.size()==i);
             }
         }
-        if(list.size()==2 && (list.get(0).equals("count"))){
+        if(listsize==2 && (list.get(0).equals("count"))){
             Double d=contentDouble(path);
             if(d!=null){
                 int i=d.intValue();
@@ -232,7 +233,7 @@ public class CyrusLanguage extends WebObject {
                        (ll!=null && ll.size()==i);
             }
         }
-        if(list.size()==4 && list.get(0).equals("within") && list.get(2).equals("of")){
+        if(listsize==4 && list.get(0).equals("within") && list.get(2).equals("of")){
             Double d=findDouble(list.get(1));
             if(d==null) return false;
             LinkedList a=contentList(path);
@@ -241,40 +242,46 @@ public class CyrusLanguage extends WebObject {
             if(b==null || b.size()==0 || !(b.get(0) instanceof Number)) return false;
             return withinOf(d, a, b);
         }
-        if(list.size()==1 && list.get(0).equals("#")){
+        if(listsize==1 && list.get(0).equals("#")){
             boolean ok=!contentSet(path);
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        if(list.size()==2 && list.get(1).equals("##")){
+        if(listsize==2 && list.get(1).equals("##")){
             boolean ok=scanType(list.get(0),path+":0")
                              && !contentSet(path+":1");
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        if("##".equals(list.get(list.size()-1))){
+        if("##".equals(list.get(listsize-1))){
             LinkedList ll=contentList(path);
-            boolean ok=(ll!=null && ll.size()==list.size()-1) &&
-                        scanList(new LinkedList(list.subList(0,list.size()-1)),path,rhs);
+            boolean ok=(ll!=null && ll.size()==listsize-1) &&
+                        scanList(new LinkedList(list.subList(0,listsize-1)),path,rhs);
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        if(list.size()==2 && list.get(1).equals("**")){
+        if(listsize==2 && list.get(1).equals("**")){
             boolean ok=scanType(list.get(0),path+":0");
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        if(list.size()==3 && list.get(2).equals("**")){
+        if(listsize==3 && list.get(2).equals("**")){
             boolean ok=scanType(list.get(0),path+":0") &&
                        scanType(list.get(1),path+":1");
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        boolean matchEach=list.size()!=1;
         LinkedList ll=contentList(path);
-        if(ll==null && !matchEach && scanType(list.get(0),path)){ if(rhs!=null) rewrites.put(path,rhs); return true; }
+        if(ll==null && listsize==1 && scanType(list.get(0),path)){ if(rhs!=null) rewrites.put(path,rhs); return true; }
         if(ll==null) ll=contentListMayJump(path);
         if(ll==null) return false;
+        if(doScanList(list,path,rhs,ll)) return true;
+        if(listsize==1 && isRef(list.get(0)) && scanType(findObject(list.get(0)),path)){ if(rhs!=null) rewrites.put(path,rhs); return true; }
+        return false;
+    }
+
+    private boolean doScanList(LinkedList list, String path, LinkedList rhs, LinkedList ll){
+        boolean matchEach=list.size()!=1;
         LinkedList<String> bl=new LinkedList<String>();
         int i=0;
         for(Object v: list){
@@ -304,8 +311,8 @@ public class CyrusLanguage extends WebObject {
     private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
         String when=contentStringOr("Rule:when","(no description)");
-        if(!r && anylogging && !tryfail && !mayfail) System.out.println("When "+when+"\nFailed to match "+v+" @"+pk+"="+contentObject(pk));
-        if( r && extralogging && tryfail           ) log(    "When "+when+"\nTrying to fail but matched "+v+" @"+pk+"="+contentObject(pk));
+        if(!r && anylogging && !tryfail && !mayfail) System.out.println("When "+when+" "+uid+"\nFailed to match "+v+" @"+pk+"="+contentObject(pk));
+        if( r && extralogging && tryfail           ) log(    "When "+when+" "+uid+"\nTrying to fail but matched "+v+" @"+pk+"="+contentObject(pk));
         return r;
     }
 
