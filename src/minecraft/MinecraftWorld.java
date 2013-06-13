@@ -76,9 +76,9 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
 
     private void addForScanning(String scanneruid, LinkedHashMap scanning){
         if(scanning==null) return;
-        if(contentListContains("scanners", scanneruid)) return;
+        if(contentListContains("scanners", scanneruid)) return; // need to pull in the scan/world-view if in Persistence not core
         contentListAdd(        "scanners", scanneruid);
-        contentListAdd("scans", spawn(new MinecraftWorld(uid,scanneruid)));
+        contentListAdd("views", spawn(new MinecraftWorld(uid,scanneruid)));
     }
 
     private void evaluateWorldView(){

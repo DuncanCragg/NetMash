@@ -38,7 +38,7 @@ public class Utils{
 
     static public void whereAmI(Object message){
         try{ throw new Exception(); } catch(Exception e){
-            logXX(message); for(Object o: e.getStackTrace()) logXX(o.toString());
+            logXX(message); for(Object o: e.getStackTrace()) System.out.println(o.toString());
         }
     }
 

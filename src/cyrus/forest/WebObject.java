@@ -758,6 +758,11 @@ public class WebObject {
     /** Callback for httpGETJSON. */
     public void httpNotifyJSON(final JSON json, String param){}
 
+    /** Check if something has changed when in evaluate. */
+    public boolean modified(){
+        return inevaluate && (statemod || obsalmod);
+    }
+
     /** Call to reset all changes. */
     public void rollback(){
         inevaluate = false;

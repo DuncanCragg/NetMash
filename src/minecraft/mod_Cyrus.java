@@ -60,7 +60,12 @@ public class mod_Cyrus extends BaseMod {
 
     public boolean onTickInGame(float var1, Minecraft minecraft){
         if(!checkIfNewWorld()) return true;
-        for(Tickable tickable: tickables) tickable.tick(var1, minecraft);
+        for(Tickable tickable: tickables){
+            long s=System.currentTimeMillis();
+            tickable.tick(var1, minecraft);
+            long e=System.currentTimeMillis();
+            if(e-s > 50) log("***** Tick took "+(e-s)+"ms for:\n"+tickable);
+        }
         return true;
     }
 
