@@ -37,9 +37,6 @@ public class mod_Cyrus extends BaseMod {
         try{ topdbis = new FileInputStream(db); }catch(Exception e){ }
         if(topdbis==null) topdbis=this.getClass().getClassLoader().getResourceAsStream("top.db");
 
-        FileOutputStream topdbos=null;
-        try{ topdbos = new FileOutputStream(db, true); }catch(Exception e){ throw new RuntimeException("Local DB: "+e); }
-
         modCyrus=this;
 
         ModLoader.setInGameHook(this, true, true);
@@ -48,7 +45,7 @@ public class mod_Cyrus extends BaseMod {
 
         System.out.println("-------------------");
         System.out.println(Version.NAME+" "+Version.NUMBERS);
-        Kernel.init(config, new FunctionalObserver(topdbis, topdbos));
+        Kernel.init(config, new FunctionalObserver(topdbis));
         Kernel.run();
     }
 

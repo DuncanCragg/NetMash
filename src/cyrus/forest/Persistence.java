@@ -23,11 +23,12 @@ public class Persistence implements FileUser {
 
     public  FunctionalObserver funcobs;
 
+    private InputStream      topdbis=null;
+    private boolean topdbrd;
     private String directory = null;
     private String db = null;
     private File dbfile=null;
-    private InputStream      topdbis=null;
-    private FileOutputStream topdbos=null;
+
     private JSON cyrusconfig=null;
     private boolean cyrus=false;
 
@@ -36,25 +37,19 @@ public class Persistence implements FileUser {
 
     // ----------------------------------------
 
-    public Persistence(InputStream topdbis, FileOutputStream topdbos){
+    public Persistence(InputStream topdbis){ try{
 
         funcobs = FunctionalObserver.funcobs;
         this.topdbis = topdbis;
-        this.topdbos = topdbos;
+        this.topdbrd=(topdbis!=null);
+        this.directory = Kernel.config.stringPathN("persist:directory");
+        this.db        = Kernel.config.stringPathN("persist:db");
+        this.dbfile  = new File(directory+"/"+db);
 
-        directory = Kernel.config.stringPathN("persist:directory");
-        db        = Kernel.config.stringPathN("persist:db");
-        if(topdbis==null){
-           dbfile = new File(directory+"/"+db);
-           try{ Kernel.readFile(dbfile, this); }
-           catch(Exception e){ log("Persistence: Failure reading DB: "+e.getMessage()); }
-           log("Persistence: Database at "+directory+"/"+db);
-        }
-        else{
-           try{ Kernel.readFile(topdbis, this); }
-           catch(Exception e){ log("Persistence: Failure reading DB: "+e.getMessage()); }
-           log("Persistence: Local database at "+db);
-        }
+        if(topdbrd) Kernel.readFile(topdbis, this);
+        else        Kernel.readFile(dbfile,  this);
+
+        if(topdbrd) compressDB();
 
         final int syncrate = Kernel.config.intPathN("persist:syncrate");
         new Thread(){ public void run(){ runSync(syncrate); } }.start();
@@ -64,9 +59,9 @@ public class Persistence implements FileUser {
             funcobs.hereIsTheConfigBack(cyrusconfig);
             preload(cyrusconfig.listPathN("persist:preload"));
         }
-
         log("Persistence: initialised.");
-    }
+
+    } catch(Exception e){ log("Persistence: Failure reading DB: "+e.getMessage()); return; } }
 
     boolean isUnix=true;
 
@@ -124,30 +119,29 @@ public class Persistence implements FileUser {
 
     private void runSync(int syncrate){
         for(int i=0; ; i++){
-            if(i%20==0) writeTheLot();
-            for(WebObject w: syncable){
+            if(i%20==0) compressDB();
+            try{ for(WebObject w: syncable){
                 syncable.remove(w);
                 CharBuffer jsonchars;
                 synchronized(w){ jsonchars=CharBuffer.wrap(w.toString(cyrus)); }
                 jsoncache.put(w.uid, jsonchars);
-                ByteBuffer bytebuffer = UTF8.encode(jsonchars);
-                try{
-                    if(topdbos==null) Kernel.writeFile(dbfile, true, bytebuffer, this);
-                    else              Kernel.writeFile(topdbos,      bytebuffer, this);
-                }catch(Exception e){ log("Persistence: Failure writing to DB: "+e.getMessage()); }
-            }
+                    ByteBuffer bytebuffer = UTF8.encode(jsonchars);
+                    Kernel.writeFile(dbfile, true, bytebuffer, this);
+            }}catch(Exception e){ log("Persistence: Failure writing to DB: "+e.getMessage()); }
             Kernel.sleep(syncrate!=0? syncrate: 100);
         }
     }
 
-    private void writeTheLot(){ try{
-        File ddbfile = new File(directory+"/snapshot."+db);
+    private void compressDB(){ try{
+        File ddbfile = new File(directory+"/compressed."+db);
         Kernel.writeFile(ddbfile, false, UTF8.encode(""), this);
         for(Map.Entry<String,CharBuffer> entry: jsoncache.entrySet()){
             CharBuffer jsonchars=entry.getValue();
             jsonchars.position(0);
-            Kernel.writeFile(ddbfile, true, UTF8.encode(jsonchars), this);
+            ByteBuffer bytebuffer = UTF8.encode(jsonchars);
+            Kernel.writeFile(ddbfile, true, bytebuffer, this);
         }
+        if(!ddbfile.renameTo(dbfile)) throw new Exception("Compressed snapshot DB rename failed: "+ddbfile+" to "+dbfile);
     }catch(Exception e){ log("Persistence: Failure writing to DB: "+e.getMessage()); } }
 
     // ----------------------------------------

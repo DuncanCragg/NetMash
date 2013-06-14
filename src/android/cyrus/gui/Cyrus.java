@@ -1135,14 +1135,11 @@ log(show? "show keyboard": "hide keyboard");
         try{ topdbis = openFileInput(db); }catch(Exception e){ }
         if(topdbis==null) topdbis = getResources().openRawResource(R.raw.top);
 
-        FileOutputStream topdbos=null;
-        try{ topdbos = openFileOutput(db, Context.MODE_APPEND); }catch(Exception e){ throw new RuntimeException("Local DB: "+e); }
-
         workaroundForFroyoBug();
 
         System.out.println("-------------------");
         System.out.println(Version.NAME+" "+Version.NUMBERS);
-        Kernel.init(config, new FunctionalObserver(topdbis, topdbos));
+        Kernel.init(config, new FunctionalObserver(topdbis));
         Kernel.run();
     }
 
