@@ -3,11 +3,11 @@ RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/cyrus.zip
 
 small:
 	sed -i 's/overrideWidth:670/overrideWidth:300/'  jars/options.txt
-	sed -i 's/overrideHeight:800/overrideHeight:200/' jars/options.txt
+	sed -i 's/overrideHeight:800/overrideHeight:300/' jars/options.txt
 
 large:
 	sed -i 's/overrideWidth:300/overrideWidth:670/'  jars/options.txt
-	sed -i 's/overrideHeight:200/overrideHeight:800/' jars/options.txt
+	sed -i 's/overrideHeight:300/overrideHeight:800/' jars/options.txt
 
 cr: compile runhere
 
@@ -15,7 +15,7 @@ cr: compile runhere
 cer: compile emptydb runhere
 
 
-crr: compile release runthere
+crr: compile release newcyrus
 
 
 compile:
@@ -37,12 +37,15 @@ release:
 	cd reobf/minecraft/ && zip -r ../../cyrus.zip *
 	cp cyrus.zip $(RELEASE_TARGET)
 
-runthere:
+newcyrus:
 	cp cyrus.zip ~/.minecraft/mods/
 	rm -f ~/.minecraft/cyrus.db
 	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
 
-runmc:
+continue:
+	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
+
+nocyrus:
 	rm -f ~/.minecraft/mods/cyrus.zip
 	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
 
