@@ -71,6 +71,9 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
             Integer psz=getIntFromList(newPosition,2);
             if(psx!=null && psy!=null && psz!=null){
                 // setPosition() doesn't seem to work
+                if(entity instanceof EntityLiving){
+                    ((EntityLiving)entity).getNavigator().tryMoveToXYZ(psx, psy, psz, 0.3F);
+                }
             }
         }
         if(newSpeed!=null && newSpeed.size()==3){
