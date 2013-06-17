@@ -208,8 +208,8 @@
         "{ is: editable minecraft cow rule"
         "  when: \"run, scan below ground\""
         "  alive: true"
-        "  cowpos: @position !=> @position"
-        "  scanpos: => @cowpos:0 0 @cowpos:2"
+        "  pos: @position !=> @position"
+        "  scanpos: => @pos:0 0 @pos:2"
         "  scanning: => { for: blocks size: 2 16 2 position: @scanpos }"
         "  Notifying: => @. with @world"
         "}"
@@ -218,11 +218,14 @@
         "  alive: true"
         "  on-ground: true"
         "  world-view: { position: @scanpos list: (((/ore-diamond/))) }"
-        "  placing: => { material: glass position: @cowpos + (0 -1 0) trail: true }"
+        "  placing: => { material: glass position: @pos + (0 -1 0) trail: true }"
         "}"
         "]|"
         "Spawn some cows, now. They should leave a trail of glass behind whenever they 'dowse' diamonds below ground."
         "If it seems to be a long wait for that, try changing 'ore-diamond' to 'ore-'."
+        "Here are these rules again but for the player, available on URLs you can paste into global-rules:"
+        http://the-cyrus.net/o/uid-1df2-bb43-9f4a-ad99.json
+        http://the-cyrus.net/o/uid-135a-30b3-b12a-df9a.json
 }
 
 { UID: uid-bce6-6258-53cb-a39a
