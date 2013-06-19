@@ -10,8 +10,11 @@ LOCAL_IP=192.168.0.6
 examples: runstt
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-f25a-08e1-7d7d-09f8.json'
 
-tutorial: runtut
+cytut: runtut
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7081-c95e-1c04-d7a5.json'
+
+mctut: runmct
+	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
 
 cars: runcars
 	chromium-browser 'http://localhost:8081/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
@@ -133,6 +136,8 @@ runlap: kill clean netconfig usecapdb  setvm2lanconfig run2
 
 runtut: kill clean           usetutordb setvm1tstconfig run1
 
+runmct: kill clean           usemctutdb setvm1tstconfig run1
+
 runstt: kill clean           usestaticdb setvm1tstconfig run1
 
 runsta: kill clean netconfig usestaticdb setvm1emuconfig run1
@@ -198,6 +203,9 @@ usetestdb:
 
 usetutordb:
 	cp src/server/vm1/tutorial.db src/server/vm1/cyrus.db
+
+usemctutdb:
+	cp src/server/vm1/mc-tutorial.db src/server/vm1/cyrus.db
 
 usestaticdb:
 	cp src/server/vm1/static.db src/server/vm1/cyrus.db

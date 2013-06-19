@@ -1,0 +1,298 @@
+{ UID: uid-1044-e6e9-125e-e35c
+  is: gui
+  title: "Cyrus Minecraft Tutorial"
+  view:
+    { is: style direction: horizontal }
+    { view: open     item: uid-5a7a-16e9-508f-2f65 }
+    { view: open raw item: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json }
+}
+
+{ UID: uid-5a7a-16e9-508f-2f65
+  is: article list
+  title: "Instructions"
+  list: uid-3592-f387-6662-8d44
+        uid-490c-22d2-b138-4a43
+        uid-48c2-9388-264b-d30b
+        uid-4ee8-9084-8ab0-6a2b
+        uid-6672-f066-5321-d37f
+        uid-6e91-d824-6fea-ce5c
+        uid-2b62-478a-30dd-3bf7
+        uid-8c1a-79ee-15b5-94ac
+        uid-bce6-6258-53cb-a39a
+        uid-3db2-0c18-eaf9-66fb
+        uid-290d-5dcf-c778-646c
+}
+
+{ UID: uid-3592-f387-6662-8d44
+  is: article
+  title: "Welcome to Cyrus for Minecraft Programming"
+  text: "Cyrus lets you program Minecraft mods with simple rules."
+        "If you can write HTML or CSS or program formulae in Excel, you won't have any trouble programming Minecraft in Cyrus."
+        "On the right you'll see a Cyrus 'object' representing the Minecraft program."
+        "If you're in a world, there should be a link next to 'worlds:' - jump that."
+        "It should look something like this:"
+        "|["
+        "{ is: editable queryable updatable 3d minecraft world"
+        "  global-rules: http://localhost:8084/o/uid-60b6-54d1-3b03-c265.json"
+        "  player: http://localhost:8084/o/uid-e7ca-3831-5841-f8ea.json"
+        "  time-stamp: 25215"
+        "  time-of-day: 25550"
+        "  daytime: true"
+        "  raining: false"
+        "  rain-strength: 0"
+        "  thundering: false"
+        "  seed: -5563498940576003772"
+        "}"
+        "]|"
+        "When you run a Minecraft world, you'll be able to see the state of that world - time of day, raining or snowing."
+        "If you then hit the link after 'player:', you'll be able to see your player coordinates in the world. Watch it change as you move around."
+        "Note that, at any time, you can hit the browser refresh to get back to the top after jumping these links."
+        "If you switch worlds, you can see each world from its link at the top (after refresh)."
+}
+
+{ UID: uid-490c-22d2-b138-4a43
+  is: article
+  title: "Setting rain and daytime"
+  text: "Hit refresh to get the world link back, then try putting in some properties on the world."
+        "You can try 'set-raining' or 'set-daytime':"
+        "|["
+        "{ :"
+        "  time-of-day: 313200"
+        "  daytime: true"
+        "  raining: false"
+        "  rain-strength: 0"
+        "  thundering: false"
+      "![  set-raining: true]!"
+      "![  set-thundering: true]!"
+      "![  set-daytime: false]!"
+      "![  set-time-of-day: 6000]!"
+        "  :"
+        "}"
+        "]|"
+        "Select the text to switch to editing, then add those lines in bold - one at a time is best! - where shown."
+        "Press the 'Update' button below this text to make the change. If it doesn't seem to work, hit refresh."
+        "Day is 0 to 12000, night 12000 to 24000, plus 24000 * number of days."
+}
+
+{ UID: uid-48c2-9388-264b-d30b
+  is: article
+  title: "Safer at home"
+  text: "Here, as soon as you stray too far from home, the sky turns dark and stormy."
+        "You need to edit both the world and your player object."
+        "Put the first rule in your player, the second in the world:"
+        "|["
+        "  Rules: {"
+        "    is: player rule"
+        "    when: \"too far from home, then in danger\""
+        "    distance-from-spawn: => @position ~ @spawn-position"
+        "    danger: => @distance-from-spawn > 20"
+        "  }"
+        " "
+        "  Rules: {"
+        "    is: world rule"
+        "    when: \"in danger, darken the skies...\""
+        "    player: { danger: * }"
+        "    set-daytime: => if @player:danger then false else true"
+        "    set-raining: => @player:danger"
+        "    set-thundering: => @player:danger"
+        "  }"
+        "]|"
+}
+
+{ UID: uid-4ee8-9084-8ab0-6a2b
+  is: article
+  title: "Placing some blocks: a trail of glass"
+  text: "This is a mod to leave a trail of glass everywhere you go."
+        "Another player rule:"
+        "|["
+        "{ is: editable 3d minecraft player entity"
+        "  name: \"..\""
+        "  world: http://localhost:8084/o/uid-...json"
+        "  position: -638 63 -147"
+      "![  Rules: {]!"
+      "![    is: minecraft player rule]!"
+      "![    placing: => { material: glass shape: box size: 2 2 2 position: @position + (3 0 3) }]!"
+      "![    Notifying: => @. with @world]!"
+        "  }"
+        "}"
+        "]|"
+        "We take the player position, whatever it's set to or changes to, and add three blocks North and East, for placing."
+        "This will place a glass box of size 1x1x1 near the coordinates of your player."
+        "The line 'placing: => ..' in the rule updates the object with a corresponding 'placing:', which you'll see."
+        "The Notifying line is to tell the world about this object."
+        "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sand-stone', 'stone', 'ore-gold', etc."
+        "Note: remember to edit the rule, not the object! The rule rewrites the object."
+        "This is more powerful than editing directly, because you can get the position to keep updating for you, like this."
+}
+
+{ UID: uid-6672-f066-5321-d37f
+  is: article
+  title: "Scanning the blocks in the world"
+  text: "Now let's add a scanner to the user, which tells the world we'd like to be updated on the blocks in some region."
+        "The region will be -30 down from where we stand:"
+        "|["
+        "  Rules: {"
+        "    is: minecraft player rule"
+      "![    scanning: => { for: blocks size: 2 3 4 position: @position + (0 -30 0) }]!"
+        "    Notifying: => @. with @world"
+        "  }"
+        "]|"
+        "As you can see, scanning is similar to placing, except you're just looking, not changing."
+        "You'll see your results at the 'world-view:' link: as you move around, you'll see different blocks."
+        "Try to find some air underground, indicating a cave. Then dig down, to see if you find it."
+        "The 'world-view:' link is set by another, global, rule."
+        "To see the rules, hit refresh and then jump the 'global-rules:' link in the world object, then jump the first link."
+        "A global rule is a rule applied to all objects, not a rule that was inside the object as before."
+        "|["
+        "  {"
+        "    is: minecraft rule"
+        "    when: \"world-view scan results notified, save\""
+        "    Alerted: { is: minecraft world-view }"
+        "    world-view: # => @Alerted"
+        "  }"
+        "]|"
+        "The world tells the player or scanning object about the scan results: the other end of 'Notifying' is 'Alerted':"
+        "When the world Notifies us of our scan results, we get Alerted, so we check it's a 'minecraft world-view' before setting 'world-view' to link to it."
+        "The '#' checks that scan hasn't already been set, which means this will only be run or triggered once."
+}
+
+{ UID: uid-6e91-d824-6fea-ce5c
+  is: article
+  title: "Scanning the entities in the world"
+  text: "Looking for cows, zombies, users:"
+        "|["
+        "  Rules: {"
+        "    is: minecraft player rule"
+      "![    scanning: => { for: entities size: 20 3 20 position: @position + (-10 -2 -10) }]!"
+        "    Notifying: => @. with @world"
+        "  }"
+        "]|"
+        "Changing 'blocks' to 'entities' returns the positions and links of users, cows, zombies, etc."
+        "Spawn some zombies and skeletons and jump the 'world-view:' link to see them."
+}
+
+{ UID: uid-2b62-478a-30dd-3bf7
+  is: article
+  title: "Duplicating stuff"
+  text: "Set this as your player's rules:"
+        "|["
+        "  Rules: {"
+        "    is: minecraft player rule"
+        "    scanning: => {"
+        "      for: blocks"
+        "      size: 5 5 5"
+        "      position: @position + (5 0 5)"
+        "    }"
+        "    Notifying: => @. with @world"
+        "  }{"
+        "    is: minecraft player rule"
+        "    world-view: *"
+        "    placing: => {"
+        "      material: @world-view:list"
+        "      position: @position + (5 0 -10)"
+        "    }"
+        "  }"
+        "]|"
+        "Now, whereever you go, a copy of what's near you appears next to it."
+        "Don't go near things that have too much behaviour, like water, lava, flowers, torches, as Minecraft will crash."
+}
+
+{ UID: uid-8c1a-79ee-15b5-94ac
+  is: article
+  title: "Dowsing the Cowpath Mod"
+  text: "We're going to add more global rules, just for cows this time."
+        "Again, hit refresh and jump the 'global-rules:' link in the world object."
+        "Now type 'uid-new' twice and set the following at the second and third links."
+        "Alternatively, paste these two rules inside the global rules list:"
+        "|["
+        "{ is: editable minecraft cow rule"
+        "  when: \"run, scan below ground\""
+        "  alive: true"
+        "  pos: @position !=> @position"
+        "  scanpos: => @pos:0 0 @pos:2"
+        "  scanning: => { for: blocks size: 2 16 2 position: @scanpos }"
+        "  Notifying: => @. with @world"
+        "}"
+        "{ is: editable minecraft cow rule"
+        "  when: \"diamonds found, set glass marker on surface\""
+        "  alive: true"
+        "  on-ground: true"
+        "  world-view: { position: @scanpos list: (((/ore-diamond/))) }"
+        "  placing: => { material: glass position: @pos + (0 -1 0) trail: true }"
+        "}"
+        "]|"
+        "Spawn some cows, now. They should leave a trail of glass behind whenever they 'dowse' diamonds below ground."
+        "If it seems to be a long wait for that, try changing 'ore-diamond' to 'ore-'."
+        "Here are these rules again but for the player, available on URLs you can paste into global-rules:"
+        http://the-cyrus.net/o/uid-1df2-bb43-9f4a-ad99.json
+        http://the-cyrus.net/o/uid-135a-30b3-b12a-df9a.json
+}
+
+{ UID: uid-bce6-6258-53cb-a39a
+  is: article
+  title: "Structures"
+  text: "Hit refresh, jump into your world's link, then jump into your player and copy the world: link."
+        "Now type |[ my-box: uid-new ]|. The my-box: property should now have a link: jump it, and enter this:"
+        "|["
+        "{ is: editable minecraft structure"
+        "  world: uid-of-your-current-world"
+        "  Rules: {"
+        "    is: structure rule"
+        "    when: \"player moves, set structure position\""
+        "    position:  => @world:player:position + (3 0 3)"
+        "    Notifying: => @. with @world"
+        "  }"
+        "  material: stone-double-slab"
+        "  shape: box"
+        "  size: 7 4 7"
+        "}"
+        "]|"
+        "You need to add the uid or URL of your world as indicated."
+        "You should see a stone-built box appear. If you move, it should track you around."
+        "Change the size (not too big! 20 or less), and try different materials."
+        "Try '+ (-3 0 -3)' to build around you, then material: air, to wipe out big chunks of territory!"
+}
+
+{ UID: uid-3db2-0c18-eaf9-66fb
+  is: article
+  title: "Pushing zombies away"
+  text: "Here, you'll find that zombies suddenly move away from you all the time without you hitting them:"
+        "|["
+        "  Rules: {"
+        "    is: minecraft player rule"
+        "    scanning: => { for: entities size: 15 5 15 position: @position + (-7 -2 -7) }"
+        "    Notifying: => @. with @world"
+        "  }{"
+        "    is: minecraft player rule"
+        "    world-view: maybe { sub-items: { item: { is: zombie }}}"
+        "    pushing: => {"
+        "      entities: @=world-view:sub-items:item"
+        "      speed: 0.5 0.5 0.5"
+        "    }"
+        "  }"
+        "]|"
+        "Try changing that to 'is: chicken' - they fly gently back down to earth..."
+}
+
+{ UID: uid-290d-5dcf-c778-646c
+  is: article
+  title: "Pushing yourself away from zombies"
+  text: "When a zombie comes close, you should bounce away automatically:"
+        "|["
+        "  Rules: {"
+        "    is: minecraft player rule"
+        "    scanning: => { for: entities size: 9 5 9 position: @position + (-4 -2 -4) }"
+        "    Notifying: => @. with @world"
+        "  }{"
+        "    is: minecraft player rule"
+        "    world-view: { sub-items: { item: { is: zombie }}}"
+        "    set-speed: => (@position - @=world-view:sub-items:item:position) / 5"
+        "  }{"
+        "    is: minecraft player rule"
+        "    world-view: not { sub-items: { item: { is: zombie }}}"
+        "    set-speed: => #"
+        "  }"
+        "]|"
+        "This only works if there's one zombie, else @=world-view:sub-items:item:position returns a list."
+}
+
