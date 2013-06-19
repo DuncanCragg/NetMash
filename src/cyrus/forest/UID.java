@@ -49,12 +49,9 @@ public class UID {
     }
 
     static public boolean isUID(Object o){
-        if(!(o instanceof String)) return false;
+        if(o==null || !(o instanceof String)) return false;
         String uid=(String)o;
-        if(uid==null || uid.equals("")) return false;
-        if(uid.startsWith("http://") ||
-           uid.startsWith("uid-")       ) return true;
-        return false;
+        return (uid.startsWith("uid-") || uid.startsWith("http://"));
     }
 
     static public String  URLPATHRE=null;

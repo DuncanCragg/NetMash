@@ -9,6 +9,7 @@ import java.util.regex.*;
 
 import cyrus.platform.*;
 import cyrus.lib.JSON;
+import static cyrus.forest.UID.*;
 
 import static cyrus.lib.Utils.*;
 
@@ -61,12 +62,13 @@ public class Persistence implements FileUser {
         }
         log("Persistence: initialised.");
 
-    } catch(Exception e){ log("Persistence: Failure reading DB: "+e.getMessage()); return; } }
+    } catch(Exception e){ log("Persistence: Failure reading DB:"); e.printStackTrace(); return; } }
 
     boolean isUnix=true;
 
     public void readable(ByteBuffer bytebuffer, int len){
         if(len == -1) return;
+        CharBuffer prevchars=null;
         while(true){
             ByteBuffer jsonbytes=null;
             if(isUnix) jsonbytes = Kernel.chopAtDivider(bytebuffer, "\n\n".getBytes(), true);
@@ -76,8 +78,10 @@ public class Persistence implements FileUser {
             isUnix=unix;
             CharBuffer jsonchars = UTF8.decode(jsonbytes);
             String uid = findUIDAndDetectCyrus(jsonchars);
+            if(!isUID(uid)) throw new RuntimeException("Data corrupt:\n"+jsonchars+(prevchars!=null? "Previous object:\n"+prevchars: ""));
             if(uid.equals("cyrusconfig")) cyrusconfig = new JSON(jsonchars,cyrus);
             else jsoncache.put(uid, jsonchars);
+            prevchars=jsonchars;
         }
     }
 
