@@ -120,7 +120,7 @@
         "This will place a glass box of size 1x1x1 near the coordinates of your player."
         "The line 'placing: => ..' in the rule updates the object with a corresponding 'placing:', which you'll see."
         "The Notifying line is to tell the world about this object."
-        "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sand-stone', 'stone', 'ore-gold', etc."
+        "Try other box sizes (like '5 4 7' - not too big!) and material names like 'sandstone', 'stone', 'gold-ore', etc."
         "Note: remember to edit the rule, not the object! The rule rewrites the object."
         "This is more powerful than editing directly, because you can get the position to keep updating for you, like this."
 }
@@ -217,12 +217,12 @@
         "  when: \"diamonds found, set glass marker on surface\""
         "  alive: true"
         "  on-ground: true"
-        "  world-view: { position: @scanpos list: (((/ore-diamond/))) }"
+        "  world-view: { position: @scanpos list: (((/diamond-ore/))) }"
         "  placing: => { material: glass position: @pos + (0 -1 0) trail: true }"
         "}"
         "]|"
         "Spawn some cows, now. They should leave a trail of glass behind whenever they 'dowse' diamonds below ground."
-        "If it seems to be a long wait for that, try changing 'ore-diamond' to 'ore-'."
+        "If it seems to be a long wait for that, try changing 'diamond-ore' to '-ore'."
         "Here are these rules again but for the player, available on URLs you can paste into global-rules:"
         http://the-cyrus.net/o/uid-1df2-bb43-9f4a-ad99.json
         http://the-cyrus.net/o/uid-135a-30b3-b12a-df9a.json

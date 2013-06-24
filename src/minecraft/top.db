@@ -5,7 +5,7 @@
 }
 
 { UID: uid-60b6-54d1-3b03-c265
-  is: editable list
+  is: editable rule list
   title: "global rules"
   list: uid-df7c-2043-f410-724f
 }
