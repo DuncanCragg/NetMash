@@ -41,7 +41,6 @@ Links to Cyrus
  ./src/minecraft/net/minecraft/src/MinecraftEntity.java -> .../cyrus/src/minecraft/MinecraftEntity.java
  ./src/minecraft/net/minecraft/src/mod_Cyrus.java       -> .../cyrus/src/minecraft/mod_Cyrus.java
  ./lib/cyrusconfig.db                                   -> .../cyrus/src/minecraft/cyrusconfig.db
- ./lib/top.db                                           -> .../cyrus/src/minecraft/top.db
  ./lib/statics                                          -> .../cyrus/src/js
 
 

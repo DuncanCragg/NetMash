@@ -31,12 +31,6 @@ public class mod_Cyrus extends BaseMod {
         JSON config=null;
         try{ config = new JSON(configis,true); }catch(Exception e){ throw new RuntimeException("Error in config file: "+e); }
 
-        String db = config.stringPathN("persist:db");
-
-        InputStream topdbis=null;
-        try{ topdbis = new FileInputStream(db); }catch(Exception e){ }
-        if(topdbis==null) topdbis=this.getClass().getClassLoader().getResourceAsStream("top.db");
-
         modCyrus=this;
 
         ModLoader.setInGameHook(this, true, true);
@@ -45,7 +39,7 @@ public class mod_Cyrus extends BaseMod {
 
         System.out.println("-------------------");
         System.out.println(Version.NAME+" "+Version.NUMBERS);
-        Kernel.init(config, new FunctionalObserver(topdbis));
+        Kernel.init(config, new FunctionalObserver());
         Kernel.run();
     }
 

@@ -61,8 +61,11 @@ public class Persistence implements FileUser {
             toppaj = Pattern.compile(toprej, Pattern.MULTILINE | Pattern.DOTALL);
         }
 
+        boolean dbrd=dbfile.exists() && dbfile.canRead();
+
         if(topdbrd) Kernel.readFile(topdbis, this);
-        else        Kernel.readFile(dbfile,  this);
+        else
+        if(dbrd)    Kernel.readFile(dbfile,  this);
 
         if(topdbrd) compressDB();
 
