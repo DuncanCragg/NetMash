@@ -30,7 +30,7 @@ runhere:
 release:
 	./reobfuscate.sh --client
 	cp lib/*.db reobf/minecraft
-	sed -i 's:net.minecraft.src.Minecraft:Minecraft:' reobf/minecraft/top.db
+	sed -i 's:net.minecraft.src.Minecraft:Minecraft:' reobf/minecraft/cyrusconfig.db
 	mkdir -p reobf/minecraft/statics
 	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrus.zip
