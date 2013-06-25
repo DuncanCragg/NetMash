@@ -197,12 +197,10 @@ public class FunctionalObserver implements Module {
         http.setCacheNotify(cyrusconfig.stringPathN("network:cache-notify"));
     }
 
-    void evalAndPersistSpawned(WebObject w){
-        for(WebObject n: w.spawned){
-            evaluatable(n);
-            persistence.save(n);
-            notifyUpdated(n, true);
-        }
+    void evalAndSaveAndNotifyUpdated(WebObject notifier){
+        evaluatable(notifier);
+        persistence.save(notifier);
+        notifyUpdated(notifier, true);
     }
 
     void saveAndNotifyUpdated(WebObject notifier, boolean realupdate){

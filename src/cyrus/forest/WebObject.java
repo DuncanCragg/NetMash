@@ -874,7 +874,7 @@ public class WebObject {
         else{
             if(obsalmod) funcobs.saveAndAlertFirstTime(this);
         }
-        funcobs.evalAndPersistSpawned(this);
+        for(WebObject n: spawned) funcobs.evalAndSaveAndNotifyUpdated(n);
     }
 
     void makeNewStatePublicRightNowShouldBeAllAtomicButIsnt(){
