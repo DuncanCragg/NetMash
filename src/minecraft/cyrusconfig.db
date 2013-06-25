@@ -3,13 +3,11 @@
   persist: { directory: .
              db: cyrus.db
              syncrate: 100
-             preload: uid-b1d8-d170-a3d9-e693 }
+             preload: net.minecraft.src.MinecraftCyrus }
   network: { host: localhost
              port: 8084
              pathprefix: /o/
              cache-notify: c-n-47b0-80c6-b3fc-42c6
              log: 0 }
-  rules: { log: 1
-           global-rules: uid-60b6-54d1-3b03-c265
-  }
+  rules: { log: 1 }
 }

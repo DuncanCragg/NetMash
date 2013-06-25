@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import cyrus.forest.WebObject;
+import cyrus.forest.*;
 
 import static cyrus.lib.Utils.*;
 
@@ -11,9 +11,18 @@ public class MinecraftCyrus extends WebObject {
 
     static MinecraftCyrus that=null;
 
-    public MinecraftCyrus(){ that=this; }
+    public MinecraftCyrus(){
+        super("{ \"is\": \"minecraft\" }");
+        that=this;
+    }
 
     public void evaluate(){
+        String gruid=content("global-rules");
+        if(gruid==null){
+            gruid=spawn(new CyrusLanguage("{ \"is\": [ \"editable\", \"rule\", \"list\" ], \"title\": \"global rules\" }"));
+            content("global-rules", gruid);
+        }
+    //  setGlobalRules(gruid);
         contentAll("worlds:name");
     }
 
