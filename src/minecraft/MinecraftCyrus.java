@@ -1,8 +1,12 @@
 package net.minecraft.src;
 
+import java.awt.*;
+import java.net.*;
+
 import cyrus.forest.*;
 
 import static cyrus.lib.Utils.*;
+import static cyrus.forest.UID.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
@@ -18,7 +22,7 @@ public class MinecraftCyrus extends WebObject {
 
     boolean first=true;
 
-    public void evaluate(){
+    public void evaluate(){ try{
         if(first){ first=false;
             String gruid=content("global-rules");
             if(gruid==null){
@@ -27,9 +31,10 @@ public class MinecraftCyrus extends WebObject {
             }
             CyrusLanguage.addGlobalRules(gruid);
             contentAll("worlds:name");
-         // "http://localhost:8081/#http://localhost:8084/o/"+uid+".json
+
+            Desktop.getDesktop().browse(URI.create(localPre()+"/#"+toURL(uid)));
         }
-    }
+    }catch(Exception e){ e.printStackTrace(); }}
 
     static public void newWorld(String worldname, World world){
         if(that==null) return;
