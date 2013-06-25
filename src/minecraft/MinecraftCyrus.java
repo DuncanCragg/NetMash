@@ -16,14 +16,19 @@ public class MinecraftCyrus extends WebObject {
         that=this;
     }
 
+    boolean first=true;
+
     public void evaluate(){
-        String gruid=content("global-rules");
-        if(gruid==null){
-            gruid=spawn(new CyrusLanguage("{ \"is\": [ \"editable\", \"rule\", \"list\" ], \"title\": \"global rules\" }"));
-            content("global-rules", gruid);
+        if(first){ first=false;
+            String gruid=content("global-rules");
+            if(gruid==null){
+                gruid=spawn(new CyrusLanguage("{ \"is\": [ \"editable\", \"rule\", \"list\" ], \"title\": \"global rules\" }"));
+                content("global-rules", gruid);
+            }
+            CyrusLanguage.addGlobalRules(gruid);
+            contentAll("worlds:name");
+         // "http://localhost:8081/#http://localhost:8084/o/"+uid+".json
         }
-        CyrusLanguage.addGlobalRules(gruid);
-        contentAll("worlds:name");
     }
 
     static public void newWorld(String worldname, World world){
