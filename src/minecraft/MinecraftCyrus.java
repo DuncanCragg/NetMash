@@ -22,7 +22,7 @@ public class MinecraftCyrus extends WebObject {
             gruid=spawn(new CyrusLanguage("{ \"is\": [ \"editable\", \"rule\", \"list\" ], \"title\": \"global rules\" }"));
             content("global-rules", gruid);
         }
-    //  setGlobalRules(gruid);
+        CyrusLanguage.addGlobalRules(gruid);
         contentAll("worlds:name");
     }
 

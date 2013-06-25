@@ -93,10 +93,15 @@ public class CyrusLanguage extends WebObject {
         return evalrules;
     }
 
+    static private LinkedList<String> globalRules=new LinkedList<String>();
+
+    static public void addGlobalRules(String gruid){ if(!globalRules.contains(gruid)) globalRules.add(gruid); }
+
     private LinkedList getGlobalAndLocalRules(){
         if(contentIsOrListContains("is","rule")) return null;
         LinkedList globlocrules=new LinkedList();
         maybeAddAll(globlocrules, Kernel.config.listPathN("rules:global-rules"));
+        maybeAddAll(globlocrules, globalRules);
         maybeAddAll(globlocrules, contentAsList("Rules"));
         return globlocrules;
     }
