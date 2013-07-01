@@ -28,18 +28,19 @@ public class MinecraftCyrus extends WebObject {
             String gruid=content("global-rules");
             if(guiuid==null){
                 guiuid=spawn(new CyrusLanguage(
-                    "{ \"is\": \"gui\",\n"+
-                      "\"title\": \"Cyrus Minecraft\",\n"+
-                      "\"view\": [\n"+
-                        "{ \"is\": \"style\", \"direction\": \"horizontal\" },\n"+
-                        "[\n"+
-                          "\"http://localhost:8081/o/uid-01b4-33f4-ff45-4d95.json\",\n"+
-                          "{ \"view\": \"open\", \"item\": \"http://localhost:8081/o/uid-5a7a-16e9-508f-2f65.json\" }\n"+
-                        "],\n"+
-                        "{ \"view\": [ \"open\", \"raw\" ], \"item\": \""+toURL(uid)+"\" }\n"+
-                      "]\n"+
-                    "}\n"));
-                gruid=spawn(new CyrusLanguage("{ \"is\": [ \"editable\", \"rule\", \"list\" ], \"title\": \"global rules\" }"));
+                    "{ is: gui\n"+
+                      "title: \"Cyrus Minecraft\"\n"+
+                      "view:\n"+
+                        "{ is: style direction: horizontal }\n"+
+                        "{\n"+
+                          "helpfulmod:  { input: checkbox label: \"Helpfyul animals\" }\n"+
+                          "helpfullink: http://localhost:8081/o/uid-01b4-33f4-ff45-4d95.json\n"+
+                          "tutorial:    { view: open item: http://localhost:8081/o/uid-5a7a-16e9-508f-2f65.json }\n"+
+                        "}\n"+
+                        "{ view: open raw  item: "+toURL(uid)+" }\n"+
+                      "\n"+
+                    "}\n", true));
+                gruid=spawn(new CyrusLanguage("{ is: editable rule list title: \"Global Rules\" }", true));
                 content("gui", guiuid);
                 content("global-rules", gruid);
             }
