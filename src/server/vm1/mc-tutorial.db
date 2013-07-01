@@ -1,15 +1,6 @@
-{ UID: uid-1044-e6e9-125e-e35c
-  is: gui
-  title: "Cyrus Minecraft Tutorial"
-  view:
-    { is: style direction: horizontal }
-    { view: open     item: uid-5a7a-16e9-508f-2f65 }
-    { view: open raw item: http://localhost:8084/o/uid-b1d8-d170-a3d9-e693.json }
-}
-
 { UID: uid-5a7a-16e9-508f-2f65
   is: article list
-  title: "Instructions"
+  title: "Cyrus Minecraft Tutorial"
   list: uid-3592-f387-6662-8d44
         uid-490c-22d2-b138-4a43
         uid-48c2-9388-264b-d30b

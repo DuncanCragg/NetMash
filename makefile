@@ -116,6 +116,10 @@ reinstalllan: uninstalllan installlan
 
 # -------------------------------------------------------------------
 
+runlomc: kill clean netconfig usemcdbs setvm1tstconfig run1
+
+runremc: kill clean netconfig usemcdbs setvm1remconfig run1
+
 runall: kill clean netconfig usealldbs setvm3emuconfig run1n2
 
 runemu: kill clean netconfig useworlddb setvm3emuconfig run1n2
@@ -178,6 +182,10 @@ run2: jar
 run1n2: run1 run2
 
 # -------------------------------------------------------------------
+
+usemcdbs:
+	cp src/minecraft/helpful-animals.db src/server/vm1/cyrus.db
+	cat src/server/vm1/mc-tutorial.db >> src/server/vm1/cyrus.db
 
 usealldbs: useworlddb
 	cat src/server/vm1/static.db >> src/server/vm1/cyrus.db
@@ -276,6 +284,12 @@ setvm3lanconfig:
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrus.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrus.db
 
+setvm1tstconfig:
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrus.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrus.db
+
 setvm2tstconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/cyrusconfig.db
@@ -292,15 +306,15 @@ setvm3tstconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm2/cyrus.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm2/cyrus.db
 
+setvm1remconfig:
+	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/cyrus.db
+
 setvm3remconfig:
 	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm1/cyrus.db
 	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm2/cyrus.db
-
-setvm1tstconfig:
-	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
 
 netconfig:
 	cp src/server/vm2/netconfig.db src/server/vm2/cyrusconfig.db

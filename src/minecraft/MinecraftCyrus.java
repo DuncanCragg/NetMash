@@ -24,15 +24,28 @@ public class MinecraftCyrus extends WebObject {
 
     public void evaluate(){ try{
         if(first){ first=false;
+            String guiuid=content("gui");
             String gruid=content("global-rules");
-            if(gruid==null){
+            if(guiuid==null){
+                guiuid=spawn(new CyrusLanguage(
+                    "{ \"is\": \"gui\",\n"+
+                      "\"title\": \"Cyrus Minecraft\",\n"+
+                      "\"view\": [\n"+
+                        "{ \"is\": \"style\", \"direction\": \"horizontal\" },\n"+
+                        "[\n"+
+                          "\"http://localhost:8081/o/uid-01b4-33f4-ff45-4d95.json\",\n"+
+                          "{ \"view\": \"open\", \"item\": \"http://localhost:8081/o/uid-5a7a-16e9-508f-2f65.json\" }\n"+
+                        "],\n"+
+                        "{ \"view\": [ \"open\", \"raw\" ], \"item\": \""+toURL(uid)+"\" }\n"+
+                      "]\n"+
+                    "}\n"));
                 gruid=spawn(new CyrusLanguage("{ \"is\": [ \"editable\", \"rule\", \"list\" ], \"title\": \"global rules\" }"));
+                content("gui", guiuid);
                 content("global-rules", gruid);
             }
             CyrusLanguage.addGlobalRules(gruid);
             contentAll("worlds:name");
-
-            Desktop.getDesktop().browse(URI.create(localPre()+"/#"+toURL(uid)));
+            Desktop.getDesktop().browse(URI.create(localPre()+"/#"+toURL(guiuid)));
         }
     }catch(Exception e){ e.printStackTrace(); }}
 
