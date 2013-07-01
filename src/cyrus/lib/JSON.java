@@ -46,18 +46,9 @@ public class JSON {
         chp=0;
     }
 
-    final String listprepend = "{ \"list\": ";
-
     /** Make from a JSON string. */
     public JSON(String str){
-        int hi=str.indexOf('{');
-        int li=str.indexOf('[');
-        if(li >=0 && !(hi >=0 && hi < li)){
-            StringBuilder sb=new StringBuilder(str);
-            sb.insert(0, listprepend);
-            sb.append(" }");
-            str = sb.toString();
-        }
+        str=list2hash(str);
         chars = str.toCharArray();
         chp=0;
     }
@@ -65,30 +56,23 @@ public class JSON {
     /** Make from given String, with switch for Cyrus format. */
     public JSON(String str, boolean cyrus){
         this.cyrus=cyrus;
+        if(!cyrus) str=list2hash(str);
         chars = str.toCharArray();
+        chp=0;
+    }
+
+    /** Make from a JSON CharBuffer. */
+    public JSON(CharBuffer charbuffer){
+        charbuffer=list2hash(charbuffer);
+        chars = charbuffer.toString().toCharArray();
         chp=0;
     }
 
     /** Make from given CharBuffer, with switch for Cyrus format. */
     public JSON(CharBuffer charbuffer, boolean cyrus){
         this.cyrus=cyrus;
+        if(!cyrus) charbuffer=list2hash(charbuffer);
         chars = charbuffer.toString().toCharArray();
-        chp=0;
-    }
-
-    /** Make from a JSON CharBuffer. */
-    public JSON(CharBuffer charbuffer){
-        int hi=indexOf(charbuffer, '{');
-        int li=indexOf(charbuffer, '[');
-        if(li >=0 && !(hi >=0 && hi < li)){
-            CharBuffer cb = CharBuffer.allocate(listprepend.length()+charbuffer.length()+2);
-            cb.append(listprepend);
-            cb.append(charbuffer);
-            cb.append(" }");
-            charbuffer = cb;
-        }
-      /*if(charbuffer.hasArray()) chars = charbuffer.array();
-        else                    */chars = charbuffer.toString().toCharArray();
         chp=0;
     }
 
@@ -497,6 +481,33 @@ public class JSON {
 
     static public final Charset UTF8 = Charset.forName("UTF-8");
     static public final int FILEREADBUFFERSIZE = 4096;
+
+    final String listprepend = "{ \"list\": ";
+
+    private String list2hash(String str){
+        int hi=str.indexOf('{');
+        int li=str.indexOf('[');
+        if(li >=0 && !(hi >=0 && hi < li)){
+            StringBuilder sb=new StringBuilder(str);
+            sb.insert(0, listprepend);
+            sb.append(" }");
+            str = sb.toString();
+        }
+        return str;
+    }
+
+    private CharBuffer list2hash(CharBuffer charbuffer){
+        int hi=indexOf(charbuffer, '{');
+        int li=indexOf(charbuffer, '[');
+        if(li >=0 && !(hi >=0 && hi < li)){
+            CharBuffer cb = CharBuffer.allocate(listprepend.length()+charbuffer.length()+2);
+            cb.append(listprepend);
+            cb.append(charbuffer);
+            cb.append(" }");
+            charbuffer = cb;
+        }
+        return charbuffer;
+    }
 
     private String getStringFromIS(InputStream is) throws UnsupportedEncodingException, IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"), FILEREADBUFFERSIZE);

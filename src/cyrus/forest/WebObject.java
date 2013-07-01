@@ -110,6 +110,15 @@ public class WebObject {
     }
 
     /** For creating new WebObjects inside evaluate(). */
+    public WebObject(String s, boolean cyrus){
+        funcobs = FunctionalObserver.funcobs;
+        uid = UID.generateUID();
+        etag = UID.generateVersion();
+        publicState = new JSON(s,cyrus);
+        updatingState = publicState;
+    }
+
+    /** For creating new WebObjects inside evaluate(). */
     public WebObject(JSON json){
         funcobs = FunctionalObserver.funcobs;
         uid = UID.generateUID();
