@@ -396,19 +396,19 @@ function JSON2HTML(url){
                 else
                 if(this.isONLink(item)){
                     if(!horizontal) rows.push('<tr>');
-                    rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, item, true, true)+'</td>');
+                    rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, item, true, true)+'</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
                 else
                 if(item.constructor===String){
                     if(!horizontal) rows.push('<tr>');
-                    rows.push('<td class="grid-col">'+this.getStringHTML(item)+'</td>');
+                    rows.push('<td colspan="2" class="grid-col">'+this.getStringHTML(item)+'</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
                 else
                 if(item.constructor===Array){
                     if(!horizontal) rows.push('<tr>');
-                    rows.push('<td class="grid-col">');
+                    rows.push('<td colspan="2" class="grid-col">');
                     rows.push('<table class="grid">');
                     submittable=this.createGUI(item,rows) || submittable;
                     rows.push('</table>');
@@ -417,7 +417,7 @@ function JSON2HTML(url){
                 }
                 else{
                     if(!horizontal) rows.push('<tr>');
-                    rows.push('<td class="grid-col">'+item+'</td>');
+                    rows.push('<td colspan="2" class="grid-col">'+item+'</td>');
                     if(!horizontal) rows.push('</tr>');
                 }
             }
@@ -486,7 +486,17 @@ function JSON2HTML(url){
                 var open=this.isOrContains(guilist.view,'open');
                 var raw =this.isOrContains(guilist.view,'raw');
                 if(!horizontal) rows.push('<tr>');
-                rows.push('<td class="grid-col">'+this.getObjectHeadHTML(null, guilist.item, true, !open, null, raw)+'</td>');
+                rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, guilist.item, true, !open, null, raw)+'</td>');
+                if(!horizontal) rows.push('</tr>');
+            }
+            else
+            if(guilist.is!='style') {
+                if(!horizontal) rows.push('<tr>');
+                rows.push('<td colspan="2" class="grid-col">');
+                rows.push('<table class="grid">');
+                submittable=this.createGUI(guilist,rows);
+                rows.push('</table>');
+                rows.push('</td>');
                 if(!horizontal) rows.push('</tr>');
             }
             return submittable;
