@@ -1,9 +1,22 @@
+{ UID: uid-3b6f-735c-abc5-54a0
+  is: editable rule list
+  title: "Top Mods"
+  list: uid-01b4-33f4-ff45-4d95
+        uid-7c20-e639-ead7-8d63
+}
+
 { UID: uid-01b4-33f4-ff45-4d95
   is: editable rule list
-  title: "Helpful Animals"
+  title: "Helpful animals: pigs"
   list: uid-23d4-dca8-abee-ed37
         uid-9c0d-fb2b-53e5-19c3
         uid-ca56-08ba-9031-2f05
+}
+
+{ UID: uid-7c20-e639-ead7-8d63
+  is: editable rule list
+  title: "Helpful animals: cows"
+  list: uid-23d4-dca8-abee-ed37
         uid-c14a-f563-7693-004a
         uid-71c6-7f99-3485-0e4d
 }

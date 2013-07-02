@@ -38,7 +38,7 @@ public class MinecraftCyrus extends WebObject {
                     "    { is: style direction: horizontal }\n"+
                     "    (\n"+
                     "      {\n"+
-                    "        title: \"Choose mods to include\"\n"+
+                    "        text: \"Choose mods to include: \"\n"+
                     "        helpfulmod: { input: checkbox label: \"Helpful animals\" }\n"+
                     "        relaxmod:   { input: checkbox label: \"Relaxation\" }\n"+
                     "      }\n"+
@@ -61,7 +61,7 @@ public class MinecraftCyrus extends WebObject {
                 contentTemp("Alerted", alerted);
                 if(contentIsOrListContains("Alerted:is", "form")){
                     final LinkedList<String> gr=new LinkedList<String>();
-                    if(contentBool("Alerted:form:helpfulmod")) gr.add("http://localhost:8081/o/uid-01b4-33f4-ff45-4d95.json");
+                    if(contentBool("Alerted:form:helpfulmod")) gr.add("http://localhost:8081/o/uid-3b6f-735c-abc5-54a0.json");
                     if(contentBool("Alerted:form:relaxmod"  )) gr.add("http://localhost:8081/o/uid-1111-2222-3333-4444.json");
                     new Evaluator(globalrules){ public void evaluate(){
                         globalrules.contentList("list", gr);
