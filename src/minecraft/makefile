@@ -9,13 +9,13 @@ large:
 	sed -i 's/overrideWidth:300/overrideWidth:670/'  jars/options.txt
 	sed -i 's/overrideHeight:300/overrideHeight:800/' jars/options.txt
 
-cr: compile runhere
+test: compile emptydb runhere
 
 
-cer: compile emptydb runhere
+cont: compile runhere
 
 
-crr: compile release newcyrus
+run: compile release newcyrus
 
 
 compile:
@@ -48,8 +48,5 @@ continue:
 nocyrus:
 	rm -f ~/.minecraft/mods/cyrus.zip
 	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
-
-editor:
-	chromium-browser 'http://localhost:8084/#http://localhost:8084/o/uid-1044-e6e9-125e-e35c.json'
 
 
