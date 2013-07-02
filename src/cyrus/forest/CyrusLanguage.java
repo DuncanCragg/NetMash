@@ -32,6 +32,8 @@ public class CyrusLanguage extends WebObject {
 
     static int MAX_LOOPS=50;
 
+    LinkedList<String> rulesRun=new LinkedList<String>();
+
     @SuppressWarnings("unchecked")
     public void evaluate(){ try{
         Object am=contentObject("is"); if(am==null) am=contentHash("#");
@@ -45,6 +47,7 @@ public class CyrusLanguage extends WebObject {
             statemod=false;
             if(!(i==0 && rules.size() >0)) rules=getGlobalAndLocalRules();   if(extralogging) log("Rules: "+rules);
             if(rules==null || rules.size()==0) break;
+            rulesRun.clear();
             runTheRules(rules);
             if(!statemod) break;
             modified=true;
@@ -60,7 +63,7 @@ public class CyrusLanguage extends WebObject {
                 contentTempObserve("Rule", (String)rule);
                 LinkedList rulelist=contentListMayJump("Rule");
                 if(rulelist!=null) runTheRules(rulelist);
-                else runTheRule();
+                else if(!rulesRun.contains(rule)){ rulesRun.add((String)rule); runTheRule(); }
             }
             else
             if(rule instanceof LinkedList) runTheRules((LinkedList)rule);
