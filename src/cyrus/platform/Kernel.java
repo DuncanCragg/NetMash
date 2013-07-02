@@ -122,6 +122,7 @@ public class Kernel {
             fileuser.readable(bytebuffer, len);
             bytebuffer=ensureBufferBigEnough(bytebuffer);
         }
+        channel.close();
     }
 
     static public void readFile(InputStream is, FileUser fileuser) throws Exception{
@@ -146,6 +147,7 @@ public class Kernel {
             len=channel.read(bytebuffer);
             bytebuffer=ensureBufferBigEnough(bytebuffer);
         }
+        channel.close();
         return bytebuffer;
     }
 
@@ -166,12 +168,14 @@ public class Kernel {
         FileChannel channel = new FileOutputStream(file, append).getChannel();
         int n=channel.write(bytebuffer);
         fileuser.writable(bytebuffer, n);
+        channel.close();
     }
 
     static public void writeFile(FileOutputStream os, ByteBuffer bytebuffer, FileUser fileuser) throws Exception{
         FileChannel channel = os.getChannel();
         int n=channel.write(bytebuffer);
         fileuser.writable(bytebuffer, n);
+        channel.close();
     }
 
     static public ByteBuffer chopAtDivider(ByteBuffer bytebuffer, byte[] divider){
