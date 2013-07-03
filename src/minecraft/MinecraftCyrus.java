@@ -12,6 +12,7 @@ import static cyrus.forest.UID.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 
+/** Singleton global Cyrus 'site'. */
 public class MinecraftCyrus extends WebObject {
 
     static MinecraftCyrus that=null;
@@ -26,6 +27,11 @@ public class MinecraftCyrus extends WebObject {
     static WebObject globalrules;
     boolean first=true;
 
+    LinkedHashMap mods=new LinkedHashMap();
+
+    String topmodsuid ="http://localhost:8081/o/uid-3b6f-735c-abc5-54a0.json";
+    String tutorialuid="http://localhost:8081/o/uid-5a7a-16e9-508f-2f65.json";
+
     public void evaluate(){ try{
         if(contentIsOrListContains("is","site") && first){ first=false;
             String guiuid=content("gui");
@@ -34,15 +40,13 @@ public class MinecraftCyrus extends WebObject {
                 guiuid=spawn(new MinecraftCyrus(
                     "{ is: gui\n"+
                     "  title: \"Cyrus Minecraft\"\n"+
+                    "  site: "+toURL(uid)+"\n"+
+                    "  top-mods: "+topmodsuid+"\n"+
                     "  view:\n"+
                     "    { is: style direction: horizontal }\n"+
                     "    (\n"+
-                    "      {\n"+
-                    "        text: \"Choose mods to include: \"\n"+
-                    "        helpfulmod: { input: checkbox label: \"Helpful animals\" }\n"+
-                    "        relaxmod:   { input: checkbox label: \"Relaxation\" }\n"+
-                    "      }\n"+
-                    "      { view: closed  item: http://localhost:8081/o/uid-5a7a-16e9-508f-2f65.json }\n"+
+                    "      { pretext: \"Loading mods..\" }\n"+
+                    "      { view: closed  item: "+tutorialuid+" }\n"+
                     "    )\n"+
                     "    { view: open raw  item: "+toURL(uid)+" }\n"+
                     "}\n"));
@@ -57,12 +61,30 @@ public class MinecraftCyrus extends WebObject {
         }
         else
         if(contentIsOrListContains("is","gui")){
+            if(!contentSet("view:1:0:modtext") && contentSet("top-mods:title")){
+                content("view:1:0:pretext","Choose mods to include: ");
+                content("view:1:0:modtext", content("top-mods:title"));
+            }
+            LinkedList modson=contentListMayJump("site:global-rules");
+            LinkedList topmods=contentListMayJump("top-mods");
+            int i=0;
+            if(topmods!=null) for(Object o: topmods){
+                if(!(o instanceof String)) continue;
+                String tag="mod-"+i;
+                mods.put(tag,o);
+                String title=content("top-mods:list:"+i+":title");
+                boolean on=modson!=null && modson.contains(o);
+                contentHash("view:1:0:"+tag, hash("input","checkbox","label",title,"value",on));
+            i++; }
             for(String alerted: alerted()){
                 contentTemp("Alerted", alerted);
                 if(contentIsOrListContains("Alerted:is", "form")){
-                    final LinkedList<String> gr=new LinkedList<String>();
-                    if(contentBool("Alerted:form:helpfulmod")) gr.add("http://localhost:8081/o/uid-3b6f-735c-abc5-54a0.json");
-                    if(contentBool("Alerted:form:relaxmod"  )) gr.add("http://localhost:8081/o/uid-1111-2222-3333-4444.json");
+                    final LinkedList gr=new LinkedList();
+                    LinkedHashMap<String,Object> form=contentHash("Alerted:form");
+                    if(form!=null) for(Map.Entry<String,Object> entry: form.entrySet()){
+                        String tag=entry.getKey();
+                        if(contentBool("Alerted:form:"+tag)) gr.add(mods.get(tag));
+                    }
                     new Evaluator(globalrules){ public void evaluate(){
                         globalrules.contentList("list", gr);
                     }};
