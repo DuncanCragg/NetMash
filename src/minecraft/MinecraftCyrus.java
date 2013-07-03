@@ -4,6 +4,7 @@ import java.awt.*;
 import java.net.*;
 import java.util.*;
 
+import cyrus.platform.Kernel;
 import cyrus.forest.*;
 
 import static cyrus.lib.Utils.*;
@@ -29,9 +30,6 @@ public class MinecraftCyrus extends WebObject {
 
     LinkedHashMap mods=new LinkedHashMap();
 
-    String topmodsuid ="http://localhost:8081/o/uid-3b6f-735c-abc5-54a0.json";
-    String tutorialuid="http://localhost:8081/o/uid-5a7a-16e9-508f-2f65.json";
-
     public void evaluate(){ try{
         if(contentIsOrListContains("is","site") && first){ first=false;
             String guiuid=content("gui");
@@ -41,12 +39,12 @@ public class MinecraftCyrus extends WebObject {
                     "{ is: gui\n"+
                     "  title: \"Cyrus Minecraft\"\n"+
                     "  site: "+toURL(uid)+"\n"+
-                    "  top-mods: "+topmodsuid+"\n"+
+                    "  top-mods: "+Kernel.config.stringPathN("app:top-mods")+"\n"+
                     "  view:\n"+
                     "    { is: style direction: horizontal }\n"+
                     "    (\n"+
                     "      { pretext: \"Loading mods..\" }\n"+
-                    "      { view: closed  item: "+tutorialuid+" }\n"+
+                    "      { view: closed  item: "+Kernel.config.stringPathN("app:tutorial")+" }\n"+
                     "    )\n"+
                     "    { view: open raw  item: "+toURL(uid)+" }\n"+
                     "}\n"));

@@ -54,7 +54,7 @@ public class User extends CyrusLanguage {
               "  \"list\": null \n"+
               "}");
 
-        LinkedList cyruslinks=Kernel.config.listPathN("cyrus:links");
+        LinkedList cyruslinks=Kernel.config.listPathN("app:links");
         links.publicState.listPath("list", cyruslinks);
 
         User contacts = new User(
@@ -65,7 +65,7 @@ public class User extends CyrusLanguage {
 
         // -----------------------------------------------------
 
-        String homeusers=Kernel.config.stringPathN("cyrus:homeusers");
+        String homeusers=Kernel.config.stringPathN("app:homeusers");
         currentUser = new User(homeusers, contact.uid, links.uid, contacts.uid);
 
         cyruslinks.addFirst(currentUser.uid);
