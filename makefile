@@ -116,9 +116,9 @@ reinstalllan: uninstalllan installlan
 
 # -------------------------------------------------------------------
 
-runlomc: kill clean netconfig usemcdbs setvm1tstconfig run1
+runlomc: kill clean           usemcdbs setvm1tstconfig run1
 
-runremc: kill clean netconfig usemcdbs setvm1remconfig run1
+runremc: kill clean           usemcdbs setvm1remconfig run1
 
 runall: kill clean netconfig usealldbs setvm3emuconfig run1n2
 
@@ -144,7 +144,7 @@ runmct: kill clean           usemctutdb setvm1tstconfig run1
 
 runstt: kill clean           usestaticdb setvm1tstconfig run1
 
-runsta: kill clean netconfig usestaticdb setvm1emuconfig run1
+runsta: kill clean           usestaticdb setvm1emuconfig run1
 
 runcur: kill clean curconfig usetestdb setvm3tstconfig run1n2
 
@@ -184,7 +184,7 @@ run1n2: run1 run2
 # -------------------------------------------------------------------
 
 usemcdbs:
-	cp src/minecraft/helpful-animals.db src/server/vm1/cyrus.db
+	cp  src/minecraft/helpful-animals.db src/server/vm1/cyrus.db
 	cat src/server/vm1/mc-tutorial.db >> src/server/vm1/cyrus.db
 
 usealldbs: useworlddb

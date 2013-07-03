@@ -30,7 +30,8 @@ runhere:
 release:
 	./reobfuscate.sh --client
 	cp lib/*.db reobf/minecraft
-	sed -i 's:net.minecraft.src.Minecraft:Minecraft:' reobf/minecraft/cyrusconfig.db
+	sed -i 's#net.minecraft.src.Minecraft#Minecraft#' reobf/minecraft/cyrusconfig.db
+	sed -i 's#http://localhost#http://the-cyrus.net#' reobf/minecraft/cyrusconfig.db
 	mkdir -p reobf/minecraft/statics
 	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrus.zip
@@ -43,6 +44,7 @@ newcyrus:
 	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
 
 continue:
+	cp cyrus.zip ~/.minecraft/mods/
 	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
 
 nocyrus:
