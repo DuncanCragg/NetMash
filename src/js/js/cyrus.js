@@ -437,10 +437,12 @@ function JSON2HTML(url){
                 var input=guilist.input;
                 var label=guilist.label;
                 var range=guilist.range;
+                var valu2=guilist.value;
                 if(!horizontal) rows.push('<tr>');
                 if(input=='checkbox'){
+                    var checked=value || valu2;
                     rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(value? '" checked="true':'')+'"/></td>');
+                    rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(checked? '" checked="true':'')+'"/></td>');
                     submittable=true;
                 }
                 else
