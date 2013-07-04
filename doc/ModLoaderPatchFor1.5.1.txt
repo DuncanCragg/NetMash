@@ -1,0 +1,10 @@
+diff ModLoader.java ModLoader2.java
+600c600,603
+<          File var13 = new File(ModLoader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+---
+>          String pp=ModLoader.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
+>          int s=pp.indexOf("/");
+>          int e=pp.indexOf("!");
+>          if(s== -1) s=0; if(e== -1) e=pp.length();
+>          File var13 = new File(pp.substring(s,e));
+
