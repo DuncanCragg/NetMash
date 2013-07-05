@@ -9,7 +9,7 @@ Minecraft
  - cp lwjgl-*/jar/{jinput.jar,lwjgl.jar,lwjgl_util.jar} ~/.minecraft/bin
  - cp lwjgl-*/native/linux/* ~/.minecraft/bin/natives
  - run Minecraft, "Quit Game"
- - cp -a ~/.minecraft/bin and ~/.minecraft/resources jars
+ - cp -a ~/.minecraft/bin ~/.minecraft/resources jars
 
 ModLoader
 

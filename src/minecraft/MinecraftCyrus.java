@@ -55,7 +55,9 @@ public class MinecraftCyrus extends WebObject {
             }
             CyrusLanguage.addGlobalRules(gruid);
             contentAll("worlds:name");
-            Desktop.getDesktop().browse(URI.create(localPre()+"/#"+toURL(guiuid)));
+            URI openthis=URI.create(localPre()+"/#"+toURL(guiuid));
+            log("Opening "+openthis+" in default browser..");
+            Desktop.getDesktop().browse(openthis);
         }
         else
         if(contentIsOrListContains("is","gui")){
