@@ -8,7 +8,7 @@ import cyrus.forest.WebObject;
 
 import static cyrus.lib.Utils.*;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.*;
 import net.minecraft.server.MinecraftServer;
 
 public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable {

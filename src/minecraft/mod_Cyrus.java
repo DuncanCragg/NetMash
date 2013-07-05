@@ -12,7 +12,7 @@ import cyrus.forest.*;
 
 import static cyrus.lib.Utils.*;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.*;
 import net.minecraft.server.MinecraftServer;
 
 public class mod_Cyrus extends BaseMod {
