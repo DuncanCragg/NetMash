@@ -1,0 +1,66 @@
+
+MCP
+
+ - unzip MCP; rm *.bat
+
+Minecraft
+
+ - run Minecraft; "Options"; "Force update!"
+ - put minecraft_server.1.6.1.jar into jars
+
+Decompile
+
+ - ./decompile.sh
+ - extract ModLoader 1.6.1 into versions/1.6.1
+ - ./cleanup.sh
+ - ./decompile.sh
+ - put compilation fixes in
+ - ./recompile.sh --client
+ - ./updatemd5.sh
+
+
+Links to Cyrus
+
+---------------------------------------
+#!/bin/bash
+ln -s .../cyrus/src/minecraft/makefile
+ln -s .../cyrus/src/minecraft/cyrusconfig.db       lib/cyrusconfig.db
+ln -s .../cyrus/src/js                             lib/statics
+ln -s .../cyrus/src/cyrus                          src/minecraft/cyrus
+ln -s .../cyrus/src/minecraft/MinecraftCyrus.java  src/minecraft/net/minecraft/src/MinecraftCyrus.java
+ln -s .../cyrus/src/minecraft/MinecraftEntity.java src/minecraft/net/minecraft/src/MinecraftEntity.java
+ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft/net/minecraft/src/MinecraftWorld.java
+ln -s .../cyrus/src/minecraft/mod_Cyrus.java       src/minecraft/net/minecraft/src/mod_Cyrus.java
+---------------------------------------
+
+
+Installing ModLoader in normal client install
+
+ - cd ~/.minecraft/versions/1.6.1
+ - mv 1.6.1.jar 1.6.1-dist.jar
+ - mkdir repack
+ - cd repack
+ - unzip ../1.6.1-dist.jar
+ - rm -rf META-INF
+ - unzip ~/minecraft/mods/ModLoader6.zip
+ - jar -cf ../1.6.1.jar *
+ - cd ..
+ - rm -rf repack
+
+
+Run
+
+ - run options: -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random
+
+Also
+
+ - ./updatemcp.sh
+
+
+
+
+
+
+
+
+

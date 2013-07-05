@@ -1,5 +1,6 @@
 
-RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/cyrus.zip
+RELEASE_TARGET5=~/the-u-web/net/the-cyrus.net/cyrus5.zip
+RELEASE_TARGET6=~/the-u-web/net/the-cyrus.net/cyrus6.zip
 
 small:
 	sed -i 's/overrideWidth:670/overrideWidth:300/'  jars/options.txt
@@ -15,7 +16,10 @@ test: compile emptydb runhere
 cont: compile runhere
 
 
-run: compile release newcyrus
+run5: compile releasezip release5 newcyrus5
+
+
+run6: compile releasezip release6 newcyrus6
 
 
 compile:
@@ -27,7 +31,7 @@ emptydb:
 runhere:
 	./startclient.sh
 
-release:
+releasezip:
 	./reobfuscate.sh --client
 	cp lib/*.db reobf/minecraft
 	sed -i 's#net.minecraft.src.Minecraft#Minecraft#' reobf/minecraft/cyrusconfig.db
@@ -36,19 +40,37 @@ release:
 	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrus.zip
 	cd reobf/minecraft/ && zip -r ../../cyrus.zip *
-	cp cyrus.zip $(RELEASE_TARGET)
 
-newcyrus:
+release5:
+	cp cyrus.zip $(RELEASE_TARGET5)
+
+release6:
+	cp cyrus.zip $(RELEASE_TARGET6)
+
+newcyrus5:
 	cp cyrus.zip ~/.minecraft/mods/
 	rm -f ~/.minecraft/cyrus.db
-	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
+	java -jar ~/.minecraft/minecraft.jar
 
-continue:
+continue5:
 	cp cyrus.zip ~/.minecraft/mods/
-	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
+	java -jar ~/.minecraft/minecraft.jar
 
-nocyrus:
+nocyrus5:
 	rm -f ~/.minecraft/mods/cyrus.zip
-	cd ~/.minecraft && java -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random -jar minecraft.jar
+	java -jar ~/.minecraft/minecraft.jar
+
+newcyrus6:
+	cp cyrus.zip ~/.minecraft/versions/1.6.1ML/mods/
+	rm -f ~/.minecraft/cyrus.db
+	java -jar ~/.minecraft/minecraft.jar
+
+continue6:
+	cp cyrus.zip ~/.minecraft/versions/1.6.1ML/mods/
+	java -jar ~/.minecraft/minecraft.jar
+
+nocyrus6:
+	rm -f ~/.minecraft/mods/versions/1.6.1ML/cyrus.zip
+	java -jar ~/.minecraft/minecraft.jar
 
 
