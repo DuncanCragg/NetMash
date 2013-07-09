@@ -207,7 +207,7 @@ abstract class HTTPCommon {
 
     class PostResponse{ int code; String location; PostResponse(int c, String l){this.code=c;this.location=l;}}
 
-    static public final int CLIENT_RETRY_WAIT = 10000;
+    static public final int CLIENT_RETRY_WAIT =  5000;
     static public final int LONG_POLL_TIMEOUT = 30000;
 
     static public final Charset UTF8  = Charset.forName("UTF-8");
@@ -951,22 +951,31 @@ class HTTPClient extends HTTPCommon implements ChannelUser {
         doNextRequest(doRetryAndGetSleep());
     }
 
+    private int cursleep=0;
+
     int doRetryAndGetSleep(){
         int sleep=0;
         if(!request.type.equals("LONG")){
             if(retryRequest){
-                if(Kernel.config.intPathN("network:log")==2) log("Failed request for "+request.path+" - will wait then retry");
-                sleep=CLIENT_RETRY_WAIT;
+                sleep=biggerSleep("Failed request for ");
                 retry(request);
             }
         }
         else{
             if(longFailedSoWait){
-                if(Kernel.config.intPathN("network:log")==2) log("Failed long poll or connection broken to "+request.path);
-                sleep=CLIENT_RETRY_WAIT;
+                sleep=biggerSleep("Failed long poll or connection broken to ");
             }
             retry(request);
         }
+        cursleep=sleep;
+        return sleep;
+    }
+
+    private int biggerSleep(String message){
+        int sleep=(cursleep==0)? CLIENT_RETRY_WAIT: (int)(cursleep*1.2);
+        if(sleep>300000) sleep=300000;
+        String w=" - will wait "+(sleep/1000)+"s then retry";
+        if(Kernel.config.intPathN("network:log")==1) log(message+request.path+w);
         return sleep;
     }
 

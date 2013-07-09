@@ -85,9 +85,9 @@ public class Kernel {
             channel = SocketChannel.open();
             channel.configureBlocking(false);
             channel.socket().setTcpNoDelay(true);
-            logOut("If you're watching this, it's hung on DNS in InetSocketAddress");
+            if(config.intPathN("network:log")==2) logOut("DNS/InetSocketAddress..");
             channel.connect(new InetSocketAddress(host, port));
-            logOut("DNS done");
+            if(config.intPathN("network:log")==2) logOut("..DNS done");
             selock.lock(); try{ selector.wakeup();
             channel.register(selector, SelectionKey.OP_CONNECT);
             channels.put(channel, channeluser);
@@ -548,7 +548,7 @@ public class Kernel {
     }
 
     static private void logErr(String message, Throwable t, AbstractInterruptibleChannel c){
-        System.err.println("Kernel: "+message+":\n"+t);
+        System.err.println("Kernel: "+message+":");
         t.printStackTrace();
         try{ if(c!=null) c.close(); } catch(Throwable tt){}
     }
