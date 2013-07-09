@@ -392,13 +392,12 @@ public class User extends CyrusLanguage {
         jumpToUID(uid, null, false);
     }
 
-    public void jumpToUID(String uid, final String mode, final boolean relativeToViewing){
-        final String jumpuid;
-        if(oneOfOurs(uid))    jumpuid=UID.toUID(uid); else
-        if(relativeToViewing) jumpuid=UID.normaliseUID(content("private:viewing"),uid);
-        else                  jumpuid=uid;
-        new Evaluator(this){
-            public void evaluate(){
+    public void jumpToUID(final String uid, final String mode, final boolean relativeToViewing){
+        new Evaluator(this){ public void evaluate(){
+            String jumpuid;
+            if(oneOfOurs(uid))    jumpuid=UID.toUID(uid); else
+            if(relativeToViewing) jumpuid=UID.normaliseUID(content("private:viewing"),uid);
+            else                  jumpuid=uid;
                 jumpToHereAndShow(jumpuid,mode);
             }
         };
