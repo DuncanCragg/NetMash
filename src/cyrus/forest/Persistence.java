@@ -49,8 +49,9 @@ public class Persistence implements FileUser {
         this.topdbis = topdbis;
         this.topdbrd=(topdbis!=null);
         this.directory = Kernel.config.stringPathN("persist:directory");
+        this.directory=(directory==null || directory.trim().equals(""))? "": (!directory.endsWith("/")? directory+"/": directory);
         this.db        = Kernel.config.stringPathN("persist:db");
-        this.dbfile  = new File(directory+"/"+db);
+        this.dbfile  = new File(directory+db);
         this.topclass=Kernel.config.stringPathN("persist:preload");
 
         if(isUID(topclass)) topclass=null;
@@ -166,7 +167,7 @@ public class Persistence implements FileUser {
     }
 
     private void compressDB(){ try{
-        File ddbfile = new File(directory+"/compressed."+db);
+        File ddbfile = new File(directory+"compressed."+db);
         Kernel.writeFile(ddbfile, false, UTF8.encode(""), this);
         for(Map.Entry<String,CharBuffer> entry: jsoncache.entrySet()){
             CharBuffer jsonchars=entry.getValue();
