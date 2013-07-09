@@ -1,13 +1,13 @@
 { UID: uid-5f55-165f-abb3-947a
   Rules: uid-b2ea-21bc-8546-cf49
   is: testfjord
-  list: ( a b c )
+  list: a b c
 }
 
 { UID: uid-b2ea-21bc-8546-cf49
-  is: ( testfjord rule )
+  is: testfjord rule
   when: "second item in list found rewrite"
-  list: { 1: <>bee }
+  list: { 1: => bee }
 }
 
 { UID: uid-2875-04a7-a6cb-eeee
@@ -17,9 +17,9 @@
 }
 
 { UID: uid-7731-edb1-73a5-00ad
-  is: ( testfjord rule )
+  is: testfjord rule
   when: "empty hash found spawn"
-  a: { bee: <#>$:x cee: <#>sum(2,$:x) UID: <#>new }
+  a: { bee: # => @x cee: # => + 2 @x UID: # => new }
 }
 
 {   UID: uid-5348-3aaa-bfc1-7d0c

@@ -170,7 +170,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         content(      "seed",       ""+world.getSeed());
     }
 
-    // 0=dawn 6000=midday 12000=dusk 18000=midnight
+    /* 0=dawn 6000=midday 12000=dusk 18000=midnight */
     private int getTimeInDay(){ return (int)(world.getWorldTime() % 24000); }
     private int getDaysIn(){    return (int)(world.getWorldTime() / 24000); }
     private boolean isDay(){    return getTimeInDay() < 12000; }
