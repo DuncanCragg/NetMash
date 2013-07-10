@@ -21,11 +21,12 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
               "}");
     }
 
-    public MinecraftWorld(String worlduid, String scanneruid){
+    public MinecraftWorld(String worlduid, String scanneruid, boolean isplayer){
         super("{ \"is\": [ \"3d\", \"minecraft\", \"world-view\" ],\n"+
               "  \"world\": \""+worlduid+"\",\n"+
               "  \"scanner\": \""+scanneruid+"\"\n"+
               "}");
+        if(!isplayer) noPersist();
     }
 
     private String hasType;
@@ -46,7 +47,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             contentTemp("Alerted", alerted);
             if(contentIsOrListContains("Alerted:is", "minecraft")){
                 if(contentIsOrListContains("is","queryable")){
-                    addForScanning(alerted, contentHash("Alerted:scanning"));
+                    addForScanning(alerted, contentHash("Alerted:scanning"), contentIsOrListContains("Alerted:is", "player"));
                 }
                 if(contentIsOrListContains("is","updatable")){
                     addForPushing(alerted, contentHash("Alerted:pushing"));
@@ -74,11 +75,14 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         if(contentSet("set-time-of-day"))timeOfDay   =Integer.valueOf(contentInt( "set-time-of-day"));
     }
 
-    private void addForScanning(String scanneruid, LinkedHashMap scanning){
-        if(scanning==null) return;
-        if(contentListContains("scanners", scanneruid)) return; // need to pull in the scan/world-view if in Persistence not core
-        contentListAdd(        "scanners", scanneruid);
-        contentListAdd("views", spawn(new MinecraftWorld(uid,scanneruid)));
+    LinkedList scanners=new LinkedList();
+
+    private void addForScanning(String scanneruid, LinkedHashMap scanning, boolean isplayer){
+        if(scanning==null || scanners.contains(scanneruid)) return;
+        scanners.add(scanneruid);
+        if(isplayer && contentAllContains("player-views:scanner",scanneruid)) return;
+        String viewuid=spawn(new MinecraftWorld(uid,scanneruid,isplayer));
+        if(isplayer) contentListAdd("player-views", viewuid);
     }
 
     private void evaluateWorldView(){
