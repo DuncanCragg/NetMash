@@ -5,7 +5,7 @@
 }
 
 { UID: uid-0cf7-8431-7b2f-d834
-  is: rule list
+  is: list
   list: uid-1161-ef52-c9f4-6cbd
       ( uid-240c-821a-edad-f4d7
         { is: test rule

@@ -48,7 +48,7 @@ public class MinecraftCyrus extends WebObject {
                     "    )\n"+
                     "    { view: open raw  item: "+toURL(uid)+" }\n"+
                     "}\n"));
-                globalrules=new CyrusLanguage("{ is: editable rule list title: \"Global Rules\" }", true);
+                globalrules=new CyrusLanguage("{ is: editable list title: \"Global Rules\" }", true);
                 gruid=spawn(globalrules);
                 content("gui", guiuid);
                 content("global-rules", gruid);

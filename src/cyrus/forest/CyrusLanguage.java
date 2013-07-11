@@ -62,7 +62,7 @@ public class CyrusLanguage extends WebObject {
             if(rule instanceof String){
                 contentTempObserve("Rule", (String)rule);
                 LinkedList rulelist=contentListMayJump("Rule");
-                if(rulelist!=null) runTheRules(rulelist);
+                if(rulelist!=null && !contentIsOrListContains("Rule:is","rule")) runTheRules(rulelist);
                 else if(!rulesRun.contains(rule)){ rulesRun.add((String)rule); runTheRule(); }
             }
             else
