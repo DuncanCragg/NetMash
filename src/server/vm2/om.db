@@ -107,6 +107,7 @@
   bx: => (@nl each ({ a: d b: e c: f } select @.. else @..)) @xx
   nl: (((!a => a)))
   fl: => @. each (if (@.. == a) then A else a)
+  lw: => @. with { UID: new v: @vd }
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -156,6 +157,7 @@
   bx: (((e e e)(d d e)(d d d))((e d e)(d d e)(f d d))) qq
   nl: not ((!a))
   fl: ((a a a)(A A a)(A A A))((a A a)(A A a)(a A A))
+  lw: { v: 5 }
 }
 
 { UID: uid-1de5-4d69-667a-56e4

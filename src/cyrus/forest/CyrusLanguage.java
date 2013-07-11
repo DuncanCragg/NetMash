@@ -446,7 +446,7 @@ public class CyrusLanguage extends WebObject {
             LinkedList rhs=entry.getValue();
             if(rhs.size()==0) continue;
             if(rhs.size() >=2 && "@.".equals(rhs.get(0)) && "with".equals(rhs.get(1))){
-                LinkedList e=copyFindEach(subList(rhs,2));
+                LinkedList e=findListIn(deepCopyObject(evalDeepList(subList(rhs,2))));
                 if(e==null || e.size()==0) continue;
                 if(currentRewritePath.equals("Notifying")) for(Object o: e) notifying(o.toString());
                 else contentSetAddAll(currentRewritePath, e);
@@ -482,7 +482,7 @@ public class CyrusLanguage extends WebObject {
         if(shufflePath!=null) shuffleList(shufflePath);
         for(String p: topDowners.keySet()){
             LinkedList ll=contentList(p);
-            if(ll!=null) contentObject(p,copyFindObject(eval(ll)));
+            if(ll!=null) contentObject(p,deepCopyObject(findObject(eval(ll))));
         }
     }
 
@@ -1066,19 +1066,6 @@ public class CyrusLanguage extends WebObject {
         String cp=(p==null)? "": ":"+p;
         for(String s: ll) maybeAdd(r, jump? contentObjectMayJump(s+cp): contentObject(s+cp));
         return r.isEmpty()? null: (r.size()==1? r.get(0): r);
-    }
-
-    // ----------------------------------------------------
-
-    @SuppressWarnings("unchecked")
-    private LinkedList copyFindEach(List ll){
-        LinkedList r=new LinkedList();
-        for(Object o: ll) maybeAdd(r,copyFindObject(o));
-        return r;
-    }
-
-    private Object copyFindObject(Object o){
-        return deepCopyObject(findObject(o));
     }
 
     // ----------------------------------------------------
