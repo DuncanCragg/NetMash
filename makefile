@@ -17,10 +17,10 @@ mctut: runmct
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
 
 cars: runcars
-	chromium-browser 'http://localhost:8081/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
+	chromium-browser 'http://localhost:8082/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
 
 capweb: runcapw
-	chromium-browser 'http://localhost:8081/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
+	chromium-browser 'http://localhost:8082/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
 
 ####################
 
@@ -34,7 +34,7 @@ cap: androidemu runcap logcat
 
 tests: json uid cyrus
 
-cyrus: runcyrus showtestresults
+cyrus: runom showtestresults
 
 ####################
 
@@ -128,15 +128,15 @@ runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
-runcyrus: kill cyrusconfig   usecyrusdb setvm2tstconfig run2
+runom:  kill       omconfig  useomdb    setvm2tstconfig run2
 
 runcars: kill clean netconfig usecarsdb setvm3tstconfig run1n2
 
-runcap: kill clean netconfig useworlddb usecapdb setvm3emuconfig run1n2
+runcap:  kill clean netconfig useworlddb usecapdb setvm3emuconfig run1n2
 
-runcapw: kill clean netconfig useworlddb usecapdb setvm3tstconfig run1n2
+runcapw: kill clean netconfig usecapdb setvm2tstconfig run2
 
-runlap: kill clean netconfig usecapdb  setvm2lanconfig run2
+runlap:  kill clean netconfig usecapdb setvm2lanconfig run2
 
 runtut: kill clean           usetutordb setvm1tstconfig run1
 
@@ -195,7 +195,7 @@ useworlddb:
 	cp src/server/vm1/world.db src/server/vm1/cyrus.db
 	cp src/server/vm2/world.db src/server/vm2/cyrus.db
 
-usecyrusdb:
+useomdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db
 
 usecapdb:
@@ -319,7 +319,7 @@ setvm3remconfig:
 netconfig:
 	cp src/server/vm2/netconfig.db src/server/vm2/cyrusconfig.db
 
-cyrusconfig:
+omconfig:
 	cp src/server/vm2/omconfig.db src/server/vm2/cyrusconfig.db
 
 curconfig:
