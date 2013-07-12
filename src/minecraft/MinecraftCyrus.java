@@ -25,7 +25,7 @@ public class MinecraftCyrus extends WebObject {
 
     public MinecraftCyrus(String s){ super(s,true); }
 
-    static WebObject globalrules;
+    static String globalruleuid=null;
     boolean first=true;
 
     LinkedHashMap mods=new LinkedHashMap();
@@ -33,7 +33,7 @@ public class MinecraftCyrus extends WebObject {
     public void evaluate(){ try{
         if(contentIsOrListContains("is","site") && first){ first=false;
             String guiuid=content("gui");
-            String gruid=content("global-rules");
+            globalruleuid=content("global-rules");
             if(guiuid==null){
                 guiuid=spawn(new MinecraftCyrus(
                     "{ is: gui\n"+
@@ -48,12 +48,11 @@ public class MinecraftCyrus extends WebObject {
                     "    )\n"+
                     "    { view: open raw  item: "+toURL(uid)+" }\n"+
                     "}\n"));
-                globalrules=new CyrusLanguage("{ is: editable list title: \"Global Rules\" }", true);
-                gruid=spawn(globalrules);
+                globalruleuid=spawn(new CyrusLanguage("{ is: editable list title: \"Global Rules\" }", true));
                 content("gui", guiuid);
-                content("global-rules", gruid);
+                content("global-rules", globalruleuid);
             }
-            CyrusLanguage.addGlobalRules(gruid);
+            CyrusLanguage.addGlobalRules(globalruleuid);
             contentAll("worlds:name");
             URI openthis=URI.create(localPre()+"/#"+toURL(guiuid));
             log("Opening "+openthis+" in default browser..");
@@ -85,6 +84,7 @@ public class MinecraftCyrus extends WebObject {
                         String tag=entry.getKey();
                         if(contentBool("Alerted:form:"+tag)) gr.add(mods.get(tag));
                     }
+                    final WebObject globalrules=onlyUseThisToHandControlOfThreadToDependent(globalruleuid);
                     new Evaluator(globalrules){ public void evaluate(){
                         globalrules.contentList("list", gr);
                     }};
