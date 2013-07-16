@@ -44,7 +44,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     private void addScanAndPlace(){
         if(blockNames.get("air")==null) setUpBlockNames();
         for(String alerted: alerted()){
-            contentTemp("Alerted", alerted);
+            contentTempObserve("Alerted", alerted);
             if(contentIsOrListContains("Alerted:is", "minecraft")){
                 if(contentIsOrListContains("is","queryable")){
                     addForScanning(alerted, contentHash("Alerted:scanning"), contentIsOrListContains("Alerted:is", "player"));
