@@ -250,7 +250,6 @@ public class FunctionalObserver implements Module {
         if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); return; }
         if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); return; }
         if(notified.isVisibleRemote())   { if(realupdate) http.push(    notified); return; }
-        log("Not notified: ",notified.uid);
     }
 
     WebObject observing(WebObject observer, String observeduid, boolean tempObserve){
