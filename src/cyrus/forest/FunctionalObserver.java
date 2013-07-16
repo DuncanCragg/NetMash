@@ -214,14 +214,19 @@ public class FunctionalObserver implements Module {
         alertFirst(notifier);
     }
 
+    @SuppressWarnings("unchecked")
     private void notifyUpdated(WebObject notifier, boolean realupdate){
+        LinkedList sanitised=new LinkedList();
         for(String notifieduid: notifier.notify){
             WebObject notified = cacheGetTryOurs(notifieduid);
             if(tryOutEagerAlertingForABit || !notified.observe.contains(notifier.uid)){
                 notified.alertedin.add(notifier.uid);
             }
-            evaluatableOrPush(notified, realupdate);
+            if(!evaluatableOrPush(notified, realupdate)) sanitised.add(notifieduid);
         }
+        if(sanitised.size()==0) return;
+        log("Sanitising notifiable uids, removing:",sanitised);
+        notifier.notify.removeAll(sanitised);
     }
 
     private void notifyUpdatedOnAThread(final WebObject notifier){
@@ -235,21 +240,27 @@ public class FunctionalObserver implements Module {
         notifier.httpnotify.clear();
     }
 
+    @SuppressWarnings("unchecked")
     private void alertFirst(WebObject notifier){
+        LinkedList sanitised=new LinkedList();
         for(String alertuid: notifier.newalert){
             WebObject alerted = cacheGetTryOurs(alertuid);
             if(tryOutEagerAlertingForABit || !alerted.observe.contains(notifier.uid)){
                 alerted.alertedin.add(notifier.uid);
-                evaluatableOrPush(alerted, true);
+                if(!evaluatableOrPush(alerted, true)) sanitised.add(alertuid);
             }
         }
+        if(sanitised.size()==0) return;
+        log("Sanitising notifiable uids, removing:",sanitised);
+        notifier.newalert.removeAll(sanitised);
     }
 
-    private void evaluatableOrPush(WebObject notified, boolean realupdate){
-        if(notified.oneOfOurs())         {                  evaluatable(notified); return; }
-        if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); return; }
-        if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); return; }
-        if(notified.isVisibleRemote())   { if(realupdate) http.push(    notified); return; }
+    private boolean evaluatableOrPush(WebObject notified, boolean realupdate){
+        if(notified.oneOfOurs())         {                  evaluatable(notified); return true; }
+        if(notified.isAsymmetricCN())    { if(realupdate) http.longpush(notified); return true; }
+        if(notified.isAsymmetricRemote()){ if(realupdate) http.longpush(notified); return true; }
+        if(notified.isVisibleRemote())   { if(realupdate) http.push(    notified); return true; }
+        return false;
     }
 
     WebObject observing(WebObject observer, String observeduid, boolean tempObserve){
@@ -293,10 +304,12 @@ public class FunctionalObserver implements Module {
     }
 
     @SuppressWarnings("unchecked")
-    private void sanitiseNotifications(WebObject w){
+    private void sanitiseNotifications(WebObject notifier){
         LinkedList sanitised=new LinkedList();
-        for(String notifieduid: w.notify) if(!oneOfOurs(notifieduid)) sanitised.add(notifieduid);
-        w.notify.removeAll(sanitised);
+        for(String notifieduid: notifier.notify) if(!oneOfOurs(notifieduid)) sanitised.add(notifieduid);
+        if(sanitised.size()==0) return;
+        log("Sanitising notifiable uids, removing:",sanitised);
+        notifier.notify.removeAll(sanitised);
     }
 
     private void handleShell(WebObject s){
