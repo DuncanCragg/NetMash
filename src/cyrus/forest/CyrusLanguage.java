@@ -321,8 +321,8 @@ public class CyrusLanguage extends WebObject {
     private boolean scanType(Object v, String pk){
         boolean r=doScanType(v,pk);
         String when=contentStringOr("Rule:when","(no description)");
-        if(!r && anylogging && !tryfail && !mayfail) System.out.println("When "+when+" "+uid+"\nFailed to match "+v+" @"+pk+"="+contentObject(pk));
-        if( r && extralogging && tryfail           ) log(    "When "+when+" "+uid+"\nTrying to fail but matched "+v+" @"+pk+"="+contentObject(pk));
+        if(!r && extralogging && !tryfail && !mayfail) log("When "+when+" "+uid+"\nFailed to match "           +v+" @"+pk+"="+contentObject(pk));
+        if( r && extralogging &&  tryfail            ) log("When "+when+" "+uid+"\nTrying to fail but matched "+v+" @"+pk+"="+contentObject(pk));
         return r;
     }
 
