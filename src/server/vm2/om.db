@@ -264,9 +264,15 @@
   vv: @uu:#
   st: 1 2 3 5 8 9
   fb: 5
-  : { la: 8 } => {
+  : { la: 8 } => as-is {
     is: test-done
     title: "Test Complete"
+    Timer: 500
+    Rules: { is: test-done rule
+      when: "timer done, do again"
+      Timer: 0 => 500
+      x: < 1 => @. + 1
+    }
   }
 }
 

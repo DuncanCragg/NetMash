@@ -871,6 +871,7 @@ public class WebObject {
     public void evaluate(){ }
 
     void evalPost(){
+        doTimer();
         inevaluate = false;
         observe.addAll(alerted);
         notify.addAll(newalert);
@@ -889,6 +890,19 @@ public class WebObject {
     void makeNewStatePublicRightNowShouldBeAllAtomicButIsnt(){
         publicState = updatingState;
         etag++;
+    }
+
+    int timer=0;
+
+    private void doTimer(){
+        if(timer>0) return;
+        timer=contentInt("Timer");
+        if(timer==0) return;
+        final WebObject me=this;
+        new Thread(){ public void run(){
+            try{ Thread.sleep(timer); }catch(Exception e){}
+            new Evaluator(me){ public void evaluate(){ if(timer!=0){ timer=0; contentInt("Timer", 0); self.evaluate(); }}};
+        }}.start();
     }
 
     /* ---------------------------------------------------- */
