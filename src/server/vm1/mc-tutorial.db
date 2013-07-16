@@ -10,6 +10,7 @@
         uid-2b62-478a-30dd-3bf7
         uid-8c1a-79ee-15b5-94ac
         uid-bce6-6258-53cb-a39a
+        uid-ea47-528f-3ccb-8976
         uid-3db2-0c18-eaf9-66fb
         uid-290d-5dcf-c778-646c
 }
@@ -104,7 +105,7 @@
       "![    is: minecraft player rule]!"
       "![    placing: => { material: glass shape: box size: 2 2 2 position: @position + (3 0 3) }]!"
       "![    Notifying: => @. with @world]!"
-        "  }"
+      "![  }]!"
         "}"
         "]|"
         "We take the player position, whatever it's set to or changes to, and add three blocks North and East, for placing."
@@ -242,6 +243,41 @@
         "You should see a stone-built box appear. If you move, it should track you around."
         "Change the size (not too big! 20 or less), and try different materials."
         "Try '+ (-3 0 -3)' to build around you, then material: air, to wipe out big chunks of territory!"
+}
+
+{ UID: uid-ea47-528f-3ccb-8976
+  is: article
+  title: "Flashing or animated structure"
+  text: "Place some blocks that alternate between glass and glowstone. Add the following to the previous example:"
+        "|["
+        "{ is: editable minecraft structure"
+        "  world: uid-of-your-current-world"
+        "  Rules: {"
+        "    is: structure rule"
+      "![    when: \"created, set structure position near player\"]!"
+        "    position: => @world:player:position + (3 -1 3)"
+      "![    Timer: # => 1000]!"
+        "    Notifying: => @. with @world"
+        "  } {"
+      "![    is: structure rule]!"
+      "![    when: \"tick, if glass, make glowstone\"]!"
+      "![    material: (((glass => glowstone)))]!"
+      "![    Timer: 0 => 1000]!"
+      "![    Notifying: => @. with @world]!"
+      "![  } {]!"
+      "![    is: structure rule]!"
+      "![    when: \"tick, if glowstone, make glass\"]!"
+      "![    material: (((glowstone => glass)))]!"
+      "![    Timer: 0 => 1000]!"
+      "![    Notifying: => @. with @world]!"
+      "![  }]!"
+      "![  material: ((stone-double-slab) (stone-double-slab) (glass))]!"
+        "}"
+        "]|"
+        "These rules will sample the players position, put some blocks of glass near there and start a one-second timer."
+        "When that timer expires, the material is changed to glowstone and the timer is restarted."
+        "When that timer expires, the material is changed back to glass and the timer is restarted."
+        "The 'Timer' property is a special built-in feature of the objects of the language."
 }
 
 { UID: uid-3db2-0c18-eaf9-66fb
