@@ -108,6 +108,7 @@
   nl: (((!a => a)))
   fl: => @. each (if (@.. == a) then A else a)
   lw: => @. with { UID: new v: @vd }
+  ma: => { UID: new some: thingy } { UID: new some: thang } { UID: new some: nothing }
 }
 
 { UID: uid-40fb-5964-b385-c922
@@ -158,6 +159,9 @@
   nl: not ((!a))
   fl: ((a a a)(A A a)(A A A))((a A a)(A A a)(a A A))
   lw: { v: 5 }
+  ma: { some: /thing/ }
+  au: => @=ma
+  at: => @=ma:some
 }
 
 { UID: uid-1de5-4d69-667a-56e4
@@ -188,6 +192,8 @@
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
   nl: ((a a a)(a a a)(a a a))((a a a)(a a a)(a a a))
   nt: not *
+  au: count 2
+  at: count 2
 }
 
 { UID: uid-61d6-65c9-2931-505b
@@ -205,6 +211,8 @@
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   pa: { b: d a: d e: f}
   lu: { c: d qq: 20 20 30 40 50 }
+  au: /uid-/ /uid-/
+  at: thingy nothing
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
