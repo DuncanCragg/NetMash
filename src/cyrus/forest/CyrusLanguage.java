@@ -130,8 +130,8 @@ public class CyrusLanguage extends WebObject {
         LinkedHashMap<String,Object> rule=contentHash("Rule:#");
         boolean ok=scanHash(rule, "");
         if(ok) doRewrites();
-        ; if(ok && anylogging) System.out.println("Rule fired: \"When "+when+"\" "+uid);
-        ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+"\n"+rule+"\n====\n"+contentHash("#")+"\n===========");
+        ; if(ok && statemod && anylogging) System.out.println("Rule fired: \"When "+when+"\" on "+uid);
+        ; if(extralogging) log("==========\nscanRuleHash="+(ok?"pass":"fail")+(statemod?"/":"/un")+"changed\n"+rule+"\n====\n"+contentHash("#")+"\n===========");
         if(alerted!=null && contentIs("Alerted",alerted)) contentTemp("Alerted",null);
     }
 
