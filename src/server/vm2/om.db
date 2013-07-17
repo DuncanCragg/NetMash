@@ -237,7 +237,7 @@
   vo: => @. dot ((0 1 0)(-1 0 0)(0 0 0))
   vc: within 0.347 of (4.8 6.2 5.2) => (@. + @vo) / 5
   uu: s r
-  vv: # => { a: 20 uid-39da-3645-4f58-50cb list: s r }
+  vv: # => { a: 20 uid-39da-3645-4f58-50cb list: s r within: uid-39da-3645-4f58-50cb }
   cc: { x: count 1 z: count 1 }
   ff: { a: < 200 }
   gg: # => @=ff cut-out { list: * }

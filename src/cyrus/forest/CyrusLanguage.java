@@ -579,7 +579,7 @@ public class CyrusLanguage extends WebObject {
         if(o==null) return null;
         if(o instanceof String && "".equals(o)) return null;
         if(o instanceof String && "#".equals(o) && !asis) return null;
-        if(o instanceof String)  return ((String)o).equals("uid-new")? spawnEd(): o;
+        if(o instanceof String)  return ((String)o).equals("uid-new")? spawnNewThing(): o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedHashMap) return deepCopyHash(((LinkedHashMap)o),asis);
@@ -1173,13 +1173,15 @@ public class CyrusLanguage extends WebObject {
         return r;
     }
 
+    @SuppressWarnings("unchecked")
     private Object spawnHash(LinkedHashMap hm){
+        hm.put("within",uid);
         try{ return spawn(getClass().newInstance().construct(hm)); } catch(Throwable t){ t.printStackTrace(); }
         return hm;
     }
 
-    private String spawnEd(){
-        return spawn(new CyrusLanguage("{ \"is\": [ \"editable\" ] }"));
+    public String spawnNewThing(){
+        return spawn(new CyrusLanguage("{ is: editable new-thing within: "+uid+" }", true));
     }
 
     private Object findObjectFixRefs(Object o, String lep, Object lev, boolean justref){

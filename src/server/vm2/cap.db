@@ -156,7 +156,6 @@
     { UID: new
       Rules: uid-bf4f-c4d7-38a5-8288 uid-51dd-2560-3c5d-5c64 uid-566e-f0f3-3350-97ea uid-5f28-9174-b47d-2a74 uid-4a47-2cb6-8e99-a178 uid-6419-0368-25da-f91e
       is: updatable land
-      within: @Alerted:within
       request: @Alerted
       title: @Alerted:title
       area: @Alerted:area
@@ -189,7 +188,6 @@
     { UID: new
       Rules: uid-99f5-6410-8944-2642 uid-6d46-73a1-05c4-1703 uid-c619-afdd-0d5d-1a5d
       is: updatable land
-      within: @Alerted:within
       request: @Alerted
       title: @Alerted:title
       area: @Alerted:area
