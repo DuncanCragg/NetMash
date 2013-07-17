@@ -270,6 +270,7 @@
         "    Timer: 0 => 1000"
         "  }"
         "  material: ((stone-double-slab) (stone-double-slab) (glass))"
+        "  trail: true"
         "}"
         "]|"
         "These rules will sample the players position, put some blocks of glass near there and start a one-second timer."
