@@ -38,6 +38,8 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
     LinkedList newPosition=null;
     LinkedList newSpeed=null;
 
+    EntityAIMoveTowardsCoords ai2coords=null;
+
     private void setOwnState(){
         newPosition=contentList("set-position");
         newSpeed   =contentList("set-speed");
@@ -59,22 +61,28 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
                 nopersist=false;
             }
             if(entity==null) return;
-            setAndGetState();
+            setState();
+            getState();
             if(modified()) self.evaluate();
         }};
     }
 
-    private void setAndGetState(){
+    private void setState(){
         if(newPosition!=null && newPosition.size()==3){
             Integer psx=getIntFromList(newPosition,0);
             Integer psy=getIntFromList(newPosition,1);
             Integer psz=getIntFromList(newPosition,2);
             if(psx!=null && psy!=null && psz!=null){
-                // setPosition() doesn't seem to work
                 if(entity instanceof EntityLiving){
-                    ((EntityLiving)entity).getNavigator().tryMoveToXYZ(psx, psy, psz, 0.3F);
+                    if(ai2coords==null){
+                        EntityLiving entityliving=(EntityLiving)entity;
+                        ai2coords=new EntityAIMoveTowardsCoords(entityliving);
+                        entityliving.tasks.addTask(2, ai2coords);
+                    }
+                    ai2coords.tryToMoveToXYZ(psx, psy, psz, ModLoader.VERSION.contains("1.5")? 0.3F: 1.0F);
                 }
             }
+            else if(ai2coords!=null) ai2coords.resetTask();
         }
         if(newSpeed!=null && newSpeed.size()==3){
             Float spx=getFloatFromList(newSpeed,0,0);
@@ -88,6 +96,9 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
                 entity.motionZ+=spz; if(entity.motionZ>1) entity.motionZ=1f; if(entity.motionZ< -1) entity.motionZ= -1f;
             }
         }
+    }
+
+    private void getState(){
         int ppx=(int)entity.posX;
         int ppy=(int)entity.posY;
         int ppz=(int)entity.posZ;
@@ -114,6 +125,33 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
     public World world(){
         MinecraftServer server=MinecraftServer.getServer();
         return server==null? null: server.worldServerForDimension(0);
+    }
+
+    class EntityAIMoveTowardsCoords extends EntityAIBase {
+
+        private EntityLiving entity;
+        private double psx, psy, psz;
+        private float speed;
+        private boolean running=true;
+
+        public EntityAIMoveTowardsCoords(EntityLiving entity){
+            this.entity=entity;
+            this.setMutexBits(1);
+        }
+
+        public void tryToMoveToXYZ(double psx, double psy, double psz, float speed){
+            if(this.psx==psx && this.psy==psy && this.psz==psz && this.speed==speed) return;
+            this.psx=psx; this.psy=psy; this.psz=psz; this.speed=speed;
+            this.running=true;
+        }
+
+        public boolean shouldExecute(){ return running; }
+
+        public boolean continueExecuting(){ return running && !entity.getNavigator().noPath(); }
+
+        public void resetTask(){ running=false; }
+
+        public void startExecuting(){ entity.getNavigator().tryMoveToXYZ(psx, psy, psz, speed); }
     }
 }
 

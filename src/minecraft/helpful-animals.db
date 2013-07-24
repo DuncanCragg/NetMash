@@ -30,7 +30,7 @@
 
 { UID: uid-9c0d-fb2b-53e5-19c3
   is: editable minecraft pig rule
-  when: "run, scan below ground"
+  when: "run, scan around player"
   alive: true
   set-position: @world:player:position !=> @world:player:position
   scanpos: => @position + (-2 0 -2)
