@@ -75,8 +75,8 @@ public class Kernel {
             listeners.put(listener, channeluser);
             }finally{ selock.unlock(); }
 
-        } catch(BindException e){ bailOut("Could not bind to port "+port, e, listener);
-        } catch(Exception     e){ bailOut("Could not bind to port "+port, e, listener); }
+        } catch(BindException e){ logErr("Could not bind to port "+port, e, listener);
+        } catch(Exception     e){ logErr("Could not bind to port "+port, e, listener); }
     }
 
     static public SocketChannel channelConnect(String host, int port, ChannelUser channeluser){
@@ -554,7 +554,8 @@ public class Kernel {
     }
 
     static private void bailOut(String message, Throwable t, AbstractInterruptibleChannel c){
-        System.err.println("Kernel: Bailing! "+message+":\n"+t);
+        System.err.println("Kernel: Bailing! "+message+":");
+        t.printStackTrace();
         try{ if(c!=null) c.close(); } catch(Throwable tt){}
         System.exit(1);
     }
