@@ -110,8 +110,14 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
         contentBool("on-ground", entity.onGround);
         contentBool("collided",  entity.isCollided);
         if(entity instanceof EntityPlayer){
-            ChunkCoordinates   spawnpos=(entity2!=null? ((EntityPlayer)entity2).getBedLocation(): null);
-            if(spawnpos==null) spawnpos=                ((EntityPlayer)entity ).getBedLocation();
+            EntityPlayer player1=(EntityPlayer)entity;
+            EntityPlayer player2=(EntityPlayer)entity2;
+
+            ItemStack holdings=player2.getHeldItem();
+            content("holding", holdings!=null? deCamelise(holdings.getItem().getUnlocalizedName().substring(5)): null);
+
+            ChunkCoordinates   spawnpos=(player2!=null? player2.getBedLocation(): null);
+            if(spawnpos==null) spawnpos=                player1.getBedLocation();
             if(spawnpos!=null) contentList("spawn-position",list(spawnpos.posX,spawnpos.posY,spawnpos.posZ));
         }
         contentBool("alive", !entity.isDead);

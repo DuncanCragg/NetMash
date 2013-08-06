@@ -454,6 +454,12 @@ public class Utils{
         return r;
     }
 
+    static public String deCamelise(String s){
+        return s.replaceAll("([a-z])([A-Z])", "$1 $2")
+                .replaceAll("\b([A-Z]+)([A-Z])([a-z])", "$1 $2$3")
+                .replaceAll(" ","-").toLowerCase();
+    }
+
     @SuppressWarnings("unchecked")
     static public LinkedList subList(LinkedList ll, int s){
         return new LinkedList(ll.subList(s,ll.size()));
