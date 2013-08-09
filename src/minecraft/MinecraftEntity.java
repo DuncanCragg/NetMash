@@ -48,16 +48,14 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
     int tickNum=0;
 
     public void tick(float var1, final Minecraft minecraft){
+        final MinecraftEntity me=this;
         new Evaluator(this){ public void evaluate(){
             if(++tickNum < 8) return;
             tickNum=0;
-            World currentworld=world(); if(currentworld==null) return;
-            String currentname=currentworld.worldInfo.getWorldName();
-            if(!contentIs("world:name",currentname)) return;
+            if(!inCurrentWorld()) return;
             if(contentIsOrListContains("is","player")){
-                EntityPlayer player=minecraft.thePlayer;
-             /* if(entity.equals(player)) */ entity=player;
-                entity2=otherPlayer((EntityPlayer)entity);
+                getPlayers(minecraft);
+                mod_Cyrus.modCyrus.registerPlayer(me);
                 nopersist=false;
             }
             if(entity==null) return;
@@ -65,6 +63,20 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
             getState();
             if(modified()) self.evaluate();
         }};
+    }
+
+    private boolean inCurrentWorld(){
+        World currentworld=world();
+        if(currentworld==null) return false;
+        String currentname=currentworld.worldInfo.getWorldName();
+        return contentIs("world:name",currentname);
+    }
+
+    private void getPlayers(Minecraft minecraft){
+        EntityPlayer player=minecraft.thePlayer;
+     /* if(entity.equals(player)) */
+        entity=player;
+        entity2=otherPlayer((EntityPlayer)entity);
     }
 
     private void setState(){
@@ -113,7 +125,7 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
             EntityPlayer player1=(EntityPlayer)entity;
             EntityPlayer player2=(EntityPlayer)entity2;
 
-            ItemStack holdings=player2.getHeldItem();
+            ItemStack holdings=player1.getHeldItem();
             content("holding", holdings!=null? deCamelise(holdings.getItem().getUnlocalizedName().substring(5)): null);
 
             ChunkCoordinates   spawnpos=(player2!=null? player2.getBedLocation(): null);

@@ -111,11 +111,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                 if(!contentIs("name",currentname)) return;
                 world=currentworld;
                 EntityPlayer player=minecraft.thePlayer;
-                if(!contentSet("player")){
-                    String euid=entityToCyrus(player,uid);
-                    content("player", euid);
-                    mod_Cyrus.modCyrus.registerPlayer(entityMap.get(euid));
-                }
+                if(!contentSet("player")) content("player", entityToCyrus(player,uid));
                 if(tickNum==0){
                     setAndGetWorldState();
                     doEntitiesToCyrus(player);
