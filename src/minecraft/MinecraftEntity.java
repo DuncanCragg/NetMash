@@ -123,6 +123,27 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
         contentBool("alive", !entity.isDead);
     }
 
+    public void onInteracting(final String style, final int x, final int y, final int z, final int side){
+        new Evaluator(this){ public void evaluate(){
+            contentList(style, list(x,y,z,side));
+            if(modified()) self.evaluate();
+        }};
+    }
+
+    public void onInteracting(final String style, final Entity e){
+        new Evaluator(this){ public void evaluate(){
+            content(style, MinecraftWorld.entityToCyrus(e));
+            if(modified()) self.evaluate();
+        }};
+    }
+
+    public void onNotInteracting(final String style){
+        new Evaluator(this){ public void evaluate(){
+            content(style, null);
+            if(modified()) self.evaluate();
+        }};
+    }
+
     private EntityPlayer otherPlayer(EntityPlayer player){
         for(Object p: world().playerEntities) if(p.equals(player)) return (EntityPlayer)p;
         return null;

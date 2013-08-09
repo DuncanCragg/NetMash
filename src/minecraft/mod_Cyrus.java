@@ -43,6 +43,60 @@ public class mod_Cyrus extends BaseMod {
         Kernel.run();
     }
 
+    MinecraftEntity thePlayer=null;
+
+    public void registerPlayer(MinecraftEntity player){ thePlayer=player; }
+
+    public void clientConnect(NetClientHandler nch){
+        Minecraft mc=Minecraft.getMinecraft();
+        EnumGameType gt=getGameType(mc);
+        mc.playerController = new PlayerControllerMP(mc, nch){
+            int ticks=0;
+            public void clickBlock(int x, int y, int z, int sideHit){
+                super.clickBlock(x,y,z,sideHit);
+                if(thePlayer!=null) thePlayer.onInteracting("hitting", x,y,z,sideHit);
+                ticks=1;
+            }
+            public void onPlayerDamageBlock(int x, int y, int z, int sideHit){
+                super.onPlayerDamageBlock(x,y,z,sideHit);
+                if(thePlayer!=null) thePlayer.onInteracting("hitting", x,y,z,sideHit);
+                ticks=1;
+            }
+            public boolean onPlayerRightClick(EntityPlayer player, World world, ItemStack items, int x, int y, int z, int sideHit, Vec3 hitVec){
+                boolean r=super.onPlayerRightClick(player, world, items, x, y, z, sideHit, hitVec);
+                if(thePlayer!=null) thePlayer.onInteracting("placing", x,y,z,sideHit);
+                ticks=1;
+                return r;
+            }
+            public void attackEntity(EntityPlayer player, Entity entityHit){
+                super.attackEntity(player, entityHit);
+                if(thePlayer!=null) thePlayer.onInteracting("hitting", entityHit);
+                ticks=1;
+            }
+            public boolean func_78768_b(EntityPlayer player, Entity entityHit){
+                boolean r=super.func_78768_b(player, entityHit);
+                if(thePlayer!=null) thePlayer.onInteracting("touching", entityHit);
+                ticks=1;
+                return r;
+            }
+            static final int WAITTICKS=6;
+            public void updateController(){
+                if(ticks==0 || thePlayer==null) return;
+                if(ticks< WAITTICKS){ ticks++; return; }
+                thePlayer.onNotInteracting("hitting");
+                thePlayer.onNotInteracting("placing");
+                thePlayer.onNotInteracting("touching");
+                ticks=0;
+            }
+        };
+        mc.playerController.setGameType(gt);
+    }
+
+    EnumGameType getGameType(Minecraft mc){
+        // world.getWorldInfo().getGameType() == EnumGameType.ADVENTURE
+        return mc.playerController.isInCreativeMode()? EnumGameType.CREATIVE: EnumGameType.SURVIVAL;
+    }
+
     public interface Tickable { public void tick(float var1, Minecraft minecraft); }
 
     CopyOnWriteArrayList<Tickable> tickables=new CopyOnWriteArrayList<Tickable>();
@@ -84,8 +138,6 @@ public class mod_Cyrus extends BaseMod {
     public void keyboardEvent(KeyBinding var1) { logXX("key "+var1); }
 /*
     public void modsLoaded() {}
-
-    public void clientConnect(NetClientHandler var1){ logXX("clientConnect: "+var1); }
 
     public void generateNether(World var1, Random var2, int var3, int var4) {}
 

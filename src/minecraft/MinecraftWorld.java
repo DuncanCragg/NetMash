@@ -111,7 +111,11 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
                 if(!contentIs("name",currentname)) return;
                 world=currentworld;
                 EntityPlayer player=minecraft.thePlayer;
-                if(!contentSet("player")) content("player", entityToCyrus(player,uid));
+                if(!contentSet("player")){
+                    String euid=entityToCyrus(player,uid);
+                    content("player", euid);
+                    mod_Cyrus.modCyrus.registerPlayer(entityMap.get(euid));
+                }
                 if(tickNum==0){
                     setAndGetWorldState();
                     doEntitiesToCyrus(player);
@@ -260,23 +264,29 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         }
     }
 
-    static LinkedHashMap<String,String> entityObs=new LinkedHashMap<String,String>();
-    static LinkedHashMap<String,Entity> entityMap=new LinkedHashMap<String,Entity>();
+    static LinkedHashMap<String,String>          entityObs=new LinkedHashMap<String,String>();
+    static LinkedHashMap<String,MinecraftEntity> entityMap=new LinkedHashMap<String,MinecraftEntity>();
+
+    static public String entityToCyrus(Entity e){
+        String name=e.getEntityName()+"-"+e.entityId;
+        return entityObs.get(name);
+    }
 
     private String entityToCyrus(Entity e, String worlduid){
         String name=e.getEntityName()+"-"+e.entityId;
         String euid=entityObs.get(name);
         if(euid==null){
             String type=(e instanceof EntityPlayer)? "player": e.getEntityName().toLowerCase();
-            euid=spawn(new MinecraftEntity(e,type,name,worlduid));
+            MinecraftEntity me=new MinecraftEntity(e,type,name,worlduid);
+            euid=spawn(me);
             entityObs.put(name,euid);
-            entityMap.put(euid,e);
+            entityMap.put(euid,me);
         }
         return euid;
     }
 
     private void doPushing(String pusheruid, LinkedHashMap pushing){
-        Entity pusher=entityMap.get(pusheruid);
+        Entity pusher=entityMap.get(pusheruid).entity;
         LinkedList entities=getListFromHash(pushing,"entities");
         LinkedList speed   =getListFromHash(pushing,"speed");
         if(entities.size()==0 || speed.size()!=3) return;
@@ -287,7 +297,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         if(spx< -1) spx= -1f; if(spy< -1) spy= -1f; if(spz< -1) spz= -1f;
         if(spx>  1) spx=  1f; if(spy>  1) spy=  1f; if(spz>  1) spz=  1f;
         for(Object o: entities){ if(!(o instanceof String)) return;
-            Entity e=entityMap.get((String)o);
+            Entity e=entityMap.get((String)o).entity;
             if(e==null) continue;
             e.motionX+=spx; if(e.motionX>1) e.motionX=1f; if(e.motionX< -1) e.motionX= -1f;
             e.motionY+=spy; if(e.motionY>1) e.motionY=1f; if(e.motionY< -1) e.motionY= -1f;
