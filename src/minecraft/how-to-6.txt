@@ -24,8 +24,14 @@ Decompile, Fix, Decompile, Recompile
  - ./decompile.sh
  - extract ModLoader 1.6.2 into versions/1.6.2 (see below)
  - ./cleanup.sh
- - ./decompile.sh
- - compilation fixes: copy-paste the required types from errors and put casts in the code
+ - ./decompile.sh  # ignore patch hunk error, but..
+ - compilation fixes: copy-paste the required types from errors and put casts in the code:
+    src/minecraft/net/minecraft/src/ChatMessageComponent.java:197
+      var7.append(StatCollector.translateToLocalFormatted(this.field_111090_h, (Object[])var13));
+    src/minecraft/net/minecraft/src/ModLoader.java:240,252,1140
+      localizedStrings.put(s1, (Map<String,String>)obj);
+      tradeItems.put(Integer.valueOf(profession), (List<TradeEntry>)list);
+      keyList.put(basemod, (Map<KeyBinding,boolean[]>)obj);
  - ./recompile.sh --client
  - ./updatemd5.sh
 
@@ -43,6 +49,8 @@ ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft/net/minecraft/s
 ln -s .../cyrus/src/minecraft/mod_Cyrus.java       src/minecraft/net/minecraft/src/mod_Cyrus.java
 ---------------------------------------
 
+Then "make runlomc" in Cyrus directory to bring up mod and tutorial server.
+Then "make test" in MC(P) directory, with a browser like Chrome ready to go.
 
 Installing ModLoader
 
