@@ -1,25 +1,35 @@
 
-MCP
+Get Cyrus from GitHub
 
- - unzip MCP; rm *.bat
+ - git clone https://github.com/DuncanCragg/Cyrus.git
 
-Minecraft
+Get Minecraft Coder Pack, MCP
 
- - run Minecraft; "Options"; "Force update!"
- - put minecraft_server.1.6.1.jar into jars
+ - download http://www.mediafire.com/download/xcjy2o2zsdol7cu/mcp805.zip
+ - unzip; rm *.bat
 
-Decompile
+Get ModLoader
 
+ - http://dl.dropboxusercontent.com/u/20629262/Latest/ModLoader.zip
+
+Get and run Minecraft
+
+ - run Minecraft; get it to load latest of everything
+ - download https://s3.amazonaws.com/Minecraft.Download/versions/1.6.2/minecraft_server.1.6.2.jar
+ - put minecraft_server.1.6.2.jar into jars dir
+
+Decompile, Fix, Decompile, Recompile
+
+ - in MCP directory
  - ./decompile.sh
- - extract ModLoader 1.6.1 into versions/1.6.1
+ - extract ModLoader 1.6.2 into versions/1.6.2 (see below)
  - ./cleanup.sh
  - ./decompile.sh
- - put compilation fixes in
+ - compilation fixes: copy-paste the required types from errors and put casts in the code
  - ./recompile.sh --client
  - ./updatemd5.sh
 
-
-Links to Cyrus
+Then put in links to Cyrus - make a script like this, with '.../cyrus' adjusted to absolute path:
 
 ---------------------------------------
 #!/bin/bash
@@ -34,16 +44,16 @@ ln -s .../cyrus/src/minecraft/mod_Cyrus.java       src/minecraft/net/minecraft/s
 ---------------------------------------
 
 
-Installing ModLoader in normal client install
+Installing ModLoader
 
- - cd ~/.minecraft/versions/1.6.1
- - mv 1.6.1.jar 1.6.1-dist.jar
+ - cd versions/1.6.2 (in ~/.minecraft/ for runtime, jars for MCP)
+ - mv 1.6.2.jar 1.6.2-dist.jar
  - mkdir repack
  - cd repack
- - unzip ../1.6.1-dist.jar
+ - unzip ../1.6.2-dist.jar
  - rm -rf META-INF
- - unzip ~/minecraft/mods/ModLoader6.zip
- - jar -cf ../1.6.1.jar *
+ - unzip .../ModLoader.zip
+ - jar -cf ../1.6.2.jar *
  - cd ..
  - rm -rf repack
 
@@ -52,7 +62,7 @@ Run
 
  - run options: -Xmx1024M -Xms512M -Djava.security.egd=file:/dev/random
 
-Also
+Also may need
 
  - ./updatemcp.sh
 
