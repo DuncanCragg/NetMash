@@ -1,6 +1,5 @@
 
-RELEASE_TARGET5=~/the-u-web/net/the-cyrus.net/cyrus5.zip
-RELEASE_TARGET6=~/the-u-web/net/the-cyrus.net/cyrus6.zip
+RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/cyrus.zip
 
 small:
 	sed -i 's/overrideWidth:670/overrideWidth:300/'  jars/options.txt
@@ -16,10 +15,7 @@ test: compile emptydb runclient
 cont: compile runclient
 
 
-run5: compile release-client-zip release5 newcyrus5
-
-
-run6: compile release-client-zip release6 newcyrus6
+run: compile release-client-zip release newcyrus
 
 
 compile:
@@ -41,35 +37,19 @@ release-client-zip:
 	rm -f cyrus.zip
 	cd reobf/minecraft/ && zip -r ../../cyrus.zip *
 
-release5:
-	cp cyrus.zip $(RELEASE_TARGET5)
+release:
+	cp cyrus.zip $(RELEASE_TARGET)
 
-release6:
-	cp cyrus.zip $(RELEASE_TARGET6)
-
-newcyrus5:
-	cp cyrus.zip ~/.minecraft/mods/
-	rm -f ~/.minecraft/cyrus.db
-	java -jar ~/.minecraft/minecraft.jar
-
-continue5:
-	cp cyrus.zip ~/.minecraft/mods/
-	java -jar ~/.minecraft/minecraft.jar
-
-nocyrus5:
-	rm -f ~/.minecraft/mods/cyrus.zip
-	java -jar ~/.minecraft/minecraft.jar
-
-newcyrus6:
+newcyrus:
 	cp cyrus.zip ~/.minecraft/versions/1.6.2ML/mods/
 	rm -f ~/.minecraft/cyrus.db
 	java -jar ~/.minecraft/minecraft.jar
 
-continue6:
+continue:
 	cp cyrus.zip ~/.minecraft/versions/1.6.2ML/mods/
 	java -jar ~/.minecraft/minecraft.jar
 
-nocyrus6:
+nocyrus:
 	rm -f ~/.minecraft/mods/versions/1.6.2ML/cyrus.zip
 	java -jar ~/.minecraft/minecraft.jar
 
