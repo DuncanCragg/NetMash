@@ -10,16 +10,16 @@ large:
 	sed -i 's/overrideWidth:300/overrideWidth:670/'  jars/options.txt
 	sed -i 's/overrideHeight:300/overrideHeight:800/' jars/options.txt
 
-test: compile emptydb runhere
+test: compile emptydb runclient
 
 
-cont: compile runhere
+cont: compile runclient
 
 
-run5: compile releasezip release5 newcyrus5
+run5: compile release-client-zip release5 newcyrus5
 
 
-run6: compile releasezip release6 newcyrus6
+run6: compile release-client-zip release6 newcyrus6
 
 
 compile:
@@ -28,12 +28,12 @@ compile:
 emptydb:
 	rm -f jars/cyrus.db
 
-runhere:
+runclient:
 	./startclient.sh
 
-releasezip:
+release-client-zip:
 	./reobfuscate.sh --client
-	cp lib/*.db reobf/minecraft
+	cp lib/cyrusconfig.db reobf/minecraft
 	sed -i 's#net.minecraft.src.Minecraft#Minecraft#' reobf/minecraft/cyrusconfig.db
 	sed -i 's#http://localhost#http://the-cyrus.net#' reobf/minecraft/cyrusconfig.db
 	mkdir -p reobf/minecraft/statics
@@ -61,16 +61,16 @@ nocyrus5:
 	java -jar ~/.minecraft/minecraft.jar
 
 newcyrus6:
-	cp cyrus.zip ~/.minecraft/versions/1.6.1ML/mods/
+	cp cyrus.zip ~/.minecraft/versions/1.6.2ML/mods/
 	rm -f ~/.minecraft/cyrus.db
 	java -jar ~/.minecraft/minecraft.jar
 
 continue6:
-	cp cyrus.zip ~/.minecraft/versions/1.6.1ML/mods/
+	cp cyrus.zip ~/.minecraft/versions/1.6.2ML/mods/
 	java -jar ~/.minecraft/minecraft.jar
 
 nocyrus6:
-	rm -f ~/.minecraft/mods/versions/1.6.1ML/cyrus.zip
+	rm -f ~/.minecraft/mods/versions/1.6.2ML/cyrus.zip
 	java -jar ~/.minecraft/minecraft.jar
 
 
