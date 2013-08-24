@@ -77,7 +77,7 @@ release-client:
 	cp cyrusclient.zip $(CLIENT_RELEASE_TARGET)
 
 run-new-server:
-	java -jar cyrusserver.jar
+	mkdir -p runserver && cd runserver && java -jar ../cyrusserver.jar
 
 run-new-client:
 	cp cyrusclient.zip ~/.minecraft/versions/1.6.2ML/mods/
@@ -88,7 +88,6 @@ continue-release-client:
 	cp cyrusclient.zip ~/.minecraft/versions/1.6.2ML/mods/
 	java -jar ~/.minecraft/minecraft.jar
 
-nocyrus-client:
-	rm -f ~/.minecraft/mods/versions/1.6.2ML/cyrusclient.zip
+mc:
 	java -jar ~/.minecraft/minecraft.jar
 
