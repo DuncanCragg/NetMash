@@ -32,7 +32,7 @@
   is: editable minecraft pig rule
   when: "run, scan around player"
   alive: true
-  set-position: @world:player:position !=> @world:player:position
+  set-position: @world:players:0:position !=> @world:players:0:position
   scanpos: => @position + (-2 0 -2)
   scanning: => { for: blocks size: 5 2 5 position: @scanpos }
   Notifying: => @. with @world

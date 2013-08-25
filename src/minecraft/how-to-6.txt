@@ -43,10 +43,15 @@ ln -s .../cyrus/src/minecraft/makefile
 ln -s .../cyrus/src/minecraft/cyrusconfig.db       lib/cyrusconfig.db
 ln -s .../cyrus/src/js                             lib/statics
 ln -s .../cyrus/src/cyrus                          src/minecraft/cyrus
+ln -s .../cyrus/src/minecraft/mod_Cyrus.java       src/minecraft/net/minecraft/src/mod_Cyrus.java
 ln -s .../cyrus/src/minecraft/MinecraftCyrus.java  src/minecraft/net/minecraft/src/MinecraftCyrus.java
 ln -s .../cyrus/src/minecraft/MinecraftEntity.java src/minecraft/net/minecraft/src/MinecraftEntity.java
 ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft/net/minecraft/src/MinecraftWorld.java
-ln -s .../cyrus/src/minecraft/mod_Cyrus.java       src/minecraft/net/minecraft/src/mod_Cyrus.java
+ln -s .../cyrus/src/cyrus                          src/minecraft_server/cyrus
+ln -s .../cyrus/src/minecraft/ModCyrus.java        src/minecraft_server/net/minecraft/src/mod_Cyrus.java
+ln -s .../cyrus/src/minecraft/MinecraftCyrus.java  src/minecraft_server/net/minecraft/src/MinecraftCyrus.java
+ln -s .../cyrus/src/minecraft/MinecraftEntity.java src/minecraft_server/net/minecraft/src/MinecraftEntity.java
+ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft_server/net/minecraft/src/MinecraftWorld.java
 ---------------------------------------
 
 Then "make runlomc" in Cyrus directory to bring up mod and tutorial server.

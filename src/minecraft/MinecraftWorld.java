@@ -8,7 +8,6 @@ import cyrus.forest.WebObject;
 
 import static cyrus.lib.Utils.*;
 
-import net.minecraft.client.*;
 import net.minecraft.server.MinecraftServer;
 
 public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable {
@@ -102,7 +101,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
 
     int tickNum=0;
 
-    public void tick(float var1, final Minecraft minecraft){
+    public void tick(){
         if(++tickNum==20) tickNum=0;
         final World  currentworld=world(); if(currentworld==null) return;
         final String currentname=currentworld.worldInfo.getWorldName();
@@ -110,11 +109,11 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
             new Evaluator(this){ public void evaluate(){
                 if(!contentIs("name",currentname)) return;
                 world=currentworld;
-                EntityPlayer player=minecraft.thePlayer;
-                if(!contentSet("player")) content("player", entityToCyrus(player,uid));
+                LinkedList players=getPlayers();
+                if(players.size() >0) contentList("players", players); else content("players",null);
                 if(tickNum==0){
                     setAndGetWorldState();
-                    doEntitiesToCyrus(player);
+                    doEntitiesToCyrus();
                     self.evaluate();
                 }
             }};
@@ -179,19 +178,27 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
     private int getDaysIn(){    return (int)(world.getWorldTime() / 24000); }
     private boolean isDay(){    return getTimeInDay() < 12000; }
 
-    private void doEntitiesToCyrus(EntityPlayer player){
+    private void doEntitiesToCyrus(){
         int six=40; int siy=20; int siz=40;
-        int atx=(int)(player.posX-six/2); int aty=(int)(player.posY-siy/2); int atz=(int)(player.posZ-siz/2);
-        List entities=world.getLoadedEntityList();
-        for(int i=0; i< entities.size(); i++){
-            Entity e=(Entity)entities.get(i);
-            if(e.posX >atx && e.posX<atx+six &&
-               e.posY >aty && e.posY<aty+siy &&
-               e.posZ >atz && e.posZ<atz+siz   ){
-                if(e instanceof EntityPlayer) continue;
-                entityToCyrus(e,uid);
+        for(Object p: world.playerEntities){ EntityPlayer player=(EntityPlayer)p;
+            int atx=(int)(player.posX-six/2); int aty=(int)(player.posY-siy/2); int atz=(int)(player.posZ-siz/2);
+            for(Object o: world.loadedEntityList){ Entity e=(Entity)o;
+                if(e.posX >atx && e.posX<atx+six &&
+                   e.posY >aty && e.posY<aty+siy &&
+                   e.posZ >atz && e.posZ<atz+siz   ){
+                    if(e instanceof EntityPlayer) continue;
+                    entityToCyrus(e,uid);
+                }
             }
         }
+    }
+
+    private LinkedList getPlayers(){
+        LinkedList r=new LinkedList();
+        for(Object o: world.playerEntities){ EntityPlayer player=(EntityPlayer)o;
+            r.add(entityToCyrus(player,uid));
+        }
+        return r;
     }
 
     private void doScanning(LinkedHashMap scanning){
@@ -238,7 +245,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
 
     private void getSubItemsAround(int atx, int aty, int atz, int six, int siy, int siz){
         LinkedList ll=new LinkedList();
-        List entities=world.getLoadedEntityList();
+        List entities=world.loadedEntityList;
         for(int i=0; i< entities.size(); i++){
             Entity e=(Entity)entities.get(i);
             if(e.posX >atx && e.posX<atx+six &&
@@ -262,6 +269,10 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
 
     static LinkedHashMap<String,String>          entityObs=new LinkedHashMap<String,String>();
     static LinkedHashMap<String,MinecraftEntity> entityMap=new LinkedHashMap<String,MinecraftEntity>();
+
+    static public String entityName(Entity e){
+        return e.getEntityName()+"-"+e.entityId;
+    }
 
     static public String entityToCyrus(Entity e){
         String name=e.getEntityName()+"-"+e.entityId;

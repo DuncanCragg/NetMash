@@ -8,7 +8,6 @@ import cyrus.forest.WebObject;
 
 import static cyrus.lib.Utils.*;
 
-import net.minecraft.client.*;
 import net.minecraft.server.MinecraftServer;
 
 public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable {
@@ -16,7 +15,6 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
     public MinecraftEntity(){}
 
     Entity entity;
-    Entity entity2;
 
     public MinecraftEntity(Entity e, String type, String name, String worlduid){
         super("{ \"is\": [ \"editable\", \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
@@ -47,15 +45,14 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
 
     int tickNum=0;
 
-    public void tick(float var1, final Minecraft minecraft){
+    public void tick(){
         final MinecraftEntity me=this;
         new Evaluator(this){ public void evaluate(){
             if(++tickNum < 8) return;
             tickNum=0;
             if(!inCurrentWorld()) return;
             if(contentIsOrListContains("is","player")){
-                getPlayers(minecraft);
-                mod_Cyrus.modCyrus.registerPlayer(me);
+                getPlayer();
                 nopersist=false;
             }
             if(entity==null) return;
@@ -72,11 +69,10 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
         return contentIs("world:name",currentname);
     }
 
-    private void getPlayers(Minecraft minecraft){
-        EntityPlayer player=minecraft.thePlayer;
-     /* if(entity.equals(player)) */
-        entity=player;
-        entity2=otherPlayer((EntityPlayer)entity);
+    private void getPlayer(){
+        for(Object o: world().playerEntities){ EntityPlayer player=(EntityPlayer)o;
+            if(contentIs("name",MinecraftWorld.entityName(player))) entity=player;
+        }
     }
 
     private void setState(){
@@ -91,7 +87,7 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
                         ai2coords=new EntityAIMoveTowardsCoords(entityliving);
                         entityliving.tasks.addTask(2, ai2coords);
                     }
-                    ai2coords.tryToMoveToXYZ(psx, psy, psz, ModLoader.VERSION.contains("1.5")? 0.3F: 1.0F);
+                    ai2coords.tryToMoveToXYZ(psx, psy, psz, 1.0F);
                 }
             }
             else if(ai2coords!=null) ai2coords.resetTask();
@@ -122,14 +118,12 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
         contentBool("on-ground", entity.onGround);
         contentBool("collided",  entity.isCollided);
         if(entity instanceof EntityPlayer){
-            EntityPlayer player1=(EntityPlayer)entity;
-            EntityPlayer player2=(EntityPlayer)entity2;
+            EntityPlayer player=(EntityPlayer)entity;
 
-            ItemStack holdings=player1.getHeldItem();
+            ItemStack holdings=player.getHeldItem();
             content("holding", holdings!=null? deCamelise(holdings.getItem().getUnlocalizedName().substring(5)): null);
 
-            ChunkCoordinates   spawnpos=(player2!=null? player2.getBedLocation(): null);
-            if(spawnpos==null) spawnpos=                player1.getBedLocation();
+            ChunkCoordinates spawnpos=player.getBedLocation();
             if(spawnpos!=null) contentList("spawn-position",list(spawnpos.posX,spawnpos.posY,spawnpos.posZ));
         }
         contentBool("alive", !entity.isDead);
@@ -154,11 +148,6 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
             content(style, null);
             if(modified()) self.evaluate();
         }};
-    }
-
-    private EntityPlayer otherPlayer(EntityPlayer player){
-        for(Object p: world().playerEntities) if(p.equals(player)) return (EntityPlayer)p;
-        return null;
     }
 
     public World world(){

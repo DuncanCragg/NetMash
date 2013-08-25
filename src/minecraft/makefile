@@ -10,7 +10,7 @@ large:
 	sed -i 's/overrideWidth:300/overrideWidth:670/'  jars/options.txt
 	sed -i 's/overrideHeight:300/overrideHeight:800/' jars/options.txt
 
-test-server: compile-server run-server
+test-server: compile-server emptydb run-server
 
 
 test-client: compile-client emptydb run-client

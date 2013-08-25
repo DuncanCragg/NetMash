@@ -1,0 +1,10 @@
+
+ - update players with hitting, placing, touching - trace message
+
+ - getBedLocation - spawn position
+ - no x/z speed sent over wire
+ - holding doesn't update until used (unless test-client)
+
+ - clashing cyrus.db
+ - players:0 may be empty so add more checks
+

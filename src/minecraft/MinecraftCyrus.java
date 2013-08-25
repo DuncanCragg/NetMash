@@ -10,7 +10,6 @@ import cyrus.forest.*;
 import static cyrus.lib.Utils.*;
 import static cyrus.forest.UID.*;
 
-import net.minecraft.client.*;
 import net.minecraft.server.MinecraftServer;
 
 /** Singleton global Cyrus 'site'. */
