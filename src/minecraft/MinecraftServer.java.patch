@@ -1,0 +1,28 @@
+--- ../x/src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-18 12:13:40.090297344 +0100
++++ ./src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-24 15:44:39.701797755 +0100
+@@ -56,6 +56,7 @@
+ import net.minecraft.src.WorldServerMulti;
+ import net.minecraft.src.WorldSettings;
+ import net.minecraft.src.WorldType;
++import net.minecraft.src.mod_Cyrus;
+ 
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage {
+    private static MinecraftServer mcServer;
+@@ -307,6 +308,9 @@
+    public void run() {
+       try {
+          if(this.startServer()) {
++
++            mod_Cyrus.load();
++
+             long var1 = func_130071_aq();
+ 
+             for(long var50 = 0L; this.serverRunning; this.serverIsRunning = true) {
+@@ -472,6 +476,7 @@
+       this.getNetworkThread().handleNetworkListenThread();
+       this.theProfiler.endStartSection("players");
+       this.serverConfigManager.onTick();
++      mod_Cyrus.modCyrus.onTick();
+       this.theProfiler.endStartSection("tickables");
+ 
+       for(var1 = 0; var1 < this.playersOnline.size(); ++var1) {
