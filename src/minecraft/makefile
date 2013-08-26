@@ -65,6 +65,7 @@ release-client-zip:
 	cp lib/cyrusconfig.db reobf/minecraft
 	sed -i 's#net.minecraft.src.Minecraft#Minecraft#' reobf/minecraft/cyrusconfig.db
 	sed -i 's#http://localhost#http://the-cyrus.net#' reobf/minecraft/cyrusconfig.db
+	sed -i 's#port: 8084#port: 8085#'                 reobf/minecraft/cyrusconfig.db
 	mkdir -p reobf/minecraft/statics
 	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrusclient.zip

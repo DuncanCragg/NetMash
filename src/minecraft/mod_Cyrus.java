@@ -4,15 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.io.*;
 
-import cyrus.Version;
-import cyrus.Cyrus;
-import cyrus.platform.Kernel;
-import cyrus.lib.JSON;
-import cyrus.forest.*;
-
 import static cyrus.lib.Utils.*;
-
-import net.minecraft.server.MinecraftServer;
 
 public class mod_Cyrus extends BaseMod {
 
@@ -22,54 +14,13 @@ public class mod_Cyrus extends BaseMod {
 
     public String toString() { return this.getName() + ' ' + this.getVersion(); }
 
-    public static mod_Cyrus modCyrus;
-
     public void load(){
-
-        InputStream configis=this.getClass().getClassLoader().getResourceAsStream("cyrusconfig.db");
-        JSON config=null;
-        try{ config = new JSON(configis,true); }catch(Exception e){ throw new RuntimeException("Error in config file: "+e); }
-
-        modCyrus=this;
-
+        MinecraftCyrus.self.runCyrus();
         ModLoader.setInGameHook(this, true, true);
-
-        System.out.println("-------------------");
-        System.out.println(Version.NAME+" "+Version.NUMBERS);
-        Kernel.init(config, new FunctionalObserver());
-        Kernel.run();
     }
-
-    public interface Tickable { public void tick(); }
-
-    CopyOnWriteArrayList<Tickable> tickables=new CopyOnWriteArrayList<Tickable>();
-
-    public void registerTicks(Tickable tickable){ tickables.add(tickable); }
 
     public boolean onTickInGame(float var1, Minecraft minecraft){
-        if(!checkIfNewWorld()) return true;
-        for(Tickable tickable: tickables){
-            long s=System.currentTimeMillis();
-            tickable.tick();
-            long e=System.currentTimeMillis();
-            if(e-s > 50) log("***** Tick took "+(e-s)+"ms for:\n"+tickable);
-        }
-        return true;
-    }
-
-    String worldname=null;
-
-    private boolean checkIfNewWorld(){
-        MinecraftServer server=MinecraftServer.getServer();
-        if(server==null) return false;
-        World world=server.worldServerForDimension(0);
-        if(world==null) return false;
-        String name=world.worldInfo.getWorldName();
-        if(name==null) return false;
-        if(!name.equals(worldname)){
-            worldname=name;
-            MinecraftCyrus.newWorld(worldname,world);
-        }
+        MinecraftCyrus.self.onTick();
         return true;
     }
 

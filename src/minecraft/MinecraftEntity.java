@@ -10,7 +10,7 @@ import static cyrus.lib.Utils.*;
 
 import net.minecraft.server.MinecraftServer;
 
-public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable {
+public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tickable {
 
     public MinecraftEntity(){}
 
@@ -29,8 +29,12 @@ public class MinecraftEntity extends CyrusLanguage implements mod_Cyrus.Tickable
 
     public void evaluate(){
         super.evaluate();
-        if(!running){ running=true; mod_Cyrus.modCyrus.registerTicks(this); }
+        if(!running){ running=true; MinecraftCyrus.self.registerTicks(this); }
         setOwnState();
+    }
+
+    static public void onInteracting(EntityPlayerMP player, String style, int x, int y, int z, int side){
+logXX("onInteracting",player, style, x,y,z,side);
     }
 
     LinkedList newPosition=null;

@@ -1,0 +1,40 @@
+--- ../a/src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-18 12:13:40.090297344 +0100
++++ src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-26 16:10:09.063767252 +0100
+@@ -56,6 +56,7 @@
+ import net.minecraft.src.WorldServerMulti;
+ import net.minecraft.src.WorldSettings;
+ import net.minecraft.src.WorldType;
++import net.minecraft.src.MinecraftCyrus;
+ 
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage {
+    private static MinecraftServer mcServer;
+@@ -307,6 +308,9 @@
+    public void run() {
+       try {
+          if(this.startServer()) {
++
++            MinecraftCyrus.self.runCyrus();
++
+             long var1 = func_130071_aq();
+ 
+             for(long var50 = 0L; this.serverRunning; this.serverIsRunning = true) {
+@@ -472,6 +476,7 @@
+       this.getNetworkThread().handleNetworkListenThread();
+       this.theProfiler.endStartSection("players");
+       this.serverConfigManager.onTick();
++      MinecraftCyrus.self.onTick();
+       this.theProfiler.endStartSection("tickables");
+ 
+       for(var1 = 0; var1 < this.playersOnline.size(); ++var1) {
+--- ../a/src/minecraft_server/net/minecraft/src/NetServerHandler.java	2013-08-18 12:13:40.086297345 +0100
++++ src/minecraft_server/net/minecraft/src/NetServerHandler.java	2013-08-26 16:13:06.495762480 +0100
+@@ -316,6 +316,9 @@
+       int var6 = par1Packet15Place.getYPosition();
+       int var7 = par1Packet15Place.getZPosition();
+       int var8 = par1Packet15Place.getDirection();
++
++      MinecraftEntity.onInteracting(this.playerEntity, "placing", var5,var6,var7,var8);
++
+       if(par1Packet15Place.getDirection() == 255) {
+          if(var3 == null) {
+             return;

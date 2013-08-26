@@ -10,7 +10,7 @@ import static cyrus.lib.Utils.*;
 
 import net.minecraft.server.MinecraftServer;
 
-public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable {
+public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tickable {
 
     public MinecraftWorld(){}
 
@@ -37,7 +37,7 @@ public class MinecraftWorld extends CyrusLanguage implements mod_Cyrus.Tickable 
         if(contentIsOrListContains("is","world-view")) hasType="world-view";
         if("world"     .equals(hasType)){ addScanAndPlace(); super.evaluate(); setWorldState(); } else
         if("world-view".equals(hasType)){ evaluateWorldView(); super.evaluate(); }
-        if(!running){ running=true; mod_Cyrus.modCyrus.registerTicks(this); }
+        if(!running){ running=true; MinecraftCyrus.self.registerTicks(this); }
     }
 
     private void addScanAndPlace(){

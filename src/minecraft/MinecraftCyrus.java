@@ -3,9 +3,15 @@ package net.minecraft.src;
 import java.awt.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
+import java.io.*;
 
 import cyrus.platform.Kernel;
 import cyrus.forest.*;
+import cyrus.Version;
+import cyrus.Cyrus;
+import cyrus.lib.JSON;
+
 
 import static cyrus.lib.Utils.*;
 import static cyrus.forest.UID.*;
@@ -15,14 +21,66 @@ import net.minecraft.server.MinecraftServer;
 /** Singleton global Cyrus 'site'. */
 public class MinecraftCyrus extends WebObject {
 
-    static MinecraftCyrus that=null;
+    static public MinecraftCyrus self=null;
 
     public MinecraftCyrus(){
         super("{ is: minecraft site }",true);
-        that=this;
+        self=this;
     }
 
     public MinecraftCyrus(String s){ super(s,true); }
+
+    static public void runCyrus(){
+        InputStream configis=MinecraftCyrus.class.getClassLoader().getResourceAsStream("cyrusconfig.db");
+        JSON config=null;
+        try{ config = new JSON(configis,true); }catch(Exception e){ throw new RuntimeException("Error in config file: "+e); }
+
+        System.out.println("-------------------");
+        System.out.println(Version.NAME+" "+Version.NUMBERS);
+        Kernel.init(config, new FunctionalObserver());
+        Kernel.run();
+    }
+
+    public interface Tickable { public void tick(); }
+
+    CopyOnWriteArrayList<Tickable> tickables=new CopyOnWriteArrayList<Tickable>();
+
+    public void registerTicks(Tickable tickable){ tickables.add(tickable); }
+
+    static public void onTick(){ if(self!=null) self.doOnTick(); }
+
+    public void doOnTick(){
+        if(!checkIfNewWorld()) return;
+        for(Tickable tickable: tickables){
+            long s=System.currentTimeMillis();
+            tickable.tick();
+            long e=System.currentTimeMillis();
+            if(e-s > 50) log("***** Tick took "+(e-s)+"ms for:\n"+tickable);
+        }
+    }
+
+    String worldname=null;
+
+    private boolean checkIfNewWorld(){
+        MinecraftServer server=MinecraftServer.getServer();
+        if(server==null) return false;
+        World world=server.worldServerForDimension(0);
+        if(world==null) return false;
+        String name=world.worldInfo.getWorldName();
+        if(name==null) return false;
+        if(!name.equals(worldname)){
+            worldname=name;
+            newWorld(worldname,world);
+        }
+        return true;
+    }
+
+    private void newWorld(final String worldname, final World world){
+        new Evaluator(this){ public void evaluate(){
+            if(contentAllContains("worlds:name",worldname)) return;
+            contentListAdd("worlds", spawn(new MinecraftWorld(worldname,world)));
+        }};
+    }
 
     static String globalruleuid=null;
     boolean first=true;
@@ -92,17 +150,5 @@ public class MinecraftCyrus extends WebObject {
             }
         }
     }catch(Exception e){ e.printStackTrace(); }}
-
-    static public void newWorld(String worldname, World world){
-        if(that==null) return;
-        that.doNewWorld(worldname,world);
-    }
-
-    private void doNewWorld(final String worldname, final World world){
-        new Evaluator(that){ public void evaluate(){
-            if(contentAllContains("worlds:name",worldname)) return;
-            contentListAdd("worlds", spawn(new MinecraftWorld(worldname,world)));
-        }};
-    }
 }
 

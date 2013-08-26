@@ -48,11 +48,10 @@ ln -s .../cyrus/src/minecraft/MinecraftCyrus.java  src/minecraft/net/minecraft/s
 ln -s .../cyrus/src/minecraft/MinecraftEntity.java src/minecraft/net/minecraft/src/MinecraftEntity.java
 ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft/net/minecraft/src/MinecraftWorld.java
 ln -s .../cyrus/src/cyrus                          src/minecraft_server/cyrus
-ln -s .../cyrus/src/minecraft/ModCyrus.java        src/minecraft_server/net/minecraft/src/mod_Cyrus.java
 ln -s .../cyrus/src/minecraft/MinecraftCyrus.java  src/minecraft_server/net/minecraft/src/MinecraftCyrus.java
 ln -s .../cyrus/src/minecraft/MinecraftEntity.java src/minecraft_server/net/minecraft/src/MinecraftEntity.java
 ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft_server/net/minecraft/src/MinecraftWorld.java
-patch -p0 < .../cyrus/src/minecraft/MinecraftServer.java.patch
+patch -p0 < .../cyrus/src/minecraft/server.patch
 ---------------------------------------
 
 Then "make runlomc" in Cyrus directory to bring up mod and tutorial server.
