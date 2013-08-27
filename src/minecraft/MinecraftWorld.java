@@ -267,29 +267,34 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         }
     }
 
-    static LinkedHashMap<String,String>          entityObs=new LinkedHashMap<String,String>();
+    static LinkedHashMap<String,String>          entityUID=new LinkedHashMap<String,String>();
     static LinkedHashMap<String,MinecraftEntity> entityMap=new LinkedHashMap<String,MinecraftEntity>();
 
-    static public String entityName(Entity e){
-        return e.getEntityName()+"-"+e.entityId;
+    static public MinecraftEntity getEntityFor(Entity e){
+        String euid=entityToUID(e);
+        return (euid!=null)? entityMap.get(euid): null;
     }
 
-    static public String entityToCyrus(Entity e){
-        String name=e.getEntityName()+"-"+e.entityId;
-        return entityObs.get(name);
+    static public String entityToUID(Entity e){
+        String name=entityName(e);
+        return entityUID.get(name);
     }
 
     private String entityToCyrus(Entity e, String worlduid){
-        String name=e.getEntityName()+"-"+e.entityId;
-        String euid=entityObs.get(name);
+        String name=entityName(e);
+        String euid=entityUID.get(name);
         if(euid==null){
             String type=(e instanceof EntityPlayer)? "player": e.getEntityName().toLowerCase();
             MinecraftEntity me=new MinecraftEntity(e,type,name,worlduid);
             euid=spawn(me);
-            entityObs.put(name,euid);
+            entityUID.put(name,euid);
             entityMap.put(euid,me);
         }
         return euid;
+    }
+
+    static public String entityName(Entity e){
+        return e.getEntityName()+"-"+e.entityId;
     }
 
     private void doPushing(String pusheruid, LinkedHashMap pushing){

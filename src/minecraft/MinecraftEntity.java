@@ -33,10 +33,6 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
         setOwnState();
     }
 
-    static public void onInteracting(EntityPlayerMP player, String style, int x, int y, int z, int side){
-logXX("onInteracting",player, style, x,y,z,side);
-    }
-
     LinkedList newPosition=null;
     LinkedList newSpeed=null;
 
@@ -133,6 +129,11 @@ logXX("onInteracting",player, style, x,y,z,side);
         contentBool("alive", !entity.isDead);
     }
 
+    static public void onInteracting(EntityPlayerMP player, String style, int x, int y, int z, int side){
+        MinecraftEntity entity=MinecraftWorld.getEntityFor(player);
+        if(entity!=null) entity.onInteracting(style, x,y,z, side);
+    }
+
     public void onInteracting(final String style, final int x, final int y, final int z, final int side){
         new Evaluator(this){ public void evaluate(){
             contentList(style, list(x,y,z,side));
@@ -142,7 +143,7 @@ logXX("onInteracting",player, style, x,y,z,side);
 
     public void onInteracting(final String style, final Entity e){
         new Evaluator(this){ public void evaluate(){
-            content(style, MinecraftWorld.entityToCyrus(e));
+            content(style, MinecraftWorld.entityToUID(e));
             if(modified()) self.evaluate();
         }};
     }
