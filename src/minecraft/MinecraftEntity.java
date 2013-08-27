@@ -60,6 +60,7 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
             getState();
             if(modified()) self.evaluate();
         }};
+        finishInteractions();
     }
 
     private boolean inCurrentWorld(){
@@ -139,11 +140,14 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
         if(entity!=null) entity.onInteracting(style, e);
     }
 
+    int ticks=0;
+
     public void onInteracting(final String style, final int x, final int y, final int z, final int side){
         new Evaluator(this){ public void evaluate(){
             contentList(style, list(x,y,z,side));
             if(modified()) self.evaluate();
         }};
+        ticks=1;
     }
 
     public void onInteracting(final String style, final Entity e){
@@ -151,6 +155,18 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
             content(style, MinecraftWorld.entityToUID(e));
             if(modified()) self.evaluate();
         }};
+        ticks=1;
+    }
+
+    static final int WAITTICKS=6;
+
+    public void finishInteractions(){
+        if(ticks==0) return;
+        if(ticks< WAITTICKS){ ticks++; return; }
+        onNotInteracting("hitting");
+        onNotInteracting("placing");
+        onNotInteracting("touching");
+        ticks=0;
     }
 
     public void onNotInteracting(final String style){
