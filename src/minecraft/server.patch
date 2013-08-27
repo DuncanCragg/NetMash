@@ -1,5 +1,6 @@
---- ../a/src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-18 12:13:40.090297344 +0100
-+++ src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-26 16:10:09.063767252 +0100
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-/src/minecraft_server/net/minecraft/server/MinecraftServer.java src/minecraft_server/net/minecraft/server/MinecraftServer.java
+--- ../cyrus1.6.2-/src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-18 12:13:40.090297344 +0100
++++ src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-26 21:48:29.067221268 +0100
 @@ -56,6 +56,7 @@
  import net.minecraft.src.WorldServerMulti;
  import net.minecraft.src.WorldSettings;
@@ -26,15 +27,16 @@
        this.theProfiler.endStartSection("tickables");
  
        for(var1 = 0; var1 < this.playersOnline.size(); ++var1) {
---- ../a/src/minecraft_server/net/minecraft/src/NetServerHandler.java	2013-08-18 12:13:40.086297345 +0100
-+++ src/minecraft_server/net/minecraft/src/NetServerHandler.java	2013-08-26 16:13:06.495762480 +0100
-@@ -316,6 +316,9 @@
-       int var6 = par1Packet15Place.getYPosition();
-       int var7 = par1Packet15Place.getZPosition();
-       int var8 = par1Packet15Place.getDirection();
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-/src/minecraft_server/net/minecraft/src/ItemInWorldManager.java src/minecraft_server/net/minecraft/src/ItemInWorldManager.java
+--- ../cyrus1.6.2-/src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-18 12:13:39.950297351 +0100
++++ src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-27 09:35:32.021770093 +0100
+@@ -221,6 +221,9 @@
+    }
+ 
+    public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {
 +
-+      MinecraftEntity.onInteracting(this.playerEntity, "placing", var5,var6,var7,var8);
++      MinecraftEntity.onInteracting(thisPlayerMP, "placing", par4,par5,par6,par7);
 +
-       if(par1Packet15Place.getDirection() == 255) {
-          if(var3 == null) {
-             return;
+       int var11;
+       if(!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) {
+          var11 = par2World.getBlockId(par4, par5, par6);
