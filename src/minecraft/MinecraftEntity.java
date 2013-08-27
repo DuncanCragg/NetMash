@@ -129,9 +129,14 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
         contentBool("alive", !entity.isDead);
     }
 
-    static public void onInteracting(EntityPlayerMP player, String style, int x, int y, int z, int side){
+    static public void onInteracting(EntityPlayer player, String style, int x, int y, int z, int side){
         MinecraftEntity entity=MinecraftWorld.getEntityFor(player);
         if(entity!=null) entity.onInteracting(style, x,y,z, side);
+    }
+
+    static public void onInteracting(EntityPlayer player, String style, Entity e){
+        MinecraftEntity entity=MinecraftWorld.getEntityFor(player);
+        if(entity!=null) entity.onInteracting(style, e);
     }
 
     public void onInteracting(final String style, final int x, final int y, final int z, final int side){

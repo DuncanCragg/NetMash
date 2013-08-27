@@ -27,10 +27,43 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-/src/minecraft_server/net/minecraft
        this.theProfiler.endStartSection("tickables");
  
        for(var1 = 0; var1 < this.playersOnline.size(); ++var1) {
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-/src/minecraft_server/net/minecraft/src/EntityPlayer.java src/minecraft_server/net/minecraft/src/EntityPlayer.java
+--- ../cyrus1.6.2-/src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-18 12:13:40.046297350 +0100
++++ src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-27 10:22:43.221693943 +0100
+@@ -666,6 +666,9 @@
+    public void displayGUIBook(ItemStack par1ItemStack) {}
+ 
+    public boolean interactWith(Entity par1Entity) {
++
++      MinecraftEntity.onInteracting(this, "touching", par1Entity);
++
+       ItemStack var2 = this.getCurrentEquippedItem();
+       ItemStack var3 = var2 != null?var2.copy():null;
+       if(!par1Entity.func_130002_c(this)) {
+@@ -710,6 +713,9 @@
+    }
+ 
+    public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
++
++      MinecraftEntity.onInteracting(this, "hitting", par1Entity);
++
+       if(par1Entity.canAttackWithItem()) {
+          if(!par1Entity.func_85031_j(this)) {
+             float var2 = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-/src/minecraft_server/net/minecraft/src/ItemInWorldManager.java src/minecraft_server/net/minecraft/src/ItemInWorldManager.java
 --- ../cyrus1.6.2-/src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-18 12:13:39.950297351 +0100
-+++ src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-27 09:35:32.021770093 +0100
-@@ -221,6 +221,9 @@
++++ src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-27 10:09:17.453715618 +0100
+@@ -89,6 +89,9 @@
+    }
+ 
+    public void onBlockClicked(int par1, int par2, int par3, int par4) {
++
++      MinecraftEntity.onInteracting(thisPlayerMP, "hitting", par1,par2,par3,par4);
++
+       if(!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3)) {
+          if(this.isCreative()) {
+             if(!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4)) {
+@@ -221,6 +224,9 @@
     }
  
     public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {
