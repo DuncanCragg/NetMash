@@ -35,10 +35,10 @@ ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft_server/net/mine
 patch -p0 < .../cyrus/src/minecraft/hooks.patch
 ---------------------------------------
 
+Set MINECRAFT_DIR in makefile
 Then "make runlomc" in Cyrus directory to bring up mod and tutorial server.
 Then "make test-client" in MC(P) directory, with a browser like Chrome ready to go.
 Then "make run-release-client" and either "make test-server" or "make run-release-server"
- .. if you've got MC in ~/.minecraft
 
 
 Run
