@@ -30,7 +30,11 @@ public class MinecraftCyrus extends WebObject {
 
     public MinecraftCyrus(String s){ super(s,true); }
 
+    static boolean initialised=false;
+
     static public void runCyrus(){
+        if(initialised) return; initialised=true;
+
         InputStream configis=MinecraftCyrus.class.getClassLoader().getResourceAsStream("cyrusconfig.db");
         JSON config=null;
         try{ config = new JSON(configis,true); }catch(Exception e){ throw new RuntimeException("Error in config file: "+e); }

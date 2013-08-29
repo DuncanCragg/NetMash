@@ -1,0 +1,150 @@
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/server/MinecraftServer.java src/minecraft/net/minecraft/server/MinecraftServer.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/server/MinecraftServer.java	2013-08-29 08:59:17.257427024 +0100
++++ src/minecraft/net/minecraft/server/MinecraftServer.java	2013-08-29 09:21:07.245391790 +0100
+@@ -51,6 +51,7 @@
+ import net.minecraft.src.WorldServerMulti;
+ import net.minecraft.src.WorldSettings;
+ import net.minecraft.src.WorldType;
++import net.minecraft.src.MinecraftCyrus;
+ 
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage {
+    private static MinecraftServer mcServer;
+@@ -307,6 +308,9 @@
+    public void run() {
+       try {
+          if(this.startServer()) {
++
++            MinecraftCyrus.self.runCyrus();
++
+             long var1 = func_130071_aq();
+ 
+             for(long var50 = 0L; this.serverRunning; this.serverIsRunning = true) {
+@@ -472,6 +476,7 @@
+       this.getNetworkThread().networkTick();
+       this.theProfiler.endStartSection("players");
+       this.serverConfigManager.sendPlayerInfoToAllPlayers();
++      MinecraftCyrus.self.onTick();
+       this.theProfiler.endStartSection("tickables");
+ 
+       for(var1 = 0; var1 < this.tickables.size(); ++var1) {
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayer.java src/minecraft/net/minecraft/src/EntityPlayer.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayer.java	2013-08-29 08:59:17.189427025 +0100
++++ src/minecraft/net/minecraft/src/EntityPlayer.java	2013-08-29 09:19:36.033394243 +0100
+@@ -695,6 +695,9 @@
+    public void displayGUIBook(ItemStack par1ItemStack) {}
+ 
+    public boolean interactWith(Entity par1Entity) {
++
++      MinecraftEntity.onInteracting(this, "touching", par1Entity);
++
+       ItemStack var2 = this.getCurrentEquippedItem();
+       ItemStack var3 = var2 != null?var2.copy():null;
+       if(!par1Entity.func_130002_c(this)) {
+@@ -739,6 +742,9 @@
+    }
+ 
+    public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
++
++      MinecraftEntity.onInteracting(this, "hitting", par1Entity);
++
+       if(par1Entity.canAttackWithItem()) {
+          if(!par1Entity.func_85031_j(this)) {
+             float var2 = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/ItemInWorldManager.java src/minecraft/net/minecraft/src/ItemInWorldManager.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/ItemInWorldManager.java	2013-08-29 08:59:17.049427029 +0100
++++ src/minecraft/net/minecraft/src/ItemInWorldManager.java	2013-08-29 09:18:31.905395971 +0100
+@@ -89,6 +89,9 @@
+    }
+ 
+    public void onBlockClicked(int par1, int par2, int par3, int par4) {
++
++      MinecraftEntity.onInteracting(thisPlayerMP, "hitting", par1,par2,par3,par4);
++
+       if(!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3)) {
+          if(this.isCreative()) {
+             if(!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4)) {
+@@ -221,6 +224,9 @@
+    }
+ 
+    public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {
++
++      MinecraftEntity.onInteracting(thisPlayerMP, "placing", par4,par5,par6,par7);
++
+       int var11;
+       if(!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) {
+          var11 = par2World.getBlockId(par4, par5, par6);
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/server/MinecraftServer.java src/minecraft_server/net/minecraft/server/MinecraftServer.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-29 09:09:12.217411022 +0100
++++ src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-29 09:15:53.285400234 +0100
+@@ -56,6 +56,7 @@
+ import net.minecraft.src.WorldServerMulti;
+ import net.minecraft.src.WorldSettings;
+ import net.minecraft.src.WorldType;
++import net.minecraft.src.MinecraftCyrus;
+ 
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage {
+    private static MinecraftServer mcServer;
+@@ -307,6 +308,9 @@
+    public void run() {
+       try {
+          if(this.startServer()) {
++
++            MinecraftCyrus.self.runCyrus();
++
+             long var1 = func_130071_aq();
+ 
+             for(long var50 = 0L; this.serverRunning; this.serverIsRunning = true) {
+@@ -472,6 +476,7 @@
+       this.getNetworkThread().handleNetworkListenThread();
+       this.theProfiler.endStartSection("players");
+       this.serverConfigManager.onTick();
++      MinecraftCyrus.self.onTick();
+       this.theProfiler.endStartSection("tickables");
+ 
+       for(var1 = 0; var1 < this.playersOnline.size(); ++var1) {
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayer.java src/minecraft_server/net/minecraft/src/EntityPlayer.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-29 09:09:13.365410992 +0100
++++ src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-29 09:15:53.285400234 +0100
+@@ -666,6 +666,9 @@
+    public void displayGUIBook(ItemStack par1ItemStack) {}
+ 
+    public boolean interactWith(Entity par1Entity) {
++
++      MinecraftEntity.onInteracting(this, "touching", par1Entity);
++
+       ItemStack var2 = this.getCurrentEquippedItem();
+       ItemStack var3 = var2 != null?var2.copy():null;
+       if(!par1Entity.func_130002_c(this)) {
+@@ -710,6 +713,9 @@
+    }
+ 
+    public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
++
++      MinecraftEntity.onInteracting(this, "hitting", par1Entity);
++
+       if(par1Entity.canAttackWithItem()) {
+          if(!par1Entity.func_85031_j(this)) {
+             float var2 = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/ItemInWorldManager.java src/minecraft_server/net/minecraft/src/ItemInWorldManager.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-29 09:09:13.973410972 +0100
++++ src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-29 09:18:39.509395763 +0100
+@@ -89,6 +89,9 @@
+    }
+ 
+    public void onBlockClicked(int par1, int par2, int par3, int par4) {
++
++      MinecraftEntity.onInteracting(thisPlayerMP, "hitting", par1,par2,par3,par4);
++
+       if(!this.gameType.isAdventure() || this.thisPlayerMP.isCurrentToolAdventureModeExempt(par1, par2, par3)) {
+          if(this.isCreative()) {
+             if(!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4)) {
+@@ -221,6 +224,9 @@
+    }
+ 
+    public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {
++
++      MinecraftEntity.onInteracting(thisPlayerMP, "placing", par4,par5,par6,par7);
++
+       int var11;
+       if(!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) {
+          var11 = par2World.getBlockId(par4, par5, par6);

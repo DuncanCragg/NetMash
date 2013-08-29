@@ -8,32 +8,14 @@ Get Minecraft Coder Pack, MCP
  - download http://www.mediafire.com/download/xcjy2o2zsdol7cu/mcp805.zip
  - unzip; rm *.bat
 
-Get ModLoader
-
- - http://dl.dropboxusercontent.com/u/20629262/Latest/ModLoader.zip
-
 Get and run Minecraft
 
- - run Minecraft; get it to load latest of everything
- - download https://s3.amazonaws.com/Minecraft.Download/versions/1.6.2/minecraft_server.1.6.2.jar
- - put minecraft_server.1.6.2.jar into jars dir
+ - put into jars dir: https://s3.amazonaws.com/Minecraft.Download/versions/1.6.2/minecraft_server.1.6.2.jar
 
-Decompile, Fix, Decompile, Recompile
+Decompile, Recompile
 
- - in MCP directory
  - ./decompile.sh
- - extract ModLoader 1.6.2 into versions/1.6.2 (see below)
- - ./cleanup.sh
- - ./decompile.sh  # ignore patch hunk error, but..
- - compilation fixes: copy-paste the required types from errors and put casts in the code:
-    src/minecraft/net/minecraft/src/ChatMessageComponent.java:197
-      var7.append(StatCollector.translateToLocalFormatted(this.field_111090_h, (Object[])var13));
-    src/minecraft/net/minecraft/src/ModLoader.java:240,252,1140
-      localizedStrings.put(s1, (Map<String,String>)obj);
-      tradeItems.put(Integer.valueOf(profession), (List<TradeEntry>)list);
-      keyList.put(basemod, (Map<KeyBinding,boolean[]>)obj);
- - ./recompile.sh --client
- - ./updatemd5.sh
+ - ./recompile.sh
 
 Then put in links to Cyrus - make a script like this, with '.../cyrus' adjusted to absolute path:
 
@@ -43,7 +25,6 @@ ln -s .../cyrus/src/minecraft/makefile
 ln -s .../cyrus/src/minecraft/cyrusconfig.db       lib/cyrusconfig.db
 ln -s .../cyrus/src/js                             lib/statics
 ln -s .../cyrus/src/cyrus                          src/minecraft/cyrus
-ln -s .../cyrus/src/minecraft/mod_Cyrus.java       src/minecraft/net/minecraft/src/mod_Cyrus.java
 ln -s .../cyrus/src/minecraft/MinecraftCyrus.java  src/minecraft/net/minecraft/src/MinecraftCyrus.java
 ln -s .../cyrus/src/minecraft/MinecraftEntity.java src/minecraft/net/minecraft/src/MinecraftEntity.java
 ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft/net/minecraft/src/MinecraftWorld.java
@@ -51,24 +32,13 @@ ln -s .../cyrus/src/cyrus                          src/minecraft_server/cyrus
 ln -s .../cyrus/src/minecraft/MinecraftCyrus.java  src/minecraft_server/net/minecraft/src/MinecraftCyrus.java
 ln -s .../cyrus/src/minecraft/MinecraftEntity.java src/minecraft_server/net/minecraft/src/MinecraftEntity.java
 ln -s .../cyrus/src/minecraft/MinecraftWorld.java  src/minecraft_server/net/minecraft/src/MinecraftWorld.java
-patch -p0 < .../cyrus/src/minecraft/server.patch
+patch -p0 < .../cyrus/src/minecraft/hooks.patch
 ---------------------------------------
 
 Then "make runlomc" in Cyrus directory to bring up mod and tutorial server.
-Then "make test" in MC(P) directory, with a browser like Chrome ready to go.
-
-Installing ModLoader
-
- - cd versions/1.6.2 (in ~/.minecraft/ for runtime, jars for MCP)
- - mv 1.6.2.jar 1.6.2-dist.jar
- - mkdir repack
- - cd repack
- - unzip ../1.6.2-dist.jar
- - rm -rf META-INF
- - unzip .../ModLoader.zip
- - jar -cf ../1.6.2.jar *
- - cd ..
- - rm -rf repack
+Then "make test-client" in MC(P) directory, with a browser like Chrome ready to go.
+Then "make run-release-client" and either "make test-server" or "make run-release-server"
+ .. if you've got MC in ~/.minecraft
 
 
 Run
