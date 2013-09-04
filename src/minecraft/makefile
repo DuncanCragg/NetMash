@@ -1,6 +1,6 @@
 
 SERVER_RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/cyrusserver.jar
-CLIENT_RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/cyrusclient.zip
+CLIENT_RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/1.6.2-Cyrus.jar
 MINECRAFT_DIR=~/.minecraft
 
 small:
@@ -23,7 +23,7 @@ cont-client: compile-client run-client
 run-release-server: compile-server cyrusserver-jar release-server run-new-server
 
 
-run-release-client: compile-client cyrusclient-zip release-client run-new-client
+run-release-client: compile-client cyrusclient-jar release-client run-new-client
 
 
 compile-server:
@@ -70,39 +70,41 @@ cyrusclient-zip:
 	rm -f cyrusclient.zip
 	cd reobf/minecraft/ && zip -rq ../../cyrusclient.zip *
 
+cyrusclient-jar: cyrusclient-zip $(MINECRAFT_DIR)/versions/1.6.2-Cyrus
+	rm -f 1.6.2-Cyrus.jar
+	mkdir tmp
+	cd tmp && unzip -q ../jars/1.6.2-Cyrus.jar
+	cd tmp && rm -rf META-INF/
+	cd tmp && unzip -oq ../cyrusclient.zip
+	cd tmp && jar -cf ../1.6.2-Cyrus.jar *
+	rm -rf tmp
+	cp 1.6.2-Cyrus.jar $(MINECRAFT_DIR)/versions/1.6.2-Cyrus
+
 release-server:
 	cp cyrusserver.jar $(SERVER_RELEASE_TARGET)
 
 release-client:
-	cp cyrusclient.zip $(CLIENT_RELEASE_TARGET)
+	cp 1.6.2-Cyrus.jar $(CLIENT_RELEASE_TARGET)
 
 run-new-server: cyrusserver.jar
 	rm -f runserver/cyrus.db
 	mkdir -p runserver && cd runserver && java -jar ../cyrusserver.jar
 
-run-new-client: build-client-jar
+run-new-client: $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/1.6.2-Cyrus.jar
 	rm -f $(MINECRAFT_DIR)/cyrus.db
 	java -jar $(MINECRAFT_DIR)/minecraft.jar
-
-build-client-jar: cyrusclient.zip $(MINECRAFT_DIR)/versions/1.6.2-Cyrus
-	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus && mkdir tmp
-	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/tmp && unzip -q ../1.6.2-Cyrus.jar
-	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/tmp && rm ../1.6.2-Cyrus.jar && rm -rf META-INF/
-	cp cyrusclient.zip $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/tmp
-	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/tmp && unzip -oq cyrusclient.zip
-	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/tmp && jar -cf ../1.6.2-Cyrus.jar *
-	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus && rm -rf tmp
 
 $(MINECRAFT_DIR)/versions/1.6.2-Cyrus:
 	cd $(MINECRAFT_DIR)/versions/ && cp -a 1.6.2 1.6.2-Cyrus
 	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus && mv 1.6.2.jar                  1.6.2-Cyrus.jar
 	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus && mv 1.6.2.json                 1.6.2-Cyrus.json
 	cd $(MINECRAFT_DIR)/versions/1.6.2-Cyrus && sed -i "s:1.6.2:1.6.2-Cyrus:" 1.6.2-Cyrus.json
+	cp $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/1.6.2-Cyrus.jar jars
 
 mc:
 	java -jar $(MINECRAFT_DIR)/minecraft.jar
 
 clean:
-	rm -f cyrusclient.zip cyrusserver.zip cyrusserver.jar
+	rm -f cyrusclient.zip 1.6.2-Cyrus.jar cyrusserver.zip cyrusserver.jar
 
 
