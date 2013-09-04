@@ -603,7 +603,7 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private Object deepCopyList(LinkedList ll, boolean asis){
         if(ll.size()==0) return null;
-        if(isAsIs(ll)) return deepCopyObject(ll.get(1),true);
+        if(!asis && isAsIs(ll)) return deepCopyObject(ll.get(1),true);
         LinkedList r=new LinkedList();
         for(Object o: ll) maybeAdd(r,deepCopyObject(o,asis));
         return r;

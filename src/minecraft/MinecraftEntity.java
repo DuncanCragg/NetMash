@@ -25,22 +25,31 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
         noPersist();
     }
 
+    LinkedList newPosition=null;
+    LinkedList newSpeed=null;
+    String     newHolding=null;
+    LinkedList targetPosition=null;
+
     boolean running=false;
 
     public void evaluate(){
+        LinkedList pos=contentList("position");
+        LinkedList spd=contentList("speed");
+        String     hld=content(    "holding");
+
         super.evaluate();
+
+        LinkedList pos2=contentList("position");
+        LinkedList spd2=contentList("speed");
+        String     hld2=content(    "holding");
+
+        newPosition=(pos2!=null && !pos2.equals(pos))? pos2: null;
+        newSpeed   =(spd2!=null && !spd2.equals(spd))? spd2: null;
+        newHolding =(hld2!=null && !hld2.equals(hld))? hld2: null;
+
+        targetPosition=contentList("target-position");
+
         if(!running){ running=true; MinecraftCyrus.self.registerTicks(this); }
-        setOwnState();
-    }
-
-    LinkedList newPosition=null;
-    LinkedList newSpeed=null;
-
-    EntityAIMoveTowardsCoords ai2coords=null;
-
-    private void setOwnState(){
-        newPosition=contentList("set-position");
-        newSpeed   =contentList("set-speed");
     }
 
     int tickNum=0;
@@ -76,11 +85,13 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
         }
     }
 
+    EntityAIMoveTowardsCoords ai2coords=null;
+
     private void setState(){
-        if(newPosition!=null && newPosition.size()==3){
-            Integer psx=getIntFromList(newPosition,0);
-            Integer psy=getIntFromList(newPosition,1);
-            Integer psz=getIntFromList(newPosition,2);
+        if(targetPosition!=null && targetPosition.size()==3){
+            Integer psx=getIntFromList(targetPosition,0);
+            Integer psy=getIntFromList(targetPosition,1);
+            Integer psz=getIntFromList(targetPosition,2);
             if(psx!=null && psy!=null && psz!=null){
                 if(entity instanceof EntityLiving){
                     if(ai2coords==null){
@@ -103,6 +114,11 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
                 entity.motionX+=spx; if(entity.motionX>1) entity.motionX=1f; if(entity.motionX< -1) entity.motionX= -1f;
                 entity.motionY+=spy; if(entity.motionY>1) entity.motionY=1f; if(entity.motionY< -1) entity.motionY= -1f;
                 entity.motionZ+=spz; if(entity.motionZ>1) entity.motionZ=1f; if(entity.motionZ< -1) entity.motionZ= -1f;
+            }
+        }
+        if(newHolding!=null){
+            if(entity instanceof EntityPlayer){
+                EntityPlayer player=(EntityPlayer)entity;
             }
         }
     }

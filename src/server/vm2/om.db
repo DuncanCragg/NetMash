@@ -276,7 +276,7 @@
     is: test-done
     title: "Test Complete"
     Timer: 500
-    Rules: { is: test-done rule
+    Rules: as-is { is: test-done rule
       when: "timer done, do again"
       Timer: 0 => 500
       x: < 1 => @. + 1

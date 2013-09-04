@@ -21,7 +21,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     }
 
     public MinecraftWorld(String worlduid, String scanneruid, boolean isplayer){
-        super("{ \"is\": [ \"3d\", \"minecraft\", \"world-view\" ],\n"+
+        super("{ \"is\": [ \"3d\", \"minecraft\", \"structure\" ],\n"+
               "  \"world\": \""+worlduid+"\",\n"+
               "  \"scanner\": \""+scanneruid+"\"\n"+
               "}");
@@ -33,11 +33,37 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     boolean running=false;
 
     public void evaluate(){
-        if(contentIsOrListContains("is","world"))      hasType="world";
-        if(contentIsOrListContains("is","world-view")) hasType="world-view";
-        if("world"     .equals(hasType)){ addScanAndPlace(); super.evaluate(); setWorldState(); } else
-        if("world-view".equals(hasType)){ evaluateWorldView(); super.evaluate(); }
+        if(contentIsOrListContains("is","world"))     hasType="world";
+        if(contentIsOrListContains("is","structure")) hasType="structure";
+        if("world"    .equals(hasType)) evaluateWorld(); else
+        if("structure".equals(hasType)) super.evaluate();
         if(!running){ running=true; MinecraftCyrus.self.registerTicks(this); }
+    }
+
+    Boolean isRaining=null;
+    Boolean isThundering=null;
+    Boolean isDaytime=null;
+    Number  timeOfDay=null;
+
+    private void evaluateWorld(){
+        addScanAndPlace();
+
+        Boolean ra=contentBoolean("raining");
+        Boolean th=contentBoolean("thundering");
+        Boolean da=contentBoolean("daytime");
+        Number  ti=contentNumber( "time-of-day");
+
+        super.evaluate();
+
+        Boolean ra2=contentBoolean("raining");
+        Boolean th2=contentBoolean("thundering");
+        Boolean da2=contentBoolean("daytime");
+        Number  ti2=contentNumber( "time-of-day");
+
+        isRaining   =(ra2!=null && !ra2.equals(ra))? ra2: null;
+        isThundering=(th2!=null && !th2.equals(th))? th2: null;
+        isDaytime   =(da2!=null && !da2.equals(da))? da2: null;
+        timeOfDay   =(ti2!=null && !ti2.equals(ti))? ti2: null;
     }
 
     private void addScanAndPlace(){
@@ -58,22 +84,6 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         }
     }
 
-    private Boolean isRaining=null;
-    private Boolean isThundering=null;
-    private Boolean isDaytime=null;
-    private Integer timeOfDay=null;
-
-    private void setWorldState(){
-        isRaining=null;
-        isThundering=null;
-        isDaytime=null;
-        timeOfDay=null;
-        if(contentSet("set-raining"))    isRaining   =Boolean.valueOf(contentBool("set-raining"));
-        if(contentSet("set-thundering")) isThundering=Boolean.valueOf(contentBool("set-thundering"));
-        if(contentSet("set-daytime"))    isDaytime   =Boolean.valueOf(contentBool("set-daytime"));
-        if(contentSet("set-time-of-day"))timeOfDay   =Integer.valueOf(contentInt( "set-time-of-day"));
-    }
-
     LinkedList scanners=new LinkedList();
 
     private void addForScanning(String scanneruid, LinkedHashMap scanning, boolean isplayer){
@@ -82,9 +92,6 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         if(isplayer && contentAllContains("player-views:scanner",scanneruid)) return;
         String viewuid=spawn(new MinecraftWorld(uid,scanneruid,isplayer));
         if(isplayer) contentListAdd("player-views", viewuid);
-    }
-
-    private void evaluateWorldView(){
     }
 
     ConcurrentLinkedQueue<LinkedList> pushingQ =new ConcurrentLinkedQueue<LinkedList>();
@@ -143,7 +150,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             }
         }
         else
-        if("world-view".equals(hasType)){
+        if("structure".equals(hasType)){
             if(tickNum==0){
                 new Evaluator(this){ public void evaluate(){
                     if(!contentIs("world:name",currentname)) return;
@@ -159,7 +166,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             if( isDaytime && !isDay()) world.setWorldTime(getDaysIn()*24000+500);
             if(!isDaytime &&  isDay()) world.setWorldTime(getDaysIn()*24000+12500);
         }
-        if(timeOfDay   !=null) world.setWorldTime(timeOfDay);
+        if(timeOfDay   !=null) world.setWorldTime(timeOfDay.longValue());
         if(isRaining   !=null) world.getWorldInfo().setRaining(   isRaining);
         if(isThundering!=null) world.getWorldInfo().setThundering(isThundering);
         long ts=100L*(world.getTotalWorldTime()/100L);
@@ -236,9 +243,9 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             }
             il.add(jl);
         }
-        if(!il.equals(contentList("list"))){
+        if(!il.equals(contentList("materials"))){
             contentList("sub-items", null);
-            contentList("list",il);
+            contentList("materials",il);
             notifying(content("scanner"));
         }
     }
@@ -261,7 +268,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             }
         }
         if(!ll.equals(contentList("sub-items"))){
-            contentList("list",null);
+            contentList("materials",null);
             contentList("sub-items", ll);
             notifying(content("scanner"));
         }
@@ -319,14 +326,14 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
     private void doPlacing(LinkedHashMap placing, boolean air){
         LinkedList position=getListFromHash(  placing,    "position"); if(position.size()!=3) return;
-        Object     material=                  placing.get("material"); if(material==null) material="air";
+        Object     materials=                 placing.get("materials"); if(materials==null) materials="air";
         String     shape=   getStringFromHash(placing,    "shape", null);
         LinkedList size    =getListFromHash(  placing,    "size");
         Integer psx=getIntFromList(position,0);
         Integer psy=getIntFromList(position,1);
         Integer psz=getIntFromList(position,2);
         if(psx==null || psy==null || psz==null) return;
-        if("box".equals(shape) && material instanceof String){
+        if("box".equals(shape) && materials instanceof String){
             if(size.size()!=3) return;
             Integer six=getIntFromList(size,0);
             Integer siy=getIntFromList(size,1);
@@ -338,17 +345,17 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             for(int j=0; j<siy; j++)
             for(int k=0; k<siz; k++){
                 boolean a = air || (i!=0 && i!=six-1 && j!=0 && j!=siy-1 && k!=0 && k!=siz-1);
-                ensureBlockAt(psx+i,psy+j,psz+k, a? "air": (String)material);
+                ensureBlockAt(psx+i,psy+j,psz+k, a? "air": (String)materials);
             }
         }
         else{
-            if(material instanceof String){
-                ensureBlockAt(psx,psy,psz, air? "air": (String)material);
+            if(materials instanceof String){
+                ensureBlockAt(psx,psy,psz, air? "air": (String)materials);
             }
             else
-            if(material instanceof LinkedList){
+            if(materials instanceof LinkedList){
                 int i=0,j=0,k=0;
-                LinkedList l3=(LinkedList)material;
+                LinkedList l3=(LinkedList)materials;
                 for(Object o2: l3){
                     if(o2 instanceof LinkedList){
                         LinkedList l2=(LinkedList)o2;

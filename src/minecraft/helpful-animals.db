@@ -24,7 +24,7 @@
 { UID: uid-23d4-dca8-abee-ed37
   is: minecraft rule
   when: "world-view scan results notified, save"
-  Alerted: { is: minecraft world-view }
+  Alerted: { is: minecraft structure }
   world-view: # => @Alerted
 }
 
@@ -32,7 +32,7 @@
   is: editable minecraft pig rule
   when: "run, scan around player"
   alive: true
-  set-position: @world:players:0:position !=> @world:players:0:position
+  target-position: @world:players:0:position !=> @world:players:0:position
   scanpos: => @position + (-2 0 -2)
   scanning: => { for: blocks size: 5 2 5 position: @scanpos }
   Notifying: => @. with @world
@@ -43,8 +43,8 @@
   when: "stone found, vaporise it"
   alive: true
   on-ground: true
-  world-view: { position: @scanpos list: (((stone))) }
-  placing: => { material: @world-view:list each ({ stone: air gravel: air dirt: air } select @.. else @.. )
+  world-view: { position: @scanpos materials: (((stone))) }
+  placing: => { materials: @world-view:materials each ({ stone: air gravel: air dirt: air } select @.. else @.. )
                 position: @scanpos trail: true }
 }
 
@@ -60,10 +60,10 @@
 
 { UID: uid-71c6-7f99-3485-0e4d
   is: editable minecraft cow rule
-  when: "something found, set marker on surface"
+  when: "diamonds found, set marker on surface"
   alive: true
   on-ground: true
-  world-view: { position: @scanpos list: (((/iron-ore/))) }
-  placing: => { material: rose position: @pos + (0 0 0) trail: true }
+  world-view: { position: @scanpos materials: (((/diamond-ore/))) }
+  placing: => { materials: rose position: @pos trail: true }
 }
 

@@ -1,4 +1,9 @@
 
+ - spawn position? saved in client?
+ - placing clashes
+ - player position, target-position, speed, holding, spawn-position, alive, hitting, placing, touching (doc/local/player-properties.db)
+ - player speed for zombie rule
+
  - use bin not lib?
  - evaluate() or evaluatable()? see trace doc/local/contentAPIeval.txt
  - clashing cyrus.db and cyrusconfig.db/port
