@@ -603,14 +603,19 @@ public class CyrusLanguage extends WebObject {
     @SuppressWarnings("unchecked")
     private Object deepCopyList(LinkedList ll, boolean asis){
         if(ll.size()==0) return null;
-        if(!asis && isAsIs(ll)) return deepCopyObject(ll.get(1),true);
+        if(!asis && isAsIs(ll)) return deepCopyObject(getAsIs(ll),true);
         LinkedList r=new LinkedList();
         for(Object o: ll) maybeAdd(r,deepCopyObject(o,asis));
         return r;
     }
 
     private boolean isAsIs(Object o){
-        return o instanceof LinkedList && ((LinkedList)o).size()==2 && "as-is".equals(((LinkedList)o).get(0));
+        return o instanceof LinkedList && ((LinkedList)o).size() >=2 && "as-is".equals(((LinkedList)o).get(0));
+    }
+
+    private Object getAsIs(LinkedList ll){
+        if(ll.size()==2) return ll.get(1);
+        return subList(ll,1);
     }
 
     // ----------------------------------------------------
