@@ -260,10 +260,21 @@ public class Utils{
         if(o instanceof Boolean) return (Boolean)o;
         if(o instanceof String){
             String s=(String)o;
+            if(s.toLowerCase().equals("true" )) return true;
+            if(s.toLowerCase().equals("false")) return false;
+        }
+        return false;
+    }
+
+    static public Boolean findABooleanIn(Object o){
+        if(o==null) return null;
+        if(o instanceof Boolean) return (Boolean)o;
+        if(o instanceof String){
+            String s=(String)o;
             if(s.toLowerCase().equals("true" )) return Boolean.valueOf(true);
             if(s.toLowerCase().equals("false")) return Boolean.valueOf(false);
         }
-        return false;
+        return null;
     }
 
     static public boolean isBoolean(Object o){

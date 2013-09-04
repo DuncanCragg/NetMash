@@ -41,6 +41,7 @@ public class WebObject {
     private boolean copyshallow = true;
     private LinkedList<String> tempPaths = new LinkedList<String>();
     public  boolean inevaluate = false;
+    public  boolean reentered = false;
     public  boolean statemod = false;
     public  boolean obsalmod = false;
     public  boolean refreshobserves = false;
@@ -480,6 +481,11 @@ public class WebObject {
         return false;
     }
 
+    /** Get Boolean at this path. */
+    public Boolean contentBoolean(String path){
+        return findABooleanIn(contentObject(path));
+    }
+
     /** Set boolean at this path. */
     public void contentBool(String path, boolean val){
         doCopyOnWrite(path);
@@ -775,6 +781,7 @@ public class WebObject {
     /** Call to reset all changes. */
     public void rollback(){
         inevaluate = false;
+        reentered = false;
         statemod = false;
         obsalmod = false;
         refreshobserves = false;
@@ -850,6 +857,7 @@ public class WebObject {
     /* ---------------------------------------------------- */
 
     void handleEval(){
+        if(inevaluate){ reentered=true; Utils.whereAmI("************ re-entrancy two **********"); return; }
         evalPre();
         evaluate();
         evalPost();
@@ -857,6 +865,7 @@ public class WebObject {
 
     void evalPre(){
         inevaluate = true;
+        reentered = false;
         statemod = false;
         obsalmod = false;
         refreshobserves = false;
@@ -872,7 +881,9 @@ public class WebObject {
 
     void evalPost(){
         doTimer();
+        if(reentered) Utils.whereAmI("************** re-entrancy one **************");
         inevaluate = false;
+        reentered = false;
         observe.addAll(alerted);
         notify.addAll(newalert);
         funcobs.dropNotifies(this);
