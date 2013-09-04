@@ -1,4 +1,5 @@
 
+ - use bin not lib?
  - evaluate() or evaluatable()? see trace doc/local/contentAPIeval.txt
  - clashing cyrus.db and cyrusconfig.db/port
  - holding doesn't always update until used
