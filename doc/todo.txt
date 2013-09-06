@@ -1,14 +1,35 @@
 
- - spawn position? saved in client?
- - placing clashes
- - player position, target-position, speed, holding, spawn-position, alive, hitting, placing, touching (doc/local/player-properties.db)
- - player speed for zombie rule
+Cube and Structure propagation
 
+ - test-client and run-new-client have different regions set up in cyrus.db pointing to each other
+ - { UID: uid-f862-56af-d46d-c440
+     Class: cyrus.types.PresenceTracker
+     is: editable 3d minecraft place
+     title: "Region 1"
+     position: -500 0 0
+     size: 1000 1000
+     seed: same-seed
+     sub-items: { position:  -5 0 0 object: uid-cube-1 }
+                { position: -99 0 0 object: uid-structure-1 }
+                { position: 500 0 0 object: uid-region-2 }
+   }
+ - if you change from the seed, save in a cube in sub-items; only in own region (but sliced anyway)
+ - render sub-item link to other region if visible: pull in structures and slice if they overrun
+ - in their region, need a structure to override your hacking (like they do currently)
+    - so region sends scanning-for-blocks to their region/place/ex-world - scanning-for-blocks always fitted to nearest cube(s)
+
+
+Bits
+
+ - rule to save world-view without pigs/cows mod
+ - player speed for zombie rule, and fix for non-one zombie cases (0, 2+); not speed: => #
+ - player position, target-position, holding, spawn-position, alive, hitting, placing, touching (doc/local/player-properties.db)
+ - spawn position? saved in client? getBedLocation or what?
+ - placing clashes
  - use bin not lib?
  - evaluate() or evaluatable()? see trace doc/local/contentAPIeval.txt
- - clashing cyrus.db and cyrusconfig.db/port
- - holding doesn't always update until used
- - spawn position: getBedLocation or what?
  - no x/z speed sent over wire?
  - players:0 may be empty so add more checks
+ - clashing cyrus.db and cyrusconfig.db/port
+ - holding doesn't always update until used
 
