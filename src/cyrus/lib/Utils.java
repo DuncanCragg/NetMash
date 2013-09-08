@@ -357,14 +357,14 @@ public class Utils{
         return r+" ]";
     }
 
-    static public String setToListString(Iterable<String> set){ return setToListString(set,false); }
+    static public String setToListString(Iterable set){ return setToListString(set,false); }
 
-    static public String setToListString(Iterable<String> set, boolean cyrus){
+    static public String setToListString(Iterable set, boolean cyrus){
         String q=cyrus? "": "\"";
         String c=cyrus? "": ",";
         String s=cyrus? "": "[";
         String e=cyrus? "": "]";
-        Iterator<String> i = set.iterator();
+        Iterator i = set.iterator();
         if(!i.hasNext()) return cyrus? "": "[ ]";
         String r = s;
         do{ r+=" "+q+i.next()+q+c; }while(i.hasNext());

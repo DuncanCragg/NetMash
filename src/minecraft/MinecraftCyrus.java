@@ -59,7 +59,7 @@ public class MinecraftCyrus extends WebObject {
             long s=System.currentTimeMillis();
             tickable.tick();
             long e=System.currentTimeMillis();
-            if(e-s > 50) log("***** Tick took "+(e-s)+"ms for:\n"+tickable);
+            if(e-s > 80) log("***** Tick took "+(e-s)+"ms for:\n"+tickable);
         }
     }
 

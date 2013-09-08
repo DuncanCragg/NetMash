@@ -55,7 +55,6 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
     int tickNum=0;
 
     public void tick(){
-        final MinecraftEntity me=this;
         new Evaluator(this){ public void evaluate(){
             if(++tickNum < 8) return;
             tickNum=0;

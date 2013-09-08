@@ -1,26 +1,45 @@
 
 Cube and Structure propagation
 
- - test-client and run-new-client have different regions set up in cyrus.db pointing to each other
+ - if you change from the seed, save in a cube in sub-items
+ - only in own region (but sliced anyway)
+
  - { UID: uid-f862-56af-d46d-c440
-     Class: cyrus.types.PresenceTracker
-     is: editable 3d minecraft place
-     title: "Region 1"
-     position: -500 0 0
-     size: 1000 1000
+*    Class: cyrus.types.PresenceTracker
+*    is: editable 3d minecraft place
+*    title: "Region 1"
+*    position: -500 0 0
+*    size: 1000 1000
      seed: same-seed
-     sub-items: { position:  -5 0 0 object: uid-cube-1 }
+*    sub-items: { position:  -5 0 0 object: uid-cube-1 }
                 { position: -99 0 0 object: uid-structure-1 }
                 { position: 500 0 0 object: uid-region-2 }
+*    players: ??
    }
- - if you change from the seed, save in a cube in sub-items; only in own region (but sliced anyway)
- - render sub-item link to other region if visible: pull in structures and slice if they overrun
- - in their region, need a structure to override your hacking (like they do currently)
-    - so region sends scanning-for-blocks to their region/place/ex-world - scanning-for-blocks always fitted to nearest cube(s)
+ - { UID: uid-cube-1
+     is: 3d minecraft cube structure
+     world: uid-f862-56af-d46d-c440 within: uid-f862-56af-d46d-c440
+     position: x y z
+     materials: ( 0 0 0 0 )..
+     trail: true
+   }
 
+ - test-client and run-new-client have different regions set up in cyrus.db pointing to each other
+
+ - render sub-item link to other region if visible
+    - pull in structures and slice if they overrun
+
+ - in another's region, need a structure to override your hacking (like they do currently)
+    - so region sends scanning-for-blocks to their region/place/ex-world
+    - scanning-for-blocks always fitted to nearest cube(s)
+    - or - they make structure or cube in your region, triggers making counter-cube, which does wiping back /and/ slicing
+
+ - oops, scanning=structure but does getSubItemsAround: sub-items of entities; it's more like a little region, with sub-items
 
 Bits
 
+ - coal 173, etc new blocks
+ - make sure minecraft and minecraft_server done together
  - rule to save world-view without pigs/cows mod
  - player speed for zombie rule, and fix for non-one zombie cases (0, 2+); not speed: => #
  - player position, target-position, holding, spawn-position, alive, hitting, placing, touching (doc/local/player-properties.db)
