@@ -29,6 +29,7 @@ public class Persistence implements FileUser {
     private String directory = null;
     private String db = null;
     private File   dbfile=null;
+    private LinkedList preload=null;
     private String topclass=null;
 
     private Pattern toppac=null;
@@ -52,9 +53,9 @@ public class Persistence implements FileUser {
         this.directory=(directory==null || directory.trim().equals(""))? "": (!directory.endsWith("/")? directory+"/": directory);
         this.db        = Kernel.config.stringPathN("persist:db");
         this.dbfile  = new File(directory+db);
-        this.topclass=Kernel.config.stringPathN("persist:preload");
+        this.preload=Kernel.config.listPathN("persist:preload");
+        this.topclass=preload!=null && preload.size() >0 && !isUID(preload.get(0))? (String)preload.get(0): null;
 
-        if(isUID(topclass)) topclass=null;
         if(topclass!=null){
             String  toprec = "^\\s*Class:\\s*"+topclass+"$";
             String  toprej = "^\\s*\"Class\":\\s*\""+topclass+"\",$";
@@ -74,12 +75,11 @@ public class Persistence implements FileUser {
         new Thread(){ public void run(){ runSync(syncrate); } }.start();
 
         if(topclass!=null) getOrCreateTop();
-        else{
-            preload(Kernel.config.listPathN("persist:preload"));
-            if(cyrusconfig!=null){
-                funcobs.hereIsTheConfigBack(cyrusconfig);
-                preload(cyrusconfig.listPathN("persist:preload"));
-            }
+
+        preload(preload);
+        if(cyrusconfig!=null){
+            funcobs.hereIsTheConfigBack(cyrusconfig);
+            preload(cyrusconfig.listPathN("persist:preload"));
         }
         log("Persistence: initialised.");
 
@@ -108,7 +108,7 @@ public class Persistence implements FileUser {
 
     void preload(LinkedList preloadlist){
         if(preloadlist==null) return;
-        for(Object o: preloadlist) funcobs.cachePut(cache(o.toString()));
+        for(Object o: preloadlist) if(isUID(o)) funcobs.cachePut(cache((String)o));
     }
 
     private void getOrCreateTop(){
