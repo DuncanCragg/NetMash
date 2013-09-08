@@ -57,7 +57,7 @@ public class MinecraftCyrus extends WebObject {
         if(!checkIfNewWorld()) return;
         for(Tickable tickable: tickables){
             long s=System.currentTimeMillis();
-            tickable.tick();
+            try{ tickable.tick(); }catch(Throwable t){ t.printStackTrace(); }
             long e=System.currentTimeMillis();
             if(e-s > 80) log("***** Tick took "+(e-s)+"ms for:\n"+tickable);
         }
