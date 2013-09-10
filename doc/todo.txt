@@ -32,6 +32,7 @@ Cube and Structure propagation
 
 Bits
 
+ - doc/local/contentList.txt search for potential single-element lists
  - oops, scanning=structure but does getSubItemsAround: sub-items of entities; it's more like a little region, with sub-items
  - coal 173, etc new blocks
  - make sure minecraft and minecraft_server done together

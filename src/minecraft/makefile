@@ -17,6 +17,9 @@ test-server: compile-server cleandb run-server
 test-client: compile-client cleandb run-client
 
 
+clean-client: cleandb run-client
+
+
 cont-client: compile-client run-client
 
 

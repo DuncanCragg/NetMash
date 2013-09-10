@@ -854,7 +854,7 @@ public class WebObject {
     /* ---------------------------------------------------- */
 
     void handleEval(){
-        if(inevaluate){ reentered=true; Utils.whereAmI("************ re-entrancy two **********"); return; }
+        if(inevaluate){ reentered=true; Utils.whereAmI("************ already in evaluate ********** "+uid); return; }
         evalPre();
         evaluate();
         evalPost();
@@ -862,7 +862,6 @@ public class WebObject {
 
     void evalPre(){
         inevaluate = true;
-        reentered = false;
         statemod = false;
         obsalmod = false;
         refreshobserves = false;
@@ -878,7 +877,7 @@ public class WebObject {
 
     void evalPost(){
         doTimer();
-        if(reentered) Utils.whereAmI("************** re-entrancy one **************");
+        if(reentered) Utils.whereAmI("************** original evaluate ends ************** "+uid);
         inevaluate = false;
         reentered = false;
         observe.addAll(alerted);
