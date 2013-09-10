@@ -3,12 +3,15 @@
   persist: { directory: .
              db: cyrus.db
              syncrate: 100
-             preload: net.minecraft.src.MinecraftCyrus }
+             preload: net.minecraft.src.MinecraftCyrus
+                      uid-45bb-030c-c708-2d1f
+  }
   network: { host: localhost
              port: 8084
              pathprefix: /o/
              cache-notify: c-n-47b0-80c6-b3fc-42c6
-             log: 0 }
+             log: 0
+  }
   rules: { log: 1 }
   app: { top-mods: http://localhost:8081/o/uid-3b6f-735c-abc5-54a0.json
          tutorial: http://localhost:8081/o/uid-5a7a-16e9-508f-2f65.json

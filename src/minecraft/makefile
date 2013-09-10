@@ -11,10 +11,10 @@ large:
 	sed -i 's/overrideWidth:300/overrideWidth:670/'  jars/options.txt
 	sed -i 's/overrideHeight:300/overrideHeight:800/' jars/options.txt
 
-test-server: compile-server emptydb run-server
+test-server: compile-server cleandb run-server
 
 
-test-client: compile-client emptydb run-client
+test-client: compile-client cleandb run-client
 
 
 cont-client: compile-client run-client
@@ -32,8 +32,8 @@ compile-server:
 compile-client:
 	./recompile.sh --client
 
-emptydb:
-	rm -f jars/cyrus.db
+cleandb:
+	cp lib/cyrus-A.db jars/cyrus.db
 
 run-server:
 	./startserver.sh
@@ -62,9 +62,10 @@ cyrusserver-jar: cyrusserver-zip
 cyrusclient-zip:
 	./reobfuscate.sh --client
 	cp lib/cyrusconfig.db reobf/minecraft
-	sed -i 's#net.minecraft.src.Minecraft#Minecraft#' reobf/minecraft/cyrusconfig.db
-	sed -i 's#http://lxcalhost#http://the-cyrus.net#' reobf/minecraft/cyrusconfig.db
-	sed -i 's#port: 8084#port: 8085#'                 reobf/minecraft/cyrusconfig.db
+	sed -i 's#net.minecraft.src.Minecraft#Minecraft#'           reobf/minecraft/cyrusconfig.db
+	sed -i 's#http://lxcalhost#http://the-cyrus.net#'           reobf/minecraft/cyrusconfig.db
+	sed -i 's#port: 8084#port: 8085#'                           reobf/minecraft/cyrusconfig.db
+	sed -i 's#uid-45bb-030c-c708-2d1f#uid-55b3-62cc-7c7a-8e8f#' reobf/minecraft/cyrusconfig.db
 	mkdir -p reobf/minecraft/statics
 	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrusclient.zip
@@ -87,11 +88,12 @@ release-client:
 	cp 1.6.2-Cyrus.jar $(CLIENT_RELEASE_TARGET)
 
 run-new-server: cyrusserver.jar
-	rm -f runserver/cyrus.db
-	mkdir -p runserver && cd runserver && java -jar ../cyrusserver.jar
+	mkdir -p runserver
+	cp lib/cyrus-A.db runserver/cyrus.db
+	cd runserver && java -jar ../cyrusserver.jar
 
 run-new-client: $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/1.6.2-Cyrus.jar
-	rm -f $(MINECRAFT_DIR)/cyrus.db
+	cp lib/cyrus-B.db $(MINECRAFT_DIR)/cyrus.db
 	java -jar $(MINECRAFT_DIR)/minecraft.jar
 
 $(MINECRAFT_DIR)/versions/1.6.2-Cyrus:

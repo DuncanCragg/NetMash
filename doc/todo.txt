@@ -1,15 +1,12 @@
 
 Cube and Structure propagation
 
- - if you change from the seed, save in a cube in sub-items
- - only in own region (but sliced anyway)
-
  - { UID: uid-f862-56af-d46d-c440
 *    Class: cyrus.types.PresenceTracker
 *    is: editable 3d minecraft place
 *    title: "Region 1"
-*    position: -500 0 0
-*    size: 1000 1000
+     position: -500 0 0
+     size: 1000 1000
      seed: same-seed
 *    sub-items: { position:  -5 0 0 object: uid-cube-1 }
                 { position: -99 0 0 object: uid-structure-1 }
@@ -34,10 +31,10 @@ Cube and Structure propagation
     - scanning-for-blocks always fitted to nearest cube(s)
     - or - they make structure or cube in your region, triggers making counter-cube, which does wiping back /and/ slicing
 
- - oops, scanning=structure but does getSubItemsAround: sub-items of entities; it's more like a little region, with sub-items
 
 Bits
 
+ - oops, scanning=structure but does getSubItemsAround: sub-items of entities; it's more like a little region, with sub-items
  - coal 173, etc new blocks
  - make sure minecraft and minecraft_server done together
  - rule to save world-view without pigs/cows mod

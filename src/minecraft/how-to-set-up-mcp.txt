@@ -22,6 +22,8 @@ Then put in links to Cyrus - make a script like this, with '.../cyrus' adjusted 
 ---------------------------------------
 #!/bin/bash
 ln -s .../cyrus/src/minecraft/makefile
+ln -s .../cyrus/src/minecraft/cyrus-A.db           lib/cyrus-A.db
+ln -s .../cyrus/src/minecraft/cyrus-B.db           lib/cyrus-B.db
 ln -s .../cyrus/src/minecraft/cyrusconfig.db       lib/cyrusconfig.db
 ln -s .../cyrus/src/js                             lib/statics
 ln -s .../cyrus/src/cyrus                          src/minecraft/cyrus

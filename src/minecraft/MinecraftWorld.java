@@ -18,6 +18,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         super("{ \"is\": [ \"editable\", \"queryable\", \"updatable\", \"3d\", \"minecraft\", \"world\" ],\n"+
               "  \"name\": \""+name+"\"\n"+
               "}");
+        setWorld(world);
     }
 
     public MinecraftWorld(String worlduid, String scanneruid, boolean isplayer){
@@ -26,6 +27,15 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
               "  \"scanner\": \""+scanneruid+"\"\n"+
               "}");
         if(!isplayer) noPersist();
+    }
+
+    public MinecraftWorld(String worlduid, LinkedList position){
+        super("{ is: 3d minecraft cube structure\n"+
+              "  world: "+worlduid+"\n"+
+              "  within: "+worlduid+"\n"+
+              "  position: "+setToListString(position,true)+"\n"+
+              "  trail: true\n"+
+              "}",true);
     }
 
     private String hasType;
@@ -37,7 +47,10 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         if(contentIsOrListContains("is","structure")) hasType="structure";
         if("world"    .equals(hasType)) evaluateWorld(); else
         if("structure".equals(hasType)) super.evaluate();
-        if(!running){ running=true; MinecraftCyrus.self.registerTicks(this); }
+        if(!running){ running=true;
+            MinecraftCyrus.self.registerTicks(this);
+            if("world".equals(hasType)) MinecraftCyrus.self.registerWorld(content("name"),this);
+        }
     }
 
     Boolean isRaining=null;
@@ -77,11 +90,16 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 if(contentIsOrListContains("is","updatable")){
                     addForPushing(alerted, contentHash("Alerted:pushing"));
                     addForPlacing(alerted, contentHash("Alerted:placing"));
-                    if(contentIsOrListContains("Alerted:is", "structure")) addForPlacing(alerted, contentHash("Alerted:#"));
+                    if(structureNotOurCube()) addForPlacing(alerted, contentHash("Alerted:#")); // add to sub-items
                 }
             }
             contentTemp("Alerted", null);
         }
+    }
+
+    private boolean structureNotOurCube(){
+        return   contentIsOrListContains("Alerted:is", "structure") &&
+               !(contentIsOrListContains("Alerted:is", "cube") && contentIsThis("Alerted:world"));
     }
 
     LinkedList scanners=new LinkedList();
@@ -115,10 +133,10 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         if("world".equals(hasType)){
             new Evaluator(this){ public void evaluate(){
                 if(!contentIs("name",currentname)) return;
-                world=currentworld;
-                LinkedList players=getPlayers();
-                if(players.size() >0) contentList("players", players); else content("players",null);
+                setWorld(currentworld);
                 if(tickNum==0){
+                    LinkedList players=getPlayers(); // ??
+                    if(players.size() >0) contentList("players", players); else content("players",null);
                     setAndGetWorldState();
                     doEntitiesToCyrus();
                     self.evaluate();
@@ -161,6 +179,65 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         }
     }
 
+    static public void onBlockUpdate(World world, int x, int y, int z, int previousId){
+        MinecraftWorld mcw=getWorldFor(world);
+        if(mcw!=null) mcw.onBlockUpdate(x,y,z, previousId);
+    }
+
+    boolean frozenPosAndSize=false;
+    int posnx;
+    int posnz;
+    int sizex;
+    int sizez;
+
+    public void onBlockUpdate(final int x, final int y, final int z, int previousId){
+        new Evaluator(this){ public void evaluate(){
+            if(!frozenPosAndSize){ frozenPosAndSize=true;
+                posnx=contentInt("position:0");
+                posnz=contentInt("position:2");
+                sizex=contentInt("size:0");
+                sizez=contentInt("size:1");
+            }
+            if(x<posnx || x>=posnx+sizex || z<posnz || z>=posnz+sizez) outsideRegion(x,y,z);
+            else                                                       insideRegion(x,y,z);
+        }};
+    }
+
+    private void outsideRegion(int x, int y, int z){}
+
+    private void insideRegion(int x, int y, int z){
+        final int cx=(x>>2)*4;
+        final int cy=(y>>2)*4;
+        final int cz=(z>>2)*4;
+        LinkedList cubepos=list(cx,cy,cz);
+        final WebObject cube=getCube(cubepos);
+        new Evaluator(cube){ public void evaluate(){
+            cube.contentList("materials", getBlockListAround(cx,cy,cz, 4,4,4, true));
+        }};
+    }
+
+    private WebObject getCube(LinkedList cubepos){
+        String cubeuid=null;
+        LinkedList subitems=contentList("sub-items");
+        int i=0;
+        if(subitems!=null) for(Object o: subitems){ LinkedHashMap hm=(LinkedHashMap)o;
+            if(cubepos.equals(hm.get("position")) && contentIsOrListContains("sub-items:"+i+":item:is","cube")){
+                cubeuid=(String)hm.get("item");
+            }
+        i++;}
+        return (cubeuid==null)? newCube(cubepos): onlyUseThisToHandControlOfThreadToDependent(cubeuid);
+    }
+
+    private MinecraftWorld newCube(LinkedList cubepos){
+        MinecraftWorld cube=new MinecraftWorld(uid,cubepos);
+        String cubeuid=spawn(cube);
+        LinkedHashMap hm=new LinkedHashMap();
+        hm.put("item", cubeuid);
+        hm.put("position", cubepos);
+        contentListAdd("sub-items", hm);
+        return cube;
+    }
+
     private void setAndGetWorldState(){
         if(isDaytime !=null){
             if( isDaytime && !isDay()) world.setWorldTime(getDaysIn()*24000+500);
@@ -185,7 +262,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     private int getDaysIn(){    return (int)(world.getWorldTime() / 24000); }
     private boolean isDay(){    return getTimeInDay() < 12000; }
 
-    private void doEntitiesToCyrus(){
+    private void doEntitiesToCyrus(){ // and link them into sub-items if in region
         int six=40; int siy=20; int siz=40;
         for(Object p: world.playerEntities){ EntityPlayer player=(EntityPlayer)p;
             int atx=(int)(player.posX-six/2); int aty=(int)(player.posY-siy/2); int atz=(int)(player.posZ-siz/2);
@@ -193,7 +270,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 if(e.posX >atx && e.posX<atx+six &&
                    e.posY >aty && e.posY<aty+siy &&
                    e.posZ >atz && e.posZ<atz+siz   ){
-                    if(e instanceof EntityPlayer) continue;
+                    if(e instanceof EntityPlayer) continue; // ??
                     entityToCyrus(e,uid);
                 }
             }
@@ -226,28 +303,33 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         if(six<=0)  six=1;   if(siy<=0)  siy=1;   if(siz<=0)  siz=1;
         if(six>100) six=100; if(siy>100) siy=100; if(siz>100) siz=100;
         contentList("position", position);
-        if("blocks"  .equals(scanfor)) getBlockListAround(psx, psy, psz, six, siy, siz);
+        if("blocks"  .equals(scanfor)) setBlockListAround(psx, psy, psz, six, siy, siz);
         if("entities".equals(scanfor)) getSubItemsAround( psx, psy, psz, six, siy, siz);
     }
 
-    private void getBlockListAround(int atx, int aty, int atz, int six, int siy, int siz){
+    private void setBlockListAround(int atx, int aty, int atz, int six, int siy, int siz){
+        LinkedList il=getBlockListAround(atx, aty, atz, six, siy, siz, false);
+        if(!il.equals(contentList("materials"))){
+            contentList("sub-items", null);
+            contentList("materials",il);
+            notifying(content("scanner"));
+        }
+    }
+
+    private LinkedList getBlockListAround(int atx, int aty, int atz, int six, int siy, int siz, boolean ids){
         final LinkedList il=new LinkedList();
         for(int i=0; i<six; i++){
             LinkedList jl=new LinkedList();
             for(int j=0; j<siy; j++){
                 LinkedList kl=new LinkedList();
                 for(int k=0; k<siz; k++){
-                    kl.add(getBlockAt(atx+i,aty+j,atz+k));
+                    kl.add(getBlockAt(atx+i,aty+j,atz+k, ids));
                 }
                 jl.add(kl);
             }
             il.add(jl);
         }
-        if(!il.equals(contentList("materials"))){
-            contentList("sub-items", null);
-            contentList("materials",il);
-            notifying(content("scanner"));
-        }
+        return il;
     }
 
     private void getSubItemsAround(int atx, int aty, int atz, int six, int siy, int siz){
@@ -258,7 +340,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             if(e.posX >atx && e.posX<atx+six &&
                e.posY >aty && e.posY<aty+siy &&
                e.posZ >atz && e.posZ<atz+siz   ){
-                if(e instanceof EntityPlayer) continue;
+                if(e instanceof EntityPlayer) continue; // ??
                 String euid=entityToCyrus(e,content("world"));
                 LinkedList position=list(e.posX, e.posY, e.posZ);
                 LinkedHashMap hm=new LinkedHashMap();
@@ -276,6 +358,16 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
     static LinkedHashMap<String,String>          entityUID=new LinkedHashMap<String,String>();
     static LinkedHashMap<String,MinecraftEntity> entityMap=new LinkedHashMap<String,MinecraftEntity>();
+    static LinkedHashMap<World,MinecraftWorld>   worldMap =new LinkedHashMap<World,MinecraftWorld>();
+
+    private void setWorld(World world){
+        this.world=world;
+        worldMap.put(world,this);
+    }
+
+    static public MinecraftWorld getWorldFor(World w){
+        return worldMap.get(w);
+    }
 
     static public MinecraftEntity getEntityFor(Entity e){
         String euid=entityToUID(e);
@@ -363,9 +455,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                             if(o1 instanceof LinkedList){
                                 LinkedList l1=(LinkedList)o1;
                                 for(Object o0: l1){
-                                    if(o0 instanceof String){
-                                        ensureBlockAt(psx+i,psy+j,psz+k, air? "air": (String)o0);
-                                    }
+                                    ensureBlockAt(psx+i,psy+j,psz+k, air? "air": o0);
                                 k++; }
                             }
                         j++; k=0; }
@@ -382,15 +472,18 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return server==null? null: server.worldServerForDimension(0);
     }
 
-    private void ensureBlockAt(int x, int y, int z, String name){
-        Integer id=blockNames.get(name);
+    private void ensureBlockAt(int x, int y, int z, Object name){
+        Integer id=null;
+        if(name instanceof Number) id=((Number)name).intValue();
+        if(name instanceof String) try{ id=Integer.parseInt((String)name); } catch(NumberFormatException e){ id=blockNames.get((String)name); }
+logXX("ensureBlockAt",x,y,z,name,id);
         if(id!=null && id!=world.getBlockId(x,y,z)) world.setBlock(x,y,z, id);
     }
 
-    private String getBlockAt(int x, int y, int z){
+    private Object getBlockAt(int x, int y, int z, boolean ids){
         int id=world.getBlockId(x,y,z);
         if(id<0 || id>=200) return null;
-        return blockIds.get(id);
+        return ids? Integer.valueOf(id): blockIds.get(id);
     }
 
     // ------------------------------------
