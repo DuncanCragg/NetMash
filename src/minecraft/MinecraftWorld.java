@@ -45,11 +45,33 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     public void evaluate(){
         if(contentIsOrListContains("is","world"))     hasType="world";
         if(contentIsOrListContains("is","structure")) hasType="structure";
-        if("world"    .equals(hasType)) evaluateWorld(); else
-        if("structure".equals(hasType)) super.evaluate();
+        if("world".equals(hasType)){
+            pullInNeighbours();
+            evaluateWorld();
+        }
+        else
+        if("structure".equals(hasType)) evaluateStructure();
         if(!running){ running=true;
             MinecraftCyrus.self.registerTicks(this);
             if("world".equals(hasType)) MinecraftCyrus.self.registerWorld(content("name"),this);
+        }
+    }
+
+    void pullInNeighbours(){
+        LinkedList subs=contentAsList("sub-items");
+        if(subs==null) return;
+        for(int i=0; i< subs.size(); i++){
+            String p=String.format("sub-items:%d:item:is",i);
+            contentAsList(p);
+        }
+        for(int i=0; i< subs.size(); i++){
+            String s=String.format("sub-items:%d:item:sub-items",i);
+            LinkedList subsubs=contentAsList(s);
+            if(subsubs==null) continue;
+            for(int j=0; j< subsubs.size(); j++){
+                String q=String.format("sub-items:%d:item:sub-items:%d:item:is",i,j);
+                contentAsList(q);
+            }
         }
     }
 
@@ -77,6 +99,10 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         isThundering=(th2!=null && !th2.equals(th))? th2: null;
         isDaytime   =(da2!=null && !da2.equals(da))? da2: null;
         timeOfDay   =(ti2!=null && !ti2.equals(ti))? ti2: null;
+    }
+
+    private void evaluateStructure(){
+        super.evaluate();
     }
 
     private void addScanAndPlace(){
@@ -476,7 +502,6 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         Integer id=null;
         if(name instanceof Number) id=((Number)name).intValue();
         if(name instanceof String) try{ id=Integer.parseInt((String)name); } catch(NumberFormatException e){ id=blockNames.get((String)name); }
-logXX("ensureBlockAt",x,y,z,name,id);
         if(id!=null && id!=world.getBlockId(x,y,z)) world.setBlock(x,y,z, id);
     }
 
