@@ -21,8 +21,6 @@ Cube and Structure propagation
      trail: true
    }
 
- - test-client and run-new-client have different regions set up in cyrus.db pointing to each other
-
  - render sub-item link to other region if visible
     - pull in structures and slice if they overrun
 

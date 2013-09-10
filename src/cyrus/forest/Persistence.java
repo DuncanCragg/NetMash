@@ -54,7 +54,10 @@ public class Persistence implements FileUser {
         this.db        = Kernel.config.stringPathN("persist:db");
         this.dbfile  = new File(directory+db);
         this.preload=Kernel.config.listPathN("persist:preload");
-        this.topclass=preload!=null && preload.size() >0 && !isUID(preload.get(0))? (String)preload.get(0): null;
+        this.topclass=preload!=null &&
+                      preload.size() >0 &&
+                      preload.get(0) instanceof String &&
+                      !isUID(preload.get(0))? (String)preload.get(0): null;
 
         if(topclass!=null){
             String  toprec = "^\\s*Class:\\s*"+topclass+"$";

@@ -518,10 +518,7 @@ public class WebObject {
 
     /** Get list at path, even if it's not a list (wrap non-lists). */
     public LinkedList contentAsList(String path){
-        Object o=contentObject(path);
-        if(o==null) return null;
-        if(o instanceof LinkedList) return (LinkedList)o;
-        return list(o);
+        return findListIn(contentObject(path));
     }
 
     /** Get clone copy of list at path. */
