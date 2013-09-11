@@ -73,6 +73,25 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
        int var11;
        if(!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) {
           var11 = par2World.getBlockId(par4, par5, par6);
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Minecraft.java src/minecraft/net/minecraft/src/Minecraft.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Minecraft.java	2013-08-29 08:59:17.005427030 +0100
++++ src/minecraft/net/minecraft/src/Minecraft.java	2013-09-11 10:33:14.719942996 +0100
+@@ -1102,6 +1102,15 @@
+             }
+ 
+             if(Keyboard.getEventKeyState()) {
++               if(Keyboard.getEventKey() == Keyboard.KEY_F){
++                  if(this.gameSettings.pauseOnLostFocus == true){
++                     this.gameSettings.pauseOnLostFocus = false;
++                     this.setIngameNotInFocus();
++                  }else {
++                     this.gameSettings.pauseOnLostFocus = true;
++                     this.setIngameFocus();
++                  }
++               } else
+                if(Keyboard.getEventKey() == 87) {
+                   this.toggleFullscreen();
+                } else {
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/World.java src/minecraft/net/minecraft/src/World.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/World.java	2013-08-29 08:59:17.129427028 +0100
 +++ src/minecraft/net/minecraft/src/World.java	2013-09-06 19:14:23.923644574 +0100
