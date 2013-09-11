@@ -2,16 +2,16 @@
 Cube and Structure propagation
 
  - { UID: uid-f862-56af-d46d-c440
-*    Class: cyrus.types.PresenceTracker
-*    is: editable 3d minecraft place
-*    title: "Region 1"
+*    Class: cyrus.types.PresenceTracker       -- implement PresenceTracker
+*    is: editable 3d minecraft place          -- place or region not world
+*    title: "Region 1"                        -- title not name
      position: -500 0 0
      size: 1000 1000
      seed: same-seed
-*    sub-items: { position:  -5 0 0 object: uid-cube-1 }
+*    sub-items: { position:  -5 0 0 object: uid-cube-1 }       -- players, cubes, entities, neighbours
                 { position: -99 0 0 object: uid-structure-1 }
                 { position: 500 0 0 object: uid-region-2 }
-*    players: ??
+*    players: ??                                               -- move
    }
  - { UID: uid-cube-1
      is: 3d minecraft cube structure
@@ -21,9 +21,8 @@ Cube and Structure propagation
      trail: true
    }
 
- - render sub-item link to other region if visible
-    - pull in structures and slice if they overrun
 
+ - slice if they overrun
  - in another's region, need a structure to override your hacking (like they do currently)
     - so region sends scanning-for-blocks to their region/place/ex-world
     - scanning-for-blocks always fitted to nearest cube(s)
@@ -32,6 +31,7 @@ Cube and Structure propagation
 
 Bits
 
+ - handling regions coming up and going down
  - doc/local/contentList.txt search for potential single-element lists
  - oops, scanning=structure but does getSubItemsAround: sub-items of entities; it's more like a little region, with sub-items
  - coal 173, etc new blocks
@@ -40,7 +40,7 @@ Bits
  - player speed for zombie rule, and fix for non-one zombie cases (0, 2+); not speed: => #
  - player position, target-position, holding, spawn-position, alive, hitting, placing, touching (doc/local/player-properties.db)
  - spawn position? saved in client? getBedLocation or what?
- - placing clashes
+ - 'placing' clashes
  - use bin not lib?
  - evaluate() or evaluatable()? see trace doc/local/contentAPIeval.txt
  - no x/z speed sent over wire?

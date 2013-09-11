@@ -1,6 +1,6 @@
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/server/MinecraftServer.java src/minecraft/net/minecraft/server/MinecraftServer.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/server/MinecraftServer.java	2013-08-29 08:59:17.257427024 +0100
-+++ src/minecraft/net/minecraft/server/MinecraftServer.java	2013-08-29 09:21:07.245391790 +0100
++++ src/minecraft/net/minecraft/server/MinecraftServer.java	2013-08-29 10:19:27.964373987 +0100
 @@ -51,6 +51,7 @@
  import net.minecraft.src.WorldServerMulti;
  import net.minecraft.src.WorldSettings;
@@ -73,6 +73,17 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
        int var11;
        if(!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) {
           var11 = par2World.getBlockId(par4, par5, par6);
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/World.java src/minecraft/net/minecraft/src/World.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/World.java	2013-08-29 08:59:17.129427028 +0100
++++ src/minecraft/net/minecraft/src/World.java	2013-09-06 19:14:23.923644574 +0100
+@@ -370,6 +370,7 @@
+ 
+    public void notifyBlockChange(int par1, int par2, int par3, int par4) {
+       this.notifyBlocksOfNeighborChange(par1, par2, par3, par4);
++      MinecraftWorld.onBlockUpdate(this,par1,par2,par3,par4);
+    }
+ 
+    public void markBlocksDirtyVertical(int par1, int par2, int par3, int par4) {
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/server/MinecraftServer.java src/minecraft_server/net/minecraft/server/MinecraftServer.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-29 09:09:12.217411022 +0100
 +++ src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-29 09:15:53.285400234 +0100
@@ -148,3 +159,14 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
        int var11;
        if(!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) {
           var11 = par2World.getBlockId(par4, par5, par6);
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/World.java src/minecraft_server/net/minecraft/src/World.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/World.java	2013-08-29 09:00:15.285425464 +0100
++++ src/minecraft_server/net/minecraft/src/World.java	2013-09-08 17:13:24.362146082 +0100
+@@ -342,6 +342,7 @@
+ 
+    public void notifyBlockChange(int par1, int par2, int par3, int par4) {
+       this.notifyBlocksOfNeighborChange(par1, par2, par3, par4);
++      MinecraftWorld.onBlockUpdate(this,par1,par2,par3,par4);
+    }
+ 
+    public void markBlocksDirtyVertical(int par1, int par2, int par3, int par4) {
