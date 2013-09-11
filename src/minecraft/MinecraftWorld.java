@@ -45,16 +45,22 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     public void evaluate(){
         if(contentIsOrListContains("is","world"))     hasType="world";
         if(contentIsOrListContains("is","structure")) hasType="structure";
-        if("world".equals(hasType)){
-            pullInNeighbours();
-            evaluateWorld();
-        }
-        else
+        if("world"    .equals(hasType)) evaluateWorld(); else
         if("structure".equals(hasType)) evaluateStructure();
         if(!running){ running=true;
             MinecraftCyrus.self.registerTicks(this);
             if("world".equals(hasType)) MinecraftCyrus.self.registerWorld(content("name"),this);
         }
+    }
+
+    private void evaluateWorld(){
+        pullInNeighbours();
+        addScanAndPlace();
+        timeAndWeatherEvaluate();
+    }
+
+    private void evaluateStructure(){
+        super.evaluate();
     }
 
     void pullInNeighbours(){
@@ -73,36 +79,6 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 contentAsList(q);
             }
         }
-    }
-
-    Boolean isRaining=null;
-    Boolean isThundering=null;
-    Boolean isDaytime=null;
-    Number  timeOfDay=null;
-
-    private void evaluateWorld(){
-        addScanAndPlace();
-
-        Boolean ra=contentBoolean("raining");
-        Boolean th=contentBoolean("thundering");
-        Boolean da=contentBoolean("daytime");
-        Number  ti=contentNumber( "time-of-day");
-
-        super.evaluate();
-
-        Boolean ra2=contentBoolean("raining");
-        Boolean th2=contentBoolean("thundering");
-        Boolean da2=contentBoolean("daytime");
-        Number  ti2=contentNumber( "time-of-day");
-
-        isRaining   =(ra2!=null && !ra2.equals(ra))? ra2: null;
-        isThundering=(th2!=null && !th2.equals(th))? th2: null;
-        isDaytime   =(da2!=null && !da2.equals(da))? da2: null;
-        timeOfDay   =(ti2!=null && !ti2.equals(ti))? ti2: null;
-    }
-
-    private void evaluateStructure(){
-        super.evaluate();
     }
 
     private void addScanAndPlace(){
@@ -126,6 +102,31 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     private boolean structureNotOurCube(){
         return   contentIsOrListContains("Alerted:is", "structure") &&
                !(contentIsOrListContains("Alerted:is", "cube") && contentIsThis("Alerted:world"));
+    }
+
+    Boolean isRaining=null;
+    Boolean isThundering=null;
+    Boolean isDaytime=null;
+    Number  timeOfDay=null;
+
+    private void timeAndWeatherEvaluate(){
+
+        Boolean ra=contentBoolean("raining");
+        Boolean th=contentBoolean("thundering");
+        Boolean da=contentBoolean("daytime");
+        Number  ti=contentNumber( "time-of-day");
+
+        super.evaluate();
+
+        Boolean ra2=contentBoolean("raining");
+        Boolean th2=contentBoolean("thundering");
+        Boolean da2=contentBoolean("daytime");
+        Number  ti2=contentNumber( "time-of-day");
+
+        isRaining   =(ra2!=null && !ra2.equals(ra))? ra2: null;
+        isThundering=(th2!=null && !th2.equals(th))? th2: null;
+        isDaytime   =(da2!=null && !da2.equals(da))? da2: null;
+        timeOfDay   =(ti2!=null && !ti2.equals(ti))? ti2: null;
     }
 
     LinkedList scanners=new LinkedList();

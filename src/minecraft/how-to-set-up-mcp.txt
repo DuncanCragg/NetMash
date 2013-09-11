@@ -12,10 +12,9 @@ Get and run Minecraft
 
  - put into jars dir: https://s3.amazonaws.com/Minecraft.Download/versions/1.6.2/minecraft_server.1.6.2.jar
 
-Decompile, Recompile
+Decompile
 
- - ./decompile.sh
- - ./recompile.sh
+ - ./decompile.sh --nocomments --noreformat --rg
 
 Then put in links to Cyrus - make a script like this, with '.../cyrus' adjusted to absolute path:
 

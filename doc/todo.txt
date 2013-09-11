@@ -31,6 +31,9 @@ Cube and Structure propagation
 
 Bits
 
+ - Cyrus makefile make install can curl MCP into subdir then grab minecraft_server jar, decompile, add links, apply patch
+ - what if patch changed or need a new link?
+
  - handling regions coming up and going down
  - doc/local/contentList.txt search for potential single-element lists
  - oops, scanning=structure but does getSubItemsAround: sub-items of entities; it's more like a little region, with sub-items

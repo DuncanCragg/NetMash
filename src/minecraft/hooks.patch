@@ -75,13 +75,18 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
           var11 = par2World.getBlockId(par4, par5, par6);
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Minecraft.java src/minecraft/net/minecraft/src/Minecraft.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Minecraft.java	2013-08-29 08:59:17.005427030 +0100
-+++ src/minecraft/net/minecraft/src/Minecraft.java	2013-09-11 10:33:14.719942996 +0100
-@@ -1102,6 +1102,15 @@
++++ src/minecraft/net/minecraft/src/Minecraft.java	2013-09-11 17:13:17.648646648 +0100
+@@ -1102,6 +1102,20 @@
              }
  
              if(Keyboard.getEventKeyState()) {
++               if(Keyboard.getEventKey() == 56){
++                  this.gameSettings.pauseOnLostFocus = true;
++                  if(this.inGameHasFocus) this.setIngameNotInFocus();
++                  else                    this.setIngameFocus();
++               } else
 +               if(Keyboard.getEventKey() == Keyboard.KEY_F){
-+                  if(this.gameSettings.pauseOnLostFocus == true){
++                  if(this.inGameHasFocus){
 +                     this.gameSettings.pauseOnLostFocus = false;
 +                     this.setIngameNotInFocus();
 +                  }else {
