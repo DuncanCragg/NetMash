@@ -100,7 +100,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                     addForPushing(alerted, contentHash("Alerted:pushing"));
                     addForPlacing(alerted, contentHash("Alerted:placing"));
                     if(structureNotOurCube()) addForPlacing(alerted, contentHash("Alerted:#")); // add to sub-items
-                    if(playerNotOurs())       addForEnState(alerted, contentHash("Alerted:#"));
+                    if(entityNotOurs())       addForEnState(alerted, contentHash("Alerted:#"));
                 }
             }
             contentTemp("Alerted", null);
@@ -112,8 +112,8 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                !(contentIsOrListContains("Alerted:is", "cube") && contentIsThis("Alerted:world"));
     }
 
-    private boolean playerNotOurs(){
-        return   contentIsOrListContains("Alerted:is", "player") && !contentIsThis("Alerted:world");
+    private boolean entityNotOurs(){
+        return   contentIsOrListContains("Alerted:is", "entity") && !contentIsThis("Alerted:world");
     }
 
     Boolean isRaining=null;
@@ -215,7 +215,9 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 LinkedHashMap enstate  =(LinkedHashMap)uidenstate.get(1);
                 enstate=(LinkedHashMap)enstate.clone();
 
-                String name=getStringFromHash(enstate, "name", "Bob the Builder");
+                String type=getTypeFromIs(enstate);
+                if(type==null) continue;
+                String name=getStringFromHash(enstate, "name", null);
                 LinkedList position=getListFromHash(enstate, "position");
                 if(position.size()!=3) continue;
                 Integer psx=getIntFromList(position,0);
@@ -225,7 +227,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
                 Entity e=entities.get(entityuid);
                 if(e==null || e.isDead){
-                    e=doSpawnEntity(name,psx,psy,psz);
+                    e=doSpawnEntity(type,name,psx,psy,psz);
                     if(e==null) continue;
                     String ename=entityName(e);
                     entityUID.put(ename,entityuid);
@@ -246,6 +248,18 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 }};
             }
         }
+    }
+
+    private String getTypeFromIs(LinkedHashMap hm){
+        Object o=hm.get("is");
+        if(!(o instanceof LinkedList)) return null;
+        LinkedList is=(LinkedList)o;
+        for(Object i: is){
+            if(!(i instanceof String)) return null; String s=(String)i;
+            if(s.equals("player")) return "player";
+            if(s.equals("cow"))    return "cow";
+        }
+        return null;
     }
 
     static public void onBlockUpdate(World world, int x, int y, int z, int previousId){
@@ -467,7 +481,13 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return e.getEntityName()+"-"+e.entityId;
     }
 
-    private Entity doSpawnEntity(String name, Integer psx, Integer psy, Integer psz){
+    private Entity doSpawnEntity(String type, String name, Integer psx, Integer psy, Integer psz){
+        if(type.equals("player")) return doSpawnPlayer(name,psx,psy,psz);
+        if(type.equals("cow"))    return doSpawnCow(psx,psy,psz);
+        return null;
+    }
+
+    private Entity doSpawnPlayer(String name, Integer psx, Integer psy, Integer psz){
         MinecraftServer server=MinecraftServer.getServer();
         ServerConfigurationManager scm=server.getConfigurationManager();
         EntityPlayerMP person = scm.createPlayerForUser(name);
@@ -478,6 +498,15 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         person.setLocationAndAngles(psx, psy, psz, 0, 0);
         worldserver.spawnEntityInWorld(person);
         return person;
+    }
+
+    private Entity doSpawnCow(Integer psx, Integer psy, Integer psz){
+        MinecraftServer server=MinecraftServer.getServer();
+        WorldServer worldserver = server.worldServerForDimension(0);
+        EntityCow cow=new EntityCow(worldserver);
+        cow.setLocationAndAngles(psx, psy, psz, 0, 0);
+        worldserver.spawnEntityInWorld(cow);
+        return cow;
     }
 
     private void doUpdateEntity(Entity e, Integer psx, Integer psy, Integer psz){
