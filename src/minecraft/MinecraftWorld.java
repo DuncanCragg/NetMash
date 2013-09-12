@@ -93,6 +93,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                     addForPushing(alerted, contentHash("Alerted:pushing"));
                     addForPlacing(alerted, contentHash("Alerted:placing"));
                     if(structureNotOurCube()) addForPlacing(alerted, contentHash("Alerted:#")); // add to sub-items
+                    if(playerNotOurs())       addForEnState(alerted, contentHash("Alerted:#"));
                 }
             }
             contentTemp("Alerted", null);
@@ -102,6 +103,10 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     private boolean structureNotOurCube(){
         return   contentIsOrListContains("Alerted:is", "structure") &&
                !(contentIsOrListContains("Alerted:is", "cube") && contentIsThis("Alerted:world"));
+    }
+
+    private boolean playerNotOurs(){
+        return   contentIsOrListContains("Alerted:is", "player") && !contentIsThis("Alerted:world");
     }
 
     Boolean isRaining=null;
@@ -139,13 +144,16 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         if(isplayer) contentListAdd("player-views", viewuid);
     }
 
-    ConcurrentLinkedQueue<LinkedList> pushingQ =new ConcurrentLinkedQueue<LinkedList>();
-    ConcurrentLinkedQueue<LinkedList> placingQ =new ConcurrentLinkedQueue<LinkedList>();
+    ConcurrentLinkedQueue<LinkedList> pushingQ=new ConcurrentLinkedQueue<LinkedList>();
+    ConcurrentLinkedQueue<LinkedList> placingQ=new ConcurrentLinkedQueue<LinkedList>();
+    ConcurrentLinkedQueue<LinkedList> enstateQ=new ConcurrentLinkedQueue<LinkedList>();
 
-    private void addForPushing(String pusheruid, LinkedHashMap pushing){ if(pushing !=null) pushingQ.add(list(pusheruid,pushing)); }
-    private void addForPlacing(String placeruid, LinkedHashMap placing){ if(placing !=null) placingQ.add(list(placeruid,placing)); }
+    private void addForPushing(String pusheruid, LinkedHashMap pushing){ if(pushing!=null) pushingQ.add(list(pusheruid, pushing)); }
+    private void addForPlacing(String placeruid, LinkedHashMap placing){ if(placing!=null) placingQ.add(list(placeruid, placing)); }
+    private void addForEnState(String entityuid, LinkedHashMap enstate){ if(enstate!=null) enstateQ.add(list(entityuid, enstate)); }
 
     LinkedHashMap<String,LinkedHashMap> places = new LinkedHashMap<String,LinkedHashMap>();
+    LinkedHashMap<String,Entity>        entities = new LinkedHashMap<String,Entity>();
 
     // ------------------------------------
 
@@ -192,6 +200,33 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 }
                 places.put(placeruid,placing);
                 doPlacing(placing, false);
+            }
+            while(true){
+                LinkedList uidenstate=enstateQ.poll();
+                if(uidenstate==null) break;
+                String        entityuid=(String)       uidenstate.get(0);
+                LinkedHashMap enstate  =(LinkedHashMap)uidenstate.get(1);
+                enstate=(LinkedHashMap)enstate.clone();
+
+                String name=getStringFromHash(enstate, "name", "Bob the Builder");
+                LinkedList position=getListFromHash(enstate, "position");
+                if(position.size()!=3) continue;
+                Integer psx=getIntFromList(position,0);
+                Integer psy=getIntFromList(position,1);
+                Integer psz=getIntFromList(position,2);
+                if(psx==null || psy==null || psz==null) continue;
+
+                Entity e=entities.get(entityuid);
+                if(e==null || e.isDead){
+                    e=doSpawnEntity(name,psx,psy,psz);
+                    if(e==null) continue;
+                    String ename=entityName(e);
+                    entityUID.put(ename,entityuid);
+                    entities.put(entityuid,e);
+                }
+                else {
+                    doUpdateEntity(e,psx,psy,psz);
+                }
             }
         }
         else
@@ -390,6 +425,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     private void setWorld(World world){
         this.world=world;
         worldMap.put(world,this);
+        entities.clear();
     }
 
     static public MinecraftWorld getWorldFor(World w){
@@ -421,6 +457,23 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
     static public String entityName(Entity e){
         return e.getEntityName()+"-"+e.entityId;
+    }
+
+    private Entity doSpawnEntity(String name, Integer psx, Integer psy, Integer psz){
+        MinecraftServer server=MinecraftServer.getServer();
+        ServerConfigurationManager scm=server.getConfigurationManager();
+        EntityPlayerMP person = scm.createPlayerForUser(name);
+        if(person==null){ System.out.println("Can't create player in createPlayerForUser "+name); return null; }
+        WorldServer worldserver = server.worldServerForDimension(person.dimension);
+        person.setWorld(worldserver);
+        person.theItemInWorldManager.setWorld((WorldServer)person.worldObj);
+        person.setLocationAndAngles(psx, psy, psz, 0, 0);
+        worldserver.spawnEntityInWorld(person);
+        return person;
+    }
+
+    private void doUpdateEntity(Entity e, Integer psx, Integer psy, Integer psz){
+        e.setPosition(psx,psy,psz);
     }
 
     private void doPushing(String pusheruid, LinkedHashMap pushing){
