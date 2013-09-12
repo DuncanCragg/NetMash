@@ -78,6 +78,13 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 String q=String.format("sub-items:%d:item:sub-items:%d:item:is",i,j);
                 contentAsList(q);
             }
+            s=String.format("sub-items:%d:item:players",i);
+            LinkedList players=contentAsList(s);
+            if(players==null) continue;
+            for(int j=0; j< players.size(); j++){
+                String q=String.format("sub-items:%d:item:players:%d:is",i,j);
+                contentAsList(q);
+            }
         }
     }
 
@@ -423,6 +430,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     static LinkedHashMap<World,MinecraftWorld>   worldMap =new LinkedHashMap<World,MinecraftWorld>();
 
     private void setWorld(World world){
+        if(this.world==world) return;
         this.world=world;
         worldMap.put(world,this);
         entities.clear();
