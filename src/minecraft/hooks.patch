@@ -27,6 +27,19 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/se
        this.theProfiler.endStartSection("tickables");
  
        for(var1 = 0; var1 < this.tickables.size(); ++var1) {
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Chunk.java src/minecraft/net/minecraft/src/Chunk.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Chunk.java	2013-08-29 08:59:17.037427029 +0100
++++ src/minecraft/net/minecraft/src/Chunk.java	2013-09-12 17:43:56.627110859 +0100
+@@ -513,7 +513,8 @@
+       int var3 = MathHelper.floor_double(par1Entity.posZ / 16.0D);
+       if(var2 != this.xPosition || var3 != this.zPosition) {
+          this.worldObj.getWorldLogAgent().logSevere("Wrong location! " + par1Entity);
+-         Thread.dumpStack();
++         par1Entity.kill();
++         return;
+       }
+ 
+       int var4 = MathHelper.floor_double(par1Entity.posY / 16.0D);
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayer.java src/minecraft/net/minecraft/src/EntityPlayer.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayer.java	2013-08-29 08:59:17.189427025 +0100
 +++ src/minecraft/net/minecraft/src/EntityPlayer.java	2013-08-29 09:19:36.033394243 +0100
@@ -50,6 +63,30 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
        if(par1Entity.canAttackWithItem()) {
           if(!par1Entity.func_85031_j(this)) {
              float var2 = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayerMP.java src/minecraft/net/minecraft/src/EntityPlayerMP.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayerMP.java	2013-08-29 08:59:17.169427027 +0100
++++ src/minecraft/net/minecraft/src/EntityPlayerMP.java	2013-09-11 21:21:15.896715564 +0100
+@@ -505,7 +505,7 @@
+    public void addStat(StatBase par1StatBase, int par2) {
+       if(par1StatBase != null) {
+          if(!par1StatBase.isIndependent) {
+-            this.playerNetServerHandler.sendPacketToPlayer(new Packet200Statistic(par1StatBase.statId, par2));
++            if(this.playerNetServerHandler!=null) this.playerNetServerHandler.sendPacketToPlayer(new Packet200Statistic(par1StatBase.statId, par2));
+          }
+       }
+    }
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityTrackerEntry.java src/minecraft/net/minecraft/src/EntityTrackerEntry.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityTrackerEntry.java	2013-08-29 08:59:17.209427026 +0100
++++ src/minecraft/net/minecraft/src/EntityTrackerEntry.java	2013-09-11 21:21:15.896715564 +0100
+@@ -213,7 +213,7 @@
+    public void sendPacketToAllAssociatedPlayers(Packet par1Packet) {
+       this.sendPacketToAllTrackingPlayers(par1Packet);
+       if(this.myEntity instanceof EntityPlayerMP) {
+-         ((EntityPlayerMP)this.myEntity).playerNetServerHandler.sendPacketToPlayer(par1Packet);
++         if(((EntityPlayerMP)this.myEntity).playerNetServerHandler!=null) ((EntityPlayerMP)this.myEntity).playerNetServerHandler.sendPacketToPlayer(par1Packet);
+       }
+    }
+ 
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/ItemInWorldManager.java src/minecraft/net/minecraft/src/ItemInWorldManager.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/ItemInWorldManager.java	2013-08-29 08:59:17.049427029 +0100
 +++ src/minecraft/net/minecraft/src/ItemInWorldManager.java	2013-08-29 09:18:31.905395971 +0100
@@ -108,6 +145,18 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
     }
  
     public void markBlocksDirtyVertical(int par1, int par2, int par3, int par4) {
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/WorldServer.java src/minecraft/net/minecraft/src/WorldServer.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/WorldServer.java	2013-08-29 08:59:17.109427027 +0100
++++ src/minecraft/net/minecraft/src/WorldServer.java	2013-09-12 16:48:06.809270406 +0100
+@@ -630,7 +630,7 @@
+       while(var12.hasNext()) {
+          EntityPlayer var13 = (EntityPlayer)var12.next();
+          if(var13.getDistanceSq(par2, par4, par6) < 4096.0D) {
+-            ((EntityPlayerMP)var13).playerNetServerHandler.sendPacketToPlayer(new Packet60Explosion(par2, par4, par6, par8, var11.affectedBlockPositions, (Vec3)var11.func_77277_b().get(var13)));
++            if(((EntityPlayerMP)var13).playerNetServerHandler!=null)((EntityPlayerMP)var13).playerNetServerHandler.sendPacketToPlayer(new Packet60Explosion(par2, par4, par6, par8, var11.affectedBlockPositions, (Vec3)var11.func_77277_b().get(var13)));
+          }
+       }
+ 
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/server/MinecraftServer.java src/minecraft_server/net/minecraft/server/MinecraftServer.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-29 09:09:12.217411022 +0100
 +++ src/minecraft_server/net/minecraft/server/MinecraftServer.java	2013-08-29 09:15:53.285400234 +0100
@@ -137,6 +186,19 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
        this.theProfiler.endStartSection("tickables");
  
        for(var1 = 0; var1 < this.playersOnline.size(); ++var1) {
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/Chunk.java src/minecraft_server/net/minecraft/src/Chunk.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/Chunk.java	2013-08-29 09:00:15.217425466 +0100
++++ src/minecraft_server/net/minecraft/src/Chunk.java	2013-09-12 17:44:06.103110439 +0100
+@@ -483,7 +483,8 @@
+       int var3 = MathHelper.floor_double(par1Entity.posZ / 16.0D);
+       if(var2 != this.xPosition || var3 != this.zPosition) {
+          this.worldObj.getWorldLogAgent().logSevere("Wrong location! " + par1Entity);
+-         Thread.dumpStack();
++         par1Entity.kill();
++         return;
+       }
+ 
+       int var4 = MathHelper.floor_double(par1Entity.posY / 16.0D);
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayer.java src/minecraft_server/net/minecraft/src/EntityPlayer.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-29 09:09:13.365410992 +0100
 +++ src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-29 09:15:53.285400234 +0100
@@ -160,6 +222,30 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
        if(par1Entity.canAttackWithItem()) {
           if(!par1Entity.func_85031_j(this)) {
              float var2 = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayerMP.java src/minecraft_server/net/minecraft/src/EntityPlayerMP.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayerMP.java	2013-08-29 09:00:15.313425462 +0100
++++ src/minecraft_server/net/minecraft/src/EntityPlayerMP.java	2013-09-11 21:21:15.896715564 +0100
+@@ -505,7 +505,7 @@
+    public void addStat(StatBase par1StatBase, int par2) {
+       if(par1StatBase != null) {
+          if(!par1StatBase.isIndependent) {
+-            this.playerNetServerHandler.sendPacket(new Packet200Statistic(par1StatBase.statId, par2));
++            if(this.playerNetServerHandler!=null) this.playerNetServerHandler.sendPacket(new Packet200Statistic(par1StatBase.statId, par2));
+          }
+       }
+    }
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2013-08-29 09:00:15.337425461 +0100
++++ src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2013-09-11 21:21:15.896715564 +0100
+@@ -213,7 +213,7 @@
+    public void sendPacketToTrackedPlayersAndTrackedEntity(Packet par1Packet) {
+       this.sendPacketToTrackedPlayers(par1Packet);
+       if(this.trackedEntity instanceof EntityPlayerMP) {
+-         ((EntityPlayerMP)this.trackedEntity).playerNetServerHandler.sendPacket(par1Packet);
++         if(((EntityPlayerMP)this.trackedEntity).playerNetServerHandler!=null) ((EntityPlayerMP)this.trackedEntity).playerNetServerHandler.sendPacket(par1Packet);
+       }
+    }
+ 
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/ItemInWorldManager.java src/minecraft_server/net/minecraft/src/ItemInWorldManager.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-29 09:09:13.973410972 +0100
 +++ src/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2013-08-29 09:18:39.509395763 +0100
@@ -194,3 +280,15 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
     }
  
     public void markBlocksDirtyVertical(int par1, int par2, int par3, int par4) {
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/WorldServer.java src/minecraft_server/net/minecraft/src/WorldServer.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/WorldServer.java	2013-08-29 09:00:15.269425463 +0100
++++ src/minecraft_server/net/minecraft/src/WorldServer.java	2013-09-12 16:48:51.269268424 +0100
+@@ -608,7 +608,7 @@
+       while(var12.hasNext()) {
+          EntityPlayer var13 = (EntityPlayer)var12.next();
+          if(var13.getDistanceSq(par2, par4, par6) < 4096.0D) {
+-            ((EntityPlayerMP)var13).playerNetServerHandler.sendPacket(new Packet60Explosion(par2, par4, par6, par8, var11.affectedBlockPositions, (Vec3)var11.func_77277_b().get(var13)));
++            if(((EntityPlayerMP)var13).playerNetServerHandler!=null)((EntityPlayerMP)var13).playerNetServerHandler.sendPacket(new Packet60Explosion(par2, par4, par6, par8, var11.affectedBlockPositions, (Vec3)var11.func_77277_b().get(var13)));
+          }
+       }
+ 
