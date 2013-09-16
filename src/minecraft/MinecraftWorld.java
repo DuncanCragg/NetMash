@@ -250,14 +250,20 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         }
     }
 
+    static LinkedList skipIs=list("editable","3d","minecraft","entity");
+
     private String getTypeFromIs(LinkedHashMap hm){
         Object o=hm.get("is");
         if(!(o instanceof LinkedList)) return null;
         LinkedList is=(LinkedList)o;
         for(Object i: is){
-            if(!(i instanceof String)) return null; String s=(String)i;
-            if(s.equals("player")) return "player";
-            if(s.equals("cow"))    return "cow";
+            if(!(i instanceof String)) return null;
+            String s=(String)i;
+            if(!skipIs.contains(s)){
+                if(s.equals("xp-orb")) return "XPOrb";
+                if(s.equals("minecart-tnt")) return "MinecartTNT";
+                return hyphens2caps(s);
+            }
         }
         return null;
     }
@@ -482,16 +488,15 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     }
 
     private Entity doSpawnEntity(String type, String name, Integer psx, Integer psy, Integer psz){
-        if(type.equals("player")) return doSpawnPlayer(name,psx,psy,psz);
-        if(type.equals("cow"))    return doSpawnCow(psx,psy,psz);
-        return null;
+        if(type.equals("Player")) return doSpawnPlayer(name,psx,psy,psz);
+        else                      return doSpawnEntityByName(type,name,psx,psy,psz);
     }
 
     private Entity doSpawnPlayer(String name, Integer psx, Integer psy, Integer psz){
         MinecraftServer server=MinecraftServer.getServer();
         ServerConfigurationManager scm=server.getConfigurationManager();
         EntityPlayerMP person = scm.createPlayerForUser(name);
-        if(person==null){ System.out.println("Can't create player in createPlayerForUser "+name); return null; }
+        if(person==null){ log("Can't create player in createPlayerForUser "+name); return null; }
         WorldServer worldserver = server.worldServerForDimension(person.dimension);
         person.setWorld(worldserver);
         person.theItemInWorldManager.setWorld((WorldServer)person.worldObj);
@@ -500,13 +505,15 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return person;
     }
 
-    private Entity doSpawnCow(Integer psx, Integer psy, Integer psz){
+    private Entity doSpawnEntityByName(String type, String name, Integer psx, Integer psy, Integer psz){
         MinecraftServer server=MinecraftServer.getServer();
         WorldServer worldserver = server.worldServerForDimension(0);
-        EntityCow cow=new EntityCow(worldserver);
-        cow.setLocationAndAngles(psx, psy, psz, 0, 0);
-        worldserver.spawnEntityInWorld(cow);
-        return cow;
+        Entity e=EntityList.createEntityByName(type,worldserver);
+        if(e==null){ log("Can't create entity in createEntityByName "+type); return null; }
+        e.setLocationAndAngles(psx, psy, psz, 0, 0);
+        worldserver.spawnEntityInWorld(e);
+        e.isShellEntity=true;
+        return e;
     }
 
     private void doUpdateEntity(Entity e, Integer psx, Integer psy, Integer psz){

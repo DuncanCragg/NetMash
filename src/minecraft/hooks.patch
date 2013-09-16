@@ -40,6 +40,17 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
        }
  
        int var4 = MathHelper.floor_double(par1Entity.posY / 16.0D);
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Entity.java src/minecraft/net/minecraft/src/Entity.java
+--- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Entity.java	2013-08-29 08:59:17.013427030 +0100
++++ src/minecraft/net/minecraft/src/Entity.java	2013-09-16 09:08:56.637721988 +0100
+@@ -79,6 +79,7 @@
+    private boolean invulnerable;
+    private UUID entityUniqueID;
+    public EnumEntitySize myEntitySize;
++   public boolean isShellEntity=false;
+ 
+    public Entity(World par1World) {
+       this.entityId = nextEntityID++;
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayer.java src/minecraft/net/minecraft/src/EntityPlayer.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayer.java	2013-08-29 08:59:17.189427025 +0100
 +++ src/minecraft/net/minecraft/src/EntityPlayer.java	2013-08-29 09:19:36.033394243 +0100
@@ -135,7 +146,7 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
                 } else {
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/World.java src/minecraft/net/minecraft/src/World.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/World.java	2013-08-29 08:59:17.129427028 +0100
-+++ src/minecraft/net/minecraft/src/World.java	2013-09-06 19:14:23.923644574 +0100
++++ src/minecraft/net/minecraft/src/World.java	2013-09-16 09:17:57.565697870 +0100
 @@ -370,6 +370,7 @@
  
     public void notifyBlockChange(int par1, int par2, int par3, int par4) {
@@ -144,6 +155,30 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
     }
  
     public void markBlocksDirtyVertical(int par1, int par2, int par3, int par4) {
+@@ -1224,7 +1225,7 @@
+ 
+          try {
+             ++var2.ticksExisted;
+-            var2.onUpdate();
++            if(!var2.isShellEntity) var2.onUpdate();
+          } catch (Throwable var8) {
+             var4 = CrashReport.makeCrashReport(var8, "Ticking entity");
+             var5 = var4.makeCategory("Entity being ticked");
+@@ -1387,12 +1388,14 @@
+          par1Entity.prevRotationPitch = par1Entity.rotationPitch;
+          if(par2 && par1Entity.addedToChunk) {
+             ++par1Entity.ticksExisted;
++            if(!par1Entity.isShellEntity) {
+             if(par1Entity.ridingEntity != null) {
+                par1Entity.updateRidden();
+             } else {
+                par1Entity.onUpdate();
+             }
+          }
++         }
+ 
+          this.theProfiler.startSection("chunkCheck");
+          if(Double.isNaN(par1Entity.posX) || Double.isInfinite(par1Entity.posX)) {
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/WorldServer.java src/minecraft/net/minecraft/src/WorldServer.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/WorldServer.java	2013-08-29 08:59:17.109427027 +0100
 +++ src/minecraft/net/minecraft/src/WorldServer.java	2013-09-12 16:48:06.809270406 +0100
@@ -198,6 +233,17 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
        }
  
        int var4 = MathHelper.floor_double(par1Entity.posY / 16.0D);
+diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/Entity.java src/minecraft_server/net/minecraft/src/Entity.java
+--- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/Entity.java	2013-08-29 09:00:15.201425465 +0100
++++ src/minecraft_server/net/minecraft/src/Entity.java	2013-09-16 09:08:43.993722555 +0100
+@@ -76,6 +76,7 @@
+    private boolean invulnerable;
+    private UUID entityUniqueID;
+    public EnumEntitySize myEntitySize;
++   public boolean isShellEntity=false;
+ 
+    public Entity(World par1World) {
+       this.entityId = nextEntityID++;
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayer.java src/minecraft_server/net/minecraft/src/EntityPlayer.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-29 09:09:13.365410992 +0100
 +++ src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-29 09:15:53.285400234 +0100
@@ -270,7 +316,7 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
           var11 = par2World.getBlockId(par4, par5, par6);
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/World.java src/minecraft_server/net/minecraft/src/World.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/World.java	2013-08-29 09:00:15.285425464 +0100
-+++ src/minecraft_server/net/minecraft/src/World.java	2013-09-08 17:13:24.362146082 +0100
++++ src/minecraft_server/net/minecraft/src/World.java	2013-09-16 09:18:16.113697046 +0100
 @@ -342,6 +342,7 @@
  
     public void notifyBlockChange(int par1, int par2, int par3, int par4) {
@@ -279,6 +325,30 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
     }
  
     public void markBlocksDirtyVertical(int par1, int par2, int par3, int par4) {
+@@ -988,7 +989,7 @@
+ 
+          try {
+             ++var2.ticksExisted;
+-            var2.onUpdate();
++            if(!var2.isShellEntity) var2.onUpdate();
+          } catch (Throwable var8) {
+             var4 = CrashReport.makeCrashReport(var8, "Ticking entity");
+             var5 = var4.makeCategory("Entity being ticked");
+@@ -1151,12 +1152,14 @@
+          par1Entity.prevRotationPitch = par1Entity.rotationPitch;
+          if(par2 && par1Entity.addedToChunk) {
+             ++par1Entity.ticksExisted;
++            if(!par1Entity.isShellEntity) {
+             if(par1Entity.ridingEntity != null) {
+                par1Entity.updateRidden();
+             } else {
+                par1Entity.onUpdate();
+             }
+          }
++         }
+ 
+          this.theProfiler.startSection("chunkCheck");
+          if(Double.isNaN(par1Entity.posX) || Double.isInfinite(par1Entity.posX)) {
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/WorldServer.java src/minecraft_server/net/minecraft/src/WorldServer.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/WorldServer.java	2013-08-29 09:00:15.269425463 +0100
 +++ src/minecraft_server/net/minecraft/src/WorldServer.java	2013-09-12 16:48:51.269268424 +0100
