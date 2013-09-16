@@ -471,6 +471,18 @@ public class Utils{
                 .replaceAll(" ","-").toLowerCase();
     }
 
+    static public String hyphens2caps(String s){
+        String r="";
+        if(s==null || s.equals("")) return r;
+        String[] sh=s.split("-");
+        for(int i=0; i< sh.length; i++){
+            String h=sh[i];
+            if(h.length() >0) r+=h.substring(0,1).toUpperCase();
+            if(h.length() >1) r+=h.substring(1,h.length());
+        }
+        return r;
+    }
+
     @SuppressWarnings("unchecked")
     static public LinkedList subList(LinkedList ll, int s){
         return new LinkedList(ll.subList(s,ll.size()));
