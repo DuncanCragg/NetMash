@@ -15,22 +15,22 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     public MinecraftWorld(){}
 
     public MinecraftWorld(String name, World world){
-        super("{ \"is\": [ \"editable\", \"queryable\", \"updatable\", \"3d\", \"minecraft\", \"world\" ],\n"+
-              "  \"name\": \""+name+"\"\n"+
-              "}");
+        super("{ is: editable queryable updatable 3d minecraft world\n"+
+              "  name: "+name+"\n"+
+              "}",true);
         setWorld(world);
     }
 
     public MinecraftWorld(String worlduid, String scanneruid, boolean isplayer){
-        super("{ \"is\": [ \"3d\", \"minecraft\", \"structure\" ],\n"+
-              "  \"world\": \""+worlduid+"\",\n"+
-              "  \"scanner\": \""+scanneruid+"\"\n"+
-              "}");
+        super("{ is: 3d minecraft structure\n"+
+              "  world: "+worlduid+"\n"+
+              "  scanner: "+scanneruid+"\n"+
+              "}",true);
         if(!isplayer) noPersist();
     }
 
     public MinecraftWorld(String worlduid, LinkedList position){
-        super("{ is: 3d minecraft cube structure\n"+
+        super("{ is: 3d minecraft native cube structure\n"+
               "  world: "+worlduid+"\n"+
               "  within: "+worlduid+"\n"+
               "  position: "+setToListString(position,true)+"\n"+
@@ -99,21 +99,22 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 if(contentIsOrListContains("is","updatable")){
                     addForPushing(alerted, contentHash("Alerted:pushing"));
                     addForPlacing(alerted, contentHash("Alerted:placing"));
-                    if(structureNotOurCube()) addForPlacing(alerted, contentHash("Alerted:#")); // add to sub-items
-                    if(entityNotOurs())       addForEnState(alerted, contentHash("Alerted:#"));
+                    if(structureNotOurs()) addForPlacing(alerted, contentHash("Alerted:#")); // add to sub-items
+                    if(entityNotOurs())    addForEnState(alerted, contentHash("Alerted:#"));
                 }
             }
             contentTemp("Alerted", null);
         }
     }
 
-    private boolean structureNotOurCube(){
+    private boolean structureNotOurs(){
         return   contentIsOrListContains("Alerted:is", "structure") &&
-               !(contentIsOrListContains("Alerted:is", "cube") && contentIsThis("Alerted:world"));
+               !(contentIsOrListContains("Alerted:is", "native") && contentIsThis("Alerted:world"));
     }
 
     private boolean entityNotOurs(){
-        return   contentIsOrListContains("Alerted:is", "entity") && !contentIsThis("Alerted:world");
+        return   contentIsOrListContains("Alerted:is", "entity") &&
+               !(contentIsOrListContains("Alerted:is", "native") && contentIsThis("Alerted:world"));
     }
 
     Boolean isRaining=null;

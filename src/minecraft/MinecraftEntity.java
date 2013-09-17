@@ -17,10 +17,10 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
     Entity entity;
 
     public MinecraftEntity(Entity e, String type, String name, String worlduid){
-        super("{ \"is\": [ \"editable\", \"3d\", \"minecraft\", \""+type+"\", \"entity\" ],\n"+
-              "  \"name\": \""+name+"\",\n"+
-              "  \"world\": \""+worlduid+"\"\n"+
-              "}");
+        super("{ is: editable 3d minecraft native "+type+" entity\n"+
+              "  name: "+name+"\n"+
+              "  world: "+worlduid+"\n"+
+              "}",true);
         entity=e;
         noPersist();
     }

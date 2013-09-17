@@ -31,6 +31,8 @@ Cube and Structure propagation
 
 Bits
 
+ - demo spawning entities in mc-tutorial
+
  - Cyrus makefile make install can curl MCP into subdir then grab minecraft_server jar, decompile, add links, apply patch
  - what if patch changed or need a new link?
 
