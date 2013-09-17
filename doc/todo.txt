@@ -28,10 +28,9 @@ Cube and Structure propagation
     - scanning-for-blocks always fitted to nearest cube(s)
     - or - they make structure or cube in your region, triggers making counter-cube, which does wiping back /and/ slicing
 
+seed: The 3D Web or 1465489332
 
 Bits
-
- - demo spawning entities in mc-tutorial
 
  - Cyrus makefile make install can curl MCP into subdir then grab minecraft_server jar, decompile, add links, apply patch
  - what if patch changed or need a new link?

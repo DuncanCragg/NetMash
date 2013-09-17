@@ -11,6 +11,7 @@
         uid-bce6-6258-53cb-a39a
         uid-ea47-528f-3ccb-8976
         uid-2b62-478a-30dd-3bf7
+        uid-b561-238a-5a15-bf1a
         uid-3db2-0c18-eaf9-66fb
         uid-290d-5dcf-c778-646c
 }
@@ -262,30 +263,53 @@
         "  Rules: {"
         "    is: player rule"
         "    duplicator: # => "
-        "{ UID: new"
-        "  is: editable minecraft structure"
-        "  world: @world"
-        "  scanning: {"
-        "    for: blocks"
-        "    size: 5 5 5"
-        "  }"
-        "  Rules: as-is {"
-        "    is: structure rule"
-        "    scanning: {"
-        "      position: => @within:position + (-2 -5 -2)"
-        "    }"
-        "    Notifying: => @. with @world"
-        "  }{"
-        "    is: structure rule"
-        "    world-view: *"
-        "    position: => @world-view:position + (10 5 0)"
-        "    materials: => @world-view:materials"
-        "  }"
-        "  trail: true"
-        "}"
+        "      { UID: new"
+        "        is: editable minecraft structure"
+        "        world: @world"
+        "        scanning: {"
+        "          for: blocks"
+        "          size: 5 5 5"
+        "        }"
+        "        Rules: as-is {"
+        "          is: structure rule"
+        "          scanning: {"
+        "            position: => @within:position + (-2 -5 -2)"
+        "          }"
+        "          Notifying: => @. with @world"
+        "        }{"
+        "          is: structure rule"
+        "          world-view: *"
+        "          position: => @world-view:position + (10 5 0)"
+        "          materials: => @world-view:materials"
+        "        }"
+        "        trail: true"
+        "      }"
         "  }"
         "]|"
         "Don't go near things that have too much behaviour, like water, lava, flowers, torches, as Minecraft may crash."
+}
+
+{ UID: uid-b561-238a-5a15-bf1a
+  is: article
+  title: "Spawning entities and players"
+  text: "Another player rule - spawning a pig:"
+        "|["
+        "  Rules: {"
+        "    is: player rule"
+        "    entity: # => "
+        "      { UID: new"
+        "        is: editable 3d minecraft pig entity"
+        "        name: Bob"
+        "        world: @world"
+        "        Rules: as-is {"
+        "          is: entity rule"
+        "          position: => @within:position + (-3 0 -3)"
+        "          Notifying: => @. with @world"
+        "        }"
+        "      }"
+        "  }"
+        "]|"
+        "Try running this with is: 'player', 'ender-dragon', etc. Actually only do that if you can kill it..."
 }
 
 { UID: uid-3db2-0c18-eaf9-66fb
