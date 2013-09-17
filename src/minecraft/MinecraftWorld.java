@@ -85,6 +85,13 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 String q=String.format("sub-items:%d:item:players:%d:is",i,j);
                 contentAsList(q);
             }
+            s=String.format("sub-items:%d:item:entities",i);
+            LinkedList entities=contentAsList(s);
+            if(entities==null) continue;
+            for(int j=0; j< entities.size(); j++){
+                String q=String.format("sub-items:%d:item:entities:%d:is",i,j);
+                contentAsList(q);
+            }
         }
     }
 
@@ -184,10 +191,11 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 if(!contentIs("name",currentname)) return;
                 setWorld(currentworld);
                 if(tickNum==0){
-                    LinkedList players=getPlayers(); // ??
+                    LinkedList players=getPlayers();
                     if(players.size() >0) contentList("players", players); else content("players",null);
+                    LinkedList entities=getEntities();
+                    if(entities.size() >0) contentList("entities", entities); else content("entities",null);
                     setAndGetWorldState();
-                    doEntitiesToCyrus();
                     self.evaluate();
                 }
             }};
@@ -266,8 +274,12 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             if(!(i instanceof String)) return null;
             String s=(String)i;
             if(!skipIs.contains(s)){
-                if(s.equals("xp-orb")) return "XPOrb";
+                if(s.equals("xp-orb"))       return "XPOrb";
                 if(s.equals("minecart-tnt")) return "MinecartTNT";
+                if(s.equals("mooshroom"))    return "MushroomCow";
+                if(s.equals("snowman"))      return "SnowMan";
+                if(s.equals("iron-golem"))   return "VillagerGolem";
+                if(s.equals("horse"))        return "EntityHorse";
                 return hyphens2caps(s);
             }
         }
@@ -357,7 +369,8 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     private int getDaysIn(){    return (int)(world.getWorldTime() / 24000); }
     private boolean isDay(){    return getTimeInDay() < 12000; }
 
-    private void doEntitiesToCyrus(){ // and link them into sub-items if in region
+    private LinkedList getEntities(){
+        LinkedList r=new LinkedList();
         int six=40; int siy=20; int siz=40;
         for(Object p: world.playerEntities){ EntityPlayer player=(EntityPlayer)p;
             int atx=(int)(player.posX-six/2); int aty=(int)(player.posY-siy/2); int atz=(int)(player.posZ-siz/2);
@@ -365,11 +378,12 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 if(e.posX >atx && e.posX<atx+six &&
                    e.posY >aty && e.posY<aty+siy &&
                    e.posZ >atz && e.posZ<atz+siz   ){
-                    if(e instanceof EntityPlayer) continue; // ??
-                    entityToCyrus(e,uid);
+                    if(e instanceof EntityPlayer) continue;
+                    r.add(entityToCyrus(e,uid));
                 }
             }
         }
+        return r;
     }
 
     private LinkedList getPlayers(){

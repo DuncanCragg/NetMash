@@ -4,11 +4,11 @@ CLIENT_RELEASE_TARGET=~/the-u-web/net/the-cyrus.net/1.6.2-Cyrus.jar
 MINECRAFT_DIR=~/.minecraft
 
 small:
-	sed -i 's/overrideWidth:670/overrideWidth:300/'  jars/options.txt
+	sed -i 's/overrideWidth:670/overrideWidth:400/'  jars/options.txt
 	sed -i 's/overrideHeight:800/overrideHeight:300/' jars/options.txt
 
 large:
-	sed -i 's/overrideWidth:300/overrideWidth:670/'  jars/options.txt
+	sed -i 's/overrideWidth:400/overrideWidth:670/'  jars/options.txt
 	sed -i 's/overrideHeight:300/overrideHeight:800/' jars/options.txt
 
 test-server: compile-server cleandb run-server
