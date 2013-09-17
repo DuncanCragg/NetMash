@@ -256,7 +256,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         }
     }
 
-    static LinkedList skipIs=list("editable","3d","minecraft","entity");
+    static LinkedList skipIs=list("editable","3d","minecraft","native","entity");
 
     private String getTypeFromIs(LinkedHashMap hm){
         Object o=hm.get("is");
