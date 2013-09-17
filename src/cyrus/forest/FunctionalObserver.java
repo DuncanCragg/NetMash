@@ -295,7 +295,7 @@ public class FunctionalObserver implements Module {
         WebObject s=cacheGet(w.uid);  // must look in db
         if(!w.isVisibleRemote() && s.isShell()) location=UID.toURL(w.uid);
         if(w.etag>0 && !(w.etag>s.etag) && w.notify.isEmpty()){
-            if(w.etag==s.etag) log(w.uid+" same version as "             +s.uid);
+            if(w.etag==s.etag) log(w.uid+" same version as before");
             else               log(w    +"older version than in cache:\n"+s);
             return location;
         }
