@@ -294,7 +294,11 @@ public class FunctionalObserver implements Module {
         String location=null;         // e.g. put flag on those given Location
         WebObject s=cacheGet(w.uid);  // must look in db
         if(!w.isVisibleRemote() && s.isShell()) location=UID.toURL(w.uid);
-        if(w.etag>0 && !(w.etag>s.etag) && w.notify.isEmpty()){ log(":\n"+w+"\nnot newer than:\n"+s+"\n"); return location; }
+        if(w.etag>0 && !(w.etag>s.etag) && w.notify.isEmpty()){
+            if(w.etag==s.etag) log(w.uid+" same version as "             +s.uid);
+            else               log(w    +"older version than in cache:\n"+s);
+            return location;
+        }
         sanitiseNotifications(w);
         cachePut(w);
         transferNotifyAndAlerted(s,w);
