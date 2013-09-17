@@ -187,70 +187,11 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         final World  currentworld=world(); if(currentworld==null) return;
         final String currentname=currentworld.worldInfo.getWorldName();
         if("world".equals(hasType)){
-            new Evaluator(this){ public void evaluate(){
-                if(!contentIs("name",currentname)) return;
-                setWorld(currentworld);
-                if(tickNum==0){
-                    LinkedList players=getPlayers();
-                    if(players.size() >0) contentList("players", players); else content("players",null);
-                    LinkedList entities=getEntities();
-                    if(entities.size() >0) contentList("entities", entities); else content("entities",null);
-                    setAndGetWorldState();
-                    self.evaluate();
-                }
-            }};
-            if(world!=currentworld) return;
-            while(true){
-                LinkedList uidpushing=pushingQ.poll();
-                if(uidpushing==null) break;
-                String        pusheruid=(String)       uidpushing.get(0);
-                LinkedHashMap pushing  =(LinkedHashMap)uidpushing.get(1);
-                doPushing(pusheruid, pushing);
-            }
-            while(true){
-                LinkedList uidplacing=placingQ.poll();
-                if(uidplacing==null) break;
-                String        placeruid=(String)       uidplacing.get(0);
-                LinkedHashMap placing  =(LinkedHashMap)uidplacing.get(1);
-                boolean trail=getBooleanFrom(placing,"trail");
-                if(!trail){
-                    LinkedHashMap oldplacing=places.get(placeruid);
-                    if(oldplacing!=null){
-                        doPlacing(oldplacing, true);
-                    }
-                }
-                places.put(placeruid,placing);
-                doPlacing(placing, false);
-            }
-            while(true){
-                LinkedList uidenstate=enstateQ.poll();
-                if(uidenstate==null) break;
-                String        entityuid=(String)       uidenstate.get(0);
-                LinkedHashMap enstate  =(LinkedHashMap)uidenstate.get(1);
-
-                String type=getTypeFromIs(enstate);
-                if(type==null) continue;
-                boolean foreign=getBooleanFrom(enstate,"foreign");
-                String name=getStringFromHash(enstate, "name", null);
-                LinkedList position=getListFromHash(enstate, "position");
-                if(position.size()!=3) continue;
-                Integer psx=getIntFromList(position,0);
-                Integer psy=getIntFromList(position,1);
-                Integer psz=getIntFromList(position,2);
-                if(psx==null || psy==null || psz==null) continue;
-
-                Entity e=entities.get(entityuid);
-                if(e==null || e.isDead){
-                    e=doSpawnEntity(type,foreign,name,psx,psy,psz);
-                    if(e==null) continue;
-                    String ename=entityName(e);
-                    entityUID.put(ename,entityuid);
-                    entities.put(entityuid,e);
-                }
-                else {
-                    doUpdateEntity(e,psx,psy,psz);
-                }
-            }
+            doWorldState(currentworld,currentname);
+            if(this.world!=currentworld) return;
+            doPushingQ();
+            doPlacingQ();
+            doEntityQ();
         }
         else
         if("structure".equals(hasType)){
@@ -260,6 +201,81 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                     world=currentworld;
                     doScanning(contentHash("scanner:scanning"));
                 }};
+            }
+        }
+    }
+
+    void doWorldState(final World currentworld, final String currentname){
+        new Evaluator(this){ public void evaluate(){
+            if(!contentIs("name",currentname)) return;
+            setWorld(currentworld);
+            if(tickNum==0){
+                LinkedList players=getPlayers();
+                if(players.size() >0) contentList("players", players); else content("players",null);
+                LinkedList entities=getEntities();
+                if(entities.size() >0) contentList("entities", entities); else content("entities",null);
+                setAndGetWorldState();
+                self.evaluate();
+            }
+        }};
+    }
+
+    private void doPushingQ(){
+        while(true){
+            LinkedList uidpushing=pushingQ.poll();
+            if(uidpushing==null) break;
+            String        pusheruid=(String)       uidpushing.get(0);
+            LinkedHashMap pushing  =(LinkedHashMap)uidpushing.get(1);
+            doPushing(pusheruid, pushing);
+        }
+    }
+
+    private void doPlacingQ(){
+        while(true){
+            LinkedList uidplacing=placingQ.poll();
+            if(uidplacing==null) break;
+            String        placeruid=(String)       uidplacing.get(0);
+            LinkedHashMap placing  =(LinkedHashMap)uidplacing.get(1);
+            boolean trail=getBooleanFrom(placing,"trail");
+            if(!trail){
+                LinkedHashMap oldplacing=places.get(placeruid);
+                if(oldplacing!=null){
+                    doPlacing(oldplacing, true);
+                }
+            }
+            places.put(placeruid,placing);
+            doPlacing(placing, false);
+        }
+    }
+
+    private void doEntityQ(){
+        while(true){
+            LinkedList uidenstate=enstateQ.poll();
+            if(uidenstate==null) break;
+            String        entityuid=(String)       uidenstate.get(0);
+            LinkedHashMap enstate  =(LinkedHashMap)uidenstate.get(1);
+
+            String type=getTypeFromIs(enstate);
+            if(type==null) continue;
+            boolean foreign=getBooleanFrom(enstate,"foreign");
+            String name=getStringFromHash(enstate, "name", null);
+            LinkedList position=getListFromHash(enstate, "position");
+            if(position.size()!=3) continue;
+            Integer psx=getIntFromList(position,0);
+            Integer psy=getIntFromList(position,1);
+            Integer psz=getIntFromList(position,2);
+            if(psx==null || psy==null || psz==null) continue;
+
+            Entity e=entities.get(entityuid);
+            if(e==null || e.isDead){
+                e=doSpawnEntity(type,foreign,name,psx,psy,psz);
+                if(e==null) continue;
+                String ename=entityName(e);
+                entityUID.put(ename,entityuid);
+                entities.put(entityuid,e);
+            }
+            else {
+                doUpdateEntity(e,psx,psy,psz);
             }
         }
     }
