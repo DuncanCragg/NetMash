@@ -99,12 +99,18 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 if(contentIsOrListContains("is","updatable")){
                     addForPushing(alerted, contentHash("Alerted:pushing"));
                     addForPlacing(alerted, contentHash("Alerted:placing"));
-                    if(structureNotOurs()) addForPlacing(alerted, contentHash("Alerted:#")); // add to sub-items
-                    if(entityNotOurs())    addForEnState(alerted, contentHash("Alerted:#"));
+                    if(structureNotOurs()) addForPlacing(alerted, cloneHashWithWorldFlag()); // add to sub-items
+                    if(entityNotOurs())    addForEnState(alerted, cloneHashWithWorldFlag());
                 }
             }
             contentTemp("Alerted", null);
         }
+    }
+
+    private LinkedHashMap cloneHashWithWorldFlag(){
+        LinkedHashMap hm=(LinkedHashMap)contentHash("Alerted:#").clone();
+        hm.put("foreign",Boolean.valueOf(!contentIsThis("Alerted:world")));
+        return hm;
     }
 
     private boolean structureNotOurs(){
@@ -198,7 +204,6 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 if(uidplacing==null) break;
                 String        placeruid=(String)       uidplacing.get(0);
                 LinkedHashMap placing  =(LinkedHashMap)uidplacing.get(1);
-                placing=(LinkedHashMap)placing.clone();
                 boolean trail=getBooleanFrom(placing,"trail");
                 if(!trail){
                     LinkedHashMap oldplacing=places.get(placeruid);
@@ -214,10 +219,10 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                 if(uidenstate==null) break;
                 String        entityuid=(String)       uidenstate.get(0);
                 LinkedHashMap enstate  =(LinkedHashMap)uidenstate.get(1);
-                enstate=(LinkedHashMap)enstate.clone();
 
                 String type=getTypeFromIs(enstate);
                 if(type==null) continue;
+                boolean foreign=getBooleanFrom(enstate,"foreign");
                 String name=getStringFromHash(enstate, "name", null);
                 LinkedList position=getListFromHash(enstate, "position");
                 if(position.size()!=3) continue;
@@ -228,7 +233,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
                 Entity e=entities.get(entityuid);
                 if(e==null || e.isDead){
-                    e=doSpawnEntity(type,name,psx,psy,psz);
+                    e=doSpawnEntity(type,foreign,name,psx,psy,psz);
                     if(e==null) continue;
                     String ename=entityName(e);
                     entityUID.put(ename,entityuid);
@@ -488,9 +493,9 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return e.getEntityName()+"-"+e.entityId;
     }
 
-    private Entity doSpawnEntity(String type, String name, Integer psx, Integer psy, Integer psz){
+    private Entity doSpawnEntity(String type, boolean foreign, String name, Integer psx, Integer psy, Integer psz){
         if(type.equals("Player")) return doSpawnPlayer(name,psx,psy,psz);
-        else                      return doSpawnEntityByName(type,name,psx,psy,psz);
+        else                      return doSpawnEntityByName(type,foreign,name,psx,psy,psz);
     }
 
     private Entity doSpawnPlayer(String name, Integer psx, Integer psy, Integer psz){
@@ -506,14 +511,14 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return person;
     }
 
-    private Entity doSpawnEntityByName(String type, String name, Integer psx, Integer psy, Integer psz){
+    private Entity doSpawnEntityByName(String type, boolean foreign, String name, Integer psx, Integer psy, Integer psz){
         MinecraftServer server=MinecraftServer.getServer();
         WorldServer worldserver = server.worldServerForDimension(0);
         Entity e=EntityList.createEntityByName(type,worldserver);
         if(e==null){ log("Can't create entity in createEntityByName "+type); return null; }
         e.setLocationAndAngles(psx, psy, psz, 0, 0);
         worldserver.spawnEntityInWorld(e);
-        e.isShellEntity=true;
+        e.isShellEntity=foreign;
         return e;
     }
 
