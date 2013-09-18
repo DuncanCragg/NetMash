@@ -805,6 +805,9 @@ public class CyrusLanguage extends WebObject {
             if(s2==null) s2=findString(ll.get(2));
             if(s0!=null && s2!=null) return Boolean.valueOf(s0.equals(s2));
         }
+        if(ll.size() >=2 && "not".equals(s0)){
+            return Boolean.valueOf(!findBooleanIn(findObject((ll.size()==2)? ll.get(1): subList(ll,1))));
+        }
         if(ll.size()==6 && "if".equals(s0)){
             if(s2==null) s2=findString(ll.get(2));
             if(s4==null) s4=findString(ll.get(4));

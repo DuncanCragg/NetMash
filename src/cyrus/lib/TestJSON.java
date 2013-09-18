@@ -78,10 +78,10 @@ public class TestJSON {
         System.out.println(m);
 
         int port = m.intPath("network:port");
-        assert port==8081: "port should be 8081, but it's "+port;
+        assert port==8081: "network:port should be 8081, but it's "+port;
 
         boolean log = m.boolPath("network:log");
-        assert !log: "log should be true, but it's false";
+        assert log: "network:log should be true, but it's false";
 
         int threadpool = m.intPath("kernel:threadpool");
         assert threadpool == 33: "kernel:threadpool should be 33, but it's "+ threadpool;

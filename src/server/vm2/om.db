@@ -93,7 +93,7 @@
   cc: # => @bb cut-out { x: b y: * z: e g }
   dd: # => { g: b z: y n: 3 } ( @bb with-more { UID: new  y: j k  q: h i  p: r  g: c n: 4 } )
   ll: { **: 1 s => 1 b }
-  bl: false => true
+  bl: false => not not not @bl
   zp: => @z with 4 2 5
   lu: => @. with-more { @xx: @x }
   ls: {s: *}
@@ -186,7 +186,7 @@
   pa: # => @pe with-more ( { a: @..:b } { e: f } )
   xx: #
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
-  bl: false
+  bl: false => not @nowhere
   zp: 1 2 3 ##
   lu: { c: d qq: 20 20 30 } => @. with-more ({ qq: 30 40 } { qq: 50 20 })
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
@@ -209,6 +209,7 @@
   uu: # => @z:1:1
   ff: # => { a: 200 b: 100 } @z:1:1 { a: 40 list: x y }
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
+  bl: true => not @rm
   pa: { b: d a: d e: f}
   lu: { c: d qq: 20 20 30 40 50 }
   au: /uid-/ /uid-/
@@ -242,6 +243,7 @@
   ff: { a: < 200 }
   gg: # => @=ff cut-out { list: * }
   fb: { **: fib ( <= 2 ) => 1 }
+  bl: false
   lu: { qq: count 5 }
   st: { **: (qs *) } !=> flatten @.
 }

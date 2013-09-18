@@ -256,13 +256,20 @@ public class Utils{
     }
 
     static public boolean findBooleanIn(Object o){
-        if(o==null) return false;
+        if(isEmpty(o)) return false;
         if(o instanceof Boolean) return (Boolean)o;
         if(o instanceof String){
             String s=(String)o;
             if(s.toLowerCase().equals("true" )) return true;
             if(s.toLowerCase().equals("false")) return false;
         }
+        return true;
+    }
+
+    static public boolean isEmpty(Object o){
+        if(o==null) return true;
+        if(o instanceof LinkedList && ((LinkedList)o).size()==0) return true;
+        if("".equals(o)) return true;
         return false;
     }
 
