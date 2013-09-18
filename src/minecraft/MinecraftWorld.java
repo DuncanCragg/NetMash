@@ -366,6 +366,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             if( isDaytime && !isDay()) world.setWorldTime(getDaysIn()*24000+500);
             if(!isDaytime &&  isDay()) world.setWorldTime(getDaysIn()*24000+12500);
         }
+        else
         if(timeOfDay   !=null) world.setWorldTime(timeOfDay.longValue());
         if(isRaining   !=null) world.getWorldInfo().setRaining(   isRaining);
         if(isThundering!=null) world.getWorldInfo().setThundering(isThundering);
