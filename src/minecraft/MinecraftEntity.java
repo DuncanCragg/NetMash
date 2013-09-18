@@ -141,6 +141,12 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
 
             ChunkCoordinates spawnpos=player.getBedLocation();
             if(spawnpos!=null) contentList("spawn-position",list(spawnpos.posX,spawnpos.posY,spawnpos.posZ));
+            else{
+                int spawnx=WorldInfo.getSpawnXCoordinate(world().getWorldInfo());
+                int spawny=WorldInfo.getSpawnYCoordinate(world().getWorldInfo());
+                int spawnz=WorldInfo.getSpawnZCoordinate(world().getWorldInfo());
+                contentList("spawn-position",list(spawnx,spawny,spawnz));
+            }
         }
         contentBool("alive", !entity.isDead);
     }

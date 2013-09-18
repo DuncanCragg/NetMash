@@ -81,7 +81,7 @@
         "    is: world rule"
         "    when: \"in danger, darken the skies...\""
         "    players: { danger: * }"
-        "    daytime: => if @players:0:danger then false else true"
+        "    daytime: => not @players:0:danger"
         "    raining: => @players:0:danger"
         "    thundering: => @players:0:danger"
         "  }"
