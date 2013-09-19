@@ -212,7 +212,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
             if(tickNum==0){
                 LinkedList players=getPlayers();
                 if(players.size() >0) contentList("players", players); else content("players",null);
-                LinkedList entities=getEntities();
+                LinkedList entities=getEntitiesAroundPlayers();
                 if(entities.size() >0) contentList("entities", entities); else content("entities",null);
                 setAndGetWorldState();
                 self.evaluate();
@@ -268,10 +268,8 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
             Entity e=entities.get(entityuid);
             if(e==null || e.isDead){
-                e=doSpawnEntity(type,foreign,name,psx,psy,psz);
+                e=doSpawnEntity(entityuid,type,foreign,name,psx,psy,psz);
                 if(e==null) continue;
-                String ename=entityName(e);
-                entityUID.put(ename,entityuid);
                 entities.put(entityuid,e);
             }
             else {
@@ -313,14 +311,18 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     int sizex;
     int sizez;
 
+    private void freezePosAndSize(){
+        if(!frozenPosAndSize){ frozenPosAndSize=true;
+            posnx=contentInt("position:0");
+            posnz=contentInt("position:2");
+            sizex=contentInt("size:0");
+            sizez=contentInt("size:1");
+        }
+    }
+
     public void onBlockUpdate(final int x, final int y, final int z, int previousId){
         new Evaluator(this){ public void evaluate(){
-            if(!frozenPosAndSize){ frozenPosAndSize=true;
-                posnx=contentInt("position:0");
-                posnz=contentInt("position:2");
-                sizex=contentInt("size:0");
-                sizez=contentInt("size:1");
-            }
+            freezePosAndSize();
             if(x<posnx || x>=posnx+sizex || z<posnz || z>=posnz+sizez) outsideRegion(x,y,z);
             else                                                       insideRegion(x,y,z);
         }};
@@ -361,6 +363,31 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return cube;
     }
 
+    private LinkedList getPlayers(){
+        LinkedList r=new LinkedList();
+        for(Object o: world.playerEntities){ EntityPlayer player=(EntityPlayer)o;
+            r.add(entityToCyrus(player,uid));
+        }
+        return r;
+    }
+
+    private LinkedList getEntitiesAroundPlayers(){
+        LinkedList r=new LinkedList();
+        int six=40; int siy=20; int siz=40;
+        for(Object p: world.playerEntities){ EntityPlayer player=(EntityPlayer)p;
+            int atx=(int)(player.posX-six/2); int aty=(int)(player.posY-siy/2); int atz=(int)(player.posZ-siz/2);
+            for(Object o: world.loadedEntityList){ Entity e=(Entity)o;
+                if(e.posX >atx && e.posX<atx+six &&
+                   e.posY >aty && e.posY<aty+siy &&
+                   e.posZ >atz && e.posZ<atz+siz   ){
+                    if(e instanceof EntityPlayer) continue;
+                    r.add(entityToCyrus(e,uid));
+                }
+            }
+        }
+        return r;
+    }
+
     private void setAndGetWorldState(){
         if(isDaytime !=null){
             if( isDaytime && !isDay()) world.setWorldTime(getDaysIn()*24000+500);
@@ -385,31 +412,6 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     private int getTimeInDay(){ return (int)(world.getWorldTime() % 24000); }
     private int getDaysIn(){    return (int)(world.getWorldTime() / 24000); }
     private boolean isDay(){    return getTimeInDay() < 12000; }
-
-    private LinkedList getEntities(){
-        LinkedList r=new LinkedList();
-        int six=40; int siy=20; int siz=40;
-        for(Object p: world.playerEntities){ EntityPlayer player=(EntityPlayer)p;
-            int atx=(int)(player.posX-six/2); int aty=(int)(player.posY-siy/2); int atz=(int)(player.posZ-siz/2);
-            for(Object o: world.loadedEntityList){ Entity e=(Entity)o;
-                if(e.posX >atx && e.posX<atx+six &&
-                   e.posY >aty && e.posY<aty+siy &&
-                   e.posZ >atz && e.posZ<atz+siz   ){
-                    if(e instanceof EntityPlayer) continue;
-                    r.add(entityToCyrus(e,uid));
-                }
-            }
-        }
-        return r;
-    }
-
-    private LinkedList getPlayers(){
-        LinkedList r=new LinkedList();
-        for(Object o: world.playerEntities){ EntityPlayer player=(EntityPlayer)o;
-            r.add(entityToCyrus(player,uid));
-        }
-        return r;
-    }
 
     private void doScanning(LinkedHashMap scanning){
         if(scanning==null) return;
@@ -524,9 +526,15 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return e.getEntityName()+"-"+e.entityId;
     }
 
-    private Entity doSpawnEntity(String type, boolean foreign, String name, Integer psx, Integer psy, Integer psz){
-        if(type.equals("Player")) return doSpawnPlayer(name,psx,psy,psz);
-        else                      return doSpawnEntityByName(type,foreign,name,psx,psy,psz);
+    private Entity doSpawnEntity(String euid, String type, boolean foreign, String name, Integer psx, Integer psy, Integer psz){
+        Entity e;
+        if(type.equals("Player")) e=doSpawnPlayer(name,psx,psy,psz);
+        else                      e=doSpawnEntityByName(type,foreign,name,psx,psy,psz);
+        if(e!=null){
+            String ename=entityName(e);
+            entityUID.put(ename,euid);
+        }
+        return e;
     }
 
     private Entity doSpawnPlayer(String name, Integer psx, Integer psy, Integer psz){
