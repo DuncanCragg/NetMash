@@ -41,7 +41,6 @@ public class WebObject {
     private boolean copyshallow = true;
     private LinkedList<String> tempPaths = new LinkedList<String>();
     public  boolean inevaluate = false;
-    public  boolean reentered = false;
     public  boolean statemod = false;
     public  boolean obsalmod = false;
     public  boolean refreshobserves = false;
@@ -658,7 +657,7 @@ public class WebObject {
         if(o instanceof LinkedHashMap) return (LinkedHashMap)o;
         return null;
     }
-        
+
     /** Set hash at path. */
     public void contentHash(String path, LinkedHashMap val){
         doCopyOnWrite(path);
@@ -747,10 +746,16 @@ public class WebObject {
         public Evaluator(WebObject w){
             this.self=w;
             synchronized(w){
-                w.evalPre();
-                try{ evaluate(); } catch(Throwable t){ t.printStackTrace(); }
-                w.refreshObserves();
-                w.evalPost();
+                try{
+                    if(inevaluate) whereAmI("************ already in evaluate ********** "+uid);
+                    if(!inevaluate){
+                        w.evalPre();
+                        evaluate();
+                        w.refreshObserves();
+                        w.evalPost();
+                    }
+                    else evaluate();
+                } catch(Throwable t){ t.printStackTrace(); }
             }
         }
         public void evaluate(){}
@@ -778,7 +783,6 @@ public class WebObject {
     /** Call to reset all changes. */
     public void rollback(){
         inevaluate = false;
-        reentered = false;
         statemod = false;
         obsalmod = false;
         refreshobserves = false;
@@ -853,11 +857,16 @@ public class WebObject {
 
     /* ---------------------------------------------------- */
 
-    void handleEval(){
-        if(inevaluate){ reentered=true; Utils.whereAmI("************ already in evaluate ********** "+uid); return; }
-        evalPre();
-        evaluate();
-        evalPost();
+    synchronized void handleEval(){
+        try{
+            if(inevaluate) whereAmI("************ already in evaluate ********** "+uid);
+            if(!inevaluate){
+                evalPre();
+                evaluate();
+                evalPost();
+            }
+            else evaluate();
+        } catch(Throwable t){ t.printStackTrace(); }
     }
 
     void evalPre(){
@@ -877,9 +886,7 @@ public class WebObject {
 
     void evalPost(){
         doTimer();
-        if(reentered) Utils.whereAmI("************** original evaluate ends ************** "+uid);
         inevaluate = false;
-        reentered = false;
         observe.addAll(alerted);
         notify.addAll(newalert);
         funcobs.dropNotifies(this);
