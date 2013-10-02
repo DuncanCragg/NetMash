@@ -202,7 +202,7 @@ public class WebObject {
 
     /** Get Object at this path. */
     public Object contentObject(String path){
-        if(!inevaluate) throw new RuntimeException("************** Content API called outside evaluate() **************");
+        if(!inevaluate) throw new RuntimeException("************** Content API called outside evaluate() ************** "+uid);
         if(pathMatches(path,"UID"  )) return uid;
         if(pathMatches(path,"Version")) return Integer.valueOf(etag);
         try{ return updatingState.objectPath(path);
@@ -747,8 +747,8 @@ public class WebObject {
             this.self=w;
             synchronized(w){
                 try{
-                    if(inevaluate) whereAmI("************ already in evaluate ********** "+uid);
-                    if(!inevaluate){
+                    if(w.inevaluate) whereAmI("************ already in evaluate ********** "+w.uid);
+                    if(!w.inevaluate){
                         w.evalPre();
                         evaluate();
                         w.refreshObserves();
@@ -838,7 +838,7 @@ public class WebObject {
     }
 
     private void doCopyOnWrite(String path){
-        if(!inevaluate) throw new RuntimeException("************** Content API called outside evaluate() **************");
+        if(!inevaluate) throw new RuntimeException("************** Content API called outside evaluate() ************** "+uid);
         boolean pathshallow = !path.contains(":");
         if(updatingState==publicState){
             copyshallow = true;
