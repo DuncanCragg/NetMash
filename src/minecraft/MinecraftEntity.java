@@ -169,7 +169,7 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
 
     public void onInteracting(final String style, final Entity e){
         new Evaluator(this){ public void evaluate(){
-            content(style, MinecraftWorld.entityToUID(e));
+            content(style, e.UID);
             if(modified()) self.evaluate();
         }};
         ticks=1;
