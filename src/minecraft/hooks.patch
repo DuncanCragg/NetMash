@@ -42,15 +42,36 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
        int var4 = MathHelper.floor_double(par1Entity.posY / 16.0D);
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Entity.java src/minecraft/net/minecraft/src/Entity.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/Entity.java	2013-08-29 08:59:17.013427030 +0100
-+++ src/minecraft/net/minecraft/src/Entity.java	2013-09-16 09:08:56.637721988 +0100
-@@ -79,6 +79,7 @@
++++ src/minecraft/net/minecraft/src/Entity.java	2013-09-23 17:24:48.745672352 +0100
+@@ -79,6 +79,8 @@
     private boolean invulnerable;
     private UUID entityUniqueID;
     public EnumEntitySize myEntitySize;
-+   public boolean isShellEntity=false;
++   public String UID=null;
++   public boolean isCyrus=false;
  
     public Entity(World par1World) {
        this.entityId = nextEntityID++;
+@@ -946,6 +948,10 @@
+ 
+    public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
+       try {
++         if(this.UID!=null && this.UID.length()!=0){
++             par1NBTTagCompound.setString("UID", this.UID);
++             par1NBTTagCompound.setBoolean("isCyrus", this.isCyrus);
++         }
+          par1NBTTagCompound.setTag("Pos", this.newDoubleNBTList(new double[]{this.posX, this.posY + (double)this.ySize, this.posZ}));
+          par1NBTTagCompound.setTag("Motion", this.newDoubleNBTList(new double[]{this.motionX, this.motionY, this.motionZ}));
+          par1NBTTagCompound.setTag("Rotation", this.newFloatNBTList(new float[]{this.rotationYaw, this.rotationPitch}));
+@@ -975,6 +981,8 @@
+ 
+    public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
+       try {
++         this.UID = par1NBTTagCompound.getString("UID");
++         this.isCyrus = par1NBTTagCompound.getBoolean("isCyrus");
+          NBTTagList var2 = par1NBTTagCompound.getTagList("Pos");
+          NBTTagList var6 = par1NBTTagCompound.getTagList("Motion");
+          NBTTagList var7 = par1NBTTagCompound.getTagList("Rotation");
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayer.java src/minecraft/net/minecraft/src/EntityPlayer.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/EntityPlayer.java	2013-08-29 08:59:17.189427025 +0100
 +++ src/minecraft/net/minecraft/src/EntityPlayer.java	2013-08-29 09:19:36.033394243 +0100
@@ -146,7 +167,7 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
                 } else {
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/World.java src/minecraft/net/minecraft/src/World.java
 --- ../cyrus1.6.2-base/src/minecraft/net/minecraft/src/World.java	2013-08-29 08:59:17.129427028 +0100
-+++ src/minecraft/net/minecraft/src/World.java	2013-09-16 09:17:57.565697870 +0100
++++ src/minecraft/net/minecraft/src/World.java	2013-09-21 15:28:31.667149801 +0100
 @@ -370,6 +370,7 @@
  
     public void notifyBlockChange(int par1, int par2, int par3, int par4) {
@@ -160,7 +181,7 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
           try {
              ++var2.ticksExisted;
 -            var2.onUpdate();
-+            if(!var2.isShellEntity) var2.onUpdate();
++            if(!var2.isCyrus) var2.onUpdate();
           } catch (Throwable var8) {
              var4 = CrashReport.makeCrashReport(var8, "Ticking entity");
              var5 = var4.makeCategory("Entity being ticked");
@@ -168,7 +189,7 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft/net/minecraft/sr
           par1Entity.prevRotationPitch = par1Entity.rotationPitch;
           if(par2 && par1Entity.addedToChunk) {
              ++par1Entity.ticksExisted;
-+            if(!par1Entity.isShellEntity) {
++            if(!par1Entity.isCyrus) {
              if(par1Entity.ridingEntity != null) {
                 par1Entity.updateRidden();
              } else {
@@ -235,18 +256,39 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
        int var4 = MathHelper.floor_double(par1Entity.posY / 16.0D);
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/Entity.java src/minecraft_server/net/minecraft/src/Entity.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/Entity.java	2013-08-29 09:00:15.201425465 +0100
-+++ src/minecraft_server/net/minecraft/src/Entity.java	2013-09-16 09:08:43.993722555 +0100
-@@ -76,6 +76,7 @@
++++ src/minecraft_server/net/minecraft/src/Entity.java	2013-09-23 17:28:32.577662373 +0100
+@@ -76,6 +76,8 @@
     private boolean invulnerable;
     private UUID entityUniqueID;
     public EnumEntitySize myEntitySize;
-+   public boolean isShellEntity=false;
++   public String UID=null;
++   public boolean isCyrus=false;
  
     public Entity(World par1World) {
        this.entityId = nextEntityID++;
+@@ -884,6 +886,10 @@
+ 
+    public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
+       try {
++         if(this.UID!=null && this.UID.length()!=0){
++             par1NBTTagCompound.setString("UID", this.UID);
++             par1NBTTagCompound.setBoolean("isCyrus", this.isCyrus);
++         }
+          par1NBTTagCompound.setTag("Pos", this.newDoubleNBTList(new double[]{this.posX, this.posY + (double)this.ySize, this.posZ}));
+          par1NBTTagCompound.setTag("Motion", this.newDoubleNBTList(new double[]{this.motionX, this.motionY, this.motionZ}));
+          par1NBTTagCompound.setTag("Rotation", this.newFloatNBTList(new float[]{this.rotationYaw, this.rotationPitch}));
+@@ -913,6 +919,8 @@
+ 
+    public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
+       try {
++         this.UID = par1NBTTagCompound.getString("UID");
++         this.isCyrus = par1NBTTagCompound.getBoolean("isCyrus");
+          NBTTagList var2 = par1NBTTagCompound.getTagList("Pos");
+          NBTTagList var6 = par1NBTTagCompound.getTagList("Motion");
+          NBTTagList var7 = par1NBTTagCompound.getTagList("Rotation");
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayer.java src/minecraft_server/net/minecraft/src/EntityPlayer.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-29 09:09:13.365410992 +0100
-+++ src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-08-29 09:15:53.285400234 +0100
++++ src/minecraft_server/net/minecraft/src/EntityPlayer.java	2013-09-18 19:25:49.214540317 +0100
 @@ -666,6 +666,9 @@
     public void displayGUIBook(ItemStack par1ItemStack) {}
  
@@ -316,7 +358,7 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
           var11 = par2World.getBlockId(par4, par5, par6);
 diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/World.java src/minecraft_server/net/minecraft/src/World.java
 --- ../cyrus1.6.2-base/src/minecraft_server/net/minecraft/src/World.java	2013-08-29 09:00:15.285425464 +0100
-+++ src/minecraft_server/net/minecraft/src/World.java	2013-09-16 09:18:16.113697046 +0100
++++ src/minecraft_server/net/minecraft/src/World.java	2013-09-21 15:28:28.655149784 +0100
 @@ -342,6 +342,7 @@
  
     public void notifyBlockChange(int par1, int par2, int par3, int par4) {
@@ -330,7 +372,7 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
           try {
              ++var2.ticksExisted;
 -            var2.onUpdate();
-+            if(!var2.isShellEntity) var2.onUpdate();
++            if(!var2.isCyrus) var2.onUpdate();
           } catch (Throwable var8) {
              var4 = CrashReport.makeCrashReport(var8, "Ticking entity");
              var5 = var4.makeCategory("Entity being ticked");
@@ -338,7 +380,7 @@ diff -ruNbw '--exclude=.*.swp' ../cyrus1.6.2-base/src/minecraft_server/net/minec
           par1Entity.prevRotationPitch = par1Entity.rotationPitch;
           if(par2 && par1Entity.addedToChunk) {
              ++par1Entity.ticksExisted;
-+            if(!par1Entity.isShellEntity) {
++            if(!par1Entity.isCyrus) {
              if(par1Entity.ridingEntity != null) {
                 par1Entity.updateRidden();
              } else {
