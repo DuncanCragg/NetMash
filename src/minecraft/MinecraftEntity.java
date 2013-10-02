@@ -22,7 +22,6 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
               "  world: "+worlduid+"\n"+
               "}",true);
         entity=e;
-        noPersist();
     }
 
     LinkedList newPosition=null;
@@ -59,10 +58,7 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
             if(++tickNum < 8) return;
             tickNum=0;
             if(!inCurrentWorld()) return;
-            if(contentIsOrListContains("is","player")){
-                getPlayer();
-                nopersist=false;
-            }
+            if(contentIsOrListContains("is","player")) getPlayer();
             if(entity==null) return;
             setState();
             getState();
