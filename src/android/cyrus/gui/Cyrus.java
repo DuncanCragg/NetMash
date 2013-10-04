@@ -1133,7 +1133,6 @@ log(show? "show keyboard": "hide keyboard");
 
         InputStream topdbis=null;
         try{ topdbis = openFileInput(db); }catch(Exception e){ }
-        if(topdbis==null) topdbis = getResources().openRawResource(R.raw.top);
 
         workaroundForFroyoBug();
 

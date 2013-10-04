@@ -192,8 +192,9 @@ usealldbs: useworlddb
 	cat src/server/vm2/cap.db    >> src/server/vm2/cyrus.db
 
 useworlddb:
-	cp src/server/vm1/world.db src/server/vm1/cyrus.db
-	cp src/server/vm2/world.db src/server/vm2/cyrus.db
+	cp  src/server/vm1/world.db    src/server/vm1/cyrus.db
+	cp  src/server/vm2/world.db    src/server/vm2/cyrus.db
+	cat src/server/vm2/room.db  >> src/server/vm2/cyrus.db
 
 useomdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db
@@ -226,26 +227,20 @@ setemumapkey:
 
 setappemuconfig:
 	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" res/raw/cyrusconfig.db
-	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" res/raw/top.db
 	sed -i"" -e "s:the-cyrus.net:10.0.2.2:g" src/android/cyrus/User.java
 	sed -i"" -e   "s:$(LOCAL_IP):10.0.2.2:g" res/raw/cyrusconfig.db
-	sed -i"" -e   "s:$(LOCAL_IP):10.0.2.2:g" res/raw/top.db
 	sed -i"" -e   "s:$(LOCAL_IP):10.0.2.2:g" src/android/cyrus/User.java
 
 setapplanconfig:
 	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" res/raw/cyrusconfig.db
-	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" res/raw/top.db
 	sed -i"" -e "s:the-cyrus.net:$(LOCAL_IP):g" src/android/cyrus/User.java
 	sed -i"" -e      "s:10.0.2.2:$(LOCAL_IP):g" res/raw/cyrusconfig.db
-	sed -i"" -e      "s:10.0.2.2:$(LOCAL_IP):g" res/raw/top.db
 	sed -i"" -e      "s:10.0.2.2:$(LOCAL_IP):g" src/android/cyrus/User.java
 
 setappremconfig:
 	sed -i"" -e    "s:10.0.2.2:the-cyrus.net:g" res/raw/cyrusconfig.db
-	sed -i"" -e    "s:10.0.2.2:the-cyrus.net:g" res/raw/top.db
 	sed -i"" -e    "s:10.0.2.2:the-cyrus.net:g" src/android/cyrus/User.java
 	sed -i"" -e "s:$(LOCAL_IP):the-cyrus.net:g" res/raw/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):the-cyrus.net:g" res/raw/top.db
 	sed -i"" -e "s:$(LOCAL_IP):the-cyrus.net:g" src/android/cyrus/User.java
 
 setvm1emuconfig:
@@ -331,7 +326,7 @@ tstconfig:
 # -------------------------------------------------------------------
 
 setup:
-	vim -o -N res/raw/cyrusconfig.db res/raw/top.db src/server/vm1/cyrusconfig.db src/server/vm1/test.db src/server/vm2/curconfig.db src/server/vm2/allconfig.db src/server/vm2/test.db
+	vim -o -N res/raw/cyrusconfig.db src/server/vm1/cyrusconfig.db src/server/vm1/test.db src/server/vm2/curconfig.db src/server/vm2/allconfig.db src/server/vm2/test.db
 
 showtestresults:
 	tail -f src/server/vm2/cyrus.log | egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx|Running CyrusLanguage on'
