@@ -247,30 +247,29 @@ public class User extends CyrusLanguage {
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
         if(false) log("touched item: "+mesh.get("title")+(edit? " edit": " send")+" uid: "+objectuid+" "+ndx+" "+ndy);
-        if(ndx+ndy==0){
-// not in Evaluate.
-//          history.forward();
-//          content("private:viewing",objectuid);
-//          content("private:viewas", "raw");
-//          showWhatIAmViewing();
-        }
-        else if(objectuid.equals("editing")){
-            String edituid=content("private:editing");
-            if(ndy*ndy>ndx*ndx/2) getObjectUpdating(edituid, "", true).setEditVal(edituid,ndy);
-            else if(Cyrus.top!=null) Cyrus.top.getKeys(ndx>0);
-        }
-        else new Evaluator(this){
-            public void evaluate(){
-                if(edit){
-                    setResponse(objectuid, true, 0,0);
-                    content("private:editing",objectuid);
-                    showWhatIAmViewing();
-                }
-                else{
-                    if(!setResponse(objectuid, false, ndx/30, ndy/30)) getObjectUpdating(objectuid).setSwipeVal(objectuid, ndx/30, ndy/30);
-                }
+        new Evaluator(this){ public void evaluate(){
+            if(ndx+ndy==0){
+                history.forward();
+                content("private:viewing",objectuid);
+                content("private:viewas", "raw");
+                showWhatIAmViewing();
             }
-        };
+            else
+            if(objectuid.equals("editing")){
+                String edituid=content("private:editing");
+                if(ndy*ndy>ndx*ndx/2) getObjectUpdating(edituid, "", true).setEditVal(edituid,ndy);
+                else if(Cyrus.top!=null) Cyrus.top.getKeys(ndx>0);
+            }
+            else
+            if(edit){
+                setResponse(objectuid, true, 0,0);
+                content("private:editing",objectuid);
+                showWhatIAmViewing();
+            }
+            else{
+                if(!setResponse(objectuid, false, ndx/30, ndy/30)) getObjectUpdating(objectuid).setSwipeVal(objectuid, ndx/30, ndy/30);
+            }
+        }};
     }
 
     public void setEditVal(final String edituid, final float d){
@@ -596,41 +595,42 @@ public class User extends CyrusLanguage {
 
     private User getObjectUpdating(String guiuid, String tag, boolean editable){ return (User)getWebObjectUpdating(guiuid, tag, editable); }
 
-    private WebObject getWebObjectUpdating(String guiuid, String tag, boolean editable){
-        String formuid=null;
-        editable=editable || contentIs("private:viewas","raw");
-        if(editable){
-        if(contentIsOrListContains("private:viewing:is", "editable")){
-            if(!oneOfOurs(guiuid)) formuid=content("private:responses:editable:"+UID.toUID(guiuid));
-            else                   formuid=guiuid;
-        }
-        }
-        else if(contentIsOrListContains("private:viewing:is", "3d")){
-            formuid=content("private:responses:swipe:"+UID.toUID(guiuid));
-        }
-        else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
-            formuid=content("private:responses:query:"+UID.toUID(guiuid));
-        }
-        else if(contentListContainsAll("private:viewing:is", list("attendable","event"))||
-                contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
-            formuid=content("private:responses:rsvp:"+UID.toUID(guiuid));
-        }
-        else if(contentIsOrListContains("private:viewing:is", "gui")){
-            formuid=content("private:responses:form:"+UID.toUID(guiuid));
-        }
-        else if(contentIsOrListContains("private:viewing:is", "land")){
-            if(dehash(tag).equals("new")) formuid=content("private:responses:land:"+UID.toUID(guiuid));
-            else
-            if(oneOfOurs(guiuid))         formuid=guiuid;
-        }
-        if(formuid==null) return null;
-        return onlyUseThisToHandControlOfThreadToDependent(formuid);
+    private WebObject getWebObjectUpdating(final String guiuid, final String tag, final boolean editable){
+        final WebObject[] r=new WebObject[1]; r[0]=null;
+        new Evaluator(this){ public void evaluate(){
+            String formuid=null;
+            if(editable || contentIs("private:viewas","raw")){
+            if(contentIsOrListContains("private:viewing:is", "editable")){
+                if(!oneOfOurs(guiuid)) formuid=content("private:responses:editable:"+UID.toUID(guiuid));
+                else                   formuid=guiuid;
+            }
+            }
+            else if(contentIsOrListContains("private:viewing:is", "3d")){
+                formuid=content("private:responses:swipe:"+UID.toUID(guiuid));
+            }
+            else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
+                formuid=content("private:responses:query:"+UID.toUID(guiuid));
+            }
+            else if(contentListContainsAll("private:viewing:is", list("attendable","event"))||
+                    contentListContainsAll("private:viewing:is", list("reviewable","event"))  ){
+                formuid=content("private:responses:rsvp:"+UID.toUID(guiuid));
+            }
+            else if(contentIsOrListContains("private:viewing:is", "gui")){
+                formuid=content("private:responses:form:"+UID.toUID(guiuid));
+            }
+            else if(contentIsOrListContains("private:viewing:is", "land")){
+                if(dehash(tag).equals("new")) formuid=content("private:responses:land:"+UID.toUID(guiuid));
+                else
+                if(oneOfOurs(guiuid))         formuid=guiuid;
+            }
+            if(formuid!=null) r[0]=onlyUseThisToHandControlOfThreadToDependent(formuid);
+        }};
+        return r[0];
     }
 
     public void setUpdateVal(final String guiuid, final String tag, final String val){
         if(this==currentUser) setUpdateValOnObjectUpdating(guiuid, tag, val);
-        else new Evaluator(this){
-            public void evaluate(){
+        else new Evaluator(this){ public void evaluate(){
                 if(contentListContainsAll("is", list("editable", "rule"))){
                     LinkedHashMap rule=null;
                     try{
@@ -671,8 +671,7 @@ public class User extends CyrusLanguage {
                     content("form:"+dehash(tag), val);
                 }
                 notifying(guiuid);
-            }
-        };
+        }};
     }
 
     private LinkedList shapeAround(LinkedHashMap<String,Number> p, int area){

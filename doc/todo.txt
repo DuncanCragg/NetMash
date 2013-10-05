@@ -1,8 +1,5 @@
 ------------------------
 Fix stuff:
- - fix saving to cyrus.db
- - content API called outside evaluate in getWebObjectUpdating
- - boxes black in own but not server rooms
  - avatar still visible
 ------------------------
 Add stuff:
@@ -11,7 +8,6 @@ Add stuff:
  - copy minecraft navigation controls
  - touch to place, hold to remove - add world edit stuff later, by Cyrus rules probably
  - choice of blocks to place along bottom
- - fix multitouch edit, and/or..
  - multitouch to interact
  - and edit by toggling edit button and touching target
  - edit forces correct syntax and has undo
@@ -28,4 +24,6 @@ Other stuff:
  - doc/local/contentList.txt search for potential single-element lists
  - doc/local/contentAPIeval.txt evaluate() or evaluatable()? see trace
  - later generate room; editable
+ - compress cyrus.db
+ - boxes not lit well by blue box, etc
 ------------------------
