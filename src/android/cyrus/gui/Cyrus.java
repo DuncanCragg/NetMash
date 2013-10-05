@@ -1131,14 +1131,17 @@ log(show? "show keyboard": "hide keyboard");
 
         String db = config.stringPathN("persist:db");
 
-        InputStream topdbis=null;
-        try{ topdbis = openFileInput(db); }catch(Exception e){ }
+        InputStream dbis=null;
+        try{ dbis = openFileInput(db); }catch(Exception e){ log("Local DB read: "+e); }
+
+        FileOutputStream dbos=null;
+        try{ dbos = openFileOutput(db, Context.MODE_APPEND); }catch(Exception e){ log("Local DB write: "+e); }
 
         workaroundForFroyoBug();
 
         System.out.println("-------------------");
         System.out.println(Version.NAME+" "+Version.NUMBERS);
-        Kernel.init(config, new FunctionalObserver(topdbis));
+        Kernel.init(config, new FunctionalObserver(dbis,dbos));
         Kernel.run();
     }
 

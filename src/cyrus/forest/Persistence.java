@@ -24,8 +24,8 @@ public class Persistence implements FileUser {
 
     public  FunctionalObserver funcobs;
 
-    private InputStream topdbis=null;
-    private boolean     topdbrd;
+    private InputStream      dbis=null;
+    private FileOutputStream dbos=null;
     private String directory = null;
     private String db = null;
     private File   dbfile=null;
@@ -44,11 +44,11 @@ public class Persistence implements FileUser {
 
     // ----------------------------------------
 
-    public Persistence(InputStream topdbis){ try{
+    public Persistence(InputStream dbis, FileOutputStream dbos){ try{
 
         funcobs = FunctionalObserver.funcobs;
-        this.topdbis = topdbis;
-        this.topdbrd=(topdbis!=null);
+        this.dbis = dbis;
+        this.dbos = dbos;
         this.directory = Kernel.config.stringPathN("persist:directory");
         this.directory=(directory==null || directory.trim().equals(""))? "": (!directory.endsWith("/")? directory+"/": directory);
         this.db        = Kernel.config.stringPathN("persist:db");
@@ -68,11 +68,9 @@ public class Persistence implements FileUser {
 
         boolean dbrd=dbfile.exists() && dbfile.canRead();
 
-        if(topdbrd) Kernel.readFile(topdbis, this);
+        if(dbis!=null) Kernel.readFile(dbis, this);
         else
-        if(dbrd)    Kernel.readFile(dbfile,  this);
-
-        if(topdbrd) compressDB();
+        if(dbrd)       Kernel.readFile(dbfile, this);
 
         final int syncrate = Kernel.config.intPathN("persist:syncrate");
         new Thread(){ public void run(){ runSync(syncrate); } }.start();
@@ -102,9 +100,10 @@ public class Persistence implements FileUser {
             isUnix=unix;
             CharBuffer jsonchars = UTF8.decode(jsonbytes);
             String uid = findUIDAndTopAndDetectCyrus(jsonchars);
-            if(!isUID(uid)) throw new RuntimeException("Data corrupt:\n"+jsonchars+(prevchars!=null? "Previous object:\n"+prevchars: ""));
             if(uid.equals("cyrusconfig")) cyrusconfig = new JSON(jsonchars,cyrus);
-            else jsoncache.put(uid, jsonchars);
+            else
+            if(isUID(uid)) jsoncache.put(uid, jsonchars);
+            else throw new RuntimeException("Data corrupt:\n"+jsonchars+(prevchars!=null? "Previous object:\n"+prevchars: ""));
             prevchars=jsonchars;
         }
     }
@@ -156,15 +155,16 @@ public class Persistence implements FileUser {
 
     private void runSync(int syncrate){
         for(int i=0; ; i++){
-            if(i%20==0) compressDB();
+            if(i%20==0 && dbos==null) compressDB();
             try{ for(WebObject w: syncable){
                 syncable.remove(w);
                 CharBuffer jsonchars;
                 synchronized(w){ jsonchars=CharBuffer.wrap(w.toString(cyrus)); }
                 jsoncache.put(w.uid, jsonchars);
                 ByteBuffer bytebuffer = UTF8.encode(jsonchars);
-                Kernel.writeFile(dbfile, true, bytebuffer, this);
-            }}catch(Exception e){ log("Persistence: Failure writing to DB: "+e.getMessage()); }
+                if(dbos!=null) Kernel.writeFile(dbos,         bytebuffer, this);
+                else           Kernel.writeFile(dbfile, true, bytebuffer, this);
+            }}catch(Exception e){ log("Persistence: Failure writing to DB: "); e.printStackTrace(); }
             Kernel.sleep(syncrate!=0? syncrate: 100);
         }
     }
@@ -179,7 +179,7 @@ public class Persistence implements FileUser {
             Kernel.writeFile(ddbfile, true, bytebuffer, this);
         }
         if(!ddbfile.renameTo(dbfile)) throw new Exception("Compressed snapshot DB rename failed: "+ddbfile+" to "+dbfile);
-    }catch(Exception e){ log("Persistence: Failure writing to DB: "+e.getMessage()); } }
+    }catch(Exception e){ log("Persistence: Failure compressing DB: "+e.getMessage()); } }
 
     // ----------------------------------------
 

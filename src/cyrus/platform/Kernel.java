@@ -175,7 +175,6 @@ public class Kernel {
         FileChannel channel = os.getChannel();
         int n=channel.write(bytebuffer);
         fileuser.writable(bytebuffer, n);
-        channel.close();
     }
 
     static public ByteBuffer chopAtDivider(ByteBuffer bytebuffer, byte[] divider){

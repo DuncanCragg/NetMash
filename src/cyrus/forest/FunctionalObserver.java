@@ -21,7 +21,8 @@ public class FunctionalObserver implements Module {
     public Persistence persistence;
     public HTTP http;
 
-    private InputStream topdbis=null;
+    private InputStream      dbis=null;
+    private FileOutputStream dbos=null;
 
     private ConcurrentHashMap<String,WebObject> cache = new ConcurrentHashMap<String,WebObject>();
     private CopyOnWriteArraySet<String>         polling = new CopyOnWriteArraySet<String>();
@@ -32,13 +33,14 @@ public class FunctionalObserver implements Module {
         funcobs = this;
     }
 
-    public FunctionalObserver(InputStream topdbis){
+    public FunctionalObserver(InputStream dbis, FileOutputStream dbos){
         funcobs = this;
-        this.topdbis=topdbis;
+        this.dbis=dbis;
+        this.dbos=dbos;
     }
 
     public void run(){
-        persistence = new Persistence(topdbis);
+        persistence = new Persistence(dbis, dbos);
         http        = new HTTP();
         log("FunctionalObserver: initialised; evaluating cached objects");
         startPollingThread();
