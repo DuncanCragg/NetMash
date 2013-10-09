@@ -227,7 +227,7 @@ public class FunctionalObserver implements Module {
             if(!evaluatableOrPush(notified, realupdate)) sanitised.add(notifieduid);
         }
         if(sanitised.size()==0) return;
-        log("Sanitising notifiable uids, removing:",sanitised);
+        log(notifier.uid+" sanitising notifiable uids (notifyUpdated), removing:",sanitised);
         notifier.notify.removeAll(sanitised);
     }
 
@@ -253,7 +253,7 @@ public class FunctionalObserver implements Module {
             }
         }
         if(sanitised.size()==0) return;
-        log("Sanitising notifiable uids, removing:",sanitised);
+        log(notifier.uid+" sanitising notifiable uids (alertFirst), removing:",sanitised);
         notifier.newalert.removeAll(sanitised);
     }
 
@@ -314,7 +314,7 @@ public class FunctionalObserver implements Module {
         LinkedList sanitised=new LinkedList();
         for(String notifieduid: notifier.notify) if(!oneOfOurs(notifieduid)) sanitised.add(notifieduid);
         if(sanitised.size()==0) return;
-        log("Sanitising notifiable uids, removing:",sanitised);
+        log(notifier.uid+" sanitising notifiable uids (httpNotify/sanitiseNotifications), removing:",sanitised);
         notifier.notify.removeAll(sanitised);
     }
 
