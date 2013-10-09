@@ -15,11 +15,27 @@
   present: 0
   sub-items:
     { item: uid-311d-8423-3ca6-ddcb position:  0 10 0 }
-    { item: uid-8a54-9690-a4d5-4a9c position:  0 0 15 }
     { item: uid-c058-2db1-0b26-8f48 position:  7 0  7 }
     { item: uid-c058-2db1-0b26-8f48 position: -7 0  7 }
     { item: uid-c058-2db1-0b26-8f48 position:  7 0 -7 }
     { item: uid-c058-2db1-0b26-8f48 position: -7 0 -7 }
+    { item: uid-8a54-9690-a4d5-4a9c position:  0  2 15 }
+    { item: uid-ad6c-85d2-46ab-85da position:  0  0 12 }
+    { item: uid-ad6c-85d2-46ab-85da position:  1  0 12 }
+    { item: uid-ad6c-85d2-46ab-85da position:  2  0 12 }
+    { item: uid-ad6c-85d2-46ab-85da position:  3  0 12 }
+    { item: uid-ad6c-85d2-46ab-85da position:  0  0 13 }
+    { item: uid-ad6c-85d2-46ab-85da position:  1  0 13 }
+    { item: uid-ad6c-85d2-46ab-85da position:  2  0 13 }
+    { item: uid-ad6c-85d2-46ab-85da position:  3  0 13 }
+    { item: uid-ad6c-85d2-46ab-85da position:  0 -1 14 }
+    { item: uid-ad6c-85d2-46ab-85da position:  1 -1 14 }
+    { item: uid-ad6c-85d2-46ab-85da position:  2 -1 14 }
+    { item: uid-ad6c-85d2-46ab-85da position:  3 -1 14 }
+    { item: uid-ad6c-85d2-46ab-85da position:  0 -1 15 }
+    { item: uid-ad6c-85d2-46ab-85da position:  1 -1 15 }
+    { item: uid-ad6c-85d2-46ab-85da position:  2 -1 15 }
+    { item: uid-ad6c-85d2-46ab-85da position:  3 -1 15 }
   vertices: (  1.0 -0.1 -1.0 ) ( 1.0 -0.1 1.0 ) ( -1.0 -0.1 1.0 ) ( -1.0 -0.1 -1.0 )
   texturepoints: ( 0.0 0.0 ) ( 5.0 0.0 ) ( 5.0 5.0 ) ( 0.0 5.0 )
   normals: ( 0.0 1.0 0.0 )
@@ -85,11 +101,17 @@
   text: "Welcome to Ann Droid's Place!"
   rotation: 10 10 10
   scale: 1.0 1.0 1.0
-  light: 0.5 1.0 1.0
+  light: 2 2 2
 }
 
 { UID: uid-311d-8423-3ca6-ddcb
   is: 3d cuboid
   light: 10 10 10
+}
+
+{ UID: uid-ad6c-85d2-46ab-85da
+  is: 3d cuboid
+  scale: 0.5 0.5 0.5
+  textures: http://fc00.deviantart.net/fs70/f/2012/182/2/8/texture__sand__lowres_256__by_nuxlystardust_stock-d55kqwc.jpg
 }
 
