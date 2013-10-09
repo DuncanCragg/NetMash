@@ -1,29 +1,58 @@
 ------------------------
-Fix stuff:
- - avatar still visible
+In-World (non-edit) Link management
+ + grab a viewed object/region's link, or any object/region's link
+ - grab rules/materials links off an object/region
+ - grab links from remote site lists
+ + first cut: last link grabbed=holding
+ - into link chooser, organised by type for context, sorted by recent, select->holding
+ - choice of material blocks to hold/place along bottom, variant of generic link chooser
+ + request add/rem link at location relative to object/region
+ - request add/rem links for rules and materials on any object/region: add to list at N, remove Nth in list
+ - request add/rem links in global rules
+ - operations: grab/add/rem/cut
+ + local or remote user, Java animates user and notifies target or its within
+ * add: interacting by multitouch: Cyrus sees I'm holding this link, interacting with this target
+    + bottom left is moving and multitouch while moving, top left is multitouch for standing still
+    * point touched on an object: object has to work out what displacement to add, or to pass to its within
+    + if beyond current region, touch white grid
+    - posn implied by touching a neighbour if voxels
+ + rem: hitting by touch/hold: link and position on 'within' object/region
+    + send user hit action to linker of object/region - the within of the user
+ * { is: user holding: <link to object/region>, placing/joining/hitting/interacting: { on: <target link> position: 1 2 1 } }
+ - { is: user holding: <link to ruleset/texture/shader/sound> (un-)animating/texturing/shading/sounding:  }
+ + separate places: users: sub-objects: (cubes:, entities:, structures: in MC)
+    + placing object -> sub-objects: and joining region -> places:
+ + Java finds nearest place - User automatically set 'within' nearest enclosing region (can only be within: places: objects)
+ + Cyrus presence tracker: effectively user requests by within to add/rem link to it in target region at current position
+ * Cyrus rule: user then requests to add/rem other links; OK if present, calculate displacement
+ - request to set global rules on a site object/region
 ------------------------
-Add stuff:
- - { is: voxels  chunks: uid-y uid-z } using existing cubes
- - textures 1=all, 2=top/bottom+sides 3=top, bottom, sides, 4=top,bottom, opposite sides
+ * multitouch a region sets user holding link to fixed other region joining on target region at given coords
+ * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement
+------------------------
+World Basics
+ - blue sky; ambient light; day/night - region object: { night/day }
+ - blank white grid is your region, can add stuff or link blocks in-world
+ - { is: voxels  chunks: uid-y uid-z } using existing cubes; same one linked?
+ - physics pulling you down; collision with blocks; vertical movement of avatar
  - copy minecraft navigation controls
- - touch to place, hold to remove - add world edit stuff later, by Cyrus rules probably
- - choice of blocks to place along bottom
- - multitouch to interact
- - and edit by toggling edit button and touching target
- - edit forces correct syntax and has undo
- - on tablet, split edit/view
- - physics pulling you down; collision with blocks
- - user object: { position, hitting, placing, multitouch interacting }
- - region object: { night/day }
- - global mods with checkboxes as in MC
- - link chooser for region linking and rule/mod linking
 ------------------------
-Expand to demoable state: see plan
+In-World Editing
+ - edit by toggling edit button and touching target
+    - edit forces correct syntax and has undo
+    - on tablet, split edit/view
+    - edit params and properties of objects, edit animation rules
 ------------------------
-Other stuff:
- - doc/local/contentList.txt search for potential single-element lists
- - doc/local/contentAPIeval.txt evaluate() or evaluatable()? see trace
+More stuff:
+ - make sure MC-like Web page functions work still - global rules, tutorial, editing
+ - bug: presence detector picks up form submissions and swipes (fix blue bot)
+ - bug: avatar still visible
+ - fix: compress cyrus.db
+ - fix: doc/local/contentList.txt search for potential single-element lists
+ - fix: doc/local/contentAPIeval.txt evaluate() or evaluatable()? see trace
+ - fix: lighting: boxes not lit well by blue bot, etc
+ - ---
  - later generate room; editable
- - compress cyrus.db
- - boxes not lit well by blue box, etc
+ - add world edit stuff later, by Cyrus rules probably
+ - textures 1=all, 2=top/bottom+sides 3=top, bottom, sides, 4=top, bottom, opposite sides
 ------------------------
