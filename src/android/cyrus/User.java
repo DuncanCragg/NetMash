@@ -218,12 +218,11 @@ public class User extends CyrusLanguage {
 
     private float lastx,lasty,lastz;
     private LinkedHashMap lastmesh=null;
-    private boolean lastedit;
     private float lastdx, lastdy;
 
-    synchronized public void onObjectTouched(LinkedHashMap mesh, final boolean edit, final float dx, final float dy){
+    synchronized public void onObjectTouched(LinkedHashMap mesh, final float dx, final float dy){
         if(mesh!=lastmesh){ lastdx=0; lastdy=0; earliest=0; waiting=false; }
-        lastmesh=mesh; lastedit=edit; lastdx+=dx; lastdy+=dy;
+        lastmesh=mesh; lastdx+=dx; lastdy+=dy;
         final long updated=System.currentTimeMillis();
         final User self=this;
         if(waiting) return;
@@ -236,7 +235,7 @@ public class User extends CyrusLanguage {
                     if(lastdx+lastdy==0) return;
                     float ldx=lastdx,ldy=lastdy;
                     lastdx=0; lastdy=0;
-                    onObjectTouched(lastmesh,lastedit,ldx,ldy);
+                    onObjectTouched(lastmesh,ldx,ldy);
                 }
             }}.start();
             return;
@@ -246,46 +245,30 @@ public class User extends CyrusLanguage {
         earliest=updated+500;
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
-        if(false) log("touched item: "+mesh.get("title")+(edit? " edit": " send")+" uid: "+objectuid+" "+ndx+" "+ndy);
+logXX("multitouched item: "+mesh.get("title")+" uid: "+objectuid+" "+ndx+" "+ndy+" "+(ndx*ndx+ndy*ndy));
         new Evaluator(this){ public void evaluate(){
-            if(ndx+ndy==0){
+            boolean edit=false;
+            boolean interact=(ndx*ndx+ndy*ndy)<1;
+            if(edit){
                 history.forward();
                 content("private:viewing",objectuid);
                 content("private:viewas", "raw");
                 showWhatIAmViewing();
             }
             else
-            if(objectuid.equals("editing")){
-                String edituid=content("private:editing");
-                if(ndy*ndy>ndx*ndx/2) getObjectUpdating(edituid, "", true).setEditVal(edituid,ndy);
-                else if(Cyrus.top!=null) Cyrus.top.getKeys(ndx>0);
-            }
-            else
-            if(edit){
-                setResponse(objectuid, true, 0,0);
-                content("private:editing",objectuid);
-                showWhatIAmViewing();
+            if(interact){
+                content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
+                content("joining", objectuid);
+                notifying(objectuid);
             }
             else{
-                if(!setResponse(objectuid, false, ndx/30, ndy/30)) getObjectUpdating(objectuid).setSwipeVal(objectuid, ndx/30, ndy/30);
-            }
-        }};
-    }
-
-    public void setEditVal(final String edituid, final float d){
-        new Evaluator(this){
-            public void evaluate(){
-                if(contentListContainsAll("is", list("editable", "rule"))){
-                    LinkedList oldscale=contentList("editable:scale");
-                    LinkedList newscale=list(getFloatFromList(oldscale,0,1)*(1f+d/10f),
-                                             getFloatFromList(oldscale,1,1)*(1f+d/10f),
-                                             getFloatFromList(oldscale,2,1)*(1f+d/10f));
-                    LinkedHashMap rule=makeEditRule("scale",0,newscale);
-                    contentMerge(rule);
-                    notifying(edituid);
+                boolean newSwipe=setResponse(objectuid, ndx/30, ndy/30);
+                if(!newSwipe){
+                    User swipe=getObjectUpdating(objectuid);
+                    swipe.setSwipeVal(objectuid, ndx/30, ndy/30);
                 }
             }
-        };
+        }};
     }
 
     public void setSwipeVal(final String objectuid, final float dx, final float dy){
@@ -531,21 +514,20 @@ public class User extends CyrusLanguage {
         return val[0];
     }
 
-    private boolean setResponse(String guiuid){ return setResponse(guiuid, false, 0,0); }
+    private boolean setResponse(String guiuid){ return setResponse(guiuid, 0,0); }
 
-    private boolean setResponse(String guiuid, boolean editable, float dx, float dy){
+    private boolean setResponse(String guiuid, float dx, float dy){
         User resp=null;
         String path=null;
-        editable=editable || contentIs("private:viewas","raw");
-        if(editable){
-        if(contentIsOrListContains("private:viewing:is", "editable")){
-            if(!oneOfOurs(guiuid)){
-                path="private:responses:editable:"+UID.toUID(guiuid);
-                if(contentSet(path)) return false;
-                if(!contentSet("private:responses:editable")) contentHash("private:responses:editable", hash());
-                resp=newEditableRule(guiuid, uid);
+        if(contentIs("private:viewas","raw")){
+            if(contentIsOrListContains("private:viewing:is", "editable")){
+                if(!oneOfOurs(guiuid)){
+                    path="private:responses:editable:"+UID.toUID(guiuid);
+                    if(contentSet(path)) return false;
+                    if(!contentSet("private:responses:editable")) contentHash("private:responses:editable", hash());
+                    resp=newEditableRule(guiuid, uid);
+                }
             }
-        }
         }
         else if(contentIsOrListContains("private:viewing:is", "3d")){
             path="private:responses:swipe:"+UID.toUID(guiuid);
@@ -589,21 +571,19 @@ public class User extends CyrusLanguage {
         return true;
     }
 
-    private User getObjectUpdating(String guiuid){ return (User)getWebObjectUpdating(guiuid, "", false); }
+    private User getObjectUpdating(String guiuid){ return (User)getWebObjectUpdating(guiuid, ""); }
 
-    private User getObjectUpdating(String guiuid, String tag){ return (User)getWebObjectUpdating(guiuid, tag, false); }
+    private User getObjectUpdating(String guiuid, String tag){ return (User)getWebObjectUpdating(guiuid, tag); }
 
-    private User getObjectUpdating(String guiuid, String tag, boolean editable){ return (User)getWebObjectUpdating(guiuid, tag, editable); }
-
-    private WebObject getWebObjectUpdating(final String guiuid, final String tag, final boolean editable){
+    private WebObject getWebObjectUpdating(final String guiuid, final String tag){
         final WebObject[] r=new WebObject[1]; r[0]=null;
         new Evaluator(this){ public void evaluate(){
             String formuid=null;
-            if(editable || contentIs("private:viewas","raw")){
-            if(contentIsOrListContains("private:viewing:is", "editable")){
-                if(!oneOfOurs(guiuid)) formuid=content("private:responses:editable:"+UID.toUID(guiuid));
-                else                   formuid=guiuid;
-            }
+            if(contentIs("private:viewas","raw")){
+                if(contentIsOrListContains("private:viewing:is", "editable")){
+                    if(!oneOfOurs(guiuid)) formuid=content("private:responses:editable:"+UID.toUID(guiuid));
+                    else                   formuid=guiuid;
+                }
             }
             else if(contentIsOrListContains("private:viewing:is", "3d")){
                 formuid=content("private:responses:swipe:"+UID.toUID(guiuid));
@@ -817,7 +797,7 @@ public class User extends CyrusLanguage {
     }
 
     private void setUpdateValOnObjectUpdating(String guiuid, String tag, String val){
-        WebObject o=getWebObjectUpdating(guiuid, tag, false);
+        WebObject o=getWebObjectUpdating(guiuid, tag);
         if(o==null) return;
         if(o instanceof User) ((User)o).setUpdateVal(guiuid,tag,val);
         else
