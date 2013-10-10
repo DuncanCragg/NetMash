@@ -231,7 +231,6 @@ public class User extends CyrusLanguage {
         earliest=updated+500;
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
-logXX("multitouched item: "+down+" "+mesh.get("title")+" uid: "+objectuid);
         new Evaluator(this){ public void evaluate(){
             boolean edit=false;
             if(edit){
