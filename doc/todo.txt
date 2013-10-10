@@ -27,6 +27,8 @@ In-World (non-edit) Link management
  * Cyrus rule: user then requests to add/rem other links; OK if present, calculate displacement
  - request to set global rules on a site object/region
 ------------------------
+ * return touch/untouch; light and game rules react to user touch - not adding sub!
+ * return x/y coords on object by second pass and fragment shader that sets R=x, G=y (triangles?)
  * multitouch a region sets user holding link to fixed other region joining on target region at given coords
  * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement
 ------------------------

@@ -71,7 +71,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     private boolean touchDetecting=false;
     private int     touchX,touchY;
     private Mesh    touchedObject=null;
-    private float   touchDX,touchDY;
     private boolean lightObject=false;
     // touchDetecting => mvpm; pos; touchCol
     // lightObject    => mvpm; pos; tex; lightCol; texture0
@@ -127,7 +126,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             int touchedG=flipAndRound((int)b.get(1));
             int touchedB=flipAndRound((int)b.get(2));
             touchedObject=touchables.get(String.format("%d:%d:%d",touchedR,touchedG,touchedB));
-            if(touchedObject!=null) cyrus.user.onObjectTouched(touchedObject.mesh,touchDX,touchDY);
+            if(touchedObject!=null) cyrus.user.onObjectTouched(touchedObject.mesh);
             touchDetecting=false;
         }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
         drawFrame();
@@ -376,15 +375,14 @@ public class Renderer implements GLSurfaceView.Renderer {
             }
             cyrus.user.onNewPosition(eyeX, eyeY, eyeZ);
         }else{
-            if(touchDetecting){ touchDX+=dx; touchDY+=dy; return; }
+            if(touchDetecting) return;
             if(x!=touchX || y!=touchY) touchedObject=null;
             if(touchedObject==null){
                 touchDetecting=true;
                 touchX=x; touchY=y;
-                touchDX=dx; touchDY=dy;
             }
             else{
-                cyrus.user.onObjectTouched(touchedObject.mesh,dx,dy);
+                cyrus.user.onObjectTouched(touchedObject.mesh);
             }
         }
     }

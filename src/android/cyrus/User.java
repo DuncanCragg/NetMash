@@ -153,15 +153,6 @@ public class User extends CyrusLanguage {
                         "}");
     }
 
-    static User newSwipe(String itemuid, String useruid, float dx, float dy){
-        return new User("{ \"is\": \"swipe\", \n"+
-                        "  \"item\": \""+itemuid+"\",\n"+
-                        "  \"user\": \""+useruid+"\",\n"+
-                        "  \"dx\": \""+dx+"\",\n"+
-                        "  \"dy\": \""+dy+"\"\n"+
-                        "}");
-    }
-
     // ---------------------------------------------------------
 
     Cyrus2GUI cyrus2gui;
@@ -218,11 +209,10 @@ public class User extends CyrusLanguage {
 
     private float lastx,lasty,lastz;
     private LinkedHashMap lastmesh=null;
-    private float lastdx, lastdy;
 
-    synchronized public void onObjectTouched(LinkedHashMap mesh, final float dx, final float dy){
-        if(mesh!=lastmesh){ lastdx=0; lastdy=0; earliest=0; waiting=false; }
-        lastmesh=mesh; lastdx+=dx; lastdy+=dy;
+    synchronized public void onObjectTouched(LinkedHashMap mesh){
+        if(mesh!=lastmesh){ earliest=0; waiting=false; }
+        lastmesh=mesh;
         final long updated=System.currentTimeMillis();
         final User self=this;
         if(waiting) return;
@@ -232,53 +222,29 @@ public class User extends CyrusLanguage {
                 Kernel.sleep(earliest-updated);
                 synchronized(self){
                     waiting=false;
-                    if(lastdx+lastdy==0) return;
-                    float ldx=lastdx,ldy=lastdy;
-                    lastdx=0; lastdy=0;
-                    onObjectTouched(lastmesh,ldx,ldy);
+                    onObjectTouched(lastmesh);
                 }
             }}.start();
             return;
         }
-        final float ndx=lastdx, ndy=lastdy;
-        lastdx=0; lastdy=0;
         earliest=updated+500;
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
-logXX("multitouched item: "+mesh.get("title")+" uid: "+objectuid+" "+ndx+" "+ndy+" "+(ndx*ndx+ndy*ndy));
+logXX("multitouched item: "+mesh.get("title")+" uid: "+objectuid);
         new Evaluator(this){ public void evaluate(){
             boolean edit=false;
-            boolean interact=(ndx*ndx+ndy*ndy)<1;
             if(edit){
                 history.forward();
                 content("private:viewing",objectuid);
                 content("private:viewas", "raw");
                 showWhatIAmViewing();
             }
-            else
-            if(interact){
+            else {
                 content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
                 content("joining", objectuid);
                 notifying(objectuid);
             }
-            else{
-                boolean newSwipe=setResponse(objectuid, ndx/30, ndy/30);
-                if(!newSwipe){
-                    User swipe=getObjectUpdating(objectuid);
-                    swipe.setSwipeVal(objectuid, ndx/30, ndy/30);
-                }
-            }
         }};
-    }
-
-    public void setSwipeVal(final String objectuid, final float dx, final float dy){
-        new Evaluator(this){
-            public void evaluate(){
-                contentDouble("dx", dx);
-                contentDouble("dy", dy);
-                notifying(objectuid);
-            }
-        };
     }
 
     synchronized public void onNewPosition(final float x, final float y, final float z){
@@ -514,9 +480,7 @@ logXX("multitouched item: "+mesh.get("title")+" uid: "+objectuid+" "+ndx+" "+ndy
         return val[0];
     }
 
-    private boolean setResponse(String guiuid){ return setResponse(guiuid, 0,0); }
-
-    private boolean setResponse(String guiuid, float dx, float dy){
+    private boolean setResponse(String guiuid){
         User resp=null;
         String path=null;
         if(contentIs("private:viewas","raw")){
@@ -528,12 +492,6 @@ logXX("multitouched item: "+mesh.get("title")+" uid: "+objectuid+" "+ndx+" "+ndy
                     resp=newEditableRule(guiuid, uid);
                 }
             }
-        }
-        else if(contentIsOrListContains("private:viewing:is", "3d")){
-            path="private:responses:swipe:"+UID.toUID(guiuid);
-            if(contentSet(path)) return false;
-            if(!contentSet("private:responses:swipe")) contentHash("private:responses:swipe", hash());
-            resp=newSwipe(guiuid, uid, dx, dy);
         }
         else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
             path="private:responses:query:"+UID.toUID(guiuid);
@@ -584,9 +542,6 @@ logXX("multitouched item: "+mesh.get("title")+" uid: "+objectuid+" "+ndx+" "+ndy
                     if(!oneOfOurs(guiuid)) formuid=content("private:responses:editable:"+UID.toUID(guiuid));
                     else                   formuid=guiuid;
                 }
-            }
-            else if(contentIsOrListContains("private:viewing:is", "3d")){
-                formuid=content("private:responses:swipe:"+UID.toUID(guiuid));
             }
             else if(contentListContainsAll("private:viewing:is", list("searchable", "document", "list"))){
                 formuid=content("private:responses:query:"+UID.toUID(guiuid));
@@ -867,10 +822,6 @@ logXX("multitouched item: "+mesh.get("title")+" uid: "+objectuid+" "+ndx+" "+ndy
         }
         else
         if(contentIsOrListContains("is", "rsvp")){
-        }
-        else
-        if(contentIsOrListContains("is", "swipe")){
-            notifying(content("item"));
         }
         else
         if(contentIs("is", "form")){
