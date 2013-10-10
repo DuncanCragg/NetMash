@@ -211,7 +211,7 @@ public class User extends CyrusLanguage {
     private LinkedHashMap lastmesh=null;
     private boolean lastdown=false;
 
-    synchronized public void onObjectTouched(LinkedHashMap mesh, boolean down){
+    synchronized public void onObjectTouched(LinkedHashMap mesh, final boolean down){
         if(mesh!=lastmesh){ earliest=0; waiting=false; }
         lastmesh=mesh; lastdown=down;
         final long updated=System.currentTimeMillis();
@@ -241,8 +241,13 @@ logXX("multitouched item: "+down+" "+mesh.get("title")+" uid: "+objectuid);
                 showWhatIAmViewing();
             }
             else {
-                content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
-                content("joining", objectuid);
+                if(down){
+                    content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
+                    content("joining", objectuid);
+                }
+                else{
+                    content("joining",null);
+                }
                 notifying(objectuid);
             }
         }};
