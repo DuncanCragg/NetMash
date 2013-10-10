@@ -126,7 +126,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             int touchedG=flipAndRound((int)b.get(1));
             int touchedB=flipAndRound((int)b.get(2));
             touchedObject=touchables.get(String.format("%d:%d:%d",touchedR,touchedG,touchedB));
-            if(touchedObject!=null) cyrus.user.onObjectTouched(touchedObject.mesh);
+            if(touchedObject!=null) cyrus.user.onObjectTouched(touchedObject.mesh,true);
             touchDetecting=false;
         }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
         drawFrame();
@@ -355,7 +355,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private boolean emulator(){ return Kernel.config.stringPathN("network:home-cache-notify").indexOf("10.0.2.2")!= -1; }
 
-    public void swipe(boolean shift, int edge, int x, int y, float dx, float dy){
+    public void swipe(boolean down, boolean shift, int edge, int x, int y, float dx, float dy){
+logXX("swipe",down,shift,edge,x,y,dx,dy);
         if(emulator()) shift=(edge!=3 && edge!=4);
         if(!shift){
             if(edge!=2){
@@ -382,7 +383,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 touchX=x; touchY=y;
             }
             else{
-                cyrus.user.onObjectTouched(touchedObject.mesh);
+                cyrus.user.onObjectTouched(touchedObject.mesh, down);
             }
         }
     }

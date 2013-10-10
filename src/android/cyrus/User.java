@@ -209,10 +209,11 @@ public class User extends CyrusLanguage {
 
     private float lastx,lasty,lastz;
     private LinkedHashMap lastmesh=null;
+    private boolean lastdown=false;
 
-    synchronized public void onObjectTouched(LinkedHashMap mesh){
+    synchronized public void onObjectTouched(LinkedHashMap mesh, boolean down){
         if(mesh!=lastmesh){ earliest=0; waiting=false; }
-        lastmesh=mesh;
+        lastmesh=mesh; lastdown=down;
         final long updated=System.currentTimeMillis();
         final User self=this;
         if(waiting) return;
@@ -222,7 +223,7 @@ public class User extends CyrusLanguage {
                 Kernel.sleep(earliest-updated);
                 synchronized(self){
                     waiting=false;
-                    onObjectTouched(lastmesh);
+                    onObjectTouched(lastmesh,lastdown);
                 }
             }}.start();
             return;
@@ -230,7 +231,7 @@ public class User extends CyrusLanguage {
         earliest=updated+500;
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
-logXX("multitouched item: "+mesh.get("title")+" uid: "+objectuid);
+logXX("multitouched item: "+down+" "+mesh.get("title")+" uid: "+objectuid);
         new Evaluator(this){ public void evaluate(){
             boolean edit=false;
             if(edit){

@@ -150,26 +150,34 @@ log(show? "show keyboard": "hide keyboard");
             case MotionEvent.ACTION_DOWN:
                 ox=e.getX(0); oy=e.getY(0);
                 px=ox; py=oy;
+                onemeshview.queueEvent(new Runnable(){ public void run(){
+                    if(onerenderer==null) return;
+                    onerenderer.swipe(true, false, 0, (int)ox,screenHeight-(int)oy, 0,0);
+                }});
                 numTouch=1;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 tx=e.getX(1); ty=e.getY(1);
                 qx=tx; qy=ty;
+                onemeshview.queueEvent(new Runnable(){ public void run(){
+                    if(onerenderer==null) return;
+                    onerenderer.swipe(true, true, 0, (int)tx,screenHeight-(int)ty, 0,0);
+                }});
                 numTouch=2;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 xx=tx; yy=ty;
-                if(qx==tx && qy==ty) onemeshview.queueEvent(new Runnable(){ public void run(){
+                onemeshview.queueEvent(new Runnable(){ public void run(){
                     if(onerenderer==null) return;
-                    onerenderer.swipe(true, 0, (int)xx,screenHeight-(int)yy, 0,0);
+                    onerenderer.swipe(false, true, 0, (int)xx,screenHeight-(int)yy, 0,0);
                 }});
                 numTouch=1;
                 break;
             case MotionEvent.ACTION_UP:
                 xx=ox; yy=oy;
-                if(px==ox && py==oy) onemeshview.queueEvent(new Runnable(){ public void run(){
+                onemeshview.queueEvent(new Runnable(){ public void run(){
                     if(onerenderer==null) return;
-                    onerenderer.swipe(false, 0, (int)xx,screenHeight-(int)yy, 0,0);
+                    onerenderer.swipe(false, false, 0, (int)xx,screenHeight-(int)yy, 0,0);
                 }});
                 ox=0; oy=0;
                 px=0; py=0;
@@ -186,12 +194,12 @@ log(show? "show keyboard": "hide keyboard");
                 float mx,my;
                 if(!mt){
                     mx=cx-px; my=cy-py;
-                    if(mx*mx+my*my<0.1) return true;
+                    if(mx*mx+my*my<1.0) return true;
                     px=cx; py=cy;
                     xx=ox; yy=oy;
                 }else{
                     mx=cx-qx; my=cy-qy;
-                    if(mx*mx+my*my<0.1) return true;
+                    if(mx*mx+my*my<1.0) return true;
                     qx=cx; qy=cy;
                     xx=tx; yy=ty;
                 }
@@ -199,7 +207,7 @@ log(show? "show keyboard": "hide keyboard");
                 final float dy=100*my/screenHeight;
                 onemeshview.queueEvent(new Runnable(){ public void run(){
                     if(onerenderer==null) return;
-                    onerenderer.swipe(mt, fromEdge(xx,yy), (int)xx,screenHeight-(int)yy, dx,dy);
+                    onerenderer.swipe(true, mt, fromEdge(xx,yy), (int)xx,screenHeight-(int)yy, dx,dy);
                 }});
                 break;
             default:
