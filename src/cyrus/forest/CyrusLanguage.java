@@ -346,6 +346,7 @@ public class CyrusLanguage extends WebObject {
         if(v.equals("@") && contentIsThis(pk)) return true;
         if(v.equals("number") && isNumber(contentObject(pk))) return true;
         if(v.equals("boolean") && isBoolean(contentObject(pk))) return true;
+        if(v.equals("uid") && UID.isUID(contentObject(pk))) return true;
         if(v.startsWith("/") && v.endsWith("/") && regexMatch(v.substring(1,v.length()-1),pk)) return true;
         if(isBoolean(v) && scanBoolean(findBooleanIn(v),pk)) return true;
         if(isRef(v) && scanType(findObject(v),pk)) return true;

@@ -136,7 +136,7 @@
   tt: { x: 4 y: 33 }{ x: 4 y: 333 }
   pp: { x: 4 y: # }{ x: 4 y: # }
   cc: { x: b } !=> @.
-  dd: { g: b  z: y n: 3} { UID: /uid-/  x: a b  y: c d j k  z: e f g  q: h i  p: q r  g: c n: 4}
+  dd: { g: b  z: y n: 3} { UID: uid  x: a b  y: c d j k  z: e f g  q: h i  p: q r  g: c n: 4}
   ee: # => ( @dd with-more { u: @..:UID  h: @..:g } ) cut-out { z: * }
   ea: # => @dd each { @..:g: @..:UID e: @..:n + 1 }
   pe: # => @p each { @..:a: @..:c }
@@ -177,8 +177,8 @@
   vo: => @. dot ((0 1 0)(-1 0 0)(0 0 0))
   vc: 6 5 5 => @. - @vo
   cc: { y: * } !=> @.
-  ee: { g: b z: # u: # h: b } { x: b z: # u: /uid-/ h: c }
-  ea: { b: #  e: 4 } { c: /uid-/  e: 5}
+  ee: { g: b z: # u: # h: b } { x: b z: # u: uid h: c }
+  ea: { b: #  e: 4 } { c: uid  e: 5}
   pe: { b: d }
   pl: b d
   ne: 2 3 ##
@@ -212,7 +212,7 @@
   bl: true => not @rm
   pa: { b: d a: d e: f}
   lu: { c: d qq: 20 20 30 40 50 }
-  au: /uid-/ /uid-/
+  au: uid uid
   at: thingy nothing
 }
 
