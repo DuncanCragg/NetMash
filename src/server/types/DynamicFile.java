@@ -21,36 +21,27 @@ public class DynamicFile extends CyrusLanguage {
     private void runTicker(){
         running=true;
         new Thread(){ public void run(){
-            String watching=content("watching");
             while(running){
                 try{ Thread.sleep(200); }catch(Exception e){}
-                tick(watching);
+                tick();
             }
         }}.start();
     }
 
-    private void tick(final String watching){
-        new Evaluator(this){
-            public void evaluate(){
-                try{
-                    File file = new File(watching);
-                    if(!(file.exists() && file.canRead())) throw new Exception("Can't read file");
-                    long modified=file.lastModified();
-                    if(modified > fileModified){
-                        fileModified=modified;
-                        contentReplace(new JSON(file,true));
-                        content("watching", watching);
-                        self.evaluate();
-                    }
-                } catch(Exception e){ e.printStackTrace(); }
-            }
-        };
-    }
+    private void tick(){
+        new Evaluator(this){ public void evaluate(){ try{
+            String watching=content("watching");
+            File file = new File(watching);
+            if(!(file.exists() && file.canRead())) throw new Exception("Can't read file");
+            long modified=file.lastModified();
+            if(modified > fileModified){
+                fileModified=modified;
+                contentReplace(new JSON(file,true));
+                content("watching", watching);
+                self.evaluate();
 
-    private void logFail(Exception e){
-        log("Exception in DynamicFile"+(e!=null? ": "+e: ""));
-        log("Reading file: "+content("watching"));
-        if(e!=null) e.printStackTrace();
+            }
+        } catch(Exception e){ e.printStackTrace(); }}};
     }
 }
 
