@@ -8,7 +8,6 @@
     { item: uid-bfa0-9dcb-1d1c-1e83 position:  0 10 0 }
     { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position:  4 0 4 }
     { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: -4 0 4 }
-    { item: http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json position:  0 0 -27 }
   vertices: ( 1.0 -0.1 -1.0 ) ( 1.0 -0.1 1.0 ) ( -1.0 -0.1 1.0 ) ( -1.0 -0.1 -1.0 )
   texturepoints: ( 0.0 0.0 ) ( 5.0 0.0 ) ( 5.0 5.0 ) ( 0.0 5.0 )
   normals: ( 0.0 1.0 0.0 )
@@ -16,6 +15,12 @@
   textures: http://img.photobucket.com/albums/v693/fakirnogwat/0009.png
   vertex-shader: uid-ff5d-1ef4-cfa5-5f92
   fragment-shader: uid-1ff8-59e9-6dac-9b56
+  Rules: {
+    is: place rule
+    when: "user interacts with this place, grab url it's holding and join it"
+    Alerted: { is: user  joining: @  holding: uid }
+    sub-items: => @. with { item: @Alerted:holding position:  0 0 -27 }
+  }
 }
 
 { UID: uid-ff5d-1ef4-cfa5-5f92
