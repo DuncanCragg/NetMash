@@ -14,13 +14,13 @@ In-World (non-edit) Link management
  + minecraft: left on block=hitting xyz; left on entity=hitting URL; right on block=placing xyz; right on entity=touching URL
  * add: interacting by multitouch: Cyrus sees I'm holding this link, interacting with this target
     + bottom left is moving and multitouch while moving, top left is multitouch for standing still
-    * triangle touched on an object: object has to work out what displacement to add, or to pass to its within
+    * coords touched on an object: object has to work out what displacement to add, or to pass to its within
     + if beyond current region, touch white grid
     - posn implied by touching a neighbour if voxels
     - ultimately ability to add a block of type defined somewhere else - may need to clone with its links
  + rem: hitting by touch with holding nothing or a tool: link and position on 'within' object/region
     + send user hit action to linker of object/region - the within of the user
- * { is: user holding: <link to object/region>, touching: { on: <target link> triangle: 7 within: <holder of> position: <coords in holder> } }
+ * { is: user holding: <link to object/region>, touching: { on: <target link> coords: 7 within: <holder of> position: <coords in holder> } }
  - { is: user holding: <link to ruleset/texture/shader/sound> (un-)animating/texturing/shading/sounding:  }
  - touching: get coords and uid of within if a shared link - shared if no within or within not here, notify within not shared object
  - type of ruleset/shader by is:
@@ -32,9 +32,14 @@ In-World (non-edit) Link management
  * Cyrus rule: user then requests to add/rem other links; OK if present, calculate displacement
  - request to set global rules on a site object/region
 ------------------------
- * return triangle on object by second pass and fragment shader that sets RGB=triangle
- * multitouch a region sets user (holding link to fixed other region) touching on to target region near touched triangle
- * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement off that triangle
+ * return coords on object by second pass and fragment shader that sets RGB=object-relative coords
+ * multitouch a region { is: user holding: <link to fixed region>, touching: { on: <target link> coords: 7 within: <holder of> position: <coords in holder> } }
+ * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement off that coords
+ * user holding an object, touching; target adds link to object at coord:
+   (a) place - point touched
+   (b) object - point touched (relative to object coords)
+   (c) voxel - within notified with voxel coords and voxel-relative touched coords
+   (d) linked/shared object - within notified with object coords and object-rel touched coords
 ------------------------
 World Basics
  - blue sky; ambient light; day/night - region object: { night/day }
