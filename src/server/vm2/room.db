@@ -88,7 +88,7 @@
 { UID: uid-e6e9-df58-ddab-6eb9
   is: 3d rule editable
   when: "touched, increase light"
-  Alerted: { is: user  joining: @  Version: > @v }
+  Alerted: { is: user  touching: @  Version: > @v }
   v: => @Alerted:Version
   light: * ( => clamp 0 10 ( @. + 1 ) ) ( => clamp 0 10 ( @. + 1 ) )
 }

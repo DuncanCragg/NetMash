@@ -11,26 +11,30 @@ In-World (non-edit) Link management
  - request add/rem links in global rules
  - operations: grab/add/rem/cut
  + local or remote user, Java animates user and notifies target or its within
+ + minecraft: left on block=hitting xyz; left on entity=hitting URL; right on block=placing xyz; right on entity=touching URL
  * add: interacting by multitouch: Cyrus sees I'm holding this link, interacting with this target
     + bottom left is moving and multitouch while moving, top left is multitouch for standing still
-    * point touched on an object: object has to work out what displacement to add, or to pass to its within
+    * triangle touched on an object: object has to work out what displacement to add, or to pass to its within
     + if beyond current region, touch white grid
     - posn implied by touching a neighbour if voxels
- + rem: hitting by touch/hold: link and position on 'within' object/region
+    - ultimately ability to add a block of type defined somewhere else - may need to clone with its links
+ + rem: hitting by touch with holding nothing or a tool: link and position on 'within' object/region
     + send user hit action to linker of object/region - the within of the user
- * { is: user holding: <link to object/region>, placing/joining/hitting/interacting: { on: <target link> position: 1 2 1 } }
+ * { is: user holding: <link to object/region>, touching: { on: <target link> triangle: 7 within: <holder of> position: <coords in holder> } }
  - { is: user holding: <link to ruleset/texture/shader/sound> (un-)animating/texturing/shading/sounding:  }
- + separate places: users: sub-objects: (cubes:, entities:, structures: in MC)
-    + placing object -> sub-objects: and joining region -> places:
+ - touching: get coords and uid of within if a shared link - shared if no within or within not here, notify within not shared object
+ - type of ruleset/shader by is:
+ - type of texture/sound by extension (ug - and ug everywhere), or fetch/inspect, or came from there, or explicit GUI choice
+ + separate { sub-objects: .. places: .. users: .. } (cubes:, entities:, structures: in MC)
+    + placing object -> sub-objects: .. joining region -> places: .. presence track -> users:
  + Java finds nearest place - User automatically set 'within' nearest enclosing region (can only be within: places: objects)
- + Cyrus presence tracker: effectively user requests by within to add/rem link to it in target region at current position
+ + Cyrus presence tracker: effectively user requests by within to add/rem link to it in users: of target region at current position
  * Cyrus rule: user then requests to add/rem other links; OK if present, calculate displacement
  - request to set global rules on a site object/region
 ------------------------
- * return touch/untouch; light and game rules react to user touch - not adding sub!
- * return x/y coords on object by second pass and fragment shader that sets R=x, G=y (B=triangle?)
- * multitouch a region sets user holding link to fixed other region joining on target region at given coords
- * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement
+ * return triangle on object by second pass and fragment shader that sets RGB=triangle
+ * multitouch a region sets user (holding link to fixed other region) touching on to target region near touched triangle
+ * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement off that triangle
 ------------------------
 World Basics
  - blue sky; ambient light; day/night - region object: { night/day }

@@ -242,10 +242,10 @@ public class User extends CyrusLanguage {
             else {
                 if(down){
                     content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
-                    content("joining", objectuid);
+                    content("touching", objectuid);
                 }
                 else{
-                    content("joining",null);
+                    content("touching",null);
                 }
                 notifying(objectuid);
             }
