@@ -69,6 +69,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float direction=0;
 
     private boolean touchDetecting=false;
+    private boolean touchCoordsDetecting=false;
     private int     touchX,touchY;
     private Mesh    touchedObject=null;
     private boolean lightObject=false;
@@ -77,8 +78,10 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     static String basicVertexShaderSource       = "uniform mat4 mvpm, mvvm; attribute vec4 pos; attribute vec2 tex; attribute vec3 nor; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ texturePt = tex; mvvp = vec3(mvvm*pos); mvvn = vec3(mvvm*vec4(nor,0.0)); gl_Position = mvpm*pos; }";
     static String basicFragmentShaderSource     = "precision mediump float; uniform vec3 lightPos; uniform vec3 lightCol; uniform sampler2D texture0; varying vec3 mvvp; varying vec2 texturePt; varying vec3 mvvn; void main(){ float lgtd=length(lightPos-mvvp); vec3 lgtv=normalize(lightPos-mvvp); float dffus=max(dot(mvvn, lgtv), 0.1)*(1.0/(1.0+(0.25*lgtd*lgtd))); gl_FragColor=vec4(lightCol,1.0)*(0.30+0.85*dffus)*texture2D(texture0,texturePt); }";
-    static String grayscaleVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
-    static String grayscaleFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
+    static String objectTouchedVertexShaderSource   = "uniform mat4 mvpm; attribute vec4 pos; void main(){ gl_Position=mvpm*pos; }";
+    static String objectTouchedFragmentShaderSource = "precision mediump float; uniform vec4 touchCol; void main(){ gl_FragColor = touchCol; }";
+    static String modelCoordsVertexShaderSource  = "uniform mat4 mvpm; attribute vec4 pos; varying vec3 vcol; void main(){ gl_Position=mvpm*pos; vcol=vec3(pos); }";
+    static String modelCoordsFragmentShaderSource = "precision mediump float; varying vec3 vcol; void main(){ gl_FragColor = vec4(vcol,1.0); }";
     static String lightVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; attribute vec2 tex; varying vec2 texturePt; void main(){ texturePt = tex; gl_Position = mvpm*pos; }";
     static String lightFragmentShaderSource     = "precision mediump float; uniform vec3 lightCol; uniform sampler2D texture0; varying vec2 texturePt; void main(){ gl_FragColor=vec4(lightCol,1.0)*texture2D(texture0,texturePt); }";
 
@@ -126,8 +129,16 @@ public class Renderer implements GLSurfaceView.Renderer {
             int touchedG=flipAndRound((int)b.get(1));
             int touchedB=flipAndRound((int)b.get(2));
             touchedObject=touchables.get(String.format("%d:%d:%d",touchedR,touchedG,touchedB));
-            if(touchedObject!=null) cyrus.user.onObjectTouched(touchedObject.mesh,true);
+            touchCoordsDetecting=true;
+            drawFrame();
+            GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
+            if(debugGL) throwAnyGLException("glReadPixels ",touchX,touchY,b);
+            float touchedX=flipAndScale((int)b.get(0));
+            float touchedY=flipAndScale((int)b.get(1));
+            float touchedZ=flipAndScale((int)b.get(2));
+            touchCoordsDetecting=false;
             touchDetecting=false;
+            if(touchedObject!=null) cyrus.user.onObjectTouched(touchedObject.mesh,true);
         }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
         drawFrame();
         if(!debugGL) throwAnyGLException("Something went wrong in GL: switch on 'debugGL' ",touchX,"/",touchY);
@@ -136,6 +147,11 @@ public class Renderer implements GLSurfaceView.Renderer {
     private int flipAndRound(int n){
         if(n<0) n+=256;
         return ((n+8)/16)*16;
+    }
+
+    private float flipAndScale(int n){
+        if(n<0) n+=256;
+        return n/256.0f;
     }
 
     private void drawFrame(){
@@ -184,7 +200,8 @@ public class Renderer implements GLSurfaceView.Renderer {
             getProgramLocs(program);
             setupTextures(m);
         }else{
-            program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
+            if(!touchCoordsDetecting) program=getProgram(objectTouchedVertexShaderSource, objectTouchedFragmentShaderSource);
+            else                      program=getProgram(modelCoordsVertexShaderSource, modelCoordsFragmentShaderSource);
             getProgramLocs(program);
         }
         setVariables(m, tx,ty,tz);
@@ -198,7 +215,9 @@ public class Renderer implements GLSurfaceView.Renderer {
             getProgramLocs(program);
             setupTextures(m);
         }else{
-            int program=getProgram(grayscaleVertexShaderSource, grayscaleFragmentShaderSource);
+            int program;
+            if(!touchCoordsDetecting) program=getProgram(objectTouchedVertexShaderSource, objectTouchedFragmentShaderSource);
+            else                      program=getProgram(modelCoordsVertexShaderSource, modelCoordsFragmentShaderSource);
             getProgramLocs(program);
         }
         setVariablesForEdit(m);
@@ -232,6 +251,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
         if(touchDetecting){
+            if(touchCoordsDetecting) return;
             incrementTouchColour();
             touchCol[0]=touchR/256.0f;
             touchCol[1]=touchG/256.0f;
@@ -275,6 +295,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mvvmLoc, 1, false, matrixMVV, 0);
         GLES20.glUniformMatrix4fv(mvpmLoc, 1, false, matrixMVP, 0);
         if(touchDetecting){
+            if(touchCoordsDetecting) return;
             incrementTouchColour();
             touchCol[0]=touchR/256.0f;
             touchCol[1]=touchG/256.0f;
@@ -500,6 +521,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         mvpmLoc =     GLES20.glGetUniformLocation(program, "mvpm");
         posLoc =      GLES20.glGetAttribLocation( program, "pos");
         if(touchDetecting){
+            if(touchCoordsDetecting) return;
             touchColLoc = GLES20.glGetUniformLocation(program, "touchCol");
             return;
         }
