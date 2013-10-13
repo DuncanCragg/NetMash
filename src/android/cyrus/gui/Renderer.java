@@ -71,7 +71,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private boolean touchDetecting=false;
     private boolean touchCoordsDetecting=false;
     private int     touchX,touchY;
-    private Mesh    touchedObject=null;
+    private Mesh  touchedObject=null;
     private boolean lightObject=false;
     // touchDetecting => mvpm; pos; touchCol
     // lightObject    => mvpm; pos; tex; lightCol; texture0
@@ -129,18 +129,22 @@ public class Renderer implements GLSurfaceView.Renderer {
             int touchedG=flipAndRound((int)b.get(1));
             int touchedB=flipAndRound((int)b.get(2));
             touchedObject=touchables.get(String.format("%d:%d:%d",touchedR,touchedG,touchedB));
-            touchCoordsDetecting=true;
-            drawFrame();
-            GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
-            if(debugGL) throwAnyGLException("glReadPixels ",touchX,touchY,b);
-            float touchedX=flipAndScale((int)b.get(0));
-            float touchedY=flipAndScale((int)b.get(1));
-            float touchedZ=flipAndScale((int)b.get(2));
-            touchCoordsDetecting=false;
+            if(touchedObject!=null){
+                touchCoordsDetecting=true;
+                drawFrame();
+                touchCoordsDetecting=false;
+                GLES20.glReadPixels(touchX,touchY, 1,1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, b);
+                if(debugGL) throwAnyGLException("glReadPixels ",touchX,touchY,b);
+                float touchedX=flipAndScale((int)b.get(0));
+                float touchedY=flipAndScale((int)b.get(1));
+                float touchedZ=flipAndScale((int)b.get(2));
+                cyrus.user.onObjectTouched(touchedObject.mesh,true,touchedX,touchedY,touchedZ);
+            }
             touchDetecting=false;
-            if(touchedObject!=null) cyrus.user.onObjectTouched(touchedObject.mesh,true);
         }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
+
         drawFrame();
+
         if(!debugGL) throwAnyGLException("Something went wrong in GL: switch on 'debugGL' ",touchX,"/",touchY);
     }
 
@@ -403,7 +407,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 touchX=x; touchY=y;
             }
             else{
-                cyrus.user.onObjectTouched(touchedObject.mesh, down);
+                if(!down) cyrus.user.onObjectTouched(touchedObject.mesh,false,-1,-1,-1);
             }
         }
     }

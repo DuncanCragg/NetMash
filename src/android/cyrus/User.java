@@ -210,10 +210,12 @@ public class User extends CyrusLanguage {
     private float lastx,lasty,lastz;
     private LinkedHashMap lastmesh=null;
     private boolean lastdown=false;
+    private float lastxc,lastyc,lastzc;
 
-    synchronized public void onObjectTouched(LinkedHashMap mesh, final boolean down){
+    synchronized public void onObjectTouched(LinkedHashMap mesh, final boolean down, final float x, final float y, final float z){
+/*
         if(mesh!=lastmesh){ earliest=0; waiting=false; }
-        lastmesh=mesh; lastdown=down;
+        lastmesh=mesh; lastdown=down; lastxc=x; lastyc=y; lastzc=z;
         final long updated=System.currentTimeMillis();
         final User self=this;
         if(waiting) return;
@@ -223,12 +225,13 @@ public class User extends CyrusLanguage {
                 Kernel.sleep(earliest-updated);
                 synchronized(self){
                     waiting=false;
-                    onObjectTouched(lastmesh,lastdown);
+                    onObjectTouched(lastmesh,lastdown,lastxc,lastyc,lastzc);
                 }
             }}.start();
             return;
         }
         earliest=updated+500;
+*/
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
         new Evaluator(this){ public void evaluate(){
@@ -240,6 +243,7 @@ public class User extends CyrusLanguage {
                 showWhatIAmViewing();
             }
             else {
+logXX((down? "down ": "up ")+objectuid+"@"+x+","+y+","+z);
                 if(down){
                     content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
                     content("touching", objectuid);
