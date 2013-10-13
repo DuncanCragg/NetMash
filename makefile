@@ -3,7 +3,7 @@
 # Where you want the release Android apk to be copied
 #
 RELEASE_TARGET=../net/the-cyrus.net/Cyrus.apk
-LOCAL_IP=192.168.0.6
+LOCAL_IP=192.168.0.8
 #
 ################################################################################
 
