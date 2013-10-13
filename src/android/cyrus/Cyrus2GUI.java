@@ -679,8 +679,8 @@ public class Cyrus2GUI {
         objhash.put("rotation",      user.contentObject(p+"rotation"));
         objhash.put("scale",         user.contentObject(p+"scale"));
         objhash.put("light",         user.contentObject(p+"light"));
-        objhash.put("vertices",      list(list(  1.0, -1.0, -1.0 ), list(  1.0, -1.0,  1.0 ), list( -1.0, -1.0,  1.0 ), list( -1.0, -1.0, -1.0 ),
-                                          list(  1.0,  1.0, -1.0 ), list(  1.0,  1.0,  1.0 ), list( -1.0,  1.0,  1.0 ), list( -1.0,  1.0, -1.0 )));
+        objhash.put("vertices",      list(list(  1.0,  0.0,  0.0 ), list(  1.0,  0.0,  1.0 ), list(  0.0,  0.0,  1.0 ), list(  0.0,  0.0,  0.0 ),
+                                          list(  1.0,  1.0,  0.0 ), list(  1.0,  1.0,  1.0 ), list(  0.0,  1.0,  1.0 ), list(  0.0,  1.0,  0.0 )));
         objhash.put("texturepoints", list(list( 1.0, 1.0 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 1.0 ) ));
         objhash.put("normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
                                           list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
@@ -717,8 +717,8 @@ public class Cyrus2GUI {
         objhash.put("rotation",      user.contentObject(p+"rotation"));
         objhash.put("scale",         user.contentObject(p+"scale"));
         objhash.put("light",         user.contentObject(p+"light"));
-        objhash.put("vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
-                                          list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
+        objhash.put("vertices",      list(list(  1.0,  0.0,  0.0 ), list(  1.0,  0.0,  0.2 ), list(  0.0,  0.0,  0.2 ), list(  0.0,  0.0,  0.0 ),
+                                          list(  1.0,  1.0,  0.0 ), list(  1.0,  1.0,  0.2 ), list(  0.0,  1.0,  0.2 ), list(  0.0,  1.0,  0.0 )));
         objhash.put("texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));
         objhash.put("normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
                                           list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),
@@ -748,8 +748,8 @@ public class Cyrus2GUI {
 
         objhash.put("is", "mesh");
         objhash.put("title", title);
-        objhash.put("vertices",      list(list(  1.0,  0.0, -0.1 ), list(  1.0,  0.0,  0.1 ), list( -1.0,  0.0,  0.1 ), list( -1.0,  0.0, -0.1 ),
-                                          list(  1.0,  1.0, -0.1 ), list(  1.0,  1.0,  0.1 ), list( -1.0,  1.0,  0.1 ), list( -1.0,  1.0, -0.1 )));
+        objhash.put("vertices",      list(list(  1.0,  0.0,  0.0 ), list(  1.0,  0.0,  0.1 ), list(  0.0,  0.0,  0.1 ), list(  0.0,  0.0,  0.0 ),
+                                          list(  1.0,  1.0,  0.0 ), list(  1.0,  1.0,  0.1 ), list(  0.0,  1.0,  0.1 ), list(  0.0,  1.0,  0.0 )));
         objhash.put("texturepoints", list(list( 1.0, 0.5 ), list( 1.0, 0.0 ), list( 0.0, 0.0 ), list( 0.0, 0.5 ) ));
         objhash.put("normals",       list(list( -1.0,  0.0,  0.0 ), list( 1.0, 0.0, 0.0 ),
                                           list(  0.0, -1.0,  0.0 ), list( 0.0, 1.0, 0.0 ),

@@ -11,7 +11,7 @@
   is: place 3d mesh editable
   title: "Ann Droid's Place"
   rotation: 0 0 0
-  scale: 15.0 15.0 15.0
+  scale: 30 30 30
   present: 0
   sub-items:
     { item: uid-311d-8423-3ca6-ddcb position:  0 10 0 }
@@ -36,7 +36,7 @@
     { item: uid-ad6c-85d2-46ab-85da position:  1 -1 15 }
     { item: uid-ad6c-85d2-46ab-85da position:  2 -1 15 }
     { item: uid-ad6c-85d2-46ab-85da position:  3 -1 15 }
-  vertices: (  1.0 -0.1 -1.0 ) ( 1.0 -0.1 1.0 ) ( -1.0 -0.1 1.0 ) ( -1.0 -0.1 -1.0 )
+  vertices: (  1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )
   texturepoints: ( 0.0 0.0 ) ( 5.0 0.0 ) ( 5.0 5.0 ) ( 0.0 5.0 )
   normals: ( 0.0 1.0 0.0 )
   faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )
@@ -55,10 +55,10 @@
   is: 3d mesh editable
   title: Avatar
   rotation: 0 45 0
-  scale: 1.0 1.0 1.0
+  scale: 1 1 1
   vertices:
-    (  1.0 -1.0 -1.0 ) (  1.0 -1.0  1.0 ) ( -1.0 -1.0  1.0 ) ( -1.0 -1.0 -1.0 )
-    (  1.0  1.0 -1.0 ) (  1.0  1.0  1.0 ) ( -1.0  1.0  1.0 ) ( -1.0  1.0 -1.0 )
+    (  1  0  0 ) (  1  0  1 ) (  0  0  1 ) (  0  0  0 )
+    (  1  1  0 ) (  1  1  1 ) (  0  1  1 ) (  0  1  0 )
   texturepoints: ( 0.0 0.0 ) ( 1.0 0.0 ) ( 1.0 1.0 ) ( 0.0 1.0 )
   normals: ( -1.0  0.0  0.0 ) ( 1.0 0.0 0.0 )
            (  0.0 -1.0  0.0 ) ( 0.0 1.0 0.0 )
@@ -77,10 +77,10 @@
   is: 3d mesh editable
   title: "Nice Box"
   rotation: 0 0 0
-  scale: 1.0 1.0 1.0
+  scale: 2 2 2
   vertices:
-    (  1.0 -1.0 -1.0 ) (  1.0 -1.0  1.0 ) ( -1.0 -1.0  1.0 ) ( -1.0 -1.0 -1.0 )
-    (  1.0  1.0 -1.0 ) (  1.0  1.0  1.0 ) ( -1.0  1.0  1.0 ) ( -1.0  1.0 -1.0 )
+    (  1  0  0 ) (  1  0  1 ) (  0  0  1 ) (  0  0  0 )
+    (  1  1  0 ) (  1  1  1 ) (  0  1  1 ) (  0  1  0 )
   texturepoints: ( 0.0 0.0 ) ( 1.0 0.0 ) ( 1.0 1.0 ) ( 0.0 1.0 )
   normals: ( -1.0  0.0  0.0 ) ( 1.0 0.0 0.0 )
            (  0.0 -1.0  0.0 ) ( 0.0 1.0 0.0 )
@@ -100,8 +100,8 @@
   title: "Important Notice"
   text: "Welcome to Ann Droid's Place!"
   rotation: 10 10 10
-  scale: 1.0 1.0 1.0
   light: 2 2 2
+  scale: 2 1 1
 }
 
 { UID: uid-311d-8423-3ca6-ddcb

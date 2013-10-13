@@ -12,7 +12,7 @@ In-World (non-edit) Link management
  - operations: grab/add/rem/cut
  + local or remote user, Java animates user and notifies target or its within
  + minecraft: left on block=hitting xyz; left on entity=hitting URL; right on block=placing xyz; right on entity=touching URL
- * add: interacting by multitouch: Cyrus sees I'm holding this link, interacting with this target
+ + add: interacting by multitouch: Cyrus sees I'm holding this link, interacting with this target
     + bottom left is moving and multitouch while moving, top left is multitouch for standing still
     * coords touched on an object: object has to work out what displacement to add, or to pass to its within
     + if beyond current region, touch white grid
@@ -33,6 +33,7 @@ In-World (non-edit) Link management
  - request to set global rules on a site object/region
 ------------------------
  * return coords on object by second pass and fragment shader that sets RGB=object-relative coords
+    * all mesh within unit bounding box and get coords relative to that regardless of scale
  * multitouch a region { is: user holding: <link to fixed region>, touching: { on: <target link> coords: 7 within: <holder of> position: <coords in holder> } }
  * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement off that coords
  * user holding an object, touching; target adds link to object at coord:
@@ -40,6 +41,7 @@ In-World (non-edit) Link management
    (b) object - point touched (relative to object coords)
    (c) voxel - within notified with voxel coords and voxel-relative touched coords
    (d) linked/shared object - within notified with object coords and object-rel touched coords
+   (e) linked place - notify current place within to remove, etc
 ------------------------
 World Basics
  - blue sky; ambient light; day/night - region object: { night/day }

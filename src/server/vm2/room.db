@@ -3,15 +3,16 @@
   is: place 3d mesh editable
   title: "Your Room"
   sub-items:
-    { item: uid-20ce-d0b1-c717-3dbb position: 0 1 0 }
-    { item: uid-e30d-92d3-3de9-f898 position: 0 0 -2 }
-    { item: uid-a07e-434c-b8e7-5b40 position: 3 3 3 }
-    { item: uid-f6c8-2d51-8060-a52a position: 0 1 -11 }
-    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: 4 0 -7 }
-    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: -4 0 -7 }
-    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: 0 4 -7 }
-    { item: http://10.0.2.2:8081/o/uid-1e51-f298-5f55-6caa.json position: 0 0 -30 }
-  vertices: ( 20 -1 -20 ) ( 20 -1 20 ) ( -20 -1 20 ) ( -20 -1 -20 ) ( 20 20 -20 ) ( 20 20 20 ) ( -20 20 20 ) ( -20 20 -20 )
+    { item: uid-20ce-d0b1-c717-3dbb position: 10 1 10 }
+    { item: uid-e30d-92d3-3de9-f898 position: 20 0 18 }
+    { item: uid-a07e-434c-b8e7-5b40 position: 20 0 17 }
+    { item: uid-f6c8-2d51-8060-a52a position: 20 3  9 }
+    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: 24 0 13 }
+    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: 16 0 13 }
+    { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: 20 4 13 }
+    { item: http://10.0.2.2:8081/o/uid-1e51-f298-5f55-6caa.json position: 10 -1 -20 }
+  vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 ) ( 1 1 0 ) ( 1 1 1 ) ( 0 1 1 ) ( 0 1 0 )
+  scale: 40 20 40
   texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )
   normals: ( 1 0 0 ) ( -1 0 0 ) ( 0 1 0 ) ( 0 -1 0 ) ( 0 0 1 ) ( 0 0 -1 )
   faces: ( 5/1/5 4/3/5 1/2/5 ) ( 5/1/5 8/4/5 4/3/5 ) ( 3/1/1 8/3/1 7/2/1 ) ( 3/1/1 4/4/1 8/3/1 ) ( 2/1/6 3/4/6 6/2/6 ) ( 6/2/6 3/4/6 7/3/6 )
@@ -30,6 +31,7 @@
   title: Cyrus example
   text: "Edit me: multitouch tap"
   light: 1 1 0
+  scale: 2 1 1
 }
 
 { UID: uid-b553-d845-44d6-48ac
@@ -44,7 +46,7 @@
   scale: 0.3 0.3 0.3
   light: 0.0 0.0 1
   within: uid-f862-56af-d46d-c440
-  position: 0 0 -3
+  position: 20 0 17
   time: uid-b553-d845-44d6-48ac
   next-time: 0
 }
@@ -101,11 +103,11 @@
   title: "Maths Game"
   text: "Light up this fraction:" - -
   rotation: 0 0 0
-  scale: 1 1 1
+  scale: 2 1 1
   light: 0.5 0.5 1
-  sub-items: ( -1.2 -1.8 ) ( -0.4 -1.8 ) ( 0.4 -1.8 ) ( 1.2 -1.8 )
-               ( -1.2 -1.0 ) ( -0.4 -1.0 ) ( 0.4 -1.0 ) ( 1.2 -1.0 )
-               ( -1.2 -0.2 ) ( -0.4 -0.2 ) ( 0.4 -0.2 ) ( 1.2 -0.2 )
+  sub-items: ( -1.2 -2.4 ) ( -0.4 -2.4 ) ( 0.4 -2.4 ) ( 1.2 -2.4 )
+             ( -1.2 -1.6 ) ( -0.4 -1.6 ) ( 0.4 -1.6 ) ( 1.2 -1.6 )
+             ( -1.2 -0.8 ) ( -0.4 -0.8 ) ( 0.4 -0.8 ) ( 1.2 -0.8 )
   numerator: 2
   status: creating
   lit: 0
@@ -123,7 +125,7 @@
           is: 3d cuboid editable
           title: "Game Cube"
           rotation: 0 0 0
-          scale: 0.36 0.36 0.36
+          scale: 0.72 0.72 0.72
           light: 0 0.4 0.7
         }
         position: @.0 @.1 -0.5
