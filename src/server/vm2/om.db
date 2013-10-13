@@ -70,6 +70,7 @@
   title: "/est Ru/"
   bf: false
   bt: !true
+  zv: => (@z:1.. + (2 2 2)) × (@vd + (2 2 2))
   zx: => @z + ( 10 @x 30 40 )
   a: # => @x @h:0:x:h:x
   d: # => clamp 14 19 @x
@@ -114,6 +115,7 @@
 { UID: uid-40fb-5964-b385-c922
   is: test rule
   when: "-------------- Test 2"
+  zv: 30 28 15
   zx: 10 21 32 43
   la: (divisible-by 5) false (divisible-by 2) yay
   rm: number => @. % 3

@@ -32,16 +32,16 @@ In-World (non-edit) Link management
  * Cyrus rule: user then requests to add/rem other links; OK if present, calculate displacement
  - request to set global rules on a site object/region
 ------------------------
- * return coords on object by second pass and fragment shader that sets RGB=object-relative coords
-    * all mesh within unit bounding box and get coords relative to that regardless of scale
  * multitouch a region { is: user holding: <link to fixed region>, touching: { on: <target link> coords: 7 within: <holder of> position: <coords in holder> } }
  * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement off that coords
+    * OM: ( 2 3 4 ) * ( 4 3 2 ) => ( 8 9 8 )
  * user holding an object, touching; target adds link to object at coord:
    (a) place - point touched
    (b) object - point touched (relative to object coords)
    (c) voxel - within notified with voxel coords and voxel-relative touched coords
    (d) linked/shared object - within notified with object coords and object-rel touched coords
    (e) linked place - notify current place within to remove, etc
+ * so fixed link to a cube, hit place, gets added there
 ------------------------
 World Basics
  - blue sky; ambient light; day/night - region object: { night/day }

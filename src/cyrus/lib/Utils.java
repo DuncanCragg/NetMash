@@ -97,6 +97,19 @@ public class Utils{
     }
 
     @SuppressWarnings("unchecked")
+    static public LinkedList vvcross(LinkedList v, LinkedList w){
+        if(w.size()!=v.size()) return null;
+        LinkedList r=new LinkedList();
+        int i=0; for(Object p: v){ Object q=w.get(i);
+            Double d1=tryDouble(p);
+            Double d2=tryDouble(q);
+            if(d1==null || d2==null) return null;
+            r.add(d1*d2);
+        i++; }
+        return r;
+    }
+
+    @SuppressWarnings("unchecked")
     static public LinkedList vvadd(LinkedList a, LinkedList b){ return vvaddsum(a,b,true); }
 
     @SuppressWarnings("unchecked")
