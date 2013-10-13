@@ -246,7 +246,7 @@ public class User extends CyrusLanguage {
 logXX((down? "down ": "up ")+objectuid+"@"+x+","+y+","+z);
                 if(down){
                     content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
-                    content("touching", objectuid);
+                    contentHash("touching", hash("item",objectuid, "position",list(x,y,z)));
                 }
                 else{
                     content("touching",null);
@@ -282,7 +282,7 @@ logXX((down? "down ": "up ")+objectuid+"@"+x+","+y+","+z);
                     contentList("private:position:"+UID.toUID(content("private:viewing")), newposn);
                 }
                 else{
-                    String     newplaceuid=(String)    newplace.get(0);
+                    String     newplaceuid=(String)  newplace.get(0);
                     LinkedList newposn  =(LinkedList)newplace.get(1);
                     contentList("position", newposn);
                     contentList("private:position:"+UID.toUID(newplaceuid), newposn);
@@ -300,14 +300,24 @@ logXX((down? "down ": "up ")+objectuid+"@"+x+","+y+","+z);
             String objispath=String.format("within:sub-items:%d:item:is",i);
             if(!contentListContains(objispath,"place")) continue;
             LinkedList placeposn=contentList(String.format("within:sub-items:%d:position",i));
+            LinkedList placescale=contentList(String.format("within:sub-items:%d:item:scale",i));
             float px=getFloatFromList(placeposn,0,0);
             float py=getFloatFromList(placeposn,1,0);
             float pz=getFloatFromList(placeposn,2,0);
-            float dx=ux-px; float dy=uy-py; float dz=uz-pz;
-            float d=FloatMath.sqrt(dx*dx+dy*dy+dz*dz);
-            if(d<10) return list(content(String.format("within:sub-items:%d:item",i)), list(dx,dy,dz));
+            float sx=getFloatFromList(placescale,0,1);
+            float sy=getFloatFromList(placescale,1,1);
+            float sz=getFloatFromList(placescale,2,1);
+            if(pointWithinSquare(ux,uy,uz, px,py,pz, sx,sy,sz)){
+                return list(content(String.format("within:sub-items:%d:item",i)), list(ux-px,uy-py,uz-pz));
+            }
         }
         return null;
+    }
+
+    private boolean pointWithinSquare(float ux, float uy, float uz, float px, float py, float pz, float sx, float sy, float sz){
+        return ux>px && ux<px+sx &&
+               uy>py && uy<py+sy &&
+               uz>pz && uz<pz+sz;
     }
 
     // ---------------------------------------------------------

@@ -18,8 +18,9 @@
   Rules: {
     is: place rule
     when: "user interacts with this place, grab url it's holding and join it"
-    Alerted: { is: user  touching: @  holding: uid }
-    sub-items: => @. with { item: @Alerted:holding position:  0 0 -27 }
+    Alerted: { is: user  holding: uid  touching: { item: @ } }
+    sub-items: => @. with { item: @Alerted:holding position:  0 0 -30 }
+    coordsave: => @Alerted:touching:position * @scale
   }
 }
 

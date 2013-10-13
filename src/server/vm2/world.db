@@ -14,28 +14,28 @@
   scale: 30 30 30
   present: 0
   sub-items:
-    { item: uid-311d-8423-3ca6-ddcb position:  0 10 0 }
-    { item: uid-c058-2db1-0b26-8f48 position:  7 0  7 }
-    { item: uid-c058-2db1-0b26-8f48 position: -7 0  7 }
-    { item: uid-c058-2db1-0b26-8f48 position:  7 0 -7 }
-    { item: uid-c058-2db1-0b26-8f48 position: -7 0 -7 }
-    { item: uid-8a54-9690-a4d5-4a9c position:  0  2 15 }
-    { item: uid-ad6c-85d2-46ab-85da position:  0  0 12 }
-    { item: uid-ad6c-85d2-46ab-85da position:  1  0 12 }
-    { item: uid-ad6c-85d2-46ab-85da position:  2  0 12 }
-    { item: uid-ad6c-85d2-46ab-85da position:  3  0 12 }
-    { item: uid-ad6c-85d2-46ab-85da position:  0  0 13 }
-    { item: uid-ad6c-85d2-46ab-85da position:  1  0 13 }
-    { item: uid-ad6c-85d2-46ab-85da position:  2  0 13 }
-    { item: uid-ad6c-85d2-46ab-85da position:  3  0 13 }
-    { item: uid-ad6c-85d2-46ab-85da position:  0 -1 14 }
-    { item: uid-ad6c-85d2-46ab-85da position:  1 -1 14 }
-    { item: uid-ad6c-85d2-46ab-85da position:  2 -1 14 }
-    { item: uid-ad6c-85d2-46ab-85da position:  3 -1 14 }
-    { item: uid-ad6c-85d2-46ab-85da position:  0 -1 15 }
-    { item: uid-ad6c-85d2-46ab-85da position:  1 -1 15 }
-    { item: uid-ad6c-85d2-46ab-85da position:  2 -1 15 }
-    { item: uid-ad6c-85d2-46ab-85da position:  3 -1 15 }
+    { item: uid-311d-8423-3ca6-ddcb position: 15 10 15 }
+    { item: uid-c058-2db1-0b26-8f48 position: 22 0 22 }
+    { item: uid-c058-2db1-0b26-8f48 position:  8 0 22 }
+    { item: uid-c058-2db1-0b26-8f48 position: 22 0  8 }
+    { item: uid-c058-2db1-0b26-8f48 position:  8 0  8 }
+    { item: uid-8a54-9690-a4d5-4a9c position: 20  3 25 }
+    { item: uid-ad6c-85d2-46ab-85da position: 20  1 22 }
+    { item: uid-ad6c-85d2-46ab-85da position: 21  1 22 }
+    { item: uid-ad6c-85d2-46ab-85da position: 22  1 22 }
+    { item: uid-ad6c-85d2-46ab-85da position: 23  1 22 }
+    { item: uid-ad6c-85d2-46ab-85da position: 20  1 23 }
+    { item: uid-ad6c-85d2-46ab-85da position: 21  1 23 }
+    { item: uid-ad6c-85d2-46ab-85da position: 22  1 23 }
+    { item: uid-ad6c-85d2-46ab-85da position: 23  1 23 }
+    { item: uid-ad6c-85d2-46ab-85da position: 20  0 24 }
+    { item: uid-ad6c-85d2-46ab-85da position: 21  0 24 }
+    { item: uid-ad6c-85d2-46ab-85da position: 22  0 24 }
+    { item: uid-ad6c-85d2-46ab-85da position: 23  0 24 }
+    { item: uid-ad6c-85d2-46ab-85da position: 20  0 25 }
+    { item: uid-ad6c-85d2-46ab-85da position: 21  0 25 }
+    { item: uid-ad6c-85d2-46ab-85da position: 22  0 25 }
+    { item: uid-ad6c-85d2-46ab-85da position: 23  0 25 }
   vertices: (  1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )
   texturepoints: ( 0.0 0.0 ) ( 5.0 0.0 ) ( 5.0 5.0 ) ( 0.0 5.0 )
   normals: ( 0.0 1.0 0.0 )
@@ -111,7 +111,7 @@
 
 { UID: uid-ad6c-85d2-46ab-85da
   is: 3d cuboid
-  scale: 0.5 0.5 0.5
+  scale: 1 1 1
   textures: http://fc00.deviantart.net/fs70/f/2012/182/2/8/texture__sand__lowres_256__by_nuxlystardust_stock-d55kqwc.jpg
 }
 

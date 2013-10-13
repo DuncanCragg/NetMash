@@ -89,10 +89,10 @@
 
 { UID: uid-e6e9-df58-ddab-6eb9
   is: 3d rule editable
-  when: "touched, increase light"
-  Alerted: { is: user  touching: @  Version: > @v }
+  when: "touched, set light colour"
+  Alerted: { is: user  touching: { item: @ }  Version: > @v }
   v: => @Alerted:Version
-  light: * ( => clamp 0 10 ( @. + 1 ) ) ( => clamp 0 10 ( @. + 1 ) )
+  light: ( => @Alerted:touching:position:0 * 4) ( => @Alerted:touching:position:1 * 4) ( => @Alerted:touching:position:2 * 4)
 }
 
 { UID: uid-f6c8-2d51-8060-a52a
