@@ -243,9 +243,9 @@ public class User extends CyrusLanguage {
                 showWhatIAmViewing();
             }
             else {
-logXX((down? "down ": "up ")+objectuid+"@"+x+","+y+","+z);
                 if(down){
-                    content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
+                //  content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
+                    content("holding","http://10.0.2.2:8082/o/uid-ad6c-85d2-46ab-85da.json");
                     contentHash("touching", hash("item",objectuid, "position",list(x,y,z)));
                 }
                 else{

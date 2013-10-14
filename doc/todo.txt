@@ -34,7 +34,7 @@ In-World (non-edit) Link management
 ------------------------
  * multitouch a region { is: user holding: <link to fixed region>, touching: { on: <target link> coords: 7 within: <holder of> position: <coords in holder> } }
  * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement off that coords
-    * OM: ( 2 3 4 ) * ( 4 3 2 ) => ( 8 9 8 )
+    * use 'within .. of' - rename to avoid clash with within: - divide floor into nine boxes, test within and place at that side/corner
  * user holding an object, touching; target adds link to object at coord:
    (a) place - point touched
    (b) object - point touched (relative to object coords)
@@ -51,19 +51,22 @@ World Basics
  - copy minecraft navigation controls
 ------------------------
 In-World Editing
+ - remove all current in-3D edit crap
  - edit by toggling edit button and touching target
     - edit forces correct syntax and has undo
     - on tablet, split edit/view
     - edit params and properties of objects, edit animation rules
 ------------------------
 More stuff:
+ # mystery adding users bug - rotation?
+ # loss of list structure when round-tripped to web (e.g. MC tutorial, Rob's place)
  - make sure MC-like Web page functions work still - global rules, tutorial, editing
- - bug: presence detector picks up form submissions and swipes (fix blue bot)
- - bug: avatar still visible
- - fix: compress cyrus.db
- - fix: doc/local/contentList.txt search for potential single-element lists
- - fix: doc/local/contentAPIeval.txt evaluate() or evaluatable()? see trace
- - fix: lighting: boxes not lit well by blue bot, etc
+ # bug: presence detector picks up form submissions and swipes (fix blue bot)
+ # bug: avatar still visible
+ # fix: compress cyrus.db
+ # fix: doc/local/contentList.txt search for potential single-element lists
+ # fix: doc/local/contentAPIeval.txt evaluate() or evaluatable()? see trace
+ # fix: lighting: boxes not lit well by blue bot, etc
  - ---
  - later generate room; editable
  - add world edit stuff later, by Cyrus rules probably
