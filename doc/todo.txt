@@ -1,7 +1,4 @@
 ------------------------
- + bottom left  press, drag = move second press = touch
- + bottom right press, drag = look second press = touch
-------------------------
  + holding link to a place/region, touch place, work out displacement from sub-region hit
     + Cyrus rule on target region detects user state and adds adjacent region with displacement off that coords
     + use 'within .. of' - rename to avoid clash with within: - divide floor into nine boxes, test within and place at that side/corner

@@ -394,6 +394,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 eyeZ+=dx/7f*FloatMath.sin(direction)-dy/7f*FloatMath.cos(direction);
                 seeX=eyeX-4.5f*FloatMath.sin(direction);
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
+                cyrus.user.onNewPosition(eyeX, eyeY, eyeZ);
             }
             else
             if(edge==4){
@@ -402,10 +403,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 if(direction<-2*Math.PI) direction+=2*Math.PI;
                 seeX=eyeX-4.5f*FloatMath.sin(direction);
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
-                eyeX-=dy/7f*FloatMath.sin(direction);
-                eyeZ-=dy/7f*FloatMath.cos(direction);
             }
-            cyrus.user.onNewPosition(eyeX, eyeY, eyeZ);
         }else{
             if(touchDetecting) return;
             if(x!=touchX || y!=touchY) touchedObject=null;
