@@ -223,13 +223,10 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private int fromEdge(float tx,float ty){
-        float borderPercent=15.0f/100.0f;
-        float xBorderWidth=screenWidth *borderPercent;
-        float yBorderWidth=screenHeight*borderPercent;
-        if(ty<yBorderWidth+20)           return 1; // top strip
-        if(ty>screenHeight-yBorderWidth) return 2; // bottom strip
-        if(tx<xBorderWidth)              return 3; // left strip
-        if(tx>screenWidth -xBorderWidth) return 4; // right strip
+        if(tx< screenWidth/2 && ty< screenHeight/2) return 1; // top left
+        if(tx>=screenWidth/2 && ty< screenHeight/2) return 2; // top right
+        if(tx< screenWidth/2 && ty>=screenHeight/2) return 3; // bottom left
+        if(tx>=screenWidth/2 && ty>=screenHeight/2) return 4; // bottom right
         return 0;
     }
 
@@ -1127,7 +1124,10 @@ log(show? "show keyboard": "hide keyboard");
 
     //---------------------------------------------------------
 
-    public void toast(String s){ Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
+    public void toast(final String s, final boolean longer){
+        final Cyrus self=this;
+        guiHandler.post(new Runnable(){ public void run(){ Toast.makeText(self, s, longer? Toast.LENGTH_LONG: Toast.LENGTH_SHORT).show(); }});
+    }
 
     //---------------------------------------------------------
 

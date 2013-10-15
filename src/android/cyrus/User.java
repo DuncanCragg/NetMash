@@ -212,7 +212,7 @@ public class User extends CyrusLanguage {
     private boolean lastdown=false;
     private float lastxc,lastyc,lastzc;
 
-    synchronized public void onObjectTouched(LinkedHashMap mesh, final boolean down, final float x, final float y, final float z){
+    synchronized public void onObjectTouched(LinkedHashMap mesh, final boolean down, final int firstTouchQuadrant, final float x, final float y, final float z){
 /*
         if(mesh!=lastmesh){ earliest=0; waiting=false; }
         lastmesh=mesh; lastdown=down; lastxc=x; lastyc=y; lastzc=z;
@@ -225,7 +225,7 @@ public class User extends CyrusLanguage {
                 Kernel.sleep(earliest-updated);
                 synchronized(self){
                     waiting=false;
-                    onObjectTouched(lastmesh,lastdown,lastxc,lastyc,lastzc);
+                    onObjectTouched(lastmesh,lastdown,,lastxc,lastyc,lastzc);
                 }
             }}.start();
             return;
@@ -235,8 +235,13 @@ public class User extends CyrusLanguage {
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
         new Evaluator(this){ public void evaluate(){
-            boolean edit=false;
-            if(edit){
+            if(firstTouchQuadrant==1){
+            //  content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
+                content("holding",objectuid);
+                Cyrus.top.toast("Holding "+content("holding:title"), false);
+            }
+            else
+            if(firstTouchQuadrant==2){
                 history.forward();
                 content("private:viewing",objectuid);
                 content("private:viewas", "raw");
@@ -244,8 +249,6 @@ public class User extends CyrusLanguage {
             }
             else {
                 if(down){
-                //  content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
-                    content("holding","http://10.0.2.2:8082/o/uid-ad6c-85d2-46ab-85da.json");
                     contentHash("touching", hash("item",objectuid, "position",list(x,y,z)));
                 }
                 else{
@@ -591,7 +594,7 @@ public class User extends CyrusLanguage {
                         JSON json=new JSON(Cyrus.top.getRawSource(),true);
                         json.setPathAdd("is", "editable");
                         rule=makeEditRule("",contentInt("editable:Version"),json);
-                    }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1]); }
+                    }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1], true); }
                     if(rule!=null) contentMerge(rule);
                 }
                 else
@@ -781,7 +784,7 @@ public class User extends CyrusLanguage {
                 String source=spawnUIDNew(Cyrus.top.getRawSource());
                 try{
                 self.contentReplace(new JSON(source,true));
-                }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1]); }
+                }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1], true); }
                 self.contentSetAdd("is", "editable");
                 self.evaluate();
             }};
@@ -1001,8 +1004,7 @@ public class User extends CyrusLanguage {
         if(contentSet("private:viewing:is")){
             String title=content("private:viewing:title");
             boolean editable=contentIsOrListContains("private:viewing:is","editable");
-            LinkedHashMap viewhash=cyrus2gui.guifyHash(contentHash("private:viewing:#"), editable);
-            viewhash.put("#uid", "uid: "+content("private:viewing"));
+            LinkedHashMap viewhash=cyrus2gui.guifyHash(content("private:viewing"),contentHash("private:viewing:#"), editable);
             content("within","");
             content("private:editing","");
             JSON uiJSON=new JSON("{ \"is\": \"gui\" }");

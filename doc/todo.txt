@@ -1,5 +1,26 @@
 ------------------------
+ + bottom left  press, drag = move second press = touch
+ + bottom right press, drag = look second press = touch
+------------------------
+ + holding link to a place/region, touch place, work out displacement from sub-region hit
+    + Cyrus rule on target region detects user state and adds adjacent region with displacement off that coords
+    + use 'within .. of' - rename to avoid clash with within: - divide floor into nine boxes, test within and place at that side/corner
+    + if user present (same within as this target)
+------------------------
+ + { is: user holding: .. touching: { item: .. position: .. within: { item: .. position: .. } } }
+ + target adds link to object at coord:
+   (a) place - point touched
+   (b) object - point touched (relative to object coords)
+   (c) voxel - within notified with voxel coords and voxel-relative touched coords
+   (d) linked/shared object - within notified with object coords and object-rel touched coords
+   (e) linked place - notify current place within to remove, etc
+ + within if a shared link: if no within or within not here
+    + notify within not shared object
+------------------------
+------------------------
 In-World (non-edit) Link management
+ - show link holding as texture for icon
+ - object edit to see links - "everything has a link"
  + grab a viewed object/region's link, or any object/region's link
  - grab rules/materials links off an object/region
  - grab links from remote site lists
@@ -12,36 +33,24 @@ In-World (non-edit) Link management
  - operations: grab/add/rem/cut
  + local or remote user, Java animates user and notifies target or its within
  + minecraft: left on block=hitting xyz; left on entity=hitting URL; right on block=placing xyz; right on entity=touching URL
- + add: interacting by multitouch: Cyrus sees I'm holding this link, interacting with this target
-    + bottom left is moving and multitouch while moving, top left is multitouch for standing still
-    * coords touched on an object: object has to work out what displacement to add, or to pass to its within
+ + add: Cyrus sees I'm holding this link, interacting with this target
+    - coords touched on an object: object has to work out what displacement to add, or to pass to its within
     + if beyond current region, touch white grid
     - posn implied by touching a neighbour if voxels
     - ultimately ability to add a block of type defined somewhere else - may need to clone with its links
  + rem: hitting by touch with holding nothing or a tool: link and position on 'within' object/region
     + send user hit action to linker of object/region - the within of the user
- * { is: user holding: <link to object/region>, touching: { on: <target link> coords: 7 within: <holder of> position: <coords in holder> } }
+ - { is: user holding: <link to object/region>, touching: { on: <target link> coords: 7 within: <holder of> position: <coords in holder> } }
  - { is: user holding: <link to ruleset/texture/shader/sound> (un-)animating/texturing/shading/sounding:  }
- - touching: get coords and uid of within if a shared link - shared if no within or within not here, notify within not shared object
  - type of ruleset/shader by is:
  - type of texture/sound by extension (ug - and ug everywhere), or fetch/inspect, or came from there, or explicit GUI choice
  + separate { sub-objects: .. places: .. users: .. } (cubes:, entities:, structures: in MC)
     + placing object -> sub-objects: .. joining region -> places: .. presence track -> users:
  + Java finds nearest place - User automatically set 'within' nearest enclosing region (can only be within: places: objects)
  + Cyrus presence tracker: effectively user requests by within to add/rem link to it in users: of target region at current position
- * Cyrus rule: user then requests to add/rem other links; OK if present, calculate displacement
+ + Cyrus rule: user then requests to add/rem other links; OK if present, calculate displacement
  - request to set global rules on a site object/region
 ------------------------
- * multitouch a region { is: user holding: <link to fixed region>, touching: { on: <target link> coords: 7 within: <holder of> position: <coords in holder> } }
- * Cyrus region rule on target detects user request and if user present, adds adjacent region with displacement off that coords
-    * use 'within .. of' - rename to avoid clash with within: - divide floor into nine boxes, test within and place at that side/corner
- * user holding an object, touching; target adds link to object at coord:
-   (a) place - point touched
-   (b) object - point touched (relative to object coords)
-   (c) voxel - within notified with voxel coords and voxel-relative touched coords
-   (d) linked/shared object - within notified with object coords and object-rel touched coords
-   (e) linked place - notify current place within to remove, etc
- * so fixed link to a cube, hit place, gets added there
 ------------------------
 World Basics
  - blue sky; ambient light; day/night - region object: { night/day }

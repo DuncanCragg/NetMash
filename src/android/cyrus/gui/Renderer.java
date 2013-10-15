@@ -71,7 +71,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     private boolean touchDetecting=false;
     private boolean touchCoordsDetecting=false;
     private int     touchX,touchY;
-    private Mesh  touchedObject=null;
+    private Mesh    touchedObject=null;
+    private int     firstTouchQuadrant=0;
     private boolean lightObject=false;
     // touchDetecting => mvpm; pos; touchCol
     // lightObject    => mvpm; pos; tex; lightCol; texture0
@@ -138,7 +139,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 float touchedX=flipAndScale((int)b.get(0));
                 float touchedY=flipAndScale((int)b.get(1));
                 float touchedZ=flipAndScale((int)b.get(2));
-                cyrus.user.onObjectTouched(touchedObject.mesh,true,touchedX,touchedY,touchedZ);
+                cyrus.user.onObjectTouched(touchedObject.mesh,true,firstTouchQuadrant,touchedX,touchedY,touchedZ);
             }
             touchDetecting=false;
         }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
@@ -383,7 +384,19 @@ public class Renderer implements GLSurfaceView.Renderer {
     public void swipe(boolean down, boolean shift, int edge, int x, int y, float dx, float dy){
         if(emulator()) shift=(edge!=3 && edge!=4);
         if(!shift){
-            if(edge!=2){
+            if(!down){
+                firstTouchQuadrant=0;
+                return;
+            }
+            firstTouchQuadrant=edge;
+            if(edge==3){
+                eyeX-=dx/7f*FloatMath.cos(direction)+dy/7f*FloatMath.sin(direction);
+                eyeZ+=dx/7f*FloatMath.sin(direction)-dy/7f*FloatMath.cos(direction);
+                seeX=eyeX-4.5f*FloatMath.sin(direction);
+                seeZ=eyeZ-4.5f*FloatMath.cos(direction);
+            }
+            else
+            if(edge==4){
                 direction += dx/50f;
                 if(direction> 2*Math.PI) direction-=2*Math.PI;
                 if(direction<-2*Math.PI) direction+=2*Math.PI;
@@ -391,12 +404,6 @@ public class Renderer implements GLSurfaceView.Renderer {
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
                 eyeX-=dy/7f*FloatMath.sin(direction);
                 eyeZ-=dy/7f*FloatMath.cos(direction);
-            }
-            else{
-                eyeX-=dx/7f*FloatMath.cos(direction)+dy/7f*FloatMath.sin(direction);
-                eyeZ+=dx/7f*FloatMath.sin(direction)-dy/7f*FloatMath.cos(direction);
-                seeX=eyeX-4.5f*FloatMath.sin(direction);
-                seeZ=eyeZ-4.5f*FloatMath.cos(direction);
             }
             cyrus.user.onNewPosition(eyeX, eyeY, eyeZ);
         }else{
@@ -407,7 +414,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 touchX=x; touchY=y;
             }
             else{
-                if(!down) cyrus.user.onObjectTouched(touchedObject.mesh,false,-1,-1,-1);
+                if(!down) cyrus.user.onObjectTouched(touchedObject.mesh,false,0,-1,-1,-1);
             }
         }
     }
