@@ -236,7 +236,6 @@ public class User extends CyrusLanguage {
         if(objectuid==null) return;
         new Evaluator(this){ public void evaluate(){
             if(firstTouchQuadrant==1){
-            //  content("holding","http://10.0.2.2:8082/o/uid-39da-3645-4f58-50cb.json");
                 content("holding",objectuid);
                 Cyrus.top.toast("Holding "+content("holding:title"), false);
             }

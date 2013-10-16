@@ -7,10 +7,11 @@
     { item: uid-e30d-92d3-3de9-f898 position: 20 0 18 }
     { item: uid-a07e-434c-b8e7-5b40 position: 20 0 17 }
     { item: uid-f6c8-2d51-8060-a52a position: 20 3  9 }
+    { item: uid-39da-3645-4f58-50cb position: -30 0 0 }
     { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: 24 0 13 }
     { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: 16 0 13 }
     { item: http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json position: 20 4 13 }
-    { item: http://10.0.2.2:8081/o/uid-1e51-f298-5f55-6caa.json position: 10 -1 -20 }
+    { item: http://10.0.2.2:8081/o/uid-1e51-f298-5f55-6caa.json position: 10 0 -20 }
   vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 ) ( 1 1 0 ) ( 1 1 1 ) ( 0 1 1 ) ( 0 1 0 )
   scale: 40 20 40
   texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )
@@ -28,7 +29,7 @@
     when: "you edit this rule you can see the effect!"
   }
   is: 3d notice editable
-  title: Cyrus example
+  title: "Cyrus example"
   text: "Edit me: multitouch tap"
   light: 1 1 0
   scale: 2 1 1

@@ -1,10 +1,14 @@
 ################################################################################
 #
+# IP of your development machine on the LAN
+# Always 'make veryclean' before changing this!
+#
+LOCAL_IP=192.168.0.8
+#LOCAL_IP=192.168.42.192
+#
 # Where you want the release Android apk to be copied
 #
 RELEASE_TARGET=../net/the-cyrus.net/Cyrus.apk
-LOCAL_IP=192.168.0.8
-#LOCAL_IP=192.168.42.192
 #
 ################################################################################
 

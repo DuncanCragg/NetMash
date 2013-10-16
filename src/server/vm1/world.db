@@ -17,9 +17,19 @@
   fragment-shader: uid-1ff8-59e9-6dac-9b56
   Rules: {
     is: place rule
-    when: "user interacts with this place, grab url it's holding and join it"
+    when: "user touches this place holding a link, grab user"
     Alerted: { is: user  holding: uid  touching: { item: @ } }
-    sub-items: => @. with { item: @Alerted:holding position: @Alerted:touching:position × @scale }
+    u: => @Alerted
+  }{
+    is: place rule
+    when: "user touches this place holding an object, grab URL and place it"
+    u: { holding: { is: !place } }
+    sub-items: => @. with { item: @u:holding position: @u:touching:position × @scale }
+  }{
+    is: place rule
+    when: "user touches this place holding a place, grab URL and position it"
+    u: { holding: { is: place } }
+    sub-items: => @. with { item: @u:holding position: -30 0 0 }
   }
 }
 
@@ -34,6 +44,7 @@
 }
 
 { UID: uid-bfa0-9dcb-1d1c-1e83
+  title: light
   is: 3d cuboid
   light: 10 10 10
 }
