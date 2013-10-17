@@ -1,8 +1,13 @@
 ------------------------
  + holding link to a place/region, touch place, work out displacement from sub-region hit
     + Cyrus rule on target region detects user state and adds adjacent region with displacement off that coords
-    + use 'within .. of' - rename to avoid clash with within: - divide floor into nine boxes, test within and place at that side/corner
-    + if user present (same within as this target)
+    + use 'inside': divide floor into nine boxes, test within and place at that side/corner
+    + make sure not already there
+    + check for loops
+    + separate out rules and add to all places
+    + remove room walls and ceiling
+    + increase ambient light
+ + if user present (target=place=within or same within as this target)
 ------------------------
  + { is: user holding: .. touching: { item: .. position: .. within: { item: .. position: .. } } }
  + target adds link to object at coord:

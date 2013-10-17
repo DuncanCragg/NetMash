@@ -147,6 +147,16 @@ public class Utils{
         return r;
     }
 
+    static public Boolean insideBox(LinkedList p, LinkedList q, LinkedList s){
+        if(p.size()!=3 || q.size()!=3 || s.size()!=3) return false;
+        double px=tryDouble(p.get(0),0); double py=tryDouble(p.get(1),0); double pz=tryDouble(p.get(2),0);
+        double qx=tryDouble(q.get(0),0); double qy=tryDouble(q.get(1),0); double qz=tryDouble(q.get(2),0);
+        double sx=tryDouble(s.get(0),0); double sy=tryDouble(s.get(1),0); double sz=tryDouble(s.get(2),0);
+        return px>=qx && px<=qx+sx &&
+               py>=qy && py<=qy+sy &&
+               pz>=qz && pz<=qz+sz;
+    }
+
     static public Boolean withinOf(double r, LinkedList a, LinkedList b){
         return vvdist(a,b)<r;
     }

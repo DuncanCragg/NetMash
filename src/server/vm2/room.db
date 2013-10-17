@@ -73,7 +73,7 @@
   is:  3d cuboid editable rule
   when: "time passes, set position to half way to target"
   target-position: ( number number number )
-  position: within 0.5 of @target-position !=> ( @. + @target-position ) / 2
+  position: inside { position: @target-position - (0.25 0.25 0.25) scale: 0.5 0.5 0.5 } !=> ( @. + @target-position ) / 2
   time: { timestamp: > @next-time }
   next-time: => @time:timestamp + 1000
 }
