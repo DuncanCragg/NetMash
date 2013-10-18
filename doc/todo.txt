@@ -1,13 +1,14 @@
 ------------------------
- + holding link to a place/region, touch place, work out displacement from sub-region hit
-    + Cyrus rule on target region detects user state and adds adjacent region with displacement off that coords
-    + use 'inside': divide floor into nine boxes, test within and place at that side/corner
-    + make sure not already there
-    + check for loops
-    + separate out rules and add to all places
-    + remove room walls and ceiling
-    + increase ambient light
+ + doesn't always work: objects and places
+ + stuttery: logs?
+ + increase ambient light
+ + check for loops in render
+ + make sure not already there in rule (link + inside position + bbox/scale)
+ + remove room walls and ceiling
+ + add rules to all places
  + if user present (target=place=within or same within as this target)
+ + reduce 8 placing rules to 1
+------------------------
 ------------------------
  + { is: user holding: .. touching: { item: .. position: .. within: { item: .. position: .. } } }
  + target adds link to object at coord:
@@ -52,6 +53,7 @@ In-World (non-edit) Link management
  + Cyrus presence tracker: effectively user requests by within to add/rem link to it in users: of target region at current position
  + Cyrus rule: user then requests to add/rem other links; OK if present, calculate displacement
  - request to set global rules on a site object/region
+ + copy-on-write - replace link with link to clone on edit
 ------------------------
 ------------------------
 World Basics
@@ -69,14 +71,14 @@ In-World Editing
 ------------------------
 More stuff:
  # mystery adding users bug - rotation?
- # loss of list structure when round-tripped to web (e.g. MC tutorial, Rob's place)
- - make sure MC-like Web page functions work still - global rules, tutorial, editing
  # bug: presence detector picks up form submissions and swipes (fix blue bot)
  # bug: avatar still visible
  # fix: compress cyrus.db
+ # loss of list structure when round-tripped to web (e.g. MC tutorial, Rob's place)
  # fix: doc/local/contentList.txt search for potential single-element lists
  # fix: doc/local/contentAPIeval.txt evaluate() or evaluatable()? see trace
  # fix: lighting: boxes not lit well by blue bot, etc
+ - make sure MC-like Web page functions work still - global rules, tutorial, editing
  - ---
  - later generate room; editable
  - add world edit stuff later, by Cyrus rules probably

@@ -33,13 +33,17 @@ emu: androidemu runemu logcat
 
 lan: androidlan runlan lancat
 
+lan1: androidlan runlan tailtestresults1
+
+lan2: androidlan runlan tailtestresults2
+
 cap: androidemu runcap logcat
 
 ####################
 
 tests: json uid cyrus
 
-cyrus: runom showtestresults
+cyrus: runom tailtestresults2
 
 ####################
 
@@ -333,11 +337,16 @@ tstconfig:
 setup:
 	vim -o -N res/raw/cyrusconfig.db src/server/vm1/cyrusconfig.db src/server/vm1/test.db src/server/vm2/curconfig.db src/server/vm2/allconfig.db src/server/vm2/test.db
 
-showtestresults:
+tailtestresults1:
+	tail -f src/server/vm1/cyrus.log | egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx|Running CyrusLanguage on'
+
+tailtestresults2:
 	tail -f src/server/vm2/cyrus.log | egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx|Running CyrusLanguage on'
 
+showtestresults1:
+	egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx' src/server/vm1/cyrus.log
+
 showtestresults2:
-	sleep 1
 	egrep -i 'running rule|scan|failed|error|exception|fired|xxxxx' src/server/vm2/cyrus.log
 
 whappen:
