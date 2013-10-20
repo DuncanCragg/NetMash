@@ -106,7 +106,7 @@
 
 { UID: uid-311d-8423-3ca6-ddcb
   is: 3d cuboid
-  light: 10 10 10
+  light: 2 2 2
 }
 
 { UID: uid-ad6c-85d2-46ab-85da

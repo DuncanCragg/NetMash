@@ -63,12 +63,6 @@ World Basics
  - physics pulling you down; collision with blocks; vertical movement of avatar
  - copy minecraft navigation controls; velocity and look up/down and both together (touch on release if in that quadrant and not moved)
 ------------------------
-In-World Editing
- - remove all current in-3D edit crap
- - edit forces correct syntax and has undo
- - on tablet, split edit/view
- - edit params and properties of objects, edit animation rules
-------------------------
 More stuff:
  # mystery adding users bug - rotation?
  # bug: presence detector picks up form submissions and swipes (fix blue bot)
@@ -89,4 +83,10 @@ More stuff:
  + what if a /rule/ isn't cached and you get an Alerted? it'll be missed, presumably
  + prevent access to Alerted fields - @Alerted:<path>
  + do presence detect in Cyrus as part of fixing user Alerted when placing
+------------------------
+In-World Editing
+ - remove all current in-3D edit crap
+ - edit forces correct syntax and has undo
+ - on tablet, split edit/view
+ - edit params and properties of objects, edit animation rules
 ------------------------
