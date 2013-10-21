@@ -45,7 +45,7 @@
   title: bot
   rotation: 45 45 45
   scale: 0.3 0.3 0.3
-  light: 0.0 0.0 1
+  light: 0 0 1
   within: uid-f862-56af-d46d-c440
   position: 20 0 17
   time: uid-b553-d845-44d6-48ac

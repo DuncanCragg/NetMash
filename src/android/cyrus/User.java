@@ -438,7 +438,7 @@ public class User extends CyrusLanguage {
                 String path="private:position:"+UID.toUID(guiuid);
                 val[0]=contentList(path);
                 if(val[0]==null){
-                   val[0]=list(0,0.7,3);
+                   val[0]=list(10,1.0,10);
                    contentList(path,val[0]);
                 }
                 contentList("position", val[0]);
