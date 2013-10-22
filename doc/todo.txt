@@ -1,24 +1,22 @@
 ------------------------
- + doesn't always work: objects and places
- + stuttery: logs?
- + increase ambient light
- + check for loops in render
+ # stuttery: logs?
  + make sure not already there in rule (link + inside position + bbox/scale)
- + remove room walls and ceiling
- + add rules to all places
- + if user present (target=place=within or same within as this target)
- + reduce 8 placing rules to 1
+ + check for scene graph loops in render
+ # doesn't always work: objects and places
 ------------------------
+ + only allow placing if user present (target=place=within or same within as this target)
+ + reduce 8 placing rules to 1
+ + add placing rules to all places
 ------------------------
  + { is: user holding: .. touching: { item: .. position: .. within: { item: .. position: .. } } }
+ + shared link: if no within or within not here
+    + notify linker in scene graph, not shared object: keep track of structure when building scene
  + target adds link to object at coord:
    (a) place - point touched
    (b) object - point touched (relative to object coords)
    (c) voxel - within notified with voxel coords and voxel-relative touched coords
    (d) linked/shared object - within notified with object coords and object-rel touched coords
    (e) linked place - notify current place within to remove, etc
- + within if a shared link: if no within or within not here
-    + notify within not shared object
 ------------------------
 ------------------------
 In-World (non-edit) Link management
@@ -57,7 +55,7 @@ In-World (non-edit) Link management
 ------------------------
 ------------------------
 World Basics
- - blue sky; ambient light; day/night - region object: { night/day }
+ - region object: { night/day }
  - blank white grid is your region, can add stuff or link blocks in-world
  - { is: voxels  chunks: uid-y uid-z } using existing cubes; same one linked?
  - physics pulling you down; collision with blocks; vertical movement of avatar
