@@ -207,31 +207,7 @@ public class User extends CyrusLanguage {
     private long earliest=0;
     private boolean waiting=false;
 
-    private float lastx,lasty,lastz;
-    private LinkedHashMap lastmesh=null;
-    private boolean lastdown=false;
-    private float lastxc,lastyc,lastzc;
-
-    synchronized public void onObjectTouched(LinkedHashMap mesh, final boolean down, final int firstTouchQuadrant, final float x, final float y, final float z){
-/*
-        if(mesh!=lastmesh){ earliest=0; waiting=false; }
-        lastmesh=mesh; lastdown=down; lastxc=x; lastyc=y; lastzc=z;
-        final long updated=System.currentTimeMillis();
-        final User self=this;
-        if(waiting) return;
-        if(updated<earliest){
-            waiting=true;
-            new Thread(){ public void run(){
-                Kernel.sleep(earliest-updated);
-                synchronized(self){
-                    waiting=false;
-                    onObjectTouched(lastmesh,lastdown,,lastxc,lastyc,lastzc);
-                }
-            }}.start();
-            return;
-        }
-        earliest=updated+500;
-*/
+    public void onObjectTouched(LinkedHashMap mesh, final boolean down, final int firstTouchQuadrant, final float x, final float y, final float z){
         final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
         if(objectuid==null) return;
         new Evaluator(this){ public void evaluate(){
@@ -258,23 +234,28 @@ public class User extends CyrusLanguage {
         }};
     }
 
-    synchronized public void onNewPosition(final float x, final float y, final float z){
+    private float lastx,lasty,lastz;
+    private int posupdate=0;
+    private Thread moveThread=null;
+
+    public void onNewPosition(float x, float y, float z){
         lastx=x; lasty=y; lastz=z;
-        final long updated=System.currentTimeMillis();
-        final User self=this;
-        if(waiting) return;
-        if(updated<earliest){
-            waiting=true;
-            new Thread(){ public void run(){
-                Kernel.sleep(earliest-updated);
-                synchronized(self){
-                    waiting=false;
-                    onNewPosition(lastx,lasty,lastz);
+        posupdate++;
+        if(moveThread==null){
+            moveThread=new Thread(){ public void run(){
+                int p= -1;
+                while(true){
+                    if(p!=posupdate){
+                        p=posupdate;
+                        doMoveTo(lastx,lasty,lastz);
+                    }
+                    Kernel.sleep(500);
                 }
-            }}.start();
-            return;
+            }}; moveThread.start();
         }
-        earliest=updated+1000;
+    }
+
+    void doMoveTo(final float x, final float y, final float z){
         new Evaluator(this){
             public void evaluate(){
                 LinkedList newplace=findNewPlaceNearer(x,y,z);
