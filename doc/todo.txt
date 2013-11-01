@@ -1,13 +1,10 @@
 ------------------------
- # stuttery: logs?
- + make sure not already there in rule (link + inside position + bbox/scale)
- + check for scene graph loops in render
- # doesn't always work: objects and places
 ------------------------
- + only allow placing if user present (target=place=within or same within as this target)
- + reduce 8 placing rules to 1
- + add placing rules to all places
+ + render a mini icon version of what you're holding in the bottom right of the screen
 ------------------------
+Adding links to non-owned objects/places
+ + First container within* to user within* gets touch event with relative displacement.
+   So can add locally by touching neighbour you don't own
  + { is: user holding: .. touching: { item: .. position: .. within: { item: .. position: .. } } }
  + shared link: if no within or within not here
     + notify linker in scene graph, not shared object: keep track of structure when building scene
@@ -17,6 +14,22 @@
    (c) voxel - within notified with voxel coords and voxel-relative touched coords
    (d) linked/shared object - within notified with object coords and object-rel touched coords
    (e) linked place - notify current place within to remove, etc
+------------------------
+Linked Augmented Reality
+ + ability to take starting point from QR code by indicating starting view point in object
+ - markers to reset position - other reference view points in object scene graph
+ - lock in to GPS if within BB or margin around - add attribute for GPS of corner of BB
+ + pan/tilt from accel, etc
+ - camera background
+------------------------
+------------------------
+ + add placing rules to all places
+ + check for scene graph loops in render (link+within 10% of bbox)
+ + make sure not already there in rule (link + inside position + bbox/scale)
+ # doesn't always work: objects and places
+------------------------
+ + only allow placing if user present (target=place=within or same within as this target)
+ + reduce 8 placing rules to 1
 ------------------------
 ------------------------
 In-World (non-edit) Link management
@@ -81,6 +94,13 @@ More stuff:
  + what if a /rule/ isn't cached and you get an Alerted? it'll be missed, presumably
  + prevent access to Alerted fields - @Alerted:<path>
  + do presence detect in Cyrus as part of fixing user Alerted when placing
+------------------------
+Watch for case where you link to something apparently static and they switch the within
+to you and become active and trash your world..
+------------------------
+For some 3D objects, interacting may jump you to another object, eg 2D form, 3D place or
+object, or even to the object itself. Then can allow params to be adjusted in a GUI for
+3D object, etc.
 ------------------------
 In-World Editing
  - remove all current in-3D edit crap
