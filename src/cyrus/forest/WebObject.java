@@ -331,7 +331,14 @@ public class WebObject {
     public boolean contentIsThis(String path){
         String s = content(path);
         if(s==null) return false;
-        return UID.toUID(s).equals(uid);
+        return UID.toUID(s).equals(UID.toUID(uid));
+    }
+
+    /** Test if there's a link to this object. */
+    public boolean contentIsThisUID(String path, String uid){
+        String s = content(path);
+        if(s==null) return false;
+        return UID.toUID(s).equals(UID.toUID(uid));
     }
 
     /** Test if the string content is a link or uid. */
