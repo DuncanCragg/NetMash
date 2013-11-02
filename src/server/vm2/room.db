@@ -32,6 +32,7 @@
   text: "Edit me: multitouch tap"
   light: 1 1 0
   scale: 2 1 1
+  within: uid-f862-56af-d46d-c440
 }
 
 { UID: uid-b553-d845-44d6-48ac
@@ -84,6 +85,7 @@
   rotation: 0 45 0
   scale: 0.3 0.5 0.3
   light: 2 2 2
+  within: uid-f862-56af-d46d-c440
   v: 0
 }
 
@@ -105,6 +107,7 @@
   rotation: 0 0 0
   scale: 2 1 1
   light: 0.5 0.5 1
+  within: uid-f862-56af-d46d-c440
   sub-items: ( -1.2 -2.4 ) ( -0.4 -2.4 ) ( 0.4 -2.4 ) ( 1.2 -2.4 )
              ( -1.2 -1.6 ) ( -0.4 -1.6 ) ( 0.4 -1.6 ) ( 1.2 -1.6 )
              ( -1.2 -0.8 ) ( -0.4 -0.8 ) ( 0.4 -0.8 ) ( 1.2 -0.8 )

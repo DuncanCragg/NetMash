@@ -25,7 +25,7 @@ public class PresenceTracker extends CyrusLanguage {
             int i=(subuids==null)? -1: subuids.indexOf(trackuid);
             if(contentIsThis("Alerted:within")){
                 LinkedList position=contentListClone("Alerted:position");
-                if(position==null) position=list(0,0,0);
+                if(position==null) continue;
                 if(i== -1){
                     LinkedHashMap hm=new LinkedHashMap();
                     hm.put("item", trackuid);

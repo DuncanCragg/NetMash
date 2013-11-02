@@ -104,5 +104,6 @@
   title: light
   is: 3d cuboid
   light: 2 2 2
+  within: uid-1e51-f298-5f55-6caa
 }
 

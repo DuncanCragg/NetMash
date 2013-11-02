@@ -99,6 +99,7 @@
   is: 3d notice editable
   title: "Important Notice"
   text: "Welcome to Ann Droid's Place!"
+  within: uid-39da-3645-4f58-50cb
   rotation: 10 10 10
   light: 2 2 2
   scale: 2 1 1
@@ -107,6 +108,7 @@
 { UID: uid-311d-8423-3ca6-ddcb
   is: 3d cuboid
   light: 2 2 2
+  within: uid-39da-3645-4f58-50cb
 }
 
 { UID: uid-ad6c-85d2-46ab-85da
