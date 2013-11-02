@@ -202,6 +202,10 @@ public class User extends CyrusLanguage {
 
     public ConcurrentHashMap<Integer,String> mesh2uid = new ConcurrentHashMap<Integer,String>();
 
+    public void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
+        if(mesh!=null && uid!=null) mesh2uid.put(System.identityHashCode(mesh),UID.normaliseUID(parentuid,uid));
+    }
+
     // ---------------------------------------------------------
 
     private long earliest=0;

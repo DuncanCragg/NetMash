@@ -569,7 +569,7 @@ public class Cyrus2GUI {
 
         LinkedHashMap objhash=object2mesh("private:viewing:",false);
         if(objhash==null) return null;
-        mesh2uidPut(objhash, user.content("private:viewing"), user.content("private:viewing"));
+        user.mesh2uidPut(objhash, user.content("private:viewing"), user.content("private:viewing"));
 
         LinkedList subone=new LinkedList();
 
@@ -608,7 +608,7 @@ public class Cyrus2GUI {
     private void addObjectToSubs(String parentuid, String p, LinkedList subone, LinkedList subtwo, float tx, float ty, float tz){
         LinkedHashMap objhash=object2mesh(p+":item:", true);
         if(objhash==null) return;
-        mesh2uidPut(objhash, parentuid, user.content(p+":item"));
+        user.mesh2uidPut(objhash, parentuid, user.content(p+":item"));
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("item",objhash);
         LinkedList position=new LinkedList();
@@ -625,7 +625,7 @@ public class Cyrus2GUI {
         if(objhash==null) return;
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("item",objhash);
-        mesh2uidPut(objhash, "", "editing");
+        user.mesh2uidPut(objhash, "", "editing");
         subobs.add(hm);
     }
 
@@ -787,10 +787,6 @@ public class Cyrus2GUI {
         }
         user.textBitmaps.put(key, bitmap);
         return key;
-    }
-
-    private void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
-        if(mesh!=null && uid!=null) user.mesh2uid.put(System.identityHashCode(mesh),UID.normaliseUID(parentuid,uid));
     }
 
     private static boolean loadShadersOnceDontForgetToSeeIfSettingToFalseIsSlow=false;
