@@ -569,7 +569,7 @@ public class Cyrus2GUI {
 
         LinkedHashMap objhash=object2mesh("private:viewing:",false);
         if(objhash==null) return null;
-        user.mesh2uidPut(objhash, user.content("private:viewing"), user.content("private:viewing"));
+        objhash.put("touchinfo", list(user.content("private:viewing"),null,null));
 
         LinkedList subone=new LinkedList();
 
@@ -584,20 +584,18 @@ public class Cyrus2GUI {
         String parentuid=user.content("private:viewing");
         for(int i=0; i< subs.size(); i++){
             String p=String.format("private:viewing:sub-items:%d",i);
-            addObjectToSubs(parentuid,p,subone,subtwo,0,0,0);
+            addObjectToSubs(parentuid,p,null,subone,subtwo,0,0,0);
         }
         for(int i=0; i< subs.size(); i++){
-            String o=String.format("private:viewing:sub-items:%d:item",i);
-            String c=String.format("private:viewing:sub-items:%d:position",i);
-            String s=String.format("private:viewing:sub-items:%d:item:sub-items",i);
-            LinkedList subposn=user.contentAsList(c);
-            LinkedList subsubs=user.contentAsList(s);
+            String o=String.format("private:viewing:sub-items:%d",i);
+            LinkedList subposn=user.contentAsList(o+":position");
+            LinkedList subsubs=user.contentAsList(o+":item:sub-items");
             if(subsubs==null) continue;
+            parentuid=user.content(o+":item");
             float tx=getFloatFromList(subposn,0,0),ty=getFloatFromList(subposn,1,0),tz=getFloatFromList(subposn,2,0);
-            parentuid=user.content(o);
             for(int j=0; j< subsubs.size(); j++){
                 String q=String.format("private:viewing:sub-items:%d:item:sub-items:%d",i,j);
-                addObjectToSubs(parentuid,q,subone,subtwo,tx,ty,tz);
+                addObjectToSubs(parentuid,q,o,subone,subtwo,tx,ty,tz);
             }
         }
         subtwo.addAll(subone);
@@ -605,11 +603,11 @@ public class Cyrus2GUI {
         return objhash;
     }
 
-    private void addObjectToSubs(String parentuid, String p, LinkedList subone, LinkedList subtwo, float tx, float ty, float tz){
+    private void addObjectToSubs(String parentuid, String p, String pp, LinkedList subone, LinkedList subtwo, float tx, float ty, float tz){
         LinkedHashMap objhash=object2mesh(p+":item:", true);
         if(objhash==null) return;
-        user.mesh2uidPut(objhash, parentuid, user.content(p+":item"));
         LinkedHashMap hm=new LinkedHashMap();
+        hm.put("touchinfo", getTouchInfo(p,pp,objhash,parentuid));
         hm.put("item",objhash);
         LinkedList position=new LinkedList();
         LinkedList subposn=user.contentAsList(p+":position");
@@ -620,12 +618,38 @@ public class Cyrus2GUI {
         ((objhash.get("light")==null)? subone: subtwo).add(hm);
     }
 
+    private LinkedList getTouchInfo(String p, String pp, LinkedHashMap objhash, String parentuid){
+        String     withinuid=null;
+        LinkedList withinpos=null;
+        boolean w0=user.contentIs("within",user.contentString(p+":item:within")) ||
+                   user.contentIs("within",user.contentString(p+":item:within:within"));
+        if(!w0){
+            if(pp==null){
+                withinuid=user.content("within");
+                withinpos=user.contentAsList(p+":position");
+            }
+            else{
+                boolean w1=user.contentIs("within",user.contentString(pp+":item:within")) ||
+                           user.contentIs("within",user.contentString(pp+":item:within:within"));
+                if(!w1){
+                    withinuid=user.content("within");
+                    withinpos=vvadd(user.contentAsList(pp+":position"), user.contentAsList(p+":position"));
+                }
+                else{
+                    withinuid=user.content(pp+":item");
+                    withinpos=user.contentAsList(p+":position");
+                }
+            }
+        }
+        return list(UID.normaliseUID(parentuid,user.content(p+":item")),withinuid,withinpos);
+    }
+
     private void addEditingToSubs(LinkedList subobs){
         LinkedHashMap objhash=object2edit();
         if(objhash==null) return;
         LinkedHashMap hm=new LinkedHashMap();
         hm.put("item",objhash);
-        user.mesh2uidPut(objhash, "", "editing");
+        // something for touchinfo
         subobs.add(hm);
     }
 

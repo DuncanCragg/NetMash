@@ -33,6 +33,7 @@
   light: 1 1 0
   scale: 2 1 1
   within: uid-f862-56af-d46d-c440
+  sub-items: { item: uid-ad6c-85d2-46ab-85da position: 0 3 0 }
 }
 
 { UID: uid-b553-d845-44d6-48ac

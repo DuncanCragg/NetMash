@@ -71,7 +71,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     private boolean touchDetecting=false;
     private boolean touchCoordsDetecting=false;
     private int     touchX,touchY;
-    private Mesh    touchedObject=null;
+    private LinkedList touchInfo=null;
     private int     firstTouchQuadrant=0;
     private boolean lightObject=false;
     // touchDetecting => mvpm; pos; touchCol
@@ -113,7 +113,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     }
 
     int touchR, touchG, touchB;
-    public ConcurrentHashMap<String,Mesh> touchables = new ConcurrentHashMap<String,Mesh>();
+    public ConcurrentHashMap<String,LinkedList> touchables = new ConcurrentHashMap<String,LinkedList>();
 
     @Override
     public void onDrawFrame(GL10 gl){ onDrawFrame(); }
@@ -129,8 +129,8 @@ public class Renderer implements GLSurfaceView.Renderer {
             int touchedR=flipAndRound((int)b.get(0));
             int touchedG=flipAndRound((int)b.get(1));
             int touchedB=flipAndRound((int)b.get(2));
-            touchedObject=touchables.get(String.format("%d:%d:%d",touchedR,touchedG,touchedB));
-            if(touchedObject!=null){
+            touchInfo=touchables.get(String.format("%d:%d:%d",touchedR,touchedG,touchedB));
+            if(touchInfo!=null){
                 touchCoordsDetecting=true;
                 drawFrame();
                 touchCoordsDetecting=false;
@@ -139,10 +139,10 @@ public class Renderer implements GLSurfaceView.Renderer {
                 float touchedX=flipAndScale((int)b.get(0));
                 float touchedY=flipAndScale((int)b.get(1));
                 float touchedZ=flipAndScale((int)b.get(2));
-                cyrus.user.onObjectTouched(touchedObject.mesh,true,firstTouchQuadrant,touchedX,touchedY,touchedZ);
+                cyrus.user.onObjectTouched(touchInfo,true,firstTouchQuadrant,touchedX,touchedY,touchedZ);
             }
             touchDetecting=false;
-        }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchedObject=null; }}
+        }catch(Throwable t){ t.printStackTrace(); log(touchX+"/"+touchY); touchDetecting=false; touchInfo=null; }}
 
         drawFrame();
 
@@ -183,13 +183,14 @@ public class Renderer implements GLSurfaceView.Renderer {
             Mesh ms=meshes.get(System.identityHashCode(hm));
             if(ms==null){ ms=new Mesh(hm,cyrus.user); meshes.put(System.identityHashCode(hm),ms); }
             Object subobcrd=subob.get("position");
-            if(subobcrd!=null) drawAMesh(ms, getFloatFromList(subobcrd,0,0), getFloatFromList(subobcrd,1,0), getFloatFromList(subobcrd,2,0));
+            LinkedList subobtin=(LinkedList)subob.get("touchinfo");
+            if(subobcrd!=null) drawAMesh(ms, getFloatFromList(subobcrd,0,0), getFloatFromList(subobcrd,1,0), getFloatFromList(subobcrd,2,0), subobtin);
             else               drawEditMesh(ms);
         }
-        drawAMesh(m,0,0,0);
+        drawAMesh(m,0,0,0, (LinkedList)m.mesh.get("touchinfo"));
     }
 
-    private void drawAMesh(Mesh m, float tx, float ty, float tz){
+    private void drawAMesh(Mesh m, float tx, float ty, float tz, LinkedList touchinfo){
         int program=0;
         if(!touchDetecting){
             lightObject=(m.lightR+m.lightG+m.lightB >0);
@@ -209,7 +210,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             else                      program=getProgram(modelCoordsVertexShaderSource, modelCoordsFragmentShaderSource);
             getProgramLocs(program);
         }
-        setVariables(m, tx,ty,tz);
+        setVariables(m, tx,ty,tz, touchinfo);
         uploadVBO(m);
         drawMesh(m);
     }
@@ -230,7 +231,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         drawMesh(m);
     }
 
-    private void setVariables(Mesh m, float tx, float ty, float tz){
+    private void setVariables(Mesh m, float tx, float ty, float tz, LinkedList touchinfo){
 
         Matrix.setIdentityM(matrixRtx, 0);
         Matrix.setIdentityM(matrixRty, 0);
@@ -262,7 +263,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             touchCol[1]=touchG/256.0f;
             touchCol[2]=touchB/256.0f;
             GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
-            touchables.put(String.format("%d:%d:%d",touchR,touchG,touchB),m);
+            touchables.put(String.format("%d:%d:%d",touchR,touchG,touchB), touchinfo);
         }
         else{
             if(!lightObject){
@@ -306,7 +307,7 @@ public class Renderer implements GLSurfaceView.Renderer {
             touchCol[1]=touchG/256.0f;
             touchCol[2]=touchB/256.0f;
             GLES20.glUniform4fv(touchColLoc, 1, touchCol, 0);
-            touchables.put(String.format("%d:%d:%d",touchR,touchG,touchB),m);
+            touchables.put(String.format("%d:%d:%d",touchR,touchG,touchB), null);
         }
         else{
             GLES20.glUniform3f(lightPosLoc, 0f, 1f, -2f);
@@ -406,13 +407,13 @@ public class Renderer implements GLSurfaceView.Renderer {
             }
         }else{
             if(touchDetecting) return;
-            if(x!=touchX || y!=touchY) touchedObject=null;
-            if(touchedObject==null){
+            if(x!=touchX || y!=touchY) touchInfo=null;
+            if(touchInfo==null){
                 touchDetecting=true;
                 touchX=x; touchY=y;
             }
             else{
-                if(!down) cyrus.user.onObjectTouched(touchedObject.mesh,false,0,-1,-1,-1);
+                if(!down) cyrus.user.onObjectTouched(touchInfo,false,0,-1,-1,-1);
             }
         }
     }

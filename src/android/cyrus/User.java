@@ -200,19 +200,15 @@ public class User extends CyrusLanguage {
 
     public ConcurrentHashMap<String,String> shaders = new ConcurrentHashMap<String,String>();
 
-    public ConcurrentHashMap<Integer,String> mesh2uid = new ConcurrentHashMap<Integer,String>();
-
-    public void mesh2uidPut(LinkedHashMap mesh, String parentuid, String uid){
-        if(mesh!=null && uid!=null) mesh2uid.put(System.identityHashCode(mesh),UID.normaliseUID(parentuid,uid));
-    }
-
     // ---------------------------------------------------------
 
     private long earliest=0;
     private boolean waiting=false;
 
-    public void onObjectTouched(LinkedHashMap mesh, final boolean down, final int firstTouchQuadrant, final float x, final float y, final float z){
-        final String objectuid=mesh2uid.get(System.identityHashCode(mesh));
+    public void onObjectTouched(LinkedList touchInfo, final boolean down, final int firstTouchQuadrant, final float x, final float y, final float z){
+        final String     objectuid=(String)    touchInfo.get(0);
+        final String     withinuid=(String)    touchInfo.get(1);
+        final LinkedList withinpos=(LinkedList)touchInfo.get(2);
         if(objectuid==null) return;
         new Evaluator(this){ public void evaluate(){
             if(firstTouchQuadrant==1){
@@ -228,12 +224,14 @@ public class User extends CyrusLanguage {
             }
             else {
                 if(down){
-                    contentHash("touching", hash("item",objectuid, "position",list(x,y,z)));
+                    LinkedHashMap touching=hash("item",objectuid, "position",list(x,y,z));
+                    if(withinuid!=null) touching.put("within", hash("item",withinuid, "position",withinpos));
+                    contentHash("touching", touching);
                 }
                 else{
                     content("touching",null);
                 }
-                notifying(objectuid);
+                notifying(withinuid!=null? withinuid: objectuid);
             }
         }};
     }

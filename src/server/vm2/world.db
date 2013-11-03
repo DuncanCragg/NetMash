@@ -113,6 +113,7 @@
 
 { UID: uid-ad6c-85d2-46ab-85da
   is: 3d cuboid
+  title: "unattached cube"
   scale: 1 1 1
   textures: http://fc00.deviantart.net/fs70/f/2012/182/2/8/texture__sand__lowres_256__by_nuxlystardust_stock-d55kqwc.jpg
 }
