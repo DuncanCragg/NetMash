@@ -83,6 +83,8 @@ More stuff:
  # fix: doc/local/contentList.txt search for potential single-element lists
  # fix: doc/local/contentAPIeval.txt evaluate() or evaluatable()? see trace
  # fix: lighting: boxes not lit well by blue bot, etc
+ # fix: sanitising notifiable uids - strip at source, leaks info
+ # fix: above also may have highlighted too much traffic
  - make sure MC-like Web page functions work still - global rules, tutorial, editing
  - ---
  - later generate room; editable
