@@ -224,9 +224,15 @@ public class User extends CyrusLanguage {
             }
             else {
                 if(down){
-                    LinkedHashMap touching=hash("item",objectuid, "position",list(x,y,z));
+                    LinkedList posn=list(x,y,z);
+                    LinkedHashMap touching=hash("item",objectuid, "position",posn);
                     if(withinuid!=null) touching.put("within", hash("item",withinuid, "position",withinpos));
                     contentHash("touching", touching);
+                    LinkedList scale=contentList("touching:item:scale");
+                    if(scale!=null){
+                        LinkedList rescaledposn=vvcross(scale,posn);
+                        if(rescaledposn!=null) touching.put("position", rescaledposn);
+                    }
                 }
                 else{
                     content("touching",null);

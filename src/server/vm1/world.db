@@ -25,19 +25,21 @@
   when: "user touches this place holding a link, grab user"
   Alerted: { is: user  holding: uid  touching: { item: @ } }
   u: => @Alerted
+  scale13: => @scale / 3
+  scale23: => @scale / 1.5
 }
 
 { UID: uid-256c-3801-7ee4-9b95
   is: place rule
   when: "user touches this place holding an object, grab URL and place it"
   u: { holding: { is: !place } }
-  sub-items: => @. with { item: @u:holding position: @u:touching:position × @scale }
+  sub-items: => @. with { item: @u:holding position: @u:touching:position }
 }
 
 { UID: uid-20c7-4c00-c191-f8c4
   is: place rule
   when: "user touches this place TL holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0 0 0 scale: 0.33 0 0.33 } } }
+  u: { holding: { is: place } touching: { position: inside { position: 0 0 0 scale: @scale13:0 0 @scale13:2 } } }
   sub-items: => @. with { item: @u:holding position: (0 - @u:holding:scale:0) 0 (0 - @u:holding:scale:2) }
 }
 
