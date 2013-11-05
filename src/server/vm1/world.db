@@ -46,49 +46,49 @@
 { UID: uid-7fbd-b271-079f-4458
   is: place rule
   when: "user touches this place TM holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0.33 0 0 scale: 0.33 0 0.33 } } }
+  u: { holding: { is: place } touching: { position: inside { position: @scale13:0 0 0 scale: @scale13:0 0 @scale13:2 } } }
   sub-items: => @. with { item: @u:holding position: 0 0 (0 - @u:holding:scale:2) }
 }
 
 { UID: uid-e141-249a-0c98-e04f
   is: place rule
   when: "user touches this place TR holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0.67 0 0 scale: 0.33 0 0.33 } } }
+  u: { holding: { is: place } touching: { position: inside { position: @scale23:0 0 0 scale: @scale13:0 0 @scale13:2 } } }
   sub-items: => @. with { item: @u:holding position: @scale:0 0 (0 - @u:holding:scale:2) }
 }
 
 { UID: uid-77c3-7029-6bb3-7645
   is: place rule
   when: "user touches this place ML holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0 0 0.33 scale: 0.33 0 0.33 } } }
+  u: { holding: { is: place } touching: { position: inside { position: 0 0 @scale13:2 scale: @scale13:0 0 @scale13:2 } } }
   sub-items: => @. with { item: @u:holding position: (0 - @u:holding:scale:0) 0 0 }
 }
 
 { UID: uid-27b8-a5aa-5eea-78be
   is: place rule
   when: "user touches this place MR holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0.67 0 0.33 scale: 0.33 0 0.33 } } }
+  u: { holding: { is: place } touching: { position: inside { position: @scale23:0 0 @scale13:2 scale: @scale13:0 0 @scale13:2 } } }
   sub-items: => @. with { item: @u:holding position: @scale:0 0 0 }
 }
 
 { UID: uid-1db0-00f1-f15a-1c9a
   is: place rule
   when: "user touches this place BL holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0 0 0.67 scale: 0.33 0 0.33 } } }
+  u: { holding: { is: place } touching: { position: inside { position: 0 0 @scale23:2 scale: @scale13:0 0 @scale13:2 } } }
   sub-items: => @. with { item: @u:holding position: (0 - @u:holding:scale:0) 0 @scale:2 }
 }
 
 { UID: uid-c481-c3d8-c7fb-d17a
   is: place rule
   when: "user touches this place BM holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0.33 0 0.67 scale: 0.33 0 0.33 } } }
+  u: { holding: { is: place } touching: { position: inside { position: @scale13:0 0 @scale23:2 scale: @scale13:0 0 @scale13:2 } } }
   sub-items: => @. with { item: @u:holding position: 0 0 @scale:2 }
 }
 
 { UID: uid-047d-ff67-483f-97b6
   is: place rule
   when: "user touches this place BR holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0.67 0 0.67 scale: 0.33 0 0.33 } } }
+  u: { holding: { is: place } touching: { position: inside { position: @scale23:0 0 @scale23:2 scale: @scale13:0 0 @scale13:2 } } }
   sub-items: => @. with { item: @u:holding position: @scale:0 0 @scale:2 }
 }
 
