@@ -85,6 +85,7 @@ More stuff:
  # fix: lighting: boxes not lit well by blue bot, etc
  # fix: sanitising notifiable uids - strip at source, leaks info
  # fix: above also may have highlighted too much traffic
+ # fix: add * to / for vector/scalar
  - make sure MC-like Web page functions work still - global rules, tutorial, editing
  - ---
  - later generate room; editable

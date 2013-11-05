@@ -248,9 +248,9 @@ public class CyrusLanguage extends WebObject {
             if(hm!=null){
                 LinkedList p=contentList(path);
                 if(p==null || p.size()==0 || !(p.get(0) instanceof Number)) return false;
-                LinkedList q=findList(hm.get("position"));
+                LinkedList q=findListEval(hm.get("position"));
                 if(q==null || q.size()==0 || !(q.get(0) instanceof Number)) return false;
-                LinkedList s=findList(hm.get("scale"));
+                LinkedList s=findListEval(hm.get("scale"));
                 if(s==null || s.size()==0 || !(s.get(0) instanceof Number)) return false;
                 return insideBox(p, q, s);
             }
@@ -985,6 +985,13 @@ public class CyrusLanguage extends WebObject {
         if(isRef(o)) return eitherBindingOrContentHash(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
         return findHashIn(o);
+    }
+
+    private LinkedList findListEval(Object o){
+        if(o==null) return new LinkedList();
+        if(isRef(o)) return eitherBindingOrContentList(((String)o).substring(1), true);
+        if(o instanceof LinkedList) o=evalDeepList((LinkedList)o);
+        return findListIn(o);
     }
 
     private LinkedList findList(Object o){ return findList(o,true); }

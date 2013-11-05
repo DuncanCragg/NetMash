@@ -239,7 +239,7 @@
   j: true => false
   p: d b
   vo: => @. dot ((0 1 0)(-1 0 0)(0 0 0))
-  vc: inside { position: @vc - (0.2 0.8 0.0) scale: @sc / 2 } => (@. + @vo) / 5
+  vc: inside { position: @vc - (0.2 0.8 0.0) scale: (@sc:0 / 2) (@sc:1 / 2) (@sc:2 / 2) } => (@. + @vo) / 5
   uu: s r
   vv: # => { a: 20 uid-2aa2-3645-4f58-50cb list: s r within: uid-2aa2-3645-4f58-50cb }
   cc: { x: count 1 z: count 1 }
