@@ -23,13 +23,11 @@ Linked Augmented Reality
  - camera background
 ------------------------
 ------------------------
- + add placing rules to all places
+ + make sure not already there in rule (link + inside position + bbox/scale) - already has dupes @. with
  + check for scene graph loops in render (link+within 10% of bbox)
- + make sure not already there in rule (link + inside position + bbox/scale)
  # doesn't always work: objects and places
 ------------------------
  + only allow placing if user present (target=place=within or same within as this target)
- + reduce 8 placing rules to 1
 ------------------------
 ------------------------
 In-World (non-edit) Link management

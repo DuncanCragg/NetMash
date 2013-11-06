@@ -1,5 +1,8 @@
 { UID: uid-f862-56af-d46d-c440
   Class: cyrus.types.PresenceTracker
+  Rules: http://10.0.2.2:8081/o/uid-0150-e8f4-53eb-7f45.json
+         http://10.0.2.2:8081/o/uid-256c-3801-7ee4-9b95.json
+         http://10.0.2.2:8081/o/uid-20c7-4c00-c191-f8c4.json
   is: place 3d mesh editable
   title: "Your Room"
   sub-items:

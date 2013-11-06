@@ -1,8 +1,6 @@
 { UID: uid-1e51-f298-5f55-6caa
   Class: cyrus.types.PresenceTracker
-  Rules: uid-0150-e8f4-53eb-7f45 uid-256c-3801-7ee4-9b95 uid-20c7-4c00-c191-f8c4 uid-7fbd-b271-079f-4458
-         uid-e141-249a-0c98-e04f uid-77c3-7029-6bb3-7645 uid-27b8-a5aa-5eea-78be uid-1db0-00f1-f15a-1c9a
-         uid-c481-c3d8-c7fb-d17a uid-047d-ff67-483f-97b6
+  Rules: uid-0150-e8f4-53eb-7f45 uid-256c-3801-7ee4-9b95 uid-20c7-4c00-c191-f8c4
   is: place 3d mesh editable
   title: "Rob Ott's Place"
   rotation: 0 0 0
@@ -22,74 +20,26 @@
 
 { UID: uid-0150-e8f4-53eb-7f45
   is: place rule
-  when: "user touches this place holding a link, grab user"
+  when: "user touches this place holding a link, grab user and calculate placing offsets"
   Alerted: { is: user  holding: uid  touching: { item: @ } }
   u: => @Alerted
+  xpos: => (0 - @u:holding:scale:0) 0 @scale:0
+  zpos: => (0 - @u:holding:scale:2) 0 @scale:2
   scale13: => @scale / 3
-  scale23: => @scale / 1.5
 }
 
 { UID: uid-256c-3801-7ee4-9b95
   is: place rule
   when: "user touches this place holding an object, grab URL and place it"
-  u: { holding: { is: !place } }
+  u: { holding: { is: !place } touching: { item: @ position: number number number } }
   sub-items: => @. with { item: @u:holding position: @u:touching:position }
 }
 
 { UID: uid-20c7-4c00-c191-f8c4
   is: place rule
-  when: "user touches this place TL holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0 0 0 scale: @scale13:0 0 @scale13:2 } } }
-  sub-items: => @. with { item: @u:holding position: (0 - @u:holding:scale:0) 0 (0 - @u:holding:scale:2) }
-}
-
-{ UID: uid-7fbd-b271-079f-4458
-  is: place rule
-  when: "user touches this place TM holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: @scale13:0 0 0 scale: @scale13:0 0 @scale13:2 } } }
-  sub-items: => @. with { item: @u:holding position: 0 0 (0 - @u:holding:scale:2) }
-}
-
-{ UID: uid-e141-249a-0c98-e04f
-  is: place rule
-  when: "user touches this place TR holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: @scale23:0 0 0 scale: @scale13:0 0 @scale13:2 } } }
-  sub-items: => @. with { item: @u:holding position: @scale:0 0 (0 - @u:holding:scale:2) }
-}
-
-{ UID: uid-77c3-7029-6bb3-7645
-  is: place rule
-  when: "user touches this place ML holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0 0 @scale13:2 scale: @scale13:0 0 @scale13:2 } } }
-  sub-items: => @. with { item: @u:holding position: (0 - @u:holding:scale:0) 0 0 }
-}
-
-{ UID: uid-27b8-a5aa-5eea-78be
-  is: place rule
-  when: "user touches this place MR holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: @scale23:0 0 @scale13:2 scale: @scale13:0 0 @scale13:2 } } }
-  sub-items: => @. with { item: @u:holding position: @scale:0 0 0 }
-}
-
-{ UID: uid-1db0-00f1-f15a-1c9a
-  is: place rule
-  when: "user touches this place BL holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: 0 0 @scale23:2 scale: @scale13:0 0 @scale13:2 } } }
-  sub-items: => @. with { item: @u:holding position: (0 - @u:holding:scale:0) 0 @scale:2 }
-}
-
-{ UID: uid-c481-c3d8-c7fb-d17a
-  is: place rule
-  when: "user touches this place BM holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: @scale13:0 0 @scale23:2 scale: @scale13:0 0 @scale13:2 } } }
-  sub-items: => @. with { item: @u:holding position: 0 0 @scale:2 }
-}
-
-{ UID: uid-047d-ff67-483f-97b6
-  is: place rule
-  when: "user touches this place BR holding a place, grab URL and position it"
-  u: { holding: { is: place } touching: { position: inside { position: @scale23:0 0 @scale23:2 scale: @scale13:0 0 @scale13:2 } } }
-  sub-items: => @. with { item: @u:holding position: @scale:0 0 @scale:2 }
+  when: "user touches this place holding a place, grab URL and position it"
+  u: { holding: { is: place } touching: { item: @ position: number number number } }
+  sub-items: => @. with { item: @u:holding position: (@xpos select (@u:touching:position:0 / @scale13:0)) 0 (@zpos select (@u:touching:position:2 / @scale13:2)) }
 }
 
 { UID: uid-ff5d-1ef4-cfa5-5f92

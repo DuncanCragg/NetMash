@@ -7,7 +7,10 @@
 
 { UID: uid-39da-3645-4f58-50cb
   Class: cyrus.types.PresenceTracker
-  Rules: uid-56d4-91ef-a2fc-2585
+  Rules: http://10.0.2.2:8081/o/uid-0150-e8f4-53eb-7f45.json
+         http://10.0.2.2:8081/o/uid-256c-3801-7ee4-9b95.json
+         http://10.0.2.2:8081/o/uid-20c7-4c00-c191-f8c4.json
+         uid-56d4-91ef-a2fc-2585
   is: place 3d mesh editable
   title: "Ann Droid's Place"
   rotation: 0 0 0
