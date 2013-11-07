@@ -1,13 +1,10 @@
 ------------------------
 ------------------------
- + render a mini icon version of what you're holding in the bottom right of the screen
-------------------------
 Adding links to non-owned objects/places
- + First container within* to user within* gets touch event with relative displacement.
-   So can add locally by touching neighbour you don't own
- + { is: user holding: .. touching: { item: .. position: .. within: { item: .. position: .. } } }
  + shared link: if no within or within not here
-    + notify linker in scene graph, not shared object: keep track of structure when building scene
+ + first container within* to user within* gets touch event with relative displacement.
+ + so can add locally by touching neighbour you don't own
+ + { is: user holding: .. touching: { item: .. position: .. within: { item: .. position: .. } } }
  + target adds link to object at coord:
    (a) place - point touched
    (b) object - point touched (relative to object coords)
@@ -22,12 +19,11 @@ Linked Augmented Reality
  + pan/tilt from accel, etc
  - camera background
 ------------------------
-------------------------
  + make sure not already there in rule (link + inside position + bbox/scale) - already has dupes @. with
  + check for scene graph loops in render (link+within 10% of bbox)
  # doesn't always work: objects and places
-------------------------
  + only allow placing if user present (target=place=within or same within as this target)
+ + render a mini icon version of what you're holding in the bottom right of the screen
 ------------------------
 ------------------------
 In-World (non-edit) Link management
