@@ -14,7 +14,7 @@ Adding links to non-owned objects/places
 ------------------------
 Linked Augmented Reality
  + ability to take starting point from QR code by indicating starting view point in object
- - markers to reset position - other reference view points in object scene graph
+ - markers to reset position - other reference view points in object scene graph; combine QR+marker
  - lock in to GPS if within BB or margin around - add attribute for GPS of corner of BB
  + pan/tilt from accel, etc
  - camera background
@@ -22,8 +22,10 @@ Linked Augmented Reality
  + make sure not already there in rule (link + inside position + bbox/scale) - already has dupes @. with
  + check for scene graph loops in render (link+within 10% of bbox)
  # doesn't always work: objects and places
+ # fix huge delay and cubes in wrong place; extend length of user holding?
  + only allow placing if user present (target=place=within or same within as this target)
  + render a mini icon version of what you're holding in the bottom right of the screen
+ - grab-link and edit tools, not regions on screen
 ------------------------
 ------------------------
 In-World (non-edit) Link management
@@ -93,7 +95,7 @@ More stuff:
  + do presence detect in Cyrus as part of fixing user Alerted when placing
 ------------------------
 Watch for case where you link to something apparently static and they switch the within
-to you and become active and trash your world..
+to you and become active and trash your world.. Need 'visible' but can only view, 'active' and can edit.
 ------------------------
 For some 3D objects, interacting may jump you to another object, eg 2D form, 3D place or
 object, or even to the object itself. Then can allow params to be adjusted in a GUI for
