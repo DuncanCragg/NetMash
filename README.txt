@@ -1,6 +1,6 @@
-Cyrus
+NetMash
 
-See http://the-cyrus.net - it's experimental at the moment so you probably shouldn't be
+See http://netmash.net - it's experimental at the moment so you probably shouldn't be
 reading this, you should be reading the code or something. Or contacting me.
 
 Browser:
