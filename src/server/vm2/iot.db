@@ -1,0 +1,19 @@
+{ UID: uid-c093-a908-a9d8-f1c1
+  Rules: uid-16bd-140a-8862-41cd
+  is: 3d cuboid editable
+  title: Light
+  rotation: 45 45 45
+  scale: 1 1 1
+  light: 1 1 1
+  within: uid-41b6-5f8f-f143-b30d
+  v: 0
+}
+
+{ UID: uid-16bd-140a-8862-41cd
+  is: 3d rule editable
+  when: "touched, set light colour"
+  Alerted: { is: user  touching: { item: @ }  Version: > @v }
+  v: => @Alerted:Version
+  light: ( => @Alerted:touching:position:0 * 2) ( => @Alerted:touching:position:1 * 2) ( => @Alerted:touching:position:2 * 2)
+}
+

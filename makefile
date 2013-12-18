@@ -37,6 +37,8 @@ lan1: androidlan runlan tailtestresults1
 
 lan2: androidlan runlan tailtestresults2
 
+iot: androidlan runiot lancat
+
 cap: androidemu runcap logcat
 
 ####################
@@ -135,6 +137,8 @@ runemu: kill clean netconfig useworlddb setvm3emuconfig run1n2
 
 runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
+runiot: kill clean netconfig useiotdb setvm3lanconfig run1n2
+
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
 runom:  kill       omconfig  useomdb    setvm2tstconfig run2
@@ -204,6 +208,10 @@ useworlddb:
 	cp  src/server/vm1/world.db    src/server/vm1/cyrus.db
 	cp  src/server/vm2/world.db    src/server/vm2/cyrus.db
 	cat src/server/vm2/room.db  >> src/server/vm2/cyrus.db
+
+useiotdb:
+	cp src/server/vm1/iot.db src/server/vm1/cyrus.db
+	cp src/server/vm2/iot.db src/server/vm2/cyrus.db
 
 useomdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db
