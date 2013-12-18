@@ -136,6 +136,18 @@ public class Utils{
     }
 
     @SuppressWarnings("unchecked")
+    static public LinkedList vsmul(LinkedList v, double s){
+        if(s==0) return v;
+        LinkedList r=new LinkedList();
+        for(Object o: v){
+            Double d=tryDouble(o);
+            if(d==null) return null;
+            r.add(Double.valueOf(d*s));
+        }
+        return r;
+    }
+
+    @SuppressWarnings("unchecked")
     static public LinkedList vsdiv(LinkedList v, double s){
         if(s==0) return v;
         LinkedList r=new LinkedList();
