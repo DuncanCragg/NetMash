@@ -213,7 +213,7 @@ public class User extends CyrusLanguage {
         new Evaluator(this){ public void evaluate(){
             if(firstTouchQuadrant==1){
                 content("holding",objectuid);
-                Cyrus.top.toast("Holding "+content("holding:title"), false);
+                Cyrus.top.toast("Holding "+contentStringOr("holding:title","object"), false);
             }
             else
             if(firstTouchQuadrant==2){
