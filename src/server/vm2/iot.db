@@ -1,5 +1,5 @@
 { UID: uid-c093-a908-a9d8-f1c1
-  Rules: uid-16bd-140a-8862-41cd
+  Rules: uid-16bd-140a-8862-41cd uid-9011-94df-9feb-e3c2 uid-2f18-945a-c460-9bd7
   is: 3d cuboid editable
   title: Light
   rotation: 45 45 45
@@ -14,6 +14,20 @@
   when: "touched, set light colour"
   Alerted: { is: user  touching: { item: @ }  Version: > @v }
   v: => @Alerted:Version
-  light: => @Alerted:touching:position * 2
+  light: => @Alerted:touching:position * 1.4
+}
+
+{ UID: uid-9011-94df-9feb-e3c2
+  is: 3d rule editable
+  when: "starting, get light-sensor"
+  within: { sub-items: { item: { is: light-sensor } } }
+  light-sensor: # => @=within:sub-items:item
+}
+
+{ UID: uid-2f18-945a-c460-9bd7
+  is: 3d rule editable
+  when: "it gets dark, turn light on"
+  light-sensor: { light-level: < 100 }
+  light: => 1 1 1
 }
 
