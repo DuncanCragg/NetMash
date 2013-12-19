@@ -27,6 +27,9 @@ cars: runcars
 capweb: runcapw
 	chromium-browser 'http://localhost:8082/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
 
+seepi:
+	chromium-browser 'http://192.168.0.18:8082/#http://192.168.0.18:8082/o/uid-c093-a908-a9d8-f1c1.json'
+
 ####################
 
 emu: androidemu runemu logcat
@@ -38,6 +41,8 @@ lan1: androidlan runlan tailtestresults1
 lan2: androidlan runlan tailtestresults2
 
 iot: androidlan runiot lancat
+
+iotest: androidlan runiotest lancat
 
 cap: androidemu runcap logcat
 
@@ -137,7 +142,9 @@ runemu: kill clean netconfig useworlddb setvm3emuconfig run1n2
 
 runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
-runiot: kill clean netconfig useiotdb setvm3lanconfig run1n2
+runiot: kill clean netconfig useiotdb setvm1lanconfig run1
+
+runiotest: kill clean netconfig useiotdb setvm3lanconfig run1n2
 
 runliot: kill clean netconfig useliotdb setvm2lanconfig run2
 
@@ -285,21 +292,19 @@ setvm3cleanconfig:
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/cyrusconfig.db
 
+setvm1lanconfig:
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrus.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/cyrus.db
+
 setvm2lanconfig:
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrus.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrus.db
 
-setvm3lanconfig:
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrus.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm1/cyrus.db
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrus.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrus.db
+setvm3lanconfig: setvm1lanconfig setvm2lanconfig
 
 setvm1tstconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
