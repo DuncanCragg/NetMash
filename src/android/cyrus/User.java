@@ -38,42 +38,48 @@ public class User extends CyrusLanguage {
 
     static public User currentUser=null;
 
+    static public BLELinks linksaround=null;
+
     static public void createUserAndDevice(){
 
         String fullName=UserContacts.getUsersFullName();
         String your=fullName.equals("You")? "Your": fullName+"'s";
 
         CyrusLanguage contact = new CyrusLanguage(
-              "{ \"is\": [ \"editable\", \"contact\" ], \n"+
-              "  \"full-name\": \""+fullName+"\", \n"+
-              "  \"address\": { } \n"+
-              "}");
+              "{ is: editable contact\n"+
+              "  full-name: \""+fullName+"\" \n"+
+              "  address: { } \n"+
+              "}", true);
 
         CyrusLanguage links = new CyrusLanguage(
-              "{ \"is\": [ \"link\", \"list\", \"editable\" ], \n"+
-              "  \"list\": null \n"+
-              "}");
+              "{ is: link list editable\n"+
+              "}", true);
 
-        LinkedList cyruslinks=Kernel.config.listPathN("app:links");
-        links.publicState.listPath("list", cyruslinks);
+        linksaround = new BLELinks(
+              "{ is: broadcast link list\n"+
+              "  title: \"Objects Around\" \n"+
+              "}");
 
         User contacts = new User(
-              "{ \"is\": [ \"private\", \"contact\", \"list\" ], \n"+
-              "  \"title\": \"Phone Contacts\", \n"+
-              "  \"list\": null \n"+
-              "}");
+              "{ is: private contact list\n"+
+              "  title: \"Phone Contacts\", \n"+
+              "}", true);
 
         // -----------------------------------------------------
 
         String homeusers=Kernel.config.stringPathN("app:homeusers");
-        currentUser = new User(homeusers, contact.uid, links.uid, contacts.uid);
+        currentUser = new User(homeusers, contact.uid, links.uid, linksaround.uid, contacts.uid);
 
+        LinkedList cyruslinks=Kernel.config.listPathN("app:links");
+        cyruslinks.addFirst(linksaround.uid);
         cyruslinks.addFirst(currentUser.uid);
+        links.publicState.listPath("list", cyruslinks);
 
         currentUser.funcobs.setCacheNotifyAndSaveConfig(currentUser);
 
         currentUser.funcobs.cacheSaveAndEvaluate(contact, true);
         currentUser.funcobs.cacheSaveAndEvaluate(links);
+        currentUser.funcobs.cacheSaveAndEvaluate(linksaround);
         currentUser.funcobs.cacheSaveAndEvaluate(contacts);
         currentUser.funcobs.cacheSaveAndEvaluate(currentUser, true);
 
@@ -83,9 +89,11 @@ public class User extends CyrusLanguage {
 
     public User(String jsonstring){ super(jsonstring); }
 
+    public User(String jsonstring, boolean cyrus){ super(jsonstring,cyrus); }
+
     public User(JSON json){ super(json); }
 
-    public User(String homeusers, String contactuid, String linksuid, String contactsuid){
+    public User(String homeusers, String contactuid, String linksuid, String linksarounduid, String contactsuid){
         super("{   \"is\": \"user\", \n"+
               "    \"homeusers\": \""+homeusers+"\", \n"+
               "    \"saying\": \"\", \n"+
@@ -99,6 +107,7 @@ public class User extends CyrusLanguage {
               "        \"editing\": null, \n"+
               "        \"viewas\": \"gui\", \n"+
               "        \"links\": \""+linksuid+"\", \n"+
+              "        \"links-around\": \""+linksarounduid+"\", \n"+
               "        \"history\": null, \n"+
               "        \"contacts\":  \""+contactsuid+"\", \n"+
               "        \"responses\": { }, \n"+
@@ -171,10 +180,12 @@ public class User extends CyrusLanguage {
             }
         };
         if(currentlocation!=null) currentlocation.getLocationUpdates();
+        if(linksaround!=null)  linksaround.enableScanning();
     }
 
     public void onTopPause(){
         if(currentlocation!=null) currentlocation.stopLocationUpdates();
+        if(linksaround!=null)  linksaround.disableScanning();
     }
 
     public void onTopDestroy(){

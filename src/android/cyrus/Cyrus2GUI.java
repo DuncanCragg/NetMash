@@ -64,7 +64,6 @@ public class Cyrus2GUI {
     public LinkedHashMap links2GUI(){
         String listuid = user.content("private:viewing");
         LinkedList<String> links = user.contentList("private:viewing:list");
-        if(links==null) return null;
         LinkedList viewlist = new LinkedList();
         viewlist.add(style("direction","vertical"));
         String title = user.content("private:viewing:title");
@@ -442,7 +441,7 @@ public class Cyrus2GUI {
     public void linksList2GUI(LinkedList<String> links, LinkedList viewlist, String prefix, String listuid, String label){
         if(label!=null && label.length()!=0) viewlist.add(label);
         int i= -1;
-        for(String uid: links){ i++;
+        if(links!=null) for(String uid: links){ i++;
             String bmtext=null;
             if(user.contentSet(prefix+":"+i+":is")){
                 if(bmtext==null) bmtext=user.contentString(prefix+":"+i+":when");
