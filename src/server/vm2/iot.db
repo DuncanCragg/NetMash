@@ -1,4 +1,5 @@
 { UID: uid-c093-a908-a9d8-f1c1
+  Class: PiBeaconLight
   Rules: uid-16bd-140a-8862-41cd uid-9011-94df-9feb-e3c2 uid-2f18-945a-c460-9bd7
   is: 3d cuboid editable
   title: Light
