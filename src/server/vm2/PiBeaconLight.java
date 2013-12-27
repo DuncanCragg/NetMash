@@ -6,7 +6,7 @@ import cyrus.forest.*;
 
 import static cyrus.lib.Utils.*;
 
-/** .
+/** Class to drive an RGB LED and broadcast its URL through a BLE beacon on a Raspberry Pi.
   */
 public class PiBeaconLight extends CyrusLanguage {
 
@@ -66,29 +66,24 @@ public class PiBeaconLight extends CyrusLanguage {
         FileWriter l1 = new FileWriter("/sys/class/gpio/gpio23/value");
         FileWriter l2 = new FileWriter("/sys/class/gpio/gpio24/value");
 
-        int total = 1024;
         int mark = 0;
+        int total = 1024;
         int d = 8;
 
         while(true){
             int m=mark/64;
             int s=(total-mark)/64;
 
-            l1.write("1");
-            l1.flush();
-            l2.write("0");
-            l2.flush();
+            l1.write("1"); l1.flush();
+            l2.write("0"); l2.flush();
             Thread.sleep(m);
 
-            l1.write("0");
-            l1.flush();
-            l2.write("1");
-            l2.flush();
+            l1.write("0"); l1.flush();
+            l2.write("1"); l2.flush();
             Thread.sleep(s);
 
             mark+=d;
-            if(mark>=total) d= -d;
-            if(mark<=0) d= -d;
+            if(mark>=total || mark<=0) d= -d;
         }
 
         }catch(Exception e){ e.printStackTrace(); }
