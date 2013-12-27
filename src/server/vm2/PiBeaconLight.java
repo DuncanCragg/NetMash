@@ -2,7 +2,7 @@
 import java.io.File;
 import java.io.FileWriter;
 
-import cyrus.forest.WebObject;
+import cyrus.forest.*;
 
 import static cyrus.lib.Utils.*;
 
