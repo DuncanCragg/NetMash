@@ -21,10 +21,8 @@ public class PiBeaconLight extends CyrusLanguage {
         }
     }
 
-    static final String GPIO_OUT = "out";
-    static final String GPIO_ON = "1";
-    static final String GPIO_OFF = "0";
-    static String[] GpioChannels = { "23", "24" };
+    FileWriter unex;
+    FileWriter ex;
 
     public void initialisationCeremony(){
 
@@ -32,61 +30,65 @@ public class PiBeaconLight extends CyrusLanguage {
 
         try {
 
-            FileWriter unexportFile = new FileWriter("/sys/class/gpio/unexport");
-            FileWriter exportFile =   new FileWriter("/sys/class/gpio/export");
+            unex = new FileWriter("/sys/class/gpio/unexport");
+            ex =   new FileWriter("/sys/class/gpio/export");
 
-            for(String gpioChannel: GpioChannels){
+            grabGPIO("23");
+            grabGPIO("24");
 
-                System.out.println(gpioChannel);
-
-                File exportFileCheck = new File("/sys/class/gpio/gpio"+gpioChannel);
-                if(exportFileCheck.exists()){
-                    unexportFile.write(gpioChannel);
-                    unexportFile.flush();
-                }
-
-                exportFile.write(gpioChannel);
-                exportFile.flush();
-
-                FileWriter directionFile = new FileWriter("/sys/class/gpio/gpio" + gpioChannel + "/direction");
-
-                directionFile.write(GPIO_OUT);
-                directionFile.flush();
-            }
+            setGPIOout("23");
+            setGPIOout("24");
 
         }catch(Exception e){ e.printStackTrace(); }
+    }
+
+    void grabGPIO(String ch) throws Exception{
+        File f = new File("/sys/class/gpio/gpio"+ch);
+        if(f.exists()){
+            unex.write(ch);
+            unex.flush();
+        }
+        ex.write(ch);
+        ex.flush();
+    }
+
+    void setGPIOout(String ch) throws Exception{
+        FileWriter fw = new FileWriter("/sys/class/gpio/gpio"+ch+"/direction");
+        fw.write("out");
+        fw.flush();
+        fw.close();
     }
 
     void doit(){
 
         try {
 
-        FileWriter l1 = new FileWriter("/sys/class/gpio/gpio" + GpioChannels[0] + "/value");
-        FileWriter l2 = new FileWriter("/sys/class/gpio/gpio" + GpioChannels[1] + "/value");
+        FileWriter l1 = new FileWriter("/sys/class/gpio/gpio23/value");
+        FileWriter l2 = new FileWriter("/sys/class/gpio/gpio24/value");
 
-        int totalt = 1024;
+        int total = 1024;
         int mark = 0;
-        int dir = 8;
+        int d = 8;
 
         while(true){
-            float m=mark/64f;
-            float s=(totalt-mark)/64f;
-            int mt=(int)m;
-            int st=(int)s;
+            int m=mark/64;
+            int s=(total-mark)/64;
 
-            l1.write(GPIO_ON);
+            l1.write("1");
             l1.flush();
-            l2.write(GPIO_OFF);
+            l2.write("0");
             l2.flush();
-            java.lang.Thread.sleep(mt);
+            java.lang.Thread.sleep(m);
 
-            l1.write(GPIO_OFF);
+            l1.write("0");
             l1.flush();
-            l2.write(GPIO_ON);
+            l2.write("1");
             l2.flush();
-            java.lang.Thread.sleep(st);
+            java.lang.Thread.sleep(s);
 
-            mark+=dir; if(mark>=totalt) dir= -dir; if(mark<=0) dir= -dir;
+            mark+=d;
+            if(mark>=total) d= -d;
+            if(mark<=0) d= -d;
         }
 
         }catch(Exception e){ e.printStackTrace(); }
