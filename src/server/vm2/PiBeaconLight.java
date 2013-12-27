@@ -78,13 +78,13 @@ public class PiBeaconLight extends CyrusLanguage {
             l1.flush();
             l2.write("0");
             l2.flush();
-            java.lang.Thread.sleep(m);
+            Thread.sleep(m);
 
             l1.write("0");
             l1.flush();
             l2.write("1");
             l2.flush();
-            java.lang.Thread.sleep(s);
+            Thread.sleep(s);
 
             mark+=d;
             if(mark>=total) d= -d;
