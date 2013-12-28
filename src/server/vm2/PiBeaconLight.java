@@ -14,11 +14,19 @@ public class PiBeaconLight extends CyrusLanguage {
 
     private boolean running=false;
 
+    double R=1f;
+    double G=1f;
+    double B=1f;
+
     public void evaluate(){
         if(!running){ running=true;
             initialisationCeremony();
             new Thread(){ public void run(){ doit(); }}.start();
         }
+        super.evaluate();
+        R=contentDouble("light:0");
+        G=contentDouble("light:1");
+        B=contentDouble("light:2");
     }
 
     FileWriter unex;
@@ -63,27 +71,15 @@ public class PiBeaconLight extends CyrusLanguage {
 
         try {
 
-        FileWriter l1 = new FileWriter("/sys/class/gpio/gpio23/value");
-        FileWriter l2 = new FileWriter("/sys/class/gpio/gpio24/value");
+        FileWriter lr = new FileWriter("/sys/class/gpio/gpio23/value");
+        FileWriter lg = new FileWriter("/sys/class/gpio/gpio24/value");
 
-        int mark = 0;
-        int total = 1024;
-        int d = 8;
-
+        int n=0;
         while(true){
-            int m=mark/64;
-            int s=(total-mark)/64;
-
-            l1.write("1"); l1.flush();
-            l2.write("0"); l2.flush();
-            Thread.sleep(m);
-
-            l1.write("0"); l1.flush();
-            l2.write("1"); l2.flush();
-            Thread.sleep(s);
-
-            mark+=d;
-            if(mark>=total || mark<=0) d= -d;
+            lr.write(n<R*16? "1": "0"); lr.flush();
+            lg.write(n<G*16? "1": "0"); lg.flush();
+            Thread.sleep(1);
+            n++; if(n==16) n=0;
         }
 
         }catch(Exception e){ e.printStackTrace(); }

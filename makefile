@@ -27,7 +27,10 @@ cars: runcars
 capweb: runcapw
 	chromium-browser 'http://localhost:8082/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
 
-seepi:
+seepia:
+	chromium-browser 'http://192.168.0.17:8082/#http://192.168.0.17:8082/o/uid-c093-a908-a9d8-f1c1.json'
+
+seepib:
 	chromium-browser 'http://192.168.0.18:8082/#http://192.168.0.18:8082/o/uid-c093-a908-a9d8-f1c1.json'
 
 ####################
