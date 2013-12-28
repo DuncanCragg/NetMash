@@ -74,15 +74,22 @@ public class PiBeaconLight extends CyrusLanguage {
         FileWriter lr = new FileWriter("/sys/class/gpio/gpio23/value");
         FileWriter lg = new FileWriter("/sys/class/gpio/gpio24/value");
 
-        int n=0;
         while(true){
-            lr.write(n<R*16? "1": "0"); lr.flush();
-            lg.write(n<G*16? "1": "0"); lg.flush();
-            Thread.sleep(1);
-            n++; if(n==16) n=0;
+            lr.write("1"); lr.flush();
+            lg.write("1"); lg.flush();
+            int tr=(int)((R/1.4)*16);
+            int tg=(int)((G/1.4)*16);
+            if(tr<tg){ sleep(tr);    lr.write("0"); lr.flush();
+                       sleep(tg-tr); lg.write("0"); lg.flush();
+                       sleep(16-tg); }
+            else     { sleep(tg);    lg.write("0"); lg.flush();
+                       sleep(tr-tg); lr.write("0"); lr.flush();
+                       sleep(16-tr); }
         }
 
         }catch(Exception e){ e.printStackTrace(); }
     }
+
+    void sleep(int ms) throws Exception { if(ms<=0) return; Thread.sleep(ms); }
 }
 
