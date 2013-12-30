@@ -149,7 +149,7 @@ runiot: kill clean netconfig useiotdb setvm1lanconfig run1
 
 runiotest: kill clean netconfig useiotdb setvm3lanconfig run1n2
 
-runliot: kill clean netconfig useliotdb setvm2iotconfig run2
+runliot: kill netconfig useliotdb setvm2iotconfig run2
 
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
