@@ -542,6 +542,10 @@ abstract class HTTPCommon {
                 json = new JSON(jsonchars,true);
             }
             else
+            if(httpContentType.startsWith("text/plain") && httpReqURL.endsWith(".cyr")){
+                json = new JSON(jsonchars,true);
+            }
+            else
             if(httpContentType.startsWith("application/x-www-form-urlencoded")){
                 json = new JSON(decodeAndGetFormValue(jsonchars));
             }
