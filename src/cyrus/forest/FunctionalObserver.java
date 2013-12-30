@@ -62,7 +62,7 @@ public class FunctionalObserver implements Module {
     boolean isshortpolling=false;
     boolean visible=false;
     private void startPollingThread(){
-        visible=Kernel.config.isAtPathN("network:host");
+        visible=!UID.notVisible();
         pollingThread=new Thread(){ public void run(){
             while(ispolling){
                 Kernel.sleep(10000);

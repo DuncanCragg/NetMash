@@ -149,7 +149,7 @@ runiot: kill clean netconfig useiotdb setvm1lanconfig run1
 
 runiotest: kill clean netconfig useiotdb setvm3lanconfig run1n2
 
-runliot: kill clean netconfig useliotdb setvm2lanconfig run2
+runliot: kill clean netconfig useliotdb setvm2iotconfig run2
 
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
@@ -306,6 +306,9 @@ setvm2lanconfig:
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm2/cyrus.db
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrus.db
+
+setvm2iotconfig:
+	sed -i"" -e  "s#host: 10.0.2.2##g" src/server/vm2/cyrusconfig.db
 
 setvm3lanconfig: setvm1lanconfig setvm2lanconfig
 

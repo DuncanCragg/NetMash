@@ -2,6 +2,7 @@ package cyrus.forest;
 
 import java.util.*;
 import java.io.*;
+import java.net.*;
 import java.nio.*;
 import java.nio.charset.*;
 import java.util.concurrent.*;
@@ -113,10 +114,27 @@ public class UID {
 
     static public String localPre(){
         if(localpre==null){
-            localpre="http://"+Kernel.config.stringPathN("network:host")+":"+
-                               Kernel.config.intPathN(   "network:port");
+            String host=Kernel.config.stringPathN("network:host");
+            if(host==null) host=findTheMainIP4AddressOfThisHost();
+            localpre="http://"+host+":"+Kernel.config.intPathN("network:port");
         }
         return localpre;
+    }
+
+    static public String findTheMainIP4AddressOfThisHost(){ try{
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while(interfaces.hasMoreElements()){
+            NetworkInterface ni=interfaces.nextElement();
+            if(!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
+            Enumeration<InetAddress> addresses=ni.getInetAddresses();
+            while(addresses.hasMoreElements()){
+                InetAddress ad=addresses.nextElement();
+                if(ad.isLoopbackAddress() || !(ad instanceof Inet4Address)) continue;
+                return ad.getHostAddress();
+            }
+        }
+        } catch(Throwable t){ t.printStackTrace(); }
+        return "127.0.0.1";
     }
 
     static public String localPrePath(){
@@ -128,7 +146,7 @@ public class UID {
 
     static boolean notVisible(){
         if(notvisible==null){
-            notvisible=!Kernel.config.isAtPathN("network:host");
+            notvisible=!Kernel.config.isAtPathN("network:port");
         }
         return notvisible;
     }
