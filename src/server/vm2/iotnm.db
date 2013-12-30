@@ -1,0 +1,22 @@
+{ UID: uid-16bd-140a-8862-41cd
+  is: 3d rule editable
+  when: "touched, set light colour"
+  Alerted: { is: user  touching: { item: @ }  Version: > @v }
+  v: => @Alerted:Version
+  light: => @Alerted:touching:position * 1.4
+}
+
+{ UID: uid-9011-94df-9feb-e3c2
+  is: 3d rule editable
+  when: "starting, get light-sensor"
+  within: { sub-items: { item: { is: light-sensor } } }
+  light-sensor: # => @=within:sub-items:item
+}
+
+{ UID: uid-2f18-945a-c460-9bd7
+  is: 3d rule editable
+  when: "it gets dark, turn light on"
+  light-sensor: { light-level: < 100 }
+  light: => 1 1 1
+}
+

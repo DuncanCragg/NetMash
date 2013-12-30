@@ -1,6 +1,8 @@
 { UID: uid-c093-a908-a9d8-f1c1
   Class: PiBeaconLight
-  Rules: uid-16bd-140a-8862-41cd uid-9011-94df-9feb-e3c2 uid-2f18-945a-c460-9bd7
+  Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cy
+         http://netmash.net/o/uid-9011-94df-9feb-e3c2.cy
+         http://netmash.net/o/uid-2f18-945a-c460-9bd7.cy
   is: 3d cuboid editable
   title: Light
   rotation: 45 45 45
@@ -8,27 +10,5 @@
   light: 1 1 1
   within: http://192.168.0.8:8081/o/uid-41b6-5f8f-f143-b30d.json
   v: 0
-}
-
-{ UID: uid-16bd-140a-8862-41cd
-  is: 3d rule editable
-  when: "touched, set light colour"
-  Alerted: { is: user  touching: { item: @ }  Version: > @v }
-  v: => @Alerted:Version
-  light: => @Alerted:touching:position * 1.4
-}
-
-{ UID: uid-9011-94df-9feb-e3c2
-  is: 3d rule editable
-  when: "starting, get light-sensor"
-  within: { sub-items: { item: { is: light-sensor } } }
-  light-sensor: # => @=within:sub-items:item
-}
-
-{ UID: uid-2f18-945a-c460-9bd7
-  is: 3d rule editable
-  when: "it gets dark, turn light on"
-  light-sensor: { light-level: < 100 }
-  light: => 1 1 1
 }
 
