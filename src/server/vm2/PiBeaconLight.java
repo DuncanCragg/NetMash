@@ -10,7 +10,19 @@ import static cyrus.lib.Utils.*;
   */
 public class PiBeaconLight extends CyrusLanguage {
 
-    public PiBeaconLight(){ }
+    public PiBeaconLight(){
+        super("{ Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
+              "         http://netmash.net/o/uid-9011-94df-9feb-e3c2.cyr\n"+
+              "         http://netmash.net/o/uid-2f18-945a-c460-9bd7.cyr\n"+
+              "  is: 3d cuboid editable\n"+
+              "  title: Light\n"+
+              "  rotation: 45 45 45\n"+
+              "  scale: 1 1 1\n"+
+              "  light: 1 1 1\n"+
+              "  within: http://192.168.0.8:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
+              "  v: 0\n"+
+              "}\n", true);
+    }
 
     private boolean running=false;
 

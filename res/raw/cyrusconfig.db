@@ -9,8 +9,7 @@
   rules: { log: 0 }
   gl: { log: false }
   app: { homeusern: http://10.0.2.2:8082/o/uid-6332-84e1-c1de-3364.json
-         links: http://192.168.0.18:8082/o/uid-c093-a908-a9d8-f1c1.json
-                http://10.0.2.2:8081/o/uid-41b6-5f8f-f143-b30d.json
+         links: http://10.0.2.2:8081/o/uid-41b6-5f8f-f143-b30d.json
                 http://10.0.2.2:8082/o/uid-f862-56af-d46d-c440.json
                 http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json
                 http://10.0.2.2:8082/o/uid-56d4-91ef-a2fc-2585.json

@@ -27,12 +27,6 @@ cars: runcars
 capweb: runcapw
 	chromium-browser 'http://localhost:8082/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
 
-seepia:
-	chromium-browser 'http://192.168.0.17:8082/#http://192.168.0.17:8082/o/uid-c093-a908-a9d8-f1c1.json'
-
-seepib:
-	chromium-browser 'http://192.168.0.18:8082/#http://192.168.0.18:8082/o/uid-c093-a908-a9d8-f1c1.json'
-
 ####################
 
 emu: androidemu runemu logcat
@@ -149,7 +143,7 @@ runiot: kill clean netconfig useiotdb setvm1lanconfig run1
 
 runiotest: kill clean netconfig useiotdb setvm3lanconfig run1n2
 
-runliot: kill netconfig useliotdb setvm2iotconfig run2
+runliot: kill netconfig setvm2iotconfig run2
 
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
@@ -223,10 +217,6 @@ useworlddb:
 
 useiotdb:
 	cp src/server/vm1/iot.db src/server/vm1/cyrus.db
-	cp src/server/vm2/iot.db src/server/vm2/cyrus.db
-
-useliotdb:
-	cp src/server/vm2/iot.db src/server/vm2/cyrus.db
 
 useomdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db
@@ -309,6 +299,7 @@ setvm2lanconfig:
 
 setvm2iotconfig:
 	sed -i"" -e  "s#host: 10.0.2.2##g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s#preload: ( )#preload: PiBeaconLight#g" src/server/vm2/cyrusconfig.db
 
 setvm3lanconfig: setvm1lanconfig setvm2lanconfig
 

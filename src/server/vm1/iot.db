@@ -3,7 +3,6 @@
   is: place 3d mesh editable
   title: "Room of Things"
   sub-items: { item: uid-52e0-e5c3-0ed1-6ed3 position: 5 1 5 }
-             { item: http://192.168.0.18:8082/o/uid-c093-a908-a9d8-f1c1.json position: 10 1 10 }
   scale: 20 20 20
   vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )
   texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )
