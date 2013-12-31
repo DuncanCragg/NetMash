@@ -1,6 +1,5 @@
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 
 import cyrus.forest.*;
 
@@ -44,21 +43,24 @@ public class PiBeaconLight extends CyrusLanguage {
 
     void startBroadcasting(){
         logXX("startBroadcasting",uid,UID.toURL(uid));
-        try{
-            Runtime rt=Runtime.getRuntime();
-            Process p;
-            logXX("up");
-            p=rt.exec("hciconfig hci0 up");
-            logXX("set");
-            p=rt.exec("hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 c0 a8 00 12 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00 > /dev/null 2>&1");
-            logXX("adv");
-            p=rt.exec("hciconfig hci0 leadv 3 > /dev/null 2>&1");
-            logXX("done");
-                    // hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00
-                    // hcitool -i hci0 cmd 0x08 0x0008 1f 02 01 1a 1b ff 4c 00 02 16 c0 a8 00 12 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00
 
-        }catch(Throwable t){ t.printStackTrace(); }
+        exec("hciconfig hci0 up");
+        exec("hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 c0 a8 00 11 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00");
+        exec("hciconfig hci0 leadv 3");
+        exec("hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 c0 a8 00 11 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00");
+           // hcitool -i hci0 cmd 0x08 0x0008 1f 02 01 1a 1b ff 4c 00 02 16 c0 a8 00 12 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00
+           // hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00
     }
+
+    void exec(String command){ try{
+        Process p=Runtime.getRuntime().exec(command);
+        BufferedInputStream bis = new BufferedInputStream(p.getInputStream());
+        int read;
+        do{ read = bis.read();
+            if(read!= -1) System.out.write(read);
+            else          System.out.write('\n');
+        }while(read != -1);
+    }catch(Throwable t){ t.printStackTrace(); }}
 
     FileWriter unex;
     FileWriter ex;
