@@ -43,13 +43,17 @@ public class PiBeaconLight extends CyrusLanguage {
 
     void startBroadcasting(){
         logXX("startBroadcasting",uid,UID.toURL(uid));
-
+        // hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00
+        // hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 c0 a8 00 11 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00
+        // hcitool -i hci0 cmd 0x08 0x0008 1f 02 01 1a 1b ff 4c 00 02 16 c0 a8 00 12 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00
+        String advert="hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 ";
+        advert=advert+String.format("%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x ", 0xc0, 0xa8, 0x00, 0x11, 0x1f, 0x92, 0xc0, 0x93, 0xa9, 0x08, 0xa9, 0xd8, 0xf1, 0xc1);
+        advert=advert+"00 00 00 00 00 00 00 00";
         exec("hciconfig hci0 up");
-        exec("hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 c0 a8 00 11 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00");
+        exec(advert);
         exec("hciconfig hci0 leadv 3");
-        exec("hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 c0 a8 00 11 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00");
-           // hcitool -i hci0 cmd 0x08 0x0008 1f 02 01 1a 1b ff 4c 00 02 16 c0 a8 00 12 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00
-           // hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00
+        exec(advert); // possible bug workaround
+        logXX(advert);
     }
 
     void exec(String command){ try{
