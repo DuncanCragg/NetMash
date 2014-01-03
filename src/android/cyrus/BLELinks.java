@@ -72,14 +72,13 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
     @Override
     public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
         new Evaluator(this){ public void evaluate(){
-            String data="";
-            for(int i=0; i<ad.length; i++) data += String.format("%02x ", ad[i]);
             String url=String.format("http://%d.%d.%d.%d:%d/o/uid-%02x%02x-%02x%02x-%02x%02x-%02x%02x.json",
                                      0xff&ad[9],0xff&ad[10],0xff&ad[11],0xff&ad[12],
                                      ((0xff & ad[13])*256)+(0xff & ad[14]),
                                      ad[15],ad[16],ad[17],ad[18],ad[19],ad[20],ad[21],ad[22]);
-            contentList("list", list(url));
-            contentInt("rssi", rssi);
+            contentSetAdd("list", url);
+            logXX(device.toString().replaceAll(":","-"), hash("object",url, "distance",-rssi-25));
+            contentHash(device.toString().replaceAll(":","-"), hash("object",url, "distance",-rssi-25));
         }};
     }
 }

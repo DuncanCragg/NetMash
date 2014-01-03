@@ -39,8 +39,6 @@ lan2: androidlan runlan tailtestresults2
 
 iot: androidlan runiot lancat
 
-iotest: androidlan runiotest lancat
-
 cap: androidemu runcap logcat
 
 ####################
@@ -139,11 +137,9 @@ runemu: kill clean netconfig useworlddb setvm3emuconfig run1n2
 
 runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
-runiot: kill clean netconfig useiotdb setvm1lanconfig run1
+runiot: kill clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2root
 
-runiotest: kill clean netconfig useiotdb setvm3lanconfig run1n2
-
-runliot: kill netconfig setvm2iotconfig run2
+runliot: kill      netconfig          setvm2iotconfig run2
 
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
@@ -198,7 +194,12 @@ run1: jar
 run2: jar
 	(cd src/server/vm2; ./run.sh)
 
+run2root: jar
+	(cd src/server/vm2; sudo ./run.sh)
+
 run1n2: run1 run2
+
+run1n2root: run1 run2root
 
 # -------------------------------------------------------------------
 

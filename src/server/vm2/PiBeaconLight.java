@@ -1,5 +1,6 @@
 
 import java.io.*;
+import java.net.*;
 import java.util.regex.*;
 
 import cyrus.platform.*;
@@ -45,7 +46,8 @@ public class PiBeaconLight extends CyrusLanguage {
 
     void startBroadcasting(){
         logXX("startBroadcasting",uid,UID.toURL(uid));
-        byte[] ipbytes=UID.IP().getAddress();
+        InetAddress ip=UID.IP();
+        byte[] ipbytes= ip==null? new byte[]{127,0,0,1}: ip.getAddress();
         int port=Kernel.config.intPathN("network:port");
         String re="uid-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])";
         Matcher m = Pattern.compile(re).matcher(uid);
