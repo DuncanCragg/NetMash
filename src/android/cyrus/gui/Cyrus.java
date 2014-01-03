@@ -1044,6 +1044,18 @@ log(show? "show keyboard": "hide keyboard");
             guiHandler.post(new Runnable(){ public void run(){ view.setImageBitmap(bm2); }});
         }}.start();
     }
+/*
+    new GetImageAsyncTask().execute(url);
+
+    private class GetImageAsyncTask extends AsyncTask {
+        protected Bitmap doInBackground(String... urls) {
+            return getBitmap(urls[0]);
+        }
+        protected void onPostExecute(Bitmap bm) {
+            view.setImageBitmap(bm);
+        }
+    }
+*/
 
     private Bitmap placeHolderBitmap;
     public Bitmap getPlaceHolderBitmap(){
