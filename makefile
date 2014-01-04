@@ -137,7 +137,7 @@ runemu: kill clean netconfig useworlddb setvm3emuconfig run1n2
 
 runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
-runiot: kill clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2root
+runiot: killroot clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2root
 
 runliot: kill      netconfig usenodb  setvm2iotconfig run2
 
@@ -439,6 +439,9 @@ local.properties:
 
 kill:
 	@-pkill -f 'java -classpath'
+
+killroot:
+	@-sudo pkill -f 'java -classpath'
 
 clean:
 	rm -rf ./build/classes/cyrus
