@@ -1,5 +1,6 @@
 { UID: uid-41b6-5f8f-f143-b30d
   Class: cyrus.types.PresenceTracker
+  Rules: uid-3365-7407-0f7f-9826
   is: place 3d mesh editable
   title: "Room of Things"
   sub-items: { item: uid-52e0-e5c3-0ed1-6ed3 position: 5 1 5 }
@@ -11,6 +12,12 @@
   textures: http://www.textures123.com/free-texture/sand/sand-texture4.jpg
   vertex-shader: uid-ff5d-1ef4-cfa5-5f92
   fragment-shader: uid-1ff8-59e9-6dac-9b56
+}
+
+{ UID: uid-3365-7407-0f7f-9826
+  is: place rule
+  Alerted: { within: @ }
+  sub-items: => @. with { item: @Alerted position: 7 1 7 }
 }
 
 { UID: uid-52e0-e5c3-0ed1-6ed3

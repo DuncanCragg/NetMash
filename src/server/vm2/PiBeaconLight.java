@@ -14,6 +14,7 @@ public class PiBeaconLight extends CyrusLanguage {
 
     public PiBeaconLight(){
         super("{ Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
+              "         http://netmash.net/o/uid-6f1a-4c7c-d111-2679.cyr\n"+
               "         http://netmash.net/o/uid-9011-94df-9feb-e3c2.cyr\n"+
               "         http://netmash.net/o/uid-2f18-945a-c460-9bd7.cyr\n"+
               "  is: 3d cuboid editable\n"+

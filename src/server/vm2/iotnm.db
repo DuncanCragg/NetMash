@@ -6,6 +6,12 @@
   light: => @Alerted:touching:position * 1.4
 }
 
+{ UID: uid-6f1a-4c7c-d111-2679
+  is: 3d rule editable
+  when: "starting, notify place within"
+  Notifying: => @. with @within
+}
+
 { UID: uid-9011-94df-9feb-e3c2
   is: 3d rule editable
   when: "starting, get light-sensor"
