@@ -221,6 +221,7 @@ usenodb:
 
 useiotdb:
 	cp src/server/vm1/iot.db src/server/vm1/cyrus.db
+	rm -f                    src/server/vm2/cyrus.db
 
 useomdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db

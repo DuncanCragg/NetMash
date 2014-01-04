@@ -16,6 +16,7 @@
 
 { UID: uid-3365-7407-0f7f-9826
   is: place rule
+  when: "thing notified, add to this place"
   Alerted: { within: @ }
   sub-items: => @. with { item: @Alerted position: 7 1 7 }
 }
