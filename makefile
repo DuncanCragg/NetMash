@@ -139,7 +139,7 @@ runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
 runiot: kill clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2root
 
-runliot: kill      netconfig          setvm2iotconfig run2
+runliot: kill      netconfig usenodb  setvm2iotconfig run2
 
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
@@ -215,6 +215,9 @@ useworlddb:
 	cp  src/server/vm1/world.db    src/server/vm1/cyrus.db
 	cp  src/server/vm2/world.db    src/server/vm2/cyrus.db
 	cat src/server/vm2/room.db  >> src/server/vm2/cyrus.db
+
+usenodb:
+	rm -f src/server/vm1/cyrus.db src/server/vm2/cyrus.db
 
 useiotdb:
 	cp src/server/vm1/iot.db src/server/vm1/cyrus.db
