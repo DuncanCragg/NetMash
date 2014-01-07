@@ -753,6 +753,7 @@ public class WebObject {
         public Evaluator(WebObject w){
             this.self=w;
             synchronized(w){
+                boolean ie=w.inevaluate;
                 try{
                     if(w.inevaluate) whereAmI("************ already in evaluate ********** "+w.uid);
                     if(!w.inevaluate){
@@ -762,7 +763,7 @@ public class WebObject {
                         w.evalPost();
                     }
                     else evaluate();
-                } catch(Throwable t){ t.printStackTrace(); }
+                } catch(Throwable t){ t.printStackTrace(); w.inevaluate=ie; }
             }
         }
         public void evaluate(){}
@@ -865,6 +866,7 @@ public class WebObject {
     /* ---------------------------------------------------- */
 
     synchronized void handleEval(){
+        boolean ie=inevaluate;
         try{
             if(inevaluate) whereAmI("************ already in evaluate ********** "+uid);
             if(!inevaluate){
@@ -873,7 +875,7 @@ public class WebObject {
                 evalPost();
             }
             else evaluate();
-        } catch(Throwable t){ t.printStackTrace(); }
+        } catch(Throwable t){ t.printStackTrace(); inevaluate=ie; }
     }
 
     void evalPre(){
