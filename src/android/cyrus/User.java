@@ -228,6 +228,7 @@ public class User extends CyrusLanguage {
             }
             else
             if(firstTouchQuadrant==2){
+                trackingAround=false;
                 history.forward();
                 content("private:viewing",objectuid);
                 content("private:viewas", "raw");
@@ -373,6 +374,7 @@ public class User extends CyrusLanguage {
     }
 
     private void jumpToHereAndShow(String uid, String mode){
+        trackingAround=false;
         history.forward();
         content("private:viewing", uid);
         if(mode!=null) content("private:viewas", mode);
@@ -388,11 +390,22 @@ public class User extends CyrusLanguage {
         };
     }
 
+    boolean trackingAround=false;
+
     public boolean menuItem(final int itemid){
         new Evaluator(this){
             public void evaluate(){
+                trackingAround=false;
                 switch(itemid){
-                    case Cyrus.MENU_ITEM_ADD:
+                    case Cyrus.MENU_ITEM_ARD:
+                        String ar=getNearestPlace();
+                        if(ar!=null){
+                            trackingAround=true;
+                            history.forward();
+                            content("private:viewing", ar);
+                            content("private:viewas", "gui");
+                            showWhatIAmViewing();
+                        }
                     break;
                     case Cyrus.MENU_ITEM_LNX:
                         history.forward();
@@ -824,6 +837,7 @@ public class User extends CyrusLanguage {
 
     public void evaluate(){
         if(contentIs("is", "user") && this==currentUser){
+            if(trackingAround) checkAround();
             showWhatIAmViewing();
         }
         else
@@ -849,6 +863,36 @@ public class User extends CyrusLanguage {
             firstAlertedResponseSubscribeForUserFIXMEAndJumpUser();
         }
         else log("no evaluate: "+this);
+    }
+
+    void checkAround(){
+        for(String alertedUid: alerted()){
+            if(alertedUid.equals(content("private:links-around"))){
+                String o=content("private:viewing");
+                String n=getNearestPlace();
+logXX("old",o,"new",n);
+                if(n==null) trackingAround=false;
+                else
+                if(!n.equals(o)){
+                    history.forward();
+                    content("private:viewing", n);
+                }
+                return;
+            }
+        }
+        refreshObserves();
+    }
+
+    String getNearestPlace(){
+        LinkedList<String> urls=(LinkedList<String>)contentList("private:links-around:list");
+        if(urls==null) return null;
+        double m=10000;
+        String u=null;
+        for(String url: urls){
+            double d=contentDouble("private:links-around:"+UID.toUID(url)+":distance");
+            if(d<m){ m=d; u=url; }
+        }
+        return u;
     }
 
     private void firstAlertedResponseSubscribeForUserFIXMEAndJumpUser(){

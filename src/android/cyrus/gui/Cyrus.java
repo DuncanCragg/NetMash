@@ -324,7 +324,7 @@ log(show? "show keyboard": "hide keyboard");
         layout.addView(view, 0);
     }
 
-    static final public int MENU_ITEM_ADD = Menu.FIRST+0;
+    static final public int MENU_ITEM_ARD = Menu.FIRST+0;
     static final public int MENU_ITEM_LNX = Menu.FIRST+1;
     static final public int MENU_ITEM_GUI = Menu.FIRST+2;
     static final public int MENU_ITEM_MAP = Menu.FIRST+3;
@@ -333,7 +333,7 @@ log(show? "show keyboard": "hide keyboard");
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         super.onCreateOptionsMenu(menu);
-        menu.add(0, MENU_ITEM_ADD, Menu.NONE, "+ Link");
+        menu.add(0, MENU_ITEM_ARD, Menu.NONE, "Around");
         menu.add(1, MENU_ITEM_LNX, Menu.NONE, "Links");
         menu.add(2, MENU_ITEM_GUI, Menu.NONE, "Item");
         menu.add(3, MENU_ITEM_MAP, Menu.NONE, "On Map");
