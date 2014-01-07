@@ -1,12 +1,14 @@
 package cyrus;
 
+import java.util.*;
+
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.bluetooth.*;
 import android.bluetooth.BluetoothAdapter.*;
 
 import cyrus.platform.Kernel;
-import cyrus.forest.WebObject;
+import cyrus.forest.*;
 import cyrus.gui.Cyrus;
 
 import static cyrus.lib.Utils.*;
@@ -77,8 +79,14 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
                                      ((0xff & ad[13])*256)+(0xff & ad[14]),
                                      ad[15],ad[16],ad[17],ad[18],ad[19],ad[20],ad[21],ad[22]);
             contentSetAdd("list", url);
-            logXX(device.toString().replaceAll(":","-"), hash("object",url, "distance",-rssi-25));
-            contentHash(device.toString().replaceAll(":","-"), hash("object",url, "distance",-rssi-25));
+            contentHash(UID.toUID(url), hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
+            LinkedList allplaces=contentAll("list:within");
+            if(allplaces!=null) for(Object o: allplaces){
+                if(!(o instanceof String)) continue;
+                String placeurl=(String)o;
+                contentSetAdd("list", placeurl);
+                contentHash(UID.toUID(placeurl), hash("distance",20));
+            }
         }};
     }
 }
