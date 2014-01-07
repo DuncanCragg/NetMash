@@ -22,7 +22,7 @@ public class PiBeaconLight extends CyrusLanguage {
               "  rotation: 45 45 45\n"+
               "  scale: 1 1 1\n"+
               "  light: 1 1 1\n"+
-              "  within: http://192.168.0.8:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
+              "  within: http://10.0.2.2:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
               "  v: 0\n"+
               "}\n", true);
     }

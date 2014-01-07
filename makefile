@@ -289,6 +289,7 @@ setvm3cleanconfig:
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/PiBeaconLight.java
 
 setvm1lanconfig:
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
@@ -305,6 +306,7 @@ setvm2lanconfig:
 setvm2iotconfig:
 	sed -i"" -e  "s#host: 10.0.2.2##g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s#preload: ( )#preload: PiBeaconLight#g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/PiBeaconLight.java
 
 setvm3lanconfig: setvm1lanconfig setvm2lanconfig
 
