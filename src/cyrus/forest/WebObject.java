@@ -753,17 +753,14 @@ public class WebObject {
         public Evaluator(WebObject w){
             this.self=w;
             synchronized(w){
-                boolean ie=w.inevaluate;
-                try{
-                    if(w.inevaluate) whereAmI("************ already in evaluate ********** "+w.uid);
-                    if(!w.inevaluate){
-                        w.evalPre();
-                        evaluate();
-                        w.refreshObserves();
-                        w.evalPost();
-                    }
-                    else evaluate();
-                } catch(Throwable t){ t.printStackTrace(); w.inevaluate=ie; }
+                if(w.inevaluate) whereAmI("************ already in evaluate ********** "+w.uid);
+                if(!w.inevaluate){
+                    w.evalPre();
+                    try{ evaluate(); } catch(Throwable t){ t.printStackTrace(); }
+                    w.refreshObserves();
+                    w.evalPost();
+                }
+                else try{ evaluate(); } catch(Throwable t){ t.printStackTrace(); }
             }
         }
         public void evaluate(){}
@@ -866,16 +863,13 @@ public class WebObject {
     /* ---------------------------------------------------- */
 
     synchronized void handleEval(){
-        boolean ie=inevaluate;
-        try{
-            if(inevaluate) whereAmI("************ already in evaluate ********** "+uid);
-            if(!inevaluate){
-                evalPre();
-                evaluate();
-                evalPost();
-            }
-            else evaluate();
-        } catch(Throwable t){ t.printStackTrace(); inevaluate=ie; }
+        if(inevaluate) whereAmI("************ already in evaluate ********** "+uid);
+        if(!inevaluate){
+            evalPre();
+            try{ evaluate(); } catch(Throwable t){ t.printStackTrace(); }
+            evalPost();
+        }
+        else try{ evaluate(); } catch(Throwable t){ t.printStackTrace(); }
     }
 
     void evalPre(){
