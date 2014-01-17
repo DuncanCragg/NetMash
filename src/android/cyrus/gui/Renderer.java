@@ -66,8 +66,6 @@ public class Renderer implements GLSurfaceView.Renderer {
     private float seeY;
     private float seeZ;
 
-    private float direction=0;
-
     private boolean touchDetecting=false;
     private boolean touchCoordsDetecting=false;
     private int     touchX,touchY;
@@ -86,11 +84,10 @@ public class Renderer implements GLSurfaceView.Renderer {
     static String lightVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; attribute vec2 tex; varying vec2 texturePt; void main(){ texturePt = tex; gl_Position = mvpm*pos; }";
     static String lightFragmentShaderSource     = "precision mediump float; uniform vec3 lightCol; uniform sampler2D texture0; varying vec2 texturePt; void main(){ gl_FragColor=vec4(lightCol,1.0)*texture2D(texture0,texturePt); }";
 
-    public Renderer(Cyrus cyrus, LinkedHashMap hm, LinkedList position) {
+    public Renderer(Cyrus cyrus, LinkedHashMap hm) {
         debugGL=Kernel.config.boolPathN("gl:log"); if(debugGL) log("** GL Debugging on! May be slower..");
         this.cyrus=cyrus;
         this.mesh=new Mesh(hm,cyrus.user);
-        resetPositionAndView(position);
     }
 
     synchronized public void newMesh(LinkedHashMap hm){
@@ -367,17 +364,15 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     // -------------------------------------------------------------
 
-    public void resetPositionAndView(LinkedList position){
-        float x=getFloatFromList(position,0,0);
-        float y=getFloatFromList(position,1,0);
-        float z=getFloatFromList(position,2,0);
-        direction=0;
-        eyeX=x;
-        eyeY=y;
-        eyeZ=z;
-        seeX=eyeX;
-        seeY=eyeY;
-        seeZ=eyeZ-4.5f;
+    private float direction=0;
+
+    public void setPositionAndOrientation(LinkedList position, LinkedList orientation){
+        eyeX=getFloatFromList(position,0,0);
+        eyeY=getFloatFromList(position,1,0);
+        eyeZ=getFloatFromList(position,2,0);
+        direction=getFloatFromList(orientation,0,0);
+        seeX=eyeX-4.5f*FloatMath.sin(direction);
+        seeZ=eyeZ-4.5f*FloatMath.cos(direction);
     }
 
     private boolean emulator(){ return Kernel.config.stringPathN("network:home-cache-notify").indexOf("10.0.2.2")!= -1; }
@@ -395,7 +390,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 eyeZ+=dx/7f*FloatMath.sin(direction)-dy/7f*FloatMath.cos(direction);
                 seeX=eyeX-4.5f*FloatMath.sin(direction);
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
-                cyrus.user.onNewPosition(eyeX, eyeY, eyeZ);
+                cyrus.user.onNewPositionOrOrientation(eyeX,eyeY,eyeZ, direction);
             }
             else
             if(edge==4){
@@ -404,6 +399,7 @@ public class Renderer implements GLSurfaceView.Renderer {
                 if(direction<-2*Math.PI) direction+=2*Math.PI;
                 seeX=eyeX-4.5f*FloatMath.sin(direction);
                 seeZ=eyeZ-4.5f*FloatMath.cos(direction);
+                cyrus.user.onNewPositionOrOrientation(eyeX,eyeY,eyeZ, direction);
             }
         }else{
             if(touchDetecting) return;

@@ -43,6 +43,9 @@ public class Cyrus extends MapActivity{
     static public Cyrus top=null;
     static public User  user=null;
 
+    public GLSurfaceView onemeshview=null;
+    public Renderer      onerenderer=null;
+
     public void onUserReady(User u){ user = u; }
 
     //---------------------------------------------------------
@@ -109,7 +112,7 @@ public class Cyrus extends MapActivity{
 
     @Override
     public void onBackPressed(){
-        user.jumpBack();
+        user.goBack();
         return;
     }
 
@@ -272,6 +275,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private void uiDrawJSON(){ if(false) log("uiDrawJSON "+uiUID+":\n"+uiJSON);
+        boolean newObject=!uiUID.equals(viewUID);
         viewUID=uiUID;
         String title =uiJSON.stringPathN("title");
         if(title==null) setTitle(       "Cyrus");
@@ -283,11 +287,12 @@ log(show? "show keyboard": "hide keyboard");
         }else{
             LinkedHashMap mesh=uiJSON.hashPathN("#");
             addMesh(mesh);
+            if(newObject){
+                LinkedList<LinkedList> po=user.getPositionAndOrientation();
+                onerenderer.setPositionAndOrientation(po.get(0),po.get(1));
+            }
         }
     }
-
-    public GLSurfaceView onemeshview=null;
-    public Renderer      onerenderer=null;
 
     private void addMesh(LinkedHashMap mesh){
         if(createMeshView(mesh)){
@@ -960,7 +965,7 @@ log(show? "show keyboard": "hide keyboard");
             onemeshview.setFocusable(true);
             onemeshview.setFocusableInTouchMode(true);
             onemeshview.setEGLContextClientVersion(2);
-            onerenderer = new Renderer(this,mesh,user.getPosition(viewUID));
+            onerenderer = new Renderer(this,mesh);
             onemeshview.setRenderer(onerenderer);
             onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }

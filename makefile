@@ -455,7 +455,7 @@ clean:
 	-mv ,l* doc/local
 	rm -f  ,*
 
-veryclean: kill clean setappemuconfig netconfig setvm3cleanconfig setemumapkey
+veryclean: killroot clean setappemuconfig netconfig setvm3cleanconfig setemumapkey
 	-mv    src/server/vm1/cyrus.log doc/local/cyrus1.log
 	-mv    src/server/vm2/cyrus.log doc/local/cyrus2.log
 	rm -f  src/server/vm[12]/cyrus.db

@@ -99,7 +99,7 @@ public class User extends CyrusLanguage {
               "    \"saying\": \"\", \n"+
               "    \"within\": null, \n"+
               "    \"position\": [ 0.0, 0.0, 0.0 ], \n"+
-              "    \"avatar\": \"http://10.0.2.2:8082/o/uid-7794-3aa8-2192-7a60.json\", \n"+
+              "    \"avatar\": \"http://10.0.2.2:8081/o/uid-7794-3aa8-2192-7a60.json\", \n"+
               "    \"location\": { \"lat\": 54.106037, \"lon\": -1.579163 }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
               "    \"private\": { \n"+
@@ -111,7 +111,8 @@ public class User extends CyrusLanguage {
               "        \"history\": null, \n"+
               "        \"contacts\":  \""+contactsuid+"\", \n"+
               "        \"responses\": { }, \n"+
-              "        \"position\": { } \n"+
+              "        \"position\": { }, \n"+
+              "        \"orientation\": { } \n"+
               "    }\n"+
               "}");
     }
@@ -228,11 +229,7 @@ public class User extends CyrusLanguage {
             }
             else
             if(firstTouchQuadrant==2){
-                trackingAround=false;
-                history.forward();
-                content("private:viewing",objectuid);
-                content("private:viewas", "raw");
-                showWhatIAmViewing();
+                jumpToHereAndShow(objectuid, "raw", false);
             }
             else {
                 if(down){
@@ -254,12 +251,14 @@ public class User extends CyrusLanguage {
         }};
     }
 
-    private float lastx,lasty,lastz;
+    private float lastpx,lastpy,lastpz;
+    private float lastdi;
     private int posupdate=0;
     private Thread moveThread=null;
 
-    public void onNewPosition(float x, float y, float z){
-        lastx=x; lasty=y; lastz=z;
+    public void onNewPositionOrOrientation(float px, float py, float pz, float di){
+        lastpx=px; lastpy=py; lastpz=pz;
+        lastdi=di;
         posupdate++;
         if(moveThread==null){
             moveThread=new Thread(){ public void run(){
@@ -267,7 +266,7 @@ public class User extends CyrusLanguage {
                 while(true){
                     if(p!=posupdate){
                         p=posupdate;
-                        doMoveTo(lastx,lasty,lastz);
+                        doMoveTo(lastpx,lastpy,lastpz, lastdi);
                     }
                     Kernel.sleep(500);
                 }
@@ -275,22 +274,23 @@ public class User extends CyrusLanguage {
         }
     }
 
-    void doMoveTo(final float x, final float y, final float z){
+    void doMoveTo(final float px, final float py, final float pz, final float di){
         new Evaluator(this){
             public void evaluate(){
-                LinkedList newplace=findNewPlaceNearer(x,y,z);
+                LinkedList newplace=findNewPlaceNearer(px,py,pz);
                 if(newplace==null){
-                    LinkedList newposn=list(x,y,z);
+                    LinkedList newposn=list(px,py,pz);
+                    LinkedList newornt=list(di);
                     contentList("position", newposn);
-                    contentList("private:position:"+UID.toUID(content("private:viewing")), newposn);
+                    contentList("private:position:"   +UID.toUID(content("private:viewing")), newposn);
+                    contentList("private:orientation:"+UID.toUID(content("private:viewing")), newornt);
                 }
                 else{
                     String     newplaceuid=(String)  newplace.get(0);
                     LinkedList newposn  =(LinkedList)newplace.get(1);
                     contentList("position", newposn);
                     contentList("private:position:"+UID.toUID(newplaceuid), newposn);
-                    jumpToHereAndShow(newplaceuid,"gui");
-                    if(Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetPositionAndView(newposn);
+                    jumpToHereAndShow(newplaceuid,"gui", false);
                 }
             }
         };
@@ -330,24 +330,15 @@ public class User extends CyrusLanguage {
         public String toString(){ return String.format("View(%s, %s)", uid, as); }
         public boolean equals(Object v){ return (v instanceof View) && uid.equals(((View)v).uid) && as.equals(((View)v).as); }
     };
+
     class History extends Stack<View>{
-        User user;
-        public History(User u){ this.user=u; }
-        public void forward(){
-            View n=new View(user.content("private:viewing"), user.content("private:viewas"));
+        public History(){}
+        public void forward(View n){
             int i=search(n);
             if(empty() || i == -1 || i >1) push(n);
         }
-        public boolean back(){
-            if(history.empty()) return false;
-            View view=history.pop();
-            user.content("private:viewing", view.uid);
-            user.content("private:viewas",  view.as);
-            LinkedList newposn=contentList("private:position:"+UID.toUID(view.uid));
-            contentList("position", newposn);
-            if(newposn!=null && Cyrus.top!=null && Cyrus.top.onerenderer!=null) Cyrus.top.onerenderer.resetPositionAndView(newposn);
-            return true;
-        }
+        public View nonBrainDeadPop(){  return empty()? null: pop(); }
+        public View nonBrainDeadPeek(){ return empty()? null: peek(); }
         public String toString(){
             StringBuilder sb=new StringBuilder();
             sb.append("[ ");
@@ -356,81 +347,79 @@ public class User extends CyrusLanguage {
             return sb.toString();
         }
     };
-    private History history = new History(this);
+
+    private History history = new History();
 
     public void jumpToUID(final String uid){
         jumpToUID(uid, null, false);
     }
 
-    public void jumpToUID(final String uid, final String mode, final boolean relativeToViewing){
+    public void jumpToUID(final String uid, final String as, final boolean relativeToViewing){
         new Evaluator(this){ public void evaluate(){
             String jumpuid;
             if(oneOfOurs(uid))    jumpuid=UID.toUID(uid); else
             if(relativeToViewing) jumpuid=UID.normaliseUID(content("private:viewing"),uid);
             else                  jumpuid=uid;
-                jumpToHereAndShow(jumpuid,mode);
-            }
-        };
-    }
-
-    private void jumpToHereAndShow(String uid, String mode){
-        trackingAround=false;
-        history.forward();
-        content("private:viewing", uid);
-        if(mode!=null) content("private:viewas", mode);
-        showWhatIAmViewing();
-    }
-
-    public void jumpBack(){
-        new Evaluator(this){
-            public void evaluate(){
-                if(!history.back()) return;
-                showWhatIAmViewing();
+                jumpToHereAndShow(jumpuid,as,false);
             }
         };
     }
 
     boolean trackingAround=false;
 
+    public void goBack(){
+        trackingAround=false;
+        new Evaluator(this){ public void evaluate(){ jumpBack(); } };
+    }
+
+    private void jumpToHereAndShow(String uid, String as, boolean setTrackingAround){
+        if(uid==null) return;
+        trackingAround=setTrackingAround;
+        View end=history.nonBrainDeadPeek();
+        if(end!=null && end.uid.equals(uid) && (as==null || end.as.equals(as))) jumpBack();
+        else jumpForward(uid, as);
+    }
+
+    private void jumpForward(String uid, String as){
+        View view=new View(content("private:viewing"), content("private:viewas"));
+        history.forward(view);
+        setViewingAndAs(uid, as);
+        showWhatIAmViewing();
+    }
+
+    private void jumpBack(){
+        View view=history.nonBrainDeadPop();
+        if(view==null) return;
+        setViewingAndAs(view.uid, view.as);
+        showWhatIAmViewing();
+    }
+
+    private void setViewingAndAs(String uid, String as){
+        content("private:viewing", uid);
+        if(as!=null) content("private:viewas", as);
+    }
+
     public boolean menuItem(final int itemid){
-        new Evaluator(this){
-            public void evaluate(){
-                trackingAround=false;
-                switch(itemid){
-                    case Cyrus.MENU_ITEM_ARD:
-                        String ar=getNearestPlace();
-                        if(ar!=null){
-                            trackingAround=true;
-                            history.forward();
-                            content("private:viewing", ar);
-                            content("private:viewas", "gui");
-                            showWhatIAmViewing();
-                        }
-                    break;
-                    case Cyrus.MENU_ITEM_LNX:
-                        history.forward();
-                        content("private:viewing", content("private:links"));
-                        content("private:viewas", "gui");
-                        showWhatIAmViewing();
-                    break;
-                    case Cyrus.MENU_ITEM_GUI:
-                        history.forward();
-                        content("private:viewas", "gui");
-                        showWhatIAmViewing();
-                    break;
-                    case Cyrus.MENU_ITEM_MAP:
-                        history.forward();
-                        content("private:viewas", "map");
-                        showWhatIAmViewing();
-                    break;
-                    case Cyrus.MENU_ITEM_RAW:
-                        history.forward();
-                        content("private:viewas", "raw");
-                        showWhatIAmViewing();
-                    break;
-                }
+        new Evaluator(this){ public void evaluate(){
+            switch(itemid){
+            case Cyrus.MENU_ITEM_ARD:
+                String ar=getNearestPlace();
+                jumpToHereAndShow(ar,"gui",true);
+            break;
+            case Cyrus.MENU_ITEM_LNX:
+                jumpToHereAndShow(content("private:links"), "gui", false);
+            break;
+            case Cyrus.MENU_ITEM_GUI:
+                jumpToHereAndShow(content("private:viewing"), "gui", false);
+            break;
+            case Cyrus.MENU_ITEM_MAP:
+                jumpToHereAndShow(content("private:viewing"), "map", false);
+            break;
+            case Cyrus.MENU_ITEM_RAW:
+                jumpToHereAndShow(content("private:viewing"), "raw", false);
+            break;
             }
-        };
+        }};
         return true;
     }
 
@@ -444,20 +433,28 @@ public class User extends CyrusLanguage {
         };
     }
 
-    public LinkedList getPosition(final String guiuid){
-        final LinkedList[] val=new LinkedList[1];
-        new Evaluator(this){
-            public void evaluate(){
-                String path="private:position:"+UID.toUID(guiuid);
-                val[0]=contentList(path);
-                if(val[0]==null){
-                   val[0]=list(10,1.0,10);
-                   contentList(path,val[0]);
-                }
-                contentList("position", val[0]);
+    public LinkedList<LinkedList> getPositionAndOrientation(){
+        final LinkedList<LinkedList> r = new LinkedList<LinkedList>();
+        new Evaluator(this){ public void evaluate(){
+            String uid=content("private:viewing");
+            String pospath="private:position:"   +UID.toUID(uid);
+            String oripath="private:orientation:"+UID.toUID(uid);
+            LinkedList newposn=contentList(pospath);
+            LinkedList newornt=contentList(oripath);
+            if(newposn==null){
+                LinkedList scale=contentList("private:viewing:scale");
+                float sx=getFloatFromList(scale,0,1);
+                float sz=getFloatFromList(scale,2,1);
+                newposn=list(sx/2, 1.0, sz+1.0);
+                newornt=list(0);
+                contentList(pospath, newposn);
+                contentList(oripath, newornt);
             }
-        };
-        return val[0];
+            contentList("position", newposn);
+            r.add(newposn);
+            r.add(newornt);
+        }};
+        return r;
     }
 
     public String getFormStringVal(final String guiuid, final String tag){
@@ -837,8 +834,7 @@ public class User extends CyrusLanguage {
 
     public void evaluate(){
         if(contentIs("is", "user") && this==currentUser){
-            if(trackingAround) checkAround();
-            showWhatIAmViewing();
+            if(!checkAroundAndShow()) showWhatIAmViewing();
         }
         else
         if(contentListContainsAll("is", list("private", "contact", "list"))){
@@ -865,34 +861,51 @@ public class User extends CyrusLanguage {
         else log("no evaluate: "+this);
     }
 
-    void checkAround(){
+    boolean checkAroundAndShow(){
+        if(!trackingAround) return false;
+        refreshObserves();
         for(String alertedUid: alerted()){
             if(alertedUid.equals(content("private:links-around"))){
                 String o=content("private:viewing");
                 String n=getNearestPlace();
-logXX("old",o,"new",n);
                 if(n==null) trackingAround=false;
                 else
                 if(!n.equals(o)){
-                    history.forward();
-                    content("private:viewing", n);
+                    jumpToHereAndShow(n,"gui",true);
+                    return true;
                 }
-                return;
+                break;
             }
         }
-        refreshObserves();
+        return false;
     }
+
+    double currentdistance=10000;
+    String currenturl=null;
 
     String getNearestPlace(){
         LinkedList<String> urls=(LinkedList<String>)contentList("private:links-around:list");
         if(urls==null) return null;
-        double m=10000;
-        String u=null;
+        double closestdist=10000;
+        String closesturl=null;
         for(String url: urls){
             double d=contentDouble("private:links-around:"+UID.toUID(url)+":distance");
-            if(d<m){ m=d; u=url; }
+logXX(url,d);
+            if(d<closestdist){ closestdist=d; closesturl=url; }
         }
-        return u;
+logXX(closestdist,currentdistance);
+        if(closestdist<currentdistance){
+            currentdistance=closestdist;
+            currenturl=closesturl;
+        }
+        else{
+            //if(closestdist>currentdistance*1.1 && closestdist<currentdistance*1.8){
+                currentdistance=closestdist;
+                currenturl=closesturl;
+            //}
+            //else currentdistance=0.8*currentdistance+0.2*closestdist;
+        }
+        return currenturl;
     }
 
     private void firstAlertedResponseSubscribeForUserFIXMEAndJumpUser(){
