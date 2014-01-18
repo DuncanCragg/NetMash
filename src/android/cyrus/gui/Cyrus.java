@@ -286,20 +286,21 @@ log(show? "show keyboard": "hide keyboard");
             addGUI(o);
         }else{
             LinkedHashMap mesh=uiJSON.hashPathN("#");
-            addMesh(mesh);
-            if(newObject){
+            if(addMesh(mesh)||newObject){
                 LinkedList<LinkedList> po=user.getPositionAndOrientation();
                 onerenderer.setPositionAndOrientation(po.get(0),po.get(1));
             }
         }
     }
 
-    private void addMesh(LinkedHashMap mesh){
-        if(createMeshView(mesh)){
+    private boolean addMesh(LinkedHashMap mesh){
+        boolean newview=createMeshView(mesh);
+        if(newview){
             View v=layout.getChildAt(0);
             if(v!=null) layout.removeView(v);
             layout.addView(onemeshview, 0);
         }
+        return newview;
     }
 
     private void addGUI(Object o){
