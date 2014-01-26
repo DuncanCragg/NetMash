@@ -31,7 +31,8 @@ public class Sensors implements SensorEventListener {
     float[] acceldata;
     float[] magnedata;
 
-    float R[]           = new float[9];
+    float R1[]          = new float[9];
+    float R2[]          = new float[9];
     float orientation[] = new float[3];
 
     float azim;
@@ -42,8 +43,9 @@ public class Sensors implements SensorEventListener {
         if(evt.sensor.getType()==Sensor.TYPE_ACCELEROMETER ) acceldata = evt.values.clone();
         if(evt.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD) magnedata = evt.values.clone();
         if(acceldata!=null && magnedata!=null){
-            if(SensorManager.getRotationMatrix(R, null, acceldata, magnedata)){
-                SensorManager.getOrientation(R, orientation);
+            if(SensorManager.getRotationMatrix(R1, null, acceldata, magnedata)){
+                SensorManager.remapCoordinateSystem(R1, SensorManager.AXIS_X, SensorManager.AXIS_Z, R2);
+                SensorManager.getOrientation(R2, orientation);
                 azim=smooth(azim,orientation[0]);
                 pitc=smooth(pitc,orientation[1]);
                 roll=smooth(roll,orientation[2]);
