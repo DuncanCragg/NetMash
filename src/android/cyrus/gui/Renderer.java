@@ -377,6 +377,13 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private boolean emulator(){ return Kernel.config.stringPathN("network:home-cache-notify").indexOf("10.0.2.2")!= -1; }
 
+    public void pan(float d){
+        direction=d;
+        seeX=eyeX-4.5f*FloatMath.sin(direction);
+        seeZ=eyeZ-4.5f*FloatMath.cos(direction);
+        cyrus.user.onNewPositionOrOrientation(eyeX,eyeY,eyeZ, direction);
+    }
+
     public void swipe(boolean down, boolean shift, int edge, int x, int y, float dx, float dy){
         if(emulator()) shift=(edge!=3 && edge!=4);
         if(!shift){

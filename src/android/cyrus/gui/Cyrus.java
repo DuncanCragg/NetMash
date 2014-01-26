@@ -38,7 +38,7 @@ import cyrus.User;
 
 /**  Cyrus main.
   */
-public class Cyrus extends MapActivity{
+public class Cyrus extends MapActivity {
 
     static public Cyrus top=null;
     static public User  user=null;
@@ -234,6 +234,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private void triggerRenderingBurst(){
+        if(onemeshview==null) return;
         onemeshview.requestRender();
         onemeshview.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         new Thread(){ public void run(){ try{
@@ -261,6 +262,12 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     //---------------------------------------------------------
+
+    public void onNewOrientation(float azimuth, float pitch, float roll){
+        if(onerenderer==null) return;
+        onerenderer.pan(-azimuth);
+        triggerRenderingBurst();
+    }
 
     private JSON uiJSON;
     private String uiUID;

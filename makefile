@@ -3,7 +3,7 @@
 # IP of your development machine on the LAN
 # Always 'make veryclean' before changing this!
 #
-LOCAL_IP=192.168.0.6
+LOCAL_IP=192.168.0.8
 #LOCAL_IP=192.168.42.192
 #
 # Where you want the release Android apk to be copied
@@ -441,9 +441,11 @@ local.properties:
 
 kill:
 	@-pkill -f 'java -classpath'
+	hciconfig noleadv
 
 killroot:
 	@-sudo pkill -f 'java -classpath'
+	sudo hciconfig noleadv
 
 clean:
 	rm -rf ./build/classes/cyrus

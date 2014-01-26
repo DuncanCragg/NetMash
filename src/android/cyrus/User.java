@@ -167,43 +167,48 @@ public class User extends CyrusLanguage {
 
     Cyrus2GUI cyrus2gui;
     CurrentLocation currentlocation=null;
+    Sensors sensors=null;
     boolean trackGPS=true;
 
     public void onTopCreate(String url){
         if(trackGPS) currentlocation = new CurrentLocation(this);
+        if(sensors==null) sensors=new Sensors(this);
         if(url!=null) jumpToUID(url,"gui",false);
     }
 
     public void onTopResume(){
-        new Evaluator(this){
-            public void evaluate(){
-                showWhatIAmViewing();
-            }
-        };
+        new Evaluator(this){ public void evaluate(){ showWhatIAmViewing(); }};
         if(currentlocation!=null) currentlocation.getLocationUpdates();
-        if(linksaround!=null)  linksaround.enableScanning();
+        if(sensors!=null)         sensors.startWatchingSensors();
+        if(linksaround!=null)     linksaround.enableScanning();
     }
 
     public void onTopPause(){
         if(currentlocation!=null) currentlocation.stopLocationUpdates();
-        if(linksaround!=null)  linksaround.disableScanning();
+        if(sensors!=null)         sensors.stopWatchingSensors();
+        if(linksaround!=null)     linksaround.disableScanning();
     }
 
     public void onTopDestroy(){
+        if(currentlocation!=null) currentlocation.stopLocationUpdates();
+        if(sensors!=null)         sensors.stopWatchingSensors();
+        if(linksaround!=null)     linksaround.disableScanning();
     }
 
     // ---------------------------------------------------------
 
     void onNewLocation(final Location location){
-        new Evaluator(this){
-            public void evaluate(){
-                if(false) log("location: "+location);
-                contentDouble("location:lat", location.getLatitude());
-                contentDouble("location:lon", location.getLongitude());
-                contentDouble("location:acc", location.getAccuracy());
-                content(      "location:prv", location.getProvider());
-            }
-        };
+        new Evaluator(this){ public void evaluate(){
+            if(false) log("location: "+location);
+            contentDouble("location:lat", location.getLatitude());
+            contentDouble("location:lon", location.getLongitude());
+            contentDouble("location:acc", location.getAccuracy());
+            content(      "location:prv", location.getProvider());
+        }};
+    }
+
+    void onNewOrientation(float azimuth, float pitch, float roll){
+        if(trackingAround) Cyrus.top.onNewOrientation(azimuth,pitch,roll);
     }
 
     // ---------------------------------------------------------
