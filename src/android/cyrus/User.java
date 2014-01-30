@@ -234,7 +234,7 @@ public class User extends CyrusLanguage {
             }
             else
             if(firstTouchQuadrant==2){
-                jumpToHereAndShow(objectuid, "raw", false);
+                jumpToHereAndShow(objectuid, "gui", false);
             }
             else {
                 if(down){
@@ -408,8 +408,7 @@ public class User extends CyrusLanguage {
         new Evaluator(this){ public void evaluate(){
             switch(itemid){
             case Cyrus.MENU_ITEM_ARD:
-                String ar=getNearestPlace();
-                jumpToHereAndShow(ar,"gui",true);
+                jumpToEnvironment();
             break;
             case Cyrus.MENU_ITEM_LNX:
                 jumpToHereAndShow(content("private:links"), "gui", false);
@@ -871,24 +870,84 @@ public class User extends CyrusLanguage {
         refreshObserves();
         for(String alertedUid: alerted()){
             if(alertedUid.equals(content("private:links-around"))){
-                String o=content("private:viewing");
-                String n=getNearestPlace();
-                if(n==null) trackingAround=false;
-                else
-                if(!n.equals(o)){
-                    jumpToHereAndShow(n,"gui",true);
-                    return true;
-                }
-                break;
+                return jumpToEnvironment();
             }
         }
         return false;
     }
 
+    boolean jumpToEnvironment(){
+        String nearestobj=getNearestObject();
+        if(nearestobj==null){ trackingAround=false; return false; }
+        trackingAround=true;
+
+        contentTemp("nearest-object",nearestobj);
+
+        String jumpto;
+        if(contentIsOrListContains("nearest-object:is","place")){
+            jumpto=nearestobj;
+            contentList("target-position", getCoordsOfMiddleOfPlace());
+        }
+        else{
+            jumpto=content("nearest-object:within");
+            contentList("target-position", getCoordsOfObjectInPlace(nearestobj));
+        }
+        contentTemp("nearest-object",null);
+
+        ensureUserMoveThread();
+
+        if(jumpto!=null && !jumpto.equals(content("private:viewing"))){
+            jumpToHereAndShow(jumpto,"gui",true);
+            return true;
+        }
+        return false;
+    }
+
+    LinkedList getCoordsOfMiddleOfPlace(){
+        LinkedList s=contentList("nearest-object:scale");
+        return list(getFloatFromList(s,0,0)/2, 1, getFloatFromList(s,2,0)/2);
+    }
+
+    LinkedList getCoordsOfObjectInPlace(String url){
+        LinkedList subObjects=contentList("nearest-object:within:sub-items");
+        if(subObjects==null) return list(0,0);
+        for(int i=0; i< subObjects.size(); i++){
+            if(url.equals(       content(String.format("nearest-object:within:sub-items:%d:item",i)))){
+                LinkedList p=contentList(String.format("nearest-object:within:sub-items:%d:position",i));
+                return list(getFloatFromList(p,0,0), 1, getFloatFromList(p,2,0));
+            }
+        }
+        return list(2,1,2);
+    }
+
+    Thread userMoveThread=null;
+
+    void ensureUserMoveThread(){
+        if(userMoveThread!=null) return;
+        userMoveThread=new Thread(){ public void run(){ try{
+            while(true){
+                if(trackingAround) updateUserPosition();
+                Kernel.sleep(trackingAround? 100: 500);
+            }
+        }catch(Throwable t){ t.printStackTrace(); }}};
+        userMoveThread.start();
+    }
+
+    void updateUserPosition(){
+        new Evaluator(this){ public void evaluate(){
+            LinkedList currenpos=contentList("position");
+            LinkedList targetpos=contentList("target-position");
+            if(targetpos==null) return;
+            float dx=getFloatFromList(targetpos, 0, 0)-getFloatFromList(currenpos, 0, 0);
+            float dz=getFloatFromList(targetpos, 2, 0)-getFloatFromList(currenpos, 2, 0);
+            if(dx*dx+dz*dz>1) Cyrus.top.onNewMovement(dx/20,dz/20);
+        }};
+    }
+
     double currentdistance=10000;
     String currenturl=null;
 
-    String getNearestPlace(){
+    String getNearestObject(){
         LinkedList<String> urls=(LinkedList<String>)contentList("private:links-around:list");
         if(urls==null) return null;
         double closestdist=10000;
@@ -898,7 +957,7 @@ public class User extends CyrusLanguage {
 logXX(url,d);
             if(d<closestdist){ closestdist=d; closesturl=url; }
         }
-logXX(closestdist,currentdistance);
+logXX("closestdist",closestdist,"currentdistance",currentdistance);
         if(closestdist<currentdistance){
             currentdistance=closestdist;
             currenturl=closesturl;

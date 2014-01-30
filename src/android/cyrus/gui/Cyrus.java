@@ -269,6 +269,12 @@ log(show? "show keyboard": "hide keyboard");
         triggerRenderingBurst();
     }
 
+    public void onNewMovement(float dx, float dz){
+        if(onerenderer==null) return;
+        onerenderer.move(dx,dz);
+        triggerRenderingBurst();
+    }
+
     private JSON uiJSON;
     private String uiUID;
     private Handler guiHandler = new Handler();
