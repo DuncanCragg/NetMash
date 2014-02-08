@@ -3,7 +3,7 @@
 # IP of your development machine on the LAN
 # Always 'make veryclean' before changing this!
 #
-LOCAL_IP=192.168.0.8
+LOCAL_IP=192.168.0.11
 #LOCAL_IP=192.168.42.192
 #
 # Coordinates of PiBeaconLight
