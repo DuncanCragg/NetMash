@@ -86,7 +86,7 @@ logXX(url,device.toString().replaceAll(":","-"),rssi);
                 if(!(o instanceof String)) continue;
                 String placeurl=(String)o;
                 contentSetAdd("list", placeurl);
-                contentHash(UID.toUID(placeurl), hash("distance",40));
+                contentHash(UID.toUID(placeurl), hash("distance",25));
             }
         }};
     }

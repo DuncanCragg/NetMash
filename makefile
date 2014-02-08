@@ -8,7 +8,7 @@ LOCAL_IP=192.168.0.11
 #
 # Coordinates of PiBeaconLight
 #
-LIGHT_POS=5 1 10
+LIGHT_POS=1 1 10
 #
 # Where you want the release Android apk to be copied
 #
