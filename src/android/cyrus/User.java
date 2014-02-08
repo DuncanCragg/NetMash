@@ -940,7 +940,7 @@ public class User extends CyrusLanguage {
             if(targetpos==null) return;
             float dx=getFloatFromList(targetpos, 0, 0)-getFloatFromList(currenpos, 0, 0);
             float dz=getFloatFromList(targetpos, 2, 0)-getFloatFromList(currenpos, 2, 0);
-            if(dx*dx+dz*dz>1) Cyrus.top.onNewMovement(dx/20,dz/20);
+            if(dx*dx+dz*dz>5) Cyrus.top.onNewMovement(dx/20,dz/20);
         }};
     }
 

@@ -2,7 +2,7 @@
   Class: cyrus.types.PresenceTracker
   is: place 3d mesh editable
   title: "Room of Things"
-  sub-items: { item: uid-52e0-e5c3-0ed1-6ed3 position: 5 1 5 }
+  sub-items: { item: uid-52e0-e5c3-0ed1-6ed3 position: 15 1 10 }
   scale: 20 20 20
   vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )
   texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )

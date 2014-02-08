@@ -265,7 +265,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         else{
             if(!lightObject){
                 float[] poscol;
-                if(lights.size()!=0) poscol=nearestLight(tx, ty, tz);
+                if(lights.size()!=0) poscol=nearestLight(tx+m.scaleX/2, ty+m.scaleY/2, tz+m.scaleZ/2);
                 else                 poscol=new float[]{ 3f,7f,3f, 10f,10f,10f };
                 lightPosWorld[0]=poscol[0]; lightPosWorld[1]=poscol[1]; lightPosWorld[2]=poscol[2]; lightPosWorld[3]=1;
                 lightCol[0]     =poscol[3]; lightCol[1]     =poscol[4]; lightCol[2]     =poscol[5];
