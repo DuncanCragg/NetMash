@@ -692,6 +692,7 @@ function JSON2HTML(url){
         },
         createLinks: function(s){
             return s.replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.json)/g, '<a class="replace-up" href="#$1">$1</a>')
+                    .replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.cyr)/g,  '<a class="replace-up" href="#$1">$1</a>')
                     .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,                 '<a class="replace-up" href="#$1.json">$1</a>');
         },
         toCyrusObject: function(o,i,tagdelim){
