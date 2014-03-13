@@ -1,4 +1,10 @@
 ------------------------
+ + split out each test into clear test suite rules
+ + remove !=> ?
+ + swap @ and @=
+ + @.. ?!
+ + Cyrus tests: { is: !place } should fail due to not matching { .. } Alerted:holding:is returns null, matches !place ? test with uid-not-here
+ + one not zero based list indexing http://en.wikipedia.org/wiki/Comparison_of_programming_languages_%28array%29
 ------------------------
 Adding links to non-owned objects/places
  + shared link: if no within or within not here
@@ -87,8 +93,7 @@ More stuff:
  - later generate room; editable
  - add world edit stuff later, by Cyrus rules probably
  - textures 1=all, 2=top/bottom+sides 3=top, bottom, sides, 4=top, bottom, opposite sides
-------------------------
- + OM tests: { is: !place } should fail due to not matching { .. } Alerted:holding:is returns null, matches !place ? test with uid-not-here
+-----------------------------------------
  + transient Alerted no good - even if it did allow you to see through a link in it - cos link may need cacheing
  + what if a /rule/ isn't cached and you get an Alerted? it'll be missed, presumably
  + prevent access to Alerted fields - @Alerted:<path>

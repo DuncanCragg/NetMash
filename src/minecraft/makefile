@@ -36,7 +36,7 @@ compile-client:
 	./recompile.sh --client
 
 cleandb:
-	cp lib/cyrus-A.db jars/cyrus.db
+	rm jars/cyrus.db
 
 run-server:
 	./startserver.sh
@@ -68,7 +68,6 @@ cyrusclient-zip:
 	sed -i 's#net.minecraft.src.Minecraft#Minecraft#'           reobf/minecraft/cyrusconfig.db
 	sed -i 's#http://lxcalhost#http://the-cyrus.net#'           reobf/minecraft/cyrusconfig.db
 	sed -i 's#port: 8084#port: 8085#'                           reobf/minecraft/cyrusconfig.db
-	sed -i 's#uid-45bb-030c-c708-2d1f#uid-55b3-62cc-7c7a-8e8f#' reobf/minecraft/cyrusconfig.db
 	mkdir -p reobf/minecraft/statics
 	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrusclient.zip
@@ -92,11 +91,11 @@ release-client:
 
 run-new-server: cyrusserver.jar
 	mkdir -p runserver
-	cp lib/cyrus-A.db runserver/cyrus.db
+	rm runserver/cyrus.db
 	cd runserver && java -jar ../cyrusserver.jar
 
 run-new-client: $(MINECRAFT_DIR)/versions/1.6.2-Cyrus/1.6.2-Cyrus.jar
-	cp lib/cyrus-B.db $(MINECRAFT_DIR)/cyrus.db
+	rm $(MINECRAFT_DIR)/cyrus.db
 	java -jar $(MINECRAFT_DIR)/minecraft.jar
 
 $(MINECRAFT_DIR)/versions/1.6.2-Cyrus:

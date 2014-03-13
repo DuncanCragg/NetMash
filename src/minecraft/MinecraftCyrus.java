@@ -136,7 +136,7 @@ public class MinecraftCyrus extends WebObject {
         contentAll("worlds:name");
         URI openthis=URI.create(localPre()+"/#"+toURL(guiuid));
         log("Opening "+openthis+" in default browser..");
-        try{ Desktop.getDesktop().browse(openthis);}catch(Exception e){ e.printStackTrace(); }
+        try{ exec("chromium-browser "+openthis); /*Desktop.getDesktop().browse(openthis); */ }catch(Exception e){ e.printStackTrace(); }
     }
 
     LinkedHashMap mods=new LinkedHashMap();

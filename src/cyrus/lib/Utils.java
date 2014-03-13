@@ -4,6 +4,8 @@ package cyrus.lib;
 import java.util.*;
 import java.util.regex.*;
 import java.text.*;
+import java.net.*;
+import java.io.*;
 
 import cyrus.platform.*;
 
@@ -41,6 +43,16 @@ public class Utils{
             logXX(message); for(Object o: e.getStackTrace()) System.out.println(o.toString());
         }
     }
+
+    static public void exec(String command){ try{
+        Process p=Runtime.getRuntime().exec(command);
+        BufferedInputStream bis = new BufferedInputStream(p.getInputStream());
+        int read;
+        do{ read = bis.read();
+            if(read!= -1) System.out.write(read);
+            else          System.out.write('\n');
+        }while(read != -1);
+    }catch(Throwable t){ t.printStackTrace(); }}
 
     // -------------------------------
 

@@ -12,7 +12,8 @@ import net.minecraft.server.MinecraftServer;
 
 public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tickable {
 
-    public MinecraftWorld(){}
+    public MinecraftWorld(){
+    }
 
     public MinecraftWorld(String name, World world){
         super("{ is: editable queryable updatable 3d minecraft world\n"+
@@ -300,30 +301,9 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         if(mcw!=null) mcw.onBlockUpdate(x,y,z, previousId);
     }
 
-    boolean frozenPosAndSize=false;
-    int posnx;
-    int posnz;
-    int sizex;
-    int sizez;
-
-    private void freezePosAndSize(){
-        if(!frozenPosAndSize){ frozenPosAndSize=true;
-            posnx=contentInt("position:0");
-            posnz=contentInt("position:2");
-            sizex=contentInt("size:0");
-            sizez=contentInt("size:1");
-        }
-    }
-
     public void onBlockUpdate(final int x, final int y, final int z, int previousId){
-        new Evaluator(this){ public void evaluate(){
-            freezePosAndSize();
-            if(x<posnx || x>=posnx+sizex || z<posnz || z>=posnz+sizez) outsideRegion(x,y,z);
-            else                                                       insideRegion(x,y,z);
-        }};
+        // new Evaluator(this){ public void evaluate(){ }};
     }
-
-    private void outsideRegion(int x, int y, int z){}
 
     private void insideRegion(int x, int y, int z){
         final int cx=(x>>2)*4;
@@ -369,14 +349,10 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
     private LinkedList getNewNativeEntitiesAroundPlayers(){
         LinkedList r=new LinkedList();
-        freezePosAndSize();
         int six=40; int siy=20; int siz=40;
         for(Object p: world.playerEntities){ EntityPlayer player=(EntityPlayer)p;
             int atx=(int)(player.posX-six/2); int aty=(int)(player.posY-siy/2); int atz=(int)(player.posZ-siz/2);
             for(Object o: world.loadedEntityList){ Entity e=(Entity)o;
-                if(sizex>0 && sizez>0 &&
-                   (e.posX<posnx || e.posX>=posnx+sizex ||
-                    e.posZ<posnz || e.posZ>=posnz+sizez   )) continue;
                 if(e.posX<atx || e.posX>=atx+six ||
                    e.posY<aty || e.posY>=aty+siy ||
                    e.posZ<atz || e.posZ>=atz+siz   ) continue;

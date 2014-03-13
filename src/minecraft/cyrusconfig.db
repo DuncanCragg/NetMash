@@ -4,7 +4,6 @@
              db: cyrus.db
              syncrate: 100
              preload: net.minecraft.src.MinecraftCyrus
-                      uid-45bb-030c-c708-2d1f
   }
   network: { host: localhost
              port: 8084

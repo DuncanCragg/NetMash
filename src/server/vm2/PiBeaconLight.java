@@ -70,16 +70,6 @@ public class PiBeaconLight extends CyrusLanguage {
         logXX(advert);
     }
 
-    void exec(String command){ try{
-        Process p=Runtime.getRuntime().exec(command);
-        BufferedInputStream bis = new BufferedInputStream(p.getInputStream());
-        int read;
-        do{ read = bis.read();
-            if(read!= -1) System.out.write(read);
-            else          System.out.write('\n');
-        }while(read != -1);
-    }catch(Throwable t){ t.printStackTrace(); }}
-
     FileWriter unex;
     FileWriter ex;
 

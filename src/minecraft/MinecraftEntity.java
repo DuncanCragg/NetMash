@@ -12,7 +12,8 @@ import net.minecraft.server.MinecraftServer;
 
 public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tickable {
 
-    public MinecraftEntity(){}
+    public MinecraftEntity(){
+    }
 
     Entity entity;
 
