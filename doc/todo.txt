@@ -5,6 +5,7 @@
  + @.. ?!
  + Cyrus tests: { is: !place } should fail due to not matching { .. } Alerted:holding:is returns null, matches !place ? test with uid-not-here
  + one not zero based list indexing http://en.wikipedia.org/wiki/Comparison_of_programming_languages_%28array%29
+ + 0 is top (nothing there so could be anything/any match = null/""/[]), false is bottom (no match, not true model of world)
 ------------------------
 Adding links to non-owned objects/places
  + shared link: if no within or within not here

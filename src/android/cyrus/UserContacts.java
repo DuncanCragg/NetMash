@@ -122,12 +122,12 @@ if(++i>10) break;
     }
 
     static User newContact(String name, String phonenumber, String emailaddress, String address){
-        return new User(         "{ \"is\": \"contact\", \n"+
-                                 "  \"full-name\": \""+name+"\""+
-            (phonenumber!=null?  ",\n  \"phone\": \""+phonenumber+"\"": "")+
-            (emailaddress!=null? ",\n  \"email\": \""+emailaddress+"\"": "")+
-            (address!=null?      ",\n  \"address\": \""+address+"\"": "")+
-                                 "\n}");
+        return new User(         "{ is: contact\n"+
+                                 "  full-name: "+JSON.cyrusToString(name)+
+          (phonenumber!=null?  "\n  phone: "+JSON.cyrusToString(phonenumber): "")+
+          (emailaddress!=null? "\n  email: "+JSON.cyrusToString(emailaddress): "")+
+          (address!=null?      "\n  address: "+JSON.cyrusToString(address): "")+
+                               "\n}", true);
     }
 }
 

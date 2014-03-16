@@ -1338,8 +1338,10 @@ public class JSON {
         return o.toString();
     }
 
-    private String stringToString(String s, boolean cyrus){
-        if(s.equals("")) return "\"\"";
+    public static String cyrusToString(String s){ return stringToString(s,true); }
+
+    public static String stringToString(String s, boolean cyrus){
+        if(s==null || s.equals("")) return "\"\"";
         String r=replaceEscapableChars(s);
         if(!cyrus) return "\""+r+"\"";
         if(r.indexOf(" ")!= -1 || r.indexOf("(")!= -1 || r.indexOf(")")!= -1 || r.indexOf("{")!= -1 || r.indexOf("}")!= -1 || r.endsWith(":")) return "\""+r+"\"";

@@ -47,8 +47,8 @@ public class User extends CyrusLanguage {
 
         CyrusLanguage contact = new CyrusLanguage(
               "{ is: editable contact\n"+
-              "  full-name: \""+fullName+"\" \n"+
-              "  address: { } \n"+
+              "  full-name: "+JSON.cyrusToString(fullName)+"\n"+
+              "  address: { }\n"+
               "}", true);
 
         CyrusLanguage links = new CyrusLanguage(
