@@ -3,6 +3,7 @@ package net.minecraft.src;
 import java.util.*;
 import java.util.concurrent.*;
 
+import cyrus.lib.JSON;
 import cyrus.forest.CyrusLanguage;
 import cyrus.forest.WebObject;
 
@@ -19,7 +20,7 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
 
     public MinecraftEntity(Entity e, String type, String name, String worlduid){
         super("{ is: editable 3d minecraft native "+type+" entity\n"+
-              "  name: "+name+"\n"+
+              "  name: "+JSON.cyrusToString(name)+"\n"+
               "  world: "+worlduid+"\n"+
               "}",true);
         entity=e;
@@ -33,6 +34,9 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
     boolean running=false;
 
     public void evaluate(){
+
+        MinecraftWorld.putEntityFor(uid, this);
+
         LinkedList pos=contentList("position");
         LinkedList spd=contentList("speed");
         String     hld=content(    "holding");
@@ -81,6 +85,7 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
         }
     }
 
+    EntityAITasks aitasks=null;
     EntityAIMoveTowardsCoords ai2coords=null;
 
     private void setState(){
@@ -90,10 +95,11 @@ public class MinecraftEntity extends CyrusLanguage implements MinecraftCyrus.Tic
             Integer psz=getIntFromList(targetPosition,2);
             if(psx!=null && psy!=null && psz!=null){
                 if(entity instanceof EntityLiving){
-                    if(ai2coords==null){
-                        EntityLiving entityliving=(EntityLiving)entity;
+                    EntityLiving entityliving=(EntityLiving)entity;
+                    if(aitasks!=entityliving.tasks){
+                        aitasks=entityliving.tasks;
                         ai2coords=new EntityAIMoveTowardsCoords(entityliving);
-                        entityliving.tasks.addTask(2, ai2coords);
+                        aitasks.addTask(2, ai2coords);
                     }
                     ai2coords.tryToMoveToXYZ(psx, psy, psz, 1.0F);
                 }

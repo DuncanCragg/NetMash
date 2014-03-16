@@ -3,6 +3,7 @@ package net.minecraft.src;
 import java.util.*;
 import java.util.concurrent.*;
 
+import cyrus.lib.JSON;
 import cyrus.forest.CyrusLanguage;
 import cyrus.forest.WebObject;
 
@@ -17,7 +18,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
     public MinecraftWorld(String name, World world){
         super("{ is: editable queryable updatable 3d minecraft world\n"+
-              "  name: "+name+"\n"+
+              "  name: "+JSON.cyrusToString(name)+"\n"+
               "}",true);
         setWorld(world);
     }
@@ -208,7 +209,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         if(!contentIs("name",currentname)) return;
         setWorld(currentworld);
         if(tickNum==0){
-            contentSetAddAll("players", getPlayers());
+            contentSetAddAll("players",  getNewPlayers());
             contentSetAddAll("entities", getNewNativeEntitiesAroundPlayers());
             setAndGetWorldState();
             evaluate();
@@ -338,10 +339,10 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return cube;
     }
 
-    private LinkedList getPlayers(){
+    private LinkedList getNewPlayers(){
         LinkedList r=new LinkedList();
         for(Object o: world.playerEntities){ EntityPlayer e=(EntityPlayer)o;
-            if(e.isCyrus || (e.UID!=null && e.UID.length()!=0)) continue;
+         // if(e.isCyrus || (e.UID!=null && e.UID.length()!=0)) continue;
             r.add(ensureNativeCyrusEntity(e,uid));
         }
         return r;
@@ -357,7 +358,9 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                    e.posY<aty || e.posY>=aty+siy ||
                    e.posZ<atz || e.posZ>=atz+siz   ) continue;
                 if(e instanceof EntityPlayer) continue;
-                if(e.isCyrus || (e.UID!=null && e.UID.length()!=0)) continue;
+            //  if(e.isCyrus || (e.UID!=null && e.UID.length()!=0)) continue;
+                if(typeName(e).startsWith("item.")||
+                   typeName(e).startsWith("falling block")) continue;
                 r.add(ensureNativeCyrusEntity(e,uid));
             }
         }
@@ -479,15 +482,27 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         return (euid!=null)? entityMap.get(euid): null;
     }
 
+    static public void putEntityFor(String euid, MinecraftEntity me){
+        entityMap.put(euid,me);
+    }
+
     private String ensureNativeCyrusEntity(Entity e, String worlduid){
         if(e.UID==null) createNativeCyrusEntity(e,worlduid);
+        else{
+            MinecraftEntity me=entityMap.get(e.UID);
+            if(me!=null) me.entity=e;
+            else{
+                contentTempObserve("cache-this-in",e.UID);
+                contentObject("cache-this-in:is");
+                contentTemp("cache-this-in",null);
+            }
+        }
         return e.UID;
     }
 
     private void createNativeCyrusEntity(Entity e, String worlduid){
         MinecraftEntity me=new MinecraftEntity(e,typeName(e),entityName(e),worlduid);
         String euid=spawn(me);
-        entityMap.put(euid,me);
         e.UID=euid;
     }
 
@@ -496,7 +511,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     }
 
     static public String entityName(Entity e){
-        return e.getEntityName()+"-"+e.entityId;
+        return (e instanceof EntityPlayer)? e.getEntityName(): e.getEntityName()+"-"+e.entityId;
     }
 
     private Entity doSpawnEntity(String euid, String type, boolean foreign, String name, Integer psx, Integer psy, Integer psz){
@@ -505,7 +520,6 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         else                      e=doSpawnEntityByType(type,foreign,name);
         if(e!=null){
             e.setLocationAndAngles(psx, psy, psz, 0, 0);
-            String ename=entityName(e);
             e.UID=euid;
             e.isCyrus=true;
         }
