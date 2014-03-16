@@ -133,7 +133,9 @@ public class MinecraftCyrus extends WebObject {
             content("global-rules", globalruleuid);
         }
         CyrusLanguage.addGlobalRules(globalruleuid);
+
         contentAll("worlds:name");
+
         URI openthis=URI.create(localPre()+"/#"+toURL(guiuid));
         log("Opening "+openthis+" in default browser..");
         try{ exec("chromium-browser "+openthis); /*Desktop.getDesktop().browse(openthis); */ }catch(Exception e){ e.printStackTrace(); }

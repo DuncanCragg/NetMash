@@ -479,7 +479,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
 
     static public MinecraftEntity getEntityFor(Entity e){
         String euid=e.UID;
-        return (euid!=null)? entityMap.get(euid): null;
+        return (euid!=null && euid.length()!=0)? entityMap.get(euid): null;
     }
 
     static public void putEntityFor(String euid, MinecraftEntity me){
@@ -487,7 +487,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     }
 
     private String ensureNativeCyrusEntity(Entity e, String worlduid){
-        if(e.UID==null) createNativeCyrusEntity(e,worlduid);
+        if(e.UID==null || e.UID.length()==0) createNativeCyrusEntity(e,worlduid);
         else{
             MinecraftEntity me=entityMap.get(e.UID);
             if(me!=null) me.entity=e;
