@@ -620,8 +620,10 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
                                     ensureBlockAt(psx+i,psy+j,psz+k, air? "air": o0);
                                 k++; }
                             }
+                            else ensureBlockAt(psx+i,psy,psz+j, air? "air": o1);
                         j++; k=0; }
                     }
+                    else ensureBlockAt(psx,psy+i,psz, air? "air": o2);
                 i++; j=0; }
             }
         }

@@ -36,7 +36,7 @@ compile-client:
 	./recompile.sh --client
 
 cleandb:
-	rm jars/cyrus.db
+	rm -f jars/cyrus.db
 
 run-server:
 	./startserver.sh
