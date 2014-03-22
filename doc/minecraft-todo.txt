@@ -1,4 +1,28 @@
 
+------------------------------------------------------------------------
+
+Minecraft+NetMash+Cyrus demo
+
+ - it's Minecraft+NetMash code, implementing Cyrus
+ - showing language and types in browser
+ - show off the language mainly - map-reduce type stuff
+ - pure functional -vs- OO, state -vs- process/fn, monads, state-state, DSLs, rules, Clojure identity, Datomic, state vs events and FP, FRP, Rx
+
+ * better way to place structures - wooden tools to point - copy/paste
+    - has most of the interesting things in it
+    - scan area into structure, clone structure with new position, change materials
+ - debug pig example
+ - names of blocks matching gui names
+ - patterns of block types in structures
+ - how to build a house programmatically
+ - write up all the Minecraft types - structures and behaviours
+
+ - fix annoying browser refresh when editing or looking
+ - fix maximisation loss when updated
+ - make fix-max a separate thing or highlight somehow
+
+------------------------------------------------------------------------
+
 Cube and Structure propagation
 
  - { UID: uid-f862-56af-d46d-c440

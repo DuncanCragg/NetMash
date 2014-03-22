@@ -1,5 +1,5 @@
 
-// }-------------- Networking ------------------------------{
+// 967 }-------------- Networking ------------------------------{
 
 function Network(){
 
@@ -129,11 +129,11 @@ function JSON2HTML(url){
         getHTML: function(url,json,closed,raw){
             if(!json) return '<div><div>No object!</div><div>'+'<a href="'+url+'">'+url+'</a></div></div>';
             if(json.constructor===String){
-                if(url.endethWith('.cyr'))      return this.getCyrusTextHTML(url,json,closed);
+                if(url.endethWith('.cyr'))      return this.getCyrusTextHTML(url,json,closed,true);
                 return '<div><div>Not Cyrus text!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
             }
             if(json.constructor!==Object) return '<div><div>Not an object!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
-            if(raw)                             return this.getCyrusTextHTML(url,json,closed);
+            if(raw)                             return this.getCyrusTextHTML(url,json,closed,true);
             if(this.isA('gui',     json))       return this.getGUIHTML(url,json,closed);
             if(this.isA('contact', json))       return this.getContactHTML(url,json,closed);
             if(this.isA('land',    json) &&
@@ -147,7 +147,7 @@ function JSON2HTML(url){
             if(this.isA('article', json, true)) return this.getDocumentListHTML(url,json,closed);
             if(this.isA('document',json, true)) return this.getDocumentListHTML(url,json,closed);
             if(this.isA('media',   json, true)) return this.getMediaListHTML(url,json,closed);
-            return this.getCyrusTextHTML(url,json,closed);
+            return this.getCyrusTextHTML(url,json,closed,false);
         },
         getAnyHTML: function(a,closed){
             if(!a) return '';
@@ -164,9 +164,9 @@ function JSON2HTML(url){
             else return this.getObjectHeadHTML(this.getTitle(json,title),url,false,closed)+
                         '<pre class="cyrus">\n'+JSON.stringify(json)+'\n</pre></div>';
         },
-        getCyrusTextHTML: function(url,item,closed){
-            if(item.constructor!==String) return this.getCyrusTextHTML(url,this.toCyrusHash(item),closed);
-            return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,true)+
+        getCyrusTextHTML: function(url,item,closed,raw){
+            if(item.constructor!==String) return this.getCyrusTextHTML(url,this.toCyrusHash(item),closed,raw);
+            return this.getObjectHeadHTML('Cyrus Code',url,false,closed,null,raw)+
                    '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
                    '<pre class="cyrus-readonly">\n'+this.createLinks(item)+'\n</pre></div>';
         },
@@ -221,10 +221,12 @@ function JSON2HTML(url){
             var rows=[];
             rows.push(this.getObjectHeadHTML('Contact: '+this.getTitle(json), url, false, closed));
             rows.push('<div class="vcard">');
-            if(json['full-name'] !== undefined) rows.push('<h2 class="fn">'+this.getAnyHTML(json['full-name'])+'</h2>');
+            if(json.name         !== undefined) rows.push('<h2 class="fn">'+this.getContactNameHTML(json.name,json['full-name'],json.gender)+'</h2>'); else
+            if(json['full-name'] !== undefined) rows.push('<h2 class="fn">'+this.getAnyHTML(json['full-name']+(json.gender!==undefined? '('+json.gender+')': ''))+'</h2>');
             if(json.address      !== undefined) rows.push(this.getContactAddressHTML(json.address));
             if(json.phone        !== undefined) rows.push(this.getContactPhoneHTML(json.phone));
             if(json.email        !== undefined) rows.push('<div class="info-item">Email: <span class="email">'+this.getAnyHTML(json.email)+'</span></div>');
+            if(json.birthday     !== undefined) rows.push('<div class="info-item">Birthday: <span class="birthday">'+this.getAnyHTML(json.birthday)+'</span></div>');
             if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
             if(json.publications !== undefined) rows.push(this.getObjectListHTML('Publications', 'publication', json.publications, true));
             if(json.bio          !== undefined) rows.push('<div class="info-item">Bio: '+this.getAnyHTML(json.bio)+'</div>');
@@ -233,8 +235,12 @@ function JSON2HTML(url){
             if(json.inspirations !== undefined) rows.push(this.getObjectListHTML('Inspired by', 'inspirations', json.inspirations, true));
             if(json.following    !== undefined) rows.push(this.getObjectListHTML('Following', 'following', json.following, true));
             if(json.More         !== undefined) rows.push(this.getObjectListHTML('More', 'more', json.More, true));
+            if(json['other-names']!==undefined) rows.push(this.getContactOtherNamesHTML(json['other-names']));
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
+        },
+        getContactNameHTML: function(name,fullname,gender){
+            return name.given+' '+name.family+(fullname? ' ('+fullname+')': '')+(gender!==undefined? ' ('+gender+')': '');
         },
         getContactAddressHTML: function(addresses){
             if(addresses.constructor!==Array) addresses = [ addresses ];
@@ -260,6 +266,18 @@ function JSON2HTML(url){
             if(phone.mobile !== undefined) rows.push('<div class="info-item phone">Mobile: <span class="tel">'+this.getAnyHTML(phone.mobile)+'</span></div>');
             if(phone.home   !== undefined) rows.push('<div class="info-item phone">Home:   <span class="tel">'+this.getAnyHTML(phone.home)+'</span></div>');
             if(phone.work   !== undefined) rows.push('<div class="info-item phone">Work:   <span class="tel">'+this.getAnyHTML(phone.work)+'</span></div>');
+            }
+            return rows.join('\n')+'\n';
+        },
+        getContactOtherNamesHTML: function(othernames){
+            if(othernames.constructor!==Array) othernames = [ othernames ];
+            var rows=[];
+            if(othernames.length==0) return;
+            rows.push('<h3>Other names</h3>');
+            for(var i in othernames){ var name = othernames[i];
+            rows.push('<div class="list">');
+            rows.push(this.getContactNameHTML(name));
+            rows.push('</div>');
             }
             return rows.join('\n')+'\n';
         },
@@ -620,6 +638,7 @@ function JSON2HTML(url){
         getTitle: function(json,elsedefault){
             if(!json || json.constructor!==Object) return '';
             if(json['full-name'] !== undefined) return this.getAnyHTML(json['full-name']);
+            if(json.name         !== undefined) return this.getAnyHTML(json.name.given+' '+json.name.family);
             if(json.title        !== undefined) return this.getAnyHTML(json.title);
             return elsedefault? elsedefault: deCameliseList(json.is);
         },
@@ -691,8 +710,10 @@ function JSON2HTML(url){
             return false;
         },
         createLinks: function(s){
-            return s.replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.json)/g, '<a class="replace-up" href="#$1">$1</a>')
-                    .replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.cyr)/g,  '<a class="replace-up" href="#$1">$1</a>')
+            return s.replace(/(http:\/\/[^ ]*.json)/g,                    '<a class="replace-up" href="#$1">$1</a>')
+                    .replace(/(http:\/\/[^ ]*.cyr)/g,                     '<a class="replace-up" href="#$1">$1</a>')
+                //  .replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.json)/g, '<a class="replace-up" href="#$1">$1</a>')
+                //  .replace(/(http:\/\/[^ ]*\/uid-[-0-9a-zA-Z]*.cyr)/g,  '<a class="replace-up" href="#$1">$1</a>')
                     .replace(/([^\/]uid-[-0-9a-zA-Z]*)/g,                 '<a class="replace-up" href="#$1.json">$1</a>');
         },
         toCyrusObject: function(o,i,tagdelim){
@@ -742,7 +763,6 @@ function Cyrus(){
             me.getTopObject(''+window.location);
         },
         topObjectIn: function(url,obj,s,x){
-            lockURL=null;
             if(url && url!=topObjectURL){
                 topObjectURL = url;
                 history.pushState(null,null,getMashURL(url));
@@ -755,9 +775,11 @@ function Cyrus(){
                     else for(var i in objMore) moreOf[objMore[i]]=obj;
                 }
             }
-            document.title = json2html.getTitleString(obj).htmlUnEscape();
-            window.scrollTo(0,0);
-            $('#content').html(json2html.getHTML(topObjectURL, obj, false));
+            if(url!=lockURL){
+                document.title = json2html.getTitleString(obj).htmlUnEscape();
+                window.scrollTo(0,0);
+                $('#content').html(json2html.getHTML(topObjectURL, obj, false));
+            }
             me.setUpHTMLEvents();
             setTimeout(function(){
                 me.ensureVisibleAndReflow($('#content'));
@@ -807,7 +829,7 @@ function Cyrus(){
         someObjectIn: function(url,obj,s,x){
             if(obj){
                 var notify=obj.Notify; delete obj.Notify;
-                var formForCurrentView=me.getUIDOnly(topObjectURL);
+                var formForCurrentView=me.getResponseFor(topObjectURL);
                 if(formForCurrentView) for(var i in notify){ var u=notify[i];
                     if(getUID(u)==formForCurrentView){ me.topObjectIn(url,obj,s,x); return; }
                 }
@@ -817,6 +839,7 @@ function Cyrus(){
         },
         setUpHTMLEvents: function(){
             $(window).resize(function(e){
+                lockURL=null;
                 if($(window).width() != windowWidth){
                     windowWidth = $(window).width();
                     me.reflowIfWidthChanged($('#content'));
@@ -826,7 +849,11 @@ function Cyrus(){
                     me.reflowIfHeightChanged($('#content'));
                 }
             });
+            $('input.button').unbind().click(function(e){
+                lastButtonPressed=this;
+            });
             $('.open-close').unbind().click(function(e){
+                lockURL=null;
                 var objhead = $(this).parent();
                 var panel=objhead.next();
                 if(panel.css('display')=='none'){ panel.show('fast', function(){ me.ensureVisibleAndReflow(panel); }); objhead.addClass('open'); }
@@ -835,6 +862,7 @@ function Cyrus(){
                 return false;
             });
             $('.media-img').unbind().click(function(e){
+                lockURL=null;
                 var mediaList = $(this).parent().parent();
                 var numSlides = mediaList.children().length;
                 if(typeof mediaIndex==='undefined') mediaIndex=1;
@@ -887,6 +915,7 @@ function Cyrus(){
                 e.preventDefault();
             });
             $('.gui-form').unbind().submit(function(e){
+                lockURL=null;
                 var targetURL=$(this).find('.form-target').val();
                 var uidver=me.getUIDandVer(targetURL);
                 var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "",\n  "form": {\n   ';
@@ -898,6 +927,7 @@ function Cyrus(){
                 e.preventDefault();
             });
             $('.new-land-form').unbind().submit(function(e){
+                lockURL=null;
                 var targetURL=$(this).find('.land-within').val();
                 var uidver=me.getUIDandVer();
                 var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+targetURL+'",\n  "user": "",\n  ';
@@ -909,6 +939,7 @@ function Cyrus(){
                 e.preventDefault();
             });
             $('.land-form').unbind().submit(function(e){
+                lockURL=null;
                 var targetURL =$(this).find('.land-target').val();
                 var withinURL =$(this).find('.land-within').val();
                 var requestURL=$(this).find('.land-request').val();
@@ -922,6 +953,7 @@ function Cyrus(){
                 e.preventDefault();
             });
             $('.rsvp-form').unbind().submit(function(e){
+                lockURL=null;
                 if($(this).find('.rsvp-type').val()=='attendable'){
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
@@ -932,7 +964,7 @@ function Cyrus(){
                 }
                 if($(this).find('.rsvp-type').val()=='reviewable'){
                     var withinURL=$(this).find('.rsvp-within').val();
-                    var within=me.getUIDOnly(withinURL);
+                    var within=me.getResponseFor(withinURL);
                     if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
@@ -947,25 +979,29 @@ function Cyrus(){
             });
             $('#query').focus();
             $('#query-form').unbind().submit(function(e){
+                lockURL=null;
                 var q=$('#query').val();
                 var json = '{ "is": [ "document", "query" ],\n  "text": [ "has-words", "'+q.jsonEscape()+'" ] }';
                 network.postJSON(topObjectURL, json, false, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
                 e.preventDefault();
             });
             $('#login-form').unbind().submit(function(e){
+                lockURL=null;
                 var creds = { 'username': $('#username').val(), 'userpass': $('#userpass').val() };
                 me.setCreds(topObjectURL, creds);
                 e.preventDefault();
             });
             $('.replace-up').unbind().click(function(e){
+                lockURL=null;
                 var url = $(this).attr('href').substring(1);
                 me.replaceUp(url,$(this));
                 e.preventDefault();
                 return false;
             });
             $('.new-state').unbind().click(function(e){
+                lockURL=null;
                 var mashURL = $(this).attr('href');
-                url=mashURL.substring(mashURL.indexOf('#')+1);
+                var url=mashURL.substring(mashURL.indexOf('#')+1);
                 if(!me.replaceUp(url,$(this))){
                     me.getTopObject(mashURL);
                     history.pushState(null,null,mashURL);
@@ -974,6 +1010,7 @@ function Cyrus(){
                 return false;
             });
             $(window).bind('popstate', function() {
+                lockURL=null;
                 me.getTopObject(''+window.location);
             });
         },
@@ -981,6 +1018,7 @@ function Cyrus(){
             var objbody=me.getObjectBodyAbove(a);
             if(!objbody) return false;
             var objhead=objbody.prev();
+            objhead.find('a.object').each(function(n,ae){ var a=$(ae); lockURL=a.attr('href'); });
             var open=objhead.hasClass('open');
             var raw =objhead.hasClass('raw');
             objhead.replaceWith(json2html.getObjectHeadHTML(null, url, true, !open, null, raw));
@@ -999,10 +1037,21 @@ function Cyrus(){
         getFormFields: function(form,fields){
             form.find('.form-field').each(function(n,i){
                 var idOrName=i.getAttribute('id') || i.getAttribute('name');
+                if(!idOrName || idOrName=='null') idOrName='field-'+n;
                 var intype=$(i).attr('type');
-                if(intype=='checkbox') fields.push('"'+idOrName+'": '+$(i).is(':checked'));
+                if(intype=='checkbox'){
+                    fields.push('"'+idOrName+'": '+($(i).is(':checked')? 'true':'false'));
+                }
                 else
-                if(!(intype=='radio' && !$(i).is(':checked'))) fields.push('"'+idOrName+'": "'+$(i).val()+'"');
+                if(intype=='radio'){
+                    if($(i).is(':checked')) fields.push('"selected": "'+idOrName+'"');
+                }
+                else
+                if(intype=='submit'){
+                    if(i==lastButtonPressed) fields.push('"pushed": "'+idOrName+'"');
+                }
+                else
+                    fields.push('"'+idOrName+'": "'+$(i).val()+'"');
             });
         },
         getTopObject: function(url){
@@ -1013,7 +1062,7 @@ function Cyrus(){
             network.getJSON(topObjectURL, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
         },
         getUIDandVer: function(url,useuid,cyrus){
-            var uidver=url? localStorage.getItem('responses:'+url): null;
+            var uidver=url? localStorage.getItem(this.uidVerKey(url,cyrus)): null;
             if(!uidver){
                 var uid=useuid? getUID(useuid): generateUID('uid');
                 if(cyrus) uidver= 'UID: '  +uid+' Version: ' +1;
@@ -1024,16 +1073,18 @@ function Cyrus(){
                 else      re=RegExp('(.*"Version": )(.*)').exec(uidver);
                 uidver=re[1]+(parseInt(re[2])+1);
             }
-            if(url) localStorage.setItem('responses:'+url, uidver);
+            if(url) localStorage.setItem(this.uidVerKey(url,cyrus), uidver);
             return uidver;
         },
-        getUIDOnly: function(url){
-            var uidver=localStorage.getItem('responses:'+url);
+        getResponseFor: function(url){
+            var uidver=localStorage.getItem(this.uidVerKey(url,false));
             if(!uidver) return null;
-            var     re=RegExp('"UID": "([^"]*)"').exec(uidver);
-            if(!re) re=RegExp('UID: ([^ ]*) ').exec(uidver);
+            var re=RegExp('"UID": "([^"]*)"').exec(uidver);
             if(!re) return null;
             return re[1];
+        },
+        uidVerKey: function(url,cyrus){
+            return (cyrus? 'cyrus-': 'json-')+'response-'+url;
         },
         ensureVisibleAndReflow: function(panel){
             me.ensureVisibleObjectsIn(panel);

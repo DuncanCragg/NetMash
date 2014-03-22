@@ -118,11 +118,11 @@ a {
 }
 
 h2, h3 {
-    margin: 8px 0px 3px 8px;
+    margin: 8px 0px 3px 3px;
 }
 
 ul {
-    margin: 0px;
+    margin: 0px 0px 10px 0px;
     padding: 0px;
     border: 1px solid #ddf;
 }
@@ -196,7 +196,12 @@ label.login-label{
 }
 
 p.list{
-    margin: 10px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+
+div.list{
+    padding: 5px 0px 0px 4px;
+    margin-bottom: 10px;
 }
 
 div.list div.list p.list{
@@ -290,7 +295,9 @@ div.plain-list{
 }
 
 div.info-item {
-    margin: 4px 0px 0px 0px;
+    padding: 5px 0px 11px 4px;
+    border-bottom: 1px solid #AA7;
+    margin-bottom: 10px;
 }
 
 div span.dtstart, div span.dtend {
@@ -317,10 +324,8 @@ div.text{
 }
 
 p.description, div.adr {
-    border-top: 1px solid #AA7;
+    padding: 5px 0px 5px 4px;
     border-bottom: 1px solid #AA7;
-    padding-top: 5px;
-    padding-bottom: 5px;
     margin-bottom: 10px;
 }
 

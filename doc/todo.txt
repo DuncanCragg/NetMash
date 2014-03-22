@@ -1,4 +1,6 @@
 ------------------------
+ - stopping nutty rules dead
+------------------------
  + split out each test into clear test suite rules
  + remove !=> ?
  + swap @ and @=

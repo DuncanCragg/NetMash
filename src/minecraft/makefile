@@ -108,6 +108,9 @@ $(MINECRAFT_DIR)/versions/1.6.2-Cyrus:
 mc:
 	java -jar $(MINECRAFT_DIR)/minecraft.jar
 
+mc2:
+	java -jar -Dsun.java3d.opengl=true -Xmx1024M -Xms512M $(MINECRAFT_DIR)/minecraft.jar
+
 clean:
 	rm -f cyrusclient.zip 1.6.2-Cyrus.jar cyrusserver.zip cyrusserver.jar
 
