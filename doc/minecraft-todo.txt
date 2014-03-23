@@ -11,6 +11,7 @@ Minecraft+NetMash+Cyrus demo
  * better way to place structures - wooden tools to point - copy/paste
     - has most of the interesting things in it
     - scan area into structure, clone structure with new position, change materials
+
  - debug pig example
  - names of blocks matching gui names
  - patterns of block types in structures

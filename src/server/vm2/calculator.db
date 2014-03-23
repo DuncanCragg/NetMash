@@ -1,0 +1,32 @@
+{ is: editable gui
+  Rules: {
+    is: gui rule
+    when: "a number or clear is pressed, join it on to the end of the display number"
+    Alerted: { Version: > @v  is: form  form: { pushed: /[0-9.]|clear/ } }
+    v: => @Alerted:Version
+    num: => if (@Alerted:form:pushed == clear) then 0 else (join (@. @Alerted:form:pushed))
+    view: { result: { input: textfield  value: => @num }}
+  }{
+    is: gui rule
+    when: "operation is pressed, accumulate and save op"
+    Alerted: { Version: > @v  is: form  form: { pushed: /plus|minus|times|divide/ } }
+    v: => @Alerted:Version
+    acc: => @. @lastop @num
+    lastop: => ( { plus: + minus: - times: × divide: ÷ } select @Alerted:form:pushed )
+    num: => #
+    view: { result: { input: textfield  value: => @acc }}
+  }
+  v: 0
+  acc: 0
+  num: 0
+  lastop: +
+  view: {
+   result: { is: style direction: horizontal } { input: textfield  value: 0 }
+   buttons:
+     { style: { is: style direction: horizontal } 7: { input: button label: 7 }  8: { input: button label: 8 }  9: { input: button label: 9 } plus:   { input: button label: + } allcl:  { input: button label: AC } }
+     { style: { is: style direction: horizontal } 4: { input: button label: 4 }  5: { input: button label: 5 }  6: { input: button label: 6 } minus:  { input: button label: - } clear:  { input: button label: C } }
+     { style: { is: style direction: horizontal } 1: { input: button label: 1 }  2: { input: button label: 2 }  3: { input: button label: 3 } times:  { input: button label: × } clear:  { input: button label: C } }
+     { style: { is: style direction: horizontal } 0: { input: button label: 0 } 00: { input: button label: 00 } .: { input: button label: . } divide: { input: button label: ÷ } equals: { input: button label: = } }
+ }
+}
+

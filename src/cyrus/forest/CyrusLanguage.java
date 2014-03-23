@@ -689,6 +689,10 @@ public class CyrusLanguage extends WebObject {
             if(s4==null) s4=findString(ll.get(4));
             if(s1!=null && s2!=null && s3!=null && s4!=null) return String.format(s1, s2, s3, s4);
         }
+        if(ll.size()==2 && "join".equals(s0)){
+            if(l1==null) l1=findList(ll.get(1));
+            return join(findEach(l1), null);
+        }
         if(ll.size()==3 && "join".equals(s0)){
             if(l2==null) l2=findList(ll.get(2));
             if(s1==null) s1=findString(ll.get(1));

@@ -1,5 +1,5 @@
 
-// 967 }-------------- Networking ------------------------------{
+// 971 }-------------- Networking ------------------------------{
 
 function Network(){
 
@@ -449,13 +449,16 @@ function JSON2HTML(url){
             return this.objectGUI(tag,widget,rows,horizontal,value);
         },
         objectGUI: function(tag,guilist,rows,horizontal,value){
+            if(tag==null || tag=='') tag='prop-'+Math.floor(Math.random()*1e6);
             var val=(value!==undefined);
             var submittable=false;
+            var buttonspresent=false;
             if(guilist.input){
                 var input=guilist.input;
                 var label=guilist.label;
                 var range=guilist.range;
                 var valu2=guilist.value;
+                var val2=(valu2!==undefined);
                 if(!horizontal) rows.push('<tr>');
                 if(input=='checkbox'){
                     var checked=value || valu2;
@@ -481,6 +484,12 @@ function JSON2HTML(url){
                     if(val && !label)   rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
                     else
                     if(val)             rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
+                    else
+                    if(val2 && !label)  rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
+                    else
+                    if(val2)            rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
+                    else
+                    if(!label)          rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
                     else                rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
                     submittable=true;
                 }
@@ -498,6 +507,7 @@ function JSON2HTML(url){
                 else
                 if(input=='button'){
                     rows.push('<td><input id="'+tag+'" class="button form-field" type="submit" value="'+label+'" />');
+                    buttonspresent=true;
                 }
                 if(!horizontal) rows.push('</tr>');
             }
@@ -519,7 +529,7 @@ function JSON2HTML(url){
                 rows.push('</td>');
                 if(!horizontal) rows.push('</tr>');
             }
-            return submittable;
+            return submittable && !buttonspresent;
         },
         // ------------------------------------------------
         getArticleHTML: function(url,json,closed){
@@ -1037,7 +1047,7 @@ function Cyrus(){
         getFormFields: function(form,fields){
             form.find('.form-field').each(function(n,i){
                 var idOrName=i.getAttribute('id') || i.getAttribute('name');
-                if(!idOrName || idOrName=='null') idOrName='field-'+n;
+                if(!idOrName || idOrName=='null') idOrName='prop-'+Math.floor(Math.random()*1e6);
                 var intype=$(i).attr('type');
                 if(intype=='checkbox'){
                     fields.push('"'+idOrName+'": '+($(i).is(':checked')? 'true':'false'));

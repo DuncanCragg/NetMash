@@ -183,6 +183,8 @@ input.text{
 input.button, input.submit{
     font-size: 1em;
     margin: 0 0 7pt 5pt;
+    width: 95%;
+    height: 2.5em;
 }
 
 input.checkbox{

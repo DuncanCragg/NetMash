@@ -99,7 +99,7 @@
   lu: => @. with-more { @xx: @x }
   ls: {s: *}
   tx: => join , (x (@=ls:s select (random 0 (( count @=ls ) - 1))))
-  jt: => join / ( @is @x )
+  jt: => join ( @is @x )
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
   zf: => @li:4.. filter (@.. > 7000)
   ze: => @li:4.. each   (@.. > 7000)
@@ -151,7 +151,7 @@
   zp: 1 2 3 4 5 => @. filter (@.. <= 3)
   lu: { qq: 20 } => @. add-more { c: d qq: 20 30 }
   tx: /x,[123]/
-  jt: test/20
+  jt: test20
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
   zf: #
   ze: #
