@@ -48,7 +48,7 @@ public class CyrusLanguage extends WebObject {
             if(!(i==0 && rules.size() >0)) rules=getGlobalAndLocalRules();   if(extralogging) log("Rules: "+rules);
             if(rules==null || rules.size()==0) break;
             rulesRun.clear();
-            runTheRules(rules);
+            runTheRules(rules,i==0);
             if(!statemod) break;
             modified=true;
         }
@@ -57,25 +57,25 @@ public class CyrusLanguage extends WebObject {
         contentTemp("Rule",null);
     }catch(Throwable t){ log("exception in evaluate()",this); t.printStackTrace(); }}
 
-    private void runTheRules(LinkedList rules){
+    private void runTheRules(LinkedList rules, boolean showalerted){
         for(Object rule: rules){
             if(rule instanceof String){
                 contentTempObserve("Rule", (String)rule);
                 LinkedList rulelist=contentListMayJump("Rule");
-                if(rulelist!=null && !contentIsOrListContains("Rule:is","rule")) runTheRules(rulelist);
-                else if(!rulesRun.contains(rule)){ rulesRun.add((String)rule); runTheRule(); }
+                if(rulelist!=null && !contentIsOrListContains("Rule:is","rule")) runTheRules(rulelist,showalerted);
+                else if(!rulesRun.contains(rule)){ rulesRun.add((String)rule); runTheRule(showalerted); }
             }
             else
-            if(rule instanceof LinkedList) runTheRules((LinkedList)rule);
+            if(rule instanceof LinkedList) runTheRules((LinkedList)rule,showalerted);
             else
             if(rule instanceof LinkedHashMap){
                 contentTemp("Rule", rule);
-                runTheRule();
+                runTheRule(showalerted);
             }
         }
     }
 
-    private void runTheRule(){
+    private void runTheRule(boolean showalerted){
         LinkedList ruleis=contentList("Rule:is"); if(extralogging) log("Rule is="+ruleis);
         if(ruleis==null) return;
         for(Object is: ruleis){
@@ -83,7 +83,7 @@ public class CyrusLanguage extends WebObject {
             if("editable".equals(is)) continue;
             if(!contentIsOrListContains("is", is.toString())){ if(extralogging) log("Rule doesn't apply: "+is+" "+contentString("is")); return; }
         }
-        runRule();
+        runRule(showalerted);
     }
 
     @SuppressWarnings("unchecked")
@@ -111,9 +111,9 @@ public class CyrusLanguage extends WebObject {
         return globlocrules;
     }
 
-    private void runRule(){
-        if(extralogging) log("Run rule. alerted="+alerted());
-        if(alerted().size()==0) runRule(null);
+    private void runRule(boolean showalerted){
+        if(extralogging) log("Run rule. alerted="+alerted()+" "+showalerted);
+        if(alerted().size()==0 || !showalerted) runRule(null);
         else for(String alerted: alerted()) runRule(alerted);
     }
 

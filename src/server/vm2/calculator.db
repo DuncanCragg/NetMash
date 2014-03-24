@@ -1,25 +1,20 @@
 { is: editable gui
-  Rules: {
-    is: gui rule
-    when: "a number or clear is pressed, join it on to the end of the display number"
-    Alerted: { Version: > @v  is: form  form: { pushed: /[0-9.]|clear/ } }
-    v: => @Alerted:Version
-    num: => if (@Alerted:form:pushed == clear) then 0 else (join (@. @Alerted:form:pushed))
-    view: { result: { input: textfield  value: => @num }}
-  }{
-    is: gui rule
-    when: "operation is pressed, accumulate and save op"
-    Alerted: { Version: > @v  is: form  form: { pushed: /plus|minus|times|divide/ } }
-    v: => @Alerted:Version
-    acc: => @. @lastop @num
-    lastop: => ( { plus: + minus: - times: × divide: ÷ } select @Alerted:form:pushed )
-    num: => #
-    view: { result: { input: textfield  value: => @acc }}
+  Rules:
+  { is: gui rule
+    Alerted: { is: form  form: { pushed: /[0-9.]|clear/ } }
+    local: { num: => if (@Alerted:form:pushed == clear) then 0 else (join (@. @Alerted:form:pushed)) }
+    view: { result: { input: textfield  value: => @local:num }}
   }
-  v: 0
-  acc: 0
-  num: 0
-  lastop: +
+  { is: gui rule
+    Alerted: { is: form  form: { pushed: /plus|minus|times|divide/ } }
+    local: {
+      acc: => @. @local:lastop @local:num
+      lastop: => ( { plus: + minus: - times: × divide: ÷ } select @Alerted:form:pushed )
+      num: => #
+    }
+    view: { result: { input: textfield  value: => @local:acc }}
+  }
+  local: { acc: 0 num: 0 lastop: + }
   view: {
    result: { is: style direction: horizontal } { input: textfield  value: 0 }
    buttons:
