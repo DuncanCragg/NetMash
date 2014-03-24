@@ -937,8 +937,8 @@ public class JSON {
         return 0;
     }
 
-    private boolean getBoolPath(LinkedHashMap content, String path) throws PathOvershot{
-        return findBooleanIn(getObject(content, path));
+    private Boolean getBoolPath(LinkedHashMap content, String path) throws PathOvershot{
+        return findABooleanIn(getObject(content, path));
     }
 
     private Number getNumberPath(LinkedHashMap content, String path) throws PathOvershot{

@@ -481,7 +481,7 @@ public class WebObject {
     }
 
     /** Get boolean at this path. */
-    public boolean contentBool(String path){
+    private boolean contentBool(String path){
         Object o=contentObject(path);
         if(o instanceof Boolean) return ((Boolean)o).booleanValue();
         return false;

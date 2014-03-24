@@ -302,7 +302,7 @@ public class Utils{
         return o.toString();
     }
 
-    static public boolean findBooleanIn(Object o){
+    static private boolean findBooleanIn(Object o){
         if(isEmpty(o)) return false;
         if(o instanceof Boolean) return (Boolean)o;
         if(o instanceof String){

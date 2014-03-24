@@ -351,7 +351,7 @@ public class CyrusLanguage extends WebObject {
         if(v.equals("boolean") && isBoolean(contentObject(pk))) return true;
         if(v.equals("uid") && UID.isUID(contentObject(pk))) return true;
         if(v.startsWith("/") && v.endsWith("/") && regexMatch(v.substring(1,v.length()-1),pk)) return true;
-        if(isBoolean(v) && scanBoolean(findBooleanIn(v),pk)) return true;
+        if(isBoolean(v) && scanBoolean(findABooleanIn(v),pk)) return true;
         if(isRef(v) && scanType(findObject(v),pk)) return true;
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         return false;
@@ -366,7 +366,7 @@ public class CyrusLanguage extends WebObject {
     private boolean scanBoolean(Boolean v, String pk){
         if(contentList(pk)!=null) return scanListFromSingleIfNotAlready(v,pk);
         Object o=contentObject(pk);
-        return (o==null && v==false) || (o!=null && isBoolean(o) && findBooleanIn(o)==v);
+        return (o==null && v==false) || (o!=null && isBoolean(o) && findABooleanIn(o)==v);
     }
 
     private boolean scanListFromSingleIfNotAlready(Object v, String pk){
@@ -651,6 +651,10 @@ public class CyrusLanguage extends WebObject {
             Object o1=findObject(ll.get(1));
             return Double.valueOf(numberOfElements(o1));
         }
+        if(ll.size() ==2 && "set".equals(s1)){
+            Object o0=findObject(ll.get(0));
+            return Boolean.valueOf(numberOfElements(o0) > 0);
+        }
         if(ll.size()==3 && "random".equals(s0)){
             if(d1==null) d1=findDouble(ll.get(1));
             if(d2==null) d2=findDouble(ll.get(2));
@@ -830,7 +834,8 @@ public class CyrusLanguage extends WebObject {
             if(s0!=null && s2!=null) return Boolean.valueOf(s0.equals(s2));
         }
         if(ll.size() >=2 && "not".equals(s0)){
-            return Boolean.valueOf(!findBooleanIn(findObject((ll.size()==2)? ll.get(1): subList(ll,1))));
+            Boolean bl=findABooleanIn(findObject((ll.size()==2)? ll.get(1): subList(ll,1)));
+            if(bl!=null) return Boolean.valueOf(!bl);
         }
         if(ll.size()==6 && "if".equals(s0)){
             if(s2==null) s2=findString(ll.get(2));
@@ -989,7 +994,7 @@ public class CyrusLanguage extends WebObject {
         if(o==null) return false;
         if(isRef(o)) return eitherBindingOrContentBool(((String)o).substring(1));
         if(o instanceof LinkedList) o=eval((LinkedList)o);
-        return isBoolean(o)? findBooleanIn(o): null;
+        return isBoolean(o)? findABooleanIn(o): null;
     }
 
     private LinkedHashMap findHash(Object o){
@@ -1060,9 +1065,9 @@ public class CyrusLanguage extends WebObject {
 
     private Boolean eitherBindingOrContentBool(String path){
         if(path.startsWith("..")) return null;
-        if(path.startsWith("."))  return contentBool(  currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
-        if(path.startsWith("="))  return findBooleanIn(getBinding(path.substring(1),true));
-        return contentBool(path);
+        if(path.startsWith("."))  return contentBoolean(currentRewritePath+(path.equals(".")?  "": ":"+path.substring(1)));
+        if(path.startsWith("="))  return findABooleanIn(getBinding(path.substring(1),true));
+        return contentBoolean(path);
     }
 
     private LinkedList eitherBindingOrContentList(String path, boolean jump){
