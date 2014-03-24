@@ -300,6 +300,13 @@ public class WebObject {
         return s.equals(val);
     }
 
+    /** Test if String at path contains value. */
+    public boolean contentContains(String path, String val){
+        String s = content(path);
+        if(s==null) return val==null;
+        return s.contains(val);
+    }
+
     /** Test if integer at path is value. */
     public boolean contentIs(String path, int val){
         if(!contentSet(path)) return false;

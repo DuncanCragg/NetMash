@@ -243,6 +243,12 @@ public class CyrusLanguage extends WebObject {
                        (ll!=null && ll.size()==i);
             }
         }
+        if(listsize==2 && list.get(0).equals("contains")){
+            String s=findString(list.get(1));
+            if(s!=null){
+                return contentContains(path,s);
+            }
+        }
         if(listsize==2 && list.get(0).equals("inside")){
             LinkedHashMap hm=findHash(list.get(1));
             if(hm!=null){
@@ -829,9 +835,12 @@ public class CyrusLanguage extends WebObject {
             if(d0!=null && d2!=null) return Boolean.valueOf(d0.doubleValue() == d2.doubleValue());
         }
         if(ll.size()==3 && "==".equals(s1)){
-            if(s0==null) s0=findString(ll.get(0));
             if(s2==null) s2=findString(ll.get(2));
             if(s0!=null && s2!=null) return Boolean.valueOf(s0.equals(s2));
+        }
+        if(ll.size()==3 && "contains".equals(s1)){
+            if(s2==null) s2=findString(ll.get(2));
+            if(s0!=null && s2!=null) return Boolean.valueOf(s0.contains(s2));
         }
         if(ll.size() >=2 && "not".equals(s0)){
             Boolean bl=findABooleanIn(findObject((ll.size()==2)? ll.get(1): subList(ll,1)));
