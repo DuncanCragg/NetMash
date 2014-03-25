@@ -195,10 +195,10 @@
   view: {
    result: { is: style direction: horizontal } { input: textfield  value: 0 }
    buttons:
-     { style: { is: style direction: horizontal }  7: { input: button label: 7 } 8: { input: button label: 8 }  9: { input: button label: 9 } times:  { input: button label: × } chgsgn: { input: button label: +/- } }
-     { style: { is: style direction: horizontal }  4: { input: button label: 4 } 5: { input: button label: 5 }  6: { input: button label: 6 } divide: { input: button label: ÷ } mstore: { input: button label: MS  } }
-     { style: { is: style direction: horizontal }  1: { input: button label: 1 } 2: { input: button label: 2 }  3: { input: button label: 3 } plus:   { input: button label: + } mrecal: { input: button label: MR  } }
-     { style: { is: style direction: horizontal } cl: { input: button label: C } 0: { input: button label: 0 } dp: { input: button label: . } minus:  { input: button label: - } equals: { input: button label: =   } }
+     { style: { is: style direction: horizontal } 7: { input: button label: 7 }  8: { input: button label: 8 }  9: { input: button label: 9 } times:  { input: button label: × } chgsgn: { input: button label: +/- } }
+     { style: { is: style direction: horizontal } 4: { input: button label: 4 }  5: { input: button label: 5 }  6: { input: button label: 6 } divide: { input: button label: ÷ } mstore: { input: button label: MS  } }
+     { style: { is: style direction: horizontal } 1: { input: button label: 1 }  2: { input: button label: 2 }  3: { input: button label: 3 } plus:   { input: button label: + } mrecal: { input: button label: MR  } }
+     { style: { is: style direction: horizontal } 0: { input: button label: 0 } dp: { input: button label: . } cl: { input: button label: C } minus:  { input: button label: - } equals: { input: button label: =   } }
  }
 }
 

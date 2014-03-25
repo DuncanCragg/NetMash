@@ -841,7 +841,8 @@ public class CyrusLanguage extends WebObject {
         }
         if(ll.size()==3 && "contains".equals(s1)){
             if(s2==null) s2=findString(ll.get(2));
-            if(s0!=null && s2!=null) return Boolean.valueOf(s0.contains(s2));
+            if(s0==null) return Boolean.valueOf(false);
+            if(s2!=null) return Boolean.valueOf(s0.contains(s2));
         }
         if(ll.size() >=2 && "not".equals(s0)){
             Boolean bl=findABooleanIn(findObject((ll.size()==2)? ll.get(1): subList(ll,1)));
