@@ -176,22 +176,23 @@
 { UID: uid-7356-dfcc-2173-4525
   is: editable gui
   title: Calculator
-  local: { acc: 0 num: 0 lastop: + }
+  local: { acc: 0 num: 0 op: + }
   Rules:
-  { is: gui rule
-    Alerted: { is: form  form: { pushed: /[0-9]|dp|cl/ } }
-    local: { num: => if (@Alerted:form:pushed == cl) then 0 else (if (@Alerted:form:pushed == dp) then (if (not @. contains .) then (join (@. .)) else @.) else (join (@. @Alerted:form:pushed))) }
-    view: { result: { input: textfield  value: => @local:num }}
-  }
-  { is: gui rule
-    Alerted: { is: form  form: { pushed: /plus|minus|times|divide|equals/ } }
-    local: {
-      acc: => if (@local:num set) then (@. @local:lastop @local:num) else @.
-      lastop: => { plus: +  minus: -  times: ×  divide: ÷  equals: + } select @Alerted:form:pushed
-      num: => #
+    { is: gui rule  Alerted: { is: form }  local: { key: => @Alerted:form:pushed } }
+    { is: gui rule  local: { key: /[0-9]/  num: => join (@. @local:key) } }
+    { is: gui rule  local: { key: dp       num: => if (not @. contains .) then (join (@. .)) else @. } }
+    { is: gui rule  local: { key: cl       num: => 0 }}
+    { is: gui rule
+      local: {
+        key: /plus|minus|times|divide|equals/
+        acc: => if (@local:num set) then (@. @local:op @local:num) else @.
+        op: => { plus: +  minus: -  times: ×  divide: ÷  equals: + } select @local:key
+        num: => #
+      }
     }
-    view: { result: { input: textfield  value: => @local:acc }}
-  }
+    { is: gui rule  local: { key: chgsgn  num: #  acc: => @. × -1  } }
+    { is: gui rule  local: { key: chgsgn  num: * => @. × -1 } }
+    { is: gui rule  local: { key: * => # } view: { result: { value: => if (@local:num set) then @local:num else @local:acc }}}
   view: {
    result: { is: style direction: horizontal } { input: textfield  value: 0 }
    buttons:
@@ -199,6 +200,6 @@
      { style: { is: style direction: horizontal } 4: { input: button label: 4 }  5: { input: button label: 5 }  6: { input: button label: 6 } divide: { input: button label: ÷ } mstore: { input: button label: MS  } }
      { style: { is: style direction: horizontal } 1: { input: button label: 1 }  2: { input: button label: 2 }  3: { input: button label: 3 } plus:   { input: button label: + } mrecal: { input: button label: MR  } }
      { style: { is: style direction: horizontal } 0: { input: button label: 0 } dp: { input: button label: . } cl: { input: button label: C } minus:  { input: button label: - } equals: { input: button label: =   } }
- }
+  }
 }
 
