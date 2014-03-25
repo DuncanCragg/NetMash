@@ -569,7 +569,7 @@ public class JSON {
             chp=chpsave;
             if(s==null || ( tagdelim && s.endsWith(":"))){ chp--; chp--; break; }
             try{ ll.add(readBoolean()); continue; }catch(Exception e){ chp=chpsave; }
-            try{ ll.add(readNumber());  continue; }catch(Exception e){ chp=chpsave; }
+       //   try{ ll.add(readNumber());  continue; }catch(Exception e){ chp=chpsave; }
             try{        readNull();     continue; }catch(Exception e){ chp=chpsave; }
             chp=chpstringok;
             ll.add(s);
