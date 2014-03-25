@@ -184,22 +184,24 @@
     { is: gui rule  local: { key: cl       num: => 0 }}
     { is: gui rule
       local: {
-        key: /plus|minus|times|divide|equals/
+        key: /pl|mi|ti|di|eq/
         acc: => if (@local:num set) then (@. @local:op @local:num) else @.
-        op: => { plus: +  minus: -  times: ×  divide: ÷  equals: + } select @local:key
+        op: => { pl: +  mi: -  ti: ×  di: ÷  eq: + } select @local:key
         num: => #
       }
     }
-    { is: gui rule  local: { key: chgsgn  num: #  acc: => @. × -1  } }
-    { is: gui rule  local: { key: chgsgn  num: * => @. × -1 } }
+    { is: gui rule  local: { key: cs  num: #  acc: => @. × -1  } }
+    { is: gui rule  local: { key: cs  num: * => @. × -1 } }
+    { is: gui rule  local: { key: ms  mem: => if (@local:num set) then @local:num else @local:acc } }
+    { is: gui rule  local: { key: mr  num: => if (@local:mem set) then @local:mem else @. } }
     { is: gui rule  local: { key: * => # } view: { result: { value: => if (@local:num set) then @local:num else @local:acc }}}
   view: {
    result: { is: style direction: horizontal } { input: textfield  value: 0 }
    buttons:
-     { style: { is: style direction: horizontal } 7: { input: button label: 7 }  8: { input: button label: 8 }  9: { input: button label: 9 } times:  { input: button label: × } chgsgn: { input: button label: +/- } }
-     { style: { is: style direction: horizontal } 4: { input: button label: 4 }  5: { input: button label: 5 }  6: { input: button label: 6 } divide: { input: button label: ÷ } mstore: { input: button label: MS  } }
-     { style: { is: style direction: horizontal } 1: { input: button label: 1 }  2: { input: button label: 2 }  3: { input: button label: 3 } plus:   { input: button label: + } mrecal: { input: button label: MR  } }
-     { style: { is: style direction: horizontal } 0: { input: button label: 0 } dp: { input: button label: . } cl: { input: button label: C } minus:  { input: button label: - } equals: { input: button label: =   } }
+     { style: { is: style direction: horizontal } 7: { input: button label: 7 }  8: { input: button label: 8 }  9: { input: button label: 9 } ti: { input: button label: × } cs: { input: button label: +/- } }
+     { style: { is: style direction: horizontal } 4: { input: button label: 4 }  5: { input: button label: 5 }  6: { input: button label: 6 } di: { input: button label: ÷ } ms: { input: button label: MS  } }
+     { style: { is: style direction: horizontal } 1: { input: button label: 1 }  2: { input: button label: 2 }  3: { input: button label: 3 } pl: { input: button label: + } mr: { input: button label: MR  } }
+     { style: { is: style direction: horizontal } 0: { input: button label: 0 } dp: { input: button label: . } cl: { input: button label: C } mi: { input: button label: - } eq: { input: button label: =   } }
   }
 }
 
