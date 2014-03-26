@@ -24,7 +24,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     }
 
     public MinecraftWorld(String worlduid, String scanneruid){
-        super("{ is: 3d minecraft structure\n"+
+        super("{ is: 3d minecraft native structure\n"+
               "  world: "+worlduid+"\n"+
               "  scanner: "+scanneruid+"\n"+
               "}",true);
