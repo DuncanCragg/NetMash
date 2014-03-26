@@ -47,6 +47,7 @@
   vc: 5 5 5
   v2: 5 5 5
   vd: 8 5 1
+  vi: 0 12 8 -1 3
   xx: pp
   zz: oo
   rr: { x: 3 y: < 334 }
@@ -87,6 +88,7 @@
   xx: 0 !=> qq
   zz: not ooo => #
   vd: => @. ~ @vc
+  vi: => (min @.) (max @.)
   vr: # => 33 .. 29
   ss: @rr => { x: 4 y: @.y }
   tt: # => @=ss
@@ -134,6 +136,7 @@
   xx: (false !=> #) **
   zz: #
   vd: 5
+  vi: -1 12
   vr: 33 32 31 30 29
   ss: { x: 2 y: 22 }{ x: 4 y: 33 }{ x: 6 y: 66 }{ x: 4 y: 333 }
   tt: { x: 4 y: 33 }{ x: 4 y: 333 }
@@ -235,7 +238,7 @@
   l4: => if @m:0 then 1 else 2
   l5: => if @m:2 then 3 else 4
   l6: => @a:0 (if @m:0 then + else *) @b
-  l9: => @a:0 ({ ha: + hi: - } select @m:4) @b
+  l9: => abs (@a:0 ({ ha: + hi: - } select @m:4) @b)
   la: => integer @m:3:n
   rm: 1 0 1 0 2
   j: true => false
@@ -269,7 +272,7 @@
   m: true { n: 4 } { n: 5.5 } hi yo 7.51.0
   ml: count 0
   l6: 49
-  l9: -9
+  l9: 9
   j: x { m: n } eight false
   l7: (12 3)(2 14)(3 4)
   l8: (12 3)(3 4)

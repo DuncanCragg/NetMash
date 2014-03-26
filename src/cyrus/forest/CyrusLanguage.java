@@ -577,6 +577,10 @@ public class CyrusLanguage extends WebObject {
             Double d1=findDouble(o1);
             if(d1!=null) return Integer.valueOf((int)(0.5+d1));
         }
+        if(ll.size()==2 && "abs".equals(o0)){
+            Double d1=findDouble(o1);
+            if(d1!=null) return Double.valueOf(d1>0? d1: -d1);
+        }
         Object r=eval(ll);
         return r;
     }
@@ -720,6 +724,16 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==2 && "+".equals(s0)){
             if(l1==null) l1=findList(ll.get(1));
             Double sl1=sumAll(l1);
+            if(sl1!=null) return sl1;
+        }
+        if(ll.size()==2 && "min".equals(s0)){
+            if(l1==null) l1=findList(ll.get(1));
+            Double sl1=minimum(l1);
+            if(sl1!=null) return sl1;
+        }
+        if(ll.size()==2 && "max".equals(s0)){
+            if(l1==null) l1=findList(ll.get(1));
+            Double sl1=maximum(l1);
             if(sl1!=null) return sl1;
         }
         if(ll.size()==3 && "-".equals(s1)){

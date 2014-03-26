@@ -344,19 +344,19 @@ public class Utils{
 
     static public Number findANumberIn(Object o){
         if(o==null) return null;
-        if(o instanceof String){
+        if(o instanceof String) try{
             Date d = dateFormat.parse((String)o, new ParsePosition(0));
             if(d!=null) return Double.valueOf(d.getTime());
-        }
+        } catch(Throwable t){}
         return tryDouble(o);
     }
 
     static public double findNumberIn(Object o){
         if(o==null) return 0;
-        if(o instanceof String){
+        if(o instanceof String) try{
             Date d = dateFormat.parse((String)o, new ParsePosition(0));
             if(d!=null) return d.getTime();
-        }
+        } catch(Throwable t){}
         return tryDouble(o,0);
     }
 
@@ -507,6 +507,20 @@ public class Utils{
         double d=0;
         for(Object o: ll){ Double n=tryDouble(o); if(n==null) return null; d+=n; }
         return d;
+    }
+
+    static public Double minimum(LinkedList ll){
+        if(ll==null) return null;
+        Double m=null;
+        for(Object o: ll){ Double n=tryDouble(o); if(n==null) return null; if(m==null || m>n) m=n; }
+        return m;
+    }
+
+    static public Double maximum(LinkedList ll){
+        if(ll==null) return null;
+        Double m=null;
+        for(Object o: ll){ Double n=tryDouble(o); if(n==null) return null; if(m==null || m<n) m=n; }
+        return m;
     }
 
     static public String capitaliseAndSpace(String s){
