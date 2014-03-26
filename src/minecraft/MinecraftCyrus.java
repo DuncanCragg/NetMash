@@ -169,7 +169,8 @@ public class MinecraftCyrus extends WebObject {
                 LinkedHashMap<String,Object> form=contentHash("Alerted:form");
                 if(form!=null) for(Map.Entry<String,Object> entry: form.entrySet()){
                     String tag=entry.getKey();
-                    if(contentBool("Alerted:form:"+tag)) gr.add(mods.get(tag));
+                    Boolean b=contentBoolean("Alerted:form:"+tag);
+                    if(b!=null && b) gr.add(mods.get(tag));
                 }
                 final WebObject globalrules=onlyUseThisToHandControlOfThreadToDependent(globalruleuid);
                 new Evaluator(globalrules){ public void evaluate(){
