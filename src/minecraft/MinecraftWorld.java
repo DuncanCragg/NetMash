@@ -181,7 +181,7 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
     int tickNum=0;
 
     public void tick(){
-        if(++tickNum==20) tickNum=0;
+        if(++tickNum==5) tickNum=0;
         final World  currentworld=world(); if(currentworld==null) return;
         final String currentname=currentworld.worldInfo.getWorldName();
         if("world".equals(hasType)){
@@ -814,6 +814,23 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         blockNames.put("quartz-stairs", 156); blockIds.add(156, "quartz-stairs");
         blockNames.put("activator-rail", 157); blockIds.add(157, "activator-rail");
         blockNames.put("dropper", 158); blockIds.add(158, "dropper");
+        blockNames.put("white-stained-clay", 159); blockIds.add(159, "white-stained-clay");
+        blockNames.put("white-stained-glass-pane", 160); blockIds.add(160, "white-stained-glass-pane");
+        blockNames.put("acacia-leaves", 161); blockIds.add(161, "acacia-leaves");
+        blockNames.put("acacia-wood", 162); blockIds.add(162, "acacia-wood");
+        blockNames.put("acacia-wood-stairs", 163); blockIds.add(163, "acacia-wood-stairs");
+        blockNames.put("dark-oak-wood-stairs", 164); blockIds.add(164, "dark-oak-wood-stairs");
+        blockNames.put("slime-block", 165); blockIds.add(165, "slime-block");
+        blockNames.put("barrier", 166); blockIds.add(166, "barrier");
+        blockNames.put("iron-trapdoor", 167); blockIds.add(167, "iron-trapdoor");
+        blockNames.put("thing-168", 168); blockIds.add(168, "thing-168");
+        blockNames.put("thing-169", 169); blockIds.add(169, "thing-169");
+        blockNames.put("hay-bale", 170); blockIds.add(170, "hay-bale");
+        blockNames.put("white-carpet", 171); blockIds.add(171, "white-carpet");
+        blockNames.put("hardened-clay", 172); blockIds.add(172, "hardened-clay");
+        blockNames.put("block-of-coal", 173); blockIds.add(173, "block-of-coal");
+        blockNames.put("packed-ice", 174); blockIds.add(174, "packed-ice");
+        blockNames.put("sunflower", 175); blockIds.add(175, "sunflower");
     }
 }
 
