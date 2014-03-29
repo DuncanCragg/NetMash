@@ -367,6 +367,7 @@ public class Utils{
         if(s.length()==0) return false;
         try{
             if(dateFormat.parse(s, new ParsePosition(0))!=null) return true;
+        } catch(Exception e){} try{
             Double.parseDouble(s);
             return true;
         } catch(Exception e){ return false; }
