@@ -1126,7 +1126,7 @@ function Cyrus(){
             var outerheight=outer.height();
             $('.object-body .object-body').each(function(n,r){
                 if(!$(r).is(':visible')) return;
-                $(r).height(outerheight-110);
+                //$(r).height(outerheight-110);
             });
         },
         getFullObjectURL: function(mashURL){

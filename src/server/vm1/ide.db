@@ -1,0 +1,27 @@
+{ UID: uid-7a34-bcaf-88d5-b63e
+  is: gui
+  title: "Cyrus Development"
+  view:
+    { is: style direction: horizontal }
+    { view: open raw item: uid-ccb8-43de-df47-29da }
+    { view: open     item: uid-ccb8-43de-df47-29da }
+}
+
+{ UID: uid-ccb8-43de-df47-29da
+  is: editable gui
+  title: Render
+  view: ({ is: style direction: horizontal }
+         { view: open raw item: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json }
+         { view: open     item: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json })
+  Rules: {
+    is: gui rule
+    view: newob => ({ is: style direction: horizontal }
+                    { view: open raw item: { UID: new is: editable gui view: Hiyaaa } }
+                    { view: open     item: xxx })
+  } {
+    is: gui rule
+    view: ({ view: open raw item: uid }
+           { view: open     item: xxx => @=view:1:item })
+  }
+}
+

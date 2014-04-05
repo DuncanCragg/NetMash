@@ -3,7 +3,7 @@
 # IP of your development machine on the LAN
 # Always 'make veryclean' before changing this!
 #
-LOCAL_IP=192.168.0.11
+LOCAL_IP=192.168.0.9
 #LOCAL_IP=192.168.42.192
 #
 # Coordinates of PiBeaconLight
@@ -21,6 +21,9 @@ examples: runstt
 
 cytut: runtut
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7081-c95e-1c04-d7a5.json'
+
+ide: runide
+	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
 
 mctut: runmct
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
@@ -159,6 +162,8 @@ runlap:  kill clean netconfig usecapdb setvm2lanconfig run2
 
 runtut: kill clean           usetutordb setvm1tstconfig run1
 
+runide: kill                 useidedbs setvm3tstconfig run1n2
+
 runmct: kill clean           usemctutdb setvm1tstconfig run1
 
 runstt: kill clean           usestaticdb setvm1tstconfig run1
@@ -243,6 +248,10 @@ usetestdb:
 
 usetutordb:
 	cp src/server/vm1/tutorial.db src/server/vm1/cyrus.db
+
+useidedbs:
+	cp src/server/vm1/ide.db src/server/vm1/cyrus.db
+	cp src/server/vm2/ide.db src/server/vm2/cyrus.db
 
 usemctutdb:
 	cp src/server/vm1/mc-tutorial.db src/server/vm1/cyrus.db
