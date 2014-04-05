@@ -124,7 +124,7 @@ public class MinecraftCyrus extends WebObject {
                 "    { is: style direction: horizontal }\n"+
                 "    (\n"+
                 "      { pretext: \"Loading mods..\" }\n"+
-                "      { view: closed  item: "+Kernel.config.stringPathN("app:tutorial")+" }\n"+
+                "      { view: open  item: "+Kernel.config.stringPathN("app:tutorial")+" }\n"+
                 "    )\n"+
                 "    { view: open raw  item: "+toURL(uid)+" }\n"+
                 "}\n"));

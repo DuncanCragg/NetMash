@@ -599,7 +599,7 @@ function JSON2HTML(url){
             rows.push('<input class="submit" type="submit" value="Log in" />');
             rows.push('</form>');
             }
-            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, true));
+            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, closed));
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
