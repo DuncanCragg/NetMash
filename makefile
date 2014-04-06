@@ -214,6 +214,7 @@ run1n2root: run1 run2root
 
 usemcdbs:
 	cp  src/minecraft/helpful-animals.db src/server/vm1/cyrus.db
+	cat src/minecraft/copy-n-paste.db >> src/server/vm1/cyrus.db
 	cat src/server/vm1/mc-tutorial.db >> src/server/vm1/cyrus.db
 
 usealldbs: useworlddb

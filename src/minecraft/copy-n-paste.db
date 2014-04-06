@@ -1,0 +1,84 @@
+{ UID: uid-9a97-8344-8977-3a94
+  is: editable list
+  title: "Copy and Paste"
+  list: uid-4273-38c2-7470-e378
+        uid-1889-d5df-0987-aa5f
+        uid-2c47-f295-a400-2400
+        uid-316b-2c75-26b8-6337
+        uid-10e9-562b-aa5c-9d31
+}
+
+{ UID: uid-4273-38c2-7470-e378
+  is: editable player rule
+  when: "pickaxe placing, save first point"
+  holding: pickaxe-gold
+  placing: number
+  p1: => @placing:0..2
+  p2: => @placing:0..2
+}
+
+{ UID: uid-1889-d5df-0987-aa5f
+  is: editable player rule
+  when: "axe placing, save second point"
+  holding: hatchet-gold
+  placing: number
+  p2: => @placing:0..2
+}
+
+{ UID: uid-2c47-f295-a400-2400
+  is: editable player rule
+  when: "first and second points available, calculate scan pos and size"
+  p1: number
+  p2: number
+  pp: => (min (@p1:0 @p2:0)) (min (@p1:1 @p2:1)) (min (@p1:2 @p2:2))
+  ps: => ((abs (@p1:0 - @p2:0)) + 1) ((abs (@p1:1 - @p2:1)) + 1) ((abs (@p1:2 - @p2:2)) + 1)
+}
+
+{ UID: uid-316b-2c75-26b8-6337
+  is: editable player rule
+  when: "shovel placing, save copy point"
+  holding: shovel-gold
+  placing: number
+  at: => @placing:0..2 + (0 1 0)
+}
+
+{ UID: uid-10e9-562b-aa5c-9d31
+  is: editable player rule
+  when: "starting, create duplicator"
+  duplicator: # =>
+    { UID: new
+      Rules: uid-d9b6-023e-30db-e9fd uid-58d1-a064-2630-852f uid-45c3-b80e-deea-e160
+      is: editable minecraft copypaste structure
+      world: @world
+      scanning: { for: blocks }
+      trail: true
+    }
+}
+
+{ UID: uid-d9b6-023e-30db-e9fd
+  is: editable copypaste structure rule
+  when: "player scan pos and size set,  update scan and tell world"
+  within: { pp: number  ps: number }
+  scanning: {
+    position: => @within:pp
+    size: => @within:ps
+  }
+  Notifying: => @. with @world
+}
+
+{ UID: uid-58d1-a064-2630-852f
+  is: editable copypaste structure rule
+  when: "scan results notified, capture link"
+  Alerted: { is: minecraft structure }
+  world-view: # => @Alerted
+}
+
+{ UID: uid-45c3-b80e-deea-e160
+  is: editable copypaste structure rule
+  when: "scan results and paste location available, create copy structure"
+  within: { at: number }
+  world-view: *
+  position: => @within:at
+  materials: => @world-view:materials each ({ sandstone: stone-double-slab glass: gold-block } select @.. else @.. )
+}
+
