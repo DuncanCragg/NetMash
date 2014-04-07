@@ -52,6 +52,7 @@
       world: @world
       scanning: { for: blocks }
       trail: true
+      mappings: { sandstone: quartz-block  glass-pane: ice }
     }
 }
 
@@ -79,6 +80,6 @@
   within: { at: number }
   world-view: *
   position: => @within:at
-  materials: => @world-view:materials each ({ sandstone: stone-double-slab glass: gold-block } select @.. else @.. )
+  materials: => @world-view:materials each ( @mappings select @.. else @.. )
 }
 

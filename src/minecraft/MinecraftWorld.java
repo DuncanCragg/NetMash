@@ -829,8 +829,8 @@ public class MinecraftWorld extends CyrusLanguage implements MinecraftCyrus.Tick
         blockNames.put("white-carpet", 171); blockIds.add(171, "white-carpet");
         blockNames.put("hardened-clay", 172); blockIds.add(172, "hardened-clay");
         blockNames.put("block-of-coal", 173); blockIds.add(173, "block-of-coal");
-        blockNames.put("packed-ice", 174); blockIds.add(174, "packed-ice");
-        blockNames.put("sunflower", 175); blockIds.add(175, "sunflower");
+   //   blockNames.put("packed-ice", 174); blockIds.add(174, "packed-ice");
+   //   blockNames.put("sunflower", 175); blockIds.add(175, "sunflower");
     }
 }
 
