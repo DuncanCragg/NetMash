@@ -457,7 +457,6 @@ local.properties:
 
 kill:
 	@-pkill -f 'java -classpath'
-	hciconfig noleadv
 
 killroot:
 	@-sudo pkill -f 'java -classpath'
@@ -473,7 +472,7 @@ clean:
 	-mv ,l* doc/local
 	rm -f  ,*
 
-veryclean: killroot clean setappemuconfig netconfig setvm3cleanconfig setemumapkey
+veryclean: kill clean setappemuconfig netconfig setvm3cleanconfig setemumapkey
 	-mv    src/server/vm1/cyrus.log doc/local/cyrus1.log
 	-mv    src/server/vm2/cyrus.log doc/local/cyrus2.log
 	rm -f  src/server/vm[12]/cyrus.db
