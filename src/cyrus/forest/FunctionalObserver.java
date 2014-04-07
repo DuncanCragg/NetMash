@@ -301,6 +301,7 @@ public class FunctionalObserver implements Module {
             else               log(w    +"older version than in cache:\n"+s);
             return location;
         }
+        if(w.maxAge== -1) w.noPersist();
         sanitiseNotifications(w);
         cachePut(w);
         transferNotifyAndAlerted(s,w);

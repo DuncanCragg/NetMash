@@ -918,7 +918,7 @@ function Cyrus(){
                 if(cyrus){
                     var type=$(this).find('.cyrus-type').val();
                     if(!type){
-                        var cyr = '{ '+uidver+'\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ".."\n  '+
+                        var cyr = '{ '+uidver+' Max-Age: -1\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ".."\n  '+
                                     ': { Version: '+ver+' } => as-is\n'+cy+'\n}';
                         network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
                     }else{
@@ -926,7 +926,7 @@ function Cyrus(){
                         network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
                     }
                 }else{
-                    var json = '{ '+uidver+', "is": [ "editable", "rule" ],\n  "when": "edited",\n  "editable": "'+targetURL+'",\n  "user": "" }';
+                    var json = '{ '+uidver+', "Max-Age": -1,\n  "is": [ "editable", "rule" ],\n  "when": "edited",\n  "editable": "'+targetURL+'",\n  "user": "" }';
                     network.postJSON(targetURL, me.makeJSONEditRule(json,ver,cy), false, me.getCreds(targetURL), null, null);
                 }
                 e.preventDefault();
