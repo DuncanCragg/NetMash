@@ -259,6 +259,10 @@ useidedbs:
 	cp src/server/vm1/ide.db src/server/vm1/cyrus.db
 	cp src/server/vm2/ide.db src/server/vm2/cyrus.db
 
+saveidedbs:
+	cp src/server/vm1/cyrus.db src/server/vm1/ide-save.db
+	cp src/server/vm2/cyrus.db src/server/vm2/ide-save.db
+
 usemctutdb:
 	cp src/server/vm1/mc-tutorial.db src/server/vm1/cyrus.db
 
