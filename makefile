@@ -25,6 +25,9 @@ cytut: runtut
 ide: runide
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
 
+idecont: contide
+	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
+
 mctut: runmct
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
 
@@ -162,7 +165,9 @@ runlap:  kill clean netconfig usecapdb setvm2lanconfig run2
 
 runtut: kill clean           usetutordb setvm1tstconfig run1
 
-runide: kill                 useidedbs setvm3tstconfig run1n2
+runide: kill        netconfig useidedbs setvm3tstconfig run1n2
+
+contide: kill       netconfig           setvm3tstconfig run1n2
 
 runmct: kill clean           usemctutdb setvm1tstconfig run1
 

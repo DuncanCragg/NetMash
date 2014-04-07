@@ -443,13 +443,15 @@ abstract class HTTPCommon {
 
     boolean useBrainDeadSoCalledAccessControlVerboseHeaderCruft=true;
 
-    protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents, boolean head, boolean cyrus){
-        if(useBrainDeadSoCalledAccessControlVerboseHeaderCruft){
+    protected void brainDeadSoCalledAccessControlVerboseHeaderCruft(StringBuilder sb){
+        if(!useBrainDeadSoCalledAccessControlVerboseHeaderCruft) return;
         sb.append("Access-Control-Allow-Origin: *\r\n");
         sb.append("Access-Control-Allow-Methods: GET, POST, HEAD, OPTIONS\r\n");
         sb.append("Access-Control-Allow-Headers: X-Requested-With, X-Requested-By, Cache-Notify, Origin, Content-Type, Accept\r\n");
         sb.append("Access-Control-Expose-Headers: Content-Location, Location, Cache-Notify, ETag\r\n");
-        }
+    }
+
+    protected void contentHeadersAndBody(StringBuilder sb, WebObject w, HashSet<String> percents, boolean head, boolean cyrus){
         if(w==null){ sb.append("Content-Length: 0\r\n\r\n"); return; }
         String cl=rewrite10022(w.url==null? UID.toURL(w.uid): w.url);
         sb.append("Content-Location: "); sb.append(cl); sb.append("\r\n");
@@ -747,6 +749,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     public void send200(WebObject w, boolean includeNotify, boolean head, boolean cyrus){
         StringBuilder sb=new StringBuilder();
         topResponseHeaders(sb, "200 OK");
+        brainDeadSoCalledAccessControlVerboseHeaderCruft(sb);
         contentHeadersAndBody(sb, w, getPercents(includeNotify), head, cyrus);
         if(Kernel.config.intPathN("network:log")==1) log("200 OK-->"); else
         if(Kernel.config.intPathN("network:log")==2) log("--------------->\n"+sb);
@@ -766,6 +769,7 @@ class HTTPServer extends HTTPCommon implements ChannelUser, Notifiable {
     void sendNoBody(String responseCode, String extraHeaders){
         StringBuilder sb=new StringBuilder();
         topResponseHeaders(sb, responseCode);
+        brainDeadSoCalledAccessControlVerboseHeaderCruft(sb);
         if(extraHeaders!=null) sb.append(extraHeaders);
         sb.append("Content-Length: 0\r\n\r\n");
         if(Kernel.config.intPathN("network:log")==1) log(responseCode+"-->"); else

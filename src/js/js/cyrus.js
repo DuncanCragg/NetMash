@@ -25,7 +25,7 @@ function Network(){
                     dataType: 'json',
                     success: function(obj,s,x){
                         me.isGetting(false,url,isCN);
-                        if(isCN) url = x && x.getResponseHeader('Content-Location');
+                        if(isCN && x && x.getResponseHeader('Content-Location')) url = x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
                         if(url){ try{
                             if(obj)  localStorage.setItem('objects:'+getUID(url), JSON.stringify(obj));
@@ -803,7 +803,14 @@ function Cyrus(){
             $('#content').html('<div>topObjectFail: <a href="'+topObjectURL+'">'+topObjectURL+'</a></div><div>'+s+'; '+err+'</div>');
         },
         objectIn: function(url,obj,s,x){
-            if(!obj){ this.objectFail(url,null,'object empty; status='+s,null); return; }
+            if(!obj){
+                if(x && x.status==204){
+                    var isCN=url && url.indexOf('/c-n-')!= -1;
+                    if(isCN) setTimeout(function(){ network.longGetJSON(url,me.getCreds(url),me.someObjectIn,me.objectFail); }, 50);
+                }
+                else this.objectFail(url,null,'object empty; status=>'+s+'<',null);
+                return;
+            }
             var moreofobj=moreOf[url];
             if(false && moreofobj){
                 this.mergeHashes(moreofobj,obj);
