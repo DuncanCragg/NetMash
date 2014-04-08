@@ -10,16 +10,15 @@
   duplicator: # =>
     { UID: new
       Rules:
-        http://localhost:8081/o/uid-4273-38c2-7470-e378.json
-        http://localhost:8081/o/uid-1889-d5df-0987-aa5f.json
-        http://localhost:8081/o/uid-2c47-f295-a400-2400.json
-        http://localhost:8081/o/uid-316b-2c75-26b8-6337.json
-        http://localhost:8081/o/uid-58d1-a064-2630-852f.json
-        http://localhost:8081/o/uid-45c3-b80e-deea-e160.json
+        uid-4273-38c2-7470-e378
+        uid-1889-d5df-0987-aa5f
+        uid-2c47-f295-a400-2400
+        uid-58d1-a064-2630-852f
+        uid-316b-2c75-26b8-6337
+        uid-45c3-b80e-deea-e160
       is: editable minecraft copypaste structure
       world: @world
       scanning: { for: blocks }
-      trail: true
       mappings: { sandstone: quartz-block glass-pane: ice }
     }
 }
@@ -53,6 +52,13 @@
   Notifying: => @. with @world
 }
 
+{ UID: uid-58d1-a064-2630-852f
+  is: editable copypaste structure rule
+  when: "scan results notified, capture link"
+  Alerted: { is: minecraft structure }
+  world-view: # => @Alerted
+}
+
 { UID: uid-316b-2c75-26b8-6337
   is: editable structure rule
   when: "shovel placing, save copy point"
@@ -61,17 +67,11 @@
   position: => @within:placing:0..2 + (0 1 0)
 }
 
-{ UID: uid-58d1-a064-2630-852f
-  is: editable copypaste structure rule
-  when: "scan results notified, capture link"
-  Alerted: { is: minecraft structure }
-  world-view: # => @Alerted
-}
-
 { UID: uid-45c3-b80e-deea-e160
   is: editable copypaste structure rule
-  when: "scan results and paste location available, create copy structure"
+  when: "scan results available, create copy structure"
   world-view: *
   materials: => @world-view:materials each ( @mappings select @.. else @.. )
+  trail: => true
 }
 
