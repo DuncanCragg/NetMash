@@ -28,6 +28,9 @@ ide: runide
 idecont: contide
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
 
+idemore: moreide
+	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
+
 mctut: runmct
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
 
@@ -167,6 +170,8 @@ runtut: kill clean           usetutordb setvm1tstconfig run1
 
 runide: kill        netconfig useidedbs setvm3tstconfig run1n2
 
+moreide: kill       netconfig getidedbs setvm3tstconfig run1n2
+
 contide: kill       netconfig           setvm3tstconfig run1n2
 
 runmct: kill clean           usemctutdb setvm1tstconfig run1
@@ -262,6 +267,10 @@ useidedbs:
 saveidedbs:
 	cp src/server/vm1/cyrus.db src/server/vm1/ide-save.db
 	cp src/server/vm2/cyrus.db src/server/vm2/ide-save.db
+
+getidedbs:
+	cp src/server/vm1/ide-save.db src/server/vm1/cyrus.db
+	cp src/server/vm2/ide-save.db src/server/vm2/cyrus.db
 
 usemctutdb:
 	cp src/server/vm1/mc-tutorial.db src/server/vm1/cyrus.db
