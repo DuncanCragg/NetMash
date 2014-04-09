@@ -100,6 +100,9 @@ editdynamicfile:
 editlocaldbanddynamicfile:
 	vi -o -N src/server/vm1/local.db src/server/vm1/guitest.db
 
+editide:
+	vi -o -N src/server/vm1/ideconfig.db src/server/vm2/ideconfig.db
+
 # -------------------------------------------------------------------
 
 androidemu: clean init setappemuconfig setemumapkey
@@ -134,9 +137,9 @@ reinstalllan: uninstalllan installlan
 
 # -------------------------------------------------------------------
 
-runlomc: kill clean           usemcdbs setvm1tstconfig run1
+runlomc: kill clean netconfig usemcdbs setvm1tstconfig run1
 
-runremc: kill clean           usemcdbs setvm1remconfig run1
+runremc: kill clean netconfig usemcdbs setvm1remconfig run1
 
 runall: kill clean netconfig usealldbs setvm3emuconfig run1n2
 
@@ -160,21 +163,21 @@ runcapw: kill clean netconfig usecapdb setvm2tstconfig run2
 
 runlap:  kill clean netconfig usecapdb setvm2lanconfig run2
 
-runtut: kill clean           usetutordb setvm1tstconfig run1
+runtut: kill clean netconfig usetutordb setvm1tstconfig run1
 
 runide: kill        ideconfig           setvm3tstconfig run1n2
 
-runmct: kill clean           usemctutdb setvm1tstconfig run1
+runmct: kill clean netconfig usemctutdb setvm1tstconfig run1
 
-runstt: kill clean           usestaticdb setvm1tstconfig run1
+runstt: kill clean netconfig usestaticdb setvm1tstconfig run1
 
-runsta: kill clean           usestaticdb setvm1emuconfig run1
+runsta: kill clean netconfig usestaticdb setvm1emuconfig run1
 
 runcur: kill clean curconfig usetestdb setvm3tstconfig run1n2
 
 runtst: kill clean tstconfig usetestdb setvm3tstconfig run1n2
 
-runone: kill clean           usetestdb setvm1tstconfig run1
+runone: kill clean netconfig usetestdb setvm1tstconfig run1
 
 runtwo: kill clean curconfig usetestdb setvm3emuconfig run1n2
 
