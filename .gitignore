@@ -8,7 +8,7 @@ netmash.keystore
 doc/local/
 src/server/vm?/local*.db
 src/server/vm?/cyrus.db
-src/server/vm2/cyrusconfig.db
+src/server/vm?/cyrusconfig.db
 src/server/vm?/snapshot.cyrus.db
 *.class
 *.log
