@@ -25,12 +25,6 @@ cytut: runtut
 ide: runide
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
 
-idecont: contide
-	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
-
-idemore: moreide
-	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
-
 mctut: runmct
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
 
@@ -168,11 +162,7 @@ runlap:  kill clean netconfig usecapdb setvm2lanconfig run2
 
 runtut: kill clean           usetutordb setvm1tstconfig run1
 
-runide: kill        netconfig useidedbs setvm3tstconfig run1n2
-
-moreide: kill       netconfig getidedbs setvm3tstconfig run1n2
-
-contide: kill       netconfig           setvm3tstconfig run1n2
+runide: kill        ideconfig           setvm3tstconfig run1n2
 
 runmct: kill clean           usemctutdb setvm1tstconfig run1
 
@@ -260,18 +250,6 @@ usetestdb:
 usetutordb:
 	cp src/server/vm1/tutorial.db src/server/vm1/cyrus.db
 
-useidedbs:
-	cp src/server/vm1/ide.db src/server/vm1/cyrus.db
-	cp src/server/vm2/ide.db src/server/vm2/cyrus.db
-
-saveidedbs:
-	cp src/server/vm1/cyrus.db src/server/vm1/ide-save.db
-	cp src/server/vm2/cyrus.db src/server/vm2/ide-save.db
-
-getidedbs:
-	cp src/server/vm1/ide-save.db src/server/vm1/cyrus.db
-	cp src/server/vm2/ide-save.db src/server/vm2/cyrus.db
-
 usemctutdb:
 	cp src/server/vm1/mc-tutorial.db src/server/vm1/cyrus.db
 
@@ -319,7 +297,7 @@ setvm3emuconfig: setvm1emuconfig setvm2emuconfig
 setvm3cleanconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/PiBeaconLight.java
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g"                   src/server/vm2/PiBeaconLight.java
 	sed -i"" -e  "s#position: $(LIGHT_POS)#position: 0 0 0#g" src/server/vm2/PiBeaconLight.java
 
 setvm1lanconfig:
@@ -335,9 +313,9 @@ setvm2lanconfig:
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrus.db
 
 setvm2iotconfig:
-	sed -i"" -e  "s#host: 10.0.2.2##g"                     src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s#preload: ( )#preload: PiBeaconLight#g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g"                   src/server/vm2/PiBeaconLight.java
+	sed -i"" -e  "s#host: localhost##g"                       src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s#preload: ( )#preload: PiBeaconLight#g"    src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s:localhost:$(LOCAL_IP):g"                  src/server/vm2/PiBeaconLight.java
 	sed -i"" -e  "s#position: 0 0 0#position: $(LIGHT_POS)#g" src/server/vm2/PiBeaconLight.java
 
 setvm3lanconfig: setvm1lanconfig setvm2lanconfig
@@ -375,15 +353,23 @@ setvm3remconfig:
 	sed -i"" -e  "s:10.0.2.2:the-cyrus.net:g" src/server/vm2/cyrus.db
 
 netconfig:
+	cp src/server/vm1/netconfig.db src/server/vm1/cyrusconfig.db
 	cp src/server/vm2/netconfig.db src/server/vm2/cyrusconfig.db
 
+ideconfig:
+	cp src/server/vm1/ideconfig.db src/server/vm1/cyrusconfig.db
+	cp src/server/vm2/ideconfig.db src/server/vm2/cyrusconfig.db
+
 omconfig:
-	cp src/server/vm2/omconfig.db src/server/vm2/cyrusconfig.db
+	cp src/server/vm1/netconfig.db src/server/vm1/cyrusconfig.db
+	cp src/server/vm2/omconfig.db  src/server/vm2/cyrusconfig.db
 
 curconfig:
+	cp src/server/vm1/netconfig.db src/server/vm1/cyrusconfig.db
 	cp src/server/vm2/curconfig.db src/server/vm2/cyrusconfig.db
 
 tstconfig:
+	cp src/server/vm1/netconfig.db src/server/vm1/cyrusconfig.db
 	cp src/server/vm2/allconfig.db src/server/vm2/cyrusconfig.db
 
 # -------------------------------------------------------------------
@@ -492,7 +478,7 @@ veryclean: kill clean setappemuconfig netconfig setvm3cleanconfig setemumapkey
 	-mv    src/server/vm1/cyrus.log doc/local/cyrus1.log
 	-mv    src/server/vm2/cyrus.log doc/local/cyrus2.log
 	rm -f  src/server/vm[12]/cyrus.db
-	rm -f  src/server/vm2/cyrusconfig.db
+	rm -f  src/server/vm[12]/cyrusconfig.db
 	rm -rf bin gen
 
 # -------------------------------------------------------------------

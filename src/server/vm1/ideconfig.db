@@ -1,13 +1,13 @@
-{ name: vm2
+{ name: vm1
   kernel: { threadpool: 33 }
   persist: { directory: .
-             db: cyrus.db
+             db: ide.db
              syncrate: 100
              preload: ( ) }
   network: { host: localhost
-             port: 8082
+             port: 8081
              pathprefix: /o/
-             cache-notify: c-n-0a3a-8cd3-d5c3-ed1c
+             cache-notify: c-n-14d5-99c5-da00-806a
              log: 2 }
   rules: { log: 2 }
 }

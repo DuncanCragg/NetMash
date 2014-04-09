@@ -2,7 +2,7 @@
   Rules: uid-a864-8e60-25c8-8289
   is: queryable license contact list
   title: "Restricted view of licenses"
-  source: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
+  source: http://localhost:8081/o/uid-b712-2250-dac0-a228.json
 }
 
 { UID: uid-a864-8e60-25c8-8289
@@ -12,7 +12,7 @@
   query2: # => @Alerted with-more {
     UID: new
     Rules: uid-f0c6-03a9-f469-a6ae uid-543d-4b14-428f-d6b4
-    target: http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
+    target: http://localhost:8081/o/uid-b712-2250-dac0-a228.json
     original-query: @..
   }
 }
@@ -21,7 +21,7 @@
   is: contact query rule
   when: "query updates, update self"
   match: => @original-query:match
-  Notifying: => @. with http://10.0.2.2:8081/o/uid-b712-2250-dac0-a228.json
+  Notifying: => @. with http://localhost:8081/o/uid-b712-2250-dac0-a228.json
 }
 
 { UID: uid-543d-4b14-428f-d6b4

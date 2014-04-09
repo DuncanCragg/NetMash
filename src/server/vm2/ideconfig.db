@@ -1,7 +1,7 @@
 { name: vm2
   kernel: { threadpool: 33 }
   persist: { directory: .
-             db: cyrus.db
+             db: ide.db
              syncrate: 100
              preload: ( ) }
   network: { host: localhost

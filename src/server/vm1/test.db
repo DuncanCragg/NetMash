@@ -104,9 +104,9 @@
   view: {
        #attending: "?(Attending /boolean/ )?"
        #event: { is: style direction: horizontal proportions: 75% }
-               Event: http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json
+               Event: uid-a205-babf-72a4-1272
   }
-  event: http://10.0.2.2:8081/o/uid-a205-babf-72a4-1272.json
+  event: uid-a205-babf-72a4-1272
 }
 
 { UID: uid-6db8-55e9-793e-e35c
