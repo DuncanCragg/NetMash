@@ -317,10 +317,8 @@ setvm2emuconfig:
 setvm3emuconfig: setvm1emuconfig setvm2emuconfig
 
 setvm3cleanconfig:
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e   "s:localhost:10.0.2.2:g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):10.0.2.2:g" src/server/vm2/PiBeaconLight.java
 	sed -i"" -e  "s#position: $(LIGHT_POS)#position: 0 0 0#g" src/server/vm2/PiBeaconLight.java
 
