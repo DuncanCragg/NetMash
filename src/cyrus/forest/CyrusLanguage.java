@@ -352,6 +352,7 @@ public class CyrusLanguage extends WebObject {
         if(v.equals("#")) return !contentSet(pk);
         if(contentIs(pk,v)) return true;
         if(contentIsMayJump(pk,v)) return true;
+        if(contentIsThisUID(pk,v)) return true;
         if(v.equals("@") && contentIsThis(pk)) return true;
         if(v.equals("number") && isNumber(contentObject(pk))) return true;
         if(v.equals("boolean") && isBoolean(contentObject(pk))) return true;

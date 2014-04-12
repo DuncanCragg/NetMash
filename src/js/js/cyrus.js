@@ -140,6 +140,7 @@ function JSON2HTML(url){
             }
             if(json.constructor!==Object) return '<div><div>Not an object!</div><div>'+'<a href="'+url+'">'+url+'</a></div><div>'+json+'</div></div>';
             if(raw)                             return this.getCyrusTextHTML(url,json,closed,true);
+            if(this.isA('rule',    json))       return this.getCyrusTextHTML(url,json,closed,true);
             if(this.isA('gui',     json))       return this.getGUIHTML(url,json,closed);
             if(this.isA('contact', json))       return this.getContactHTML(url,json,closed);
             if(this.isA('land',    json) &&
@@ -648,13 +649,11 @@ function JSON2HTML(url){
             rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<div class="product">');
-            if(json.title        !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
-            if(json.description  !== undefined) rows.push('<div class="info-item">'+this.getAnyHTML(json.description)+'</div>');
-            if(json['requires']  !== undefined) rows.push('<div class="info-item">Information Required: '+this.getAnyHTML(json['requires'])+'</div>');
-            if(json['loan-amount']  !== undefined) rows.push('<div class="info-item">Loan Amount: '+this.getAnyHTML(json['loan-amount'])+'</div>');
-            if(json['application-closing-date']  !== undefined) rows.push('<div class="info-item">Application Closing Date: '+this.getAnyHTML(json['application-closing-date'])+'</div>');
-            if(json.eligibility  !== undefined) rows.push('<div class="info-item">Eligibility: '+this.getAnyHTML(toString(json.eligibility))+'</div>');
+            if(json.title       !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
+            if(json.description !== undefined) rows.push('<div class="info-item">'+this.getAnyHTML(json.description)+'</div>');
+            if(json.eligibility !== undefined) rows.push('<div class="info-item">Eligibility: '+this.getAnyHTML(toString(json.eligibility))+'</div>');
                  // eligibility: { age: 18..  nationality: UK | "Other European" }
+            if(json.requires    !== undefined) rows.push('<div class="info-item">Information Required: '+this.getAnyHTML(json.requires)+'</div>');
             rows.push('<table class="grid">');
             this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
             this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json,'order-template','view'),json['options']),rows);
@@ -801,8 +800,8 @@ function JSON2HTML(url){
             var nobrackets=tagdelim && (o.length!=1 || (o[0].constructor===Array && o[0].length!=1));
             var r=nobrackets? '': '(';
             for(var x in o){ r+=this.toCyrusObject(o[x],i)+' '; }
-            if(r.length>100 && r.indexOf('\n')== -1) r='\n'+this.indent(i+2)+r.replace(' ','\n'+this.indent(i+2));
-            else r=r.trim();
+            r=r.trim();
+            if(r.length>100 && r.indexOf('\n')== -1) r='\n'+this.indent(i+2)+r.replace(/\ /g,'\n'+this.indent(i+2));
             return r+(nobrackets? '': ')');
         },
         indent: function(i){
