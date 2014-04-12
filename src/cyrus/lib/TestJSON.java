@@ -74,14 +74,14 @@ public class TestJSON {
 
         {
 
-        JSON m = new JSON(new File("./src/server/vm1/cyrusconfig.db"),true);
+        JSON m = new JSON(new File("./src/server/vm1/netconfig.db"),true);
         System.out.println(m);
 
         int port = m.intPath("network:port");
         assert port==8081: "network:port should be 8081, but it's "+port;
 
-        boolean log = m.boolPath("network:log");
-        assert log: "network:log should be true, but it's false";
+        Boolean log = m.boolPath("network:log");
+        assert log==null: "network:log should be null, but it's not";
 
         int threadpool = m.intPath("kernel:threadpool");
         assert threadpool == 33: "kernel:threadpool should be 33, but it's "+ threadpool;
@@ -220,7 +220,7 @@ public class TestJSON {
             "          a: -2147483649\n"+
             "          b: 2147483648 \"d:\"\n"+
             "          c: \n"+
-            "            ( -2147483648 2147483647 \"y:\" a:b 1 )\n"+
+            "            ( -2147483648 2147483647 \"y:\" a:b 1.000 )\n"+
             "            x\n"+
             "        }\n"+
             "        false\n"+
@@ -243,7 +243,7 @@ public class TestJSON {
         assert funky.equals(funkycharsout): "funky should be [\"quote\" 'quote' \\\"/\\b\\f\\n\\r\\t\\\\\\\"\u00a3\u00a3], but it's ["+JSON.replaceEscapableChars(funky)+"]";
 
         String portstr = m.stringPath("modules:http:port");
-        assert portstr==null: "port should be null, but it's "+portstr;
+        assert "8080".equals(portstr): "port should be 8080, but it's "+portstr;
 
         int port = m.intPath("modules:0:http:port:0");
         assert port==8080: "port should be 8080, but it's "+port;

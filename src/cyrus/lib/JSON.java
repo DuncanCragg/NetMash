@@ -232,10 +232,9 @@ public class JSON {
 
     //----------------------------------
 
-    /** Get boolean at the given path.
-      * Returns false if not boolean!
+    /** Get Boolean at the given path.
       */
-    public boolean boolPath(String path) throws PathOvershot{
+    public Boolean boolPath(String path) throws PathOvershot{
         ensureContent();
         return getBoolPath(tophash, path);
     }
