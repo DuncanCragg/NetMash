@@ -1,0 +1,35 @@
+{ UID: uid-fbdc-b069-e5b0-2df9
+  Version: 90599
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable study-finance assessment
+  case-number: 2222
+  products: {
+    product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+    contact: http://localhost:8081/o/uid-1975-15a2-3d64-0fc9.json
+    passport: http://localhost:8081/o/uid-3c83-a59f-ccd1-3b6a.json
+    course-of-study: { name: "Advanced English for Brits" }
+    year-of-study: 2014
+  }
+  application: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
+  created: 2014-03-18T13:38:59.556Z
+  status:
+    in-progress
+    { passport: ok fee: to-pay }
+  study-finance: { university-course-ref: adf923 application-reference: DYQUGDQQ loan-number: N/A }
+}
+
+{ UID: uid-a4e1-3ab9-be73-f985
+  Version: 63088
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable coffee product
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  title: Espresso
+  description: "A shot of pure coffee"
+  options: shots ristretto
+  requires: payment
+  order-template: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json
+  coffee: { price-text: "£1.50 single £2.50 double" }
+}
+

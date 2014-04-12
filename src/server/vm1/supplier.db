@@ -1,0 +1,367 @@
+{ UID: uid-effd-6dad-dac9-c520
+  Version: 14616
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable gui
+  title: "Application for Finance; Passport Details"
+  view: {
+    nationality: {
+      input: chooser
+      label: Nationality
+      range: { UK: UK US: US EU: "Other European" }
+    }
+    passport-number: { input: textfield label: "Passport Number" }
+    expiry-date: { input: textfield label: Expires }
+    biometric: { input: checkbox label: "Is Biometric?" }
+  }
+}
+
+{ UID: uid-ccb8-43de-df47-29da
+  Version: 40394
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable gui
+  title: Render
+  view:
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+      }
+      { view: open item: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+      }
+      { view: open item: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: uid-0542-777b-20be-5b5c
+      }
+      { view: open item: uid-0542-777b-20be-5b5c }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+      }
+      { view: open item: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+      }
+      { view: open item: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-329e-78ae-c94e-17bf.json
+      }
+      { view: open item: http://localhost:8081/o/uid-329e-78ae-c94e-17bf.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-effd-6dad-dac9-c520.json
+      }
+      { view: open item: http://localhost:8081/o/uid-effd-6dad-dac9-c520.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-1975-15a2-3d64-0fc9.json
+      }
+      { view: open item: http://localhost:8081/o/uid-1975-15a2-3d64-0fc9.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-3c83-a59f-ccd1-3b6a.json
+      }
+      { view: open item: http://localhost:8081/o/uid-3c83-a59f-ccd1-3b6a.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
+      }
+      { view: open item: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json
+      }
+      { view: open item: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json }
+    )
+  Rules:
+    {
+      is: gui rule
+      view:
+        newob
+        =>
+        (
+          { is: style direction: horizontal }
+          {
+            view: open raw
+            item: {
+              UID: new
+              is: editable gui
+              view: Hiyaaa
+            }
+          }
+          { view: open item: xxx }
+        )
+    }
+    {
+      is: gui rule
+      view: (
+          {
+            view: open raw
+            item: uid
+          }
+          {
+            view: open
+            item: xxx => @=view:1:item
+          }
+        )
+    }
+}
+
+{ UID: uid-68cb-7109-aa35-bda6
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-db59-ba1f-cdbe-34af
+  Class: cyrus.forest.WebObject
+  is: form
+  gui: http://localhost:8081/o/uid-1f81-c426-8ee5-67ae.json
+  user: ""
+  form: { name: adfadsf institution: UCL year-of-study: 2014 }
+}
+
+{ UID: uid-1f81-c426-8ee5-67ae
+  Version: 15385
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable gui
+  view: {
+    name: { input: textfield label: "Course Title" }
+    institution: {
+      input: chooser
+      label: "Institution, University"
+      range: { UCL: UCL ICL: Imperial }
+    }
+    year-of-study: {
+      input: chooser
+      label: "Year of Study"
+      range: { 2014: 2014 2015: 2015 }
+    }
+  }
+}
+
+{ UID: uid-28a2-d3b1-4aea-86e8
+  Version: 35506
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable coffee shop supplier
+  title: "Coffee Ar Us"
+  Rules: {
+    is: supplier rule
+    Alerted: { is: order }
+    last-order: => @Alerted
+  }
+  products: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+  last-order: uid-730e-359f-2a30-a71e
+}
+
+{ UID: uid-3c83-a59f-ccd1-3b6a
+  Version: 22353
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable passport document
+  nationality: British
+  number: 765432
+  expiry-date: 2019-08-09
+  type: biometric
+  within: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
+}
+
+{ UID: uid-4326-fef5-2342-ef05
+  Version: 46069
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable finance application
+  title: "Application form, order for finance"
+  products: {
+    product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+    contact: http://localhost:8081/o/uid-1975-15a2-3d64-0fc9.json
+    passport: http://localhost:8081/o/uid-3c83-a59f-ccd1-3b6a.json
+    course-of-study: { name: "Advanced English" institution: UCL }
+    year-of-study: 2014
+  }
+  assessment: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json
+}
+
+{ UID: uid-295d-f714-9a6b-42d6
+  Version: 77084
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable study-finance product
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  title: "Loan to Study the Arts in Southern England"
+  description: "Study a lot of Shakespeare with this loan"
+  eligibility: {
+    age: 18..
+    nationality: UK | "Other European"
+  }
+  requires: contact passport payment
+  options: course-of-study year-of-study
+  study-finance: { loan-amount: £8300 application-closing-date: 12/7/2014 }
+  order-template: http://localhost:8081/o/uid-329e-78ae-c94e-17bf.json
+}
+
+{ UID: uid-7a34-bcaf-88d5-b63e
+  Version: 52366
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: gui
+  title: "Cyrus Development"
+  view:
+    { is: style direction: horizontal }
+    {
+      view: open raw
+      item: uid-ccb8-43de-df47-29da
+    }
+    { view: open item: uid-ccb8-43de-df47-29da }
+}
+
+{ UID: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json
+  Version: 90599
+  Max-Age: 0
+  Cache-Notify: http://localhost:8082/o/c-n-0a3a-8cd3-d5c3-ed1c
+  Class: cyrus.forest.WebObject
+  is: editable study-finance assessment
+  case-number: 2222
+  products: {
+    product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+    contact: http://localhost:8081/o/uid-1975-15a2-3d64-0fc9.json
+    passport: http://localhost:8081/o/uid-3c83-a59f-ccd1-3b6a.json
+    course-of-study: { name: "Advanced English for Brits" }
+    year-of-study: 2014
+  }
+  application: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
+  created: 2014-03-18T13:38:59.556Z
+  status:
+    in-progress
+    { passport: ok fee: to-pay }
+  study-finance: { university-course-ref: adf923 application-reference: DYQUGDQQ loan-number: N/A }
+}
+
+{ UID: uid-b280-0fea-7cc7-e0a3
+  Version: 55701
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable study-finance supplier
+  title: "Loans for Study"
+  products: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+}
+
+{ UID: uid-329e-78ae-c94e-17bf
+  Version: 49463
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable gui
+  contact: name birthday gender email
+  passport: nationality number expiry-date type
+  view: {
+    course-of-study: {
+      name: { input: textfield label: "Course Title" }
+      institution: {
+        input: chooser
+        label: "Institution, University"
+        range: { UCL: UCL ICL: Imperial }
+      }
+    }
+    year-of-study: {
+      input: chooser
+      label: "Year of Study"
+      range: { 2014: 2014 2015: 2015 }
+    }
+  }
+}
+
+{ UID: uid-730e-359f-2a30-a71e
+  Version: 2
+  Max-Age: 0
+  Cache-Notify: c-n-db59-ba1f-cdbe-34af
+  Class: cyrus.forest.WebObject
+  is: order
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  user: ""
+  products: {
+    product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+    quantity: 2
+    shots: 3
+    ristretto: true
+  }
+}
+
+{ UID: uid-1975-15a2-3d64-0fc9
+  Version: 62448
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable contact
+  name: { given: Stew family: Dent }
+  birthday: 1984-08-12
+  gender: M
+  email: stewart.dent@gmail.com
+  within: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
+}
+
+{ UID: uid-0542-777b-20be-5b5c
+  Version: 41159
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable gui
+  view: {
+    shots: {
+      input: textfield
+      label: Shots
+      range: 1 .. 5
+    }
+    ristretto: { input: checkbox label: Ristretto }
+  }
+}
+
+{ UID: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+  Version: 63088
+  Max-Age: 0
+  Cache-Notify: http://localhost:8082/o/c-n-0a3a-8cd3-d5c3-ed1c
+  Class: cyrus.forest.WebObject
+  is: editable coffee product
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  title: Espresso
+  description: "A shot of pure coffee"
+  options: shots ristretto
+  requires: payment
+  order-template: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json
+  coffee: { price-text: "£1.50 single £2.50 double" }
+}
+
