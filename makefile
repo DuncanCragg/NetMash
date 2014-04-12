@@ -165,7 +165,7 @@ runlap:  kill clean netconfig usecapdb setvm2lanconfig run2
 
 runtut: kill clean netconfig usetutordb setvm1tstconfig run1
 
-runide: kill        ideconfig           setvm3tstconfig run1n2
+runide: kill        ideconfig                           run1n2
 
 runmct: kill clean netconfig usemctutdb setvm1tstconfig run1
 

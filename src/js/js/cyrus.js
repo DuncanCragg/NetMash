@@ -143,6 +143,8 @@ function JSON2HTML(url){
             if(this.isA('article', json))       return this.getArticleHTML(url,json,closed);
             if(this.isA('chapter', json))       return this.getArticleHTML(url,json,closed);
             if(this.isA('list',    json))       return this.getPlainListHTML(url,json,closed);
+            if(this.isA('supplier',json))       return this.getSupplierHTML(url,json,closed);
+            if(this.isA('product', json))       return this.getProductHTML(url,json,closed);
             if(this.isA('contact', json, true)) return this.getContactListHTML(url,json,closed);
             if(this.isA('article', json, true)) return this.getDocumentListHTML(url,json,closed);
             if(this.isA('document',json, true)) return this.getDocumentListHTML(url,json,closed);
@@ -335,8 +337,8 @@ function JSON2HTML(url){
             if(json.end       !== undefined) rows.push('<div class="info-item">Until: '+this.getDateSpan('dtend',   json.end)  +'</div>');
             if(json.list      !== undefined) rows.push(this.getObjectListHTML('Sub-Events', 'sub-event', json.list, true));
             if(json.location  !== undefined) rows.push(this.getEventLocationHTML(json.location, true));
-            if(json.attendees !== undefined) rows.push(this.getObjectListHTML('Attendees:', 'attendee', json.attendees, true));
-            if(json.reviews   !== undefined) rows.push(this.getObjectListHTML('Reviews:', 'review', json.reviews, true));
+            if(json.attendees !== undefined) rows.push(this.getObjectListHTML('Attendees', 'attendee', json.attendees, true));
+            if(json.reviews   !== undefined) rows.push(this.getObjectListHTML('Reviews', 'review', json.reviews, true));
             if(json.More      !== undefined) rows.push(this.getObjectListHTML('More', 'more', json.More, true));
             if(this.isA('attendable', json)){
                 rows.push('<form class="rsvp-form">');
@@ -544,7 +546,7 @@ function JSON2HTML(url){
             if(json.published    !== undefined) rows.push('<div class="info-item">Published: '+this.getDateSpan('published', json.published)+'</div>');
             if(json['web-view']  !== undefined) rows.push('<div class="info-item">Website: '+this.getAnyHTML(json['web-view'])+'</div>');
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, false)+'</div>');
-            if(json.authors      !== undefined) rows.push(this.getObjectListHTML('Authors:', 'author', json.authors, true));
+            if(json.authors      !== undefined) rows.push(this.getObjectListHTML('Authors', 'author', json.authors, true));
             rows.push('</div><div class="document right">');
             if(json.text         !== undefined) rows.push('<div class="text">'+this.getAnyHTML(json.text)+'</div>');
             if(json.More         !== undefined) rows.push(this.getObjectListHTML('More', 'more', json.More, true));
@@ -623,6 +625,35 @@ function JSON2HTML(url){
                    '  <img class="media-img" src="'+json.url+'" />\n'+
                    '  <div class="media-text"><p>\n'+this.markupString2HTML(json.text)+'</p>\n</div>\n'+
                    ' </div>\n';
+        },
+        // ------------------------------------------------
+        getSupplierHTML: function(url,json,closed){
+            var rows=[];
+            rows.push(this.getObjectHeadHTML(this.getTitle(json,'Contacts'), url, false, closed));
+            rows.push('<div class="supplier">');
+            if(json.products !== undefined) rows.push(this.getObjectListHTML('Products', 'product', json.products, true));
+            rows.push('</div></div>');
+            return rows.join('\n')+'\n';
+        },
+        getProductHTML: function(url,json,closed){
+            var rows=[];
+            rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
+            rows.push('<div class="product">');
+            if(json.title        !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
+            if(json.description  !== undefined) rows.push('<div class="info-item">'+this.getAnyHTML(json.description)+'</div>');
+            if(json['options']  !== undefined) rows.push('<div class="info-item">Options: '+this.getAnyHTML(json['options'])+'</div>');
+            if(json['requires']  !== undefined) rows.push('<div class="info-item">Information Required: '+this.getAnyHTML(json['requires'])+'</div>');
+            if(json['loan-amount']  !== undefined) rows.push('<div class="info-item">Loan Amount: '+this.getAnyHTML(json['loan-amount'])+'</div>');
+            if(json['application-closing-date']  !== undefined) rows.push('<div class="info-item">Application Closing Date: '+this.getAnyHTML(json['application-closing-date'])+'</div>');
+            if(json.eligibility  !== undefined) rows.push('<div class="info-item">Eligibility: '+this.getAnyHTML(toString(json.eligibility))+'</div>');
+/*
+  eligibility: {
+    age: 18..
+    nationality: UK | "Other European"
+  }
+*/
+            rows.push('</div></div>');
+            return rows.join('\n')+'\n';
         },
         // ------------------------------------------------
         markupString2HTML: function(text){
@@ -1326,9 +1357,9 @@ function fourHex(){
 
 function toString(o){
     var r='';
-    if(o.constructor===Array)  for(var i in o) r+=o[i]+', ';
+    if(o.constructor===Array)  for(var i in o) r+=toString(o[i])+' ';
     else
-    if(o.constructor===Object) for(var i in o) r+=i+': '+o[i]+', ';
+    if(o.constructor===Object) for(var i in o) r+=i+': '+toString(o[i])+'  ';
     else r=o;
     return r;
 }

@@ -118,11 +118,12 @@ a {
 }
 
 h2, h3 {
-    margin: 8px 0px 3px 3px;
+    margin: 8px 0px 3px 6px;
+    font-weight: normal;
 }
 
 ul {
-    margin: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 5px;
     padding: 0px;
     border: 1px solid #ddf;
 }
@@ -147,6 +148,7 @@ select.chooser{
     padding: 3px;
     font-size: 1.0em;
     width: 100%;
+    margin-top: 5pt;
 }
 
 input.textfield{
@@ -182,7 +184,7 @@ input.text{
 
 input.button, input.submit{
     font-size: 1em;
-    margin: 0 0 7pt 5pt;
+    margin: 5pt 0 7pt 5pt;
     width: 95%;
     height: 2.5em;
 }
@@ -261,7 +263,7 @@ body{
     overflow: auto;
 }
 
-div.vcard, div.vevent, div.document, div.plain-list, div.document-list {
+div.vcard, div.vevent, div.document, div.plain-list, div.document-list, div.supplier, div.product {
     padding: 4pt 4pt;
 }
 
@@ -290,6 +292,14 @@ div.document{
 
 div.document-list{
     background-color: #fff7f7;
+}
+
+div.supplier{
+    background-color: #fff3f3;
+}
+
+div.product{
+    background-color: #fffafa;
 }
 
 div.plain-list{
