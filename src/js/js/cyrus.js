@@ -801,8 +801,9 @@ function JSON2HTML(url){
             var nobrackets=tagdelim && (o.length!=1 || (o[0].constructor===Array && o[0].length!=1));
             var r=nobrackets? '': '(';
             for(var x in o){ r+=this.toCyrusObject(o[x],i)+' '; }
-            r=r.trim()+(nobrackets? '': ')');
-            return r;
+            if(r.length>100 && r.indexOf('\n')== -1) r='\n'+this.indent(i+2)+r.replace(' ','\n'+this.indent(i+2));
+            else r=r.trim();
+            return r+(nobrackets? '': ')');
         },
         indent: function(i){
             return '                                                            '.substring(0,i);
