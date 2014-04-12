@@ -644,6 +644,9 @@ function JSON2HTML(url){
         getProductHTML: function(url,json,closed){
             var rows=[];
             rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
+            rows.push('<form class="product-form">');
+            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<div class="product">');
             if(json.title        !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
             if(json.description  !== undefined) rows.push('<div class="info-item">'+this.getAnyHTML(json.description)+'</div>');
@@ -656,11 +659,14 @@ function JSON2HTML(url){
             this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
             this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json,'order-template','view'),json['options']),rows);
             rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Place Order" />');
+            rows.push('</form>');
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
         pickOutParameters: function(view,options){
             if(!view) return null;
+            if(!options) return null;
             viewless={};
             for(option in view) if(options.indexOf(option)!= -1) viewless[option]=view[option];
             return viewless;
@@ -985,6 +991,19 @@ function Cyrus(){
                 var targetURL=$(this).find('.form-target').val();
                 var uidver=me.getUIDandVer(targetURL);
                 var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "",\n  "form": {\n   ';
+                var fields = [];
+                me.getFormFields($(this),fields);
+                json+=fields.join(',\n   ');
+                json+='\n }\n}';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
+            $('.product-form').unbind().submit(function(e){
+                lockURL=null;
+                var targetURL=$(this).find('.order-target').val();
+                var prodURL  =$(this).find('.order-product').val();
+                var uidver=me.getUIDandVer(targetURL);
+                var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+targetURL+'",\n  "user": "",\n  "products": {\n   "product": "'+prodURL+'",';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n   ');
