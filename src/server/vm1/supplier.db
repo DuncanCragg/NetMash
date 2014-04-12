@@ -22,7 +22,7 @@
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
   title: Render
-  view:
+  view: 
     (
       { is: style direction: horizontal }
       {
@@ -111,10 +111,10 @@
       }
       { view: open item: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json }
     )
-  Rules:
+  Rules: 
     {
       is: gui rule
-      view:
+      view: 
         newob
         =>
         (
@@ -176,19 +176,42 @@
   }
 }
 
+{ UID: uid-1179-e111-5f88-e7a5
+  Version: 31288
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: coffee order-tracker
+  Rules: uid-edbf-edcc-f4a2-8b6c
+  order: uid-730e-359f-2a30-a71e
+  price: £10
+  status: waiting
+  products: {
+    product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+    quantity: 3
+    shots: 3
+    ristretto: false
+  }
+}
+
+{ UID: uid-edbf-edcc-f4a2-8b6c
+  Version: 10410
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  products: # => @order:products
+  within: => #
+  Notifying: => @. with @order
+}
+
 { UID: uid-28a2-d3b1-4aea-86e8
-  Version: 35506
+  Version: 35523
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee shop supplier
   title: "Coffee Ar Us"
-  Rules: {
-    is: supplier rule
-    Alerted: { is: order }
-    last-order: => @Alerted
-  }
+  Rules: http://localhost:8081/o/uid-cfa2-3a18-d548-e7b4.json
   products: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-  last-order: uid-730e-359f-2a30-a71e
+  trackers: ( uid-1179-e111-5f88-e7a5 )
 }
 
 { UID: uid-3c83-a59f-ccd1-3b6a
@@ -252,6 +275,23 @@
     { view: open item: uid-ccb8-43de-df47-29da }
 }
 
+{ UID: uid-d4c5-7649-fc69-5a8e
+  Version: 2
+  Max-Age: 0
+  Cache-Notify: c-n-db59-ba1f-cdbe-34af
+  Class: cyrus.forest.WebObject
+  is: order
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: ""
+  products: {
+    product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+    quantity: 1
+    name: Things
+    institution: UCL
+    year-of-study: 2015
+  }
+}
+
 { UID: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json
   Version: 90599
   Max-Age: 0
@@ -268,19 +308,25 @@
   }
   application: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
   created: 2014-03-18T13:38:59.556Z
-  status:
+  status: 
     in-progress
     { passport: ok fee: to-pay }
   study-finance: { university-course-ref: adf923 application-reference: DYQUGDQQ loan-number: N/A }
 }
 
 { UID: uid-b280-0fea-7cc7-e0a3
-  Version: 55701
+  Version: 55703
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable study-finance supplier
+  Rules: {
+    is: supplier rule
+    Alerted: { is: order }
+    last-order: => @Alerted
+  }
   title: "Loans for Study"
   products: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  last-order: uid-d4c5-7649-fc69-5a8e
 }
 
 { UID: uid-329e-78ae-c94e-17bf
@@ -308,7 +354,7 @@
 }
 
 { UID: uid-730e-359f-2a30-a71e
-  Version: 2
+  Version: 28
   Max-Age: 0
   Cache-Notify: c-n-db59-ba1f-cdbe-34af
   Class: cyrus.forest.WebObject
@@ -317,22 +363,32 @@
   user: ""
   products: {
     product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-    quantity: 2
-    shots: 3
+    quantity: ""
+    shots: ""
     ristretto: true
   }
 }
 
-{ UID: uid-1975-15a2-3d64-0fc9
-  Version: 62448
+{ UID: uid-cfa2-3a18-d548-e7b4
+  Version: 20941
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
-  is: editable contact
-  name: { given: Stew family: Dent }
-  birthday: 1984-08-12
-  gender: M
-  email: stewart.dent@gmail.com
-  within: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
+  is: editable coffee shop supplier rule
+  Alerted: { is: order supplier: @ }
+  trackers: 
+    not
+    { order: @Alerted }
+    =>
+    @.
+    with
+    {
+      UID: new
+      is: coffee order-tracker
+      Rules: uid-edbf-edcc-f4a2-8b6c
+      order: @Alerted
+      price: £10
+      status: waiting
+    }
 }
 
 { UID: uid-0542-777b-20be-5b5c
@@ -348,6 +404,18 @@
     }
     ristretto: { input: checkbox label: Ristretto }
   }
+}
+
+{ UID: uid-1975-15a2-3d64-0fc9
+  Version: 62448
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable contact
+  name: { given: Stew family: Dent }
+  birthday: 1984-08-12
+  gender: M
+  email: stewart.dent@gmail.com
+  within: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
 }
 
 { UID: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json

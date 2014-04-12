@@ -13,7 +13,7 @@
   }
   application: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
   created: 2014-03-18T13:38:59.556Z
-  status:
+  status: 
     in-progress
     { passport: ok fee: to-pay }
   study-finance: { university-course-ref: adf923 application-reference: DYQUGDQQ loan-number: N/A }

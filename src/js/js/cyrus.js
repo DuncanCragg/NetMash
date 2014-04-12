@@ -1003,7 +1003,7 @@ function Cyrus(){
                 var targetURL=$(this).find('.order-target').val();
                 var prodURL  =$(this).find('.order-product').val();
                 var uidver=me.getUIDandVer(targetURL);
-                var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+targetURL+'",\n  "user": "",\n  "products": {\n   "product": "'+prodURL+'",';
+                var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+targetURL+'",\n  "user": "",\n  "products": {\n   "product": "'+prodURL+'",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n   ');
