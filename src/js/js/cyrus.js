@@ -998,7 +998,7 @@ function Cyrus(){
                 network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                 e.preventDefault();
             });
-            $('.product-form').unbind().submit(function(e){
+            $('.product-form').unbind().submit(function(e){ //
                 lockURL=null;
                 var targetURL=$(this).find('.order-target').val();
                 var prodURL  =$(this).find('.order-product').val();
