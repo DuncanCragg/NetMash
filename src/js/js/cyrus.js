@@ -8,13 +8,16 @@ function Network(){
     var cacheNotify = null;
 
     var me = {
+        getJSON: function(url){
+          var objstr = localStorage.getItem('objects:'+getUID(url));
+          if(objstr) return JSON.parse(objstr);
+          return null;
+        },
         getJSON: function(url,creds,ok,err){
             var isCN=url.indexOf('/c-n-')!= -1;
-            var obj=null;
-        /*  var objstr = localStorage.getItem('objects:'+getUID(url));
-            if(objstr) obj=JSON.parse(objstr); */
+            var obj=null; // this.getJSON(url);
             if(obj){
-                ok(obj,'from-cache',null);
+                ok(url,JSON.parse(obj),'from-cache',null);
             }else{
                 if(me.isGetting(true,url,isCN)) return;
                 var headers = { 'Cache-Notify': me.getCacheNotify() };
@@ -43,9 +46,12 @@ function Network(){
                     headers: headers,
                     success: function(obj,s,x){
                         me.isGetting(false,url,isCN);
-                        if(isCN) url = x && x.getResponseHeader('Content-Location');
+                        if(isCN && x && x.getResponseHeader('Content-Location')) url = x.getResponseHeader('Content-Location');
                         var etag = x && x.getResponseHeader('ETag');
-                        if(url && etag) localStorage.setItem('versions:'+getUID(url), etag);
+                        if(url){ try{
+                         // if(obj)  localStorage.setItem('objects:'+getUID(url), toJSONString(obj));
+                            if(etag) localStorage.setItem('versions:'+getUID(url), etag);
+                        }catch(e){ if(e==QUOTA_EXCEEDED_ERR){ console.log('Local Storage quota exceeded'); }}}
                         ok(url,obj,s,x);
                     },
                     error: function(x,s,e){
@@ -641,19 +647,23 @@ function JSON2HTML(url){
             rows.push('<div class="product">');
             if(json.title        !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
             if(json.description  !== undefined) rows.push('<div class="info-item">'+this.getAnyHTML(json.description)+'</div>');
-            if(json['options']  !== undefined) rows.push('<div class="info-item">Options: '+this.getAnyHTML(json['options'])+'</div>');
             if(json['requires']  !== undefined) rows.push('<div class="info-item">Information Required: '+this.getAnyHTML(json['requires'])+'</div>');
             if(json['loan-amount']  !== undefined) rows.push('<div class="info-item">Loan Amount: '+this.getAnyHTML(json['loan-amount'])+'</div>');
             if(json['application-closing-date']  !== undefined) rows.push('<div class="info-item">Application Closing Date: '+this.getAnyHTML(json['application-closing-date'])+'</div>');
             if(json.eligibility  !== undefined) rows.push('<div class="info-item">Eligibility: '+this.getAnyHTML(toString(json.eligibility))+'</div>');
-/*
-  eligibility: {
-    age: 18..
-    nationality: UK | "Other European"
-  }
-*/
+                 // eligibility: { age: 18..  nationality: UK | "Other European" }
+            rows.push('<table class="grid">');
+            this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
+            this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json,'order-template','view'),json['options']),rows);
+            rows.push('</table>');
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
+        },
+        pickOutParameters: function(view,options){
+            if(!view) return null;
+            viewless={};
+            for(option in view) if(options.indexOf(option)!= -1) viewless[option]=view[option];
+            return viewless;
         },
         // ------------------------------------------------
         markupString2HTML: function(text){
@@ -695,6 +705,14 @@ function JSON2HTML(url){
                                             (icon? '<span class="icon">'+this.getAnyHTML(icon)+'</span>':'')+
                                                    '<span class="object-title">'+(title? title: '...')+'&nbsp;</span>'+
                    '</div>'+(!place? '<div class="object-body" '+(closed? 'style="display: none"':'')+'>': '');
+        },
+        getViaLinkRefactorMe: function(o,s,p){
+            var url=o[s];
+            if(!url) return null;
+            var str = localStorage.getItem('objects:'+getUID(url));
+            if(!str) return null;
+            var o1=JSON.parse(str);
+            return o1? o1[p]: null;
         },
         getViaLinksRefactorMe: function(o1,l){
             var s1=l[0];
