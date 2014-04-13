@@ -16,6 +16,16 @@
   }
 }
 
+{ UID: uid-9f27-f343-bd59-ec2d
+  Version: 81932
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  status: waiting
+  products: => @order:products
+  price: => @order:products:quantity * 3.60
+}
+
 { UID: uid-ccb8-43de-df47-29da
   Version: 40394
   Max-Age: 0
@@ -145,16 +155,6 @@
     }
 }
 
-{ UID: uid-9f27-f343-bd59-ec2d
-  Version: 81932
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable order-tracker rule
-  status: waiting
-  products: => @order:products
-  price: => @order:products:quantity * 3.60
-}
-
 { UID: uid-1f81-c426-8ee5-67ae
   Version: 15385
   Max-Age: 0
@@ -225,14 +225,14 @@
 }
 
 { UID: uid-28a2-d3b1-4aea-86e8
-  Version: 35589
+  Version: 35591
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee shop supplier
   title: "Coffee Ar Us"
   Rules: http://localhost:8081/o/uid-cfa2-3a18-d548-e7b4.json
   products: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-  trackers: http://localhost:8081/o/uid-4c27-faa8-f002-a845.json
+  trackers: ( uid-0abb-d436-0307-a7a7 )
 }
 
 { UID: uid-3c83-a59f-ccd1-3b6a
@@ -384,7 +384,7 @@
 }
 
 { UID: uid-730e-359f-2a30-a71e
-  Version: 152
+  Version: 161
   Max-Age: 0
   Cache-Notify: c-n-db59-ba1f-cdbe-34af
   Class: cyrus.forest.WebObject
@@ -393,10 +393,36 @@
   user: ""
   products: {
     product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-    quantity: 2
-    shots: 1
+    quantity: 1
     ristretto: true
   }
+}
+
+{ UID: uid-0542-777b-20be-5b5c
+  Version: 41159
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable gui
+  view: {
+    shots: {
+      input: textfield
+      label: Shots
+      range: 1 .. 5
+    }
+    ristretto: { input: checkbox label: Ristretto }
+  }
+}
+
+{ UID: uid-1975-15a2-3d64-0fc9
+  Version: 62448
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable contact
+  name: { given: Stew family: Dent }
+  birthday: 1984-08-12
+  gender: M
+  email: stewart.dent@gmail.com
+  within: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
 }
 
 { UID: uid-cfa2-3a18-d548-e7b4
@@ -424,33 +450,6 @@
     }
 }
 
-{ UID: uid-1975-15a2-3d64-0fc9
-  Version: 62448
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable contact
-  name: { given: Stew family: Dent }
-  birthday: 1984-08-12
-  gender: M
-  email: stewart.dent@gmail.com
-  within: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
-}
-
-{ UID: uid-0542-777b-20be-5b5c
-  Version: 41159
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable gui
-  view: {
-    shots: {
-      input: textfield
-      label: Shots
-      range: 1 .. 5
-    }
-    ristretto: { input: checkbox label: Ristretto }
-  }
-}
-
 { UID: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
   Version: 63088
   Max-Age: 0
@@ -464,5 +463,25 @@
   requires: payment
   order-template: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json
   coffee: { price-text: "£1.50 single £2.50 double" }
+}
+
+{ UID: uid-0abb-d436-0307-a7a7
+  Version: 51292
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable coffee order-tracker
+  Rules: 
+    http://localhost:8081/o/uid-edbf-edcc-f4a2-8b6c.json
+    http://localhost:8081/o/uid-9f27-f343-bd59-ec2d.json
+    http://localhost:8081/o/uid-9877-4ff3-e138-011c.json
+    uid-d7e7-2923-4f26-57f9
+  order: uid-730e-359f-2a30-a71e
+  status: filled
+  products: {
+    product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+    quantity: 1
+    ristretto: true
+  }
+  price: 3.6
 }
 
