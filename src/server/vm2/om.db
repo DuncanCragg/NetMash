@@ -188,13 +188,13 @@
   ea: { b: #  e: 4 } { c: uid  e: 5}
   pe: { b: d }
   pl: b d
-  ne: 2 3 ##
-  he: (3) (6) ##
+  ne: 2 3 # => 5
+  he: (3) (6) #
   pa: # => @pe with-more ( { a: @..:b } { e: f } )
   xx: #
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   bl: false => not @nowhere set
-  zp: 1 2 3 ##
+  zp: 1 2 3 #
   lu: { c: d qq: 20 20 30 } => @. with-more ({ qq: 30 40 } { qq: 50 20 })
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
   nl: ((a a a)(a a a)(a a a))((a a a)(a a a)(a a a))
@@ -217,6 +217,7 @@
   ff: # => { a: 200 b: 100 } @z:1:1 { a: 40 list: x y }
   fb: { **: fib ( > 2 ) => ( fib ( @.1 - 2 ) ) + ( fib ( @.1 - 1 ) ) }
   bl: true => not @rm set
+  ne: number #
   pa: { b: d a: d e: f}
   lu: { c: d qq: 20 20 30 40 50 }
   au: uid uid

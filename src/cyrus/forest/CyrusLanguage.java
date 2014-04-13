@@ -266,13 +266,13 @@ public class CyrusLanguage extends WebObject {
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        if(listsize==2 && list.get(1).equals("##")){
+        if(listsize==2 && list.get(1).equals("#")){
             boolean ok=scanType(list.get(0),path+":0")
                              && !contentSet(path+":1");
             if(ok && rhs!=null) rewrites.put(path,rhs);
             return ok;
         }
-        if("##".equals(list.get(listsize-1))){
+        if("#".equals(list.get(listsize-1))){
             LinkedList ll=contentList(path);
             boolean ok=(ll!=null && ll.size()==listsize-1) &&
                         scanList(new LinkedList(list.subList(0,listsize-1)),path,rhs);
