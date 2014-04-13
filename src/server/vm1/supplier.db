@@ -187,7 +187,7 @@
 }
 
 { UID: uid-4c27-faa8-f002-a845
-  Version: 30754
+  Version: 30780
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee order-tracker
@@ -195,7 +195,8 @@
     http://localhost:8081/o/uid-edbf-edcc-f4a2-8b6c.json
     http://localhost:8081/o/uid-9f27-f343-bd59-ec2d.json
     http://localhost:8081/o/uid-9877-4ff3-e138-011c.json
-  order: uid-730e-359f-2a30-a71e
+    http://localhost:8081/o/uid-d7e7-2923-4f26-57f9.json
+  order: http://localhost:8081/o/uid-730e-359f-2a30-a71e.json
   status: filled
   products: {
     product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
@@ -204,6 +205,23 @@
     ristretto: true
   }
   price: 7.2
+}
+
+{ UID: uid-d7e7-2923-4f26-57f9
+  Version: 64809
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  status: 
+    not
+    waiting
+    =>
+    if
+    ( @order:products == @products )
+    then
+    filled
+    else
+    ( filled not-as-ordered )
 }
 
 { UID: uid-28a2-d3b1-4aea-86e8
@@ -366,7 +384,7 @@
 }
 
 { UID: uid-730e-359f-2a30-a71e
-  Version: 136
+  Version: 152
   Max-Age: 0
   Cache-Notify: c-n-db59-ba1f-cdbe-34af
   Class: cyrus.forest.WebObject
@@ -375,14 +393,14 @@
   user: ""
   products: {
     product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-    quantity: ""
-    shots: ""
-    ristretto: false
+    quantity: 2
+    shots: 1
+    ristretto: true
   }
 }
 
 { UID: uid-cfa2-3a18-d548-e7b4
-  Version: 20951
+  Version: 20952
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee shop supplier rule
@@ -401,6 +419,7 @@
         http://localhost:8081/o/uid-edbf-edcc-f4a2-8b6c.json
         http://localhost:8081/o/uid-9f27-f343-bd59-ec2d.json
         http://localhost:8081/o/uid-9877-4ff3-e138-011c.json
+        uid-d7e7-2923-4f26-57f9
       order: @Alerted
     }
 }
