@@ -1136,7 +1136,7 @@ function Cyrus(){
                     if(i==lastButtonPressed) fields.push('"pushed": "'+idOrName+'"');
                 }
                 else
-                    fields.push('"'+idOrName+'": "'+$(i).val()+'"');
+                    if($(i).val()) fields.push('"'+idOrName+'": "'+$(i).val()+'"');
             });
         },
         getTopObject: function(url){
