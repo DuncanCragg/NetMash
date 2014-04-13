@@ -26,37 +26,28 @@
   price: => @order:products:quantity * 3.60
 }
 
+{ UID: uid-adf4-0bb3-b481-42a2
+  Version: 5
+  Max-Age: 0
+  Cache-Notify: c-n-db59-ba1f-cdbe-34af
+  Class: cyrus.forest.WebObject
+  is: contact
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-db59-ba1f-cdbe-34af
+  within: uid-d4c5-7649-fc69-5a8e
+  full-name: "Duncan Cragg"
+  birthday: 1-1-64
+  gender: M
+  email: duncan@cilux.org
+}
+
 { UID: uid-ccb8-43de-df47-29da
-  Version: 40394
+  Version: 40395
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
   title: Render
   view: 
-    (
-      { is: style direction: horizontal }
-      {
-        view: open raw
-        item: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
-      }
-      { view: open item: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json }
-    )
-    (
-      { is: style direction: horizontal }
-      {
-        view: open raw
-        item: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-      }
-      { view: open item: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json }
-    )
-    (
-      { is: style direction: horizontal }
-      {
-        view: open raw
-        item: uid-0542-777b-20be-5b5c
-      }
-      { view: open item: uid-0542-777b-20be-5b5c }
-    )
     (
       { is: style direction: horizontal }
       {
@@ -120,6 +111,30 @@
         item: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json
       }
       { view: open item: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+      }
+      { view: open item: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+      }
+      { view: open item: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json
+      }
+      { view: open item: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json }
     )
   Rules: 
     {
@@ -225,14 +240,34 @@
 }
 
 { UID: uid-28a2-d3b1-4aea-86e8
-  Version: 35591
+  Version: 35593
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee shop supplier
   title: "Coffee Ar Us"
   Rules: http://localhost:8081/o/uid-cfa2-3a18-d548-e7b4.json
   products: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-  trackers: ( uid-0abb-d436-0307-a7a7 )
+  trackers: ( uid-529d-4e36-a2df-c535 )
+}
+
+{ UID: uid-529d-4e36-a2df-c535
+  Version: 59870
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable coffee order-tracker
+  Rules: 
+    http://localhost:8081/o/uid-edbf-edcc-f4a2-8b6c.json
+    http://localhost:8081/o/uid-9f27-f343-bd59-ec2d.json
+    http://localhost:8081/o/uid-9877-4ff3-e138-011c.json
+    uid-d7e7-2923-4f26-57f9
+  order: uid-730e-359f-2a30-a71e
+  status: filled
+  products: {
+    product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+    quantity: 1
+    ristretto: false
+  }
+  price: 3.6
 }
 
 { UID: uid-3c83-a59f-ccd1-3b6a
@@ -248,11 +283,12 @@
 }
 
 { UID: uid-4326-fef5-2342-ef05
-  Version: 46069
+  Version: 46070
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable finance application
   title: "Application form, order for finance"
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
   products: {
     product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
     contact: http://localhost:8081/o/uid-1975-15a2-3d64-0fc9.json
@@ -263,8 +299,46 @@
   assessment: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json
 }
 
+{ UID: uid-ea76-91ce-b228-04db
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-db59-ba1f-cdbe-34af
+  Class: cyrus.forest.WebObject
+  is: passport
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-db59-ba1f-cdbe-34af
+  within: uid-d4c5-7649-fc69-5a8e
+  nationality: UK
+  number: sdfaf
+  expiry-date: 31231
+  type: biometric
+}
+
+{ UID: uid-7a6f-2f0d-e206-18cd
+  Version: 49530
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable supplier rule
+  when: "new contact received,  "
+  Alerted: { is: contact supplier: @ }
+  assessments: {
+    UID: @Alerted:within
+    contact: not @Alerted
+  }
+  fixup: => @=assessments
+}
+
+{ UID: uid-5754-bd80-998d-db05
+  Version: 66779
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable student-finance assessment
+  application: uid-d4c5-7649-fc69-5a8e
+  within: uid-b280-0fea-7cc7-e0a3
+}
+
 { UID: uid-295d-f714-9a6b-42d6
-  Version: 77084
+  Version: 77099
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable study-finance product
@@ -275,9 +349,14 @@
     age: 18..
     nationality: UK | "Other European"
   }
-  requires: contact passport payment
-  options: course-of-study year-of-study
   study-finance: { loan-amount: £8300 application-closing-date: 12/7/2014 }
+  options: course-of-study year-of-study
+  requires: {
+    contact: full-name birthday gender email
+    passport: nationality number expiry-date type
+    funky: arks-this arks-that
+    payment: credit-card-number
+  }
   order-template: http://localhost:8081/o/uid-329e-78ae-c94e-17bf.json
 }
 
@@ -287,7 +366,7 @@
   Class: cyrus.forest.CyrusLanguage
   is: gui
   title: "Cyrus Development"
-  view:
+  view: 
     { is: style direction: horizontal }
     {
       view: open raw
@@ -297,19 +376,19 @@
 }
 
 { UID: uid-d4c5-7649-fc69-5a8e
-  Version: 2
+  Version: 18
   Max-Age: 0
   Cache-Notify: c-n-db59-ba1f-cdbe-34af
   Class: cyrus.forest.WebObject
   is: order
   supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
-  user: ""
+  user: uid-db59-ba1f-cdbe-34af
   products: {
     product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-    quantity: 1
-    name: Things
+    quantity: 2
+    name: asss
     institution: UCL
-    year-of-study: 2015
+    year-of-study: 2014
   }
 }
 
@@ -335,6 +414,26 @@
   study-finance: { university-course-ref: adf923 application-reference: DYQUGDQQ loan-number: N/A }
 }
 
+{ UID: uid-55cf-3a97-3896-8527
+  Version: 99534
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable supplier rule
+  when: "new application received, add tracker for it"
+  Alerted: { is: order supplier: @ }
+  assessments: 
+    not
+    { application: @Alerted }
+    =>
+    @.
+    with
+    {
+      UID: new
+      is: editable student-finance assessment
+      application: @Alerted
+    }
+}
+
 { UID: uid-9877-4ff3-e138-011c
   Version: 67845
   Max-Age: 0
@@ -345,28 +444,28 @@
 }
 
 { UID: uid-b280-0fea-7cc7-e0a3
-  Version: 55703
+  Version: 55706
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable study-finance supplier
-  Rules: {
-    is: supplier rule
-    Alerted: { is: order }
-    last-order: => @Alerted
-  }
+  Rules: 
+    http://localhost:8081/o/uid-55cf-3a97-3896-8527.json
+    uid-7a6f-2f0d-e206-18cd
   title: "Loans for Study"
   products: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  last-order: uid-d4c5-7649-fc69-5a8e
+  assessments: (
+    http://localhost:8081/o/uid-5754-bd80-998d-db05.json
+  )
 }
 
 { UID: uid-329e-78ae-c94e-17bf
-  Version: 49463
+  Version: 49465
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
-  contact: name birthday gender email
-  passport: nationality number expiry-date type
   view: {
+    arks-this: { input: textfield label: This }
+    arks-that: { input: textfield label: That }
     course-of-study: {
       name: { input: textfield label: "Course Title" }
       institution: {
@@ -384,7 +483,7 @@
 }
 
 { UID: uid-730e-359f-2a30-a71e
-  Version: 161
+  Version: 170
   Max-Age: 0
   Cache-Notify: c-n-db59-ba1f-cdbe-34af
   Class: cyrus.forest.WebObject
@@ -394,8 +493,19 @@
   products: {
     product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
     quantity: 1
-    ristretto: true
+    ristretto: false
   }
+}
+
+{ UID: uid-89bd-3436-376a-1ab8
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-db59-ba1f-cdbe-34af
+  Class: cyrus.forest.WebObject
+  is: form
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-db59-ba1f-cdbe-34af
+  form: { within: uid-d4c5-7649-fc69-5a8e arks-this: fff arks-that: sss }
 }
 
 { UID: uid-0542-777b-20be-5b5c
@@ -411,6 +521,18 @@
     }
     ristretto: { input: checkbox label: Ristretto }
   }
+}
+
+{ UID: uid-09c7-983f-5fba-b581
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-db59-ba1f-cdbe-34af
+  Class: cyrus.forest.WebObject
+  is: payment
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-db59-ba1f-cdbe-34af
+  within: uid-d4c5-7649-fc69-5a8e
+  credit-card-number: 12313123
 }
 
 { UID: uid-1975-15a2-3d64-0fc9
@@ -466,7 +588,7 @@
 }
 
 { UID: uid-0abb-d436-0307-a7a7
-  Version: 51292
+  Version: 51295
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee order-tracker
@@ -476,7 +598,7 @@
     http://localhost:8081/o/uid-9877-4ff3-e138-011c.json
     uid-d7e7-2923-4f26-57f9
   order: uid-730e-359f-2a30-a71e
-  status: filled
+  status: filled not-as-ordered
   products: {
     product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
     quantity: 1

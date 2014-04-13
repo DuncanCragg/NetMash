@@ -98,6 +98,10 @@ function Network(){
             localStorage.setItem('Cache-Notify', cacheNotify);
             return cacheNotify;
         },
+        getUserUID: function(){
+            var cn=this.getCacheNotify();
+            return cn.replace('c-n-','uid-');
+        },
         isGetting: function(get,url,isCN){
             var pending=getting[url];
             if(get) getting[url] = true;
@@ -645,23 +649,83 @@ function JSON2HTML(url){
         getProductHTML: function(url,json,closed){
             var rows=[];
             rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
-            rows.push('<form class="product-form">');
-            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
-            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<div class="product">');
             if(json.title       !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
             if(json.description !== undefined) rows.push('<div class="info-item">'+this.getAnyHTML(json.description)+'</div>');
             if(json.eligibility !== undefined) rows.push('<div class="info-item">Eligibility: '+this.getAnyHTML(toString(json.eligibility))+'</div>');
-                 // eligibility: { age: 18..  nationality: UK | "Other European" }
-            if(json.requires    !== undefined) rows.push('<div class="info-item">Information Required: '+this.getAnyHTML(json.requires)+'</div>');
-            rows.push('<table class="grid">');
-            this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
-            this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json,'order-template','view'),json['options']),rows);
-            rows.push('</table>');
-            rows.push('<input class="submit" type="submit" value="Place Order" />');
-            rows.push('</form>');
+            if(json.options     !== undefined) this.addProductOptionsForm(json,url,rows,json.options);
+            if(json.requires    !== undefined) this.addTypedForms(json,url,rows);
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
+        },
+        addTypedForms: function(json,url,rows) {
+            var reqs=json.requires;
+            if(reqs.constructor===Object){
+                for(var r in reqs){
+                    var fields=reqs[r];
+                    if(r=='contact')  this.addContactForm(json,url,rows,fields); else
+                    if(r=='passport') this.addPassportForm(json,url,rows,fields); else
+                    if(r=='payment')  this.addPaymentForm(json,url,rows,fields);
+                    else              this.addGenericForm(json,url,rows,fields,r);
+                }
+            }
+        },
+        addProductOptionsForm: function(json,url,rows,fields){
+            rows.push('<form class="product-form">');
+            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
+            rows.push('<table class="grid">');
+            this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
+            this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json['order-template'],'view'),fields),rows);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit Product Options" />');
+            rows.push('</form>');
+        },
+        addContactForm: function(json,url,rows,fields){
+            rows.push('<form class="contact-form">');
+            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
+            rows.push('<table class="grid">');
+            if(fields.indexOf('full-name')!= -1)this.objectGUI('full-name',{ 'input': 'textfield', 'label': 'Full Name' },rows,false);
+            if(fields.indexOf('birthday')!= -1) this.objectGUI('birthday', { 'input': 'textfield', 'label': 'Birthday' },rows,false);
+            if(fields.indexOf('gender')!= -1)   this.objectGUI('gender',   { 'input': 'chooser',   'label': 'Gender', 'range': { 'M': 'Male', 'F': 'Female', 'X': 'Unspecified' } },rows,false);
+            if(fields.indexOf('email')!= -1)    this.objectGUI('email',    { 'input': 'textfield', 'label': 'Email' },rows,false);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit Contact Details" />');
+            rows.push('</form>');
+        },
+        addPassportForm: function(json,url,rows,fields){
+            rows.push('<form class="passport-form">');
+            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
+            rows.push('<table class="grid">');
+            if(fields.indexOf('nationality')!= -1) this.objectGUI('nationality', { 'input': 'chooser',   'label': 'Nationality', 'range': { 'UK': 'British', 'US': 'US', 'EU': 'Other European' } },rows,false);
+            if(fields.indexOf('number')!= -1)      this.objectGUI('number',      { 'input': 'textfield', 'label': 'Passport Number' },rows,false);
+            if(fields.indexOf('expiry-date')!= -1) this.objectGUI('expiry-date', { 'input': 'textfield', 'label': 'Expiry Date' },rows,false);
+            if(fields.indexOf('type')!= -1)        this.objectGUI('type',        { 'input': 'chooser',   'label': 'Passport Type', 'range': { 'normal': 'Non-Biometric', 'biometric': 'Biometric' } },rows,false);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit Passport Details" />');
+            rows.push('</form>');
+        },
+        addPaymentForm: function(json,url,rows,fields){
+            rows.push('<form class="payment-form">');
+            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
+            rows.push('<table class="grid">');
+            if(fields.indexOf('credit-card-number')!= -1) this.objectGUI('credit-card-number', { 'input': 'textfield', 'label': 'Credit Card Number' },rows,false);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit Payment Details" />');
+            rows.push('</form>');
+        },
+        addGenericForm: function(json,url,rows,fields,r){
+            rows.push('<form class="generic-product-form">');
+            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
+            rows.push('<table class="grid">');
+            this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json['order-template'],'view'),fields),rows);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit Details" />');
+            rows.push('</form>');
         },
         pickOutParameters: function(view,options){
             if(!view) return null;
@@ -711,8 +775,7 @@ function JSON2HTML(url){
                                                    '<span class="object-title">'+(title? title: '...')+'&nbsp;</span>'+
                    '</div>'+(!place? '<div class="object-body" '+(closed? 'style="display: none"':'')+'>': '');
         },
-        getViaLinkRefactorMe: function(o,s,p){
-            var url=o[s];
+        getViaLinkRefactorMe: function(url,p){
             if(!url) return null;
             var str = localStorage.getItem('objects:'+getUID(url));
             if(!str) return null;
@@ -981,7 +1044,7 @@ function Cyrus(){
                         network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
                     }
                 }else{
-                    var json = '{ '+uidver+', "Max-Age": -1,\n  "is": [ "editable", "rule" ],\n  "when": "edited",\n  "editable": "'+targetURL+'",\n  "user": "" }';
+                    var json = '{ '+uidver+', "Max-Age": -1,\n  "is": [ "editable", "rule" ],\n  "when": "edited",\n  "editable": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'" }';
                     network.postJSON(targetURL, me.makeJSONEditRule(json,ver,cy), false, me.getCreds(targetURL), null, null);
                 }
                 e.preventDefault();
@@ -990,11 +1053,11 @@ function Cyrus(){
                 lockURL=null;
                 var targetURL=$(this).find('.form-target').val();
                 var uidver=me.getUIDandVer(targetURL);
-                var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "",\n  "form": {\n   ';
+                var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "form": {\n   ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n   ');
-                json+='\n }\n}';
+                json+='\n }\n}\n';
                 network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                 e.preventDefault();
             });
@@ -1003,11 +1066,67 @@ function Cyrus(){
                 var targetURL=$(this).find('.order-target').val();
                 var prodURL  =$(this).find('.order-product').val();
                 var uidver=me.getUIDandVer(targetURL);
-                var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+targetURL+'",\n  "user": "",\n  "products": {\n   "product": "'+prodURL+'",\n  ';
+                var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "products": {\n   "product": "'+prodURL+'",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n   ');
-                json+='\n }\n}';
+                json+='\n }\n}\n';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
+            $('.contact-form').unbind().submit(function(e){
+                lockURL=null;
+                var targetURL=$(this).find('.order-target').val();
+                var prodURL  =$(this).find('.order-product').val();
+                var uidver=me.getUIDandVer('contact-'+targetURL);
+                var within=me.getResponseFor(targetURL);
+                var json = '{ '+uidver+',\n  "is": "contact",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
+                var fields = [];
+                me.getFormFields($(this),fields);
+                json+=fields.join(',\n   ');
+                json+='\n}\n';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
+            $('.passport-form').unbind().submit(function(e){
+                lockURL=null;
+                var targetURL=$(this).find('.order-target').val();
+                var prodURL  =$(this).find('.order-product').val();
+                var uidver=me.getUIDandVer('passport-'+targetURL);
+                var within=me.getResponseFor(targetURL);
+                var json = '{ '+uidver+',\n  "is": "passport",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
+                var fields = [];
+                me.getFormFields($(this),fields);
+                json+=fields.join(',\n   ');
+                json+='\n}\n';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
+            $('.payment-form').unbind().submit(function(e){
+                lockURL=null;
+                var targetURL=$(this).find('.order-target').val();
+                var prodURL  =$(this).find('.order-product').val();
+                var uidver=me.getUIDandVer('payment-'+targetURL);
+                var within=me.getResponseFor(targetURL);
+                var json = '{ '+uidver+',\n  "is": "payment",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
+                var fields = [];
+                me.getFormFields($(this),fields);
+                json+=fields.join(',\n   ');
+                json+='\n}\n';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            });
+            $('.generic-product-form').unbind().submit(function(e){
+                lockURL=null;
+                var targetURL=$(this).find('.order-target').val();
+                var prodURL  =$(this).find('.order-product').val();
+                var uidver=me.getUIDandVer('form-'+targetURL);
+                var within=me.getResponseFor(targetURL);
+                var json = '{ '+uidver+',\n  "is": "form",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n  "form": {\n   ';
+                var fields = [];
+                me.getFormFields($(this),fields);
+                json+=fields.join(',\n   ');
+                json+='\n }\n}\n';
                 network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                 e.preventDefault();
             });
@@ -1015,7 +1134,7 @@ function Cyrus(){
                 lockURL=null;
                 var targetURL=$(this).find('.land-within').val();
                 var uidver=me.getUIDandVer();
-                var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+targetURL+'",\n  "user": "",\n  ';
+                var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n  ');
@@ -1029,7 +1148,7 @@ function Cyrus(){
                 var withinURL =$(this).find('.land-within').val();
                 var requestURL=$(this).find('.land-request').val();
                 var uidver=me.getUIDandVer(targetURL,requestURL);
-                var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+withinURL+'",\n  "land": "'+targetURL+'",\n  "user": "",\n  ';
+                var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+withinURL+'",\n  "land": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  ';
                 var fields = [];
                 me.getFormFields($(this),fields);
                 json+=fields.join(',\n  ');
@@ -1043,7 +1162,7 @@ function Cyrus(){
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
                     var q=$(this).find('.rsvp-attending').is(':checked');
-                    var json = '{ '+uidver+', "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "",\n  "attending": "'+(q? 'yes': 'no')+'"\n}';
+                    var json = '{ '+uidver+', "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "attending": "'+(q? 'yes': 'no')+'"\n}';
                     network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
                     e.preventDefault();
                 }
@@ -1053,7 +1172,7 @@ function Cyrus(){
                     if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
                     var targetURL=$(this).find('.rsvp-target').val();
                     var uidver=me.getUIDandVer(targetURL);
-                    var json = '{ '+uidver+',\n  "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "",\n  "within": "'+within+'",\n   ';
+                    var json = '{ '+uidver+',\n  "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
                     var fields = [];
                     me.getFormFields($(this),fields);
                     json+=fields.join(',\n  ');
