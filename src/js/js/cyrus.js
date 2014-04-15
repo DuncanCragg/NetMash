@@ -767,17 +767,25 @@ function JSON2HTML(url){
         },
         getObjectHeadHTML: function(title, url, place, params, icon, raw){
             var closed= params && params.closed;
-            var backURL=params && params.backURL;
+            var backURLs=params && params.backURLs;
             if(place && !this.isObjectURL(url)) return this.getAnyHTML(url);
             return '<div class="object-head'+(closed? '':' open')+(raw? ' raw':'')+'">'+
                                                     this.getAnyHTML(url)+
                                                   ' <span class="open-close">+/-</span>'+
                                              (url?' <a href="'+url+'" class="object'+(place? '-place': '')+'">{..}</a>':'')+
-                                         (backURL? '<a class="old-state" href="'+getMashURL(this.fullURL(backURL).htmlEscape())+'"> &lt;&lt; </a>':'')+
+                                                    this.getBackURLs(backURLs)+
                                             (icon? '<span class="icon">'+this.getAnyHTML(icon)+'</span>':'')+
                                                    '<span class="object-title">'+(title? title: '...')+'&nbsp;</span>'+
                    '</div>'+(!place? '<div class="object-body" '+(closed? 'style="display: none"':'')+'>': '');
                    // don't forget to close that hanging div if !place
+        },
+        getBackURLs: function(backURLs){
+            var r='';
+            for(var i in backURLs){
+                var url=backURLs[i];
+                r+='<a class="old-state" href="'+getMashURL(this.fullURL(url).htmlEscape())+'"> &lt;&lt; </a>';
+            }
+            return r;
         },
         getViaLinkRefactorMe: function(url,p){
             if(!url) return null;
@@ -942,14 +950,14 @@ function Cyrus(){
             }
             $('a.object-place, a.object').each(function(n,ae){ var a=$(ae);
                 if(a.attr('href')!=url) return;
-                var open=a.parent().hasClass('open');
-                var raw =a.parent().hasClass('raw');
                 var objhead = a.parent();
                 if(url!=lockURL){
-                    var backURL=null;
-                    objhead.find('a.old-state').each(function(n,ae){ var a=$(ae); backURL=getObjectURL(a.attr('href')); });
+                    var open=a.parent().hasClass('open');
+                    var raw =a.parent().hasClass('raw');
+                    var backURLs=[];
+                    objhead.find('a.old-state').each(function(n,ae){ var a=$(ae); backURLs.push(getObjectURL(a.attr('href'))); });
                     objhead.next().remove();
-                    objhead.replaceWith(json2html.getHTML(url, obj, { closed: !open, backURL: backURL }, raw));
+                    objhead.replaceWith(json2html.getHTML(url, obj, { closed: !open, backURLs: backURLs }, raw));
                 }
             });
             me.setUpHTMLEvents();
@@ -1224,8 +1232,11 @@ function Cyrus(){
             var objhead = a.parent();
             var open=objhead.hasClass('open');
             var raw =objhead.hasClass('raw');
+            var backURLs=[];
+            objhead.find('a.old-state').each(function(n,ae){ var a=$(ae); backURLs.push(getObjectURL(a.attr('href'))); });
+            backURLs=backURLs.slice(backURLs.indexOf(url)+1,backURLs.length);
             objbody=objhead.next();
-            objhead.replaceWith(json2html.getObjectHeadHTML(null, url, true, { closed: !open }, null, raw));
+            objhead.replaceWith(json2html.getObjectHeadHTML(null, url, true, { closed: !open, backURLs: backURLs }, null, raw));
             objhead=objbody.prev();
             objbody.remove();
             me.ensureVisibleObjectsIn(objhead);
@@ -1237,7 +1248,9 @@ function Cyrus(){
             objhead.find('a.object').each(function(n,ae){ var a=$(ae); lockURL=a.attr('href'); });
             var open=objhead.hasClass('open');
             var raw =objhead.hasClass('raw');
-            objhead.replaceWith(json2html.getObjectHeadHTML(null, url, true, { closed: !open, backURL: lockURL }, null, raw));
+            var backURLs=[ lockURL ];
+            objhead.find('a.old-state').each(function(n,ae){ var a=$(ae); backURLs.push(getObjectURL(a.attr('href'))); });
+            objhead.replaceWith(json2html.getObjectHeadHTML(null, url, true, { closed: !open, backURLs: backURLs }, null, raw));
             objhead=objbody.prev();
             objbody.remove();
             me.ensureVisibleObjectsIn(objhead);
