@@ -672,7 +672,7 @@ function JSON2HTML(url){
         },
         addProductOptionsForm: function(json,url,rows,fields){
             rows.push('<form class="product-form">');
-            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
             this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
@@ -683,7 +683,7 @@ function JSON2HTML(url){
         },
         addContactForm: function(json,url,rows,fields){
             rows.push('<form class="contact-form">');
-            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
             if(fields.indexOf('full-name')!= -1)this.objectGUI('full-name',{ 'input': 'textfield', 'label': 'Full Name' },rows,false);
@@ -696,7 +696,7 @@ function JSON2HTML(url){
         },
         addPassportForm: function(json,url,rows,fields){
             rows.push('<form class="passport-form">');
-            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
             if(fields.indexOf('nationality')!= -1) this.objectGUI('nationality', { 'input': 'chooser',   'label': 'Nationality', 'range': { 'UK': 'British', 'US': 'US', 'EU': 'Other European' } },rows,false);
@@ -709,7 +709,7 @@ function JSON2HTML(url){
         },
         addPaymentForm: function(json,url,rows,fields){
             rows.push('<form class="payment-form">');
-            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
             if(fields.indexOf('credit-card-number')!= -1) this.objectGUI('credit-card-number', { 'input': 'textfield', 'label': 'Credit Card Number' },rows,false);
@@ -719,7 +719,7 @@ function JSON2HTML(url){
         },
         addGenericForm: function(json,url,rows,fields,r){
             rows.push('<form class="generic-product-form">');
-            rows.push('<input class="order-target" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
             this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json['order-template'],'view'),fields),rows);
@@ -962,15 +962,18 @@ function Cyrus(){
             if(isCN) setTimeout(function(){ network.longGetJSON(url,me.getCreds(url),me.someObjectIn,me.objectFail); }, retryDelay);
         },
         someObjectIn: function(url,obj,s,x){
+            var jump=false;
             if(obj){
                 var notify=obj.Notify; delete obj.Notify;
                 var formForCurrentView=me.getResponseFor(topObjectURL);
-                if(formForCurrentView) for(var i in notify){ var u=notify[i];
-                    if(getUID(u)==formForCurrentView){ me.topObjectIn(url,obj,s,x); return; }
+                for(var i in notify){
+                    var notifyUID=getUID(notify[i]);
+                    me.setSubFor(notifyUID,url);
+                    if(formForCurrentView && notifyUID==formForCurrentView) jump=true;
                 }
             }
-            if(url==topObjectURL) me.topObjectIn(url,obj,s,x);
-            else                     me.objectIn(url,obj,s,x);
+            if(url==topObjectURL || jump) me.topObjectIn(url,obj,s,x);
+            else                          me.objectIn(url,obj,s,x);
         },
         setUpHTMLEvents: function(){
             $(window).resize(function(e){
@@ -1019,168 +1022,18 @@ function Cyrus(){
                 $(this).replaceWith(h);
                 me.setUpHTMLEvents();
             });
-            $('.cyrus-form').unbind().submit(function(e){
-                lockURL=null;
-                var cyrus=true;
-                var cytext=$(this).find('.cyrus-raw').val();
-                var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert('Syntax: '+e); }
-                if(!cy){ e.preventDefault(); return; }
-                if(!cyrus){
-                    if(cy.is.constructor==String) cy.is=[ cy.is, 'editable' ];
-                    if(cy.is.constructor==Array && cy.is.indexOf('editable')== -1) cy.is.push('editable');
-                }
-                var targetURL=$(this).find('.cyrus-target').val();
-                var ver=localStorage.getItem('versions:'+getUID(targetURL));
-                if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
-                var uidver=me.getUIDandVer(targetURL,null,cyrus);
-                if(cyrus){
-                    var type=$(this).find('.cyrus-type').val();
-                    if(!type){
-                        var cyr = '{ '+uidver+' Max-Age: -1\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ".."\n  '+
-                                    ': { Version: '+ver+' } => as-is\n'+cy+'\n}';
-                        network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
-                    }else{
-                        var cyr = '{ '+uidver+'\n  is: '+type+'\n  target: '+targetURL+'\n  user: ".."\n  match: {\n'+cy+'\n  }\n}';
-                        network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
-                    }
-                }else{
-                    var json = '{ '+uidver+', "Max-Age": -1,\n  "is": [ "editable", "rule" ],\n  "when": "edited",\n  "editable": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'" }';
-                    network.postJSON(targetURL, me.makeJSONEditRule(json,ver,cy), false, me.getCreds(targetURL), null, null);
-                }
-                e.preventDefault();
-            });
-            $('.gui-form').unbind().submit(function(e){
-                lockURL=null;
-                var targetURL=$(this).find('.form-target').val();
-                var uidver=me.getUIDandVer(targetURL);
-                var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "form": {\n   ';
-                var fields = [];
-                me.getFormFields($(this),fields);
-                json+=fields.join(',\n   ');
-                json+='\n }\n}\n';
-                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                e.preventDefault();
-            });
-            $('.product-form').unbind().submit(function(e){
-                lockURL=null;
-                var targetURL=$(this).find('.order-target').val();
-                var prodURL  =$(this).find('.order-product').val();
-                var uidver=me.getUIDandVer(targetURL);
-                var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "products": {\n   "product": "'+prodURL+'",\n  ';
-                var fields = [];
-                me.getFormFields($(this),fields);
-                json+=fields.join(',\n   ');
-                json+='\n }\n}\n';
-                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                e.preventDefault();
-            });
-            $('.contact-form').unbind().submit(function(e){
-                lockURL=null;
-                var targetURL=$(this).find('.order-target').val();
-                var prodURL  =$(this).find('.order-product').val();
-                var uidver=me.getUIDandVer('contact-'+targetURL);
-                var within=me.getResponseFor(targetURL);
-                var json = '{ '+uidver+',\n  "is": "contact",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
-                var fields = [];
-                me.getFormFields($(this),fields);
-                json+=fields.join(',\n   ');
-                json+='\n}\n';
-                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                e.preventDefault();
-            });
-            $('.passport-form').unbind().submit(function(e){
-                lockURL=null;
-                var targetURL=$(this).find('.order-target').val();
-                var prodURL  =$(this).find('.order-product').val();
-                var uidver=me.getUIDandVer('passport-'+targetURL);
-                var within=me.getResponseFor(targetURL);
-                var json = '{ '+uidver+',\n  "is": "passport",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
-                var fields = [];
-                me.getFormFields($(this),fields);
-                json+=fields.join(',\n   ');
-                json+='\n}\n';
-                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                e.preventDefault();
-            });
-            $('.payment-form').unbind().submit(function(e){
-                lockURL=null;
-                var targetURL=$(this).find('.order-target').val();
-                var prodURL  =$(this).find('.order-product').val();
-                var uidver=me.getUIDandVer('payment-'+targetURL);
-                var within=me.getResponseFor(targetURL);
-                var json = '{ '+uidver+',\n  "is": "payment",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
-                var fields = [];
-                me.getFormFields($(this),fields);
-                json+=fields.join(',\n   ');
-                json+='\n}\n';
-                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                e.preventDefault();
-            });
-            $('.generic-product-form').unbind().submit(function(e){
-                lockURL=null;
-                var targetURL=$(this).find('.order-target').val();
-                var prodURL  =$(this).find('.order-product').val();
-                var uidver=me.getUIDandVer('form-'+targetURL);
-                var within=me.getResponseFor(targetURL);
-                var json = '{ '+uidver+',\n  "is": "form",\n  "supplier": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n  "form": {\n   ';
-                var fields = [];
-                me.getFormFields($(this),fields);
-                json+=fields.join(',\n   ');
-                json+='\n }\n}\n';
-                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                e.preventDefault();
-            });
-            $('.new-land-form').unbind().submit(function(e){
-                lockURL=null;
-                var targetURL=$(this).find('.land-within').val();
-                var uidver=me.getUIDandVer();
-                var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  ';
-                var fields = [];
-                me.getFormFields($(this),fields);
-                json+=fields.join(',\n  ');
-                json+='\n}\n';
-                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                e.preventDefault();
-            });
-            $('.land-form').unbind().submit(function(e){
-                lockURL=null;
-                var targetURL =$(this).find('.land-target').val();
-                var withinURL =$(this).find('.land-within').val();
-                var requestURL=$(this).find('.land-request').val();
-                var uidver=me.getUIDandVer(targetURL,requestURL);
-                var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+withinURL+'",\n  "land": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  ';
-                var fields = [];
-                me.getFormFields($(this),fields);
-                json+=fields.join(',\n  ');
-                json+='\n}\n';
-                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                e.preventDefault();
-            });
-            $('.rsvp-form').unbind().submit(function(e){
-                lockURL=null;
-                if($(this).find('.rsvp-type').val()=='attendable'){
-                    var targetURL=$(this).find('.rsvp-target').val();
-                    var uidver=me.getUIDandVer(targetURL);
-                    var q=$(this).find('.rsvp-attending').is(':checked');
-                    var json = '{ '+uidver+', "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "attending": "'+(q? 'yes': 'no')+'"\n}';
-                    network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                    e.preventDefault();
-                }
-                if($(this).find('.rsvp-type').val()=='reviewable'){
-                    var withinURL=$(this).find('.rsvp-within').val();
-                    var within=me.getResponseFor(withinURL);
-                    if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
-                    var targetURL=$(this).find('.rsvp-target').val();
-                    var uidver=me.getUIDandVer(targetURL);
-                    var json = '{ '+uidver+',\n  "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
-                    var fields = [];
-                    me.getFormFields($(this),fields);
-                    json+=fields.join(',\n  ');
-                    json+=' }';
-                    network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-                    e.preventDefault();
-                }
-            });
+
+            $('.cyrus-form').unbind().submit(function(e){ me.postCyrusForm(e,this); });
+            $('.gui-form').unbind().submit(function(e){ me.postGuiForm(e,this); });
+            $('.product-form').unbind().submit(function(e){ me.postOrder(e,this); });
+            $('.contact-form').unbind().submit(function(e){ me.postSubOrder(e,this,'contact'); });
+            $('.passport-form').unbind().submit(function(e){ me.postSubOrder(e,this,'passport'); });
+            $('.payment-form').unbind().submit(function(e){ me.postSubOrder(e,this,'payment'); });
+            $('.generic-product-form').unbind().submit(function(e){ me.postSubForm(e,this); });
+            $('.new-land-form').unbind().submit(function(e){ me.postNewLandForm(e,this); });
+            $('.land-form').unbind().submit(function(e){ me.postLandForm(e,this); });
+            $('.rsvp-form').unbind().submit(function(e){ me.postRSVPForm(e,this); });
+
             $('#query').focus();
             $('#query-form').unbind().submit(function(e){
                 lockURL=null;
@@ -1217,6 +1070,143 @@ function Cyrus(){
                 lockURL=null;
                 me.getTopObject(''+window.location);
             });
+        },
+        postCyrusForm: function(e,that){
+            lockURL=null;
+            var cyrus=true;
+            var cytext=$(that).find('.cyrus-raw').val();
+            var cy; try{ cy=cyrus? cytext: JSON.parse(cytext); } catch(e){ alert('Syntax: '+e); }
+            if(!cy){ e.preventDefault(); return; }
+            if(!cyrus){
+                if(cy.is.constructor==String) cy.is=[ cy.is, 'editable' ];
+                if(cy.is.constructor==Array && cy.is.indexOf('editable')== -1) cy.is.push('editable');
+            }
+            var targetURL=$(that).find('.cyrus-target').val();
+            var ver=localStorage.getItem('versions:'+getUID(targetURL));
+            if(ver) ver=JSON.parse('{ "ver": '+ver.substring(1,ver.length-1)+' }').ver;
+            var uidver=me.getUIDandVer('',targetURL,null,cyrus);
+            if(cyrus){
+                var type=$(that).find('.cyrus-type').val();
+                if(!type){
+                    var cyr = '{ '+uidver+' Max-Age: -1\n  is: editable rule\n  when: edited\n  editable: '+targetURL+'\n  user: ".."\n  '+
+                                ': { Version: '+ver+' } => as-is\n'+cy+'\n}';
+                    network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
+                }else{
+                    var cyr = '{ '+uidver+'\n  is: '+type+'\n  target: '+targetURL+'\n  user: ".."\n  match: {\n'+cy+'\n  }\n}';
+                    network.postJSON(targetURL, cyr, true, me.getCreds(targetURL), null, null);
+                }
+            }else{
+                var json = '{ '+uidver+', "Max-Age": -1,\n  "is": [ "editable", "rule" ],\n  "when": "edited",\n  "editable": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'" }';
+                network.postJSON(targetURL, me.makeJSONEditRule(json,ver,cy), false, me.getCreds(targetURL), null, null);
+            }
+            e.preventDefault();
+        },
+        postGuiForm: function(e,that){
+            lockURL=null;
+            var targetURL=$(that).find('.form-target').val();
+            var uidver=me.getUIDandVer('',targetURL);
+            var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "form": {\n   ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n   ');
+            json+='\n }\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postOrder: function(e,that){
+            lockURL=null;
+            var supplierURL=$(that).find('.order-supplier').val();
+            var prodURL    =$(that).find('.order-product').val();
+            var uidver=me.getUIDandVer('',supplierURL);
+            var targetURL=me.getSubFor(supplierURL);
+            var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "products": {\n   "product": "'+prodURL+'",\n  ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n   ');
+            json+='\n }\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postSubOrder: function(e,that,type){
+            lockURL=null;
+            var supplierURL=$(that).find('.order-supplier').val();
+            var prodURL    =$(that).find('.order-product').val();
+            var uidver=me.getUIDandVer(type+'-',supplierURL);
+            var within=me.getResponseFor(supplierURL);
+            var targetURL=me.getSubFor(supplierURL);
+            var json = '{ '+uidver+',\n  "is": "'+type+'",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n   ');
+            json+='\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postSubForm: function(e,that){
+            lockURL=null;
+            var supplierURL=$(that).find('.order-supplier').val();
+            var prodURL    =$(that).find('.order-product').val();
+            var uidver=me.getUIDandVer('form-',supplierURL);
+            var within=me.getResponseFor(supplierURL);
+            var targetURL=me.getSubFor(supplierURL);
+            var json = '{ '+uidver+',\n  "is": "form",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n  "form": {\n   ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n   ');
+            json+='\n }\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postNewLandForm: function(e,that){
+            lockURL=null;
+            var targetURL=$(that).find('.land-within').val();
+            var uidver=me.getUIDandVer();
+            var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n  ');
+            json+='\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postLandForm: function(e,that){
+            lockURL=null;
+            var targetURL =$(that).find('.land-target').val();
+            var withinURL =$(that).find('.land-within').val();
+            var requestURL=$(that).find('.land-request').val();
+            var uidver=me.getUIDandVer('',targetURL,requestURL);
+            var json = '{ '+uidver+',\n  "is": [ "land", "request" ],\n  "within": "'+withinURL+'",\n  "land": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n  ');
+            json+='\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postRSVPForm: function(e,that){
+            lockURL=null;
+            if($(that).find('.rsvp-type').val()=='attendable'){
+                var targetURL=$(that).find('.rsvp-target').val();
+                var uidver=me.getUIDandVer('',targetURL);
+                var q=$(that).find('.rsvp-attending').is(':checked');
+                var json = '{ '+uidver+', "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "attending": "'+(q? 'yes': 'no')+'"\n}';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            }
+            if($(that).find('.rsvp-type').val()=='reviewable'){
+                var withinURL=$(that).find('.rsvp-within').val();
+                var within=me.getResponseFor(withinURL);
+                if(!within){ e.preventDefault(); alert('please mark your attendance before reviewing'); return; }
+                var targetURL=$(that).find('.rsvp-target').val();
+                var uidver=me.getUIDandVer('',targetURL);
+                var json = '{ '+uidver+',\n  "is": "rsvp",\n  "event": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "within": "'+within+'",\n   ';
+                var fields = [];
+                me.getFormFields($(that),fields);
+                json+=fields.join(',\n  ');
+                json+=' }';
+                network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+                e.preventDefault();
+            }
         },
         replaceUp: function(url, a){
             var objbody=me.getObjectBodyAbove(a);
@@ -1265,19 +1255,20 @@ function Cyrus(){
             json2html = new JSON2HTML(topObjectURL.substring(0,topObjectURL.lastIndexOf('/')+1));
             network.getJSON(topObjectURL, me.getCreds(topObjectURL), me.topObjectIn, me.topObjectFail);
         },
-        getUIDandVer: function(url,useuid,cyrus){
-            var uidver=url? localStorage.getItem(this.uidVerKey(url,cyrus)): null;
+        getUIDandVer: function(sub,url,useuid,cyrus){
+            var uidver=url? localStorage.getItem(this.uidVerKey(sub+url,cyrus)): null;
             if(!uidver){
                 var uid=useuid? getUID(useuid): generateUID('uid');
                 if(cyrus) uidver= 'UID: '  +uid+' Version: ' +1;
                 else      uidver='"UID": "'+uid+'", "Version": '+1;
+                localStorage.setItem('targetfor-'+uid,url);
             }else{
                 var re;
                 if(cyrus) re=RegExp('(.*Version: )(.*)').exec(uidver);
                 else      re=RegExp('(.*"Version": )(.*)').exec(uidver);
                 uidver=re[1]+(parseInt(re[2])+1);
             }
-            if(url) localStorage.setItem(this.uidVerKey(url,cyrus), uidver);
+            if(url) localStorage.setItem(this.uidVerKey(sub+url,cyrus), uidver);
             return uidver;
         },
         getResponseFor: function(url){
@@ -1289,6 +1280,14 @@ function Cyrus(){
         },
         uidVerKey: function(url,cyrus){
             return (cyrus? 'cyrus-': 'json-')+'response-'+url;
+        },
+        setSubFor: function(notifyUID,subURL){
+            var mainURL=localStorage.getItem('targetfor-'+notifyUID);
+            if(mainURL) localStorage.setItem('subof-'+mainURL, subURL);
+        },
+        getSubFor: function(mainURL){
+            var subURL=localStorage.getItem('subof-'+mainURL);
+            return subURL? subURL: mainURL;
         },
         ensureVisibleAndReflow: function(panel){
             me.ensureVisibleObjectsIn(panel);
