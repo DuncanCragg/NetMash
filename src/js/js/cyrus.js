@@ -5,7 +5,6 @@ function Network(){
 
     var getting={};
     var pendingCN={};
-    var cacheNotify = null;
 
     var me = {
         getJSON: function(url){
@@ -91,12 +90,11 @@ function Network(){
             pendingCN={};
         },
         getCacheNotify: function(){
-            if(cacheNotify) return cacheNotify;
-            cacheNotify=localStorage.getItem('Cache-Notify');
-            if(cacheNotify) return cacheNotify;
-            cacheNotify=generateUID('c-n');
-            localStorage.setItem('Cache-Notify', cacheNotify);
-            return cacheNotify;
+            var cn=window['Cache-Notify'];
+            if(cn) return cn;
+            cn=generateUID('c-n');
+            window['Cache-Notify']=cn;
+            return cn;
         },
         getUserUID: function(){
             var cn=this.getCacheNotify();
