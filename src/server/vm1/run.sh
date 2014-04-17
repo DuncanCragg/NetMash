@@ -2,6 +2,6 @@
 
 javac -Xlint:unchecked -classpath ../../../build/cyrus.jar *.java || exit
 
-java -classpath .:../../../build/cyrus.jar cyrus.Cyrus > cyrus.log 2>&1 &
+java -classpath .:../../../build/cyrus.jar cyrus.NetMash > cyrus.log 2>&1 &
 
 

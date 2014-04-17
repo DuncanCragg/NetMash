@@ -5,9 +5,9 @@ import cyrus.Version;
 import cyrus.platform.Kernel;
 import cyrus.forest.FunctionalObserver;
 
-/**  Cyrus: FOREST Reference Implementation; server main.
+/**  NetMash: Cyrus/Object Network Reference Implementation; server main.
   */
-public class Cyrus {
+public class NetMash {
 
     //-----------------------------------------------------
 

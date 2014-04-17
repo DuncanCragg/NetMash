@@ -189,10 +189,10 @@ runode:
 # -------------------------------------------------------------------
 
 runon1:
-	( cd src/server/vm1 ; java -classpath .:../../../build/cyrus.jar cyrus.Cyrus > cyrus.log 2>&1 & )
+	( cd src/server/vm1 ; java -classpath .:../../../build/cyrus.jar cyrus.NetMash > cyrus.log 2>&1 & )
 
 runon2:
-	( cd src/server/vm2 ; java -classpath .:../../../build/cyrus.jar cyrus.Cyrus > cyrus.log 2>&1 & )
+	( cd src/server/vm2 ; java -classpath .:../../../build/cyrus.jar cyrus.NetMash > cyrus.log 2>&1 & )
 
 json: jar
 	java -ea -classpath ./build/cyrus.jar cyrus.lib.TestJSON
@@ -419,7 +419,7 @@ logout2:
 # -------------------------------------------------------------------
 
 classes: \
-./build/classes/cyrus/Cyrus.class \
+./build/classes/cyrus/NetMash.class \
 ./build/classes/cyrus/lib/JSON.class \
 ./build/classes/cyrus/lib/TestJSON.class \
 ./build/classes/cyrus/lib/Utils.class \
