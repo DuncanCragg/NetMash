@@ -523,7 +523,7 @@ abstract class HTTPCommon {
     }
 
     String rewrite10022(String r){
-        boolean nonCyrusClient=(httpUserAgent!=null && httpUserAgent.indexOf("Cyrus")== -1);
+        boolean nonCyrusClient=(httpUserAgent!=null && httpUserAgent.indexOf("NetMash")== -1);
         return nonCyrusClient? r.replaceAll("10.0.2.2","localhost"): r;
     }
 
