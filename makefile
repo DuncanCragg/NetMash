@@ -12,7 +12,7 @@ LIGHT_POS=1 1 10
 #
 # Where you want the release Android apk to be copied
 #
-RELEASE_TARGET=../net/the-cyrus.net/Cyrus.apk
+RELEASE_TARGET=../net/netmash.net/NetMash.apk
 #
 ################################################################################
 
@@ -108,22 +108,22 @@ editide:
 androidemu: clean init setappemuconfig setemumapkey
 	ant debug
 	adb -e uninstall cyrus.gui
-	adb -e install bin/Cyrus-debug.apk
+	adb -e install bin/NetMash-debug.apk
 
 androidlan: clean init setapplanconfig setremmapkey
 	ant release
-	( adb -d uninstall cyrus.gui && adb -d install bin/Cyrus-release.apk ) &
-	cp bin/Cyrus-release.apk $(RELEASE_TARGET)
+	( adb -d uninstall cyrus.gui && adb -d install bin/NetMash-release.apk ) &
+	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 androidrem: clean init setappremconfig setremmapkey
 	ant release
-	cp bin/Cyrus-release.apk $(RELEASE_TARGET)
+	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 installemu:
-	adb -e install bin/Cyrus-debug.apk
+	adb -e install bin/NetMash-debug.apk
 
 installlan:
-	adb -d install bin/Cyrus-release.apk
+	adb -d install bin/NetMash-release.apk
 
 uninstallemu:
 	adb -e uninstall cyrus.gui
@@ -472,7 +472,7 @@ clean:
 	rm -rf ./build/classes/server
 	rm -f  ./src/server/vm?/*.class
 	rm -rf bin/classes bin/classes.dex
-	rm -f  bin/Cyrus.ap_ bin/Cyrus*un*ed.apk
+	rm -f  bin/NetMash.ap_ bin/NetMash*un*ed.apk
 	rm -f  gen/cyrus/gui/R.java
 	-mv ,l* doc/local
 	rm -f  ,*
