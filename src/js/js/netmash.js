@@ -857,10 +857,13 @@ function JSON2HTML(url){
         },
         toCyrusObject: function(o,i,tagdelim){
             if(o===undefined || o===null) return '';
-            if(o.constructor===String) return o.indexOf(' ')== -1? o: '"'+o+'"';
+            if(o.constructor===String) return this.toCyrusString(o);
             if(o.constructor===Object) return this.toCyrusHash(o,i);
             if(o.constructor===Array)  return this.toCyrusList(o,i,tagdelim);
             return ''+o;
+        },
+        toCyrusString: function(o){
+            return (o.indexOf(' ')== -1? o.jsonEscape(): '"'+o.jsonEscape()+'"');
         },
         toCyrusHash: function(o,i){
             if(!o || o.constructor!==Object) return '??';
@@ -1280,7 +1283,7 @@ function NetMash(){
                     if(i==lastButtonPressed) fields.push('"pushed": "'+idOrName+'"');
                 }
                 else
-                    if($(i).val()) fields.push('"'+idOrName+'": "'+$(i).val()+'"');
+                    if($(i).val()) fields.push('"'+idOrName+'": "'+$(i).val().jsonEscape()+'"');
             });
         },
         getTopObject: function(url){
