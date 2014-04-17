@@ -1,26 +1,15 @@
-NetMash
+NetMash is the Cyrus language implementation in Java, part of the Object Network:
 
-See http://netmash.net - it's experimental at the moment so you probably shouldn't be
-reading this, you should be reading the code or something. Or contacting me.
+ http://netmash.net
+ http://the-cyrus.net
+ http://the-object.net
 
-Browser:
+It includes an Android app with 3D and some code to adapt to Minecraft and the Raspberry Pi.
 
-$ make examples -- some examples
-$ make tutorial -- interactive online tutorial (coming soon)
-$ make cars     -- querying a database of driving licences
+It's experimental at the moment so you probably shouldn't be reading this, you should be reading the code or something. Or contacting me.
 
-Android:
-
-.. run the emulator with Google maps at API 10-16, then:
-
-$ make emu -- build for the emulator
-$ make lan -- build for plugged-in device
-$ make cap -- land subsidies with maps
-
-Tests:
-
-$ make tests -- JSON, UID and Cyrus Language tests
-$ make cyrus -- just the Cyrus Language tests
-$ make uid   -- generate some UIDs
+$ make examples
+$ make tutorial
+$ make tests
 
 
