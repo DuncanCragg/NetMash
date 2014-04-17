@@ -19,7 +19,7 @@ RELEASE_TARGET=../net/the-cyrus.net/Cyrus.apk
 examples: runstt
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-f25a-08e1-7d7d-09f8.json'
 
-cytut: runtut
+tutorial: runtut
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7081-c95e-1c04-d7a5.json'
 
 ide: runide
