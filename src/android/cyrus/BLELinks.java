@@ -9,13 +9,13 @@ import android.bluetooth.BluetoothAdapter.*;
 
 import cyrus.platform.Kernel;
 import cyrus.forest.*;
-import cyrus.gui.Cyrus;
+import cyrus.gui.NetMash;
 
 import static cyrus.lib.Utils.*;
 
 public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallback {
 
-    public BLELinks(){ Cyrus.user.linksaround=this; }
+    public BLELinks(){ NetMash.user.linksaround=this; }
 
     public BLELinks(String s){ super(s,true); }
 
@@ -24,13 +24,13 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
     private final static int REQUEST_ENABLE_BT = 1;
 
     public void evaluate(){
-        if(!Cyrus.top.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
+        if(!NetMash.top.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
         if(!running) runBLEScan();
     }
 
     private void runBLEScan(){
         running=true;
-        BluetoothManager bm=(BluetoothManager)Cyrus.top.getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager bm=(BluetoothManager)NetMash.top.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter=bm.getAdapter(); if(bluetoothAdapter==null) return;
         new Thread(){ public void run(){
             while(running){
@@ -50,11 +50,11 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
             scanning=false;
             if(!notifiedEnableBT){
                 notifiedEnableBT=true;
-                Cyrus.top.toast("Enable Bluetooth to detect local objects", false);
+                NetMash.top.toast("Enable Bluetooth to detect local objects", false);
             }
             return;
             // Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            // Cyrus.top.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            // NetMash.top.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         if(scanning) return;
         scanning=true;

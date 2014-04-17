@@ -6,7 +6,7 @@ import android.hardware.*;
 import android.content.*;
 import static android.content.Context.*;
 
-import cyrus.gui.Cyrus;
+import cyrus.gui.NetMash;
 import static cyrus.lib.Utils.*;
 
 public class Sensors implements SensorEventListener {
@@ -16,7 +16,7 @@ public class Sensors implements SensorEventListener {
 
     public Sensors(User user){
         this.user=user;
-        sensorManager=(SensorManager)Cyrus.top.getSystemService(Context.SENSOR_SERVICE);
+        sensorManager=(SensorManager)NetMash.top.getSystemService(Context.SENSOR_SERVICE);
     }
 
     public void startWatchingSensors(){

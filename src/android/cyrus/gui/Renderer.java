@@ -23,7 +23,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 
     private boolean debugGL;
 
-    private Cyrus cyrus;
+    private NetMash cyrus;
     private Mesh mesh;
 
     private int texture0Loc;
@@ -84,7 +84,7 @@ public class Renderer implements GLSurfaceView.Renderer {
     static String lightVertexShaderSource       = "uniform mat4 mvpm; attribute vec4 pos; attribute vec2 tex; varying vec2 texturePt; void main(){ texturePt = tex; gl_Position = mvpm*pos; }";
     static String lightFragmentShaderSource     = "precision mediump float; uniform vec3 lightCol; uniform sampler2D texture0; varying vec2 texturePt; void main(){ gl_FragColor=vec4(lightCol,1.0)*texture2D(texture0,texturePt); }";
 
-    public Renderer(Cyrus cyrus, LinkedHashMap hm) {
+    public Renderer(NetMash cyrus, LinkedHashMap hm) {
         debugGL=Kernel.config.boolPathN("gl:log"); if(debugGL) log("** GL Debugging on! May be slower..");
         this.cyrus=cyrus;
         this.mesh=new Mesh(hm,cyrus.user);

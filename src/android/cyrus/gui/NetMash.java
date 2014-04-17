@@ -36,11 +36,11 @@ import static cyrus.lib.Utils.*;
 
 import cyrus.User;
 
-/**  Cyrus main.
+/**  NetMash main.
   */
-public class Cyrus extends MapActivity {
+public class NetMash extends MapActivity {
 
-    static public Cyrus top=null;
+    static public NetMash top=null;
     static public User  user=null;
 
     public GLSurfaceView onemeshview=null;
@@ -291,8 +291,8 @@ log(show? "show keyboard": "hide keyboard");
         boolean newObject=!uiUID.equals(viewUID);
         viewUID=uiUID;
         String title =uiJSON.stringPathN("title");
-        if(title==null) setTitle(       "Cyrus");
-        else            setTitle(title+"|Cyrus");
+        if(title==null) setTitle(       "NetMash");
+        else            setTitle(title+"|NetMash");
         if("gui".equals(uiJSON.stringPathN("is"))){
             Object      o=uiJSON.hashPathN("view");
             if(o==null) o=uiJSON.listPathN("view");
@@ -1156,7 +1156,7 @@ log(show? "show keyboard": "hide keyboard");
     //---------------------------------------------------------
 
     public void toast(final String s, final boolean longer){
-        final Cyrus self=this;
+        final NetMash self=this;
         guiHandler.post(new Runnable(){ public void run(){ Toast.makeText(self, s, longer? Toast.LENGTH_LONG: Toast.LENGTH_SHORT).show(); }});
     }
 

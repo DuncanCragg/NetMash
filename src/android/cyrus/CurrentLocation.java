@@ -17,7 +17,7 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
-import cyrus.gui.Cyrus;
+import cyrus.gui.NetMash;
 
 import cyrus.lib.JSON;
 import cyrus.forest.*;
@@ -36,7 +36,7 @@ public class CurrentLocation implements LocationListener {
 
     CurrentLocation(User user){
         this.user=user;
-        locationManager=(LocationManager)Cyrus.top.getSystemService(LOCATION_SERVICE);
+        locationManager=(LocationManager)NetMash.top.getSystemService(LOCATION_SERVICE);
     }
 
     public void getLocationUpdates(){

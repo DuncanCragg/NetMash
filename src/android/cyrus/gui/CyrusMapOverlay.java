@@ -32,9 +32,9 @@ public class CyrusMapOverlay extends ItemizedOverlay implements DialogInterface.
     }
 
     private ArrayList<Item> overlayitems = new ArrayList<Item>();
-    private Cyrus cyrus;
+    private NetMash cyrus;
 
-    public CyrusMapOverlay(Drawable defaultMarker, Cyrus cyrus, String mapUID){
+    public CyrusMapOverlay(Drawable defaultMarker, NetMash cyrus, String mapUID){
         super(boundCenterBottom(defaultMarker));
         populate();
         this.cyrus = cyrus;

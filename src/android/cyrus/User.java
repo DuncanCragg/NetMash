@@ -22,7 +22,7 @@ import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.content.Context.*;
 import static android.location.LocationManager.*;
 
-import cyrus.gui.Cyrus;
+import cyrus.gui.NetMash;
 import cyrus.gui.Mesh;
 import cyrus.lib.*;
 import cyrus.forest.*;
@@ -84,7 +84,7 @@ public class User extends CyrusLanguage {
         currentUser.funcobs.cacheSaveAndEvaluate(currentUser, true);
 
         if(homeusers!=null) currentUser.notifying(list(homeusers));
-        Cyrus.top.onUserReady(currentUser);
+        NetMash.top.onUserReady(currentUser);
     }
 
     public User(String jsonstring){ super(jsonstring); }
@@ -117,7 +117,7 @@ public class User extends CyrusLanguage {
               "}");
     }
 
-    public User(){ if(currentUser==null){ currentUser=this; if(Cyrus.top!=null) Cyrus.top.onUserReady(currentUser); } }
+    public User(){ if(currentUser==null){ currentUser=this; if(NetMash.top!=null) NetMash.top.onUserReady(currentUser); } }
 
     static User newForm(String guiuid, String useruid){
         return new User("{ \"is\": \"form\",\n"+
@@ -208,7 +208,7 @@ public class User extends CyrusLanguage {
     }
 
     void onNewOrientation(float azimuth, float pitch, float roll){
-        if(trackingAround) Cyrus.top.onNewOrientation(azimuth,pitch,roll);
+        if(trackingAround) NetMash.top.onNewOrientation(azimuth,pitch,roll);
     }
 
     // ---------------------------------------------------------
@@ -230,7 +230,7 @@ public class User extends CyrusLanguage {
         new Evaluator(this){ public void evaluate(){
             if(firstTouchQuadrant==1){
                 content("holding",objectuid);
-                Cyrus.top.toast("Holding "+contentStringOr("holding:title","object"), false);
+                NetMash.top.toast("Holding "+contentStringOr("holding:title","object"), false);
             }
             else
             if(firstTouchQuadrant==2){
@@ -407,19 +407,19 @@ public class User extends CyrusLanguage {
     public boolean menuItem(final int itemid){
         new Evaluator(this){ public void evaluate(){
             switch(itemid){
-            case Cyrus.MENU_ITEM_ARD:
+            case NetMash.MENU_ITEM_ARD:
                 jumpToEnvironment();
             break;
-            case Cyrus.MENU_ITEM_LNX:
+            case NetMash.MENU_ITEM_LNX:
                 jumpToHereAndShow(content("private:links"), "gui", false);
             break;
-            case Cyrus.MENU_ITEM_GUI:
+            case NetMash.MENU_ITEM_GUI:
                 jumpToHereAndShow(content("private:viewing"), "gui", false);
             break;
-            case Cyrus.MENU_ITEM_MAP:
+            case NetMash.MENU_ITEM_MAP:
                 jumpToHereAndShow(content("private:viewing"), "map", false);
             break;
-            case Cyrus.MENU_ITEM_RAW:
+            case NetMash.MENU_ITEM_RAW:
                 jumpToHereAndShow(content("private:viewing"), "raw", false);
             break;
             }
@@ -507,7 +507,7 @@ public class User extends CyrusLanguage {
                     val[0]=contentIs("private:responses:rsvp:"+UID.toUID(guiuid)+":"+dehash(tag),"yes");
                 }
                 else if(contentIsOrListContains("private:viewing:is", "gui")){
-                    val[0]=contentBool("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
+                    val[0]=contentBoolean("private:responses:form:"+UID.toUID(guiuid)+":form:"+dehash(tag));
                 }
                 else val[0]=null;
             }
@@ -604,10 +604,10 @@ public class User extends CyrusLanguage {
                 if(contentListContainsAll("is", list("editable", "rule"))){
                     LinkedHashMap rule=null;
                     try{
-                        JSON json=new JSON(Cyrus.top.getRawSource(),true);
+                        JSON json=new JSON(NetMash.top.getRawSource(),true);
                         json.setPathAdd("is", "editable");
                         rule=makeEditRule("",contentInt("editable:Version"),json);
-                    }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1], true); }
+                    }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1], true); }
                     if(rule!=null) contentMerge(rule);
                 }
                 else
@@ -793,11 +793,11 @@ public class User extends CyrusLanguage {
         else
             new Evaluator(o){ public void evaluate(){
                 if(!self.contentIsOrListContains("is", "editable")) return;
-                if(Cyrus.top==null) return;
-                String source=spawnUIDNew(Cyrus.top.getRawSource());
+                if(NetMash.top==null) return;
+                String source=spawnUIDNew(NetMash.top.getRawSource());
                 try{
                 self.contentReplace(new JSON(source,true));
-                }catch(JSON.Syntax js){ Cyrus.top.toast(js.toString().split("\n")[1], true); }
+                }catch(JSON.Syntax js){ NetMash.top.toast(js.toString().split("\n")[1], true); }
                 self.contentSetAdd("is", "editable");
                 self.evaluate();
             }};
@@ -940,7 +940,7 @@ public class User extends CyrusLanguage {
             if(targetpos==null) return;
             float dx=getFloatFromList(targetpos, 0, 0)-getFloatFromList(currenpos, 0, 0);
             float dz=getFloatFromList(targetpos, 2, 0)-getFloatFromList(currenpos, 2, 0);
-            if(dx*dx+dz*dz>5) Cyrus.top.onNewMovement(dx/20,dz/20);
+            if(dx*dx+dz*dz>5) NetMash.top.onNewMovement(dx/20,dz/20);
         }};
     }
 
@@ -1081,7 +1081,7 @@ logXX("closestdist",closestdist,"currentdistance",currentdistance);
                 }
                 uiJSON=new JSON(meshhash);
             }
-            if(Cyrus.top!=null && uiJSON!=null) Cyrus.top.drawJSON(uiJSON, content("private:viewing"));
+            if(NetMash.top!=null && uiJSON!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }
     }
 
@@ -1115,7 +1115,7 @@ logXX("closestdist",closestdist,"currentdistance",currentdistance);
                 JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
                 uiJSON.stringPath("title", title);
                 uiJSON.listPath("view", viewlist);
-                if(Cyrus.top!=null) Cyrus.top.drawJSON(uiJSON, content("private:viewing"));
+                if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
             }
         }
     }
@@ -1130,7 +1130,7 @@ logXX("closestdist",closestdist,"currentdistance",currentdistance);
             JSON uiJSON=new JSON("{ \"is\": \"gui\" }");
             uiJSON.stringPath("title", title);
             uiJSON.hashPath("view", viewhash);
-            if(Cyrus.top!=null) Cyrus.top.drawJSON(uiJSON, content("private:viewing"));
+            if(NetMash.top!=null) NetMash.top.drawJSON(uiJSON, content("private:viewing"));
         }
     }
 

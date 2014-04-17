@@ -23,14 +23,14 @@ import cyrus.lib.JSON;
 import cyrus.forest.*;
 import cyrus.platform.Kernel;
 
-import cyrus.gui.Cyrus;
+import cyrus.gui.NetMash;
 
 /** Access to User's contacts list.
 */
 public class UserContacts {
 
     static String getUsersFullName(){
-        AccountManager acctmgr = AccountManager.get(Cyrus.top);
+        AccountManager acctmgr = AccountManager.get(NetMash.top);
         Account[] accounts = acctmgr.getAccountsByType("com.google");
         for(Account account: accounts){
             String name=account.name;
@@ -55,8 +55,8 @@ public class UserContacts {
 
     static public LinkedList populateContacts(User user){
         LinkedList contactslist = new LinkedList();
-        if(Cyrus.top==null) return null;
-        Context context = Cyrus.top.getApplicationContext();
+        if(NetMash.top==null) return null;
+        Context context = NetMash.top.getApplicationContext();
         ContentResolver cr=context.getContentResolver();
         Cursor concur = cr.query(Contacts.CONTENT_URI, null, null, null, null);
         int idcol   = concur.getColumnIndex(Contacts._ID);
