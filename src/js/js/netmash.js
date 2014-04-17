@@ -113,7 +113,7 @@ function Network(){
         buildAuth: function(creds, method, url, json){
             var expires = 1340000000000;
             var agentid = 56781234;
-            return 'Cyrus username='+creds.username+', agentid='+agentid+', scope='+method+'/'+url+', expires='+expires+', hash='+
+            return 'NetMash username='+creds.username+', agentid='+agentid+', scope='+method+'/'+url+', expires='+expires+', hash='+
                         me.buildHash(creds.userpass,             agentid,           method+'/'+url,             expires, json);
         },
         buildHash: function(userpass, agentid, methodurl, expires, json){
@@ -887,7 +887,7 @@ function JSON2HTML(url){
 
 // }-------------- Viewer Application ----------------------{
 
-function Cyrus(){
+function NetMash(){
 
     var network = new Network();
     var json2html;

@@ -1,10 +1,10 @@
 CACHE MANIFEST
 # 1111
 
-css/cyrus.css
+css/netmash.css
 css/grey.png
 js/jquery.js
-js/cyrus.js
+js/netmash.js
 
 NETWORK:
 *
