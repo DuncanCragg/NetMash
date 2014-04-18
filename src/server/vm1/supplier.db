@@ -84,6 +84,20 @@
   }
 }
 
+{ UID: uid-a529-3be4-0617-f72b
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-cc69-c608-c961-6cc2
+  Class: cyrus.forest.WebObject
+  is: passport
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-cc69-c608-c961-6cc2
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  tags: travel-documents
+  nationality: none
+  type: none
+}
+
 { UID: uid-ccb8-43de-df47-29da
   Version: 40395
   Max-Age: 0
@@ -317,6 +331,19 @@ is: deleted }
   }
 }
 
+{ UID: uid-3c7a-4084-3ab6-2a59
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-cc69-c608-c961-6cc2
+  Class: cyrus.forest.WebObject
+  is: contact
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-cc69-c608-c961-6cc2
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  tags: main-applicant
+  gender: none
+}
+
 { UID: uid-d062-c8e7-af7e-bad7
   Version: 16774
   Max-Age: 0
@@ -337,6 +364,18 @@ is: deleted }
     year-of-study: 2014 none
   }
   within: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+}
+
+{ UID: uid-4b8a-f2a7-db99-3f21
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-cc69-c608-c961-6cc2
+  Class: cyrus.forest.WebObject
+  is: form
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-cc69-c608-c961-6cc2
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  form: { tags: funky }
 }
 
 { UID: uid-b9fc-7745-6d91-2d30
@@ -857,6 +896,18 @@ is: d }
   within: uid-047e-0752-114e-613f
 }
 
+{ UID: uid-6fa7-4737-f4d6-6298
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-cc69-c608-c961-6cc2
+  Class: cyrus.forest.WebObject
+  is: payment
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-cc69-c608-c961-6cc2
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  tags: payment
+}
+
 { UID: uid-feb0-63fa-50cd-6587
   Version: 61560
   Max-Age: 0
@@ -1108,7 +1159,7 @@ is: deleted }
 }
 
 { UID: uid-0012-4d35-97f6-cf18
-  Version: 34112
+  Version: 34118
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable student-finance application
@@ -1122,13 +1173,13 @@ is: deleted }
   user: uid-3a8f-a203-64c6-b432
   partial-order: uid-555b-68d2-f12c-f7b4
   products: {
-    contact: uid-b9fc-7745-6d91-2d30
+    contact: uid-3c7a-4084-3ab6-2a59
     product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
     quantity: 1 2222
     full-name: "Great things"
-    organisation: ICL
-    passport: uid-b9fc-7745-6d91-2d30
-    date: 2014
+    organisation: ICL none
+    passport: uid-a529-3be4-0617-f72b
+    date: 2014 none
   }
   within: uid-b280-0fea-7cc7-e0a3
 }
@@ -1253,18 +1304,14 @@ is: deleted }
 }
 
 { UID: uid-555b-68d2-f12c-f7b4
-  Version: 7
+  Version: 15
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
   is: order
   supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
   user: uid-cc69-c608-c961-6cc2
-  products: {
-    product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-    quantity: 2222
-    date: 2014
-  }
+  products: { product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json date: none }
 }
 
 { UID: uid-8287-19f9-df19-2bf3
