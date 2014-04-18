@@ -85,7 +85,7 @@
 }
 
 { UID: uid-a529-3be4-0617-f72b
-  Version: 1
+  Version: 2
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
@@ -94,8 +94,10 @@
   user: uid-cc69-c608-c961-6cc2
   product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
   tags: travel-documents
-  nationality: none
-  type: none
+  nationality: UK
+  number: 123123
+  expiry-date: 1-1-2018
+  type: biometric
 }
 
 { UID: uid-ccb8-43de-df47-29da
@@ -332,7 +334,7 @@ is: deleted }
 }
 
 { UID: uid-3c7a-4084-3ab6-2a59
-  Version: 1
+  Version: 2
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
@@ -341,7 +343,10 @@ is: deleted }
   user: uid-cc69-c608-c961-6cc2
   product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
   tags: main-applicant
-  gender: none
+  full-name: "Duncan Cragg"
+  birthday: 1-1-64
+  gender: M
+  email: duncan@cilux.org
 }
 
 { UID: uid-d062-c8e7-af7e-bad7
@@ -367,7 +372,7 @@ is: deleted }
 }
 
 { UID: uid-4b8a-f2a7-db99-3f21
-  Version: 1
+  Version: 2
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
@@ -375,7 +380,7 @@ is: deleted }
   supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
   user: uid-cc69-c608-c961-6cc2
   product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  form: { tags: funky }
+  form: { tags: funky arks-this: adsfasdf arks-that: asdfasdf }
 }
 
 { UID: uid-b9fc-7745-6d91-2d30
@@ -785,7 +790,7 @@ is: d }
 }
 
 { UID: uid-a80c-6976-80e9-9c30
-  Version: 43202
+  Version: 43204
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable application rule
@@ -793,9 +798,9 @@ is: d }
     passport: uid
     contact: uid
     quantity: number
-    name: *
-    institution: *
-    year-of-study: number
+    full-name: *
+    organisation: *
+    date: number
   }
   assessment: 
     #
@@ -897,7 +902,7 @@ is: d }
 }
 
 { UID: uid-6fa7-4737-f4d6-6298
-  Version: 1
+  Version: 2
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
@@ -906,6 +911,7 @@ is: d }
   user: uid-cc69-c608-c961-6cc2
   product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
   tags: payment
+  credit-card-number: 4567890456
 }
 
 { UID: uid-feb0-63fa-50cd-6587
@@ -1159,7 +1165,7 @@ is: deleted }
 }
 
 { UID: uid-0012-4d35-97f6-cf18
-  Version: 34118
+  Version: 34128
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable student-finance application
@@ -1170,18 +1176,19 @@ is: deleted }
     http://localhost:8081/o/uid-b35b-10e2-b502-fa16.json
     http://localhost:8081/o/uid-72af-337e-8830-27e3.json
     http://localhost:8081/o/uid-a80c-6976-80e9-9c30.json
-  user: uid-3a8f-a203-64c6-b432
+  user: http://localhost:8081/o/uid-3a8f-a203-64c6-b432.json
   partial-order: uid-555b-68d2-f12c-f7b4
   products: {
-    contact: uid-3c7a-4084-3ab6-2a59
     product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-    quantity: 1 2222
+    quantity: 2 1
     full-name: "Great things"
-    organisation: ICL none
-    passport: uid-a529-3be4-0617-f72b
-    date: 2014 none
+    organisation: UCL
+    contact: http://localhost:8081/o/uid-3c7a-4084-3ab6-2a59.json
+    passport: http://localhost:8081/o/uid-a529-3be4-0617-f72b.json
+    date: 2015
   }
-  within: uid-b280-0fea-7cc7-e0a3
+  within: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  assessment: uid-5c43-0e5a-ee75-6003
 }
 
 { UID: uid-8fe7-bad6-a4fc-95cc
@@ -1303,15 +1310,27 @@ is: deleted }
   within: uid-047e-0752-114e-613f
 }
 
+{ UID: uid-5c43-0e5a-ee75-6003
+  Version: 98416
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-0012-4d35-97f6-cf18
+}
+
 { UID: uid-555b-68d2-f12c-f7b4
-  Version: 15
+  Version: 18
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
   is: order
   supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
   user: uid-cc69-c608-c961-6cc2
-  products: { product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json date: none }
+  products: {
+    product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+    quantity: 1
+    date: 2015
+  }
 }
 
 { UID: uid-8287-19f9-df19-2bf3
