@@ -1170,7 +1170,7 @@ function NetMash(){
             var prodURL    =$(that).find('.order-product').val();
             var orderIs    =$(that).find('.order-is').val();
             var orderTag   =$(that).find('.order-tag').val();
-            var uidver=me.getUIDandVer('form-',supplierURL);
+            var uidver=me.getUIDandVer((orderTag? orderTag: 'form')+'-',supplierURL);
             var targetURL=me.getSubFor(supplierURL);
             var json;
             if(orderIs) json = '{ '+uidver+',\n  "is": "'+orderIs+'",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "product": "'+prodURL+'",\n  ';
