@@ -653,35 +653,60 @@ function JSON2HTML(url){
             if(json.title       !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
             if(json.description !== undefined) rows.push('<div class="info-item">'+this.getAnyHTML(json.description)+'</div>');
             if(json.eligibility !== undefined) rows.push('<div class="info-item">Eligibility: '+this.getAnyHTML(toString(json.eligibility))+'</div>');
-            if(json.options     !== undefined) this.addProductOptionsForm(json,url,rows,json.options);
-            if(json.requires    !== undefined) this.addTypedForms(json,url,rows);
+            var ordertemplateview=this.getViaLinkRefactorMe(json['order-template'],'view');
+            if(json.options     !== undefined) this.addOrderOptionsForm(json,url,rows,json.options,ordertemplateview);
+            if(json.requires    !== undefined) this.addOrderRequiresForm(json,url,rows,json.requires,ordertemplateview);
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
-        addTypedForms: function(json,url,rows) {
-            var reqs=json.requires;
-            if(reqs.constructor===Object){
-                for(var r in reqs){
-                    var fields=reqs[r];
-                    if(r=='contact')  this.addContactForm(json,url,rows,fields); else
-                    if(r=='passport') this.addPassportForm(json,url,rows,fields); else
-                    if(r=='payment')  this.addPaymentForm(json,url,rows,fields);
-                    else              this.addGenericForm(json,url,rows,fields,r);
-                }
-            }
+        addOrderOptionsForm: function(json,url,rows,options,ordertemplateview){
+            if(options.constructor!==Object) return;
+            for(var tag in options) this.addOrderOptionForm(json,url,rows,tag,options[tag],ordertemplateview);
         },
-        addProductOptionsForm: function(json,url,rows,fields){
-            rows.push('<form class="product-form">');
+        addOrderOptionForm: function(json,url,rows,tag,fields,ordertemplateview){
+            if(fields.constructor===String) fields = [ fields ];
+            if(fields.constructor!==Array) return;
+            rows.push('<form class="order-form">');
             rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
             this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
-            this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json['order-template'],'view'),fields),rows);
+            this.createGUI(this.pickOutParameters(ordertemplateview,tag,fields),rows);
             rows.push('</table>');
             rows.push('<input class="submit" type="submit" value="Submit Product Options" />');
             rows.push('</form>');
         },
+        addOrderRequiresForm: function(json,url,rows,requires,ordertemplateview) {
+            if(requires.constructor!==Object) return;
+            for(var tag in requires) this.addOrderRequireForm(json,url,rows,tag,requires[tag],ordertemplateview);
+        },
+        addOrderRequireForm: function(json,url,rows,tag,fields,ordertemplateview){
+            if(fields.constructor===String) fields = [ fields ];
+            if(fields.constructor!==Array) return;
+            rows.push('<form class="generic-form">');
+            rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
+            if(ordertemplateview[tag].is)
+            rows.push('<input class="order-is" type="hidden" value="'+ordertemplateview[tag].is+'" />');
+            rows.push('<input class="order-tag" type="hidden" value="'+tag+'" />');
+            rows.push('<table class="grid">');
+            this.createGUI(this.pickOutParameters(ordertemplateview,tag,fields),rows);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit Details" />');
+            rows.push('</form>');
+        },
+        pickOutParameters: function(view,tag,fields){
+            if(!view) return null;
+            if(!fields) return null;
+            if(!view[tag]) return null;
+            viewless={};
+            for(option in view[tag]) if(fields.indexOf(option)!= -1) viewless[option]=view[tag][option];
+            return viewless;
+        },
+        // ------------------------------------------------
         addContactForm: function(json,url,rows,fields){
+            if(fields.constructor===String) fields = [ fields ];
+            if(fields.constructor!==Array) return;
             rows.push('<form class="contact-form">');
             rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
@@ -695,6 +720,8 @@ function JSON2HTML(url){
             rows.push('</form>');
         },
         addPassportForm: function(json,url,rows,fields){
+            if(fields.constructor===String) fields = [ fields ];
+            if(fields.constructor!==Array) return;
             rows.push('<form class="passport-form">');
             rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
@@ -708,6 +735,8 @@ function JSON2HTML(url){
             rows.push('</form>');
         },
         addPaymentForm: function(json,url,rows,fields){
+            if(fields.constructor===String) fields = [ fields ];
+            if(fields.constructor!==Array) return;
             rows.push('<form class="payment-form">');
             rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
@@ -716,23 +745,6 @@ function JSON2HTML(url){
             rows.push('</table>');
             rows.push('<input class="submit" type="submit" value="Submit Payment Details" />');
             rows.push('</form>');
-        },
-        addGenericForm: function(json,url,rows,fields,r){
-            rows.push('<form class="generic-product-form">');
-            rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
-            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
-            rows.push('<table class="grid">');
-            this.createGUI(this.pickOutParameters(this.getViaLinkRefactorMe(json['order-template'],'view'),fields),rows);
-            rows.push('</table>');
-            rows.push('<input class="submit" type="submit" value="Submit Details" />');
-            rows.push('</form>');
-        },
-        pickOutParameters: function(view,options){
-            if(!view) return null;
-            if(!options) return null;
-            viewless={};
-            for(option in view) if(options.indexOf(option)!= -1) viewless[option]=view[option];
-            return viewless;
         },
         // ------------------------------------------------
         markupString2HTML: function(text){
@@ -1042,11 +1054,11 @@ function NetMash(){
 
             $('.cyrus-form').unbind().submit(function(e){ me.postCyrusForm(e,this); });
             $('.gui-form').unbind().submit(function(e){ me.postGuiForm(e,this); });
-            $('.product-form').unbind().submit(function(e){ me.postOrder(e,this); });
+            $('.order-form').unbind().submit(function(e){ me.postOrder(e,this); });
+            $('.generic-form').unbind().submit(function(e){ me.postGenericForm(e,this); });
             $('.contact-form').unbind().submit(function(e){ me.postSubOrder(e,this,'contact'); });
             $('.passport-form').unbind().submit(function(e){ me.postSubOrder(e,this,'passport'); });
             $('.payment-form').unbind().submit(function(e){ me.postSubOrder(e,this,'payment'); });
-            $('.generic-product-form').unbind().submit(function(e){ me.postSubForm(e,this); });
             $('.new-land-form').unbind().submit(function(e){ me.postNewLandForm(e,this); });
             $('.land-form').unbind().submit(function(e){ me.postLandForm(e,this); });
             $('.rsvp-form').unbind().submit(function(e){ me.postRSVPForm(e,this); });
@@ -1144,11 +1156,31 @@ function NetMash(){
             var prodURL    =$(that).find('.order-product').val();
             var uidver=me.getUIDandVer('',supplierURL);
             var targetURL=me.getSubFor(supplierURL);
-            var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "products": {\n   "product": "'+prodURL+'",\n  ';
+            var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "products": {\n   "product": "'+prodURL+'",\n   ';
             var fields = [];
             me.getFormFields($(that),fields);
-            json+=fields.join(',\n   ');
+            json+=fields.join(',\n    ');
             json+='\n }\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postGenericForm: function(e,that){
+            lockURL=null;
+            var supplierURL=$(that).find('.order-supplier').val();
+            var prodURL    =$(that).find('.order-product').val();
+            var orderIs    =$(that).find('.order-is').val();
+            var orderTag   =$(that).find('.order-tag').val();
+            var uidver=me.getUIDandVer('form-',supplierURL);
+            var targetURL=me.getSubFor(supplierURL);
+            var json;
+            if(orderIs) json = '{ '+uidver+',\n  "is": "'+orderIs+'",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "product": "'+prodURL+'",\n  ';
+            else        json = '{ '+uidver+',\n  "is": "form",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "product": "'+prodURL+'",\n  "form": {\n  ';
+            if(orderTag) json+='"tags": "'+orderTag+'",\n  ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n  ');
+            if(orderIs) json+='\n}\n';
+            else        json+='\n }\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
         },
@@ -1163,20 +1195,6 @@ function NetMash(){
             me.getFormFields($(that),fields);
             json+=fields.join(',\n   ');
             json+='\n}\n';
-            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
-            e.preventDefault();
-        },
-        postSubForm: function(e,that){
-            lockURL=null;
-            var supplierURL=$(that).find('.order-supplier').val();
-            var prodURL    =$(that).find('.order-product').val();
-            var uidver=me.getUIDandVer('form-',supplierURL);
-            var targetURL=me.getSubFor(supplierURL);
-            var json = '{ '+uidver+',\n  "is": "form",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n   "product": "'+prodURL+'",\n  "form": {\n   ';
-            var fields = [];
-            me.getFormFields($(that),fields);
-            json+=fields.join(',\n   ');
-            json+='\n }\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
         },

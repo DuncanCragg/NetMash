@@ -20,15 +20,17 @@
 }
 
 { UID: uid-a4e1-3ab9-be73-f985
-  Version: 63088
+  Version: 63093
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee product
   supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
   title: Espresso
   description: "A shot of pure coffee"
-  options: shots ristretto
-  requires: payment
+  options: {
+    coffee-parameters: shots ristretto
+  }
+  requires: { payment: credit-card-number }
   order-template: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json
   coffee: { price-text: "£1.50 single £2.50 double" }
 }
