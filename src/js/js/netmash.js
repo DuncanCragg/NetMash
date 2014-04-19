@@ -1162,7 +1162,7 @@ function NetMash(){
             var fields = [];
             me.getFormFields($(that),fields);
             json+=fields.join(',\n   ');
-            json+='\n }\n}\n';
+            json+='\n  }\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
         },
@@ -1213,7 +1213,7 @@ function NetMash(){
             me.getFormFields($(that),fields);
             json+=fields.join(',\n  ');
             if(orderIs) json+='\n}\n';
-            else        json+='\n }\n}\n';
+            else        json+='\n  }\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
         },
@@ -1333,8 +1333,10 @@ function NetMash(){
                 if(intype=='submit'){
                     if(i==lastButtonPressed) fields.push('"pushed": "'+idOrName+'"');
                 }
-                else
-                    if($(i).val()) fields.push('"'+idOrName+'": "'+$(i).val().jsonEscape()+'"');
+                else{
+                    var val=$(i).val();
+                    if(val && val!="" && val!="none") fields.push('"'+idOrName+'": "'+val.jsonEscape()+'"');
+                }
             });
         },
         getTopObject: function(url){
