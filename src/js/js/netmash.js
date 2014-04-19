@@ -661,46 +661,61 @@ function JSON2HTML(url){
         },
         addOrderOptionsForm: function(json,url,rows,options,ordertemplateview){
             if(options.constructor!==Object) return;
-            for(var tag in options) this.addOrderOptionForm(json,url,rows,tag,options[tag],ordertemplateview);
-        },
-        addOrderOptionForm: function(json,url,rows,tag,fields,ordertemplateview){
-            if(fields.constructor===String) fields = [ fields ];
-            if(fields.constructor!==Array) return;
+            if(!ordertemplateview) return;
+            var orderoptions={};
+            for(var tag in options){
+                var guispec=ordertemplateview[tag];
+                if(guispec.is) this.addOrderOptionForm(json,url,rows,tag,options[tag],guispec);
+                else orderoptions[tag]=options[tag];
+            }
             rows.push('<form class="order-form">');
             rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
+            for(var tag in orderoptions) this.createGUI(this.pickOutParameters(ordertemplateview[tag],orderoptions[tag]),rows);
             this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
-            this.createGUI(this.pickOutParameters(ordertemplateview,tag,fields),rows);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit Product Options" />');
+            rows.push('</form>');
+        },
+        addOrderOptionForm: function(json,url,rows,tag,fields,guispec){
+            if(fields.constructor===String) fields = [ fields ];
+            if(fields.constructor!==Array) return;
+            rows.push('<form class="option-form">');
+            rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
+            rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
+            rows.push('<input class="order-is" type="hidden" value="'+guispec.is+'" />');
+            rows.push('<input class="order-tag" type="hidden" value="'+tag+'" />');
+            rows.push('<table class="grid">');
+            this.createGUI(this.pickOutParameters(guispec,fields),rows);
             rows.push('</table>');
             rows.push('<input class="submit" type="submit" value="Submit Product Options" />');
             rows.push('</form>');
         },
         addOrderRequiresForm: function(json,url,rows,requires,ordertemplateview) {
             if(requires.constructor!==Object) return;
-            for(var tag in requires) this.addOrderRequireForm(json,url,rows,tag,requires[tag],ordertemplateview);
+            if(!ordertemplateview) return;
+            for(var tag in requires) this.addOrderRequireForm(json,url,rows,tag,requires[tag],ordertemplateview[tag]);
         },
-        addOrderRequireForm: function(json,url,rows,tag,fields,ordertemplateview){
+        addOrderRequireForm: function(json,url,rows,tag,fields,guispec){
             if(fields.constructor===String) fields = [ fields ];
             if(fields.constructor!==Array) return;
-            rows.push('<form class="generic-form">');
+            rows.push('<form class="require-form">');
             rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
-            if(ordertemplateview[tag].is)
-            rows.push('<input class="order-is" type="hidden" value="'+ordertemplateview[tag].is+'" />');
+            if(guispec.is)
+            rows.push('<input class="order-is" type="hidden" value="'+guispec.is+'" />');
             rows.push('<input class="order-tag" type="hidden" value="'+tag+'" />');
             rows.push('<table class="grid">');
-            this.createGUI(this.pickOutParameters(ordertemplateview,tag,fields),rows);
+            this.createGUI(this.pickOutParameters(guispec,fields),rows);
             rows.push('</table>');
             rows.push('<input class="submit" type="submit" value="Submit Details" />');
             rows.push('</form>');
         },
-        pickOutParameters: function(view,tag,fields){
-            if(!view) return null;
-            if(!fields) return null;
-            if(!view[tag]) return null;
+        pickOutParameters: function(guispec,fields){
+            if(!guispec || !fields) return null;
             viewless={};
-            for(option in view[tag]) if(fields.indexOf(option)!= -1) viewless[option]=view[tag][option];
+            for(option in guispec) if(fields.indexOf(option)!= -1) viewless[option]=guispec[option];
             return viewless;
         },
         // ------------------------------------------------
@@ -1055,7 +1070,8 @@ function NetMash(){
             $('.cyrus-form').unbind().submit(function(e){ me.postCyrusForm(e,this); });
             $('.gui-form').unbind().submit(function(e){ me.postGuiForm(e,this); });
             $('.order-form').unbind().submit(function(e){ me.postOrder(e,this); });
-            $('.generic-form').unbind().submit(function(e){ me.postGenericForm(e,this); });
+            $('.option-form').unbind().submit(function(e){ me.postOption(e,this); });
+            $('.require-form').unbind().submit(function(e){ me.postRequireForm(e,this); });
             $('.contact-form').unbind().submit(function(e){ me.postSubOrder(e,this,'contact'); });
             $('.passport-form').unbind().submit(function(e){ me.postSubOrder(e,this,'passport'); });
             $('.payment-form').unbind().submit(function(e){ me.postSubOrder(e,this,'payment'); });
@@ -1164,7 +1180,24 @@ function NetMash(){
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
         },
-        postGenericForm: function(e,that){
+        postOption: function(e,that){
+            lockURL=null;
+            var supplierURL=$(that).find('.order-supplier').val();
+            var prodURL    =$(that).find('.order-product').val();
+            var orderIs    =$(that).find('.order-is').val();
+            var orderTag   =$(that).find('.order-tag').val();
+            var uidver=me.getUIDandVer('',supplierURL);
+            var targetURL=me.getSubFor(supplierURL);
+            var json = '{ '+uidver+',\n  "is": "'+orderIs+'",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "product": "'+prodURL+'",\n  ';
+            json+='"tags": "'+orderTag+'",\n  ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n  ');
+            json+='\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postRequireForm: function(e,that){
             lockURL=null;
             var supplierURL=$(that).find('.order-supplier').val();
             var prodURL    =$(that).find('.order-product').val();

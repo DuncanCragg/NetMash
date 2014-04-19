@@ -334,7 +334,7 @@ is: deleted }
 }
 
 { UID: uid-3c7a-4084-3ab6-2a59
-  Version: 2
+  Version: 3
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
@@ -630,14 +630,16 @@ is: d }
 }
 
 { UID: uid-28a2-d3b1-4aea-86e8
-  Version: 35593
+  Version: 35594
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee shop supplier
   title: "Coffee Ar Us"
   Rules: http://localhost:8081/o/uid-cfa2-3a18-d548-e7b4.json
   products: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-  trackers: ( uid-529d-4e36-a2df-c535 )
+  trackers: 
+    uid-529d-4e36-a2df-c535
+    uid-bb49-556f-df70-22cd
 }
 
 { UID: uid-1e5d-7d5b-bd2d-0e88
@@ -846,6 +848,17 @@ is: d }
   email: duncan@cilux.org
 }
 
+{ UID: uid-dac3-edd0-2609-241b
+  Version: 2
+  Max-Age: 0
+  Cache-Notify: c-n-cc69-c608-c961-6cc2
+  Class: cyrus.forest.WebObject
+  is: order
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  user: uid-cc69-c608-c961-6cc2
+  products: { product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json ristretto: true }
+}
+
 { UID: uid-53a0-9caa-f534-ee2a
   Version: 65260
   Max-Age: 0
@@ -929,7 +942,7 @@ is: deleted }
 }
 
 { UID: uid-295d-f714-9a6b-42d6
-  Version: 77133
+  Version: 77134
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable study-finance product
@@ -1148,6 +1161,22 @@ is: deleted }
   within: uid-047e-0752-114e-613f
 }
 
+{ UID: uid-bb49-556f-df70-22cd
+  Version: 95301
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable coffee order-tracker
+  Rules: 
+    http://localhost:8081/o/uid-edbf-edcc-f4a2-8b6c.json
+    http://localhost:8081/o/uid-9f27-f343-bd59-ec2d.json
+    http://localhost:8081/o/uid-9877-4ff3-e138-011c.json
+    uid-d7e7-2923-4f26-57f9
+  order: uid-dac3-edd0-2609-241b
+  status: filled
+  products: { product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json ristretto: true }
+  price: * 3.60
+}
+
 { UID: uid-ff33-f5a7-e199-3a42
   Version: 64314
   Max-Age: 0
@@ -1165,7 +1194,7 @@ is: deleted }
 }
 
 { UID: uid-0012-4d35-97f6-cf18
-  Version: 34128
+  Version: 34133
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable student-finance application
@@ -1180,10 +1209,10 @@ is: deleted }
   partial-order: uid-555b-68d2-f12c-f7b4
   products: {
     product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-    quantity: 2 1
-    full-name: "Great things"
+    quantity: 2 1 123123 321 3
+    full-name: "Great things" "Studying Duncan Cragg"
     organisation: UCL
-    contact: http://localhost:8081/o/uid-3c7a-4084-3ab6-2a59.json
+    contact: uid-3c7a-4084-3ab6-2a59
     passport: http://localhost:8081/o/uid-a529-3be4-0617-f72b.json
     date: 2015
   }
@@ -1204,7 +1233,7 @@ is: deleted }
 }
 
 { UID: uid-329e-78ae-c94e-17bf
-  Version: 49485
+  Version: 49491
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
@@ -1319,7 +1348,7 @@ is: deleted }
 }
 
 { UID: uid-555b-68d2-f12c-f7b4
-  Version: 18
+  Version: 29
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
@@ -1328,8 +1357,9 @@ is: deleted }
   user: uid-cc69-c608-c961-6cc2
   products: {
     product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-    quantity: 1
-    date: 2015
+    full-name: "Studying Duncan Cragg"
+    organisation: UCL
+    quantity: 3
   }
 }
 
@@ -1361,7 +1391,7 @@ is: deleted }
 }
 
 { UID: uid-0542-777b-20be-5b5c
-  Version: 41161
+  Version: 41163
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
@@ -1557,7 +1587,7 @@ is: deleted }
 }
 
 { UID: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-  Version: 63093
+  Version: 63095
   Max-Age: 0
   Cache-Notify: http://localhost:8082/o/c-n-0a3a-8cd3-d5c3-ed1c
   Class: cyrus.forest.WebObject
