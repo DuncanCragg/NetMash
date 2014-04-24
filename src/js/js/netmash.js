@@ -694,25 +694,29 @@ function JSON2HTML(url){
             if(json.description !== undefined) rows.push('<div class="info-item">'+this.getAnyHTML(json.description)+'</div>');
             if(json.eligibility !== undefined) rows.push('<div class="info-item">Eligibility: '+this.getAnyHTML(toString(json.eligibility))+'</div>');
             var ordertemplateview=this.getViaLinkRefactorMe(json['order-template'],'view');
-            if(json.options     !== undefined) this.addOrderOptionsForm(json,url,rows,json.options,ordertemplateview);
-            if(json.requires    !== undefined) this.addOrderRequiresForm(json,url,rows,json.requires,ordertemplateview);
+            if(json.options     !== undefined) this.addOrderOptionsForm(json,url,rows,ordertemplateview);
+            if(json.requires    !== undefined) this.addOrderRequiresForm(json,url,rows,ordertemplateview);
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
         },
-        addOrderOptionsForm: function(json,url,rows,options,ordertemplateview){
-            if(options.constructor!==Object) return;
+        addOrderOptionsForm: function(json,url,rows,ordertemplateview){
             if(!ordertemplateview) return;
-            var orderoptions={};
-            for(var tag in options){
+            var sels={};
+            var selview=json.options? json.options: ordertemplateview;
+            if(selview.constructor===String){ sels=[]; selview = [ selview ]; }
+            if(selview.constructor===Array){  sels=[]; }
+            for(var tag in selview){
                 var guispec=ordertemplateview[tag];
-                if(guispec.is) this.addOrderOptionForm(json,url,rows,tag,options[tag],guispec);
-                else orderoptions[tag]=options[tag];
+                var fields=selview[tag];
+                if(!guispec){ guispec=ordertemplateview[fields]; fields=null; }
+                if(guispec && guispec.is && guispec.is!='style') this.addOrderOptionForm(json,url,rows,tag,fields,guispec);
+                else sels[tag]=selview[tag];
             }
             rows.push('<form class="order-form">');
             rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
-            for(var tag in orderoptions) this.createGUI(this.pickOutParameters(ordertemplateview[tag],orderoptions[tag]),rows);
+            this.createGUI(ordertemplateview,rows,null,sels);
             this.objectGUI('quantity', { 'input': 'textfield', 'label': 'Quantity' },rows,false);
             rows.push('</table>');
             rows.push('<input class="submit" type="submit" value="Submit Product Options" />');
@@ -727,15 +731,16 @@ function JSON2HTML(url){
             rows.push('<input class="order-is" type="hidden" value="'+guispec.is+'" />');
             rows.push('<input class="order-tag" type="hidden" value="'+tag+'" />');
             rows.push('<table class="grid">');
-            this.createGUI(this.pickOutParameters(guispec,fields),rows);
+            this.createGUI(guispec,rows,null,fields);
             rows.push('</table>');
             rows.push('<input class="submit" type="submit" value="Submit Product Options" />');
             rows.push('</form>');
         },
-        addOrderRequiresForm: function(json,url,rows,requires,ordertemplateview) {
-            if(requires.constructor!==Object) return;
+        addOrderRequiresForm: function(json,url,rows,ordertemplateview) {
             if(!ordertemplateview) return;
-            for(var tag in requires) this.addOrderRequireForm(json,url,rows,tag,requires[tag],ordertemplateview[tag]);
+            var selview=json.requires? json.requires: ordertemplateview;
+            if(selview.constructor===String) selview = [ selview ];
+            for(var tag in selview) this.addOrderRequireForm(json,url,rows,tag,selview[tag],ordertemplateview[tag]);
         },
         addOrderRequireForm: function(json,url,rows,tag,fields,guispec){
             if(fields.constructor===String) fields = [ fields ];
@@ -747,16 +752,10 @@ function JSON2HTML(url){
             rows.push('<input class="order-is" type="hidden" value="'+guispec.is+'" />');
             rows.push('<input class="order-tag" type="hidden" value="'+tag+'" />');
             rows.push('<table class="grid">');
-            this.createGUI(this.pickOutParameters(guispec,fields),rows);
+            this.createGUI(guispec,rows,null,fields);
             rows.push('</table>');
             rows.push('<input class="submit" type="submit" value="Submit Details" />');
             rows.push('</form>');
-        },
-        pickOutParameters: function(guispec,fields){
-            if(!guispec || !fields) return null;
-            viewless={};
-            for(var tag in guispec) if(fields.constructor!==Array || fields.indexOf(tag)!= -1) viewless[tag]=guispec[tag];
-            return viewless;
         },
         // ------------------------------------------------
         addContactForm: function(json,url,rows,fields){
