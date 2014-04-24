@@ -424,166 +424,6 @@ function JSON2HTML(url){
             rows.push('<input class="submit" type="submit" value="Submit" />');
             rows.push('</form>');
         },
-        createGUI: function(guilist,rows,json,select){
-            if(!guilist) return false;
-            if(this.isONLink(guilist)){
-                rows.push('<tr>');
-                rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, guilist, true, {closed:true})+'</td>');
-                rows.push('</tr>');
-                return false;
-            }
-            else
-            if(guilist.constructor===String){
-                rows.push('<tr><td>'+guilist+'</td></tr>');
-                return false;
-            }
-            var horizontal=false;
-            for(var i in guilist){ var item=guilist[i];
-                if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
-            }
-            var tagged=(guilist.constructor===Object);
-            var submittable=false;
-            if(horizontal) rows.push('<tr>');
-            for(var i in guilist){
-                var tag=tagged? i: null;
-                if(/^[A-Z]/.test(tag)) continue;
-                if(tag=='is' || tag=='title' || tag=='update-template') continue;
-                var selec2=null;
-                if(tag && select && select.constructor===String && select!=tag) continue;
-                if(tag && select && select.constructor===Array){
-                    var found=false;
-                    for(var s in select){
-                        if(select[s].constructor===String && select[s]==tag){ found=true; break; }
-                        if(select[s].constructor===Object && select[s][tag]){ found=true; selec2=select[s][tag]; break; }
-                    }
-                    if(!found) continue;
-                }
-                if(tag && select && select.constructor===Object){
-                    if(!select[tag]) continue;
-                    selec2=select[tag];
-                }
-                var item=guilist[i];
-                if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal,selec2) || submittable;
-                else
-                if(this.isONLink(item)){
-                    if(!horizontal) rows.push('<tr>');
-                    rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, item, true, {closed:true})+'</td>');
-                    if(!horizontal) rows.push('</tr>');
-                }
-                else
-                if(item.constructor===String){
-                    if(!horizontal) rows.push('<tr>');
-                    rows.push('<td colspan="2" class="grid-col">'+this.getStringHTML(item)+'</td>');
-                    if(!horizontal) rows.push('</tr>');
-                }
-                else
-                if(item.constructor===Array){
-                    if(!horizontal) rows.push('<tr>');
-                    rows.push('<td colspan="2" class="grid-col">');
-                    rows.push('<table class="grid">');
-                    submittable=this.createGUI(item,rows,null,selec2) || submittable;
-                    rows.push('</table>');
-                    rows.push('</td>');
-                    if(!horizontal) rows.push('</tr>');
-                }
-                else{
-                    if(!horizontal) rows.push('<tr>');
-                    rows.push('<td colspan="2" class="grid-col">'+item+'</td>');
-                    if(!horizontal) rows.push('</tr>');
-                }
-            }
-            if(horizontal) rows.push('</tr>');
-            return submittable;
-        },
-        addIfPresent: function(json,tag,widget,rows,horizontal,select){
-            if(!json) return this.objectGUI(tag,widget,rows,horizontal,undefined,select);
-            var value=json[tag];
-            if(value===undefined) return false;
-            return this.objectGUI(tag,widget,rows,horizontal,value,select);
-        },
-        objectGUI: function(tag,guilist,rows,horizontal,value,select){
-            if(tag==null || tag=='') tag='prop-'+Math.floor(Math.random()*1e6);
-            var val=(value!==undefined);
-            var submittable=false;
-            var buttonspresent=false;
-            if(guilist.input){
-                var input=guilist.input;
-                var label=guilist.label;
-                var range=guilist.range;
-                var valu2=guilist.value;
-                var val2=(valu2!==undefined);
-                if(!horizontal) rows.push('<tr>');
-                if(input=='checkbox'){
-                    var checked=value || valu2;
-                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(checked? '" checked="true':'')+'"/></td>');
-                    submittable=true;
-                }
-                else
-                if(input=='chooser'){
-                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><select id="'+tag+'" class="chooser form-field">');
-                    rows.push('<option value="none">Select..</option>');
-                    for(var o in range){
-                        if(o==value) rows.push('<option value="'+o+'" selected="true">'+range[o]+'</option>');
-                        else         rows.push('<option value="'+o+'" >'               +range[o]+'</option>');
-                    }
-                    rows.push('</select></td>');
-                    submittable=true;
-                }
-                else
-                if(input=='textfield'){
-                    if(label)           rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    if(val && !label)   rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
-                    else
-                    if(val)             rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
-                    else
-                    if(val2 && !label)  rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
-                    else
-                    if(val2)            rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
-                    else
-                    if(!label)          rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
-                    else                rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
-                    submittable=true;
-                }
-                else
-                if(input=='rating'){
-                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="radio" name="'+tag+'" class="rating form-field" value="0">0');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="1">1');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="2">2');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="3">3');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="4">4');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="5">5</td>');
-                    submittable=true;
-                }
-                else
-                if(input=='button'){
-                    rows.push('<td><input id="'+tag+'" class="button form-field" type="submit" value="'+label+'" />');
-                    buttonspresent=true;
-                }
-                if(!horizontal) rows.push('</tr>');
-            }
-            else
-            if(guilist.view){
-                var open=this.isOrContains(guilist.view,'open');
-                var raw =this.isOrContains(guilist.view,'raw');
-                if(!horizontal) rows.push('<tr>');
-                rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, guilist.item, true, {closed:!open}, null, raw)+'</td>');
-                if(!horizontal) rows.push('</tr>');
-            }
-            else
-            if(guilist.is!='style') {
-                if(!horizontal) rows.push('<tr>');
-                rows.push('<td colspan="2" class="grid-col">');
-                rows.push('<table class="grid">');
-                submittable=this.createGUI(guilist,rows,null,select);
-                rows.push('</table>');
-                rows.push('</td>');
-                if(!horizontal) rows.push('</tr>');
-            }
-            return submittable && !buttonspresent;
-        },
         // ------------------------------------------------
         getArticleHTML: function(url,json,closed){
             var rows=[];
@@ -801,6 +641,166 @@ function JSON2HTML(url){
             rows.push('</form>');
         },
         // ------------------------------------------------
+        createGUI: function(guilist,rows,json,select){
+            if(!guilist) return false;
+            if(this.isONLink(guilist)){
+                rows.push('<tr>');
+                rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, guilist, true, {closed:true})+'</td>');
+                rows.push('</tr>');
+                return false;
+            }
+            else
+            if(guilist.constructor===String){
+                rows.push('<tr><td>'+guilist+'</td></tr>');
+                return false;
+            }
+            var horizontal=false;
+            for(var i in guilist){ var item=guilist[i];
+                if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
+            }
+            var tagged=(guilist.constructor===Object);
+            var submittable=false;
+            if(horizontal) rows.push('<tr>');
+            for(var i in guilist){
+                var tag=tagged? i: null;
+                if(/^[A-Z]/.test(tag)) continue;
+                if(tag=='is' || tag=='title' || tag=='update-template') continue;
+                var selec2=null;
+                if(tag && select && select.constructor===String && select!=tag) continue;
+                if(tag && select && select.constructor===Array){
+                    var found=false;
+                    for(var s in select){
+                        if(select[s].constructor===String && select[s]==tag){ found=true; break; }
+                        if(select[s].constructor===Object && select[s][tag]){ found=true; selec2=select[s][tag]; break; }
+                    }
+                    if(!found) continue;
+                }
+                if(tag && select && select.constructor===Object){
+                    if(!select[tag]) continue;
+                    selec2=select[tag];
+                }
+                var item=guilist[i];
+                if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal,selec2) || submittable;
+                else
+                if(this.isONLink(item)){
+                    if(!horizontal) rows.push('<tr>');
+                    rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, item, true, {closed:true})+'</td>');
+                    if(!horizontal) rows.push('</tr>');
+                }
+                else
+                if(item.constructor===String){
+                    if(!horizontal) rows.push('<tr>');
+                    rows.push('<td colspan="2" class="grid-col">'+this.getStringHTML(item)+'</td>');
+                    if(!horizontal) rows.push('</tr>');
+                }
+                else
+                if(item.constructor===Array){
+                    if(!horizontal) rows.push('<tr>');
+                    rows.push('<td colspan="2" class="grid-col">');
+                    rows.push('<table class="grid">');
+                    submittable=this.createGUI(item,rows,null,selec2) || submittable;
+                    rows.push('</table>');
+                    rows.push('</td>');
+                    if(!horizontal) rows.push('</tr>');
+                }
+                else{
+                    if(!horizontal) rows.push('<tr>');
+                    rows.push('<td colspan="2" class="grid-col">'+item+'</td>');
+                    if(!horizontal) rows.push('</tr>');
+                }
+            }
+            if(horizontal) rows.push('</tr>');
+            return submittable;
+        },
+        addIfPresent: function(json,tag,widget,rows,horizontal,select){
+            if(!json) return this.objectGUI(tag,widget,rows,horizontal,undefined,select);
+            var value=json[tag];
+            if(value===undefined) return false;
+            return this.objectGUI(tag,widget,rows,horizontal,value,select);
+        },
+        objectGUI: function(tag,guilist,rows,horizontal,value,select){
+            if(tag==null || tag=='') tag='prop-'+Math.floor(Math.random()*1e6);
+            var val=(value!==undefined);
+            var submittable=false;
+            var buttonspresent=false;
+            if(guilist.input){
+                var input=guilist.input;
+                var label=guilist.label;
+                var range=guilist.range;
+                var valu2=guilist.value;
+                var val2=(valu2!==undefined);
+                if(!horizontal) rows.push('<tr>');
+                if(input=='checkbox'){
+                    var checked=value || valu2;
+                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(checked? '" checked="true':'')+'"/></td>');
+                    submittable=true;
+                }
+                else
+                if(input=='chooser'){
+                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><select id="'+tag+'" class="chooser form-field">');
+                    rows.push('<option value="none">Select..</option>');
+                    for(var o in range){
+                        if(o==value) rows.push('<option value="'+o+'" selected="true">'+range[o]+'</option>');
+                        else         rows.push('<option value="'+o+'" >'               +range[o]+'</option>');
+                    }
+                    rows.push('</select></td>');
+                    submittable=true;
+                }
+                else
+                if(input=='textfield'){
+                    if(label)           rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                    if(val && !label)   rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
+                    else
+                    if(val)             rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
+                    else
+                    if(val2 && !label)  rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
+                    else
+                    if(val2)            rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
+                    else
+                    if(!label)          rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
+                    else                rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
+                    submittable=true;
+                }
+                else
+                if(input=='rating'){
+                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                    rows.push('<td><input type="radio" name="'+tag+'" class="rating form-field" value="0">0');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="1">1');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="2">2');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="3">3');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="4">4');
+                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="5">5</td>');
+                    submittable=true;
+                }
+                else
+                if(input=='button'){
+                    rows.push('<td><input id="'+tag+'" class="button form-field" type="submit" value="'+label+'" />');
+                    buttonspresent=true;
+                }
+                if(!horizontal) rows.push('</tr>');
+            }
+            else
+            if(guilist.view){
+                var open=this.isOrContains(guilist.view,'open');
+                var raw =this.isOrContains(guilist.view,'raw');
+                if(!horizontal) rows.push('<tr>');
+                rows.push('<td colspan="2" class="grid-col">'+this.getObjectHeadHTML(null, guilist.item, true, {closed:!open}, null, raw)+'</td>');
+                if(!horizontal) rows.push('</tr>');
+            }
+            else
+            if(guilist.is!='style') {
+                if(!horizontal) rows.push('<tr>');
+                rows.push('<td colspan="2" class="grid-col">');
+                rows.push('<table class="grid">');
+                submittable=this.createGUI(guilist,rows,null,select);
+                rows.push('</table>');
+                rows.push('</td>');
+                if(!horizontal) rows.push('</tr>');
+            }
+            return submittable && !buttonspresent;
+        },
         markupString2HTML: function(text){
             if(!text) return '';
             text=text.replace(/&#39;/g,'\'');
