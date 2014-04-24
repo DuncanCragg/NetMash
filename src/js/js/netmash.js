@@ -748,7 +748,7 @@ function JSON2HTML(url){
             rows.push('<form class="require-form">');
             rows.push('<input class="order-supplier" type="hidden" value="'+json.supplier+'" />');
             rows.push('<input class="order-product" type="hidden" value="'+url+'" />');
-            if(guispec.is)
+            if(guispec && guispec.is)
             rows.push('<input class="order-is" type="hidden" value="'+guispec.is+'" />');
             rows.push('<input class="order-tag" type="hidden" value="'+tag+'" />');
             rows.push('<table class="grid">');
