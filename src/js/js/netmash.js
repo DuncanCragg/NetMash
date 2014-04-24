@@ -416,7 +416,7 @@ function JSON2HTML(url){
         addGuiIsForm: function(json,url,rows,tag,fields,guispec){
             rows.push('<form class="is-gui">');
             rows.push('<input class="gui-url" type="hidden" value="'+url+'" />');
-            rows.push('<input class="gui-is" type="hidden" value="'+guispec.is+'" />');
+            rows.push('<input class="gui-is"  type="hidden" value="'+guispec.is+'" />');
             rows.push('<input class="gui-tag" type="hidden" value="'+tag+'" />');
             rows.push('<table class="grid">');
             this.createGUI(guispec,rows,null,fields);
@@ -1108,6 +1108,7 @@ function NetMash(){
 
             $('.cyrus-form').unbind().submit(function(e){ me.postCyrusForm(e,this); });
             $('.gui-form').unbind().submit(function(e){ me.postGuiForm(e,this); });
+            $('.is-gui').unbind().submit(function(e){ me.postIsGui(e,this); });
             $('.order-form').unbind().submit(function(e){ me.postOrder(e,this); });
             $('.option-form').unbind().submit(function(e){ me.postOption(e,this); });
             $('.require-form').unbind().submit(function(e){ me.postRequireForm(e,this); });
@@ -1202,6 +1203,22 @@ function NetMash(){
             me.getFormFields($(that),fields);
             json+=fields.join(',\n   ');
             json+='\n  }\n}\n';
+            network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
+            e.preventDefault();
+        },
+        postIsGui: function(e,that){
+            lockURL=null;
+            var guiURL=$(that).find('.gui-url').val();
+            var guiIs =$(that).find('.gui-is').val();
+            var guiTag=$(that).find('.gui-tag').val();
+            var uidver=me.getUIDandVer('',guiURL);
+            var targetURL=me.getSubFor(guiURL);
+            var json = '{ '+uidver+',\n  "is": "'+guiIs+'",\n  "gui": "'+guiURL+'",\n  "user": "'+network.getUserUID()+'",\n  ';
+            json+='"tags": "'+guiTag+'",\n  ';
+            var fields = [];
+            me.getFormFields($(that),fields);
+            json+=fields.join(',\n  ');
+            json+='\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
         },
