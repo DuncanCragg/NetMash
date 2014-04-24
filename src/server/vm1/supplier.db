@@ -1130,7 +1130,7 @@ is: deleted }
 }
 
 { UID: uid-b44a-f04a-8efa-b798
-  Version: 68459
+  Version: 68461
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
@@ -1168,6 +1168,9 @@ is: deleted }
         input: chooser
         label: "Favourite Color"
         range: { red: Red blue: Blue }
+      }
+      more-info: {
+        favourite-animal: { input: textfield label: "Favourite Animal" }
       }
     }
     person2: {

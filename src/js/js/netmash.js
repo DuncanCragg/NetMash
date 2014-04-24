@@ -641,7 +641,7 @@ function JSON2HTML(url){
             rows.push('</form>');
         },
         // ------------------------------------------------
-        createGUI: function(guilist,rows,json,select){
+        createGUI: function(guilist,rows,json,select,tags){
             if(!guilist) return false;
             if(this.isONLink(guilist)){
                 rows.push('<tr>');
@@ -663,6 +663,7 @@ function JSON2HTML(url){
             if(horizontal) rows.push('<tr>');
             for(var i in guilist){
                 var tag=tagged? i: null;
+                var tags2=(tags? tags: []).concat(tag? tag: []);
                 if(/^[A-Z]/.test(tag)) continue;
                 if(tag=='is' || tag=='title' || tag=='update-template') continue;
                 var selec2=null;
@@ -680,7 +681,7 @@ function JSON2HTML(url){
                     selec2=select[tag];
                 }
                 var item=guilist[i];
-                if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal,selec2) || submittable;
+                if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal,selec2,tags2) || submittable;
                 else
                 if(this.isONLink(item)){
                     if(!horizontal) rows.push('<tr>');
@@ -698,7 +699,7 @@ function JSON2HTML(url){
                     if(!horizontal) rows.push('<tr>');
                     rows.push('<td colspan="2" class="grid-col">');
                     rows.push('<table class="grid">');
-                    submittable=this.createGUI(item,rows,null,selec2) || submittable;
+                    submittable=this.createGUI(item,rows,null,selec2,tags2) || submittable;
                     rows.push('</table>');
                     rows.push('</td>');
                     if(!horizontal) rows.push('</tr>');
@@ -712,13 +713,13 @@ function JSON2HTML(url){
             if(horizontal) rows.push('</tr>');
             return submittable;
         },
-        addIfPresent: function(json,tag,widget,rows,horizontal,select){
-            if(!json) return this.objectGUI(tag,widget,rows,horizontal,undefined,select);
+        addIfPresent: function(json,tag,widget,rows,horizontal,select,tags){
+            if(!json) return this.objectGUI(tag,widget,rows,horizontal,undefined,select,tags);
             var value=json[tag];
             if(value===undefined) return false;
-            return this.objectGUI(tag,widget,rows,horizontal,value,select);
+            return this.objectGUI(tag,widget,rows,horizontal,value,select,tags);
         },
-        objectGUI: function(tag,guilist,rows,horizontal,value,select){
+        objectGUI: function(tag,guilist,rows,horizontal,value,select,tags){
             if(tag==null || tag=='') tag='prop-'+Math.floor(Math.random()*1e6);
             var val=(value!==undefined);
             var submittable=false;
@@ -794,7 +795,7 @@ function JSON2HTML(url){
                 if(!horizontal) rows.push('<tr>');
                 rows.push('<td colspan="2" class="grid-col">');
                 rows.push('<table class="grid">');
-                submittable=this.createGUI(guilist,rows,null,select);
+                submittable=this.createGUI(guilist,rows,null,select,tags);
                 rows.push('</table>');
                 rows.push('</td>');
                 if(!horizontal) rows.push('</tr>');
