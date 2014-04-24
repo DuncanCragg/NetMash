@@ -721,66 +721,9 @@ function JSON2HTML(url){
         },
         objectGUI: function(tag,guilist,rows,horizontal,value,select,tags){
             if(tag==null || tag=='') tag='prop-'+Math.floor(Math.random()*1e6);
-            var val=(value!==undefined);
             var submittable=false;
-            var buttonspresent=false;
             if(guilist.input){
-                var input=guilist.input;
-                var label=guilist.label;
-                var range=guilist.range;
-                var valu2=guilist.value;
-                var val2=(valu2!==undefined);
-                if(!horizontal) rows.push('<tr>');
-                if(input=='checkbox'){
-                    var checked=value || valu2;
-                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(checked? '" checked="true':'')+'"/></td>');
-                    submittable=true;
-                }
-                else
-                if(input=='chooser'){
-                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><select id="'+tag+'" class="chooser form-field">');
-                    rows.push('<option value="none">Select..</option>');
-                    for(var o in range){
-                        if(o==value) rows.push('<option value="'+o+'" selected="true">'+range[o]+'</option>');
-                        else         rows.push('<option value="'+o+'" >'               +range[o]+'</option>');
-                    }
-                    rows.push('</select></td>');
-                    submittable=true;
-                }
-                else
-                if(input=='textfield'){
-                    if(label)           rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    if(val && !label)   rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
-                    else
-                    if(val)             rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
-                    else
-                    if(val2 && !label)  rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
-                    else
-                    if(val2)            rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
-                    else
-                    if(!label)          rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
-                    else                rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
-                    submittable=true;
-                }
-                else
-                if(input=='rating'){
-                    rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
-                    rows.push('<td><input type="radio" name="'+tag+'" class="rating form-field" value="0">0');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="1">1');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="2">2');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="3">3');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="4">4');
-                    rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="5">5</td>');
-                    submittable=true;
-                }
-                else
-                if(input=='button'){
-                    rows.push('<td><input id="'+tag+'" class="button form-field" type="submit" value="'+label+'" />');
-                    buttonspresent=true;
-                }
-                if(!horizontal) rows.push('</tr>');
+                submittable=this.renderWidget(tag,guilist,rows,horizontal,value,select,tags);
             }
             else
             if(guilist.view){
@@ -800,8 +743,71 @@ function JSON2HTML(url){
                 rows.push('</td>');
                 if(!horizontal) rows.push('</tr>');
             }
+            return submittable;
+        },
+        renderWidget: function(tag,guilist,rows,horizontal,value,select,tags){
+            var submittable=false;
+            var buttonspresent=false;
+            var input=guilist.input;
+            var label=guilist.label;
+            var range=guilist.range;
+            var valu2=guilist.value;
+            var val=(value!==undefined);
+            var val2=(valu2!==undefined);
+            if(!horizontal) rows.push('<tr>');
+            if(input=='checkbox'){
+                var checked=value || valu2;
+                rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(checked? '" checked="true':'')+'"/></td>');
+                submittable=true;
+            }
+            else
+            if(input=='chooser'){
+                rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                rows.push('<td><select id="'+tag+'" class="chooser form-field">');
+                rows.push('<option value="none">Select..</option>');
+                for(var o in range){
+                    if(o==value) rows.push('<option value="'+o+'" selected="true">'+range[o]+'</option>');
+                    else         rows.push('<option value="'+o+'" >'               +range[o]+'</option>');
+                }
+                rows.push('</select></td>');
+                submittable=true;
+            }
+            else
+            if(input=='textfield'){
+                if(label)           rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                if(val && !label)   rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
+                else
+                if(val)             rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+value+'" /></td>');
+                else
+                if(val2 && !label)  rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
+                else
+                if(val2)            rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field" value="'+valu2+'" /></td>');
+                else
+                if(!label)          rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
+                else                rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
+                submittable=true;
+            }
+            else
+            if(input=='rating'){
+                rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                rows.push('<td><input type="radio" name="'+tag+'" class="rating form-field" value="0">0');
+                rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="1">1');
+                rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="2">2');
+                rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="3">3');
+                rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="4">4');
+                rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="5">5</td>');
+                submittable=true;
+            }
+            else
+            if(input=='button'){
+                rows.push('<td><input id="'+tag+'" class="button form-field" type="submit" value="'+label+'" />');
+                buttonspresent=true;
+            }
+            if(!horizontal) rows.push('</tr>');
             return submittable && !buttonspresent;
         },
+        // ---------------------------------------------------
         markupString2HTML: function(text){
             if(!text) return '';
             text=text.replace(/&#39;/g,'\'');
@@ -815,7 +821,6 @@ function JSON2HTML(url){
             text=text.replace(codere, '<code>$1</code>');
             return text;
         },
-        // ---------------------------------------------------
         getTitleString: function(json){
             if(!json || json.constructor!==Object) return '';
             if(json['full-name'] !== undefined) return simpleStringFrom(json['full-name']);
