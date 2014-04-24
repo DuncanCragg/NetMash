@@ -344,16 +344,18 @@ is: deleted }
 }
 
 { UID: uid-c55b-f11f-3611-b089
-  Version: 8
+  Version: 9
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
-  is: contact
+  is: form
   gui: http://localhost:8081/o/uid-b44a-f04a-8efa-b798.json
   user: uid-cc69-c608-c961-6cc2
-  tags: person
-  name: "Duncan Cragg"
-  email: duncan@cilux.org
+  form: {
+    favourite-colour: blue
+    info:favourite-colour: red
+    info:more-info:favourite-animal: dog
+  }
 }
 
 { UID: uid-3c7a-4084-3ab6-2a59

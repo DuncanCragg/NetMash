@@ -746,6 +746,7 @@ function JSON2HTML(url){
             return submittable;
         },
         renderWidget: function(tag,guilist,rows,horizontal,value,select,tags){
+            if(tags) tag=tags.join(':');
             var submittable=false;
             var buttonspresent=false;
             var input=guilist.input;
