@@ -10,22 +10,10 @@
 }
 
 { UID: uid-effd-6dad-dac9-c520
-  Version: 14616
+  Version: 14617
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
-  is: editable gui
-  title: "Application for Finance; Passport Details"
-  view: {
-    nationality: {
-      input: chooser
-      label: Nationality
-      range: { UK: UK US: US EU: "Other European" }
-    }
-    passport-number: { input: textfield label: "Passport Number" }
-    expiry-date: { input: textfield label: Expires }
-    biometric: { input: checkbox label: "Is Biometric?" }
-  }
-}
+is: deleted }
 
 { UID: uid-dfde-88aa-d09f-98d7
   Version: 78481
@@ -49,6 +37,17 @@
   number: 123123
   expiry-date: 1-1-2018
   type: biometric
+}
+
+{ UID: uid-f5d0-93d5-ba5f-8524
+  Version: 2
+  Max-Age: 0
+  Cache-Notify: c-n-cc69-c608-c961-6cc2
+  Class: cyrus.forest.WebObject
+  is: form
+  gui: http://localhost:8081/o/uid-ccb8-43de-df47-29da.json
+  user: uid-cc69-c608-c961-6cc2
+  form: { favourite-colour: blue ristretto: false }
 }
 
 { UID: uid-fb5e-7d16-5a45-832c
@@ -342,6 +341,17 @@ is: deleted }
     institution: none
     year-of-study: none
   }
+}
+
+{ UID: uid-c55b-f11f-3611-b089
+  Version: 5
+  Max-Age: 0
+  Cache-Notify: c-n-cc69-c608-c961-6cc2
+  Class: cyrus.forest.WebObject
+  is: form
+  gui: http://localhost:8081/o/uid-b44a-f04a-8efa-b798.json
+  user: uid-cc69-c608-c961-6cc2
+  form: { favourite-colour: red name: "Duncan Cragg" }
 }
 
 { UID: uid-3c7a-4084-3ab6-2a59
@@ -953,7 +963,7 @@ is: deleted }
 }
 
 { UID: uid-295d-f714-9a6b-42d6
-  Version: 77142
+  Version: 77143
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable study-finance product
@@ -970,7 +980,7 @@ is: deleted }
     year-of-study: date
   }
   requires: {
-    main-applicant: full-name birthday gender email
+    main-applicant: title2 full-name birthday gender email
     travel-documents: nationality number expiry-date type
     payment: credit-card-number
     funky: arks-this arks-that
@@ -1118,13 +1128,50 @@ is: deleted }
 }
 
 { UID: uid-b44a-f04a-8efa-b798
-  Version: 68334
+  Version: 68459
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
+  Rules: {
+    is: gui rule
+    Alerted: {
+      is: form
+      form: {
+        info: { favourite-colour: blue }
+      }
+    }
+    select: {
+      person: => name
+    }
+  }
+  selsect: favourite-colour persond2 person info
+  selxect: {
+    info: favourite-colour
+    person2: name
+    person: email name
+  }
   view: {
-    is: contact
-    name: { input: textfield label: Name }
+    favourite-colour: {
+      input: chooser
+      label: "Favourite Colour"
+      range: { red: Red blue: Blue }
+    }
+    person: {
+      is: contact
+      name: { input: textfield label: Name }
+      email: { input: textfield label: Email }
+    }
+    info: {
+      favourite-colour: {
+        input: chooser
+        label: "Favourite Color"
+        range: { red: Red blue: Blue }
+      }
+    }
+    person2: {
+      is: contact
+      name: { input: textfield label: Name2 }
+    }
   }
 }
 
@@ -1244,13 +1291,14 @@ is: deleted }
 }
 
 { UID: uid-329e-78ae-c94e-17bf
-  Version: 49496
+  Version: 49499
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
   view: {
     main-applicant: {
       is: contact
+      title2: "Main Applicant"
       full-name: { input: textfield label: "Full Name" }
       birthday: { input: textfield label: "Date of Birth" }
       gender: {
@@ -1399,7 +1447,7 @@ is: deleted }
 }
 
 { UID: uid-0542-777b-20be-5b5c
-  Version: 41163
+  Version: 41169
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui

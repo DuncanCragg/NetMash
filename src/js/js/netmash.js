@@ -187,7 +187,7 @@ function JSON2HTML(url){
             return '<form class="cyrus-form">\n'+
             (type? '<input class="cyrus-type"   type="hidden" value="'+type+'" />\n':'')+
                    '<input class="cyrus-target" type="hidden" value="'+url+'" />\n'+
-                   '<textarea class="cyrus-raw" rows="'+(rows? rows: 24)+'">\n'+item+'\n</textarea>\n'+
+                   '<textarea class="cyrus-raw" rows="'+(rows? rows: item.split('\n').length)+'">\n'+item+'\n</textarea>\n'+
                    '<input class="submit" type="submit" value="'+(action? action: 'Update')+'" />\n'+
                    '</form>';
         },
@@ -387,18 +387,44 @@ function JSON2HTML(url){
         getGUIHTML: function(url,json,closed){
             var rows=[];
             rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
+            this.addGuiSelectionsForm(json,url,rows);
+            rows.push('</div>');
+            return rows.join('\n')+'\n';
+        },
+        addGuiSelectionsForm: function(json,url,rows){
+            var sels={};
+            var selview=json.select? json.select: json.view;
+            if(!selview || !json.view) return;
+            if(selview.constructor===String){ sels=[]; selview = [ selview ]; }
+            if(selview.constructor===Array){  sels=[]; }
+            for(var tag in selview){
+                var guispec=json.view[tag];
+                var fields=selview[tag];
+                if(!guispec){ guispec=json.view[fields]; fields=null; }
+                if(guispec && guispec.is && guispec.is!='style') this.addGuiIsForm(json,url,rows,tag,fields,guispec);
+                else sels[tag]=selview[tag];
+            }
             rows.push('<form class="gui-form">');
             rows.push('<input class="form-target" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
-            var submittable=json.view? this.createGUI(json.view,rows): false;
+            var submittable=this.createGUI(json.view,rows,null,sels);
             rows.push('</table>');
             if(submittable)
             rows.push('<input class="submit" type="submit" value="Submit" />');
             rows.push('</form>');
-            rows.push('</div>');
-            return rows.join('\n')+'\n';
         },
-        createGUI: function(guilist,rows,json){
+        addGuiIsForm: function(json,url,rows,tag,fields,guispec){
+            rows.push('<form class="is-gui">');
+            rows.push('<input class="gui-url" type="hidden" value="'+url+'" />');
+            rows.push('<input class="gui-is" type="hidden" value="'+guispec.is+'" />');
+            rows.push('<input class="gui-tag" type="hidden" value="'+tag+'" />');
+            rows.push('<table class="grid">');
+            this.createGUI(guispec,rows,null,fields);
+            rows.push('</table>');
+            rows.push('<input class="submit" type="submit" value="Submit" />');
+            rows.push('</form>');
+        },
+        createGUI: function(guilist,rows,json,select){
             if(!guilist) return false;
             if(this.isONLink(guilist)){
                 rows.push('<tr>');
@@ -422,8 +448,22 @@ function JSON2HTML(url){
                 var tag=tagged? i: null;
                 if(/^[A-Z]/.test(tag)) continue;
                 if(tag=='is' || tag=='title' || tag=='update-template') continue;
+                var selec2=null;
+                if(tag && select && select.constructor===String && select!=tag) continue;
+                if(tag && select && select.constructor===Array){
+                    var found=false;
+                    for(var s in select){
+                        if(select[s].constructor===String && select[s]==tag){ found=true; break; }
+                        if(select[s].constructor===Object && select[s][tag]){ found=true; selec2=select[s][tag]; break; }
+                    }
+                    if(!found) continue;
+                }
+                if(tag && select && select.constructor===Object){
+                    if(!select[tag]) continue;
+                    selec2=select[tag];
+                }
                 var item=guilist[i];
-                if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal) || submittable;
+                if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal,selec2) || submittable;
                 else
                 if(this.isONLink(item)){
                     if(!horizontal) rows.push('<tr>');
@@ -441,7 +481,7 @@ function JSON2HTML(url){
                     if(!horizontal) rows.push('<tr>');
                     rows.push('<td colspan="2" class="grid-col">');
                     rows.push('<table class="grid">');
-                    submittable=this.createGUI(item,rows) || submittable;
+                    submittable=this.createGUI(item,rows,null,selec2) || submittable;
                     rows.push('</table>');
                     rows.push('</td>');
                     if(!horizontal) rows.push('</tr>');
@@ -455,13 +495,13 @@ function JSON2HTML(url){
             if(horizontal) rows.push('</tr>');
             return submittable;
         },
-        addIfPresent: function(json,tag,widget,rows,horizontal){
-            if(!json) return this.objectGUI(tag,widget,rows,horizontal);
+        addIfPresent: function(json,tag,widget,rows,horizontal,select){
+            if(!json) return this.objectGUI(tag,widget,rows,horizontal,undefined,select);
             var value=json[tag];
             if(value===undefined) return false;
-            return this.objectGUI(tag,widget,rows,horizontal,value);
+            return this.objectGUI(tag,widget,rows,horizontal,value,select);
         },
-        objectGUI: function(tag,guilist,rows,horizontal,value){
+        objectGUI: function(tag,guilist,rows,horizontal,value,select){
             if(tag==null || tag=='') tag='prop-'+Math.floor(Math.random()*1e6);
             var val=(value!==undefined);
             var submittable=false;
@@ -537,7 +577,7 @@ function JSON2HTML(url){
                 if(!horizontal) rows.push('<tr>');
                 rows.push('<td colspan="2" class="grid-col">');
                 rows.push('<table class="grid">');
-                submittable=this.createGUI(guilist,rows);
+                submittable=this.createGUI(guilist,rows,null,select);
                 rows.push('</table>');
                 rows.push('</td>');
                 if(!horizontal) rows.push('</tr>');
@@ -715,7 +755,7 @@ function JSON2HTML(url){
         pickOutParameters: function(guispec,fields){
             if(!guispec || !fields) return null;
             viewless={};
-            for(option in guispec) if(fields.indexOf(option)!= -1) viewless[option]=guispec[option];
+            for(var tag in guispec) if(fields.constructor!==Array || fields.indexOf(tag)!= -1) viewless[tag]=guispec[tag];
             return viewless;
         },
         // ------------------------------------------------
