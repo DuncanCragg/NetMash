@@ -344,7 +344,7 @@ is: deleted }
 }
 
 { UID: uid-c55b-f11f-3611-b089
-  Version: 9
+  Version: 60
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
@@ -352,9 +352,12 @@ is: deleted }
   gui: http://localhost:8081/o/uid-b44a-f04a-8efa-b798.json
   user: uid-cc69-c608-c961-6cc2
   form: {
+    other-questions: { use-cyrus: false }
     favourite-colour: blue
-    info:favourite-colour: red
-    info:more-info:favourite-animal: dog
+    info: {
+      favourite-colour: blue
+      more-info: { favourite-animal: poodle }
+    }
   }
 }
 
@@ -1153,7 +1156,7 @@ is: deleted }
 }
 
 { UID: uid-b44a-f04a-8efa-b798
-  Version: 68461
+  Version: 68488
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
@@ -1161,13 +1164,12 @@ is: deleted }
     is: gui rule
     Alerted: {
       is: form
-      form: {
-        info: { favourite-colour: blue }
-      }
+      form: { info:favourite-colour: blue }
     }
-    select: {
-      person: => name
-    }
+    x: => @Alerted:form:info:more-info
+    sxelect: 
+      =>
+      { person: name }
   }
   selsect: favourite-colour persond2 person info
   selxect: {
@@ -1176,6 +1178,11 @@ is: deleted }
     person: email name
   }
   view: {
+    other-questions: {
+      style: { is: style direction: horizontal }
+      use-cyrus: { input: checkbox label: "Will you use Cyrus?" }
+      cyrus-love: { input: rating label: "How much you like Cyrus" }
+    }
     favourite-colour: {
       input: chooser
       label: "Favourite Colour"
@@ -1201,6 +1208,8 @@ is: deleted }
       name: { input: textfield label: Name2 }
     }
   }
+  sxelect: { person: name }
+  x: { favourite-animal: poodle }
 }
 
 { UID: uid-b280-0fea-7cc7-e0a3

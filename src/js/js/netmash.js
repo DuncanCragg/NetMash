@@ -1205,11 +1205,9 @@ function NetMash(){
             lockURL=null;
             var targetURL=$(that).find('.form-target').val();
             var uidver=me.getUIDandVer('',targetURL);
-            var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "form": {\n   ';
-            var fields = [];
-            me.getFormFields($(that),fields);
-            json+=fields.join(',\n   ');
-            json+='\n  }\n}\n';
+            var json = '{ '+uidver+',\n  "is": "form",\n  "gui": "'+targetURL+'",\n  "user": "'+network.getUserUID()+'",\n  "form": ';
+            json+=JSON.stringify(me.getFormStructure($(that)),null,'  ');
+            json+='\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
         },
@@ -1222,9 +1220,7 @@ function NetMash(){
             var targetURL=me.getSubFor(guiURL);
             var json = '{ '+uidver+',\n  "is": "'+guiIs+'",\n  "gui": "'+guiURL+'",\n  "user": "'+network.getUserUID()+'",\n  ';
             json+='"tags": "'+guiTag+'",\n  ';
-            var fields = [];
-            me.getFormFields($(that),fields);
-            json+=fields.join(',\n  ');
+            json+=this.stripOuterBraces(JSON.stringify(me.getFormStructure($(that)),null,'  '));
             json+='\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
@@ -1379,6 +1375,42 @@ function NetMash(){
                 if(!el || el.hasClass('object-body')) return el;
             }
             return null;
+        },
+        getFormStructure: function(form){
+            var s={};
+            form.find('.form-field').each(function(n,i){
+                var val=$(i).val().trim();
+                var intype=$(i).attr('type');
+                var idOrName=i.getAttribute('id') || i.getAttribute('name');
+                if(!idOrName || idOrName=='null') idOrName='prop-'+Math.floor(Math.random()*1e6);
+
+                if(intype=='checkbox') val=($(i).is(':checked')? 'true':'false');
+                else
+                if(intype=='radio'){ if(!$(i).is(':checked')) return; }
+                else
+                if(intype=='submit'){ if(i==lastButtonPressed) s['pushed']=idOrName; return; }
+
+                if(!val || val=="none" || val=="null") return;
+                val=val.jsonEscape();
+
+                if(idOrName.indexOf(':')!= -1){
+                    var tags=idOrName.split(':');
+                    var h=s;
+                    var l;
+                    var tag;
+                    for(var t in tags){
+                        tag=tags[t];
+                        if(!h[tag]) h[tag]={};
+                        l=h;
+                        h=h[tag];
+                    }
+                    l[tag]=val;
+                }
+                else{
+                    s[idOrName]=val;
+                }
+            });
+            return s;
         },
         getFormFields: function(form,fields){
             form.find('.form-field').each(function(n,i){
@@ -1554,6 +1586,9 @@ function NetMash(){
                 if(typebx===Array)  if(a.indexOf(b[x])== -1) a.push(clone(b[x])); else
                 if(typebx===Object) if(a.indexOf(b[x])== -1) a.push(clone(b[x]));
             }
+        },
+        stripOuterBraces: function(s){
+            return s.substring(1,s.length-1).trim();
         }
     };
     return me;
@@ -1665,10 +1700,21 @@ function fourHex(){
 }
 
 function toString(o){
+    if(!o) return '';
     var r='';
     if(o.constructor===Array)  for(var i in o) r+=toString(o[i])+' ';
     else
     if(o.constructor===Object) for(var i in o) r+=i+': '+toString(o[i])+'  ';
+    else r=o;
+    return r;
+}
+
+function toString2(o){
+    if(!o) return '';
+    var r='';
+    if(o.constructor===Array)  { r+='( '; for(var i in o) r+=toString2(o[i])+' '; r+=' )'; }
+    else
+    if(o.constructor===Object) { r+='{ '; for(var i in o) r+=i+': '+toString2(o[i])+'  '; r+=' }'; }
     else r=o;
     return r;
 }
