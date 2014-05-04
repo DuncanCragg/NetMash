@@ -22,201 +22,193 @@
   a: { bee: # => @x cee: # => + 2 @x UID: # => new }
 }
 
-{   UID: uid-5348-3aaa-bfc1-7d0c
-    is: ( fx order rule )
-    when: "you can see the dealer but have no ticket notify the dealer. 1"
-    ticket: <#>
-    dealer: { is: dealer }
-    Notifying: <>has($:dealer)
+{ UID: uid-5348-3aaa-bfc1-7d0c
+  is: fx order rule
+  when: "you can see the dealer but have no ticket notify the dealer. 1"
+  ticket: #
+  dealer: { is: dealer }
+  Notifying: => @. with @dealer
 }
 
-{   UID: uid-3aaa-bfc1-7d0c-5348
-    is: ( fx order rule )
-    when: "you see the ticket link to it and start notifying it instead of the dealer. 2"
-    Alerted: { is: ticket }
-    ticket: <#>Alerted
-    Notifying: <>has($:ticket);hasno($:dealer)
+{ UID: uid-3aaa-bfc1-7d0c-5348
+  is: fx order rule
+  when: "you see the ticket link to it and start notifying it instead of the dealer. 2"
+  Alerted: { is: ticket }
+  ticket: # => @Alerted
+  Notifying: => (@. with @ticket) without @dealer
 }
 
-{   UID: uid-7d0c-5348-3aaa-bfc1
-    is: ( fx order rule )
-    when: "you have the ticket at 500 bump up your investment. 3"
-    ticket: {}
-    params: { investment: <500.00>1000.00 }
+{ UID: uid-7d0c-5348-3aaa-bfc1
+  is: fx order rule
+  when: "you have the ticket at 500 bump up your investment. 3"
+  ticket: {}
+  params: { investment: 500.00 => 1000.00 }
 }
 
-{   UID: uid-bfc1-7d0c-5348-3aaa
-    is: ( fx order rule )
-    when: "you see the order filled simulate a race by dropping the price. 4"
-    ticket: { status: filled }
-    payment: <#>
-    params: { price: <81.7>81.5 }
+{ UID: uid-bfc1-7d0c-5348-3aaa
+  is: fx order rule
+  when: "you see the order filled simulate a race by dropping the price. 4"
+  ticket: { status: filled }
+  payment: #
+  params: { price: 81.7 => 81.5 }
 }
 
-{   UID: uid-4e30-2365-3015-e181
-    is: ( fx order rule )
-    when: "race noticed set price back and create payment shell. 5"
-    ticket: { status: not-as-ordered }
-    params: { price: <81.5>81.7 }
-    payment: <#>{}
+{ UID: uid-4e30-2365-3015-e181
+  is: fx order rule
+  when: "race noticed set price back and create payment shell. 5"
+  ticket: { status: not-as-ordered }
+  params: { price: 81.5 => 81.7 }
+  payment: # => { UID: new
+                  Rules: uid-c8f2-3fcb-bea9-08b4
+                  is: payment
+                  order: @
+                  invoice: @ticket
+                  amount: @ticket:ask * @params:investment
+                  account: {}
+  }
 }
 
-{   UID: uid-5411-baae-d459-4c6c
-    is: ( fx order rule )
-    when: "payment shell there fill it out and spawn it. 6"
-    payment: { Rules: <#>list(uid-c8f2-3fcb-bea9-08b4)
-                 is: <#>payment
-                 order: <#>$:
-                 invoice: <#>$:ticket
-                 amount: "<#>prod($:ticket:ask $:params:investment)"
-                 account: <#>{}
-                 UID: <#>new
-    }
+{ UID: uid-c8f2-3fcb-bea9-08b4
+  is: payment rule
+  when: "invoice has no payment notify it that we are paying. 7"
+  invoice: { payment: # }
+  Notifying: => @. with @invoice
 }
 
-{   UID: uid-c8f2-3fcb-bea9-08b4
-    is: ( payment rule )
-    when: "invoice has no payment notify it that we are paying. 7"
-    invoice: { payment: <#> }
-    Notifying: <>has($:invoice)
+{ UID: uid-0145-54f4-36db-302e
+  Rules: uid-5348-3aaa-bfc1-7d0c uid-3aaa-bfc1-7d0c-5348 uid-7d0c-5348-3aaa-bfc1
+         uid-bfc1-7d0c-5348-3aaa uid-4e30-2365-3015-e181
+  is: fx order
+  params: { fxpair: usd/jpy fxtype: buylim price: 81.7 investment: 500.00 }
+  dealer: http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json
 }
 
-{   UID: uid-0145-54f4-36db-302e
-    Rules: uid-5348-3aaa-bfc1-7d0c uid-3aaa-bfc1-7d0c-5348 uid-7d0c-5348-3aaa-bfc1
-           uid-bfc1-7d0c-5348-3aaa uid-4e30-2365-3015-e181 uid-5411-baae-d459-4c6c
-    is: ( fx order )
-    params: { fxpair: usd/jpy fxtype: buylim price: 81.7 investment: 500.00 }
-    dealer: http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json
+{ UID: uid-2520-44e1-a2a2-8ef1
+  is: equity bid rule
+  when: "a bid has no price set it 10% above the high-bid and notify the instrument. 1"
+  price: # => @on:bid-ask-spread:high-bid * 1.1
+  Notifying: => @. with @on
 }
 
-{   UID: uid-2520-44e1-a2a2-8ef1
-    is: ( equity bid rule )
-    when: "a bid has no price set it 10% above the high-bid and notify the instrument. 1"
-    price: "<#>prod($:on:bid-ask-spread:high-bid 1.10)"
-    Notifying: <>has($:on)
+{ UID: uid-b382-de77-f352-efe6
+  is: equity ask rule
+  when: "an ask has no price set it 10% below the low-ask and notify the instrument. 2"
+  price: # => @on:bid-ask-spread:low-ask * 0.9
+  Notifying: => @. with @on
 }
 
-{   UID: uid-b382-de77-f352-efe6
-    is: ( equity ask rule )
-    when: "an ask has no price set it 10% below the low-ask and notify the instrument. 2"
-    price: "<#>prod($:on:bid-ask-spread:low-ask 0.90)"
-    Notifying: <>has($:on)
+{ UID: uid-286a-b820-14ff-8d02
+  is: equity instrument rule
+  when: "someone bids on this instrument add to buyers. 3"
+  Alerted: { is: equity bid  on: @ }
+  buyers: => @. with Alerted
 }
 
-{   UID: uid-286a-b820-14ff-8d02
-    is: ( equity instrument rule )
-    when: "someone bids on this instrument add to buyers. 3"
-    Alerted: { is: ( equity bid ) on: <$:> }
-    buyers: <>has(Alerted)
+{ UID: uid-1cb9-6b32-be37-8f3b
+  is: equity instrument rule
+  when: "someone asks on this instrument add to sellers. 4"
+  Alerted: { is: equity ask  on: @ }
+  sellers: => @. with Alerted
 }
 
-{   UID: uid-1cb9-6b32-be37-8f3b
-    is: ( equity instrument rule )
-    when: "someone asks on this instrument add to sellers. 4"
-    Alerted: { is: ( equity ask ) on: <$:> }
-    sellers: <>has(Alerted)
+{ UID: uid-fed3-2712-f1c8-7c49
+  is: equity instrument rule
+  when: "any buyer price changes recalculate the high-bid. 5"
+  bid-ask-spread: { high-bid: => max @buyers:price }
 }
 
-{   UID: uid-fed3-2712-f1c8-7c49
-    is: ( equity instrument rule )
-    when: "any buyer price changes recalculate the high-bid. 5"
-    bid-ask-spread: { high-bid: <>max($:buyers:price) }
+{ UID: uid-dd27-36cf-f13d-3768
+  is: equity instrument rule
+  when: "any seller price changes recalculate the low-ask. 6"
+  bid-ask-spread: { low-ask: => min @sellers:price }
 }
 
-{   UID: uid-dd27-36cf-f13d-3768
-    is: ( equity instrument rule )
-    when: "any seller price changes recalculate the low-ask. 6"
-    bid-ask-spread: { low-ask:  <>min($:sellers:price) }
+{ UID: uid-a39f-b330-0492-100f
+  Rules: uid-2520-44e1-a2a2-8ef1
+  is: equity bid
+  on: uid-1488-6110-092d-2bae
 }
 
-{   UID: uid-a39f-b330-0492-100f
-    Rules: uid-2520-44e1-a2a2-8ef1
-    is: ( equity bid )
-    on: uid-1488-6110-092d-2bae
+{ UID: uid-9272-b51a-1606-32e0
+  Rules: uid-2520-44e1-a2a2-8ef1
+  is: equity bid
+  on: uid-1488-6110-092d-2bae
 }
 
-{   UID: uid-9272-b51a-1606-32e0
-    Rules: uid-2520-44e1-a2a2-8ef1
-    is: ( equity bid )
-    on: uid-1488-6110-092d-2bae
+{ UID: uid-09e4-e69b-54a4-a725
+  Rules: uid-b382-de77-f352-efe6
+  is: equity ask
+  on: uid-1488-6110-092d-2bae
 }
 
-{   UID: uid-09e4-e69b-54a4-a725
-    Rules: uid-b382-de77-f352-efe6
-    is: ( equity ask )
-    on: uid-1488-6110-092d-2bae
+{ UID: uid-1488-6110-092d-2bae
+  Rules: uid-286a-b820-14ff-8d02 uid-1cb9-6b32-be37-8f3b uid-fed3-2712-f1c8-7c49 uid-dd27-36cf-f13d-3768
+  is: equity instrument
+  long-name: "Acme Co. Inc"
+  bid-ask-spread: { high-bid: 10.0 low-ask:  20.0 }
 }
 
-{   UID: uid-1488-6110-092d-2bae
-    Rules: uid-286a-b820-14ff-8d02 uid-1cb9-6b32-be37-8f3b uid-fed3-2712-f1c8-7c49 uid-dd27-36cf-f13d-3768
-    is: ( equity instrument )
-    long-name: "Acme Co. Inc"
-    buyers: ( )
-    sellers: ( )
-    bid-ask-spread: { high-bid: 10.0 low-ask:  20.0 }
+{ UID: uid-80d7-ff34-61f1-0db7
+  Class: CountTo200
+  pair: http://localhost:8081/o/uid-c47f-5e67-9fc8-b842.json
+  count: 1
 }
 
-{   UID: uid-80d7-ff34-61f1-0db7
-    Class: CountTo200
-    pair: http://localhost:8081/o/uid-c47f-5e67-9fc8-b842.json
-    count: 1
+{ UID: uid-61c2-20d0-c001-aa46
+  Class: HRRequestResponse
+  is: hr leave-request event
+  title:  "Trip to Spain"
+  start: 2011-06-08+01:00
+  end: 2011-06-13+01:00
+  attendees: /employees/1233123
+  created: 2011-05-03T16:23:25.761+01:00
+  status: requested
+  leaveType: "Annual Leave"
+  leaveAmount:  5
+  leaveUnits: Days
+  leaveRecords: http://localhost:8081/o/uid-4574-a96f-f796-c5fb.json
 }
 
-{   UID: uid-61c2-20d0-c001-aa46
-    Class: HRRequestResponse
-    is: ( hr leave-request event )
-    title:  "Trip to Spain"
-    start: 2011-06-08+01:00
-    end: 2011-06-13+01:00
-    attendees: /employees/1233123
-    created: 2011-05-03T16:23:25.761+01:00
-    status: requested
-    leaveType: "Annual Leave"
-    leaveAmount:  5
-    leaveUnits: Days
-    leaveRecords: http://localhost:8081/o/uid-4574-a96f-f796-c5fb.json
+{ UID: uid-d7ec-6c0f-68a9-81df
+  Class: TwitterMash
+  is: twittermash top
+  topuser: duncancragg
+  twitter: http://localhost:8081/o/uid-2161-baf3-858b-858c.json
 }
 
-{   UID: uid-d7ec-6c0f-68a9-81df
-    Class: TwitterMash
-    is: ( twittermash top )
-    topuser: duncancragg
-    twitter: http://localhost:8081/o/uid-2161-baf3-858b-858c.json
+{ UID: uid-cb6f-00fb-3be2-453c
+  Notify: http://localhost:8081/o/c-n-14d5-99c5-da00-806a
+  Class: Asymmetry
+  is: asymm
+  self: uid-cb6f-00fb-3be2-453c
+  bobby: http://localhost:8081/o/uid-bb90-d577-703b-e7a9.json
+  state: 1
+  watch: ""
+  tick: http://localhost:8081/o/uid-7235-60ba-d323-d5d6.json
 }
 
-{   UID: uid-cb6f-00fb-3be2-453c
-    Notify: ( http://localhost:8081/o/c-n-14d5-99c5-da00-806a )
-    Class: Asymmetry
-    is: ( asymm )
-    self: uid-cb6f-00fb-3be2-453c
-    bobby: http://localhost:8081/o/uid-bb90-d577-703b-e7a9.json
-    state: 1
-    watch: ""
-    tick: http://localhost:8081/o/uid-7235-60ba-d323-d5d6.json
-}
-
-{   UID: uid-9153-8032-3fd4-9156
-    is: ( contact editable )
-    full-name: "Mr Brian Rock"
-    name: {
-      given:  Brian
-      middle: Andy
-      family: Rock
-    }
-    address: {
-      street: "150 Old Park Lane"
-      locality: London
-      postal-code: "W1K 1QZ"
-    }
-    phone: { work: ( "+44 20 7514 1700" "020 7231 3212" ) }
-    email: ( brian.rock@site.com bri2001@hotmail.com )
-    organisation: {
-      name: "Super Site"
-      unit: site.com
-    }
-    web-view: http://facebook.com/brio
-    photo: http://farm5.static.flickr.com/4030/4334369685_ab7a06960f.jpg
-    birthday: 1995-02-12
-    nickname: "The Masher"
+{ UID: uid-9153-8032-3fd4-9156
+  is: contact editable
+  full-name: "Mr Brian Rock"
+  name: {
+    given:  Brian
+    middle: Andy
+    family: Rock
+  }
+  address: {
+    street: "150 Old Park Lane"
+    locality: London
+    postal-code: "W1K 1QZ"
+  }
+  phone: { work: "+44 20 7514 1700" "020 7231 3212" }
+  email: brian.rock@site.com bri2001@hotmail.com
+  organisation: {
+    name: "Super Site"
+    unit: site.com
+  }
+  web-view: http://facebook.com/brio
+  photo: http://farm5.static.flickr.com/4030/4334369685_ab7a06960f.jpg
+  birthday: 1995-02-12
+  nickname: "The Masher"
 }
 
