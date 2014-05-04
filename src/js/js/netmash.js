@@ -758,13 +758,13 @@ function JSON2HTML(url){
             if(!horizontal) rows.push('<tr>');
             if(input=='checkbox'){
                 var checked=value || valu2;
-                rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                rows.push('<td class="label"><label for="'+tag+'">'+(label? label: tag)+'</label></td>');
                 rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(checked? '" checked="true':'')+'"/></td>');
                 submittable=true;
             }
             else
             if(input=='chooser'){
-                rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                rows.push('<td class="label"><label for="'+tag+'">'+(label? label: tag)+'</label></td>');
                 rows.push('<td><select id="'+tag+'" class="chooser form-field">');
                 rows.push('<option value="none">Select..</option>');
                 for(var o in range){
@@ -791,7 +791,7 @@ function JSON2HTML(url){
             }
             else
             if(input=='rating'){
-                rows.push('<td class="label"><label for="'+tag+'">'+label+'</label></td>');
+                rows.push('<td class="label"><label for="'+tag+'">'+(label? label: tag)+'</label></td>');
                 rows.push('<td><input type="radio" name="'+tag+'" class="rating form-field" value="0">0');
                 rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="1">1');
                 rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="2">2');
