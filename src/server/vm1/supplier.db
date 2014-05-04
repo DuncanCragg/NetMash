@@ -1,9 +1,3 @@
-{ UID: uid-effd-6dad-dac9-c520
-  Version: 14617
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-is: deleted }
-
 { UID: uid-056d-7f6b-c458-6315
   Version: 6
   Max-Age: 0
@@ -14,6 +8,12 @@ is: deleted }
   user: uid-cc69-c608-c961-6cc2
   form: { gender: M nationality: EU type: normal date: 2014 }
 }
+
+{ UID: uid-effd-6dad-dac9-c520
+  Version: 14617
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+is: deleted }
 
 { UID: uid-dfde-88aa-d09f-98d7
   Version: 78481
@@ -50,16 +50,6 @@ is: deleted }
   form: { favourite-colour: blue ristretto: false }
 }
 
-{ UID: uid-9f27-f343-bd59-ec2d
-  Version: 81932
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable order-tracker rule
-  status: waiting
-  products: => @order:products
-  price: => @order:products:quantity * 3.60
-}
-
 { UID: uid-fb5e-7d16-5a45-832c
   Version: 3
   Max-Age: 0
@@ -73,6 +63,16 @@ is: deleted }
     institution: UCL
     year-of-study: 2015
   }
+}
+
+{ UID: uid-9f27-f343-bd59-ec2d
+  Version: 81932
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  status: waiting
+  products: => @order:products
+  price: => @order:products:quantity * 3.60
 }
 
 { UID: uid-0d49-e869-8b83-9332
@@ -108,14 +108,6 @@ is: deleted }
   number: 8765
   expiry-date: 1-1-2018
   type: normal
-}
-
-{ UID: uid-1151-f808-45ae-9c9c
-  Version: 39663
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-ccb8-43de-df47-29da
@@ -247,8 +239,8 @@ is: deleted }
     }
 }
 
-{ UID: uid-ca10-69bd-9728-2382
-  Version: 30415
+{ UID: uid-1151-f808-45ae-9c9c
+  Version: 39663
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
@@ -272,6 +264,14 @@ is: deleted }
     year-of-study: 2015
   }
   within: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+}
+
+{ UID: uid-ca10-69bd-9728-2382
+  Version: 30415
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-ea6e-d6f3-5b6d-5546
@@ -362,19 +362,21 @@ is: deleted }
 }
 
 { UID: uid-3c7a-4084-3ab6-2a59
-  Version: 4
+  Version: 5
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
-  is: contact
+  is: form
   supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
   user: uid-cc69-c608-c961-6cc2
   product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  tags: main-applicant
-  full-name: "Duncan Cragg"
-  birthday: 1-1-64
-  gender: F
-  email: foo@bar
+  form: {
+    tags: main-applicant
+    full-name: "Duncan Cragg"
+    birthday: 1-1-64
+    gender: M
+    email: duncan@cilux.org
+  }
 }
 
 { UID: uid-d062-c8e7-af7e-bad7
@@ -400,7 +402,7 @@ is: deleted }
 }
 
 { UID: uid-4b8a-f2a7-db99-3f21
-  Version: 3
+  Version: 4
   Max-Age: 0
   Cache-Notify: c-n-cc69-c608-c961-6cc2
   Class: cyrus.forest.WebObject
@@ -408,34 +410,7 @@ is: deleted }
   supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
   user: uid-cc69-c608-c961-6cc2
   product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  form: { tags: funky arks-this: adsfasdf arks-that: fdsfs }
-}
-
-{ UID: uid-36b6-b546-19a5-bca4
-  Version: 57499
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable application rule
-  partial-order: { is: contact }
-  products: {
-    contact: => @partial-order
-  }
-}
-
-{ UID: uid-039b-2f03-3c3c-a277
-  Version: 52037
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
-}
-
-{ UID: uid-dc7a-fb1d-9f7b-98ec
-  Version: 84988
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
+  form: { tags: funky arks-this: asdf arks-that: adf }
 }
 
 { UID: uid-b9fc-7745-6d91-2d30
@@ -450,16 +425,31 @@ is: deleted }
   form: { tags: funky arks-this: xx arks-that: yy }
 }
 
-{ UID: uid-6e77-08a4-e0f1-14b9
-  Version: 2
+{ UID: uid-dc7a-fb1d-9f7b-98ec
+  Version: 84988
   Max-Age: 0
-  Cache-Notify: c-n-8b97-a7c5-f397-d7b4
-  Class: cyrus.forest.WebObject
-  is: contact
-  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
-  user: uid-8b97-a7c5-f397-d7b4
-  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  gender: none
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
+}
+
+{ UID: uid-039b-2f03-3c3c-a277
+  Version: 52037
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
+}
+
+{ UID: uid-36b6-b546-19a5-bca4
+  Version: 57499
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable application rule
+  partial-order: { is: contact }
+  products: {
+    contact: => @partial-order
+  }
 }
 
 { UID: uid-1f81-c426-8ee5-67ae
@@ -482,12 +472,16 @@ is: deleted }
   }
 }
 
-{ UID: uid-3831-aa32-c12e-1f34
-  Version: 29582
+{ UID: uid-6e77-08a4-e0f1-14b9
+  Version: 2
   Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
+  Cache-Notify: c-n-8b97-a7c5-f397-d7b4
+  Class: cyrus.forest.WebObject
+  is: contact
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-8b97-a7c5-f397-d7b4
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  gender: none
 }
 
 { UID: uid-0714-cac2-90e7-704d
@@ -503,6 +497,14 @@ is: deleted }
   number: 123123
   expiry-date: 1-1-2018
   type: biometric
+}
+
+{ UID: uid-3831-aa32-c12e-1f34
+  Version: 29582
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-dda0-5c34-1a25-e515
@@ -579,12 +581,34 @@ is: d }
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-9111-b6f6-408a-c185
-  Version: 92475
+{ UID: uid-8509-f97b-c9b2-1001
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-8b97-a7c5-f397-d7b4
+  Class: cyrus.forest.WebObject
+  is: passport
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-8b97-a7c5-f397-d7b4
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  nationality: none
+  type: none
+}
+
+{ UID: uid-d7e7-2923-4f26-57f9
+  Version: 64809
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
+  is: editable order-tracker rule
+  status: 
+    not
+    waiting
+    =>
+    if
+    ( @order:products == @products )
+    then
+    filled
+    else
+    ( filled not-as-ordered )
 }
 
 { UID: uid-edbf-edcc-f4a2-8b6c
@@ -598,17 +622,12 @@ is: d }
   within: => #
 }
 
-{ UID: uid-8509-f97b-c9b2-1001
-  Version: 1
+{ UID: uid-9111-b6f6-408a-c185
+  Version: 92475
   Max-Age: 0
-  Cache-Notify: c-n-8b97-a7c5-f397-d7b4
-  Class: cyrus.forest.WebObject
-  is: passport
-  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
-  user: uid-8b97-a7c5-f397-d7b4
-  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  nationality: none
-  type: none
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-4c27-faa8-f002-a845
@@ -632,21 +651,19 @@ is: d }
   price: 7.2
 }
 
-{ UID: uid-d7e7-2923-4f26-57f9
-  Version: 64809
+{ UID: uid-8f21-76ec-ab54-57fc
+  Version: 1
   Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable order-tracker rule
-  status: 
-    not
-    waiting
-    =>
-    if
-    ( @order:products == @products )
-    then
-    filled
-    else
-    ( filled not-as-ordered )
+  Cache-Notify: c-n-c2a4-753b-fea0-fb4f
+  Class: cyrus.forest.WebObject
+  is: order
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  user: uid-c2a4-753b-fea0-fb4f
+  products: {
+    product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+    coffee-parameters: { shots: 2 ristretto: true }
+    quantity: 1
+  }
 }
 
 { UID: uid-b778-46d2-2d47-98e8
@@ -658,16 +675,14 @@ is: d }
 }
 
 { UID: uid-28a2-d3b1-4aea-86e8
-  Version: 35594
+  Version: 35596
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable coffee shop supplier
   title: "Coffee Ar Us"
   Rules: http://localhost:8081/o/uid-cfa2-3a18-d548-e7b4.json
   products: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
-  trackers: 
-    uid-529d-4e36-a2df-c535
-    uid-bb49-556f-df70-22cd
+  trackers: ( uid-a592-50ad-4b4a-2a5a )
 }
 
 { UID: uid-1e5d-7d5b-bd2d-0e88
@@ -803,14 +818,6 @@ is: d }
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-5df4-48eb-f47a-b6eb
-  Version: 15014
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
-}
-
 { UID: uid-ae85-c5b9-17f3-9bc2
   Version: 99013
   Max-Age: 0
@@ -819,8 +826,8 @@ is: d }
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-ad90-552c-d1a5-3fe3
-  Version: 11655
+{ UID: uid-5df4-48eb-f47a-b6eb
+  Version: 15014
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
@@ -847,6 +854,14 @@ is: d }
       UID: new
       is: editable assessment
     }
+}
+
+{ UID: uid-ad90-552c-d1a5-3fe3
+  Version: 11655
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-bfb7-ba8c-a032-780f
@@ -910,6 +925,14 @@ is: d }
     { view: open item: uid-ccb8-43de-df47-29da }
 }
 
+{ UID: uid-fbb0-24c2-945f-275f
+  Version: 66709
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
+}
+
 { UID: uid-3ad8-3b1a-3978-b9e4
   Version: 4
   Max-Age: 0
@@ -924,14 +947,6 @@ is: d }
     institution: none
     year-of-study: none
   }
-}
-
-{ UID: uid-fbb0-24c2-945f-275f
-  Version: 66709
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-6163-d6ca-f7dd-e2ba
@@ -955,6 +970,19 @@ is: d }
   credit-card-number: 4444
 }
 
+{ UID: uid-6a41-6229-ae29-77e7
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-c2a4-753b-fea0-fb4f
+  Class: cyrus.forest.WebObject
+  is: payment
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  user: uid-c2a4-753b-fea0-fb4f
+  product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+  tags: payment
+  credit-card-number: adfadfs
+}
+
 { UID: uid-feb0-63fa-50cd-6587
   Version: 61560
   Max-Age: 0
@@ -969,16 +997,8 @@ is: deleted }
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-8b43-c809-57d8-edc9
-  Version: 22420
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
-}
-
 { UID: uid-295d-f714-9a6b-42d6
-  Version: 77166
+  Version: 77170
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable study-finance product
@@ -991,7 +1011,7 @@ is: deleted }
   }
   study-finance: { loan-amount: £8300 application-closing-date: 12/7/2014 }
   options: {
-    course-of-study: full-name organisation
+    course-of-study: full-name organisation struct-bit
     year-of-study: date
   }
   requires: {
@@ -1003,20 +1023,20 @@ is: deleted }
   order-template: http://localhost:8081/o/uid-329e-78ae-c94e-17bf.json
 }
 
+{ UID: uid-8b43-c809-57d8-edc9
+  Version: 22420
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
+}
+
 { UID: uid-e025-27c4-6a47-4624
   Version: 66434
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable x
   Timer: 0
-}
-
-{ UID: uid-7ee1-b313-062c-bcf4
-  Version: 94761
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-a19e-1699-2c09-34b6
@@ -1030,6 +1050,14 @@ is: deleted }
   product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
   nationality: none
   type: none
+}
+
+{ UID: uid-7ee1-b313-062c-bcf4
+  Version: 94761
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-02c7-bf2d-7c94-ac61
@@ -1056,6 +1084,17 @@ is: deleted }
   within: uid-047e-0752-114e-613f
 }
 
+{ UID: uid-d8fb-20aa-6596-6590
+  Version: 10
+  Max-Age: 0
+  Cache-Notify: c-n-3a8f-a203-64c6-b432
+  Class: cyrus.forest.WebObject
+  is: order
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-3a8f-a203-64c6-b432
+  products: { product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json date: none }
+}
+
 { UID: http://localhost:8082/o/uid-fbdc-b069-e5b0-2df9.json
   Version: 90599
   Max-Age: 0
@@ -1076,17 +1115,6 @@ is: deleted }
     in-progress
     { passport: ok fee: to-pay }
   study-finance: { university-course-ref: adf923 application-reference: DYQUGDQQ loan-number: N/A }
-}
-
-{ UID: uid-d8fb-20aa-6596-6590
-  Version: 10
-  Max-Age: 0
-  Cache-Notify: c-n-3a8f-a203-64c6-b432
-  Class: cyrus.forest.WebObject
-  is: order
-  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
-  user: uid-3a8f-a203-64c6-b432
-  products: { product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json date: none }
 }
 
 { UID: uid-55cf-3a97-3896-8527
@@ -1132,27 +1160,6 @@ is: deleted }
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
   within: uid-047e-0752-114e-613f
-}
-
-{ UID: uid-dad6-70ca-2642-d417
-  Version: 5
-  Max-Age: 0
-  Cache-Notify: c-n-65b3-9dde-81ce-2c3d
-  Class: cyrus.forest.WebObject
-  is: contact
-  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
-  user: uid-65b3-9dde-81ce-2c3d
-  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  gender: none
-}
-
-{ UID: uid-9877-4ff3-e138-011c
-  Version: 67845
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable order-tracker rule
-  Timer: 0 => #
-  status: waiting => filled
 }
 
 { UID: uid-b44a-f04a-8efa-b798
@@ -1212,6 +1219,27 @@ is: deleted }
   x: { favourite-animal: poodle }
 }
 
+{ UID: uid-9877-4ff3-e138-011c
+  Version: 67845
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  Timer: 0 => #
+  status: waiting => filled
+}
+
+{ UID: uid-dad6-70ca-2642-d417
+  Version: 5
+  Max-Age: 0
+  Cache-Notify: c-n-65b3-9dde-81ce-2c3d
+  Class: cyrus.forest.WebObject
+  is: contact
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-65b3-9dde-81ce-2c3d
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  gender: none
+}
+
 { UID: uid-b280-0fea-7cc7-e0a3
   Version: 55744
   Max-Age: 0
@@ -1235,14 +1263,6 @@ is: deleted }
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-ff33-f5a7-e199-3a42
-  Version: 64314
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
-}
-
 { UID: uid-bb49-556f-df70-22cd
   Version: 95301
   Max-Age: 0
@@ -1259,6 +1279,14 @@ is: deleted }
   price: * 3.60
 }
 
+{ UID: uid-ff33-f5a7-e199-3a42
+  Version: 64314
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
+}
+
 { UID: uid-c1c2-c5d9-0564-e729
   Version: 10674
   Max-Age: 0
@@ -1268,7 +1296,7 @@ is: deleted }
 }
 
 { UID: uid-0012-4d35-97f6-cf18
-  Version: 34143
+  Version: 34148
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable student-finance application
@@ -1280,38 +1308,39 @@ is: deleted }
     http://localhost:8081/o/uid-72af-337e-8830-27e3.json
     http://localhost:8081/o/uid-a80c-6976-80e9-9c30.json
   user: http://localhost:8081/o/uid-3a8f-a203-64c6-b432.json
-  partial-order: uid-4b8a-f2a7-db99-3f21
+  partial-order: uid-3c7a-4084-3ab6-2a59
   products: {
     product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-    quantity: 2 1 123123 321 3 33 76543 1231231 99
+    quantity: 2 1 123123 321 3 33 76543 1231231 99 432 4443
     full-name: "Great things" "Studying Duncan Cragg"
     organisation: UCL ICL
     contact: uid-555b-68d2-f12c-f7b4
     passport: uid-a529-3be4-0617-f72b
     date: 2015 2014
+    course-of-study: {
+      full-name: "Great Stuff" "Great Stuff 2"
+      organisation: UCL
+    }
+    year-of-study: { date: 2015 }
   }
   within: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
   assessment: uid-5c43-0e5a-ee75-6003
 }
 
-{ UID: uid-44f7-2d3d-b15e-9005
-  Version: 23846
+{ UID: uid-8fe7-bad6-a4fc-95cc
+  Version: 6
   Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
-}
-
-{ UID: uid-26d9-ec67-0761-29de
-  Version: 96338
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
+  Cache-Notify: c-n-3a8f-a203-64c6-b432
+  Class: cyrus.forest.WebObject
+  is: form
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-3a8f-a203-64c6-b432
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  form: { full-name: "Duncan Cragg" birthday: 1-1-64 gender: M email: duncan@cilux.org }
 }
 
 { UID: uid-329e-78ae-c94e-17bf
-  Version: 49499
+  Version: 49505
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable gui
@@ -1346,6 +1375,9 @@ is: deleted }
     course-of-study: {
       is: contact
       full-name: { input: textfield label: "Course Title" }
+      struct-bit: {
+        thing: { input: textfield label: "Extra bit" }
+      }
       organisation: {
         input: chooser
         label: "Institution, University"
@@ -1371,28 +1403,24 @@ is: deleted }
   }
 }
 
-{ UID: uid-8fe7-bad6-a4fc-95cc
-  Version: 6
-  Max-Age: 0
-  Cache-Notify: c-n-3a8f-a203-64c6-b432
-  Class: cyrus.forest.WebObject
-  is: form
-  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
-  user: uid-3a8f-a203-64c6-b432
-  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  form: { full-name: "Duncan Cragg" birthday: 1-1-64 gender: M email: duncan@cilux.org }
-}
-
-{ UID: uid-ed1f-586c-224e-5d47
-  Version: 23504
+{ UID: uid-26d9-ec67-0761-29de
+  Version: 96338
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-00d5-1c2e-c358-8fdf
-  Version: 83237
+{ UID: uid-44f7-2d3d-b15e-9005
+  Version: 23846
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
+}
+
+{ UID: uid-ed1f-586c-224e-5d47
+  Version: 23504
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
@@ -1414,17 +1442,12 @@ is: deleted }
   }
 }
 
-{ UID: uid-555b-68d2-f12c-f7b4
-  Version: 39
+{ UID: uid-00d5-1c2e-c358-8fdf
+  Version: 83237
   Max-Age: 0
-  Cache-Notify: c-n-cc69-c608-c961-6cc2
-  Class: cyrus.forest.WebObject
-  is: event
-  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
-  user: uid-cc69-c608-c961-6cc2
-  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
-  tags: year-of-study
-  date: 2014
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
 }
 
 { UID: uid-5c43-0e5a-ee75-6003
@@ -1433,6 +1456,21 @@ is: deleted }
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
   within: uid-0012-4d35-97f6-cf18
+}
+
+{ UID: uid-555b-68d2-f12c-f7b4
+  Version: 47
+  Max-Age: 0
+  Cache-Notify: c-n-cc69-c608-c961-6cc2
+  Class: cyrus.forest.WebObject
+  is: contact
+  supplier: http://localhost:8081/o/uid-b280-0fea-7cc7-e0a3.json
+  user: uid-cc69-c608-c961-6cc2
+  product: http://localhost:8081/o/uid-295d-f714-9a6b-42d6.json
+  tags: course-of-study
+  full-name: "Studying Duncan Cragg"
+  struct-bit: { thing: "This is fine" }
+  organisation: UCL
 }
 
 { UID: uid-8287-19f9-df19-2bf3
@@ -1483,21 +1521,11 @@ is: deleted }
   }
 }
 
-{ UID: uid-99bc-a640-12f1-abc8
-  Version: 55028
+{ UID: uid-23ee-0003-c500-7cb5
+  Version: 47554
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
-}
-
-{ UID: uid-89bb-40a0-7521-fc63
-  Version: 47193
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable assessment
-  within: uid-047e-0752-114e-613f
-}
+is: deleted }
 
 { UID: uid-3970-7257-e6a0-4a63
   Version: 89074
@@ -1510,11 +1538,33 @@ is: deleted }
   }
 }
 
-{ UID: uid-23ee-0003-c500-7cb5
-  Version: 47554
+{ UID: uid-89bb-40a0-7521-fc63
+  Version: 47193
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
-is: deleted }
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
+}
+
+{ UID: uid-99bc-a640-12f1-abc8
+  Version: 55028
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable assessment
+  within: uid-047e-0752-114e-613f
+}
+
+{ UID: uid-1975-15a2-3d64-0fc9
+  Version: 62448
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable contact
+  name: { given: Stew family: Dent }
+  birthday: 1984-08-12
+  gender: M
+  email: stewart.dent@gmail.com
+  within: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
+}
 
 { UID: uid-cfa2-3a18-d548-e7b4
   Version: 20952
@@ -1541,18 +1591,6 @@ is: deleted }
     }
 }
 
-{ UID: uid-1975-15a2-3d64-0fc9
-  Version: 62448
-  Max-Age: 0
-  Class: cyrus.forest.CyrusLanguage
-  is: editable contact
-  name: { given: Stew family: Dent }
-  birthday: 1984-08-12
-  gender: M
-  email: stewart.dent@gmail.com
-  within: http://localhost:8081/o/uid-4326-fef5-2342-ef05.json
-}
-
 { UID: uid-5094-2de1-88ad-9c66
   Version: 2
   Max-Age: 0
@@ -1565,16 +1603,16 @@ is: deleted }
   gender: none
 }
 
-{ UID: uid-d88c-94ee-364a-fc27
-  Version: 61558
+{ UID: uid-8925-fd59-c2c7-c7a2
+  Version: 93267
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-8925-fd59-c2c7-c7a2
-  Version: 93267
+{ UID: uid-d88c-94ee-364a-fc27
+  Version: 61558
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
@@ -1601,16 +1639,36 @@ is: deleted }
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-bc36-3913-78e3-e138
-  Version: 69188
+{ UID: uid-a592-50ad-4b4a-2a5a
+  Version: 53244
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable coffee order-tracker
+  Rules: 
+    http://localhost:8081/o/uid-edbf-edcc-f4a2-8b6c.json
+    http://localhost:8081/o/uid-9f27-f343-bd59-ec2d.json
+    http://localhost:8081/o/uid-9877-4ff3-e138-011c.json
+    uid-d7e7-2923-4f26-57f9
+  order: uid-8f21-76ec-ab54-57fc
+  status: filled
+  products: {
+    product: http://localhost:8082/o/uid-a4e1-3ab9-be73-f985.json
+    coffee-parameters: { shots: 2 ristretto: true }
+    quantity: 1
+  }
+  price: 3.6
+}
+
+{ UID: uid-0d30-ac34-10f6-4b7c
+  Version: 33158
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment
   within: uid-047e-0752-114e-613f
 }
 
-{ UID: uid-0d30-ac34-10f6-4b7c
-  Version: 33158
+{ UID: uid-bc36-3913-78e3-e138
+  Version: 69188
   Max-Age: 0
   Class: cyrus.forest.CyrusLanguage
   is: editable assessment

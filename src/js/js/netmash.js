@@ -1232,9 +1232,7 @@ function NetMash(){
             var uidver=me.getUIDandVer('',supplierURL);
             var targetURL=me.getSubFor(supplierURL);
             var json = '{ '+uidver+',\n  "is": "order",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "products": {\n   "product": "'+prodURL+'",\n   ';
-            var fields = [];
-            me.getFormFields($(that),fields);
-            json+=fields.join(',\n    ');
+            json+=this.stripOuterBraces(JSON.stringify(me.getFormStructure($(that)),null,'  '));
             json+='\n }\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
@@ -1249,9 +1247,7 @@ function NetMash(){
             var targetURL=me.getSubFor(supplierURL);
             var json = '{ '+uidver+',\n  "is": "'+orderIs+'",\n  "supplier": "'+supplierURL+'",\n  "user": "'+network.getUserUID()+'",\n  "product": "'+prodURL+'",\n  ';
             json+='"tags": "'+orderTag+'",\n  ';
-            var fields = [];
-            me.getFormFields($(that),fields);
-            json+=fields.join(',\n  ');
+            json+=this.stripOuterBraces(JSON.stringify(me.getFormStructure($(that)),null,'  '));
             json+='\n}\n';
             network.postJSON(targetURL, json, false, me.getCreds(targetURL), null, null);
             e.preventDefault();
