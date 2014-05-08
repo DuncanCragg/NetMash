@@ -257,69 +257,6 @@
      {}
 }
 
-{ UID: uid-ba2b-8619-fdea-8c2c
-  Class: FXDealerTicket
-  Rules: uid-424d-01c5-ee08-2ec9
-  is: fx dealer
-}
-
-{ UID: uid-424d-01c5-ee08-2ec9
-  is: fx dealer rule
-  when: "FX order comes in start building ticket. spawn and add ticket to tickets list"
-  Alerted: { is: fx order ticket: # }
-  tickets: { order: @Alerted } !=> @. with {
-    UID: new
-    Rules: uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377
-    is: fx ticket
-    order: @Alerted
-    ask: 81.9
-    status: waiting
-  }
-}
-
-{ UID: uid-05cf-8cb9-7b52-db80
-  is: fx ticket rule
-  when: "new ticket, set params and notify order"
-  params: # => @order:params
-  Notifying: => @. with @order
-}
-
-{ UID: uid-bce3-b010-e869-f26e
-  is: fx ticket rule
-  when: "waiting if order params change update ticket params"
-  status: waiting
-  params: {} => @order:params
-}
-
-{ UID: uid-4f84-6624-1781-3377
-  is: fx ticket rule
-  when: "ask goes below price of ticket set to filled"
-  ask: < @params:price
-  status: waiting => filled
-}
-
-{ UID: uid-1b6c-16b6-64aa-8d48
-  is: fx ticket rule
-  when: "order differs once ticket filled flag with not-as-ordered"
-  params: !@order:params
-  status: filled => @. with not-as-ordered
-}
-
-{ UID: uid-a36b-54ea-7dd6-2626
-  is: fx ticket rule
-  when: "order matches once ticket filled remove not-as-ordered. 6"
-  params: @order:params
-  status: filled => without not-as-ordered
-}
-
-{ UID: uid-913e-f82c-7198-165b
-  is: fx ticket rule
-  when: "correct payment arrives set status to paid"
-  order: { payment: { amount: (@ask * @params:investment) } }
-  status: filled => paid
-  payment: # => @order:payment
-}
-
 {   UID: uid-c47f-5e67-9fc8-b842
     Version: 11
     Class: CountTo200

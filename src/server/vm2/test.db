@@ -19,68 +19,7 @@
 { UID: uid-7731-edb1-73a5-00ad
   is: testfjord rule
   when: "empty hash found spawn"
-  a: { bee: # => @x cee: # => + 2 @x UID: # => new }
-}
-
-{ UID: uid-5348-3aaa-bfc1-7d0c
-  is: fx order rule
-  when: "you can see the dealer but have no ticket notify the dealer. 1"
-  ticket: #
-  dealer: { is: dealer }
-  Notifying: => @. with @dealer
-}
-
-{ UID: uid-3aaa-bfc1-7d0c-5348
-  is: fx order rule
-  when: "you see the ticket link to it and start notifying it instead of the dealer. 2"
-  Alerted: { is: ticket }
-  ticket: # => @Alerted
-  Notifying: => (@. with @ticket) without @dealer
-}
-
-{ UID: uid-7d0c-5348-3aaa-bfc1
-  is: fx order rule
-  when: "you have the ticket at 500 bump up your investment. 3"
-  ticket: {}
-  params: { investment: 500.00 => 1000.00 }
-}
-
-{ UID: uid-bfc1-7d0c-5348-3aaa
-  is: fx order rule
-  when: "you see the order filled simulate a race by dropping the price. 4"
-  ticket: { status: filled }
-  payment: #
-  params: { price: 81.7 => 81.5 }
-}
-
-{ UID: uid-4e30-2365-3015-e181
-  is: fx order rule
-  when: "race noticed set price back and create payment shell. 5"
-  ticket: { status: not-as-ordered }
-  params: { price: 81.5 => 81.7 }
-  payment: # => { UID: new
-                  Rules: uid-c8f2-3fcb-bea9-08b4
-                  is: payment
-                  order: @
-                  invoice: @ticket
-                  amount: @ticket:ask * @params:investment
-                  account: {}
-  }
-}
-
-{ UID: uid-c8f2-3fcb-bea9-08b4
-  is: payment rule
-  when: "invoice has no payment notify it that we are paying. 7"
-  invoice: { payment: # }
-  Notifying: => @. with @invoice
-}
-
-{ UID: uid-0145-54f4-36db-302e
-  Rules: uid-5348-3aaa-bfc1-7d0c uid-3aaa-bfc1-7d0c-5348 uid-7d0c-5348-3aaa-bfc1
-         uid-bfc1-7d0c-5348-3aaa uid-4e30-2365-3015-e181
-  is: fx order
-  params: { fxpair: usd/jpy fxtype: buylim price: 81.7 investment: 500.00 }
-  dealer: http://localhost:8081/o/uid-ba2b-8619-fdea-8c2c.json
+  a: => { UID: new bee: @x cee: 2 + @x }
 }
 
 { UID: uid-2520-44e1-a2a2-8ef1

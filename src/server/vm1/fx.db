@@ -1,0 +1,300 @@
+{ UID: uid-ccb8-43de-df47-29da
+  Version: 40495
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable gui
+  title: Render
+  view: 
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+      }
+      { view: open item: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-a4e1-3ab9-be73-f985.json
+      }
+      { view: open item: http://localhost:8081/o/uid-a4e1-3ab9-be73-f985.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json
+      }
+      { view: open item: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json }
+    )
+  Rules: 
+    {
+      is: gui rule
+      view: 
+        newob
+        =>
+        (
+          { is: style direction: horizontal }
+          {
+            view: open raw
+            item: {
+              UID: new
+              is: editable gui
+              view: Hiyaaa
+            }
+          }
+          { view: open item: xxx }
+        )
+    }
+    {
+      is: gui rule
+      view: (
+          {
+            view: open raw
+            item: uid
+          }
+          {
+            view: open
+            item: xxx => @=view:1:item
+          }
+        )
+    }
+}
+
+{ UID: uid-9f27-f343-bd59-ec2d
+  Version: 81952
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  status: waiting
+  products: => @order:products
+  price: => @order:products:quantity * 3.60
+}
+
+{ UID: uid-edbf-edcc-f4a2-8b6c
+  Version: 10426
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  status: # => waiting
+  Timer: => 15000
+  Notifying: => @. with @order
+  within: => #
+}
+
+{ UID: uid-8f21-76ec-ab54-57fc
+  Version: 5
+  Max-Age: 0
+  Cache-Notify: c-n-c2a4-753b-fea0-fb4f
+  Class: cyrus.forest.WebObject
+  is: order
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  user: uid-c2a4-753b-fea0-fb4f
+  products: {
+    product: http://localhost:8081/o/uid-a4e1-3ab9-be73-f985.json
+    fx-parameters: { buylim: true }
+  }
+}
+
+{ UID: uid-d7e7-2923-4f26-57f9
+  Version: 64819
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  status: 
+    not
+    waiting
+    =>
+    if
+    ( @order:products == @products )
+    then
+    filled
+    else
+    ( filled not-as-ordered )
+}
+
+{ UID: uid-28a2-d3b1-4aea-86e8
+  Version: 35698
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable fx shop supplier
+  title: "XFore Ltd"
+  Rules: http://localhost:8081/o/uid-cfa2-3a18-d548-e7b4.json
+  products: uid-a4e1-3ab9-be73-f985
+}
+
+{ UID: uid-a4e1-3ab9-be73-f985
+  Version: 63201
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable fx product
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  title: "FX Bid"
+  description: "Buy some currency"
+  options: {
+    fx-parameters: limit buylim currency-pair
+  }
+  requires: { payment: credit-card-number }
+  order-template: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json
+}
+
+{ UID: uid-7a34-bcaf-88d5-b63e
+  Version: 52376
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: gui
+  title: "Cyrus Development"
+  view: 
+    { is: style direction: horizontal }
+    {
+      view: open raw
+      item: uid-ccb8-43de-df47-29da
+    }
+    { view: open item: uid-ccb8-43de-df47-29da }
+}
+
+{ UID: uid-6a41-6229-ae29-77e7
+  Version: 2
+  Max-Age: 0
+  Cache-Notify: c-n-c2a4-753b-fea0-fb4f
+  Class: cyrus.forest.WebObject
+  is: payment
+  supplier: http://localhost:8081/o/uid-28a2-d3b1-4aea-86e8.json
+  user: uid-c2a4-753b-fea0-fb4f
+  product: http://localhost:8081/o/uid-a4e1-3ab9-be73-f985.json
+  tags: payment
+}
+
+{ UID: uid-77aa-a9fd-b53a-f05f
+  Version: 1
+  Max-Age: 0
+  Cache-Notify: c-n-c2a4-753b-fea0-fb4f
+  Class: cyrus.forest.WebObject
+  is: form
+  gui: http://localhost:8081/o/uid-0542-777b-20be-5b5c.json
+  user: uid-c2a4-753b-fea0-fb4f
+  form: {
+    fx-parameters: { buylim: true limit: 500 currency-pair: USDJPY }
+  }
+}
+
+{ UID: uid-9877-4ff3-e138-011c
+  Version: 67855
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable order-tracker rule
+  Timer: 0 => #
+  status: waiting => filled
+}
+
+{ UID: uid-cfa2-3a18-d548-e7b4
+  Version: 20994
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable fx broker supplier rule
+  when: "new order received, add tracker for it"
+  Alerted: { is: order supplier: @ }
+  trackers: 
+    not
+    { order: @Alerted }
+    =>
+    @.
+    with
+    {
+      UID: new
+      is: editable fx order-tracker
+      Rules: 
+        http://localhost:8081/o/uid-edbf-edcc-f4a2-8b6c.json
+        http://localhost:8081/o/uid-9f27-f343-bd59-ec2d.json
+        http://localhost:8081/o/uid-9877-4ff3-e138-011c.json
+        http://localhost:8081/o/uid-d7e7-2923-4f26-57f9.json
+      order: @Alerted
+    }
+}
+
+{ UID: uid-0542-777b-20be-5b5c
+  Version: 41203
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable gui
+  view: {
+    fx-parameters: {
+      currency-pair: {
+        input: chooser
+        range: { USDJPY: USD/JPY }
+      }
+      buylim: { input: checkbox label: "Buy Limit" }
+      limit: { input: textfield label: "Price Limit" }
+    }
+    payment: {
+      is: payment
+      credit-card-number: { input: textfield label: "Credit Card Number" }
+    }
+  }
+}
+
+{ UID: uid-ba2b-8619-fdea-8c2c
+  Class: FXDealerTicket
+  Rules: uid-424d-01c5-ee08-2ec9
+  is: fx dealer
+}
+
+{ UID: uid-424d-01c5-ee08-2ec9
+  is: fx dealer rule
+  when: "FX order comes in start building ticket. spawn and add ticket to tickets list"
+  Alerted: { is: fx order ticket: # }
+  tickets: { order: @Alerted } !=> @. with {
+    UID: new
+    Rules: uid-05cf-8cb9-7b52-db80 uid-bce3-b010-e869-f26e uid-1b6c-16b6-64aa-8d48 uid-a36b-54ea-7dd6-2626 uid-913e-f82c-7198-165b uid-4f84-6624-1781-3377
+    is: fx ticket
+    order: @Alerted
+    ask: 81.9
+    status: waiting
+  }
+}
+
+{ UID: uid-05cf-8cb9-7b52-db80
+  is: fx ticket rule
+  when: "new ticket, set params and notify order"
+  params: # => @order:params
+  Notifying: => @. with @order
+}
+
+{ UID: uid-bce3-b010-e869-f26e
+  is: fx ticket rule
+  when: "waiting if order params change update ticket params"
+  status: waiting
+  params: {} => @order:params
+}
+
+{ UID: uid-4f84-6624-1781-3377
+  is: fx ticket rule
+  when: "ask goes below price of ticket set to filled"
+  ask: < @params:price
+  status: waiting => filled
+}
+
+{ UID: uid-1b6c-16b6-64aa-8d48
+  is: fx ticket rule
+  when: "order differs once ticket filled flag with not-as-ordered"
+  params: !@order:params
+  status: filled => @. with not-as-ordered
+}
+
+{ UID: uid-a36b-54ea-7dd6-2626
+  is: fx ticket rule
+  when: "order matches once ticket filled remove not-as-ordered. 6"
+  params: @order:params
+  status: filled => without not-as-ordered
+}
+
+{ UID: uid-913e-f82c-7198-165b
+  is: fx ticket rule
+  when: "correct payment arrives set status to paid"
+  order: { payment: { amount: @ask * @params:investment } }
+  status: filled => paid
+  payment: # => @order:payment
+}
+
