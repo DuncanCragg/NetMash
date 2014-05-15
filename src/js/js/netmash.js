@@ -156,6 +156,7 @@ function JSON2HTML(url){
             if(this.isA('list',    json))       return this.getPlainListHTML(url,json,closed);
             if(this.isA('supplier',json))       return this.getSupplierHTML(url,json,closed);
             if(this.isA('product', json))       return this.getProductHTML(url,json,closed);
+            if(this.isA('light',   json))       return this.getLightHTML(url,json,closed);
             if(this.isA('contact', json, true)) return this.getContactListHTML(url,json,closed);
             if(this.isA('article', json, true)) return this.getDocumentListHTML(url,json,closed);
             if(this.isA('document',json, true)) return this.getDocumentListHTML(url,json,closed);
@@ -443,6 +444,29 @@ function JSON2HTML(url){
             if(json.More         !== undefined) rows.push(this.getObjectListHTML('More', 'more', json.More, {closed:true}));
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
+        },
+        // ------------------------------------------------
+        getLightHTML: function(url,json,closed){
+            var rows=[];
+            rows.push(this.getObjectHeadHTML(this.getTitle(json), url, false, closed));
+            rows.push('<div class="light">');
+            if(json.title !== undefined) rows.push('<h2 class="summary">'+this.getAnyHTML(json.title)+'</h2>');
+            if(json.light !== undefined) rows.push('<div class="light-area" style="background-color: '+this.getColourHTML(json.light,1)+'">'+
+                                              '<div class="light-highlight" style="background-color: '+this.getColourHTML(json.light,1.3)+'"></div></div>');
+            rows.push('</div></div>');
+            return rows.join('\n')+'\n';
+        },
+        getColourHTML: function(light,modulate){
+            if(light.constructor!==Array || light.length!=3) return '#fff';
+            var r=light[0]*modulate;
+            var g=light[1]*modulate;
+            var b=light[2]*modulate;
+            if(r<0) r=0; if(r >1) r=1;
+            if(g<0) g=0; if(g >1) g=1;
+            if(b<0) b=0; if(b >1) b=1;
+            return '#'+(~~(255*r)).toString(16)+
+                       (~~(255*g)).toString(16)+
+                       (~~(255*b)).toString(16);
         },
         // ------------------------------------------------
         getPlainListHTML: function(url,json,closed){

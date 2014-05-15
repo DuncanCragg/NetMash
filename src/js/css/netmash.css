@@ -325,6 +325,24 @@ div.logo{
     margin-bottom: 10px;
 }
 
+div.light-area{
+    position: relative;
+    width: 95%;
+    height: 250px;
+    border-radius: 125px;
+    margin: 10px;
+}
+
+div.light-highlight{
+    position: absolute;
+    z-index: 1;
+    left: 64%;
+    width: 12%;
+    top: 21px;
+    height: 20px;
+    border-radius: 10px;
+}
+
 div.text{
     border-top: 1px solid #aaa;
     border-left: 1px solid #aaa;
