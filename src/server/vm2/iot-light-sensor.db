@@ -1,0 +1,32 @@
+{ UID: uid-fbdc-b069-e5b0-2df9
+  Version: 45912
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable light
+  Rules: {
+    is: light rule
+    light: => @colour × @sensor:light
+  }
+  title: Light
+  colour: .5 1 .5
+  light: 0.32500000000000007 0.6500000000000001 0.32500000000000007
+  sensor: http://localhost:8081/o/uid-64e4-634a-f749-7e47.json
+}
+
+{ UID: http://localhost:8081/o/uid-64e4-634a-f749-7e47.json
+  Version: 80974
+  Max-Age: 0
+  Cache-Notify: http://localhost:8081/o/c-n-14d5-99c5-da00-806a
+  Class: cyrus.forest.WebObject
+  is: editable light sensor
+  Rules: 
+    http://localhost:8081/o/uid-0aa8-3c31-454e-fd80.json
+    {
+      is: light sensor rule
+      light: ( > 1 ) => 0.4
+    }
+  title: "Light Sensor"
+  light: 0.6500000000000001 0.6500000000000001 0.6500000000000001
+  Timer: 10000
+}
+

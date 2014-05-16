@@ -359,7 +359,11 @@ netconfig:
 	cp src/server/vm1/netconfig.db src/server/vm1/cyrusconfig.db
 	cp src/server/vm2/netconfig.db src/server/vm2/cyrusconfig.db
 
-ideconfig:
+setideproject:
+	sed -i"" -e "s#db:.*db#db: $(P).db#" src/server/vm1/ideconfig.db
+	sed -i"" -e "s#db:.*db#db: $(P).db#" src/server/vm2/ideconfig.db
+
+ideconfig: setideproject
 	cp src/server/vm1/ideconfig.db src/server/vm1/cyrusconfig.db
 	cp src/server/vm2/ideconfig.db src/server/vm2/cyrusconfig.db
 
