@@ -163,7 +163,7 @@ runcapw: kill clean netconfig usecapdb setvm2tstconfig run2
 
 runlap:  kill clean netconfig usecapdb setvm2lanconfig run2
 
-runtut: kill clean netconfig usetutordb setvm1tstconfig run1
+runtut: kill       netconfig usetutordb setvm3tstconfig run1n2
 
 runide: kill        ideconfig                           run1n2
 
@@ -252,6 +252,7 @@ usetestdb:
 
 usetutordb:
 	cp src/server/vm1/tutorial.db src/server/vm1/cyrus.db
+	cp src/server/vm2/tutorial.db src/server/vm2/cyrus.db
 
 usemctutdb:
 	cp src/server/vm1/mc-tutorial.db src/server/vm1/cyrus.db

@@ -2,15 +2,38 @@
   is: gui
   title: "Cyrus Tutorial"
   view:
-    { is: style direction: horizontal }
-    { view: open     item: uid-2dd4-fabc-223a-5152 }
-    { view: open raw item: uid-27c9-154b-c4bf-0453 }
-    { view: open     item: uid-27c9-154b-c4bf-0453 }
+    ({ is: style direction: horizontal proportions: 33% }
+     { view: open item: uid-2dd4-fabc-223a-5152 } { view: open item: uid-ccb8-43de-df47-29da })
+}
+
+{ UID: uid-ccb8-43de-df47-29da
+  is: gui
+  title: "Workspace"
+  view:
+   ({ is: style direction: horizontal }
+    { view: open raw item: uid-27c9-154b-c4bf-0453 } { view: open item: uid-27c9-154b-c4bf-0453 })
+   ({ is: style direction: horizontal }
+    { view: open raw item: uid-11da-a9e8-13c1-e018 } { view: open item: uid-11da-a9e8-13c1-e018 })
+   ({ is: style direction: horizontal }
+    { view: open raw item: uid-b97e-06e9-3a4a-a9fd } { view: open item: uid-b97e-06e9-3a4a-a9fd })
+   ({ is: style direction: horizontal }
+    { view: open raw item: http://localhost:8082/o/uid-c369-49cb-1671-9519.json } { view: open item: http://localhost:8082/o/uid-c369-49cb-1671-9519.json })
+   ({ is: style direction: horizontal }
+    { view: open raw item: http://localhost:8082/o/uid-7b36-1383-abb5-66fb.json } { view: open item: http://localhost:8082/o/uid-7b36-1383-abb5-66fb.json })
+   ({ is: style direction: horizontal }
+    { view: open raw item: http://localhost:8082/o/uid-fd31-ebf3-902c-7512.json } { view: open item: http://localhost:8082/o/uid-fd31-ebf3-902c-7512.json })
 }
 
 { UID: uid-27c9-154b-c4bf-0453
-  is: editable gui
-  view: Hello
+  is: editable
+}
+
+{ UID: uid-11da-a9e8-13c1-e018
+  is: editable
+}
+
+{ UID: uid-b97e-06e9-3a4a-a9fd
+  is: editable
 }
 
 { UID: uid-2dd4-fabc-223a-5152
@@ -18,49 +41,76 @@
   title: "The Cyrus Online Tutorial"
   list: uid-080a-9478-a5d5-ce76
         uid-419a-bc8d-d4ff-4146
+        uid-8c9c-0c4e-9b1d-5963
+        uid-b526-b3ee-5f7d-d332
 }
 
 { UID: uid-080a-9478-a5d5-ce76
   is: article
   title: "Start Here!"
-  text: "You probably don't want loads of intro waffle, so let's get started right away.."
-        "On the right, you see two views of what are called 'objects' in Cyrus."
-        "The middle panel has the raw Cyrus 'code', and the right panel has the resulting 'render'."
-        "The object is an 'editable gui' - this tells the browser code how to render it and that you can try and edit it"
-        "The gui's 'view' has the word 'Hello' - so that's what you see!"
-        "Type 'World!' after that 'Hello' in the middle panel. Then hit 'Update' below it."
-        "The far panel should update accordingly. Hit refresh if it doesn't for some reason."
+  text: "Welcome to the Cyrus tutorial - and to the future of programing! We're going to quickly build a dynamic distributed system over two Java VMs with a user interface."
+        "In Cyrus, you only type what you care about for what you're trying to achieve; you don't write code just for the computer's benefit, to tell it how to do things it really should already know!"
+        "Things like saving, loading, notifying updates, re-calculating dependencies, constructing and reacting to user interfaces, integration between distributed components, etc."
+        "On the right, you see two views of what are called 'objects' in Cyrus. The middle panel has the raw Cyrus 'code', and the right panel has the resulting 'render'. Currently they look the same."
 }
 
 { UID: uid-419a-bc8d-d4ff-4146
   is: article
-  title: "Rewriting, '=>' or 'becomes'"
-  text: "Let's get the computer to add 'World!' for us."
-        "Paste the following code in:"
+  title: "Let there be light!"
+  text: "When you make the raw object look like one of a number of standard 'types', the right-hand render panel will change accordingly."
+        "So, paste the following code for a light object into the top box of the middle column, after selecting the text area, which will then become editable:"
         "|["
         "{"
-        "  Rules:{"
-        "    is: gui rule"
-        "  }"
-        "  is: editable gui"
-        "  view: Hello"
+        "  is: editable light"
+        "  light: 1 1 0"
         "}"
         "]|"
-        "This adds 'Rules' to the object. We have the beginnings of a 'gui rule'. A rule has to say it 'is' a rule, and what it's a rule for."
-        "Now add the bit that does the rewrite:"
+        "Press the button below to save this. The right-hand side should now show a yellow blob - the browser's understanding of how to render a light object."
+        "The numbers '1 1 0' are the red, green and blue values of the light. You may know that red + green makes yellow. Try other numbers between zero and one for the three colour elements."
+        "Careful not to remove the word 'editable', or you won't be able to edit it any more!"
+}
+
+{ UID: uid-8c9c-0c4e-9b1d-5963
+  is: article
+  title: "Tick.."
+  text: "We need some action, and a 'Timer' can help. Put in a Timer property like this:"
         "|["
         "{"
-        "  Rules:{"
-        "    is: gui rule"
-        "    ![view: Hello => Hello World]!"
-        "  }"
-        "  is: editable gui"
-        "  view: Hello"
+        "  is: editable light"
+        "  light: 1 1 0"
+        "  ![Timer: 1000]!"
         "}"
         "]|"
-        "This is a rule that says 'when you see 'Hello' in the 'view:' of the object, rewrite it to 'Hello World'"
-        "Another way of reading it is 'view Hello ![becomes]! Hello World'"
-        "A rule does its best to match, and if it matches, the rewrites are performed"
-        "Hit 'Update', then refresh. What happened? You should see 'Hello,World Hello'. It's our first 'bug'!"
+        ".. and wait a second - it'll set to '0' after the time (in milliseconds) that you put."
+        "Try 'Timer: 4000' and wait 4 seconds. Don't put too long because you'll be stuck until it times out (and currently it won't reset if you put in another number)."
+        "Any property that starts with a capital letter is special in Cyrus - it digs deeper into the machine!"
+}
+
+{ UID: uid-b526-b3ee-5f7d-d332
+  is: article
+  title: "Tick, Tick, Tick.. The first Rule"
+  text: "Enter this into the second object down from the top in the middle column:"
+        "|["
+        "{"
+        "  is: editable light rule"
+        "  Timer: 0 => 4000"
+        "}"
+        "]|"
+        "We have the beginnings of a 'light rule'. A rule has to say it 'is' a rule, and what it's a rule for, 'light' here."
+        "This is a rule that will set the value of the timer for us - when it hits '0', it rightaway gets put back to 1 second"
+        "Another way of reading it is 'Timer: zero ![becomes]! 4000'"
+        "A rule does its best to match everything specified, and if it matches, the rewrites are performed."
+        "The rule needs to be linked to the light, in order to animate it:"
+        "|["
+        "{"
+        "  is: editable light"
+        "  ![Rules: <uid>]!"
+        "  light: 1 1 0"
+        "  Timer: 4000"
+        "}"
+        "]|"
+        "Right-click on the '{}' symbol in the header bar above the rule object and choose 'Copy Link Address', or the nearest local equivalent."
+        "Then paste that in to where it says '<uid>' next to 'Rules:' above. That links the light to its animation rule via its URL."
+        "You now won't see Timer: hit zero because it gets reset back so fast."
 }
 

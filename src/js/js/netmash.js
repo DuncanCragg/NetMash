@@ -464,9 +464,13 @@ function JSON2HTML(url){
             if(r<0) r=0; if(r >1) r=1;
             if(g<0) g=0; if(g >1) g=1;
             if(b<0) b=0; if(b >1) b=1;
-            return '#'+(~~(255*r)).toString(16)+
-                       (~~(255*g)).toString(16)+
-                       (~~(255*b)).toString(16);
+            var rs=(~~(255*r)).toString(16);
+            var gs=(~~(255*g)).toString(16);
+            var bs=(~~(255*b)).toString(16);
+            if(rs.length==1) rs='0'+rs;
+            if(gs.length==1) gs='0'+gs;
+            if(bs.length==1) bs='0'+bs;
+            return '#'+rs+gs+bs;
         },
         // ------------------------------------------------
         getPlainListHTML: function(url,json,closed){
@@ -516,7 +520,7 @@ function JSON2HTML(url){
             rows.push('<input class="submit" type="submit" value="Log in" />');
             rows.push('</form>');
             }
-            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, closed));
+            if(json.list         !== undefined) rows.push(this.getObjectListHTML(null, 'document', json.list, {closed:true}/*closed*/));
             if(json.collection   !== undefined) rows.push('<div class="info-item">'+this.getObjectHeadHTML(null, json.collection, true, {closed:false})+'</div>');
             rows.push('</div></div>');
             return rows.join('\n')+'\n';
