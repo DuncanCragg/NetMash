@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 
+import static java.lang.Math.*;
+
 import cyrus.platform.Kernel;
 import cyrus.lib.JSON;
 
@@ -681,6 +683,10 @@ public class CyrusLanguage extends WebObject {
         if(ll.size()==2 && "integer".equals(s0)){
             if(d1==null) d1=findDouble(ll.get(1));
             if(d1!=null) return Integer.valueOf((int)(0.5+d1));
+        }
+        if(ll.size()==2 && "sin".equals(s0)){
+            if(d1==null) d1=findDouble(ll.get(1));
+            if(d1!=null) return sin(d1);
         }
         if(ll.size()==3 && "..".equals(s1)){
             if(d0==null) d0=findDouble(ll.get(0));

@@ -201,6 +201,7 @@
   nt: not *
   au: count 2
   at: count 2
+  si: => sin @f
 }
 
 { UID: uid-61d6-65c9-2931-505b
@@ -223,6 +224,7 @@
   au: uid uid
   at: thingy nothing
   sc: => 0.6 1.6 0
+  si: > 0.656
 }
 
 { UID: uid-d3e7-6831-3804-7cbf
@@ -256,6 +258,7 @@
   bl: false
   lu: { qq: count 5 }
   st: { **: (qs *) } !=> flatten @.
+  si: < 0.657
 }
 
 { UID: uid-d039-5967-f60c-70f7
