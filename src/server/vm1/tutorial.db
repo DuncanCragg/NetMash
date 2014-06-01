@@ -43,6 +43,8 @@
         uid-419a-bc8d-d4ff-4146
         uid-8c9c-0c4e-9b1d-5963
         uid-b526-b3ee-5f7d-d332
+        uid-5099-29ce-1318-596f
+        uid-8ce2-6090-90ac-2b38
 }
 
 { UID: uid-080a-9478-a5d5-ce76
@@ -97,10 +99,12 @@
         "}"
         "]|"
         "We have the beginnings of a 'light rule'. A rule has to say it 'is' a rule, and what it's a rule for, 'light' here."
-        "This is a rule that will set the value of the timer for us - when it hits '0', it rightaway gets put back to 1 second"
+        "This is a rule that will set the value of the timer for us - when it hits '0', it rightaway gets put back to 4 seconds"
         "Another way of reading it is 'Timer: zero ![becomes]! 4000'"
         "A rule does its best to match everything specified, and if it matches, the rewrites are performed."
         "The rule needs to be linked to the light, in order to animate it:"
+        "Right-click on the '{}' symbol in the header bar above the rule object and choose 'Copy Link Address', or the nearest local equivalent."
+        "Then paste that in to where it says '<uid>' next to a new 'Rules:' property - see below. That links the light to its animation rule via its URL."
         "|["
         "{"
         "  is: editable light"
@@ -109,8 +113,61 @@
         "  Timer: 4000"
         "}"
         "]|"
-        "Right-click on the '{}' symbol in the header bar above the rule object and choose 'Copy Link Address', or the nearest local equivalent."
-        "Then paste that in to where it says '<uid>' next to 'Rules:' above. That links the light to its animation rule via its URL."
         "You now won't see Timer: hit zero because it gets reset back so fast."
+}
+
+{ UID: uid-5099-29ce-1318-596f
+  is: article
+  title: "Changing Colours"
+  text: "Add the following lines to the light rule and shorten the timeout to 100ms:"
+        "|["
+        "{"
+        "  is: editable light rule"
+        "  Timer: 0 => ![100]!"
+        "  ![t: => @. + 0.1]!"
+        "  ![light: => (((sin (@t * 1.1)) + 1) / 2) (((sin (@t * 2.0)) + 1) / 2) (((sin (@t * 0.7)) + 1) / 2)]!"
+        "}"
+        "]|"
+        "Now, each 100ms we add 0.1 to 't', then set the light's RGB values to different sine waves over that time."
+        "This is a bad rule for two reasons: the property 't' is not a standard one for the light type, and may clash with other uses, plus we'd like to define a function for that sine expression instead of being so verbose."
+}
+
+{ UID: uid-8ce2-6090-90ac-2b38
+  is: article
+  title: "Local Variables and Defining Functions"
+  text: "The first thing we need to do is to wrap the 't' variable to 'hide' it. Put it into a structure called 'private':"
+        "|["
+        "{"
+        "  is: editable light"
+        "  Rules: <uid>"
+        "  light: 1 1 0"
+        "  Timer: 4000"
+        "  ![private: { }]!"
+        "}"
+        "]|"
+        "And update the rule:"
+        "|["
+        "{"
+        "  is: editable light rule"
+        "  Timer: 0 => 100"
+        "  ![private: { t: => @. + 0.1 }]!"
+        "  light: => (((sin (@private:t * 1.1)) + 1) / 2) (((sin (@private:t * 2.0)) + 1) / 2) (((sin (@private:t * 0.7)) + 1) / 2)"
+        "}"
+        "]|"
+        "Now for that verbose expression repeated three times. Here's how you define a function for it:"
+        "|["
+        "{"
+        "  is: editable light rule"
+        "  Timer: 0 => 100"
+        "  private: { t: => @. + 0.1 }"
+        "  ![light: => (shifted-sin @private:t 1.1) (shifted-sin @private:t 2.0)) (shifted-sin @private:t 0.7)]!"
+        "}"
+        "]|"
+        "|["
+        "{"
+        "  is: editable light rule"
+        "  **: (shifted-sin number number) => (((sin (@.1 * @.2)) + 1) / 2)
+        "}"
+        "]|"
 }
 
