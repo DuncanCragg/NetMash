@@ -58,6 +58,7 @@
   lu: {}
   ls: {s: 2}{s: 1}{t: 4}{s: 3}
   st: qs (5 9 2 8 3 1)
+  sh: 1 2 3
   li: 4321 5432 6543 7654
   zf: zzz
   ze: zzz
@@ -103,6 +104,7 @@
   tx: => join , (x (@=ls:s select (random 0 (( count @=ls ) - 1))))
   jt: => join ( @is @x )
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
+  sh: number => sin2 @. 1.5
   zf: => @li:4.. filter (@.. > 7000)
   ze: => @li:4.. each   (@.. > 7000)
   lf: => @li:3.. filter (@.. > 7000)
@@ -157,6 +159,7 @@
   tx: /x,[123]/
   jt: test20
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
+  sh: { **: (sin2 number number) => (((sin (@.1 * @.2)) + 1) / 2) }
   zf: #
   ze: #
   lf: 7654
@@ -197,6 +200,7 @@
   zp: 1 2 3 #
   lu: { c: d qq: 20 20 30 } => @. with-more ({ qq: 30 40 } { qq: 50 20 })
   st: { **: qs ** => if ((count @.1) == 0) then # else ((qs (@.1:1.. filter (@.. < @.1:0))) @.1:0 (qs (@.1:1.. filter (@.. >= @.1:0)))) }
+  sh: 0.9987474933020273 0.5705600040299336 0.011234941167451495
   nl: ((a a a)(a a a)(a a a))((a a a)(a a a)(a a a))
   nt: not *
   au: count 2
