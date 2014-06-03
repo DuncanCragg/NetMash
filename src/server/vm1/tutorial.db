@@ -45,6 +45,7 @@
         uid-b526-b3ee-5f7d-d332
         uid-5099-29ce-1318-596f
         uid-8ce2-6090-90ac-2b38
+        uid-ba85-7a7f-4461-fcf3
 }
 
 { UID: uid-080a-9478-a5d5-ce76
@@ -135,14 +136,14 @@
 { UID: uid-8ce2-6090-90ac-2b38
   is: article
   title: "Local Variables and Defining Functions"
-  text: "The first thing we need to do is to wrap the 't' variable to 'hide' it. Put it into a structure called 'private':"
+  text: "The first thing we need to do is to wrap the 't' variable to 'hide' it. Put it into a structure called 'P':"
         "|["
         "{"
         "  is: editable light"
         "  Rules: <uid>"
         "  light: 1 1 0"
         "  Timer: 4000"
-        "  ![private: { }]!"
+        "  ![P: { }]!"
         "}"
         "]|"
         "And update the rule:"
@@ -150,10 +151,11 @@
         "{"
         "  is: editable light rule"
         "  Timer: 0 => 100"
-        "  ![private: { t: => @. + 0.1 }]!"
-        "  light: => (((sin (@private:t * 1.1)) + 1) / 2) (((sin (@private:t * 2.0)) + 1) / 2) (((sin (@private:t * 0.7)) + 1) / 2)"
+        "  ![P: { t: => @. + 0.1 }]!"
+        "  light: => (((sin (@P:t * 1.1)) + 1) / 2) (((sin (@P:t * 2.0)) + 1) / 2) (((sin (@P:t * 0.7)) + 1) / 2)"
         "}"
         "]|"
+        "Like 'Timer', you know 'P' is treated specially because it's capitalised; in this case, its contents are hidden to external clients except when editable and fetched in Cyrus format"
         "Now for that verbose expression repeated three times. Here's how you define a function for it:"
         "|["
         "{"
@@ -166,9 +168,25 @@
         "{"
         "  is: editable light rule"
         "  Timer: 0 => 100"
-        "  private: { t: => @. + 0.1 }"
-        "  ![light: => (shifted-sin @private:t 1.1) (shifted-sin @private:t 2.0) (shifted-sin @private:t 0.7)]!"
+        "  P: { t: => @. + 0.1 }"
+        "  ![light: => (shifted-sin @P:t 1.1) (shifted-sin @P:t 2.0) (shifted-sin @P:t 0.7)]!"
         "}"
         "]|"
+}
+
+{ UID: uid-ba85-7a7f-4461-fcf3
+  is: article
+  title: "Copying light over the network"
+  text: "Here's another light, but on the second Java VM, if you paste it in to the next block down:"
+        "|["
+        "{"
+        "  is: editable light"
+        "  Rules: { is: light rule  light: => @P:peer:light × (0.5 0.5 0.5) }"
+        "  light: 1 1 0"
+        "  P: { peer: <URL of first light> }"
+        "}"
+        "]|"
+        "It has a simple rule inline to copy the peer light's RGB with a dimming factor applied."
+        "Don't forget to paste in the URL of the first object, the original light, where shown."
 }
 
