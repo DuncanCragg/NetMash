@@ -48,6 +48,7 @@
         uid-ba85-7a7f-4461-fcf3
         uid-4e51-a2d7-7352-f66a
         uid-8f06-2c78-b06e-0184
+        uid-e80d-1025-1227-3541
 }
 
 { UID: uid-080a-9478-a5d5-ce76
@@ -217,5 +218,37 @@
         "All objects within each microservice run concurrently and can run in parallel over several CPUs."
         "The code is in simple functional form - and there's really not much of it, just what you need to get the job done."
         "That's the future of programming!"
+}
+
+{ UID: uid-e80d-1025-1227-3541
+  is: article
+  title: "Full Code Listing"
+  text: "Here is the full listing of the objects you should have created, including actual UIDs/URLs:"
+        "|["
+        "--------------------"
+        "{ is: editable light"
+        "  Rules: uid-11da-a9e8-13c1-e018 uid-b97e-06e9-3a4a-a9fd"
+        "  light: 1 1 0"
+        "  Timer: 200"
+        "  P: { }"
+        "}"
+        "--------------------"
+        "{ is: editable light rule"
+        "  Timer: 0 => 100"
+        "  P: { t: => @. + 0.1 }"
+        "  light: => (shifted-sin @P:t 1.1) (shifted-sin @P:t 2.0) (shifted-sin @P:t 0.7)"
+        "}"
+        "--------------------"
+        "{ is: editable light rule"
+        "  **: (shifted-sin number number) => (((sin (@.1 * @.2)) + 2) / 3)"
+        "}"
+        "--------------------"
+        "{ is: editable light"
+        "  Rules: { is: light rule  light: => @P:peer:light × (0.5 0.5 0.5) }"
+        "  light: 1 1 0"
+        "  P: { peer: http://localhost:8081/o/uid-27c9-154b-c4bf-0453.json }"
+        "}"
+        "--------------------"
+        "]|"
 }
 
