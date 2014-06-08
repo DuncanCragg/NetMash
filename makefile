@@ -143,6 +143,9 @@ reinstallemu: uninstallemu installemu
 
 reinstalllan: uninstalllan installlan
 
+runnetmash:
+	adb -d shell am start -n cyrus.gui/cyrus.gui.NetMash
+
 # -------------------------------------------------------------------
 
 runlomc: kill clean netconfig usemcdbs setvm1tstconfig run1
