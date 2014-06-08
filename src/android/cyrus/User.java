@@ -27,6 +27,7 @@ import cyrus.gui.Mesh;
 import cyrus.lib.*;
 import cyrus.forest.*;
 import cyrus.platform.Kernel;
+import cyrus.types.*;
 
 import static cyrus.lib.Utils.*;
 
@@ -62,6 +63,21 @@ public class User extends CyrusLanguage {
 
         Light light = new Light();
 
+        PresenceTracker place=null;
+        if("http://192.168.0.5:8081".equals(UID.localPre())){
+        place = new PresenceTracker(
+              "{ is: place 3d mesh editable\n"+
+              "  title: \"Room of Things\"\n"+
+              "  scale: 20 20 20\n"+
+              "  vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )\n"+
+              "  texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )\n"+
+              "  normals: ( 0 1 0 )\n"+
+              "  faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )\n"+
+            "  }\n", true);
+
+        place.uid="uid-fedb-878b-2eab-ab2a";
+        }
+
         User contacts = new User(
               "{ is: private contact list\n"+
               "  title: \"Phone Contacts\", \n"+
@@ -73,6 +89,7 @@ public class User extends CyrusLanguage {
         currentUser = new User(homeusers, contact.uid, links.uid, linksaround.uid, contacts.uid);
 
         LinkedList cyruslinks=Kernel.config.listPathN("app:links");
+        cyruslinks.addFirst("http://192.168.0.5:8081/o/uid-fedb-878b-2eab-ab2a.json");
         cyruslinks.addFirst(light.uid);
         cyruslinks.addFirst(linksaround.uid);
         cyruslinks.addFirst(currentUser.uid);
@@ -83,6 +100,8 @@ public class User extends CyrusLanguage {
         currentUser.funcobs.cacheSaveAndEvaluate(contact, true);
         currentUser.funcobs.cacheSaveAndEvaluate(links);
         currentUser.funcobs.cacheSaveAndEvaluate(light);
+        if(place!=null)
+        currentUser.funcobs.cacheSaveAndEvaluate(place);
         currentUser.funcobs.cacheSaveAndEvaluate(linksaround);
         currentUser.funcobs.cacheSaveAndEvaluate(contacts);
         currentUser.funcobs.cacheSaveAndEvaluate(currentUser, true);

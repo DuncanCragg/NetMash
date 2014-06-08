@@ -10,6 +10,8 @@ public class PresenceTracker extends CyrusLanguage {
 
     public PresenceTracker(){}
 
+    public PresenceTracker(String s, boolean cyrus){ super(s,cyrus); }
+
     public void evaluate(){
         trackPresence();
         contentAll("sub-items:item:is");
