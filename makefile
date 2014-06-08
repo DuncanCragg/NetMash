@@ -25,6 +25,9 @@ examples: runstt
 ide: runide
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
 
+iot: androidlan runiot lancat
+	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-ccb8-43de-df47-29da.json'
+
 mctut: runmct
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
 
@@ -43,8 +46,6 @@ lan: androidlan runlan lancat
 lan1: androidlan runlan tailtestresults1
 
 lan2: androidlan runlan tailtestresults2
-
-iot: androidlan runiot lancat
 
 cap: androidemu runcap logcat
 
@@ -149,6 +150,9 @@ runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
 runiot: killroot clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2root
 
+runiot2: killroot netconfig useiotdb2 setvm2iotconfig2 run1n2root
+	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-ccb8-43de-df47-29da.json'
+
 runliot: kill      netconfig usenodb  setvm2iotconfig run2
 
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
@@ -236,6 +240,11 @@ useiotdb:
 	cp src/server/vm1/iot.db src/server/vm1/cyrus.db
 	rm -f                    src/server/vm2/cyrus.db
 
+useiotdb2:
+	cp  src/server/vm1/iot.db      src/server/vm1/cyrus.db
+	cat src/server/vm2/iotnm.db >> src/server/vm1/cyrus.db
+	rm -f                          src/server/vm2/cyrus.db
+
 useomdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db
 
@@ -320,6 +329,12 @@ setvm2iotconfig:
 	sed -i"" -e  "s#host: localhost##g"                       src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s#preload: ( )#preload: PiBeaconLight#g"    src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s:localhost:$(LOCAL_IP):g"                  src/server/vm2/PiBeaconLight.java
+	sed -i"" -e  "s#position: 0 0 0#position: $(LIGHT_POS)#g" src/server/vm2/PiBeaconLight.java
+
+setvm2iotconfig2:
+	sed -i"" -e  "s#host: localhost##g"                       src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s#preload: ( )#preload: PiBeaconLight#g"    src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s#netmash.net#localhost:8081#g"             src/server/vm2/PiBeaconLight.java
 	sed -i"" -e  "s#position: 0 0 0#position: $(LIGHT_POS)#g" src/server/vm2/PiBeaconLight.java
 
 setvm3lanconfig: setvm1lanconfig setvm2lanconfig

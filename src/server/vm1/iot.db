@@ -1,3 +1,11 @@
+{ UID: uid-ccb8-43de-df47-29da
+  is: gui
+  title: "IoT IDE"
+  view:
+   ({ is: style direction: horizontal }
+    { view: open raw item: uid-41b6-5f8f-f143-b30d } { view: open item: uid-41b6-5f8f-f143-b30d })
+}
+
 { UID: uid-41b6-5f8f-f143-b30d
   Class: cyrus.types.PresenceTracker
   is: place 3d mesh editable
@@ -15,12 +23,13 @@
 }
 
 { UID: uid-52e0-e5c3-0ed1-6ed3
-  is: 3d cuboid editable light-sensor
+  is: 3d cuboid editable light sensor
   title: "Light Level"
   scale: 0.3 0.3 0.3
   within: uid-41b6-5f8f-f143-b30d
   textures: http://www.textures123.com/free-texture/sand/sand-texture4.jpg
   light-level: 100
+  light: 1 1 0
 }
 
 { UID: uid-ff5d-1ef4-cfa5-5f92

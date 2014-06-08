@@ -17,7 +17,7 @@ public class PiBeaconLight extends CyrusLanguage {
               "         http://netmash.net/o/uid-6f1a-4c7c-d111-2679.cyr\n"+
               "         http://netmash.net/o/uid-9011-94df-9feb-e3c2.cyr\n"+
               "         http://netmash.net/o/uid-2f18-945a-c460-9bd7.cyr\n"+
-              "  is: 3d cuboid editable\n"+
+              "  is: editable 3d cuboid light\n"+
               "  title: Light\n"+
               "  rotation: 45 45 45\n"+
               "  scale: 1 1 1\n"+
