@@ -375,7 +375,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         seeZ=eyeZ-4.5f*FloatMath.cos(direction);
     }
 
-    private boolean emulator(){ return Kernel.config.stringPathN("network:home-cache-notify").indexOf("10.0.2.2")!= -1; }
+    private boolean emulator(){ return Kernel.config.stringPathN("network:home-cache-notify","").indexOf("10.0.2.2")!= -1; }
 
     public void pan(float d){
         direction=d;

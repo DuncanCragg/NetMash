@@ -60,6 +60,8 @@ public class User extends CyrusLanguage {
               "  title: \"Objects Around\" \n"+
               "}");
 
+        Light light = new Light();
+
         User contacts = new User(
               "{ is: private contact list\n"+
               "  title: \"Phone Contacts\", \n"+
@@ -71,6 +73,7 @@ public class User extends CyrusLanguage {
         currentUser = new User(homeusers, contact.uid, links.uid, linksaround.uid, contacts.uid);
 
         LinkedList cyruslinks=Kernel.config.listPathN("app:links");
+        cyruslinks.addFirst(light.uid);
         cyruslinks.addFirst(linksaround.uid);
         cyruslinks.addFirst(currentUser.uid);
         links.publicState.listPath("list", cyruslinks);
@@ -79,6 +82,7 @@ public class User extends CyrusLanguage {
 
         currentUser.funcobs.cacheSaveAndEvaluate(contact, true);
         currentUser.funcobs.cacheSaveAndEvaluate(links);
+        currentUser.funcobs.cacheSaveAndEvaluate(light);
         currentUser.funcobs.cacheSaveAndEvaluate(linksaround);
         currentUser.funcobs.cacheSaveAndEvaluate(contacts);
         currentUser.funcobs.cacheSaveAndEvaluate(currentUser, true);

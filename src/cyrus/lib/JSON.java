@@ -153,6 +153,13 @@ public class JSON {
         try{ return stringPath(path); }catch(PathOvershot po){ return null; }
     }
 
+    /** Get String value (or String form of
+      * value) at the given path, or return d if none. No PathOvershot.
+      */
+    public String stringPathN(String path, String d){
+        try{ String s=stringPath(path); return s!=null? s: d; }catch(PathOvershot po){ return d; }
+    }
+
     /** Check whether there's anything at the path. */
     public boolean isAtPath(String path) throws PathOvershot{
         ensureContent();

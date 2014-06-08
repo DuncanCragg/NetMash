@@ -3,21 +3,14 @@
   persist: { db: cyrus.db
              syncrate: 2000
              preload: ( ) }
-  network: { pathprefix: /o/
+  network: { port: 8081
+             pathprefix: /o/
+             cache-notify: c-n-b18c-e1d5-1025-6643
              log: 0
-             home-cache-notify: http://10.0.2.2:8082/o/c-n-0a3a-8cd3-d5c3-ed1c }
+  }
   rules: { log: 0 }
   gl: { log: false }
-  app: { homeusern: http://10.0.2.2:8082/o/uid-6332-84e1-c1de-3364.json
-         links: http://10.0.2.2:8081/o/uid-41b6-5f8f-f143-b30d.json
-                http://10.0.2.2:8082/o/uid-f862-56af-d46d-c440.json
-                http://10.0.2.2:8082/o/uid-c058-2db1-0b26-8f48.json
-                http://10.0.2.2:8082/o/uid-56d4-91ef-a2fc-2585.json
-                http://10.0.2.2:8082/o/uid-d9e4-4f7c-d9fe-9e7c.json
-                http://10.0.2.2:8082/o/uid-c102-dd84-8284-c360.json
-                http://10.0.2.2:8081/o/uid-8ed3-ee4a-eeef-0313.json
-                http://10.0.2.2:8081/o/uid-0112-09a9-3f54-b720.json
-                http://10.0.2.2:8081/o/uid-26bc-8ee9-5443-851a.json
+  app: { links: http://duncan-cragg.org/777-777.json
   }
 }
 

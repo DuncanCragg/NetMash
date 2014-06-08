@@ -39,6 +39,8 @@ capweb: runcapw
 
 ####################
 
+apk: androidapk lancat
+
 emu: androidemu runemu logcat
 
 lan: androidlan runlan lancat
@@ -112,6 +114,11 @@ androidemu: clean init setappemuconfig setemumapkey
 	adb -e install bin/NetMash-debug.apk
 
 androidlan: clean init setapplanconfig setremmapkey
+	ant release
+	( adb -d uninstall cyrus.gui && adb -d install bin/NetMash-release.apk ) &
+	cp bin/NetMash-release.apk $(RELEASE_TARGET)
+
+androidapk: clean
 	ant release
 	( adb -d uninstall cyrus.gui && adb -d install bin/NetMash-release.apk ) &
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
