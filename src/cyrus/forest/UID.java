@@ -115,38 +115,10 @@ public class UID {
     static public String localPre(){
         if(localpre==null){
             String host=Kernel.config.stringPathN("network:host");
-            if(host==null) host=IPtoString();
+            if(host==null) host=Kernel.IPtoString();
             localpre="http://"+host+":"+Kernel.config.intPathN("network:port");
         }
         return localpre;
-    }
-
-    static public String IPtoString(){
-        if(IP()==null) return "127.0.0.1";
-        return IP().getHostAddress();
-    }
-
-    static private InetAddress IP=null;
-
-    static public InetAddress IP(){
-        if(IP==null) IP=findTheMainIP4AddressOfThisHost();
-        return IP;
-    }
-
-    static public InetAddress findTheMainIP4AddressOfThisHost(){ try{
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-        while(interfaces.hasMoreElements()){
-            NetworkInterface ni=interfaces.nextElement();
-            if(!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
-            Enumeration<InetAddress> addresses=ni.getInetAddresses();
-            while(addresses.hasMoreElements()){
-                InetAddress ad=addresses.nextElement();
-                if(ad.isLoopbackAddress() || !(ad instanceof Inet4Address)) continue;
-                return ad;
-            }
-        }
-        } catch(Throwable t){ t.printStackTrace(); }
-        return null;
     }
 
     static public String localPrePath(){

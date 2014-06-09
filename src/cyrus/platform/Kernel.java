@@ -205,6 +205,66 @@ public class Kernel {
         return rdbuffers.get(channel);
     }
 
+    static public String IPtoString(){
+        if(IP()==null) return "127.0.0.1";
+        return IP().getHostAddress();
+    }
+
+    static private InetAddress IP=null;
+
+    static public InetAddress IP(){
+        if(IP==null) IP=findTheMainIP4AddressOfThisHost();
+        return IP;
+    }
+
+    static public InetAddress findTheMainIP4AddressOfThisHost(){ try{
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while(interfaces.hasMoreElements()){
+            NetworkInterface ni=interfaces.nextElement();
+            if(!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
+            Enumeration<InetAddress> addresses=ni.getInetAddresses();
+            while(addresses.hasMoreElements()){
+                InetAddress ad=addresses.nextElement();
+                if(ad.isLoopbackAddress() || !(ad instanceof Inet4Address)) continue;
+                return ad;
+            }
+        }
+        } catch(Throwable t){ t.printStackTrace(); }
+        return null;
+    }
+
+    static public InetAddress getBroadcastAddress(){ try{
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while(interfaces.hasMoreElements()){
+            NetworkInterface ni=interfaces.nextElement();
+            if(!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
+            for(InterfaceAddress address: ni.getInterfaceAddresses()){
+                InetAddress ia=address.getBroadcast();
+                if(ia!=null) return ia;
+            }
+        }
+        } catch(Throwable t){ t.printStackTrace(); }
+        return null;
+    }
+
+    static public void broadcastUDP(InetAddress addr, int port, String message){ try{
+        DatagramSocket socket = new DatagramSocket();
+        DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), addr, port);
+        socket.setBroadcast(true);
+        socket.send(packet);
+        } catch(Throwable t){ t.printStackTrace(); }
+    }
+
+    static public String listenUDP(int port){ try{
+        DatagramSocket socket = new DatagramSocket(port);
+        byte[] buf = new byte[4096];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        socket.receive(packet);
+        return new String(packet.getData());
+        } catch(Throwable t){ t.printStackTrace(); }
+        return null;
+    }
+
     //-----------------------------------------------------
 
     static private Selector selector;
