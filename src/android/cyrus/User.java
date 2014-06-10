@@ -4,10 +4,13 @@ package cyrus;
 import java.util.*;
 import java.util.regex.*;
 import java.util.concurrent.*;
+import java.net.*;
 
 import android.os.*;
 import android.util.*;
 import android.graphics.*;
+import android.net.wifi.*;
+import android.net.*;
 
 import android.content.*;
 import android.database.Cursor;
@@ -52,6 +55,11 @@ public class User extends CyrusLanguage {
               "  address: { }\n"+
               "}", true);
 
+        User contacts = new User(
+              "{ is: private contact list\n"+
+              "  title: \"Phone Contacts\", \n"+
+              "}", true);
+
         CyrusLanguage links = new CyrusLanguage(
               "{ is: link list editable\n"+
               "}", true);
@@ -63,25 +71,32 @@ public class User extends CyrusLanguage {
 
         Light light = new Light();
 
+   //   String urlpre="http://192.168.0.11:8081";
+   //   String urlpre="http://192.168.21.125:8081";
+        String urlpre=UID.localPre();
+
+        boolean thisIsThePlace=urlpre.equals(UID.localPre());
+
         PresenceTracker place=null;
-        if("http://192.168.0.5:8081".equals(UID.localPre())){
-        place = new PresenceTracker(
-              "{ is: place 3d mesh editable\n"+
-              "  title: \"Room of Things\"\n"+
-              "  scale: 20 20 20\n"+
-              "  vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )\n"+
-              "  texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )\n"+
-              "  normals: ( 0 1 0 )\n"+
-              "  faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )\n"+
-            "  }\n", true);
+        if(thisIsThePlace){
+            place = new PresenceTracker(
+                  "{ is: place 3d mesh editable\n"+
+                  "  title: \"Room of Things\"\n"+
+                  "  scale: 20 20 20\n"+
+                  "  vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )\n"+
+                  "  texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )\n"+
+                  "  normals: ( 0 1 0 )\n"+
+                  "  faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )\n"+
+                  "}\n", true);
 
-        place.uid="uid-fedb-878b-2eab-ab2a";
+            final String placeURL=UID.toURL(place.uid);
+            new Thread(){ public void run(){
+                while(true){
+                    Kernel.broadcastUDP(getBroadcastAddress(),24589, placeURL);
+                    Kernel.sleep(2000);
+                }
+            }}.start();
         }
-
-        User contacts = new User(
-              "{ is: private contact list\n"+
-              "  title: \"Phone Contacts\", \n"+
-              "}", true);
 
         // -----------------------------------------------------
 
@@ -89,7 +104,6 @@ public class User extends CyrusLanguage {
         currentUser = new User(homeusers, contact.uid, links.uid, linksaround.uid, contacts.uid);
 
         LinkedList cyruslinks=Kernel.config.listPathN("app:links");
-        cyruslinks.addFirst("http://192.168.0.5:8081/o/uid-fedb-878b-2eab-ab2a.json");
         cyruslinks.addFirst(light.uid);
         cyruslinks.addFirst(linksaround.uid);
         cyruslinks.addFirst(currentUser.uid);
@@ -108,6 +122,20 @@ public class User extends CyrusLanguage {
 
         if(homeusers!=null) currentUser.notifying(list(homeusers));
         NetMash.top.onUserReady(currentUser);
+    }
+
+    static InetAddress broadcastAddress=null;
+
+    static public InetAddress getBroadcastAddress(){ try {
+        if(broadcastAddress!=null) return broadcastAddress;
+        WifiManager wm = (WifiManager)NetMash.top.getSystemService(WIFI_SERVICE);
+        DhcpInfo di = wm.getDhcpInfo();
+        int bc = (di.ipAddress & di.netmask) | ~di.netmask;
+        byte[] ba = new byte[4];
+        for(int k=0; k< 4; k++) ba[k]=(byte)((bc >> k*8) & 0xFF);
+        broadcastAddress=InetAddress.getByAddress(ba);
+    } catch(Throwable t){ t.printStackTrace(); }
+        return broadcastAddress;
     }
 
     public User(String jsonstring){ super(jsonstring); }

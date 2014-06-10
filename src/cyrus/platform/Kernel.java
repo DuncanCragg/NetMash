@@ -255,12 +255,19 @@ public class Kernel {
         } catch(Throwable t){ t.printStackTrace(); }
     }
 
+    static LinkedHashMap<Integer,DatagramSocket> listenUDPPorts=new LinkedHashMap<Integer,DatagramSocket>();
+
     static public String listenUDP(int port){ try{
-        DatagramSocket socket = new DatagramSocket(port);
+        DatagramSocket socket=listenUDPPorts.get(port);
+        if(socket==null){
+            socket = new DatagramSocket(port);
+            listenUDPPorts.put(port, socket);
+        }
         byte[] buf = new byte[4096];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
-        return new String(packet.getData());
+        return new String(packet.getData(),0,packet.getLength());
+
         } catch(Throwable t){ t.printStackTrace(); }
         return null;
     }

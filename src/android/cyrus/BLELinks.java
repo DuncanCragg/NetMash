@@ -34,9 +34,20 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         bluetoothAdapter=bm.getAdapter(); if(bluetoothAdapter==null) return;
         new Thread(){ public void run(){
             while(running){
+                checkOnBroadcast();
+            }
+        }}.start();
+        new Thread(){ public void run(){
+            while(running){
                 checkOnScanning();
                 Kernel.sleep(500);
         }}}.start();
+    }
+
+    private void checkOnBroadcast(){
+        String placeURL=Kernel.listenUDP(24589);
+        if(placeURL!=null) onPlaceURL(placeURL);
+        else Kernel.sleep(2000);
     }
 
     boolean notifiedEnableBT=false;
@@ -71,6 +82,14 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         bluetoothAdapter.stopLeScan(this);
     }
 
+    private void onPlaceURL(final String placeURL){
+logXX("place URL: ",placeURL);
+        new Evaluator(this){ public void evaluate(){
+            contentSetAdd("list", placeURL);
+            contentHash(UID.toUID(placeURL), hash("distance",25));
+        }};
+    }
+
     @Override
     public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
         new Evaluator(this){ public void evaluate(){
@@ -84,11 +103,13 @@ logXX(url,device.toString().replaceAll(":","-"),rssi);
             LinkedList allplaces=contentAll("list:within");
             if(allplaces!=null) for(Object o: allplaces){
                 if(!(o instanceof String)) continue;
-                String placeurl=(String)o;
-                contentSetAdd("list", placeurl);
-                contentHash(UID.toUID(placeurl), hash("distance",25));
+                String placeURL=(String)o;
+                contentSetAdd("list", placeURL);
+                contentHash(UID.toUID(placeURL), hash("distance",25));
             }
         }};
     }
+
+    // ---------------------------------------------------------
 }
 
