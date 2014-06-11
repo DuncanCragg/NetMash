@@ -348,6 +348,7 @@ log(show? "show keyboard": "hide keyboard");
     static final public int MENU_ITEM_GUI = Menu.FIRST+2;
     static final public int MENU_ITEM_MAP = Menu.FIRST+3;
     static final public int MENU_ITEM_RAW = Menu.FIRST+4;
+    static final public int MENU_ITEM_PLC = Menu.FIRST+5;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -357,6 +358,7 @@ log(show? "show keyboard": "hide keyboard");
         menu.add(2, MENU_ITEM_GUI, Menu.NONE, "Item");
         menu.add(3, MENU_ITEM_MAP, Menu.NONE, "On Map");
         menu.add(4, MENU_ITEM_RAW, Menu.NONE, "View/Edit");
+        menu.add(5, MENU_ITEM_PLC, Menu.NONE, "Place +/-");
         return true;
     }
 

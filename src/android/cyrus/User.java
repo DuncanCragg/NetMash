@@ -43,7 +43,8 @@ public class User extends CyrusLanguage {
     static public User currentUser=null;
 
     static public BLELinks linksaround=null;
-    static boolean broadcastPlace=true;
+    static boolean broadcastPlaceEnable=true;
+    static boolean broadcastPlaceSet=false;
 
     static public void createUserAndDevice(){
 
@@ -72,32 +73,23 @@ public class User extends CyrusLanguage {
 
         Light light = new Light(linksaround.uid);
 
-   //   String urlpre="http://192.168.0.11:8081";
-   //   String urlpre="http://192.168.21.125:8081";
-        String urlpre=UID.localPre();
+        PresenceTracker place = new PresenceTracker(
+              "{ is: place 3d mesh editable\n"+
+              "  title: \"Place for Things\"\n"+
+              "  scale: 20 20 20\n"+
+              "  vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )\n"+
+              "  texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )\n"+
+              "  normals: ( 0 1 0 )\n"+
+              "  faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )\n"+
+              "}\n", true);
 
-        boolean thisIsThePlace=urlpre.equals(UID.localPre());
-
-        PresenceTracker place=null;
-        if(thisIsThePlace){
-            place = new PresenceTracker(
-                  "{ is: place 3d mesh editable\n"+
-                  "  title: \"Room of Things\"\n"+
-                  "  scale: 20 20 20\n"+
-                  "  vertices: ( 1 0 0 ) ( 1 0 1 ) ( 0 0 1 ) ( 0 0 0 )\n"+
-                  "  texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )\n"+
-                  "  normals: ( 0 1 0 )\n"+
-                  "  faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )\n"+
-                  "}\n", true);
-
-            final String placeURL=UID.toURL(place.uid);
-            new Thread(){ public void run(){
-                while(true){
-                    if(broadcastPlace) Kernel.broadcastUDP(getBroadcastAddress(),24589, placeURL);
-                    Kernel.sleep(2000);
-                }
-            }}.start();
-        }
+        final String placeURL=UID.toURL(place.uid);
+        new Thread(){ public void run(){
+            while(true){
+                if(broadcastPlaceEnable && broadcastPlaceSet) Kernel.broadcastUDP(getBroadcastAddress(),24589, placeURL);
+                Kernel.sleep(2000);
+            }
+        }}.start();
 
         // -----------------------------------------------------
 
@@ -105,6 +97,7 @@ public class User extends CyrusLanguage {
         currentUser = new User(homeusers, contact.uid, links.uid, linksaround.uid, contacts.uid);
 
         LinkedList cyruslinks=Kernel.config.listPathN("app:links");
+        cyruslinks.addFirst(place.uid);
         cyruslinks.addFirst(light.uid);
         cyruslinks.addFirst(linksaround.uid);
         cyruslinks.addFirst(currentUser.uid);
@@ -115,7 +108,6 @@ public class User extends CyrusLanguage {
         currentUser.funcobs.cacheSaveAndEvaluate(contact, true);
         currentUser.funcobs.cacheSaveAndEvaluate(links);
         currentUser.funcobs.cacheSaveAndEvaluate(light);
-        if(place!=null)
         currentUser.funcobs.cacheSaveAndEvaluate(place);
         currentUser.funcobs.cacheSaveAndEvaluate(linksaround);
         currentUser.funcobs.cacheSaveAndEvaluate(contacts);
@@ -233,21 +225,21 @@ public class User extends CyrusLanguage {
         if(currentlocation!=null) currentlocation.getLocationUpdates();
         if(sensors!=null)         sensors.startWatchingSensors();
         if(linksaround!=null)     linksaround.enableScanning();
-        broadcastPlace=true;
+        broadcastPlaceEnable=true;
     }
 
     public void onTopPause(){
         if(currentlocation!=null) currentlocation.stopLocationUpdates();
         if(sensors!=null)         sensors.stopWatchingSensors();
         if(linksaround!=null)     linksaround.disableScanning();
-        broadcastPlace=false;
+        broadcastPlaceEnable=false;
     }
 
     public void onTopDestroy(){
         if(currentlocation!=null) currentlocation.stopLocationUpdates();
         if(sensors!=null)         sensors.stopWatchingSensors();
         if(linksaround!=null)     linksaround.disableScanning();
-        broadcastPlace=false;
+        broadcastPlaceEnable=false;
     }
 
     // ---------------------------------------------------------
@@ -476,6 +468,9 @@ public class User extends CyrusLanguage {
             break;
             case NetMash.MENU_ITEM_RAW:
                 jumpToHereAndShow(content("private:viewing"), "raw", false);
+            break;
+            case NetMash.MENU_ITEM_PLC:
+                broadcastPlaceSet=!broadcastPlaceSet;
             break;
             }
         }};
