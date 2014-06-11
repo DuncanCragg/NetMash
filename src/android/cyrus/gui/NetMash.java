@@ -656,16 +656,16 @@ log(show? "show keyboard": "hide keyboard");
 
     private View createFormTextView(final String tag, Object value, boolean borderless, final boolean fixed, boolean scroll){
         final String text=(value!=null)? value.toString(): "";
-        EditText view=new EditText(this);
+        final EditText view=new EditText(this);
         if(!borderless) view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         else            view.setBackgroundDrawable(getResources().getDrawable(R.drawable.borderlessinputbox));
         if(fixed)       view.setBackgroundColor(0xffffffee);
-        view.setOnKeyListener(  new OnKeyListener(){   public boolean onKey(  View v, int k, KeyEvent ev){ return updateOnEnter(v,k,ev,tag,fixed?text:null); }});
-        view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){     return jumpIfUID(v,ev); }});
+        else            view.setBackgroundColor(0xff333300);
+        view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){ return jumpIfUID(v,ev); }});
         String v1=user.getFormStringVal(viewUID,tag);
         view.setText(v1!=null? v1: text);
         view.setTextSize(20);
-        view.setTextColor(0xff000000);
+        if(fixed) view.setTextColor(0xff000000);
         view.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         view.setSingleLine(false);
         view.setMinLines(scroll? 1: 2);
@@ -673,24 +673,32 @@ log(show? "show keyboard": "hide keyboard");
         view.setHorizontallyScrolling(scroll);
         view.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         textViewForRaw=view;
-        return view;
+
+        Button view1=new Button(this);
+        view1.setOnClickListener(new OnClickListener(){ public void onClick(View v){ updateOnDone(view, tag, fixed? text: null); } });
+        view1.setText("Apply Changes");
+        view1.setTextSize(20);
+        view1.setTextColor(0xff000000);
+        view1.setBackgroundColor(0xeeeeeedd);
+
+        LinearLayout layout=new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(view1);
+        layout.addView(view);
+        return layout;
     }
+
 
     private TextView textViewForRaw;
 
     public String getRawSource(){ return textViewForRaw.getText().toString(); }
 
-    private boolean updateOnEnter(View v, int keyCode, KeyEvent event, String tag, String revert){
-        EditText view=(EditText)v;
+    private void updateOnDone(EditText view, String tag, String revert){
         String currentText=view.getText().toString();
-        if(event.getAction()==KeyEvent.ACTION_DOWN && keyCode==KeyEvent.KEYCODE_ENTER){
-            InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-            if(revert==null) user.setUpdateVal(viewUID, tag, currentText);
-            else view.setText(revert);
-            return true;
-        }
-        return false;
+        InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+        if(revert==null) user.setUpdateVal(viewUID, tag, currentText);
+        else view.setText(revert);
     }
 
     private float jx= -1;
