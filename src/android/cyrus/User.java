@@ -125,7 +125,7 @@ public class User extends CyrusLanguage {
         DhcpInfo di = wm.getDhcpInfo();
         int bc = (di.ipAddress & di.netmask) | ~di.netmask;
         byte[] ba = new byte[4];
-        for(int k=0; k< 4; k++) ba[k]=(byte)((bc >> k*8) & 0xFF);
+        for(int k=0; k< 4; k++) ba[k]=(byte)(bc >> k*8);
         broadcastAddress=InetAddress.getByAddress(ba);
     } catch(Throwable t){ t.printStackTrace(); }
         return broadcastAddress;

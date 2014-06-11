@@ -10,9 +10,6 @@ public class Light extends CyrusLanguage {
 
     public Light(String linksarounduid){
         super("{ is: editable 3d cuboid light\n"+
-              "  Rules: { is: 3d rule editable\n"+
-              "    Notifying: => @. with @within\n"+
-              "  }\n"+
               "  title: Light\n"+
               "  rotation: 45 45 45\n"+
               "  scale: 1 1 1\n"+
@@ -24,7 +21,10 @@ public class Light extends CyrusLanguage {
 
     public void evaluate(){
         String placeURL=content("links-around:place");
-        if(placeURL!=null) content("within", placeURL);
+        if(placeURL!=null){
+            content("within", placeURL);
+            notifying(placeURL);
+        }
         super.evaluate();
     }
 }
