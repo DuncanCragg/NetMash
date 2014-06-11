@@ -8,6 +8,8 @@ import static cyrus.lib.Utils.*;
   */
 public class Light extends CyrusLanguage {
 
+    public Light() {}
+
     public Light(String linksarounduid){
         super("{ is: editable 3d cuboid light\n"+
               "  title: Light\n"+
