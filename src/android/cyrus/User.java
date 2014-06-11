@@ -43,6 +43,7 @@ public class User extends CyrusLanguage {
     static public User currentUser=null;
 
     static public BLELinks linksaround=null;
+    static boolean broadcastPlace=true;
 
     static public void createUserAndDevice(){
 
@@ -69,7 +70,7 @@ public class User extends CyrusLanguage {
               "  title: \"Objects Around\" \n"+
               "}");
 
-        Light light = new Light();
+        Light light = new Light(linksaround.uid);
 
    //   String urlpre="http://192.168.0.11:8081";
    //   String urlpre="http://192.168.21.125:8081";
@@ -92,7 +93,7 @@ public class User extends CyrusLanguage {
             final String placeURL=UID.toURL(place.uid);
             new Thread(){ public void run(){
                 while(true){
-                    Kernel.broadcastUDP(getBroadcastAddress(),24589, placeURL);
+                    if(broadcastPlace) Kernel.broadcastUDP(getBroadcastAddress(),24589, placeURL);
                     Kernel.sleep(2000);
                 }
             }}.start();
@@ -232,18 +233,21 @@ public class User extends CyrusLanguage {
         if(currentlocation!=null) currentlocation.getLocationUpdates();
         if(sensors!=null)         sensors.startWatchingSensors();
         if(linksaround!=null)     linksaround.enableScanning();
+        broadcastPlace=true;
     }
 
     public void onTopPause(){
         if(currentlocation!=null) currentlocation.stopLocationUpdates();
         if(sensors!=null)         sensors.stopWatchingSensors();
         if(linksaround!=null)     linksaround.disableScanning();
+        broadcastPlace=false;
     }
 
     public void onTopDestroy(){
         if(currentlocation!=null) currentlocation.stopLocationUpdates();
         if(sensors!=null)         sensors.stopWatchingSensors();
         if(linksaround!=null)     linksaround.disableScanning();
+        broadcastPlace=false;
     }
 
     // ---------------------------------------------------------
@@ -913,7 +917,6 @@ public class User extends CyrusLanguage {
         if(contentIs("is", "form")){
             firstAlertedResponseSubscribeForUserFIXMEAndJumpUser();
         }
-        else log("no evaluate: "+this);
     }
 
     boolean checkAroundAndShow(){
