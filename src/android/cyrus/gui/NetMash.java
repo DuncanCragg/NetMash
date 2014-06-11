@@ -350,15 +350,17 @@ log(show? "show keyboard": "hide keyboard");
     static final public int MENU_ITEM_RAW = Menu.FIRST+4;
     static final public int MENU_ITEM_PLC = Menu.FIRST+5;
 
+    Menu menu;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+        this.menu=menu;
         super.onCreateOptionsMenu(menu);
         menu.add(0, MENU_ITEM_ARD, Menu.NONE, "Around");
         menu.add(1, MENU_ITEM_LNX, Menu.NONE, "Links");
         menu.add(2, MENU_ITEM_GUI, Menu.NONE, "Item");
         menu.add(3, MENU_ITEM_MAP, Menu.NONE, "On Map");
         menu.add(4, MENU_ITEM_RAW, Menu.NONE, "View/Edit");
-        menu.add(5, MENU_ITEM_PLC, Menu.NONE, "Place +/-");
+        menu.add(5, MENU_ITEM_PLC, Menu.NONE, "Place ✔");
         return true;
     }
 
@@ -366,6 +368,10 @@ log(show? "show keyboard": "hide keyboard");
     public boolean onOptionsItemSelected(MenuItem item){
         super.onOptionsItemSelected(item);
         return user.menuItem(item.getItemId());
+    }
+
+    public void setMenuTitle(int itemid, String title){
+        menu.findItem(itemid).setTitle(title);
     }
 
     private ViewGroup createVerticalStrip(Object o){

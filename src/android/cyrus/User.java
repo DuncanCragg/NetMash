@@ -471,6 +471,7 @@ public class User extends CyrusLanguage {
             break;
             case NetMash.MENU_ITEM_PLC:
                 broadcastPlaceSet=!broadcastPlaceSet;
+                NetMash.top.setMenuTitle(itemid, broadcastPlaceSet? "Place ✘": "Place ✔");
             break;
             }
         }};
