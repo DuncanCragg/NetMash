@@ -1,5 +1,7 @@
 ------------------------
- - prevent raw editable updating if focused
+ - lifecycle: broadcast thread, etc
+ - save history
+ - editable scrollable
  - setting random light position - or just edit light position directly? or write rule to follow you around?
  - AR view: allow user to take over movement manually, while still panning
  - setting avatar

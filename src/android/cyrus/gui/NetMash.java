@@ -281,6 +281,8 @@ log(show? "show keyboard": "hide keyboard");
     private Runnable uiDrawJSONRunnable=new Runnable(){public void run(){uiDrawJSON();}};
     private String viewUID = null;
 
+    public boolean editing=false;
+
     public void drawJSON(JSON uiJSON, String uiUID){ if(false) log("drawJSON "+uiUID);
         this.uiJSON=uiJSON;
         this.uiUID=uiUID;
@@ -288,6 +290,7 @@ log(show? "show keyboard": "hide keyboard");
     }
 
     private void uiDrawJSON(){ if(false) log("uiDrawJSON "+uiUID+":\n"+uiJSON);
+        editing=false;
         boolean newObject=!uiUID.equals(viewUID);
         viewUID=uiUID;
         String title =uiJSON.stringPathN("title");
@@ -661,7 +664,7 @@ log(show? "show keyboard": "hide keyboard");
         else            view.setBackgroundDrawable(getResources().getDrawable(R.drawable.borderlessinputbox));
         if(fixed)       view.setBackgroundColor(0xffffffee);
         else            view.setBackgroundColor(0xff333300);
-        view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){ return jumpIfUID(v,ev); }});
+        view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){ editing=!fixed; return jumpIfUID(v,ev); }});
         String v1=user.getFormStringVal(viewUID,tag);
         view.setText(v1!=null? v1: text);
         view.setTextSize(20);
@@ -675,7 +678,7 @@ log(show? "show keyboard": "hide keyboard");
         textViewForRaw=view;
 
         Button view1=new Button(this);
-        view1.setOnClickListener(new OnClickListener(){ public void onClick(View v){ updateOnDone(view, tag, fixed? text: null); } });
+        view1.setOnClickListener(new OnClickListener(){ public void onClick(View v){ editing=false; updateOnDone(view, tag, fixed? text: null); } });
         view1.setText("Apply Changes");
         view1.setTextSize(20);
         view1.setTextColor(0xff000000);
