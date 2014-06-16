@@ -13,35 +13,35 @@ import cyrus.gui.NetMash;
 
 import static cyrus.lib.Utils.*;
 
-public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallback {
+public class BLELinks extends WebObject /* implements BluetoothAdapter.LeScanCallback */ {
 
     public BLELinks(){ NetMash.user.linksaround=this; }
 
     public BLELinks(String s){ super(s,true); }
 
     private boolean running=false;
-    private BluetoothAdapter bluetoothAdapter;
-    private final static int REQUEST_ENABLE_BT = 1;
+//  private BluetoothAdapter bluetoothAdapter;
+//  private final static int REQUEST_ENABLE_BT = 1;
 
     public void evaluate(){
-        if(!NetMash.top.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
+     // if(!NetMash.top.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
         if(!running) runBLEScan();
     }
 
     private void runBLEScan(){
         running=true;
-        BluetoothManager bm=(BluetoothManager)NetMash.top.getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter=bm.getAdapter(); if(bluetoothAdapter==null) return;
+   //   BluetoothManager bm=(BluetoothManager)NetMash.top.getSystemService(Context.BLUETOOTH_SERVICE);
+   //   bluetoothAdapter=bm.getAdapter(); if(bluetoothAdapter==null) return;
         new Thread(){ public void run(){
             while(running){
                 checkOnBroadcast();
             }
         }}.start();
-        new Thread(){ public void run(){
-            while(running){
-                checkOnScanning();
-                Kernel.sleep(500);
-        }}}.start();
+//      new Thread(){ public void run(){
+//          while(running){
+//              checkOnScanning();
+//              Kernel.sleep(500);
+//      }}}.start();
     }
 
     private void checkOnBroadcast(){
@@ -51,10 +51,10 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         else Kernel.sleep(2000);
     }
 
-    boolean notifiedEnableBT=false;
     boolean scanning=false;
     boolean suspended=false;
-
+/*
+    boolean notifiedEnableBT=false;
     synchronized private void checkOnScanning(){
         if(suspended) return;
         if(!bluetoothAdapter.isEnabled()){
@@ -72,7 +72,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         scanning=true;
         bluetoothAdapter.startLeScan(this);
     }
-
+*/
     synchronized public void enableScanning(){
         suspended=false;
     }
@@ -80,13 +80,13 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
     synchronized public void disableScanning(){
         suspended=true;
         scanning=false;
-        bluetoothAdapter.stopLeScan(this);
+//      bluetoothAdapter.stopLeScan(this);
     }
 
     private void onPlaceURL(final String placeURL){
         new Evaluator(this){ public void evaluate(){ setPlace(placeURL); }};
     }
-
+/*
     @Override
     public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
         new Evaluator(this){ public void evaluate(){
@@ -105,7 +105,7 @@ logXX(url,device.toString().replaceAll(":","-"),rssi);
             }
         }};
     }
-
+*/
     void setPlace(String placeURL){
 logXX("place URL: ",placeURL);
         contentSetAdd("list", placeURL);

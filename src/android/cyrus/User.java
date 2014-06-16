@@ -4,13 +4,10 @@ package cyrus;
 import java.util.*;
 import java.util.regex.*;
 import java.util.concurrent.*;
-import java.net.*;
 
 import android.os.*;
 import android.util.*;
 import android.graphics.*;
-import android.net.wifi.*;
-import android.net.*;
 
 import android.content.*;
 import android.database.Cursor;
@@ -43,11 +40,9 @@ public class User extends CyrusLanguage {
     static public User currentUser=null;
 
     static public BLELinks linksaround=null;
-    static boolean broadcastPlaceEnable=true;
-    static boolean broadcastPlaceSet=false;
+    static public Place place=null;
 
     static public void createUserAndDevice(){
-
         String fullName=UserContacts.getUsersFullName();
         String your=fullName.equals("You")? "Your": fullName+"'s";
 
@@ -73,7 +68,7 @@ public class User extends CyrusLanguage {
 
         Light light = new Light(linksaround.uid);
 
-        PresenceTracker place = new PresenceTracker(
+        place = new Place(
               "{ is: place 3d mesh editable\n"+
               "  title: \"Place for Things\"\n"+
               "  scale: 20 20 20\n"+
@@ -81,15 +76,7 @@ public class User extends CyrusLanguage {
               "  texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )\n"+
               "  normals: ( 0 1 0 )\n"+
               "  faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )\n"+
-              "}\n", true);
-
-        final String placeURL=UID.toURL(place.uid);
-        new Thread(){ public void run(){
-            while(true){
-                if(broadcastPlaceEnable && broadcastPlaceSet) Kernel.broadcastUDP(getBroadcastAddress(),24589, placeURL);
-                Kernel.sleep(2000);
-            }
-        }}.start();
+              "}\n");
 
         // -----------------------------------------------------
 
@@ -103,7 +90,12 @@ public class User extends CyrusLanguage {
         cyruslinks.addFirst(currentUser.uid);
         links.publicState.listPath("list", cyruslinks);
 
-        currentUser.funcobs.setCacheNotifyAndSaveConfig(currentUser);
+        String cn="c-n-"+currentUser.uid.substring(4);
+        WebObject cyrusconfig = new WebObject(
+              "{   \"persist\": { \"preload\": [ \""+currentUser.uid+"\" ] }, \n"+
+              "    \"network\": { \"cache-notify\": \""+cn+"\"}\n"+
+              "}");
+        currentUser.funcobs.setCacheNotifyAndSaveConfig(cn, cyrusconfig);
 
         currentUser.funcobs.cacheSaveAndEvaluate(contact, true);
         currentUser.funcobs.cacheSaveAndEvaluate(links);
@@ -114,21 +106,14 @@ public class User extends CyrusLanguage {
         currentUser.funcobs.cacheSaveAndEvaluate(currentUser, true);
 
         if(homeusers!=null) currentUser.notifying(list(homeusers));
-        NetMash.top.onUserReady(currentUser);
+
+        if(NetMash.top!=null) NetMash.top.onUserReady(currentUser);
     }
 
-    static InetAddress broadcastAddress=null;
-
-    static public InetAddress getBroadcastAddress(){ try {
-        if(broadcastAddress!=null) return broadcastAddress;
-        WifiManager wm = (WifiManager)NetMash.top.getSystemService(WIFI_SERVICE);
-        DhcpInfo di = wm.getDhcpInfo();
-        int bc = (di.ipAddress & di.netmask) | ~di.netmask;
-        byte[] ba = new byte[4];
-        for(int k=0; k< 4; k++) ba[k]=(byte)(bc >> k*8);
-        broadcastAddress=InetAddress.getByAddress(ba);
-    } catch(Throwable t){ t.printStackTrace(); }
-        return broadcastAddress;
+    public User(){
+        if(currentUser!=null) return;
+        currentUser=this;
+        if(NetMash.top!=null) NetMash.top.onUserReady(currentUser);
     }
 
     public User(String jsonstring){ super(jsonstring); }
@@ -144,7 +129,7 @@ public class User extends CyrusLanguage {
               "    \"within\": null, \n"+
               "    \"position\": [ 0.0, 0.0, 0.0 ], \n"+
               "    \"avatar\": \"http://10.0.2.2:8081/o/uid-7794-3aa8-2192-7a60.json\", \n"+
-              "    \"location\": { \"lat\": 54.106037, \"lon\": -1.579163 }, \n"+
+              "    \"location\": { }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
               "    \"private\": { \n"+
               "        \"viewing\": null, \n"+
@@ -160,8 +145,6 @@ public class User extends CyrusLanguage {
               "    }\n"+
               "}");
     }
-
-    public User(){ if(currentUser==null){ currentUser=this; if(NetMash.top!=null) NetMash.top.onUserReady(currentUser); } }
 
     static User newForm(String guiuid, String useruid){
         return new User("{ \"is\": \"form\",\n"+
@@ -217,6 +200,8 @@ public class User extends CyrusLanguage {
     public void onTopCreate(String url){
         if(trackGPS) currentlocation = new CurrentLocation(this);
         if(sensors==null) sensors=new Sensors(this);
+        if(linksaround!=null)     linksaround.enableScanning();
+        if(place!=null)           place.broadcastPlaceEnable=true;
         if(url!=null) jumpToUID(url,"gui",false);
     }
 
@@ -225,21 +210,21 @@ public class User extends CyrusLanguage {
         if(currentlocation!=null) currentlocation.getLocationUpdates();
         if(sensors!=null)         sensors.startWatchingSensors();
         if(linksaround!=null)     linksaround.enableScanning();
-        broadcastPlaceEnable=true;
+        if(place!=null)           place.broadcastPlaceEnable=true;
     }
 
     public void onTopPause(){
         if(currentlocation!=null) currentlocation.stopLocationUpdates();
         if(sensors!=null)         sensors.stopWatchingSensors();
         if(linksaround!=null)     linksaround.disableScanning();
-        broadcastPlaceEnable=false;
+        if(place!=null)           place.broadcastPlaceEnable=false;
     }
 
     public void onTopDestroy(){
         if(currentlocation!=null) currentlocation.stopLocationUpdates();
         if(sensors!=null)         sensors.stopWatchingSensors();
         if(linksaround!=null)     linksaround.disableScanning();
-        broadcastPlaceEnable=false;
+        if(place!=null)           place.broadcastPlaceEnable=false;
     }
 
     // ---------------------------------------------------------
@@ -470,8 +455,8 @@ public class User extends CyrusLanguage {
                 jumpToHereAndShow(content("private:viewing"), "raw", false);
             break;
             case NetMash.MENU_ITEM_PLC:
-                broadcastPlaceSet=!broadcastPlaceSet;
-                NetMash.top.setMenuTitle(itemid, broadcastPlaceSet? "Place ✘": "Place ✔");
+                place.broadcastPlaceSet=!place.broadcastPlaceSet;
+                NetMash.top.setMenuTitle(itemid, place.broadcastPlaceSet? "Place ✘": "Place ✔");
             break;
             }
         }};

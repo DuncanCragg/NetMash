@@ -184,13 +184,8 @@ public class FunctionalObserver implements Module {
         evaluatable(w);
     }
 
-    public void setCacheNotifyAndSaveConfig(WebObject user){
-        String cn="c-n-"+user.uid.substring(4);
+    public void setCacheNotifyAndSaveConfig(String cn, WebObject cyrusconfig){
         http.setCacheNotify(cn);
-        WebObject cyrusconfig = new WebObject(
-              "{   \"persist\": { \"preload\": [ \""+user.uid+"\" ] }, \n"+
-              "    \"network\": { \"cache-notify\": \""+cn+"\"}\n"+
-              "}");
         cyrusconfig.uid="cyrusconfig";
         persistence.save(cyrusconfig);
     }

@@ -118,7 +118,7 @@ androidlan: clean init setapplanconfig setremmapkey
 	( adb -d uninstall cyrus.gui && adb -d install bin/NetMash-release.apk ) &
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
-androidapk: clean
+androidapk: clean init setremmapkey
 	ant release
 	( adb -d uninstall cyrus.gui && adb -d install bin/NetMash-release.apk ) &
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)

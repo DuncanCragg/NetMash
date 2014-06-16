@@ -914,7 +914,7 @@ log(show? "show keyboard": "hide keyboard");
             String label=(String)point.get("label");
             String sublabel=(String)point.get("sublabel");
             LinkedHashMap<String,Number> location=(LinkedHashMap<String,Number>)point.get("location");
-            if(location==null) continue;
+            if(location==null || location.get("lat")==null) continue;
             List<GeoPoint> shape=listLocation2listPoints((LinkedList)point.get("shape"));
             String jumpUID=(String)point.get("jump");
             int lat=(int)(location.get("lat").doubleValue()*1e6);
