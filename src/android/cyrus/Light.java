@@ -24,7 +24,8 @@ public class Light extends CyrusLanguage {
 
     public void evaluate(){
         String placeURL=content("links-around:place");
-        if(placeURL!=null){
+        if(placeURL!=null && !contentIs("within", placeURL)){
+            contentList("position", list(random(1,10), random(0,3), random(1,10)));
             content("within", placeURL);
             notifying(placeURL);
         }
