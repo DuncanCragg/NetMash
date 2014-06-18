@@ -47,7 +47,7 @@ public class PiBeaconLight extends CyrusLanguage {
 
     void startBroadcasting(){
         logXX("startBroadcasting",uid,UID.toURL(uid));
-        InetAddress ip=UID.IP();
+        InetAddress ip=Kernel.IP();
         byte[] ipbytes= ip==null? new byte[]{127,0,0,1}: ip.getAddress();
         int port=Kernel.config.intPathN("network:port");
         String re="uid-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])";

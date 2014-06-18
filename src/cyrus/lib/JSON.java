@@ -103,7 +103,7 @@ public class JSON {
     }
 
     /** Set content text */
-    public void content(String json){
+    synchronized public void content(String json){
         chars=json.toCharArray();
         chp=0;
         setTopHash(readHashMap(true));
@@ -543,13 +543,13 @@ public class JSON {
 
     //----------------------------------
 
-    private void ensureContent(){
+    synchronized private void ensureContent(){
         if(tophash!=null) return;
         if(chars==null) return;
         setTopHash(!cyrus? readHashMap(true): readCyrusHash(true));
     }
 
-    private void setTopHash(LinkedHashMap hm){
+    synchronized private void setTopHash(LinkedHashMap hm){
         tophash = hm;
         chars=null;
         chp=0;
@@ -1321,14 +1321,14 @@ public class JSON {
         ensureChars(0);
     }
 
-    private void ensureChars(int maxlength){
+    synchronized private void ensureChars(int maxlength){
         this.cyrus=false;
         String str=(tophash!=null)? hashToString(tophash,2,maxlength,false): "";
         chars = str.toCharArray();
         chp=0;
     }
 
-    private void ensureChars(boolean cyrus){
+    synchronized private void ensureChars(boolean cyrus){
         this.cyrus=cyrus;
         String str=(tophash!=null)? hashToString(tophash,2,0,cyrus): "";
         chars = str.toCharArray();
