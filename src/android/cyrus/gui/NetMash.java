@@ -6,7 +6,8 @@ import java.util.regex.*;
 import java.io.*;
 import java.net.*;
 
-import android.util.AttributeSet;
+import org.xmlpull.v1.*;
+
 import android.app.Activity;
 import android.os.*;
 import android.net.*;
@@ -15,6 +16,8 @@ import android.content.Intent;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.view.inputmethod.InputMethodManager;
+import android.util.*;
+import android.util.Xml.*;
 
 import android.view.*;
 import android.view.View.*;
@@ -657,18 +660,22 @@ log(show? "show keyboard": "hide keyboard");
         return view;
     }
 
+    private EditText getEditTextWorkaround(){
+        AttributeSet attributes=getAttributesOf("edittext");
+        return attributes!=null? new EditText(this,attributes): new EditText(this);
+    }
+
     private View createFormTextView(final String tag, Object value, boolean borderless, final boolean fixed, boolean scroll){
         final String text=(value!=null)? value.toString(): "";
-        final EditText view=new EditText(this);
+        final EditText view=getEditTextWorkaround();
         if(!borderless) view.setBackgroundDrawable(getResources().getDrawable(R.drawable.inputbox));
         else            view.setBackgroundDrawable(getResources().getDrawable(R.drawable.borderlessinputbox));
-        if(fixed)       view.setBackgroundColor(0xffffffee);
-        else            view.setBackgroundColor(0xff333300);
+        view.setBackgroundColor(0xffffffee);
         view.setOnTouchListener(new OnTouchListener(){ public boolean onTouch(View v, MotionEvent ev){ editing=!fixed; return jumpIfUID(v,ev); }});
         String v1=user.getFormStringVal(viewUID,tag);
         view.setText(v1!=null? v1: text);
         view.setTextSize(20);
-        if(fixed) view.setTextColor(0xff000000);
+        view.setTextColor(0xff000000);
         view.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         view.setSingleLine(false);
         view.setMinLines(scroll? 1: 2);
@@ -1208,6 +1215,13 @@ log(show? "show keyboard": "hide keyboard");
         java.lang.System.setProperty("java.net.preferIPv4Stack",     "true");
         java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
     }
+
+    public AttributeSet getAttributesOf(String resname){ try{
+        XmlPullParser parser=getResources().getXml(getResources().getIdentifier(resname, "layout", getPackageName()));
+        for(int state=parser.getEventType(); state!=XmlPullParser.END_DOCUMENT; state=parser.next()){
+            if(state==XmlPullParser.START_TAG) return Xml.asAttributeSet(parser);
+        }
+    }catch(Exception e){ e.printStackTrace(); } return null; }
 
 class BorderlessTextView extends TextView {
     public BorderlessTextView(Context context, int colour){

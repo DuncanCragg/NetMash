@@ -76,6 +76,7 @@ public class User extends CyrusLanguage {
               "  texturepoints: ( 0 0 ) ( 5 0 ) ( 5 5 ) ( 0 5 )\n"+
               "  normals: ( 0 1 0 )\n"+
               "  faces: ( 2/3/1 1/2/1 4/1/1 ) ( 2/3/1 4/1/1 3/4/1 )\n"+
+              "  textures: http://www.textures123.com/free-texture/sand/sand-texture4.jpg\n"+
               "}\n");
 
         // -----------------------------------------------------
