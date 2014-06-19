@@ -753,12 +753,7 @@ public class CyrusLanguage extends WebObject {
             if(d2==null) d2=findDouble(ll.get(2));
             if(d0!=null && d2!=null) return Double.valueOf(d0 + d2);
         }
-        if(ll.size()==3 && "×".equals(s1)){
-            if(d0==null) d0=findDouble(ll.get(0));
-            if(d2==null) d2=findDouble(ll.get(2));
-            if(d0!=null && d2!=null) return Double.valueOf(d0 * d2);
-        }
-        if(ll.size()==3 && "*".equals(s1)){
+        if(ll.size()==3 && ("*".equals(s1) || "×".equals(s1))){
             if(d0==null) d0=findDouble(ll.get(0));
             if(d2==null) d2=findDouble(ll.get(2));
             if(d0!=null && d2!=null) return Double.valueOf(d0 * d2);
@@ -778,7 +773,7 @@ public class CyrusLanguage extends WebObject {
             if(d2==null) d2=findDouble(ll.get(2));
             if(d0!=null && d2!=null) return Double.valueOf(d0 % d2);
         }
-        if(ll.size()==3 && "×".equals(s1)){
+        if(ll.size()==3 && ("*".equals(s1) || "×".equals(s1))){
             if(l0==null) l0=findList(ll.get(0));
             if(l2==null) l2=findList(ll.get(2));
             if(l0!=null && l2!=null){
@@ -815,7 +810,7 @@ public class CyrusLanguage extends WebObject {
             if(l2==null) l2=findList(ll.get(2));
             if(l0!=null && l2!=null) return vvdist(l0, l2);
         }
-        if(ll.size()==3 && "*".equals(s1)){
+        if(ll.size()==3 && ("*".equals(s1) || "×".equals(s1))){
             if(l0==null) l0=findList(ll.get(0));
             if(d2==null) d2=findDouble(ll.get(2));
             if(l0!=null && d2!=null){
