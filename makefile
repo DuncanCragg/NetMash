@@ -143,6 +143,8 @@ reinstallemu: uninstallemu installemu
 
 reinstalllan: uninstalllan installlan
 
+reinstalllog: reinstalllan lancat
+
 runnetmash:
 	adb -d shell am start -n cyrus.gui/cyrus.gui.NetMash
 

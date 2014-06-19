@@ -233,18 +233,23 @@ public class Kernel {
         return null;
     }
 
-    static public InetAddress getBroadcastAddress(){ try{
+    static public HashSet<InetAddress> getBroadcastAddresses(){
+        HashSet<InetAddress> r=new HashSet<InetAddress>();
+        try{
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while(interfaces.hasMoreElements()){
             NetworkInterface ni=interfaces.nextElement();
-            if(!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
+            if(!ni.isUp() /* || ni.isLoopback() || ni.isVirtual() */) continue;
             for(InterfaceAddress address: ni.getInterfaceAddresses()){
+logOut("---interface: "+ni);
+logOut("---------address: "+address);
+logOut("------------b/c: "+address.getBroadcast());
                 InetAddress ia=address.getBroadcast();
-                if(ia!=null) return ia;
+                if(ia!=null) r.add(ia);
             }
         }
         } catch(Throwable t){ t.printStackTrace(); }
-        return null;
+        return r;
     }
 
     static public void broadcastUDP(InetAddress addr, int port, String message){ try{

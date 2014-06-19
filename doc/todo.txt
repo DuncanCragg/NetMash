@@ -1,5 +1,5 @@
 ------------------------
- - fix touch event in place
+ - fix touch event on Alcatel and in place
  - setting avatar
  - save history
  - editable scrollable
@@ -8,6 +8,7 @@
 ------------------------
  - stopping nutty rules dead
 ------------------------
+ - chars: •√π÷∆°
  + split out each test into clear test suite rules
  + remove !=> ?
  + swap @ and @=

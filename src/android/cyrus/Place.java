@@ -1,6 +1,7 @@
 package cyrus;
 
 import java.net.*;
+import java.util.*;
 
 import android.net.wifi.*;
 import android.net.*;
@@ -33,28 +34,48 @@ public class Place extends PresenceTracker {
     void broadcastPlace(){
         running=true;
         new Thread(){ public void run(){
-            String placeURL=UID.toURL(uid);
             while(true){
                 if(broadcastPlaceEnable && broadcastPlaceSet){
-                    Kernel.broadcastUDP(getBroadcastAddress(),24589, placeURL);
+                    HashSet<InetAddress> ias=addGlobalBroadcastIA(addWifiIA(Kernel.getBroadcastAddresses()));
+                    for(InetAddress ia: ias){
+                        logXX(UID.toURL(uid), "broadcast to IP", ia);
+                        Kernel.broadcastUDP(ia, 24589, UID.toURL(uid));
+                    }
                 }
                 Kernel.sleep(2000);
             }
         }}.start();
     }
 
-    InetAddress broadcastAddress=null;
+    private HashSet<InetAddress> addWifiIA(HashSet<InetAddress> ias){
+        try{
+            WifiManager wm = (WifiManager)NetMash.top.getSystemService(WIFI_SERVICE);
+            WifiInfo wi = wm.getConnectionInfo();
+            if(wi.getSSID()==null ||
+               wi.getSSID().length()==0 ||
+               wi.getSSID().equals("<unknown ssid>") ||
+               wi.getSSID().equals("0x")){
+                logXX("Wifi not connected",wi.getSSID());
+                return ias;
+            }
+            DhcpInfo di = wm.getDhcpInfo();
+            int bc = (di.ipAddress & di.netmask) | ~di.netmask;
+            byte[] ba = new byte[4];
+            for(int k=0; k< 4; k++) ba[k]=(byte)(bc >> k*8);
+            ias.add(InetAddress.getByAddress(ba));
+            return ias;
+        } catch(Throwable t){ t.printStackTrace(); }
+        return ias;
+    }
 
-    public InetAddress getBroadcastAddress(){ try {
-        if(broadcastAddress!=null) return broadcastAddress;
-        WifiManager wm = (WifiManager)NetMash.top.getSystemService(WIFI_SERVICE);
-        DhcpInfo di = wm.getDhcpInfo();
-        int bc = (di.ipAddress & di.netmask) | ~di.netmask;
-        byte[] ba = new byte[4];
-        for(int k=0; k< 4; k++) ba[k]=(byte)(bc >> k*8);
-        broadcastAddress=InetAddress.getByAddress(ba);
-    } catch(Throwable t){ t.printStackTrace(); }
-        return broadcastAddress;
+    private HashSet<InetAddress> addGlobalBroadcastIA(HashSet<InetAddress> ias){
+        if(!ias.isEmpty()) return ias;
+        try{
+            byte[] ba = new byte[]{ (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff };
+            ias.add(InetAddress.getByAddress(ba));
+            return ias;
+        } catch(Throwable t){ t.printStackTrace(); }
+        return ias;
     }
 }
 
