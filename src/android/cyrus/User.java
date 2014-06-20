@@ -284,7 +284,8 @@ public class User extends CyrusLanguage {
                 else{
                     content("touching",null);
                 }
-                notifying(withinuid!=null? withinuid: objectuid);
+                notifying(objectuid);
+                if(withinuid!=null) notifying(withinuid);
             }
         }};
     }

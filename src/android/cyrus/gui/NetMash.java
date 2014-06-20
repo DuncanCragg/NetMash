@@ -158,7 +158,7 @@ log(show? "show keyboard": "hide keyboard");
                 px=ox; py=oy;
                 onemeshview.queueEvent(new Runnable(){ public void run(){
                     if(onerenderer==null) return;
-                    onerenderer.swipe(true, false, 0, (int)ox,screenHeight-(int)oy, 0,0);
+                    onerenderer.swipe(true, false, fromEdge(ox,oy), (int)ox,screenHeight-(int)oy, 0,0);
                 }});
                 numTouch=1;
                 break;
@@ -167,7 +167,7 @@ log(show? "show keyboard": "hide keyboard");
                 qx=tx; qy=ty;
                 onemeshview.queueEvent(new Runnable(){ public void run(){
                     if(onerenderer==null) return;
-                    onerenderer.swipe(true, true, 0, (int)tx,screenHeight-(int)ty, 0,0);
+                    onerenderer.swipe(true, true, fromEdge(ox,oy), (int)tx,screenHeight-(int)ty, 0,0);
                 }});
                 numTouch=2;
                 break;
@@ -175,7 +175,7 @@ log(show? "show keyboard": "hide keyboard");
                 xx=tx; yy=ty;
                 onemeshview.queueEvent(new Runnable(){ public void run(){
                     if(onerenderer==null) return;
-                    onerenderer.swipe(false, true, 0, (int)xx,screenHeight-(int)yy, 0,0);
+                    onerenderer.swipe(false, true, fromEdge(ox,oy), (int)xx,screenHeight-(int)yy, 0,0);
                 }});
                 numTouch=1;
                 break;
@@ -200,12 +200,12 @@ log(show? "show keyboard": "hide keyboard");
                 float mx,my;
                 if(!mt){
                     mx=cx-px; my=cy-py;
-                    if(mx*mx+my*my<1.0) return true;
+                    if(mx*mx+my*my<9) return true;
                     px=cx; py=cy;
                     xx=ox; yy=oy;
                 }else{
                     mx=cx-qx; my=cy-qy;
-                    if(mx*mx+my*my<1.0) return true;
+                    if(mx*mx+my*my<9) return true;
                     qx=cx; qy=cy;
                     xx=tx; yy=ty;
                 }

@@ -395,11 +395,8 @@ public class Renderer implements GLSurfaceView.Renderer {
     public void swipe(boolean down, boolean shift, int edge, int x, int y, float dx, float dy){
         if(emulator()) shift=(edge!=3 && edge!=4);
         if(!shift){
-            if(!down){
-                firstTouchQuadrant=0;
-                return;
-            }
             firstTouchQuadrant=edge;
+            if(!down) return;
             if(edge==3){
                 eyeX-=dx/7f*FloatMath.cos(direction)+dy/7f*FloatMath.sin(direction);
                 eyeZ+=dx/7f*FloatMath.sin(direction)-dy/7f*FloatMath.cos(direction);
