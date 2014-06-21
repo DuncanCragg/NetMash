@@ -440,7 +440,7 @@ logcat:
 	adb -e logcat | tee ,logcat | egrep -vi "locapi|\<rpc\>"
 
 lancat:
-	adb -d logcat | egrep -vi "locapi|\<rpc\>|D/dalvikvm" | tee ,logcat
+	adb -d logcat | egrep -vi "locapi|\<rpc\>" | tee ,logcat
 
 logout1:
 	tail -9999f src/server/vm1/cyrus.log

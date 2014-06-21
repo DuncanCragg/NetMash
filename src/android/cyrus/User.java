@@ -129,7 +129,7 @@ public class User extends CyrusLanguage {
               "    \"saying\": \"\", \n"+
               "    \"within\": null, \n"+
               "    \"position\": [ 0.0, 0.0, 0.0 ], \n"+
-              "    \"avatar\": \"http://10.0.2.2:8081/o/uid-7794-3aa8-2192-7a60.json\", \n"+
+              "    \"avatar\": \"http://netmash.net/o/uid-72c9-7780-5d20-ead1.cyr\", \n"+
               "    \"location\": { }, \n"+
               "    \"contact\": \""+contactuid+"\", \n"+
               "    \"private\": { \n"+
