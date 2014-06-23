@@ -1,0 +1,5 @@
+{ is: light rule
+  P: { light-sensor: { } }
+  light: => @P:light-sensor:light × @P:modulator
+}
+

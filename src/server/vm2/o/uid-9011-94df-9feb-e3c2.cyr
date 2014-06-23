@@ -1,0 +1,5 @@
+{ is: light rule
+  within: { sub-items: { item: { UID: not @  is: light sensor } } }
+  P: { light-sensor: # => @=within:sub-items:item }
+}
+

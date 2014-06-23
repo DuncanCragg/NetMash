@@ -1,0 +1,1 @@
+{ is: light rule  **: (shifted-sin number number) => (((sin (@.1 * @.2)) + 2) / 3) }

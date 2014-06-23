@@ -1,0 +1,5 @@
+{ is: light rule
+  P: { light-sensor: { light-level: < 100 }}
+  light: => 1 1 1
+}
+

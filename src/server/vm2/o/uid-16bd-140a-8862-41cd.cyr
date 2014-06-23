@@ -1,0 +1,5 @@
+{ is: light rule
+  Alerted: { is: user  touching: { item: @ }}
+  light: => @Alerted:touching:position * 1.4
+}
+
