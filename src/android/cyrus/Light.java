@@ -15,8 +15,9 @@ public class Light extends CyrusLanguage {
               "  Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
               "         http://netmash.net/o/uid-0dc6-ad27-05ec-a0b2.cyr\n"+
               "         http://netmash.net/o/uid-e369-6d5d-5283-7bc7.cyr\n"+
+              "         http://netmash.net/o/uid-9011-94df-9feb-e3c2.cyr\n"+
               "         http://netmash.net/o/uid-f27f-7d1a-2eab-c547.cyr\n"+
-              "  P: { peer: uid-none-yet }\n"+
+              "  P: { modulator: 1.3 1.3 1.3 }\n"+
               "  Timer: 100\n"+
               "  title: Light\n"+
               "  rotation: 45 45 45\n"+
