@@ -497,7 +497,7 @@ kill:
 
 killroot:
 	@-sudo pkill -f 'java -classpath'
-	sudo hciconfig hci0 noleadv
+	-sudo hciconfig hci0 noleadv
 
 clean:
 	rm -rf ./build/classes/cyrus

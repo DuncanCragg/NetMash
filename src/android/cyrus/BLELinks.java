@@ -40,7 +40,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         new Thread(){ public void run(){
             while(running){
                 checkOnScanning();
-                Kernel.sleep(750);
+                Kernel.sleep(400);
         }}}.start();
     }
 
@@ -71,10 +71,9 @@ logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",
             // NetMash.top.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         if(scanning && !dodgyChipsetLikeNexus4and7) return;
-        scanning=true;
-logXX("startLeScan");
-        try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){}
-        bluetoothAdapter.startLeScan(this);
+logXX(scanning? "stopLeScan": "startLeScan");
+        if(scanning){ scanning=false;try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){ t.printStackTrace(); } }
+        else {        scanning=true;      bluetoothAdapter.startLeScan(this); }
     }
 
     synchronized public void enableScanning(){
@@ -92,7 +91,7 @@ logXX("startLeScan");
     }
 
     @Override
-    public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
+    synchronized public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
 logXX("onLeScan",device,rssi);
         new Evaluator(this){ public void evaluate(){
             String url=String.format("http://%d.%d.%d.%d:%d/o/uid-%02x%02x-%02x%02x-%02x%02x-%02x%02x.json",
