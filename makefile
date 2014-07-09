@@ -3,7 +3,7 @@
 # IP of your development machine on the LAN
 # Always 'make veryclean' before changing this!
 #
-LOCAL_IP=192.168.0.13
+LOCAL_IP=192.168.0.16
 #LOCAL_IP=192.168.42.192
 #
 # Coordinates of PiBeaconLight
@@ -165,7 +165,7 @@ runiot: killroot clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2
 runiot2: killroot netconfig useiotdb2 setvm2iotconfig2 run1n2root
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-ccb8-43de-df47-29da.json'
 
-runliot: kill      netconfig usenodb  setvm2iotconfig run2
+runliot: killroot netconfig usenodb  setvm2iotconfig run2root
 
 runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
@@ -497,7 +497,7 @@ kill:
 
 killroot:
 	@-sudo pkill -f 'java -classpath'
-	sudo hciconfig noleadv
+	sudo hciconfig hci0 noleadv
 
 clean:
 	rm -rf ./build/classes/cyrus

@@ -57,16 +57,19 @@ public class PiBeaconLight extends CyrusLanguage {
                     // hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 00 00 00 00 c5 00
                     // hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 c0 a8 00 11 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00
                     // hcitool -i hci0 cmd 0x08 0x0008 1f 02 01 1a 1b ff 4c 00 02 16 c0 a8 00 12 1f 92 c0 93 a9 08 a9 d8 f1 c1 00 00 00 00 00 00 00 00
-        String advert="hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 1a 1a ff 4c 00 02 15 ";
+        String advert="hcitool -i hci0 cmd 0x08 0x0008 1c 02 01 1a 18 ff 4c 00 02 15 ";
         advert=advert+String.format("%02x %02x %02x %02x %02x %02x %s %s %s %s %s %s %s %s ",
                                      ipbytes[0], ipbytes[1], ipbytes[2], ipbytes[3],
                                      port/256, port-((port/256)*256),
                                      m.group(1),m.group(2),m.group(3),m.group(4),m.group(5),m.group(6),m.group(7),m.group(8));
-        advert=advert+"00 00 00 00 00 00 00 00";
+        advert=advert+"00 00 00 00 00";
+        exec("hciconfig hci0 down");
         exec("hciconfig hci0 up");
+        exec("hciconfig hci0 noleadv");
         exec(advert);
-        exec("hciconfig hci0 leadv 3");
-        exec(advert); // possible bug workaround
+        exec("hciconfig hci0 leadv");
+        exec(advert); // override dodgy Ubuntu crap set on leadv
+        exec("hciconfig hci0 noscan"); // stop more Ubuntu shite
         logXX(advert);
     }
 

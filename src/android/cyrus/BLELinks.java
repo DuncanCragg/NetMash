@@ -13,35 +13,35 @@ import cyrus.gui.NetMash;
 
 import static cyrus.lib.Utils.*;
 
-public class BLELinks extends WebObject /* implements BluetoothAdapter.LeScanCallback */ {
+public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallback {
 
     public BLELinks(){ NetMash.user.linksaround=this; }
 
     public BLELinks(String s){ super(s,true); }
 
     private boolean running=false;
-//  private BluetoothAdapter bluetoothAdapter;
-//  private final static int REQUEST_ENABLE_BT = 1;
+    private BluetoothAdapter bluetoothAdapter;
+    private final static int REQUEST_ENABLE_BT = 1;
 
     public void evaluate(){
-     // if(!NetMash.top.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
+        if(!NetMash.top.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
         if(!running) runBLEScan();
     }
 
     private void runBLEScan(){
         running=true;
-   //   BluetoothManager bm=(BluetoothManager)NetMash.top.getSystemService(Context.BLUETOOTH_SERVICE);
-   //   bluetoothAdapter=bm.getAdapter(); if(bluetoothAdapter==null) return;
+        BluetoothManager bm=(BluetoothManager)NetMash.top.getSystemService(Context.BLUETOOTH_SERVICE);
+        bluetoothAdapter=bm.getAdapter(); if(bluetoothAdapter==null) return;
         new Thread(){ public void run(){
             while(running){
                 checkOnBroadcast();
             }
         }}.start();
-//      new Thread(){ public void run(){
-//          while(running){
-//              checkOnScanning();
-//              Kernel.sleep(500);
-//      }}}.start();
+        new Thread(){ public void run(){
+            while(running){
+                checkOnScanning();
+                Kernel.sleep(750);
+        }}}.start();
     }
 
     private void checkOnBroadcast(){
@@ -53,9 +53,11 @@ public class BLELinks extends WebObject /* implements BluetoothAdapter.LeScanCal
 
     boolean scanning=false;
     boolean suspended=false;
-/*
+    boolean dodgyChipsetLikeNexus4and7=true;
+
     boolean notifiedEnableBT=false;
     synchronized private void checkOnScanning(){
+logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",bluetoothAdapter.isEnabled());
         if(suspended) return;
         if(!bluetoothAdapter.isEnabled()){
             if(scanning) try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){}
@@ -68,11 +70,13 @@ public class BLELinks extends WebObject /* implements BluetoothAdapter.LeScanCal
             // Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             // NetMash.top.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
-        if(scanning) return;
+        if(scanning && !dodgyChipsetLikeNexus4and7) return;
         scanning=true;
+logXX("startLeScan");
+        try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){}
         bluetoothAdapter.startLeScan(this);
     }
-*/
+
     synchronized public void enableScanning(){
         suspended=false;
     }
@@ -80,20 +84,25 @@ public class BLELinks extends WebObject /* implements BluetoothAdapter.LeScanCal
     synchronized public void disableScanning(){
         suspended=true;
         scanning=false;
-//      bluetoothAdapter.stopLeScan(this);
+        bluetoothAdapter.stopLeScan(this);
     }
 
     private void onPlaceURL(final String placeURL){
         new Evaluator(this){ public void evaluate(){ setPlace(placeURL); }};
     }
-/*
+
     @Override
     public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
+logXX("onLeScan",device,rssi);
         new Evaluator(this){ public void evaluate(){
             String url=String.format("http://%d.%d.%d.%d:%d/o/uid-%02x%02x-%02x%02x-%02x%02x-%02x%02x.json",
                                      0xff&ad[9],0xff&ad[10],0xff&ad[11],0xff&ad[12],
                                      ((0xff & ad[13])*256)+(0xff & ad[14]),
                                      ad[15],ad[16],ad[17],ad[18],ad[19],ad[20],ad[21],ad[22]);
+            if(ad[9]==0 || (ad[16]+ad[17]+ad[18]+ad[19]+ad[20]+ad[21]+ad[22]==0)){
+                logXX("reject",url,String.format("%02x %02x %02x %02x %02x %02x %02x",ad[9],ad[10],ad[11],ad[12],ad[13],ad[14],ad[15]));
+                return;
+            }
             contentSetAdd("list", url);
 logXX(url,device.toString().replaceAll(":","-"),rssi);
             contentHash(UID.toUID(url), hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
@@ -105,7 +114,7 @@ logXX(url,device.toString().replaceAll(":","-"),rssi);
             }
         }};
     }
-*/
+
     void setPlace(String placeURL){
 logXX("place URL: ",placeURL);
         contentSetAdd("list", placeURL);
