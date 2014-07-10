@@ -90,6 +90,8 @@ logXX(scanning? "stopLeScan": "startLeScan");
         new Evaluator(this){ public void evaluate(){ setPlace(placeURL); }};
     }
 
+    LinkedHashMap<String,BluetoothDevice> url2mac = new LinkedHashMap<String,BluetoothDevice>();
+
     @Override
     synchronized public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
 logXX("onLeScan",device,rssi);
@@ -102,6 +104,32 @@ logXX("onLeScan",device,rssi);
                 logXX("reject",url,String.format("%02x %02x %02x %02x %02x %02x %02x",ad[9],ad[10],ad[11],ad[12],ad[13],ad[14],ad[15]));
                 return;
             }
+            if(url.equals("http://192.168.0.0:0/o/uid-1501-a7ed-1501-a7ed.json")){
+                if(rssi>-50){
+                    String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase();
+logXX("gotcha", url, uid, rssi);
+                    if(!FunctionalObserver.funcobs.oneOfOurs(uid)){
+                        WebObject w=new BluetoothLight(
+                            "{ is: editable 3d cuboid light\n"+
+                            "  Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
+                            "         http://netmash.net/o/uid-0dc6-ad27-05ec-a0b2.cyr\n"+
+                            "         http://netmash.net/o/uid-e369-6d5d-5283-7bc7.cyr\n"+
+                            "  P: { }\n"+
+                            "  Timer: 1000\n"+
+                            "  title: \"Bluetooth Light\"\n"+
+                            "  rotation: 45 45 45\n"+
+                            "  scale: 1 1 1\n"+
+                            "  light: 1 1 1\n"+
+                            "}\n", (BLELinks)self);
+                        w.uid=uid;
+                        url2mac.put(uid,device);
+                        FunctionalObserver.funcobs.cacheSaveAndEvaluate(w);
+logXX("created object",UID.toURL(uid),w);
+                    }
+                }
+                return;
+            }
+            url2mac.put(url,device);
             contentSetAdd("list", url);
 logXX(url,device.toString().replaceAll(":","-"),rssi);
             contentHash(UID.toUID(url), hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
@@ -122,5 +150,22 @@ logXX("place URL: ",placeURL);
     }
 
     // ---------------------------------------------------------
+
+    void setDevice(WebObject w){
+        BluetoothDevice device=url2mac.get(w.uid);
+logXX("setDevice",w,device);
+    }
+
+class BluetoothLight extends CyrusLanguage {
+    BLELinks blelinks;
+    public BluetoothLight(){ }
+    public BluetoothLight(String s, BLELinks ble){ super(s,true); blelinks=ble; }
+    public void evaluate(){
+        super.evaluate();
+logXX("evaluating BluetoothLight",uid);
+        if(modified()) blelinks.setDevice(this);
+    }
+}
+
 }
 
