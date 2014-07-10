@@ -105,28 +105,30 @@ logXX("onLeScan",device,rssi);
                 return;
             }
             if(url.equals("http://192.168.0.0:0/o/uid-1501-a7ed-1501-a7ed.json")){
-                if(rssi>-50){
-                    String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase();
+                String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase();
+                if(rssi>-45 && !FunctionalObserver.funcobs.oneOfOurs(uid)){
 logXX("gotcha", url, uid, rssi);
-                    if(!FunctionalObserver.funcobs.oneOfOurs(uid)){
-                        WebObject w=new BluetoothLight(
-                            "{ is: editable 3d cuboid light\n"+
-                            "  Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
-                            "         http://netmash.net/o/uid-0dc6-ad27-05ec-a0b2.cyr\n"+
-                            "         http://netmash.net/o/uid-e369-6d5d-5283-7bc7.cyr\n"+
-                            "  P: { }\n"+
-                            "  Timer: 1000\n"+
-                            "  title: \"Bluetooth Light\"\n"+
-                            "  rotation: 45 45 45\n"+
-                            "  scale: 1 1 1\n"+
-                            "  light: 1 1 1\n"+
-                            "}\n", (BLELinks)self);
-                        w.uid=uid;
-                        url2mac.put(uid,device);
-                        FunctionalObserver.funcobs.cacheSaveAndEvaluate(w);
-logXX("created object",UID.toURL(uid),w);
-                    }
+                    WebObject w=new BluetoothLight(
+                        "{ is: editable 3d cuboid light\n"+
+                        "  Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
+                        "         http://netmash.net/o/uid-0dc6-ad27-05ec-a0b2.cyr\n"+
+                        "         http://netmash.net/o/uid-e369-6d5d-5283-7bc7.cyr\n"+
+                        "  P: { }\n"+
+                        "  Timer: 1000\n"+
+                        "  title: \"Bluetooth Light\"\n"+
+                        "  rotation: 45 45 45\n"+
+                        "  scale: 1 1 1\n"+
+                        "  light: 1 1 1\n"+
+                        "}\n", (BLELinks)self);
+                    w.uid=uid;
+                    FunctionalObserver.funcobs.cacheSaveAndEvaluate(w);
+                    url2mac.put(uid,device);
+logXX("captured object",UID.toURL(uid),w);
                 }
+if(FunctionalObserver.funcobs.oneOfOurs(uid)){
+contentSetAdd("list", uid);
+contentHash(uid, hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
+}
                 return;
             }
             url2mac.put(url,device);
