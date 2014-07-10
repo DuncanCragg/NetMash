@@ -18,6 +18,7 @@ import android.graphics.drawable.*;
 import android.view.inputmethod.InputMethodManager;
 import android.util.*;
 import android.util.Xml.*;
+import android.app.KeyguardManager.*;
 
 import android.view.*;
 import android.view.View.*;
@@ -1222,6 +1223,22 @@ log(show? "show keyboard": "hide keyboard");
             if(state==XmlPullParser.START_TAG) return Xml.asAttributeSet(parser);
         }
     }catch(Exception e){ e.printStackTrace(); } return null; }
+
+    public void caffeine(){
+
+        KeyguardManager km=(KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE);
+        final KeyguardLock kl=km.newKeyguardLock("NetMashKeyLock");
+        kl.disableKeyguard();
+
+        Window window = getWindow();
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
+        PowerManager pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "NetMashWakeLock");
+        wakeLock.acquire();
+    }
 
 class BorderlessTextView extends TextView {
     public BorderlessTextView(Context context, int colour){
