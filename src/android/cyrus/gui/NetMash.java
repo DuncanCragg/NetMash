@@ -9,6 +9,8 @@ import java.net.*;
 import org.xmlpull.v1.*;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
 import android.os.*;
 import android.net.*;
 import android.content.Context;
@@ -18,7 +20,6 @@ import android.graphics.drawable.*;
 import android.view.inputmethod.InputMethodManager;
 import android.util.*;
 import android.util.Xml.*;
-import android.app.KeyguardManager.*;
 
 import android.view.*;
 import android.view.View.*;
