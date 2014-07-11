@@ -10,6 +10,7 @@ import android.util.*;
 import android.graphics.*;
 
 import android.content.*;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.*;
 import android.accounts.*;
@@ -40,6 +41,7 @@ public class User extends CyrusLanguage {
     static public User currentUser=null;
 
     static public BLELinks linksaround=null;
+    static public String   linksarounduid=null;
     static public Place place=null;
 
     static public void createUserAndDevice(){
@@ -61,12 +63,16 @@ public class User extends CyrusLanguage {
               "{ is: link list editable\n"+
               "}", true);
 
-        linksaround = new BLELinks(
-              "{ is: broadcast link list\n"+
-              "  title: \"Objects Around\" \n"+
-              "}");
+        if(NetMash.top.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
+            linksaround = new BLELinks(
+                  "{ is: broadcast link list\n"+
+                  "  title: \"Objects Around\" \n"+
+                  "}");
+            linksarounduid=linksaround.uid;
+        }
+        else NetMash.top.toast("Your device doesn't have support for Bluetooth Low Energy.", true);
 
-        Light light = new Light(linksaround.uid);
+        Light light = new Light(linksarounduid);
 
         place = new Place(
               "{ is: place 3d mesh editable\n"+
@@ -82,12 +88,13 @@ public class User extends CyrusLanguage {
         // -----------------------------------------------------
 
         String homeusers=Kernel.config.stringPathN("app:homeusers");
-        currentUser = new User(homeusers, contact.uid, links.uid, linksaround.uid, contacts.uid);
+        currentUser = new User(homeusers, contact.uid, links.uid, linksarounduid, contacts.uid);
 
         LinkedList cyruslinks=Kernel.config.listPathN("app:links");
         cyruslinks.addFirst(place.uid);
         cyruslinks.addFirst(light.uid);
-        cyruslinks.addFirst(linksaround.uid);
+        if(linksarounduid!=null)
+        cyruslinks.addFirst(linksarounduid);
         cyruslinks.addFirst(currentUser.uid);
         links.publicState.listPath("list", cyruslinks);
 
@@ -102,6 +109,7 @@ public class User extends CyrusLanguage {
         currentUser.funcobs.cacheSaveAndEvaluate(links);
         currentUser.funcobs.cacheSaveAndEvaluate(light);
         currentUser.funcobs.cacheSaveAndEvaluate(place);
+        if(linksaround!=null)
         currentUser.funcobs.cacheSaveAndEvaluate(linksaround);
         currentUser.funcobs.cacheSaveAndEvaluate(contacts);
         currentUser.funcobs.cacheSaveAndEvaluate(currentUser, true);
@@ -137,7 +145,8 @@ public class User extends CyrusLanguage {
               "        \"editing\": null, \n"+
               "        \"viewas\": \"gui\", \n"+
               "        \"links\": \""+linksuid+"\", \n"+
-              "        \"links-around\": \""+linksarounduid+"\", \n"+
+              (linksarounduid!=null?
+              "        \"links-around\": \""+linksarounduid+"\", \n": "")+
               "        \"history\": null, \n"+
               "        \"contacts\":  \""+contactsuid+"\", \n"+
               "        \"responses\": { }, \n"+

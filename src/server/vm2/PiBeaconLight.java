@@ -54,6 +54,7 @@ public class PiBeaconLight extends CyrusLanguage {
         String re="uid-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])";
         Matcher m = Pattern.compile(re).matcher(uid);
         if(!m.matches()) return;
+                 //    hcitool -i hci0 cmd 0x08 0x0008 1c 02 01 1a 18 ff 4c 00 02 15 c0 a8 00 00 00 00 15 01 a7 ed 15 01 a7 ed 00 00 00 00 00
         String advert="hcitool -i hci0 cmd 0x08 0x0008 1c 02 01 1a 18 ff 4c 00 02 15 ";
         advert=advert+String.format("%02x %02x %02x %02x %02x %02x %s %s %s %s %s %s %s %s ",
                                      ipbytes[0], ipbytes[1], ipbytes[2], ipbytes[3],

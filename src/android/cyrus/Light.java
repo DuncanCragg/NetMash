@@ -24,7 +24,8 @@ public class Light extends CyrusLanguage {
               "  scale: 1 1 1\n"+
               "  light: 1 1 0\n"+
               "  position: 0 0 0\n"+
-              "  links-around: "+linksarounduid+"\n"+
+              (linksarounduid!=null?
+              "  links-around: "+linksarounduid+"\n": "")+
               "}\n", true);
     }
 
