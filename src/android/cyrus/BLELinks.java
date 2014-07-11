@@ -129,6 +129,13 @@ logXX(url,device.toString().replaceAll(":","-"),rssi);
         }};
     }
 
+    void setPlace(String placeURL){
+logXX("place URL: ",placeURL);
+        contentSetAdd("list", placeURL);
+        contentHash(UID.toUID(placeURL), hash("distance",25));
+        content("place", placeURL);
+    }
+
     BluetoothGattCallback bgcb=null;
     BluetoothGatt bg;
 
@@ -168,6 +175,18 @@ logXX("fetchInterestingAttributes from", device, uid);
                 if(status==BluetoothGatt.GATT_SUCCESS){
                     logXX("onCharacteristicRead ok");
                     checkOutCharacteristic(charact);
+                } else {
+                    logXX("onCharacteristicRead received: " + status);
+                }
+            }
+
+            @Override
+            public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic charact, int status){
+bg.close();
+                if(status==BluetoothGatt.GATT_SUCCESS){
+                    logXX("onCharacteristicWrite ok");
+                } else {
+                    logXX("onCharacteristicWrite received: " + status);
                 }
             }
 
@@ -177,6 +196,7 @@ logXX("fetchInterestingAttributes from", device, uid);
                 checkOutCharacteristic(charact);
             }
         };}
+
         bg=device.connectGatt(NetMash.top, false, bgcb);
     }
 
@@ -232,20 +252,11 @@ logXX("fetchInterestingAttributes from", device, uid);
         w.uid=pendinguid;
         FunctionalObserver.funcobs.cacheSaveAndEvaluate(w);
         url2mac.put(pendinguid,pendingdevice);
-        setURLOnDevice(pendingdevice, UID.toURL(pendinguid));
-    }
-
-    void setURLOnDevice(BluetoothDevice device, String url){
+        String url=UID.toURL(pendinguid);
 logXX("captured object, setting URL:", url);
+        charact.setValue(name+" *");
+        bg.writeCharacteristic(charact);
         pendingdevice=null; pendinguid=null;
-        bg.close();
-    }
-
-    void setPlace(String placeURL){
-logXX("place URL: ",placeURL);
-        contentSetAdd("list", placeURL);
-        contentHash(UID.toUID(placeURL), hash("distance",25));
-        content("place", placeURL);
     }
 
     // ---------------------------------------------------------
