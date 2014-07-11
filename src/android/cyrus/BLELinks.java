@@ -69,7 +69,7 @@ logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",
             return;
         }
         if(scanning && !dodgyChipsetLikeNexus4and7) return;
-logXX(scanning? "stopLeScan": "startLeScan");
+// logXX(scanning? "stopLeScan": "startLeScan");
         if(scanning){ scanning=false;try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){ t.printStackTrace(); } }
         else {        scanning=true;      bluetoothAdapter.startLeScan(this); }
     }
@@ -92,22 +92,20 @@ logXX(scanning? "stopLeScan": "startLeScan");
 
     @Override
     synchronized public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
-logXX("onLeScan",device,rssi);
         new Evaluator(this){ public void evaluate(){
             String url=String.format("http://%d.%d.%d.%d:%d/o/uid-%02x%02x-%02x%02x-%02x%02x-%02x%02x.json",
                                      0xff&ad[9],0xff&ad[10],0xff&ad[11],0xff&ad[12],
                                      ((0xff & ad[13])*256)+(0xff & ad[14]),
                                      ad[15],ad[16],ad[17],ad[18],ad[19],ad[20],ad[21],ad[22]);
             if(ad[9]==0 || (ad[16]+ad[17]+ad[18]+ad[19]+ad[20]+ad[21]+ad[22]==0)){
-                logXX("reject",url,String.format("%02x %02x %02x %02x %02x %02x %02x",ad[9],ad[10],ad[11],ad[12],ad[13],ad[14],ad[15]));
+                // logXX("reject",url,String.format("%02x %02x %02x %02x %02x %02x %02x",ad[9],ad[10],ad[11],ad[12],ad[13],ad[14],ad[15]));
                 return;
             }
-logXX("url:",url);
             if(url.equals("http://192.168.0.0:0/o/uid-1501-a7ed-1501-a7ed.json")){
                 String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase();
 logXX("isolated",rssi,uid);
-                if(rssi>-45 && !FunctionalObserver.funcobs.oneOfOurs(uid)){
-logXX("gotcha", url, uid, rssi);
+                if(rssi>-55 && !FunctionalObserver.funcobs.oneOfOurs(uid)){
+logXX("gotcha", url, device, uid, rssi);
                     fetchInterestingAttributes(device,uid);
                 }
 if(FunctionalObserver.funcobs.oneOfOurs(uid)){
@@ -143,7 +141,6 @@ logXX("place URL: ",placeURL);
     String pendinguid=null;
 
     void fetchInterestingAttributes(BluetoothDevice device, String uid){
-logXX("fetchInterestingAttributes from", device, uid);
         if(pendingdevice!=null) return;
         pendingdevice=device;
         pendinguid=uid;
@@ -157,12 +154,10 @@ logXX("fetchInterestingAttributes from", device, uid);
 
                 } else if(state==BluetoothProfile.STATE_DISCONNECTED){
                     logXX("********* Disconnected from GATT server.");
-                    pendingdevice=null; pendinguid=null;
-                    bg.close();
+                    closeGatt();
                 } else {
                     logXX("********* onConnectionStateChange received: " + state);
-                    pendingdevice=null; pendinguid=null;
-                    bg.close();
+                    closeGatt();
                 }
 
             }
@@ -174,8 +169,7 @@ logXX("fetchInterestingAttributes from", device, uid);
                     checkOutServices(gatt);
                 } else {
                     logXX("********* onServicesDiscovered received: " + status);
-                    pendingdevice=null; pendinguid=null;
-                    bg.close();
+                    closeGatt();
                 }
             }
 
@@ -186,8 +180,7 @@ logXX("fetchInterestingAttributes from", device, uid);
                     checkOutCharacteristic(charact);
                 } else {
                     logXX("********* onCharacteristicRead received: " + status);
-                    pendingdevice=null; pendinguid=null;
-                    bg.close();
+                    closeGatt();
                 }
             }
 
@@ -195,11 +188,11 @@ logXX("fetchInterestingAttributes from", device, uid);
             public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic charact, int status){
                 if(status==BluetoothGatt.GATT_SUCCESS){
                     logXX("onCharacteristicWrite ok");
+                    createObject();
                 } else {
                     logXX("********* onCharacteristicWrite received: " + status);
                 }
-                pendingdevice=null; pendinguid=null;
-                bg.close();
+                closeGatt();
             }
 
             @Override
@@ -210,6 +203,20 @@ logXX("fetchInterestingAttributes from", device, uid);
         };}
 
         bg=device.connectGatt(NetMash.top, false, bgcb);
+
+        final BluetoothGatt bgsave=bg;
+        new Thread(){ public void run(){
+            Kernel.sleep(10000);
+            logXX("checking if too late..", bg, bgsave);
+            if(bg!=bgsave || bg==null) return;
+            logXX("**** too late! closing attempt");
+            closeGatt();
+        }}.start();
+    }
+
+    void closeGatt(){
+        pendingdevice=null; pendinguid=null;
+        try{ bg.disconnect(); bg.close(); bg=null; }catch(Throwable t){}
     }
 
     public static String UUID_DEVICE_NAME = "00002a00-0000-1000-8000-00805f9b34fb";
@@ -242,13 +249,26 @@ logXX("fetchInterestingAttributes from", device, uid);
         }
     }
 
+    String pendingname=null;
+
     void checkOutCharacteristic(BluetoothGattCharacteristic charact){
+
         String u=charact.getUuid().toString();
         logXX("checkOutCharacteristic", charactLookup.get(u), u);
         if(!UUID_DEVICE_NAME.equals(u)) return;
-        String name="Not Set";
+
+        pendingname="Not Set";
         byte[] data = charact.getValue();
-        if(data != null && data.length >0) name=new String(data);
+        if(data != null && data.length >0) pendingname=new String(data);
+
+        String url=UID.toURL(pendinguid);
+logXX("captured object, setting URL:", url);
+      //charact.setValue(name+" *");
+        charact.setValue("abcdefg".getBytes(java.nio.charset.Charset.forName("UTF-8")));
+        bg.writeCharacteristic(charact);
+    }
+
+    void createObject(){
         WebObject w=new BluetoothLight(
             "{ is: editable 3d cuboid light\n"+
             "  Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
@@ -256,7 +276,7 @@ logXX("fetchInterestingAttributes from", device, uid);
             "         http://netmash.net/o/uid-e369-6d5d-5283-7bc7.cyr\n"+
             "  P: { }\n"+
             "  Timer: 1000\n"+
-            "  title: \""+name+"\"\n"+
+            "  title: \""+pendingname+"\"\n"+
             "  rotation: 45 45 45\n"+
             "  scale: 1 1 1\n"+
             "  light: 1 1 1\n"+
@@ -264,10 +284,6 @@ logXX("fetchInterestingAttributes from", device, uid);
         w.uid=pendinguid;
         FunctionalObserver.funcobs.cacheSaveAndEvaluate(w);
         url2mac.put(pendinguid,pendingdevice);
-        String url=UID.toURL(pendinguid);
-logXX("captured object, setting URL:", url);
-        charact.setValue(name+" *");
-        bg.writeCharacteristic(charact);
     }
 
     // ---------------------------------------------------------
