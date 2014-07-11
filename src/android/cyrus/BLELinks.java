@@ -150,14 +150,21 @@ logXX("fetchInterestingAttributes from", device, uid);
         if(bgcb==null){ bgcb=new BluetoothGattCallback(){
 
             @Override
-            public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-                if(newState==BluetoothProfile.STATE_CONNECTED){
+            public void onConnectionStateChange(BluetoothGatt gatt, int status, int state) {
+                if(state==BluetoothProfile.STATE_CONNECTED){
                     boolean r=bg.discoverServices();
                     logXX("Connected to GATT server. Started service discovery:" + r);
 
-                } else if(newState==BluetoothProfile.STATE_DISCONNECTED){
-                    logXX("Disconnected from GATT server.");
+                } else if(state==BluetoothProfile.STATE_DISCONNECTED){
+                    logXX("********* Disconnected from GATT server.");
+                    pendingdevice=null; pendinguid=null;
+                    bg.close();
+                } else {
+                    logXX("********* onConnectionStateChange received: " + state);
+                    pendingdevice=null; pendinguid=null;
+                    bg.close();
                 }
+
             }
 
             @Override
@@ -166,7 +173,9 @@ logXX("fetchInterestingAttributes from", device, uid);
                     logXX("onServicesDiscovered ok");
                     checkOutServices(gatt);
                 } else {
-                    logXX("onServicesDiscovered received: " + status);
+                    logXX("********* onServicesDiscovered received: " + status);
+                    pendingdevice=null; pendinguid=null;
+                    bg.close();
                 }
             }
 
@@ -176,18 +185,21 @@ logXX("fetchInterestingAttributes from", device, uid);
                     logXX("onCharacteristicRead ok");
                     checkOutCharacteristic(charact);
                 } else {
-                    logXX("onCharacteristicRead received: " + status);
+                    logXX("********* onCharacteristicRead received: " + status);
+                    pendingdevice=null; pendinguid=null;
+                    bg.close();
                 }
             }
 
             @Override
             public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic charact, int status){
-bg.close();
                 if(status==BluetoothGatt.GATT_SUCCESS){
                     logXX("onCharacteristicWrite ok");
                 } else {
-                    logXX("onCharacteristicWrite received: " + status);
+                    logXX("********* onCharacteristicWrite received: " + status);
                 }
+                pendingdevice=null; pendinguid=null;
+                bg.close();
             }
 
             @Override
@@ -256,7 +268,6 @@ bg.close();
 logXX("captured object, setting URL:", url);
         charact.setValue(name+" *");
         bg.writeCharacteristic(charact);
-        pendingdevice=null; pendinguid=null;
     }
 
     // ---------------------------------------------------------
