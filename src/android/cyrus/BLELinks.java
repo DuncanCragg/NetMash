@@ -90,33 +90,30 @@ logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",
 
     LinkedHashMap<String,BluetoothDevice> url2mac = new LinkedHashMap<String,BluetoothDevice>();
 
+    static public String ISOLATED_URL = "http://192.168.0.0:0/o/uid-1501-a7ed-1501-a7ed.json";
     @Override
     synchronized public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
         new Evaluator(this){ public void evaluate(){
+            if(ad[9]==0 || (ad[16]+ad[17]+ad[18]+ad[19]+ad[20]+ad[21]+ad[22]==0)) return;
             String url=String.format("http://%d.%d.%d.%d:%d/o/uid-%02x%02x-%02x%02x-%02x%02x-%02x%02x.json",
                                      0xff&ad[9],0xff&ad[10],0xff&ad[11],0xff&ad[12],
                                      ((0xff & ad[13])*256)+(0xff & ad[14]),
                                      ad[15],ad[16],ad[17],ad[18],ad[19],ad[20],ad[21],ad[22]);
-            if(ad[9]==0 || (ad[16]+ad[17]+ad[18]+ad[19]+ad[20]+ad[21]+ad[22]==0)){
-                // logXX("reject",url,String.format("%02x %02x %02x %02x %02x %02x %02x",ad[9],ad[10],ad[11],ad[12],ad[13],ad[14],ad[15]));
-                return;
-            }
-            if(url.equals("http://192.168.0.0:0/o/uid-1501-a7ed-1501-a7ed.json")){
+            logXX("BLE adv scan found: ", device.toString(), url, rssi);
+            if(url.equals(ISOLATED_URL)){
                 String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase();
-logXX("isolated",rssi,uid);
-                if(rssi>-55 && !FunctionalObserver.funcobs.oneOfOurs(uid)){
-logXX("gotcha", url, device, uid, rssi);
-                    fetchInterestingAttributes(device,uid);
-                }
+                logXX("Detected isolated device. New UID: ",uid,"Signal:",rssi);
+                if(rssi>-55 && !FunctionalObserver.funcobs.oneOfOurs(uid)) startOwning(device,uid);
+                else logXX("Too far away or already owned by us");
+
 if(FunctionalObserver.funcobs.oneOfOurs(uid)){
-contentSetAdd("list", uid);
-contentHash(uid, hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
+    contentSetAdd("list", uid);
+    contentHash(uid, hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
 }
                 return;
             }
             url2mac.put(url,device);
             contentSetAdd("list", url);
-logXX(url,device.toString().replaceAll(":","-"),rssi);
             contentHash(UID.toUID(url), hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
             LinkedList allplaces=contentAll("list:within");
             if(allplaces!=null) for(Object o: allplaces){
@@ -128,7 +125,6 @@ logXX(url,device.toString().replaceAll(":","-"),rssi);
     }
 
     void setPlace(String placeURL){
-logXX("place URL: ",placeURL);
         contentSetAdd("list", placeURL);
         contentHash(UID.toUID(placeURL), hash("distance",25));
         content("place", placeURL);
@@ -140,7 +136,8 @@ logXX("place URL: ",placeURL);
     BluetoothDevice pendingdevice=null;
     String pendinguid=null;
 
-    void fetchInterestingAttributes(BluetoothDevice device, String uid){
+    void startOwning(BluetoothDevice device, String uid){
+        logXX("Held close together - attempting to own device");
         if(pendingdevice!=null) return;
         pendingdevice=device;
         pendinguid=uid;
@@ -165,8 +162,8 @@ logXX("place URL: ",placeURL);
             @Override
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 if(status==BluetoothGatt.GATT_SUCCESS){
-                    logXX("onServicesDiscovered ok");
-                    checkOutServices(gatt);
+                    logXX("onServicesDiscovered OK");
+                    serviceReadIn(gatt);
                 } else {
                     logXX("********* onServicesDiscovered received: " + status);
                     closeGatt();
@@ -176,8 +173,8 @@ logXX("place URL: ",placeURL);
             @Override
             public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic charact, int status) {
                 if(status==BluetoothGatt.GATT_SUCCESS){
-                    logXX("onCharacteristicRead ok");
-                    checkOutCharacteristic(charact);
+                    logXX("onCharacteristicRead OK");
+                    characteristicReadIn(charact);
                 } else {
                     logXX("********* onCharacteristicRead received: " + status);
                     closeGatt();
@@ -187,7 +184,7 @@ logXX("place URL: ",placeURL);
             @Override
             public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic charact, int status){
                 if(status==BluetoothGatt.GATT_SUCCESS){
-                    logXX("onCharacteristicWrite ok");
+                    logXX("onCharacteristicWrite OK");
                     createObject();
                 } else {
                     logXX("********* onCharacteristicWrite received: " + status);
@@ -198,7 +195,7 @@ logXX("place URL: ",placeURL);
             @Override
             public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic charact) {
                 logXX("onCharacteristicChanged");
-                checkOutCharacteristic(charact);
+                characteristicReadIn(charact);
             }
         };}
 
@@ -220,9 +217,8 @@ logXX("place URL: ",placeURL);
     }
 
     public static String UUID_DEVICE_NAME = "00002a00-0000-1000-8000-00805f9b34fb";
-    public static String UUID_HEART_RATE_MEASUREMENT  = "00002a37-0000-1000-8000-00805f9b34fb";
 
-    void checkOutServices(BluetoothGatt gatt){
+    void serviceReadIn(BluetoothGatt gatt){
         for(BluetoothGattService gattService: gatt.getServices()){
             String u=gattService.getUuid().toString();
             logXX("service:", serviceLookup.get(u), u);
@@ -234,27 +230,20 @@ logXX("place URL: ",placeURL);
                       (charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE    )>0? "write": "",
                       (charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY   )>0? "notify": "",
                       (charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_BROADCAST)>0? "broadcast": "");
+
                 if((charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) >0){
                     if(UUID_DEVICE_NAME.equals(u)) gatt.readCharacteristic(charact);
                 }
-         /*     if((charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) >0){
-                    if(UUID_HEART_RATE_MEASUREMENT.equals(u)){
-                        bg.setCharacteristicNotification(charact, true);
-                        BluetoothGattDescriptor descriptor = charact.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
-                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                        bg.writeDescriptor(descriptor);
-                    }
-                }
-         */ }
+            }
         }
     }
 
     String pendingname=null;
 
-    void checkOutCharacteristic(BluetoothGattCharacteristic charact){
+    void characteristicReadIn(BluetoothGattCharacteristic charact){
 
         String u=charact.getUuid().toString();
-        logXX("checkOutCharacteristic", charactLookup.get(u), u);
+        logXX("characteristicReadIn", charactLookup.get(u), u);
         if(!UUID_DEVICE_NAME.equals(u)) return;
 
         pendingname="Not Set";
@@ -263,8 +252,7 @@ logXX("place URL: ",placeURL);
 
         String url=UID.toURL(pendinguid);
 logXX("captured object, setting URL:", url);
-      //charact.setValue(name+" *");
-        charact.setValue("abcdefg".getBytes(java.nio.charset.Charset.forName("UTF-8")));
+        charact.setValue((pendingname+"*").getBytes(java.nio.charset.Charset.forName("UTF-8")));
         bg.writeCharacteristic(charact);
     }
 
