@@ -1,6 +1,7 @@
 package cyrus;
 
 import java.util.*;
+import java.nio.charset.*;
 
 import android.content.*;
 import android.bluetooth.*;
@@ -131,10 +132,10 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
     }
 
     BluetoothGattCallback bgcb=null;
-    BluetoothGatt bg;
-
-    BluetoothDevice pendingdevice=null;
-    String pendinguid=null;
+    BluetoothGatt         bg=null;
+    BluetoothDevice       pendingdevice=null;
+    String                pendinguid=null;
+    String                pendingname=null;
 
     void startOwning(BluetoothDevice device, String uid){
         logXX("Held close together - attempting to own device");
@@ -146,15 +147,18 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
             @Override
             public void onConnectionStateChange(BluetoothGatt gatt, int status, int state) {
                 if(state==BluetoothProfile.STATE_CONNECTED){
-                    boolean r=bg.discoverServices();
-                    logXX("Connected to GATT server. Started service discovery:" + r);
-
+                    logXX("onConnectionStateChange connected");
+                    if(bg.discoverServices()) logXX("Started service discovery");
+                    else {
+                        logXX("********* Couldn't start service discovery");
+                        closeGatt(gatt);
+                    }
                 } else if(state==BluetoothProfile.STATE_DISCONNECTED){
                     logXX("********* Disconnected from GATT server.");
-                    closeGatt();
+                    closeGatt(gatt);
                 } else {
                     logXX("********* onConnectionStateChange received: " + state);
-                    closeGatt();
+                    closeGatt(gatt);
                 }
 
             }
@@ -163,21 +167,30 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 if(status==BluetoothGatt.GATT_SUCCESS){
                     logXX("onServicesDiscovered OK");
-                    serviceReadIn(gatt);
+                    if(!readDeviceName(gatt)){
+                        logXX("********* readDeviceName failed");
+                        closeGatt(gatt);
+                    }
                 } else {
-                    logXX("********* onServicesDiscovered received: " + status);
-                    closeGatt();
+                    logXX("********* onServicesDiscovered failed: " + status);
+                    closeGatt(gatt);
                 }
             }
 
             @Override
-            public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic charact, int status) {
+            public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic charact, int status){
                 if(status==BluetoothGatt.GATT_SUCCESS){
-                    logXX("onCharacteristicRead OK");
-                    characteristicReadIn(charact);
+                    String u=charact.getUuid().toString();
+                    logXX("onCharacteristicRead OK", charactLookup.get(u), u);
+                    if(UUID_DEVICE_NAME.equals(u)){
+                        if(!saveDeviceNameAndSetURL(charact)){
+                            logXX("********* saveDeviceNameAndSetURL failed");
+                            closeGatt(gatt);
+                        }
+                    }
                 } else {
-                    logXX("********* onCharacteristicRead received: " + status);
-                    closeGatt();
+                    logXX("********* onCharacteristicRead failed: " + status);
+                    closeGatt(gatt);
                 }
             }
 
@@ -187,15 +200,14 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
                     logXX("onCharacteristicWrite OK");
                     createObject();
                 } else {
-                    logXX("********* onCharacteristicWrite received: " + status);
+                    logXX("********* onCharacteristicWrite failed: " + status);
                 }
-                closeGatt();
+                closeGatt(gatt);
             }
 
             @Override
             public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic charact) {
                 logXX("onCharacteristicChanged");
-                characteristicReadIn(charact);
             }
         };}
 
@@ -203,25 +215,34 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
 
         final BluetoothGatt bgsave=bg;
         new Thread(){ public void run(){
-            Kernel.sleep(10000);
+            Kernel.sleep(8000);
             logXX("checking if too late..", bg, bgsave);
             if(bg!=bgsave || bg==null) return;
             logXX("**** too late! closing attempt");
-            closeGatt();
+            closeGatt(bg);
         }}.start();
     }
 
-    void closeGatt(){
+    void closeGatt(BluetoothGatt gatt){
         pendingdevice=null; pendinguid=null;
-        try{ bg.disconnect(); bg.close(); bg=null; }catch(Throwable t){}
+        try{ gatt.disconnect(); bg.disconnect(); gatt.close(); bg.close(); bg=null; }catch(Throwable t){}
     }
 
-    public static String UUID_DEVICE_NAME = "00002a00-0000-1000-8000-00805f9b34fb";
+    static public final String UUID_GENERIC_ACCESS = "00001800-0000-1000-8000-00805f9b34fb";
+    static public final String UUID_DEVICE_NAME    = "00002a00-0000-1000-8000-00805f9b34fb";
 
-    void serviceReadIn(BluetoothGatt gatt){
+    boolean readDeviceName(BluetoothGatt gatt){
+        BluetoothGattService gattService=gatt.getService(UUID.fromString(UUID_GENERIC_ACCESS));
+        if(gattService==null){ logXX("Can't find Generic Access service"); return false; }
+        BluetoothGattCharacteristic charact = gattService.getCharacteristic(UUID.fromString(UUID_DEVICE_NAME));
+        if(charact==null){ logXX("Can't find Device Name characteristic"); return false; }
+        return gatt.readCharacteristic(charact);
+    }
+
+    void displayAllServices(BluetoothGatt gatt){
         for(BluetoothGattService gattService: gatt.getServices()){
             String u=gattService.getUuid().toString();
-            logXX("service:", serviceLookup.get(u), u);
+            logXX("-- service:", serviceLookup.get(u), u);
             for(BluetoothGattCharacteristic charact: gattService.getCharacteristics()) {
                 u=charact.getUuid().toString();
                 logXX("---- characteristic", charactLookup.get(u), u);
@@ -231,29 +252,22 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
                       (charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY   )>0? "notify": "",
                       (charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_BROADCAST)>0? "broadcast": "");
 
-                if((charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) >0){
-                    if(UUID_DEVICE_NAME.equals(u)) gatt.readCharacteristic(charact);
-                }
+        //      if((charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) >0){
+        //          if(UUID_DEVICE_NAME.equals(u)) gatt.readCharacteristic(charact);
+        //      }
             }
         }
     }
 
-    String pendingname=null;
-
-    void characteristicReadIn(BluetoothGattCharacteristic charact){
-
-        String u=charact.getUuid().toString();
-        logXX("characteristicReadIn", charactLookup.get(u), u);
-        if(!UUID_DEVICE_NAME.equals(u)) return;
-
-        pendingname="Not Set";
+    boolean saveDeviceNameAndSetURL(BluetoothGattCharacteristic charact){
         byte[] data = charact.getValue();
-        if(data != null && data.length >0) pendingname=new String(data);
+        if(data==null || data.length==0) return false;
+        pendingname=new String(data);
 
         String url=UID.toURL(pendinguid);
-logXX("captured object, setting URL:", url);
-        charact.setValue((pendingname+"*").getBytes(java.nio.charset.Charset.forName("UTF-8")));
-        bg.writeCharacteristic(charact);
+        logXX("Setting URL:", url);
+        charact.setValue((pendingname+"*").getBytes(Charset.forName("UTF-8")));
+        return bg.writeCharacteristic(charact);
     }
 
     void createObject(){
