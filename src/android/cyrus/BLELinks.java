@@ -56,9 +56,9 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
 
     boolean notifiedEnableBT=false;
     synchronized private void checkOnScanning(){
-logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",bluetoothAdapter.isEnabled());
+logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:", isBTEnabled());
         if(suspended) return;
-        if(!bluetoothAdapter.isEnabled()){
+        if(!isBTEnabled()){
             if(scanning) try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){}
             scanning=false;
             if(!notifiedEnableBT){
@@ -74,6 +74,8 @@ logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",
         if(scanning){ scanning=false;try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){ t.printStackTrace(); } }
         else {        scanning=true;      bluetoothAdapter.startLeScan(this); }
     }
+
+    boolean isBTEnabled(){ try{ return bluetoothAdapter.isEnabled(); }catch(Throwable t){ logXX("Something funky in BT",t); return false; } }
 
     synchronized public void enableScanning(){
         suspended=false;
@@ -132,6 +134,7 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
     }
 
     BluetoothGattCallback bgcb=null;
+    BluetoothGattCallback bgcb2=null;
     BluetoothGatt         bg=null;
     BluetoothDevice       pendingdevice=null;
     String                pendinguid=null;
@@ -142,13 +145,28 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
         if(pendingdevice!=null) return;
         pendingdevice=device;
         pendinguid=uid;
+        ensureCB();
+
+        bg=device.connectGatt(NetMash.top, false, bgcb);
+
+        final BluetoothGatt bgsave=bg;
+        new Thread(){ public void run(){
+            Kernel.sleep(8000);
+            logXX("checking if too late..", bg, bgsave);
+            if(bg!=bgsave || bg==null) return;
+            logXX("**** too late! closing attempt");
+            closeGatt(bg);
+        }}.start();
+    }
+
+    void ensureCB(){
         if(bgcb==null){ bgcb=new BluetoothGattCallback(){
 
             @Override
             public void onConnectionStateChange(BluetoothGatt gatt, int status, int state) {
                 if(state==BluetoothProfile.STATE_CONNECTED){
                     logXX("onConnectionStateChange connected");
-                    if(bg.discoverServices()) logXX("Started service discovery");
+                    if(gatt.discoverServices()) logXX("Started service discovery");
                     else {
                         logXX("********* Couldn't start service discovery");
                         closeGatt(gatt);
@@ -183,7 +201,7 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
                     String u=charact.getUuid().toString();
                     logXX("onCharacteristicRead OK", charactLookup.get(u), u);
                     if(UUID_DEVICE_NAME.equals(u)){
-                        if(!saveDeviceNameAndSetURL(charact)){
+                        if(!saveDeviceNameAndSetURL(gatt,charact)){
                             logXX("********* saveDeviceNameAndSetURL failed");
                             closeGatt(gatt);
                         }
@@ -210,21 +228,10 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
                 logXX("onCharacteristicChanged");
             }
         };}
-
-        bg=device.connectGatt(NetMash.top, false, bgcb);
-
-        final BluetoothGatt bgsave=bg;
-        new Thread(){ public void run(){
-            Kernel.sleep(8000);
-            logXX("checking if too late..", bg, bgsave);
-            if(bg!=bgsave || bg==null) return;
-            logXX("**** too late! closing attempt");
-            closeGatt(bg);
-        }}.start();
     }
 
     void closeGatt(BluetoothGatt gatt){
-        pendingdevice=null; pendinguid=null;
+        pendingdevice=null; pendinguid=null; tryingToWrite=false;
         try{ gatt.disconnect(); bg.disconnect(); gatt.close(); bg.close(); bg=null; }catch(Throwable t){}
     }
 
@@ -259,7 +266,7 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
         }
     }
 
-    boolean saveDeviceNameAndSetURL(BluetoothGattCharacteristic charact){
+    boolean saveDeviceNameAndSetURL(BluetoothGatt gatt, BluetoothGattCharacteristic charact){
         byte[] data = charact.getValue();
         if(data==null || data.length==0) return false;
         pendingname=new String(data);
@@ -267,7 +274,7 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
         String url=UID.toURL(pendinguid);
         logXX("Setting URL:", url);
         charact.setValue((pendingname+"*").getBytes(Charset.forName("UTF-8")));
-        return bg.writeCharacteristic(charact);
+        return gatt.writeCharacteristic(charact);
     }
 
     void createObject(){
@@ -290,9 +297,82 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
 
     // ---------------------------------------------------------
 
+    boolean tryingToWrite=false;
+
     void setDevice(WebObject w){
         BluetoothDevice device=url2mac.get(w.uid);
+        if(tryingToWrite) return;
+        tryingToWrite=true;
 logXX("setDevice",w,device);
+        ensureCB2();
+
+        bg=device.connectGatt(NetMash.top, false, bgcb2);
+
+        final BluetoothGatt bgsave=bg;
+        new Thread(){ public void run(){
+            Kernel.sleep(8000);
+            logXX("checking if too late..", bg, bgsave);
+            if(bg!=bgsave || bg==null) return;
+            logXX("**** too late! closing attempt");
+            closeGatt(bg);
+        }}.start();
+    }
+
+    void ensureCB2(){
+        if(bgcb2==null){ bgcb2=new BluetoothGattCallback(){
+
+            @Override
+            public void onConnectionStateChange(BluetoothGatt gatt, int status, int state) {
+                if(state==BluetoothProfile.STATE_CONNECTED){
+                    logXX("onConnectionStateChange connected");
+                    if(gatt.discoverServices()) logXX("Started service discovery");
+                    else {
+                        logXX("********* Couldn't start service discovery");
+                        closeGatt(gatt);
+                    }
+                } else if(state==BluetoothProfile.STATE_DISCONNECTED){
+                    logXX("********* Disconnected from GATT server.");
+                    closeGatt(gatt);
+                } else {
+                    logXX("********* onConnectionStateChange received: " + state);
+                    closeGatt(gatt);
+                }
+
+            }
+
+            @Override
+            public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+                if(status==BluetoothGatt.GATT_SUCCESS){
+                    logXX("onServicesDiscovered OK");
+                    if(!writeDeviceName(gatt)){
+                        logXX("********* readDeviceName failed");
+                        closeGatt(gatt);
+                    }
+                } else {
+                    logXX("********* onServicesDiscovered failed: " + status);
+                    closeGatt(gatt);
+                }
+            }
+
+            @Override
+            public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic charact, int status){
+                if(status==BluetoothGatt.GATT_SUCCESS){
+                    logXX("onCharacteristicWrite OK");
+                } else {
+                    logXX("********* onCharacteristicWrite failed: " + status);
+                }
+                closeGatt(gatt);
+            }
+        };}
+    }
+
+    boolean writeDeviceName(BluetoothGatt gatt){
+        BluetoothGattService gattService=gatt.getService(UUID.fromString(UUID_GENERIC_ACCESS));
+        if(gattService==null){ logXX("Can't find Generic Access service"); return false; }
+        BluetoothGattCharacteristic charact = gattService.getCharacteristic(UUID.fromString(UUID_DEVICE_NAME));
+        if(charact==null){ logXX("Can't find Device Name characteristic"); return false; }
+        charact.setValue(("abcdef").getBytes(Charset.forName("UTF-8")));
+        return gatt.writeCharacteristic(charact);
     }
 
 class BluetoothLight extends CyrusLanguage {
@@ -301,7 +381,6 @@ class BluetoothLight extends CyrusLanguage {
     public BluetoothLight(String s, BLELinks ble){ super(s,true); blelinks=ble; }
     public void evaluate(){
         super.evaluate();
-logXX("evaluating BluetoothLight",uid);
         if(modified()) blelinks.setDevice(this);
     }
 }
