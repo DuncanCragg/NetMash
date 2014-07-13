@@ -140,17 +140,16 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
     String                pendinguid=null;
     String                pendingname=null;
 
-    void startOwning(BluetoothDevice device, String uid){
+    void startOwning(final BluetoothDevice device, String uid){
         logXX("Held close together - attempting to own device");
         if(pendingdevice!=null) return;
         pendingdevice=device;
         pendinguid=uid;
         ensureCB();
 
-        bg=device.connectGatt(NetMash.top, false, bgcb);
-
-        final BluetoothGatt bgsave=bg;
         new Thread(){ public void run(){
+            bg=device.connectGatt(NetMash.top, false, bgcb);
+            BluetoothGatt bgsave=bg;
             Kernel.sleep(8000);
             logXX("checking if too late..", bg, bgsave);
             if(bg!=bgsave || bg==null) return;
@@ -300,16 +299,15 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
     boolean tryingToWrite=false;
 
     void setDevice(WebObject w){
-        BluetoothDevice device=url2mac.get(w.uid);
+        final BluetoothDevice device=url2mac.get(w.uid);
         if(tryingToWrite) return;
         tryingToWrite=true;
 logXX("setDevice",w,device);
         ensureCB2();
 
-        bg=device.connectGatt(NetMash.top, false, bgcb2);
-
-        final BluetoothGatt bgsave=bg;
         new Thread(){ public void run(){
+            bg=device.connectGatt(NetMash.top, false, bgcb2);
+            BluetoothGatt bgsave=bg;
             Kernel.sleep(8000);
             logXX("checking if too late..", bg, bgsave);
             if(bg!=bgsave || bg==null) return;
