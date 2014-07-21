@@ -109,9 +109,9 @@
         <Characteristic>
             <Name>Light RGB</Name>
             <Uuid BaseUUID="CDA1000006C4CD1B866FE3A771C63274" BaseUUIDName="Object Network Base">1001</Uuid>
-            <DefaultValue>ffffff</DefaultValue>
+            <DefaultValue>52ffffff</DefaultValue>
             <UsePresentationFormat>0</UsePresentationFormat>
-            <MaxDataLength>3</MaxDataLength>
+            <MaxDataLength>4</MaxDataLength>
             <AttributeLenType>1</AttributeLenType>
             <ForceOpen>false</ForceOpen>
             <ForceEncryption>false</ForceEncryption>

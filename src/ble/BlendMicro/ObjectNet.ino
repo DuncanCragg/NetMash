@@ -409,6 +409,14 @@ void loop()
         }
         break;
         
+      case 'R': // set RGB value
+        {
+          Serial.println(ble_read());
+          Serial.println(ble_read());
+          Serial.println(ble_read());
+        }
+        break;
+        
       case 'Z':
         {
           byte len = ble_read();

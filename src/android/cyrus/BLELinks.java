@@ -342,10 +342,9 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
     boolean tryingToWrite=false;
 
     void setDevice(WebObject w){
-logXX("setDevice",w);
-return;/*
+        logXX("setDevice",w, w.contentList("light"));
         final BluetoothDevice device=url2mac.get(w.uid);
-logXX("on device",device);
+        logXX("on device",device);
         if(tryingToWrite) return;
         tryingToWrite=true;
         ensureCB2();
@@ -359,7 +358,6 @@ logXX("on device",device);
             logXX("**** Timed out .. ending attempt");
             closeGatt(bg);
         }}.start();
-*/
     }
 
     void ensureCB2(){
@@ -388,10 +386,8 @@ logXX("on device",device);
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 if(status==BluetoothGatt.GATT_SUCCESS){
                     logXX("onServicesDiscovered OK");
-                    if(!writeDeviceName(gatt,"abcdef")){
-                        logXX("********* writeDeviceName failed");
-                        closeGatt(gatt);
-                    }
+                    displayAllServices(gatt);
+                    writeRGBSoon(gatt);
                 } else {
                     logXX("********* onServicesDiscovered failed: " + status);
                     closeGatt(gatt);
@@ -410,12 +406,24 @@ logXX("on device",device);
         };}
     }
 
-    boolean writeDeviceName(BluetoothGatt gatt, String name){
-        BluetoothGattService gattService=gatt.getService(UUID.fromString(UUID_GENERIC_ACCESS));
-        if(gattService==null){ logXX("Can't find Generic Access service"); return false; }
-        BluetoothGattCharacteristic charact = gattService.getCharacteristic(UUID.fromString(UUID_DEVICE_NAME));
-        if(charact==null){ logXX("Can't find Device Name characteristic"); return false; }
-        charact.setValue(name.getBytes(Charset.forName("UTF-8")));
+    void writeRGBSoon(final BluetoothGatt gatt){
+        new Thread(){ public void run(){
+            Kernel.sleep(200);
+            logXX("Writing RGB");
+            byte[] rgb=new byte[]{ (byte)'R', (byte)0x52, (byte)0x47, (byte)0x42 };
+            if(!writeRGB(gatt, rgb)){
+                logXX("********* writeRGB failed");
+                closeGatt(gatt);
+            }
+        }}.start();
+    }
+
+    boolean writeRGB(BluetoothGatt gatt, byte[] rgb){
+        BluetoothGattService gattService=gatt.getService(UUID.fromString(UUID_OBJECT_NETWORK));
+        if(gattService==null){ logXX("Can't find Object Network service"); return false; }
+        BluetoothGattCharacteristic charact = gattService.getCharacteristic(UUID.fromString(UUID_LIGHT_RGB));
+        if(charact==null){ logXX("Can't find Light RGB characteristic"); return false; }
+        charact.setValue(rgb);
         return gatt.writeCharacteristic(charact);
     }
 
