@@ -120,7 +120,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
             if(url.equals(ISOLATED_URL)){
                 String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase()+"-00-00";
                 logXX("Detected isolated device. New UID: ",uid,"Signal:",rssi);
-                if(rssi>-50 && !FunctionalObserver.funcobs.oneOfOurs(uid)) startOwning(device,uid);
+                if(rssi>-40 && !FunctionalObserver.funcobs.oneOfOurs(uid)) startOwning(device,uid);
                 else logXX("Too far away or already owned by us");
                 return;
             }
@@ -148,6 +148,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
     BluetoothDevice       pendingdevice=null;
     String                pendinguid=null;
     String                pendingname=null;
+    LinkedList            pendingrgb=null;
 
     void startOwning(final BluetoothDevice device, String uid){
         logXX("Held close together - attempting to own device");
@@ -343,6 +344,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
 
     void setDevice(WebObject w){
         logXX("setDevice",w, w.contentList("light"));
+        pendingrgb=w.contentList("light");
         final BluetoothDevice device=url2mac.get(w.uid);
         logXX("on device",device);
         if(tryingToWrite) return;
@@ -410,7 +412,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         new Thread(){ public void run(){
             Kernel.sleep(200);
             logXX("Writing RGB");
-            byte[] rgb=new byte[]{ (byte)'R', (byte)0x52, (byte)0x47, (byte)0x42 };
+            byte[] rgb=new byte[]{ (byte)'R', (byte)(255*getFloatFromList(pendingrgb, 0, 1f)), (byte)(255*getFloatFromList(pendingrgb, 1, 1f)), (byte)(255*getFloatFromList(pendingrgb, 2, 1f)) };
             if(!writeRGB(gatt, rgb)){
                 logXX("********* writeRGB failed");
                 closeGatt(gatt);
