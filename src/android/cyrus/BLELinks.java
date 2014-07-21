@@ -59,7 +59,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
 
     boolean notifiedEnableBT=false;
     synchronized private void checkOnScanning(){
-logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:", isBTEnabled());
+        logXX("checkOnScanning",suspended? "suspended":"", scanning? "scanning":"", isBTEnabled()? "BT enabled":"");
         if(suspended) return;
         if(!isBTEnabled()){
             if(scanning) try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){}
@@ -73,7 +73,6 @@ logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",
             return;
         }
         if(scanning && !dodgyChipsetLikeNexus4and7) return;
-// logXX(scanning? "stopLeScan": "startLeScan");
         if(scanning){ scanning=false;try{ bluetoothAdapter.stopLeScan(this); } catch(Throwable t){ t.printStackTrace(); } }
         else {        scanning=true;      bluetoothAdapter.startLeScan(this); }
     }
@@ -123,11 +122,6 @@ logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",
                 logXX("Detected isolated device. New UID: ",uid,"Signal:",rssi);
                 if(rssi>-50 && !FunctionalObserver.funcobs.oneOfOurs(uid)) startOwning(device,uid);
                 else logXX("Too far away or already owned by us");
-
-if(FunctionalObserver.funcobs.oneOfOurs(uid)){
-    contentSetAdd("list", uid);
-    contentHash(uid, hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
-}
                 return;
             }
             url2mac.put(url,device);
@@ -199,7 +193,7 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 if(status==BluetoothGatt.GATT_SUCCESS){
                     logXX("onServicesDiscovered OK");
-displayAllServices(gatt);
+                    displayAllServices(gatt);
                     if(!readDeviceName(gatt)){
                         logXX("********* readDeviceName failed");
                         closeGatt(gatt);
@@ -279,10 +273,6 @@ displayAllServices(gatt);
                       (charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE    )>0? "write": "",
                       (charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY   )>0? "notify": "",
                       (charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_BROADCAST)>0? "broadcast": "");
-
-        //      if((charact.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) >0){
-        //          if(UUID_DEVICE_NAME.equals(u)) gatt.readCharacteristic(charact);
-        //      }
             }
         }
     }
@@ -291,7 +281,7 @@ displayAllServices(gatt);
         byte[] data = charact.getValue();
         if(data==null || data.length==0) return false;
         pendingname=new String(data);
-logXX("Device Name:",pendingname);
+        logXX("Device Name:",pendingname);
 
         new Thread(){ public void run(){
             Kernel.sleep(200);
