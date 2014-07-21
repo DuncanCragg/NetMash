@@ -13,7 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <Servo.h>
 #include <SPI.h>
 #include <boards.h>
-#include <RBL_nRF8001.h>
+#include "RBL_nRF8001.h"
 #include "Boards.h"
 
 #define PROTOCOL_MAJOR_VERSION   0 //
@@ -234,6 +234,7 @@ void loop()
     byte cmd;
     cmd = ble_read();
     Serial.write(cmd);
+    Serial.println("<");
     
     // Parse data here
     switch (cmd)
@@ -392,6 +393,19 @@ void loop()
         {
           byte pin = ble_read();
           reportPinCapability(pin);
+        }
+        break;
+        
+      case 'U': // set advertising URL
+        {
+          char ad[12];
+          for(int i=0; i<12; i++){
+              char c=ble_read();
+              if(c== -1) c=0;
+              ad[i]=c;
+          }
+          while(ble_read()!= -1);
+          ble_set_advertising_data(ad,12);
         }
         break;
         

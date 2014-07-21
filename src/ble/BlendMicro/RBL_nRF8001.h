@@ -36,6 +36,7 @@ However this removes the need to do the setup of the nRF8001 on every reset.*/
 #endif
 
 void ble_begin();
+void ble_set_advertising_data(char* ad, int len);
 void ble_set_name(char *name);
 void ble_write(unsigned char data);
 void ble_write_bytes(unsigned char *data, unsigned char len);

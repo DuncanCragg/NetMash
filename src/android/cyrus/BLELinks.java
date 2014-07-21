@@ -2,6 +2,9 @@ package cyrus;
 
 import java.util.*;
 import java.nio.charset.*;
+import java.io.*;
+import java.net.*;
+import java.util.regex.*;
 
 import android.content.*;
 import android.bluetooth.*;
@@ -52,7 +55,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
 
     boolean scanning=false;
     boolean suspended=false;
-    boolean dodgyChipsetLikeNexus4and7=true;
+    boolean dodgyChipsetLikeNexus4and7=false;
 
     boolean notifiedEnableBT=false;
     synchronized private void checkOnScanning(){
@@ -93,20 +96,32 @@ logXX("checkOnScanning suspended:",suspended,"scanning:",scanning,"bt enabled:",
 
     LinkedHashMap<String,BluetoothDevice> url2mac = new LinkedHashMap<String,BluetoothDevice>();
 
-    static public String ISOLATED_URL = "http://192.168.0.0:0/o/uid-1501-a7ed-1501-a7ed.json";
+    static public String ISOLATED_URL = "http://192.168.254.254:0/o/uid-15-01-a7-ed-15-01-a7-ed.json";
+
     @Override
     synchronized public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
+        String s=""; for(int i=0; i< ad.length; i++) s+=String.format("%02x ",ad[i]); logXX("onLeScan",s);
         new Evaluator(this){ public void evaluate(){
-            if(ad[9]==0 || (ad[16]+ad[17]+ad[18]+ad[19]+ad[20]+ad[21]+ad[22]==0)) return;
-            String url=String.format("http://%d.%d.%d.%d:%d/o/uid-%02x%02x-%02x%02x-%02x%02x-%02x%02x.json",
-                                     0xff&ad[9],0xff&ad[10],0xff&ad[11],0xff&ad[12],
-                                     ((0xff & ad[13])*256)+(0xff & ad[14]),
-                                     ad[15],ad[16],ad[17],ad[18],ad[19],ad[20],ad[21],ad[22]);
+            String url="";
+            if(ad[5]==0xff && ad[6]==0x4c){ // Apple iBeacon
+                url=String.format("http://%d.%d.%d.%d:%d/o/uid-%02x%02x-%02x%02x-%02x%02x-%02x%02x.json",
+                                   0xff&ad[9],0xff&ad[10],0xff&ad[11],0xff&ad[12],
+                                   ((0xff & ad[13])*256)+(0xff & ad[14]),
+                                   ad[15],ad[16],ad[17],ad[18],ad[19],ad[20],ad[21],ad[22]);
+            }
+            else
+            if(ad[0]==0x02 && ad[1]==0x01 && ad[2]==0x06){ // RedBearLab Blend Micro
+                url=String.format("http://%d.%d.%d.%d:%d/o/uid-%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x.json",
+                                   0xff&ad[7],0xff&ad[8],0xff&ad[9],0xff&ad[10],
+                                   ((0xff & ad[11])*256)+(0xff & ad[12]),
+                                   ad[13],ad[14],ad[15],ad[16],ad[17],ad[18],ad[19],ad[20]);
+            }
             logXX("BLE adv scan found: ", device.toString(), url, rssi);
+            if(url.equals("")) return;
             if(url.equals(ISOLATED_URL)){
-                String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase();
+                String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase()+"-00-00";
                 logXX("Detected isolated device. New UID: ",uid,"Signal:",rssi);
-                if(rssi>-55 && !FunctionalObserver.funcobs.oneOfOurs(uid)) startOwning(device,uid);
+                if(rssi>-50 && !FunctionalObserver.funcobs.oneOfOurs(uid)) startOwning(device,uid);
                 else logXX("Too far away or already owned by us");
 
 if(FunctionalObserver.funcobs.oneOfOurs(uid)){
@@ -151,9 +166,9 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
             bg=device.connectGatt(NetMash.top, false, bgcb);
             BluetoothGatt bgsave=bg;
             Kernel.sleep(8000);
-            logXX("checking if too late..", bg, bgsave);
+            logXX("Checking BLE device capture complete..", bg, bgsave);
             if(bg!=bgsave || bg==null) return;
-            logXX("**** too late! closing attempt");
+            logXX("**** Timed out .. ending attempt");
             closeGatt(bg);
         }}.start();
     }
@@ -184,6 +199,7 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 if(status==BluetoothGatt.GATT_SUCCESS){
                     logXX("onServicesDiscovered OK");
+displayAllServices(gatt);
                     if(!readDeviceName(gatt)){
                         logXX("********* readDeviceName failed");
                         closeGatt(gatt);
@@ -234,8 +250,14 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
         try{ gatt.disconnect(); bg.disconnect(); gatt.close(); bg.close(); bg=null; }catch(Throwable t){}
     }
 
-    static public final String UUID_GENERIC_ACCESS = "00001800-0000-1000-8000-00805f9b34fb";
-    static public final String UUID_DEVICE_NAME    = "00002a00-0000-1000-8000-00805f9b34fb";
+    static public final String UUID_GENERIC_ACCESS        = "00001800-0000-1000-8000-00805f9b34fb";
+    static public final String UUID_DEVICE_NAME           = "00002a00-0000-1000-8000-00805f9b34fb";
+
+    static public final String UUID_OBJECT_NETWORK_ADVERT = "00000b7e-0000-1000-8000-00805f9b34fb";
+    static public final String UUID_ADVERTISING_DATA      = "0000adda-0000-1000-8000-00805f9b34fb";
+
+    static public final String UUID_OBJECT_NETWORK        = "cda10000-06c4-cd1b-866f-e3a771c63274";
+    static public final String UUID_LIGHT_RGB             = "cda11001-06c4-cd1b-866f-e3a771c63274";
 
     boolean readDeviceName(BluetoothGatt gatt){
         BluetoothGattService gattService=gatt.getService(UUID.fromString(UUID_GENERIC_ACCESS));
@@ -265,14 +287,45 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
         }
     }
 
-    boolean saveDeviceNameAndSetURL(BluetoothGatt gatt, BluetoothGattCharacteristic charact){
+    boolean saveDeviceNameAndSetURL(final BluetoothGatt gatt, final BluetoothGattCharacteristic charact){
         byte[] data = charact.getValue();
         if(data==null || data.length==0) return false;
         pendingname=new String(data);
+logXX("Device Name:",pendingname);
 
-        String url=UID.toURL(pendinguid);
-        logXX("Setting URL:", url);
-        charact.setValue((pendingname+"*").getBytes(Charset.forName("UTF-8")));
+        new Thread(){ public void run(){
+            Kernel.sleep(200);
+            logXX("Setting URL");
+            byte[] ba=getAdvertisedURL(pendinguid);
+            if(ba==null || !writeAdvertistingData(gatt, ba)){
+                logXX("********* writeAdvertistingData failed");
+                closeGatt(gatt);
+            }
+        }}.start();
+
+        return true;
+    }
+
+    byte[] getAdvertisedURL(String uid){
+        InetAddress ip=Kernel.IP();
+        byte[] ipbytes= ip==null? new byte[]{127,0,0,1}: ip.getAddress();
+        int port=Kernel.config.intPathN("network:port");
+        String re="uid-([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])-([0-9a-f][0-9a-f])-00-00";
+        Matcher m = Pattern.compile(re).matcher(uid);
+        if(!m.matches()) return null;
+        return new byte[]{ (byte)'U',
+                           ipbytes[0], ipbytes[1], ipbytes[2], ipbytes[3],
+                           (byte)(port/256), (byte)(port-((port/256)*256)),
+                           (byte)Integer.parseInt(m.group(1), 16),(byte)Integer.parseInt(m.group(2), 16),(byte)Integer.parseInt(m.group(3), 16),
+                           (byte)Integer.parseInt(m.group(4), 16),(byte)Integer.parseInt(m.group(5), 16),(byte)Integer.parseInt(m.group(6), 16) };
+    }
+
+    boolean writeAdvertistingData(BluetoothGatt gatt, byte[] ba){
+        BluetoothGattService gattService=gatt.getService(UUID.fromString(UUID_OBJECT_NETWORK_ADVERT));
+        if(gattService==null){ logXX("Can't find Object Network service"); return false; }
+        BluetoothGattCharacteristic charact = gattService.getCharacteristic(UUID.fromString(UUID_ADVERTISING_DATA));
+        if(charact==null){ logXX("Can't find Advertising Data characteristic"); return false; }
+        charact.setValue(ba);
         return gatt.writeCharacteristic(charact);
     }
 
@@ -299,21 +352,24 @@ if(FunctionalObserver.funcobs.oneOfOurs(uid)){
     boolean tryingToWrite=false;
 
     void setDevice(WebObject w){
+logXX("setDevice",w);
+return;/*
         final BluetoothDevice device=url2mac.get(w.uid);
+logXX("on device",device);
         if(tryingToWrite) return;
         tryingToWrite=true;
-logXX("setDevice",w,device);
         ensureCB2();
 
         new Thread(){ public void run(){
             bg=device.connectGatt(NetMash.top, false, bgcb2);
             BluetoothGatt bgsave=bg;
             Kernel.sleep(8000);
-            logXX("checking if too late..", bg, bgsave);
+            logXX("Checking BLE device capture complete..", bg, bgsave);
             if(bg!=bgsave || bg==null) return;
-            logXX("**** too late! closing attempt");
+            logXX("**** Timed out .. ending attempt");
             closeGatt(bg);
         }}.start();
+*/
     }
 
     void ensureCB2(){
@@ -342,8 +398,8 @@ logXX("setDevice",w,device);
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 if(status==BluetoothGatt.GATT_SUCCESS){
                     logXX("onServicesDiscovered OK");
-                    if(!writeDeviceName(gatt)){
-                        logXX("********* readDeviceName failed");
+                    if(!writeDeviceName(gatt,"abcdef")){
+                        logXX("********* writeDeviceName failed");
                         closeGatt(gatt);
                     }
                 } else {
@@ -364,12 +420,12 @@ logXX("setDevice",w,device);
         };}
     }
 
-    boolean writeDeviceName(BluetoothGatt gatt){
+    boolean writeDeviceName(BluetoothGatt gatt, String name){
         BluetoothGattService gattService=gatt.getService(UUID.fromString(UUID_GENERIC_ACCESS));
         if(gattService==null){ logXX("Can't find Generic Access service"); return false; }
         BluetoothGattCharacteristic charact = gattService.getCharacteristic(UUID.fromString(UUID_DEVICE_NAME));
         if(charact==null){ logXX("Can't find Device Name characteristic"); return false; }
-        charact.setValue(("abcdef").getBytes(Charset.forName("UTF-8")));
+        charact.setValue(name.getBytes(Charset.forName("UTF-8")));
         return gatt.writeCharacteristic(charact);
     }
 
@@ -409,6 +465,9 @@ class BluetoothLight extends CyrusLanguage {
         serviceLookup.put("00001814-0000-1000-8000-00805f9b34fb", "Running Speed and Cadence");
         serviceLookup.put("00001813-0000-1000-8000-00805f9b34fb", "Scan Parameters");
         serviceLookup.put("00001804-0000-1000-8000-00805f9b34fb", "Tx Power");
+        serviceLookup.put("713d0000-503e-4c75-ba94-3148f18d941e", "RBL RedBear Lab");
+        serviceLookup.put("00000b7e-0000-1000-8000-00805f9b34fb", "Object Network Advert");
+        serviceLookup.put("cda10000-06c4-cd1b-866f-e3a771c63274", "Object Network");
 
         charactLookup.put("00002a43-0000-1000-8000-00805f9b34fb", "Alert Category ID");
         charactLookup.put("00002a42-0000-1000-8000-00805f9b34fb", "Alert Category ID Bit Mask");
@@ -491,6 +550,13 @@ class BluetoothLight extends CyrusLanguage {
         charactLookup.put("00002a0e-0000-1000-8000-00805f9b34fb", "Time Zone");
         charactLookup.put("00002a07-0000-1000-8000-00805f9b34fb", "Tx Power Level");
         charactLookup.put("00002a45-0000-1000-8000-00805f9b34fb", "Unread Alert Status");
+        charactLookup.put("713d0001-503e-4c75-ba94-3148f18d941e", "Vendor Name");
+        charactLookup.put("713d0002-503e-4c75-ba94-3148f18d941e", "Read/Notify Data");
+        charactLookup.put("713d0003-503e-4c75-ba94-3148f18d941e", "Write Data");
+        charactLookup.put("713d0004-503e-4c75-ba94-3148f18d941e", "Send More Data");
+        charactLookup.put("713d0005-503e-4c75-ba94-3148f18d941e", "Library Version");
+        charactLookup.put("0000adda-0000-1000-8000-00805f9b34fb", "Advertising Data");
+        charactLookup.put("cda11001-06c4-cd1b-866f-e3a771c63274", "Light RGB");
     }
 }
 

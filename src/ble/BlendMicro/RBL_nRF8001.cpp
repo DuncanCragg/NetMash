@@ -11,6 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 */
 
+#include <avr/eeprom.h>
 #include "RBL_nRF8001.h"
 
 #ifdef SERVICES_PIPE_TYPE_MAPPING_CONTENT
@@ -25,7 +26,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 static hal_aci_data_t setup_msgs[NB_SETUP_MESSAGES] PROGMEM = SETUP_MESSAGES_CONTENT;
 
 #if defined(BLEND_MICRO)
-static char device_name[11] = "BlendMicro";
+static char device_name[11] = "ON Light  ";
 #elif defined(BLEND)
 static char device_name[11] = "Blend     ";
 #else
@@ -90,7 +91,7 @@ void ble_set_pins(uint8_t reqn, uint8_t rdyn)
 #if defined(BLEND_MICRO)
     return;
 #else
-	reqn_pin = reqn;
+    reqn_pin = reqn;
     rdyn_pin = rdyn;
 #endif
 }
@@ -136,8 +137,8 @@ void ble_begin()
     aci_state.aci_pins.active_pin            = UNUSED;
     aci_state.aci_pins.optional_chip_sel_pin = UNUSED;
 
-    aci_state.aci_pins.interface_is_interrupt	  = false;
-    aci_state.aci_pins.interrupt_number			  = 4;//1;
+    aci_state.aci_pins.interface_is_interrupt  = false;
+    aci_state.aci_pins.interrupt_number  = 4;//1;
 
     //We reset the nRF8001 here by toggling the RESET line connected to the nRF8001
     //If the RESET line is not available we call the ACI Radio Reset to soft reset the nRF8001
@@ -151,8 +152,41 @@ void ble_begin()
 
 static volatile byte ack = 0;
 
+#define ADV_DATA_LEN 14
+static byte adv_data[] = { 0xc0,0xa8,0xfe,0xfe,0x00,0x00,0x15,0x01,0xa7,0xed,0x15,0x01,0xa7,0xed };
+
+#define URL_SET 0
+#define URL_BYTES 1
+
+#define TEST_MODE 1
+
+void get_adv_data_from_eeprom(){
+    int i=0;
+    for(; i<ADV_DATA_LEN; i++) adv_data[i]=eeprom_read_byte((uint8_t*)(URL_BYTES+i)); 
+}
+
+void advertise_for_connect()
+{
+    uint8_t urlset=eeprom_read_byte(URL_SET);
+    Serial.println(urlset? "URL set": "URL not set yet");
+    if(urlset && !TEST_MODE) get_adv_data_from_eeprom();
+    if(lib_aci_open_adv_pipe(PIPE_OBJECT_NETWORK_ADVERT_ADVERTISING_DATA_BROADCAST) &&
+       lib_aci_set_local_data(&aci_state, PIPE_OBJECT_NETWORK_ADVERT_ADVERTISING_DATA_BROADCAST, (uint8_t *)&adv_data, 14)){
+        lib_aci_connect(10, 0x00a0);
+    }
+}
+
+void ble_set_advertising_data(char* ad, int len)
+{
+    int i=0;
+    for(; i<len;          i++){ eeprom_write_byte((uint8_t*)(URL_BYTES+i), ad[i]); }
+    for(; i<ADV_DATA_LEN; i++){ eeprom_write_byte((uint8_t*)(URL_BYTES+i), 0);     }
+    eeprom_write_byte(URL_SET, 1);
+    if(TEST_MODE) get_adv_data_from_eeprom();
+}
+
 void ble_write(unsigned char data)
-{	    
+{    
     if(tx_buffer_len == MAX_TX_BUFF)
     {
             return;
@@ -169,21 +203,21 @@ void ble_write_bytes(unsigned char *data, uint8_t len)
 
 int ble_read()
 {
-	int data;
-	if(rx_buffer_len == 0) return -1;
-	if(p_before == &rx_buff[MAX_RX_BUFF])
-	{
+    int data;
+    if(rx_buffer_len == 0) return -1;
+    if(p_before == &rx_buff[MAX_RX_BUFF])
+    {
         p_before = &rx_buff[0];
-	}
-	data = *p_before;
-	p_before ++;
-	rx_buffer_len--;
-	return data;
+    }
+    data = *p_before;
+    p_before++;
+    rx_buffer_len--;
+    return data;
 }
 
 unsigned char ble_available()
 {
-	return rx_buffer_len;
+    return rx_buffer_len;
 }
 
 unsigned char ble_connected()
@@ -248,8 +282,9 @@ static void process_events()
                         }
                         else
                         {
-                            lib_aci_set_local_data(&aci_state, PIPE_GAP_DEVICE_NAME_SET , (uint8_t *)&device_name , strlen(device_name));
-                            lib_aci_connect(180/* in seconds */, 0x0050 /* advertising interval 50ms*/);
+                            //lib_aci_set_local_data(&aci_state, PIPE_GAP_DEVICE_NAME_SET , (uint8_t *)&device_name , strlen(device_name));
+                            advertise_for_connect();
+
                             Serial.println(F("Advertising started"));
                         }
                         break;
@@ -303,7 +338,7 @@ static void process_events()
                 is_connected = 0;
                 ack = 1;
                 Serial.println(F("Evt Disconnected/Advertising timed out"));
-                lib_aci_connect(30/* in seconds */, 0x0050 /* advertising interval 100ms*/);
+                advertise_for_connect();
                 Serial.println(F("Advertising started"));
                 break;
 
@@ -364,7 +399,7 @@ static void process_events()
                   Serial.write(aci_evt->params.hw_error.file_name[counter]); //uint8_t file_name[20];
                 }
                 Serial.println();
-                lib_aci_connect(180/* in seconds */, 0x0050 /* advertising interval 50ms*/);
+                advertise_for_connect();
                 Serial.println(F("Advertising started"));
                 break;
         }
