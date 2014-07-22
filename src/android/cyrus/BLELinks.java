@@ -332,10 +332,27 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
             "  rotation: 45 45 45\n"+
             "  scale: 1 1 1\n"+
             "  light: 1 1 1\n"+
+            "  links-around: "+uid+"\n"+
             "}\n", this);
         w.uid=pendinguid;
         FunctionalObserver.funcobs.cacheSaveAndEvaluate(w);
         url2mac.put(pendinguid,pendingdevice);
+    }
+
+    class BluetoothLight extends CyrusLanguage {
+        BLELinks blelinks;
+        public BluetoothLight(){ }
+        public BluetoothLight(String s, BLELinks ble){ super(s,true); blelinks=ble; }
+        public void evaluate(){
+            String placeURL=content("links-around:place");
+            if(placeURL!=null && !contentIs("within", placeURL)){
+                contentList("position", list(random(1,10), random(0,3), random(1,10)));
+                content("within", placeURL);
+                notifying(placeURL);
+            }
+            super.evaluate();
+            if(modified()) blelinks.setDevice(this);
+        }
     }
 
     // ---------------------------------------------------------
@@ -428,16 +445,6 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         charact.setValue(rgb);
         return gatt.writeCharacteristic(charact);
     }
-
-class BluetoothLight extends CyrusLanguage {
-    BLELinks blelinks;
-    public BluetoothLight(){ }
-    public BluetoothLight(String s, BLELinks ble){ super(s,true); blelinks=ble; }
-    public void evaluate(){
-        super.evaluate();
-        if(modified()) blelinks.setDevice(this);
-    }
-}
 
     static LinkedHashMap<String, String> serviceLookup = new LinkedHashMap<String, String>();
     static LinkedHashMap<String, String> charactLookup = new LinkedHashMap<String, String>();
