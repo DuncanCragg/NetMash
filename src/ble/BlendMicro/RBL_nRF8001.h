@@ -44,7 +44,6 @@ void ble_do_events();
 int ble_read();
 unsigned char ble_available();
 unsigned char ble_connected(void);
-void ble_set_pins(uint8_t reqn, uint8_t rdyn);
 unsigned char ble_busy();
 
 #endif

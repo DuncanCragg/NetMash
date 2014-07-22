@@ -86,16 +86,6 @@ void __ble_assert(const char *file, uint16_t line)
     while(1);
 }
 
-void ble_set_pins(uint8_t reqn, uint8_t rdyn)
-{
-#if defined(BLEND_MICRO)
-    return;
-#else
-    reqn_pin = reqn;
-    rdyn_pin = rdyn;
-#endif
-}
-
 void ble_begin()
 {
     spi_old = SPCR;
