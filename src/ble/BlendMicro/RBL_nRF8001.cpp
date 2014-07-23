@@ -26,7 +26,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 static hal_aci_data_t setup_msgs[NB_SETUP_MESSAGES] PROGMEM = SETUP_MESSAGES_CONTENT;
 
 #if defined(BLEND_MICRO)
-static char device_name[11] = "ON Light  ";
+static char device_name[11] = "BlendMicro";
 #elif defined(BLEND)
 static char device_name[11] = "Blend     ";
 #else
@@ -164,6 +164,7 @@ void advertise_for_connect()
        lib_aci_set_local_data(&aci_state, PIPE_OBJECT_NETWORK_ADVERT_ADVERTISING_DATA_BROADCAST, (uint8_t *)&adv_data, 14)){
         lib_aci_connect(10, 0x00a0);
     }
+    lib_aci_set_local_data(&aci_state, PIPE_GAP_DEVICE_NAME_SET , (uint8_t *)&device_name , strlen(device_name));
 }
 
 void ble_set_advertising_data(char* ad, int len)
@@ -272,7 +273,6 @@ static void process_events()
                         }
                         else
                         {
-                            //lib_aci_set_local_data(&aci_state, PIPE_GAP_DEVICE_NAME_SET , (uint8_t *)&device_name , strlen(device_name));
                             advertise_for_connect();
 
                             Serial.println(F("Advertising started"));

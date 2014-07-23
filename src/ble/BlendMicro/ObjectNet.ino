@@ -24,6 +24,11 @@ void setup() {
   pinMode(R_PIN, OUTPUT);
   pinMode(G_PIN, OUTPUT);
   pinMode(B_PIN, OUTPUT);
+  analogWrite(R_PIN, 0x00);
+  analogWrite(G_PIN, 0x00);
+  analogWrite(B_PIN, 0xff);
+
+  ble_set_name("RGB Light");
 
   ble_begin();
 }
