@@ -885,7 +885,7 @@ public class User extends CyrusLanguage {
 
     public void evaluate(){
         if(contentIs("is", "user") && this==currentUser){
-            if(!checkAroundAndShow() && !NetMash.top.editing) showWhatIAmViewing();
+            if(!checkAroundAndShow() && NetMash.top!=null && !NetMash.top.editing) showWhatIAmViewing();
         }
         else
         if(contentListContainsAll("is", list("private", "contact", "list"))){

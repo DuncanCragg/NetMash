@@ -124,7 +124,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
                 else logXX("Too far away or already owned by us");
                 return;
             }
-            url2mac.put(url,device);
+            url2mac.put(UID.toUID(url),device);
             contentSetAdd("list", url);
             contentHash(UID.toUID(url), hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
             LinkedList allplaces=contentAll("list:within");
@@ -321,41 +321,11 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
     }
 
     void createObject(){
-        WebObject w=new BluetoothLight(
-            "{ is: editable 3d cuboid light\n"+
-            "  Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
-            "         http://netmash.net/o/uid-0dc6-ad27-05ec-a0b2.cyr\n"+
-            "         http://netmash.net/o/uid-e369-6d5d-5283-7bc7.cyr\n"+
-            "  P: { }\n"+
-            "  Timer: 1000\n"+
-            "  title: \""+pendingname+"\"\n"+
-            "  rotation: 45 45 45\n"+
-            "  scale: 1 1 1\n"+
-            "  light: 1 1 1\n"+
-            "  links-around: "+uid+"\n"+
-            "}\n", this);
+        WebObject w=new BluetoothLight(this, pendingname, uid);
         w.uid=pendinguid;
         FunctionalObserver.funcobs.cacheSaveAndEvaluate(w);
         url2mac.put(pendinguid,pendingdevice);
     }
-
-    class BluetoothLight extends CyrusLanguage {
-        BLELinks blelinks;
-        public BluetoothLight(){ }
-        public BluetoothLight(String s, BLELinks ble){ super(s,true); blelinks=ble; }
-        public void evaluate(){
-            String placeURL=content("links-around:place");
-            if(placeURL!=null && !contentIs("within", placeURL)){
-                contentList("position", list(random(1,10), random(0,3), random(1,10)));
-                content("within", placeURL);
-                notifying(placeURL);
-            }
-            super.evaluate();
-            if(modified()) blelinks.setDevice(this);
-        }
-    }
-
-    // ---------------------------------------------------------
 
     boolean tryingToWrite=false;
 
@@ -364,6 +334,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         pendingrgb=w.contentList("light");
         final BluetoothDevice device=url2mac.get(w.uid);
         logXX("on device",device);
+        if(device==null) return;
         if(tryingToWrite) return;
         tryingToWrite=true;
         ensureCB2();
@@ -427,7 +398,6 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
 
     void writeRGBSoon(final BluetoothGatt gatt){
         new Thread(){ public void run(){
-            Kernel.sleep(200);
             logXX("Writing RGB");
             byte[] rgb=new byte[]{ (byte)'R', (byte)(255*getFloatFromList(pendingrgb, 0, 1f)), (byte)(255*getFloatFromList(pendingrgb, 1, 1f)), (byte)(255*getFloatFromList(pendingrgb, 2, 1f)) };
             if(!writeRGB(gatt, rgb)){
