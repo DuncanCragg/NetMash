@@ -120,7 +120,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
             if(url.equals(ISOLATED_URL)){
                 String uid="uid-"+device.toString().replaceAll(":","-").toLowerCase()+"-00-00";
                 logXX("Detected isolated device. New UID: ",uid,"Signal:",rssi);
-                if(rssi>-40 && !FunctionalObserver.funcobs.oneOfOurs(uid)) startOwning(device,uid);
+                if(rssi>-40 && !FunctionalObserver.funcobs.oneOfOurs(uid)) captureDevice(device,uid);
                 else logXX("Too far away or already owned by us");
                 return;
             }
@@ -150,7 +150,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
     String                pendingname=null;
     LinkedList            pendingrgb=null;
 
-    void startOwning(final BluetoothDevice device, String uid){
+    void captureDevice(final BluetoothDevice device, String uid){
         logXX("Held close together - attempting to own device");
         if(pendingdevice!=null) return;
         pendingdevice=device;
@@ -343,7 +343,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
             bg=device.connectGatt(NetMash.top, false, bgcb2);
             BluetoothGatt bgsave=bg;
             Kernel.sleep(8000);
-            logXX("Checking BLE device capture complete..", bg, bgsave);
+            logXX("Checking BLE device set complete..", bg, bgsave);
             if(bg!=bgsave || bg==null) return;
             logXX("**** Timed out .. ending attempt");
             closeGatt(bg);
