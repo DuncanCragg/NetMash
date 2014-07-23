@@ -9,12 +9,12 @@ import static cyrus.lib.Utils.*;
   */
 public class BluetoothLight extends CyrusLanguage {
 
-        BLELinks blelinks;
+    BLELinks blelinks;
 
-        public BluetoothLight(){ blelinks=NetMash.user.linksaround; }
+    public BluetoothLight(){ blelinks=NetMash.user.linksaround; }
 
-        public BluetoothLight(BLELinks ble, String name, String linksarounduid){
-            super(
+    public BluetoothLight(BLELinks ble, String name, String linksarounduid){
+        super(
             "{ is: editable 3d cuboid light\n"+
             "  Rules: http://netmash.net/o/uid-16bd-140a-8862-41cd.cyr\n"+
             "         http://netmash.net/o/uid-0dc6-ad27-05ec-a0b2.cyr\n"+
@@ -26,19 +26,19 @@ public class BluetoothLight extends CyrusLanguage {
             "  scale: 1 1 1\n"+
             "  light: 1 1 1\n"+
             "  links-around: "+linksarounduid+"\n"+
-            "}\n", true);
-            blelinks=ble;
-        }
-
-        public void evaluate(){
-            String placeURL=content("links-around:place");
-            if(placeURL!=null && !contentIs("within", placeURL)){
-                contentList("position", list(random(1,10), random(0,3), random(1,10)));
-                content("within", placeURL);
-                notifying(placeURL);
-            }
-            super.evaluate();
-            if(modified()) blelinks.setDevice(this);
-        }
+        "}\n", true);
+        blelinks=ble;
     }
+
+    public void evaluate(){
+        String placeURL=content("links-around:place");
+        if(placeURL!=null && !contentIs("within", placeURL)){
+            contentList("position", list(random(1,10), random(0,3), random(1,10)));
+            content("within", placeURL);
+            notifying(placeURL);
+        }
+        super.evaluate();
+        if(modified()) blelinks.setDevice(this);
+    }
+}
 
