@@ -1,9 +1,5 @@
 
-import java.util.*;
-import cyrus.forest.WebObject;
 import cyrus.forest.CyrusLanguage;
-
-import static cyrus.lib.Utils.*;
 
 /** FX Dealer Object from Book Chapter example.
   * Run by CyrusLanguage rules, but have a pseudo-market ticker.

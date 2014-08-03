@@ -225,6 +225,9 @@ run2: jar
 run2root: jar
 	(cd src/server/vm2; sudo ./run.sh)
 
+run1g: jar
+	(cd src/server/vm1; ./run-g.sh)
+
 run1n2: run1 run2
 
 run1n2root: run1 run2root
