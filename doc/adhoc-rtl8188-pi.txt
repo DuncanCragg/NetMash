@@ -5,7 +5,7 @@ You need:
 
  - to be on 3.12.28+ kernel (check uname -a); apt-get install rpi-update; rpi-update!
  - to have an rtl8188cus WiFi plug (don't plug it in yet)
- - to have my module tar file e.g. "wget http://../pi-nl80211-rtl8188cus-3.12.28+.tar"
+ - to have my module tar file e.g. "wget https://raw.githubusercontent.com/DuncanCragg/NetMash/master/binaries/pi-nl80211-rtl8188cus-3.12.28+.tar"
  - to have another Pi or laptop for a peer
 
 Get root:
