@@ -16,9 +16,9 @@ Go to your modules directory:
 
 # cd /lib/modules/3.12.28+
 
-unpack the tar:
+unpack the tar - put correct path in for tarfile:
 
-# tar xvf pi-nl80211-rtl8188cus-3.12.28+.tar
+# tar xvf .../pi-nl80211-rtl8188cus-3.12.28+.tar
 
 kernel/drivers/net/wireless/rtlwifi/rtl8192cu.ko
 kernel/drivers/net/wireless/rtlwifi/rtl_usb.ko
