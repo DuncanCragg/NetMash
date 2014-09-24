@@ -1,0 +1,25 @@
+
+git clone           https://github.com/raspberrypi/tools
+git clone --depth=1 https://github.com/raspberrypi/linux
+
+make -j5 ARCH=arm CROSS_COMPILE=/home/duncan/adhoc/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/bin/arm-bcm2708-linux-gnueabi- bcmrpi_defconfig
+make -j5 ARCH=arm CROSS_COMPILE=/home/duncan/adhoc/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/bin/arm-bcm2708-linux-gnueabi- config
+
+# drivers/net/wireless/Makefile
+# drivers/net/wireless/rtlwifi/Makefile
+# drivers/net/wireless/rtlwifi/rtl8192c/Makefile
+# drivers/net/wireless/rtlwifi/rtl8192cu/Makefile
+
+make -j5 ARCH=arm CROSS_COMPILE=/home/duncan/adhoc/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/bin/arm-bcm2708-linux-gnueabi-
+make -j5 ARCH=arm CROSS_COMPILE=/home/duncan/adhoc/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/bin/arm-bcm2708-linux-gnueabi- modules
+make -j5 ARCH=arm CROSS_COMPILE=/home/duncan/adhoc/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/bin/arm-bcm2708-linux-gnueabi- INSTALL_MOD_PATH=/home/duncan/adhoc/modules/ modules_install
+
+# drivers/net/wireless/rtlwifi/rtlwifi.ko
+# drivers/net/wireless/rtlwifi/rtl8192c/rtl8192c-common.ko
+# drivers/net/wireless/rtlwifi/rtl_usb.ko
+# drivers/net/wireless/rtlwifi/rtl8192cu/rtl8192cu.ko
+
+make -j5 ARCH=arm CROSS_COMPILE=/home/duncan/adhoc/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/bin/arm-bcm2708-linux-gnueabi- M=drivers/net/wireless/rtlwifi modules
+
+
+

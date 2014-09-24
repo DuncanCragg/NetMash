@@ -1,0 +1,72 @@
+
+This is how to get ad-hoc mode using the popular rtl8188cus USB WiFi adaptor on the Pi.
+
+You need:
+
+ - to be on 3.12.28+ kernel (check uname -a); apt-get install rpi-update; rpi-update!
+ - to have an rtl8188cus WiFi plug (don't plug it in yet)
+ - to have my module tar file e.g. "wget http://../pi-nl80211-rtl8188cus-3.12.28+.tar"
+ - to have another Pi or laptop for a peer
+
+Get root:
+
+$ sudo bash
+
+Go to your modules directory:
+
+# cd /lib/modules/3.12.28+
+
+unpack the tar:
+
+# tar xvf pi-nl80211-rtl8188cus-3.12.28+.tar
+
+kernel/drivers/net/wireless/rtlwifi/rtl8192cu.ko
+kernel/drivers/net/wireless/rtlwifi/rtl_usb.ko
+kernel/drivers/net/wireless/rtlwifi/rtlwifi.ko
+kernel/drivers/net/wireless/rtlwifi/rtl8192c-common.ko
+
+Tell the kernel how to find the new things:
+
+# depmod -a
+
+Stop the kernel finding the old thing:
+
+# vi /etc/modprobe.d/raspi-blacklist.conf
+
+Add this to the end:
+
+blacklist 8192cu
+
+Shutdown the Pi, plug in the rtl8188cus adaptor, start the Pi.
+
+Check it worked:
+
+# lsmod | grep rtl
+
+You should see rtl8192cu, rtl_usb rtlwifi and rtl8192c_common
+
+Run this script:
+
+
+#!/bin/bash
+ip link set wlan0 down
+ifconfig wlan0 down; iwconfig wlan0 mode ad-hoc
+iwconfig wlan0 channel 4
+iwconfig wlan0 essid adhockery
+iwconfig wlan0 ap 02:1B:55:AD:0C:02
+ip link set wlan0 up
+ip addr add 10.0.0.9/24 dev wlan0
+iwconfig wlan0
+ip route | grep wlan0
+
+The one-liner-two-step on line 3 is apparently necessary. Don't know why.
+
+You may need to change wlan0 to wlan1, and you can change the channel/frequency, SSID and Cell ('ap') to taste. Setting the cell id like this helps keep the cell together.
+
+Then ping another peer - run that script but change the IP number from 10.0.0.9!
+
+You should find that "iw dev wlan0 station dump" will list all the peers and their signal strength or RSSI!
+
+
+
+
