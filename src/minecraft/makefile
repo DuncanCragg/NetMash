@@ -113,6 +113,7 @@ mc2:
 
 mc3:
 	java -Dsun.java3d.opengl=true -Xmx1024M -Xms1024M -XX:+UseFastAccessorMethods -XX:+AggressiveOpts -XX:+DisableExplicitGC -XX:+UseAdaptiveGCBoundary -XX:MaxGCPauseMillis=500 -XX:SurvivorRatio=16 -XX:+UseParallelGC -XX:UseSSE=3 -XX:ParallelGCThreads=4 -jar $(MINECRAFT_DIR)/minecraft.jar
+
 clean:
 	rm -f cyrusclient.zip 1.6.2-Cyrus.jar cyrusserver.zip cyrusserver.jar
 

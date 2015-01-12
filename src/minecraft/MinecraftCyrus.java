@@ -9,7 +9,7 @@ import java.io.*;
 import cyrus.platform.Kernel;
 import cyrus.forest.*;
 import cyrus.Version;
-import cyrus.Cyrus;
+import cyrus.NetMash;
 import cyrus.lib.JSON;
 
 
