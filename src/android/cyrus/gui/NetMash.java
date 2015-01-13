@@ -43,7 +43,7 @@ import cyrus.User;
 
 /**  NetMash main.
   */
-public class NetMash extends MapActivity {
+public class NetMash extends Activity {
 
     static public NetMash top=null;
     static public User  user=null;
@@ -1060,7 +1060,7 @@ log(show? "show keyboard": "hide keyboard");
         return false;
     }
 
-    @Override
+    //@Override
     protected boolean isRouteDisplayed(){
         return false;
     }
