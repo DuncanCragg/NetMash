@@ -45,6 +45,7 @@ public class Utils{
     }
 
     static public void exec(String command){ try{
+        logXX(command);
         Process p=Runtime.getRuntime().exec(command);
         BufferedInputStream bis = new BufferedInputStream(p.getInputStream());
         int read;
