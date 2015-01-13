@@ -508,12 +508,14 @@ clean:
 	rm -rf bin/classes bin/classes.dex
 	rm -f  bin/NetMash.ap_ bin/NetMash*un*ed.apk
 	rm -f  gen/cyrus/gui/R.java
-	-mv ,l* doc/local
+	rm -f  doc/local/,l*
+	mv ,l* doc/local || echo -n
 	rm -f  ,*
 
 veryclean: killroot clean setappemuconfig netconfig setvm3cleanconfig setremmapkey
-	-mv    src/server/vm1/cyrus.log doc/local/cyrus1.log
-	-mv    src/server/vm2/cyrus.log doc/local/cyrus2.log
+	rm -f doc/local/cyrus1.log doc/local/cyrus2.log
+	mv    src/server/vm1/cyrus.log doc/local/cyrus1.log || echo -n
+	mv    src/server/vm2/cyrus.log doc/local/cyrus2.log || echo -n
 	rm -f  src/server/vm[12]/cyrus.db
 	rm -f  src/server/vm[12]/cyrusconfig.db
 	rm -rf bin gen
