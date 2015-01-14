@@ -93,7 +93,7 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         new Evaluator(this){ public void evaluate(){ setPlace(placeURL); }};
     }
 
-    LinkedHashMap<String,BluetoothDevice> url2mac = new LinkedHashMap<String,BluetoothDevice>();
+    LinkedHashMap<String,Integer> url2dis = new LinkedHashMap<String,Integer>();
 
     @Override
     synchronized public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] ad){
@@ -108,9 +108,9 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
             }
             logXX("BLE adv scan found: ", device.toString(), url, rssi);
             if(url.equals("")) return;
-            url2mac.put(UID.toUID(url),device);
+            String uid=UID.toUID(url);
             contentSetAdd("list", url);
-            contentHash(UID.toUID(url), hash("distance",-rssi-25, "mac",device.toString().replaceAll(":","-")));
+            contentHash(uid, hash("distance", smoothDistance(uid,rssi), "mac",device.toString().replaceAll(":","-")));
             LinkedList allplaces=contentAll("list:within");
             if(allplaces!=null) for(Object o: allplaces){
                 if(!(o instanceof String)) continue;
@@ -120,12 +120,21 @@ public class BLELinks extends WebObject implements BluetoothAdapter.LeScanCallba
         }};
     }
 
+    int smoothDistance(String uid, int rssi){
+        int dist= -rssi;
+        Integer prev=url2dis.get(uid);
+        int r= (prev==null)? dist:
+              ((dist< prev)? (2*prev+dist)/3:
+                             (4*prev+dist)/5);
+        url2dis.put(uid,r);
+        return r;
+    }
+
     void setPlace(String placeURL){
         contentSetAdd("list", placeURL);
         contentHash(UID.toUID(placeURL), hash("distance",25));
         content("place", placeURL);
     }
-
 }
 
 

@@ -55,10 +55,12 @@ public class Sensors implements SensorEventListener {
         }
     }
 
+    static public final float SMOOTHNESS= 0.83f;
+
     float smooth(float o, float n){
         if(o < -1.5f && n >  1.5f) o+=2*Math.PI;
         if(o >  1.5f && n < -1.5f) o-=2*Math.PI;
-        return 0.7f*o+0.3f*n;
+        return SMOOTHNESS*o+(1-SMOOTHNESS)*n;
     }
 
     public void onAccuracyChanged(Sensor s, int x) {}

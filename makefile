@@ -7,7 +7,7 @@ LOCAL_IP=192.168.0.16
 #
 # Coordinates of PiBeaconTemperature
 #
-LIGHT_POS=1 1 10
+PI_THING_POS=10 1 1
 #
 # Where you want the release Android apk to be copied
 #
@@ -324,8 +324,8 @@ setvm3emuconfig: setvm1emuconfig setvm2emuconfig
 setvm3cleanconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g"                   src/server/vm2/PiBeaconTemperature.java
-	sed -i"" -e  "s#position: $(LIGHT_POS)#position: 0 0 0#g" src/server/vm2/PiBeaconTemperature.java
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g"                      src/server/vm2/PiBeaconTemperature.java
+	sed -i"" -e  "s#position: $(PI_THING_POS)#position: 0 0 0#g" src/server/vm2/PiBeaconTemperature.java
 
 setvm1lanconfig:
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
@@ -343,13 +343,13 @@ setvm2iotconfig:
 	sed -i"" -e  "s#host: localhost##g"                          src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s#preload: ( )#preload: PiBeaconTemperature#g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s:localhost:$(LOCAL_IP):g"                     src/server/vm2/PiBeaconTemperature.java
-	sed -i"" -e  "s#position: 0 0 0#position: $(LIGHT_POS)#g"    src/server/vm2/PiBeaconTemperature.java
+	sed -i"" -e  "s#position: 0 0 0#position: $(PI_THING_POS)#g" src/server/vm2/PiBeaconTemperature.java
 
 setvm2iotconfig2:
 	sed -i"" -e  "s#host: localhost##g"                          src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s#preload: ( )#preload: PiBeaconTemperature#g" src/server/vm2/cyrusconfig.db
 	sed -i"" -e  "s#netmash.net#localhost:8081#g"                src/server/vm2/PiBeaconTemperature.java
-	sed -i"" -e  "s#position: 0 0 0#position: $(LIGHT_POS)#g"    src/server/vm2/PiBeaconTemperature.java
+	sed -i"" -e  "s#position: 0 0 0#position: $(PI_THING_POS)#g" src/server/vm2/PiBeaconTemperature.java
 
 setvm3lanconfig: setvm1lanconfig setvm2lanconfig
 
