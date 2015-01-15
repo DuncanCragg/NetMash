@@ -13,14 +13,25 @@ public class PiUtils{
     static String getPinMapping(String pin){
         if(pinMapping==null){
             pinMapping = new LinkedHashMap<String,String>();
-            pinMapping.put("4","7");
+            pinMapping.put( "4", "7");
+            pinMapping.put("17", "0");
+            pinMapping.put("18", "1");
+            pinMapping.put("22", "3");
+            pinMapping.put("23", "4");
+            pinMapping.put("24", "5");
+            pinMapping.put("25", "6");
+            pinMapping.put("27", "2");
+            pinMapping.put("28","17");
+            pinMapping.put("29","18");
+            pinMapping.put("30","19");
+            pinMapping.put("31","20");
         }
         return pinMapping.get(pin);
     }
 
     static public boolean grabGPIO(String pin, String mode) { try {
         String pinwire=getPinMapping(pin);
-        if(pinwire!=null && mode!=null) exec(String.format("gpio mode %s %s", pinwire, mode);
+        if(pinwire!=null && mode!=null) exec(String.format("gpio mode %s %s", pinwire, mode));
         if(unex==null){
             unex = new FileWriter("/sys/class/gpio/unexport");
             ex =   new FileWriter("/sys/class/gpio/export");
