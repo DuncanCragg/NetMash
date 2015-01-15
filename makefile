@@ -3,7 +3,7 @@
 # IP of your development machine on the LAN
 # Always 'make veryclean' before changing this!
 #
-LOCAL_IP=192.168.0.16
+LOCAL_IP=192.168.43.196
 #
 # Coordinates of PiBeaconTemperature
 #

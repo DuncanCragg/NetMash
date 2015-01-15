@@ -1,6 +1,8 @@
 
 import java.io.*;
 
+import static cyrus.lib.Utils.*;
+
 public class PiUtils{
 
     static FileWriter unex=null;
@@ -21,9 +23,9 @@ public class PiUtils{
         return true;
     } catch(Throwable t){ t.printStackTrace(); return false; }}
 
-    static public boolean setGPIODir(String ch, boolean out) { try {
+    static public boolean setGPIODir(String ch, String dir) { try {
         FileWriter fw = new FileWriter("/sys/class/gpio/gpio"+ch+"/direction");
-        fw.write(out? "out": "in");
+        fw.write(dir);
         fw.flush();
         fw.close();
         return true;
@@ -41,7 +43,7 @@ public class PiUtils{
         FileReader fr = new FileReader("/sys/class/gpio/gpio"+ch+"/value");
         int r=fr.read();
         fr.close();
-        return r!=0;
+        return r=='1';
     } catch(Throwable t){ t.printStackTrace(); return false; }}
 }
 

@@ -18,14 +18,14 @@ public class PiBeaconTemperature extends CyrusLanguage {
               "  text: waiting..\n"+
               "  rotation: 0 45 0\n"+
               "  scale: 1 1 1\n"+
-              "  position: 0 0 0\n"+
-              "  within: http://localhost:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
+              "  position: 10 1 1\n"+
+              "  within: http://192.168.43.196:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
               "}\n", true);
     }
 
     private boolean running=false;
 
-    double T=22.2f;
+    double T=0f;
 
     public void evaluate(){
         if(!running){ running=true;
@@ -39,15 +39,16 @@ public class PiBeaconTemperature extends CyrusLanguage {
 
     void doit(){
         while(true){
-            PiUtils.setGPIODir("4", true);
-            Kernel.sleep(1000);
-            PiUtils.setGPIOVal("4", true);
-            Kernel.sleep(1000);
+            PiUtils.setGPIODir("4", "out");
             PiUtils.setGPIOVal("4", false);
-            T+=0.01;
+            Kernel.sleep(100);
+            PiUtils.setGPIODir("4", "in");
+            long x=0;
+            while(!PiUtils.getGPIOVal("4") && x<10000) x++;
+            T=x;
             new Evaluator(this){ public void evaluate(){
-                contentDouble("temperature", T);
-                content("text", String.format("Temperature: %.2f C", T));
+                contentDouble("soil moisture", T);
+                content("text", String.format("Soil Moisture: %.0f", T));
             }};
         }
     }
