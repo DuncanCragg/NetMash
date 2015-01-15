@@ -47,7 +47,7 @@ public class PiBeaconTemperature extends CyrusLanguage {
             while(!PiUtils.getGPIOVal("4") && x<10000) x++;
             T=x;
             new Evaluator(this){ public void evaluate(){
-                contentDouble("soil moisture", T);
+                contentDouble("soil-moisture", T);
                 content("text", String.format("Soil Moisture: %.0f", T));
             }};
         }
