@@ -17,6 +17,7 @@ public class PiUtils{
             pinMapping.put( "4", "7");
             pinMapping.put("17", "0");
             pinMapping.put("18", "1");
+            pinMapping.put("21", "2");
             pinMapping.put("22", "3");
             pinMapping.put("23", "4");
             pinMapping.put("24", "5");
