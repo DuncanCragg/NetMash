@@ -18,8 +18,8 @@ public class PiBeaconTemperature extends CyrusLanguage {
               "  text: waiting..\n"+
               "  rotation: 0 45 0\n"+
               "  scale: 1 1 1\n"+
-              "  position: 10 1 1\n"+
-              "  within: http://192.168.43.196:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
+              "  position: 0 0 0\n"+
+              "  within: http://localhost:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
               "}\n", true);
     }
 
