@@ -30,7 +30,7 @@ public class PiBeaconTemperature extends CyrusLanguage {
     public void evaluate(){
         if(!running){ running=true;
             BLE.doAdvert(uid);
-            PiUtils.grabGPIO("4");
+            PiUtils.grabGPIO("4","tri");
             new Thread(){ public void run(){ doit(); }}.start();
         }
         super.evaluate();
