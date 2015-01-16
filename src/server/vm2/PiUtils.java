@@ -64,11 +64,11 @@ public class PiUtils{
         return true;
     } catch(Throwable t){ t.printStackTrace(); return false; }}
 
-    static public boolean getGPIOVal(String pin) { try {
+    static public int getGPIOVal(String pin) { try {
         FileReader fr = new FileReader("/sys/class/gpio/gpio"+pin+"/value");
         int r=fr.read();
         fr.close();
-        return r=='1';
-    } catch(Throwable t){ t.printStackTrace(); return false; }}
+        return r;
+    } catch(Throwable t){ t.printStackTrace(); return -1; }}
 }
 
