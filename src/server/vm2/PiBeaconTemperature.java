@@ -1,7 +1,10 @@
 
+import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.util.regex.*;
+import java.nio.file.*;
+import java.nio.charset.*;
 
 import cyrus.platform.*;
 import cyrus.forest.*;
@@ -35,42 +38,61 @@ public class PiBeaconTemperature extends CyrusLanguage {
         notifying(content("within"));
     }
 
-    int scaleFactor=28;
-    int[] measurements=new int[20];
-    int i=0;
-    double avg;
+    int smoothmicros=2000;
 
-    void doit(){
-        for(i=0; i< 20; i++) measurements[i]=0;
-        i=0;
+    void doit(){ try{
         while(true){
-            PiUtils.setGPIODir("4", "out");
-            PiUtils.setGPIOVal("4", false);
-            Kernel.sleep(500);
-            PiUtils.setGPIODir("4", "in");
+            List<String> strings=Files.readAllLines(Paths.get("/run/moisture.txt"), Charset.forName("UTF-8"));
+            LinkedList<Integer> values=new LinkedList<Integer>();
 
-            long startTime=System.nanoTime();
-            int waitCount; for(waitCount=0; PiUtils.getGPIOVal("4")=='0' && waitCount<2000; waitCount++);
-            int measurement=(int)(System.nanoTime()-startTime)/1000000;
-            logXX(waitCount, measurement);
+            for(String s: strings) values.add(Integer.parseInt(s));
+            Collections.sort(values);
 
-            if(PiUtils.getGPIOVal("4")!='1' ||
-               waitCount==2000              ||
-               measurement<0                ||
-               measurement>300                   ) continue;
+            int sum=0; int num=values.size()/2;
+            for(int i=0; i<num; i++) sum+=values.get(i);
+            final int ave=sum/num;
 
-            measurements[i]=measurement; i++; if(i==20) i=0;
-            int average=0; for(int n=0; n<20; n++) average+=measurements[n]; average/=scaleFactor;
-            if(average>100) average=100;
-
-            String measurementsAsString="["; for(int n=0; n<20; n++) measurementsAsString+=" "+measurements[n];
-            logXX(measurementsAsString+" ]", average);
-
-            avg=average;
+            logXX(values, ave);
             new Evaluator(this){ public void evaluate(){
-                contentDouble("soil-moisture", avg);
-                content("text", String.format("Soil Moisture: %.0f %%", avg));
+                contentInt("soil-moisture", ave);
+                content("text", String.format("Soil Moisture: %d%%", ave));
             }};
+            Kernel.sleep(3000);
+        }
+    }catch(Throwable t){ t.printStackTrace(); } }
+
+    void doitInJavaOrNot(){
+        while(true){
+            int loops=20;
+            int hold=50;
+            long startTime=System.nanoTime();
+            int waitCount=0;
+            for(int l=0; l<loops; l++){
+                PiUtils.setGPIODir("4", "out");
+                PiUtils.setGPIOVal("4", false);
+                Kernel.sleep(hold);
+                PiUtils.setGPIODir("4", "in");
+                while(PiUtils.getGPIOVal("4")!='1' && waitCount<2000) waitCount++;
+                if(waitCount==2000){ logXX("waited too long"); waitCount=0; break; }
+            }
+            if(waitCount==0){ logXX("unstable"); continue; }
+
+            int microseconds=(int)((System.nanoTime()-startTime)/loops)/1000 - hold*1000 - 2900;
+
+            if(microseconds/waitCount>20){ logXX("unstable", waitCount, "its", microseconds/waitCount, "stability", microseconds, "uS"); continue; }
+
+            smoothmicros=((85*smoothmicros)+(15*microseconds))/100;
+
+            int picofarads=smoothmicros/5;
+
+            double mst=(picofarads-120)/10; if(mst<0) mst=0; if(mst>100) mst=100;
+
+            logXX(waitCount, "its", microseconds/waitCount, "stability", microseconds, "uS", smoothmicros, "uS", picofarads, "pF", mst, "%");
+
+          //new Evaluator(this){ public void evaluate(){
+          //    contentDouble("soil-moisture", moisture);
+          //    content("text", String.format("Soil Moisture: %.0f %%", moisture));
+          //}};
         }
     }
 }

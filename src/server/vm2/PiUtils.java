@@ -1,6 +1,7 @@
 
 import java.util.*;
 import java.io.*;
+import java.nio.file.*;
 
 import static cyrus.lib.Utils.*;
 
@@ -65,10 +66,20 @@ public class PiUtils{
     } catch(Throwable t){ t.printStackTrace(); return false; }}
 
     static public int getGPIOVal(String pin) { try {
+        byte[] bytes=Files.readAllBytes(Paths.get("/sys/class/gpio/gpio"+pin+"/value"));
+        return (int)bytes[0];
+    } catch(Throwable t){ t.printStackTrace(); return -1; }}
+
+    static public int getGPIOVal2(String pin) { try {
         FileReader fr = new FileReader("/sys/class/gpio/gpio"+pin+"/value");
         int r=fr.read();
         fr.close();
         return r;
     } catch(Throwable t){ t.printStackTrace(); return -1; }}
+
+    static public void waitOn(String pin, boolean val){ try {
+        String pinwire=getPinMapping(pin);
+        if(pinwire!=null) exec(String.format("gpio wfi %s %s", pinwire, val? "rising": "falling"));
+    } catch(Throwable t){ t.printStackTrace(); }}
 }
 
