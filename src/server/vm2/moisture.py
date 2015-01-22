@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 
 def read_sensor():
-    loops = 30
+    loops = 20
     hold = 0.05
     start = time.time()
     c=0
@@ -17,18 +17,26 @@ def read_sensor():
     r = (int)(1000000 * ((time.time() - start) / loops - hold)) - 330
     return r
 
-def to_moisture(us):
-    m=(us-1000)/20
+def to_moisture(micro):
+    m=(micro-600)/20
     if(m< 0):
         m=0
     if(m> 100):
         m=100
     return m
 
-def writefile(list):
+def smooth(numlist):
+    sortlist=sorted(numlist)
+    sum=0
+    num=len(sortlist)/2
+    for i in range(0,num):
+        sum+=sortlist[i]
+    ave=sum/num
+    return ave
+
+def writefile(smoothed):
     outfile = open("/run/moisture.txt", "w")
-    for n in list:
-        outfile.write(str(n)+"\n")
+    outfile.write(str(smoothed)+"\n")
     outfile.close()
 
 
@@ -41,13 +49,14 @@ i = 0
 
 time.sleep(1)
 while(1):
-    us=read_sensor()
-    moisture = to_moisture(us)
+    micro=read_sensor()
+    moisture = to_moisture(micro)
     history[i]=moisture
-    print us, moisture, history
     i+=1
     if(i==len(history)):
         i=0
-    writefile(history)
+    smoothed=smooth(history)
+    print micro, moisture, history, smoothed
+    writefile(smoothed)
 
 

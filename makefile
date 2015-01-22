@@ -3,11 +3,11 @@
 # IP of your development machine on the LAN
 # Always 'make veryclean' before changing this!
 #
-LOCAL_IP=192.168.43.196
+LOCAL_IP=192.168.0.17
 #
 # Coordinates of PiBeaconTemperature
 #
-PI_THING_POS=10 1 1
+PI_THING_POS=1 1 10
 #
 # Where you want the release Android apk to be copied
 #
