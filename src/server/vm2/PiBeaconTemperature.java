@@ -44,7 +44,6 @@ public class PiBeaconTemperature extends CyrusLanguage {
         while(true){
             List<String> strings=Files.readAllLines(Paths.get("/run/moisture.txt"), Charset.forName("UTF-8"));
             LinkedList<Integer> values=new LinkedList<Integer>();
-
             for(String s: strings) values.add(Integer.parseInt(s));
             Collections.sort(values);
 
@@ -89,10 +88,11 @@ public class PiBeaconTemperature extends CyrusLanguage {
 
             logXX(waitCount, "its", microseconds/waitCount, "stability", microseconds, "uS", smoothmicros, "uS", picofarads, "pF", mst, "%");
 
-          //new Evaluator(this){ public void evaluate(){
-          //    contentDouble("soil-moisture", moisture);
-          //    content("text", String.format("Soil Moisture: %.0f %%", moisture));
-          //}};
+            final double moisture=mst;
+            new Evaluator(this){ public void evaluate(){
+                contentDouble("soil-moisture", moisture);
+                content("text", String.format("Soil Moisture: %.0f %%", moisture));
+            }};
         }
     }
 }
