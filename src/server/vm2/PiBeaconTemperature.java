@@ -21,8 +21,8 @@ public class PiBeaconTemperature extends CyrusLanguage {
               "  text: waiting..\n"+
               "  rotation: 0 45 0\n"+
               "  scale: 1 1 1\n"+
-              "  position: 0 0 0\n"+
-              "  within: http://localhost:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
+              "  position: 1 1 10\n"+
+              "  within: http://192.168.0.17:8081/o/uid-41b6-5f8f-f143-b30d.json\n"+
               "}\n", true);
     }
 
@@ -42,14 +42,16 @@ public class PiBeaconTemperature extends CyrusLanguage {
 
     void doit(){ try{
         while(true){
+            Kernel.sleep(3000);
             String ms=new String(Files.readAllBytes(Paths.get("/run/moisture.txt")));
-            final int moisture=Integer.parseInt(ms.trim());
+            Number n=findANumberIn(ms);
+            if(n==null) continue;
+            final int moisture=n.intValue();
             logXX(moisture);
             new Evaluator(this){ public void evaluate(){
                 contentInt("soil-moisture", moisture);
                 content("text", String.format("Soil Moisture: %d%%", moisture));
             }};
-            Kernel.sleep(3000);
         }
     }catch(Throwable t){ t.printStackTrace(); } }
 }
