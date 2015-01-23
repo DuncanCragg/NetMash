@@ -159,7 +159,9 @@ runemu: kill clean netconfig useworlddb setvm3emuconfig run1n2
 
 runlan: kill clean netconfig useworlddb setvm3lanconfig run1n2
 
-runiot: killroot clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2root
+runiot: killroot clean netconfig useiotdb setvm1lanconfig run1
+
+runiotl: killroot clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2root
 
 runiot2: killroot netconfig useiotdb2 setvm2iotconfig2 run1n2root
 	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-ccb8-43de-df47-29da.json'
