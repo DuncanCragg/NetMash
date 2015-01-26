@@ -1055,10 +1055,6 @@ logXX("closestdist",closestdist,"currentdistance",currentdistance);
                 return;
             }
             else
-            if(contentIsOrListContains("private:viewing:is", "3d")){
-                meshhash=cyrus2gui.scene2GUI();
-            }
-            else
             if(contentListContainsAll("private:viewing:is", list("user", "list"))){
                 viewhash=cyrus2gui.contactList2GUI("contact:");
             }
@@ -1102,8 +1098,16 @@ logXX("closestdist",closestdist,"currentdistance",currentdistance);
                 viewhash=cyrus2gui.lookup2GUI();
             }
             else
+            if(contentListContainsAll("private:viewing:is", list("soil", "moisture", "sensor"))){
+                viewhash=cyrus2gui.soilSensor2GUI();
+            }
+            else
             if(contentIsOrListContains("private:viewing:is", "gui")){
                 viewhash=contentHash("private:viewing:view");
+            }
+            else
+            if(contentIsOrListContains("private:viewing:is", "3d")){
+                meshhash=cyrus2gui.scene2GUI();
             }
             else{
                 content("private:viewas","raw");

@@ -417,6 +417,21 @@ public class Cyrus2GUI {
         return viewhash;
     }
 
+    public LinkedHashMap soilSensor2GUI(){
+        String title = user.content("private:viewing:title");
+        LinkedList soilInfo = new LinkedList();
+        String text = user.content("private:viewing:text");
+        String moisture = user.content("private:viewing:soil-moisture")+"%";
+        if(text!=null) soilInfo.add(list(style("direction","horizontal"), text));
+        soilInfo.add(list(style("direction","horizontal", "proportions","35%"), "Soil Moisture:", moisture));
+
+        LinkedHashMap<String,Object> viewhash = new LinkedHashMap<String,Object>();
+        viewhash.put("style", style("direction","vertical", "colours","lightgreen"));
+        viewhash.put("#title", title!=null? title: "Soil Sensor");
+        viewhash.put("#info", soilInfo);
+        return viewhash;
+    }
+
     // --------------------------------------------------
 
     private void addIfPresent(LinkedList list, String tag, String label, boolean isLink, LinkedHashMap widget){
