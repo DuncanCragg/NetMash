@@ -13,9 +13,9 @@ import static cyrus.lib.Utils.*;
 
 /** Class to fetch the soil moisture level detected by a sensor on a Raspberry Pi and broadcast its URL through a BLE beacon.
   */
-public class PiBeaconTemperature extends CyrusLanguage {
+public class PiBeaconSoilSensor extends CyrusLanguage {
 
-    public PiBeaconTemperature(){
+    public PiBeaconSoilSensor(){
         super("{ is: editable 3d notice soil moisture sensor\n"+
               "  title: \"Soil Moisture Sensor\"\n"+
               "  text: waiting..\n"+
