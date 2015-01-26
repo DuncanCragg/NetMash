@@ -18,7 +18,7 @@ public class PiBeaconSoilSensor extends CyrusLanguage {
     public PiBeaconSoilSensor(){
         super("{ is: editable 3d notice soil moisture sensor\n"+
               "  title: \"Soil Moisture Sensor\"\n"+
-              "  text: waiting..\n"+
+              "  text: Waiting..\n"+
               "  rotation: 0 45 0\n"+
               "  scale: 1 1 1\n"+
               "  position: 0 0 0\n"+
@@ -32,14 +32,11 @@ public class PiBeaconSoilSensor extends CyrusLanguage {
     public void evaluate(){
         if(!running){ running=true;
             BLE.doAdvert(uid);
-            PiUtils.grabGPIO("4","tri");
             new Thread(){ public void run(){ doit(); }}.start();
         }
         super.evaluate();
         notifying(content("within"));
     }
-
-    int smoothmicros=2000;
 
     void doit(){ try{
         while(true){
