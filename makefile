@@ -5,7 +5,7 @@
 #
 LOCAL_IP=192.168.0.17
 #
-# Coordinates of PiBeaconTemperature
+# Coordinates of PiBeaconSoilSensor
 #
 PI_THING_POS=1 1 10
 #
@@ -326,8 +326,8 @@ setvm3emuconfig: setvm1emuconfig setvm2emuconfig
 setvm3cleanconfig:
 	sed -i"" -e    "s:10.0.2.2:localhost:g" src/server/vm1/cyrusconfig.db
 	sed -i"" -e "s:$(LOCAL_IP):localhost:g" src/server/vm1/cyrusconfig.db
-	sed -i"" -e "s:$(LOCAL_IP):localhost:g"                      src/server/vm2/PiBeaconTemperature.java
-	sed -i"" -e  "s#position: $(PI_THING_POS)#position: 0 0 0#g" src/server/vm2/PiBeaconTemperature.java
+	sed -i"" -e "s:$(LOCAL_IP):localhost:g"                      src/server/vm2/PiBeaconSoilSensor.java
+	sed -i"" -e  "s#position: $(PI_THING_POS)#position: 0 0 0#g" src/server/vm2/PiBeaconSoilSensor.java
 
 setvm1lanconfig:
 	sed -i"" -e "s:localhost:$(LOCAL_IP):g" src/server/vm1/cyrusconfig.db
@@ -342,16 +342,16 @@ setvm2lanconfig:
 	sed -i"" -e  "s:10.0.2.2:$(LOCAL_IP):g" src/server/vm2/cyrus.db
 
 setvm2iotconfig:
-	sed -i"" -e  "s#host: localhost##g"                          src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s#preload: ( )#preload: PiBeaconTemperature#g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s:localhost:$(LOCAL_IP):g"                     src/server/vm2/PiBeaconTemperature.java
-	sed -i"" -e  "s#position: 0 0 0#position: $(PI_THING_POS)#g" src/server/vm2/PiBeaconTemperature.java
+	sed -i"" -e  "s#host: localhost##g"                         src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s#preload: ( )#preload: PiBeaconSoilSensor#g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s:localhost:$(LOCAL_IP):g"                     src/server/vm2/PiBeaconSoilSensor.java
+	sed -i"" -e  "s#position: 0 0 0#position: $(PI_THING_POS)#g" src/server/vm2/PiBeaconSoilSensor.java
 
 setvm2iotconfig2:
-	sed -i"" -e  "s#host: localhost##g"                          src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s#preload: ( )#preload: PiBeaconTemperature#g" src/server/vm2/cyrusconfig.db
-	sed -i"" -e  "s#netmash.net#localhost:8081#g"                src/server/vm2/PiBeaconTemperature.java
-	sed -i"" -e  "s#position: 0 0 0#position: $(PI_THING_POS)#g" src/server/vm2/PiBeaconTemperature.java
+	sed -i"" -e  "s#host: localhost##g"                         src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s#preload: ( )#preload: PiBeaconSoilSensor#g" src/server/vm2/cyrusconfig.db
+	sed -i"" -e  "s#netmash.net#localhost:8081#g"                src/server/vm2/PiBeaconSoilSensor.java
+	sed -i"" -e  "s#position: 0 0 0#position: $(PI_THING_POS)#g" src/server/vm2/PiBeaconSoilSensor.java
 
 setvm3lanconfig: setvm1lanconfig setvm2lanconfig
 
