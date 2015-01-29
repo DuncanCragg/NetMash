@@ -421,7 +421,7 @@ public class Cyrus2GUI {
         String title = user.content("private:viewing:title");
         LinkedList soilInfo = new LinkedList();
         String text = user.content("private:viewing:text");
-        String moisture = user.content("private:viewing:soil-moisture")+"%";
+        String moisture = user.contentStringOr("private:viewing:soil-moisture","--")+"%";
         if(text!=null) soilInfo.add(list(style("direction","horizontal"), text));
         soilInfo.add(list(style("direction","horizontal", "proportions","35%"), "Soil Moisture:", moisture));
 
