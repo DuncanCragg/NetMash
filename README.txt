@@ -1,8 +1,7 @@
-NetMash is the Cyrus language implementation in Java, part of the Object Network:
+NetMash is an Object Network implementation in Java.
 
  http://netmash.net
- http://the-cyrus.net
- http://the-object.net
+ http://object.network
 
 It includes an Android app with 3D and some code to adapt to Minecraft and the Raspberry Pi.
 
