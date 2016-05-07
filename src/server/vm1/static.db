@@ -178,24 +178,27 @@
   title: Calculator
   local: { acc: 0 num: 0 op: + }
   Rules:
+    { is: gui rule  view: { bt: { style: # => { is: style direction: horizontal } } } }
     { is: gui rule  Alerted: { is: form }  local: { key: => @Alerted:form:pushed } }
-    { is: gui rule  local: { key: /[0-9]/  num: => join (@. @local:key) } }
-    { is: gui rule  local: { key: dp       num: => if (not @. contains .) then (join (@. .)) else @. } }
-    { is: gui rule  local: { key: cl       num: => 0 }}
-    { is: gui rule  local: { key: /pl|mi|ti|di|eq/ num: *  acc: => @. @local:op @local:num } }
-    { is: gui rule  local: { key: /pl|mi|ti|di|eq/ num: => #  op: => { pl: +  mi: -  ti: ×  di: ÷  eq: + } select @local:key } }
-    { is: gui rule  local: { key: cs  num: #  acc: => @. × -1  } }
-    { is: gui rule  local: { key: cs  num: * => @. × -1 } }
-    { is: gui rule  local: { key: ms  mem: => if (@local:num set) then @local:num else @local:acc } }
-    { is: gui rule  local: { key: mr  num: => if (@local:mem set) then @local:mem else @. } }
+    { is: gui rule  Alerted: { is: form }  form: # => @Alerted }
+    { is: gui rule  form:    { is: farm }  local: { key: => @form:form:pushed } }
+    { is: gui rule  local: { key: /bt:k[0-9]/ num: => + (join (@. ({ bt:k0: 0  bt:k1: 1  bt:k2: 2  bt:k3: 3  bt:k4: 4  bt:k5: 5  bt:k6: 6  bt:k7: 7  bt:k8: 8  bt:k9: 9 } select @local:key))) } }
+    { is: gui rule  local: { key: bt:dp       num: => if (not @. contains .) then (join (@. .)) else @. } }
+    { is: gui rule  local: { key: bt:cl       num: => 0 }}
+    { is: gui rule  local: { key: /bt:pl|bt:mi|bt:ti|bt:di|bt:eq/ num: *  acc: => @. @local:op @local:num } }
+    { is: gui rule  local: { key: /bt:pl|bt:mi|bt:ti|bt:di|bt:eq/ num: => #  op: => { bt:pl: +  bt:mi: -  bt:ti: ×  bt:di: ÷  bt:eq: + } select @local:key } }
+    { is: gui rule  local: { key: bt:cs  num: #  acc: => @. × -1  } }
+    { is: gui rule  local: { key: bt:cs  num: * => @. × -1 } }
+    { is: gui rule  local: { key: bt:ms  mem: => if (@local:num set) then @local:num else @local:acc } }
+    { is: gui rule  local: { key: bt:mr  num: => if (@local:mem set) then @local:mem else @. } }
     { is: gui rule  local: { key: * => # } view: { result: { value: => if (@local:num set) then @local:num else @local:acc }}}
   view: {
    result: { input: textfield  value: 0 }
-   buttons:
-     { style: { is: style direction: horizontal } 7: { input: button label: 7 }  8: { input: button label: 8 }  9: { input: button label: 9 } ti: { input: button label: × } cs: { input: button label: +/- } }
-     { style: { is: style direction: horizontal } 4: { input: button label: 4 }  5: { input: button label: 5 }  6: { input: button label: 6 } di: { input: button label: ÷ } ms: { input: button label: MS  } }
-     { style: { is: style direction: horizontal } 1: { input: button label: 1 }  2: { input: button label: 2 }  3: { input: button label: 3 } pl: { input: button label: + } mr: { input: button label: MR  } }
-     { style: { is: style direction: horizontal } 0: { input: button label: 0 } dp: { input: button label: . } cl: { input: button label: C } mi: { input: button label: - } eq: { input: button label: =   } }
+   bt:
+     { k7: { input: button label: 7 } k8: { input: button label: 8 } k9: { input: button label: 9 } ti: { input: button label: × } cs: { input: button label: +/- } }
+     { k4: { input: button label: 4 } k5: { input: button label: 5 } k6: { input: button label: 6 } di: { input: button label: ÷ } ms: { input: button label: MS  } }
+     { k1: { input: button label: 1 } k2: { input: button label: 2 } k3: { input: button label: 3 } pl: { input: button label: + } mr: { input: button label: MR  } }
+     { dp: { input: button label: . } k0: { input: button label: 0 } cl: { input: button label: C } mi: { input: button label: - } eq: { input: button label: =   } }
   }
 }
 
