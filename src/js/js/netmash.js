@@ -367,9 +367,9 @@ function JSON2HTML(url){
                 rows.push('<input class="rsvp-target" type="hidden" value="'+url+'" />');
                 rows.push('<input class="rsvp-within" type="hidden" value="'+json.within+'" />');
                 rows.push('<table class="grid">');
-                var submittable=this.createGUI(json['review-template'],rows);
+                var gotsubmit=this.createGUI(json['review-template'],rows);
                 rows.push('</table>');
-                if(submittable)
+                if(!gotsubmit)
                 rows.push('<input class="submit" type="submit" value="Update" />');
                 rows.push('</form>');
             }
@@ -408,9 +408,9 @@ function JSON2HTML(url){
             rows.push('<form class="gui-form">');
             rows.push('<input class="form-target" type="hidden" value="'+url+'" />');
             rows.push('<table class="grid">');
-            var submittable=this.createGUI(json.view,rows,null,sels);
+            var gotsubmit=this.createGUI(json.view,rows,null,sels);
             rows.push('</table>');
-            if(submittable)
+            if(!gotsubmit)
             rows.push('<input class="submit" type="submit" value="Submit" />');
             rows.push('</form>');
         },
@@ -687,11 +687,12 @@ function JSON2HTML(url){
                 if(item.constructor===Object && item.is=='style') horizontal=(item.direction=='horizontal');
             }
             var tagged=(guilist.constructor===Object);
-            var submittable=false;
+            var gotsubmit=false;
             if(horizontal) rows.push('<tr>');
             for(var i in guilist){
                 var tag=tagged? i: null;
                 var tags2=(tags? tags: []).concat(tag? tag: []);
+                if(guilist.constructor===Array && tags) tags2=tags.concat(i);
                 if(/^[A-Z]/.test(tag)) continue;
                 if(tag=='is' || tag=='title' || tag=='update-template') continue;
                 var selec2=null;
@@ -709,7 +710,7 @@ function JSON2HTML(url){
                     selec2=select[tag];
                 }
                 var item=guilist[i];
-                if(item.constructor===Object) submittable=this.addIfPresent(json,tag,item,rows,horizontal,selec2,tags2) || submittable;
+                if(item.constructor===Object) gotsubmit=this.addIfPresent(json,tag,item,rows,horizontal,selec2,tags2) || gotsubmit;
                 else
                 if(this.isONLink(item)){
                     if(!horizontal) rows.push('<tr>');
@@ -727,7 +728,7 @@ function JSON2HTML(url){
                     if(!horizontal) rows.push('<tr>');
                     rows.push('<td colspan="2" class="grid-col">');
                     rows.push('<table class="grid">');
-                    submittable=this.createGUI(item,rows,null,selec2,tags2) || submittable;
+                    gotsubmit=this.createGUI(item,rows,null,selec2,tags2) || gotsubmit;
                     rows.push('</table>');
                     rows.push('</td>');
                     if(!horizontal) rows.push('</tr>');
@@ -739,7 +740,7 @@ function JSON2HTML(url){
                 }
             }
             if(horizontal) rows.push('</tr>');
-            return submittable;
+            return gotsubmit;
         },
         addIfPresent: function(json,tag,widget,rows,horizontal,select,tags){
             if(!json) return this.objectGUI(tag,widget,rows,horizontal,undefined,select,tags);
@@ -749,9 +750,9 @@ function JSON2HTML(url){
         },
         objectGUI: function(tag,guilist,rows,horizontal,value,select,tags){
             if(tag==null || tag=='') tag='prop-'+Math.floor(Math.random()*1e6);
-            var submittable=false;
+            var gotsubmit=false;
             if(guilist.input){
-                submittable=this.renderWidget(tag,guilist,rows,horizontal,value,select,tags);
+                gotsubmit=this.renderWidget(tag,guilist,rows,horizontal,value,select,tags);
             }
             else
             if(guilist.view){
@@ -766,16 +767,15 @@ function JSON2HTML(url){
                 if(!horizontal) rows.push('<tr>');
                 rows.push('<td colspan="2" class="grid-col">');
                 rows.push('<table class="grid">');
-                submittable=this.createGUI(guilist,rows,null,select,tags);
+                gotsubmit=this.createGUI(guilist,rows,null,select,tags);
                 rows.push('</table>');
                 rows.push('</td>');
                 if(!horizontal) rows.push('</tr>');
             }
-            return submittable;
+            return gotsubmit;
         },
         renderWidget: function(tag,guilist,rows,horizontal,value,select,tags){
             if(tags) tag=tags.join(':');
-            var submittable=false;
             var buttonspresent=false;
             var input=guilist.input;
             var label=guilist.label;
@@ -788,7 +788,6 @@ function JSON2HTML(url){
                 var checked=value || valu2;
                 rows.push('<td class="label"><label for="'+tag+'">'+(label? label: tag)+'</label></td>');
                 rows.push('<td><input type="checkbox" id="'+tag+'" class="checkbox form-field" value="'+tag+(checked? '" checked="true':'')+'"/></td>');
-                submittable=true;
             }
             else
             if(input=='chooser'){
@@ -800,7 +799,6 @@ function JSON2HTML(url){
                     else         rows.push('<option value="'+o+'" >'               +range[o]+'</option>');
                 }
                 rows.push('</select></td>');
-                submittable=true;
             }
             else
             if(input=='textfield'){
@@ -815,7 +813,6 @@ function JSON2HTML(url){
                 else
                 if(!label)          rows.push('<td colspan="2"><input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
                 else                rows.push('<td>            <input type="text" id="'+tag+'" class="textfield form-field"                   /></td>');
-                submittable=true;
             }
             else
             if(input=='rating'){
@@ -826,7 +823,6 @@ function JSON2HTML(url){
                 rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="3">3');
                 rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="4">4');
                 rows.push(    '<input type="radio" name="'+tag+'" class="rating form-field" value="5">5</td>');
-                submittable=true;
             }
             else
             if(input=='button'){
@@ -834,7 +830,7 @@ function JSON2HTML(url){
                 buttonspresent=true;
             }
             if(!horizontal) rows.push('</tr>');
-            return submittable && !buttonspresent;
+            return buttonspresent;
         },
         // ---------------------------------------------------
         markupString2HTML: function(text){
@@ -1001,6 +997,7 @@ function NetMash(){
     var moreOf = {};
     var retryDelay=100;
     var lockURL=null;
+    var lastButtonPressed=null;
 
     var me = {
         init: function(){
@@ -1105,9 +1102,13 @@ function NetMash(){
                     me.reflowIfHeightChanged($('#content'));
                 }
             });
-            $('input.button').unbind().click(function(e){
-                lastButtonPressed=this;
-            });
+            $('input.button').unbind()
+                             .mousedown(function(e){ lastButtonPressed=this; me.postGuiForm(e,me.getObjectBodyAbove($(this)).find('form.gui-form')); })
+                             .mouseup(  function(e){ lastButtonPressed=null; me.postGuiForm(e,me.getObjectBodyAbove($(this)).find('form.gui-form')); })
+                             .click(    function(e){ e.preventDefault(); });
+            $('input.textfield')
+                             .unbind()
+                             .keydown(  function(e){ if(e.keyCode==13)       me.postGuiForm(e,me.getObjectBodyAbove($(this)).find('form.gui-form')); });
             $('.open-close').unbind().click(function(e){
                 lockURL=null;
                 var objhead = $(this).parent();

@@ -3,6 +3,7 @@
   title: "Cyrus Examples"
   view:
     { is: style direction: vertical }
+    { view: open   item: uid-0233-cc56-1722-1a61 }
     { view: closed item: uid-26bc-8ee9-5443-851a }
     { view: closed item: uid-8ed3-ee4a-eeef-0313 }
     { view: closed item: uid-5eeb-9bff-d369-0520 }
@@ -171,6 +172,27 @@
   when: "anything changes, pick an email at random"
   reviews: { email: * }
   contest-selection: => @=reviews:email select ( random 0 ( ( count @=reviews ) - 1 ) )
+}
+
+{ UID: uid-0233-cc56-1722-1a61
+  is: editable gui
+  title: "To do MVC"
+  todo: "fix single-element list" "fix key-up happening on wrong or no button when button moves" "what does the back button mean?"
+  local: { }
+  Rules:
+    { is: gui rule  view: { todos: { style: # => { is: style direction: horizontal widths: 10% 80% 10% } } } }
+    { is: gui rule  Alerted: { is: form }  form: # => @Alerted }
+    { is: gui rule  form: { is: form  form: { pushed: * } } local: { key: not handled => @form:form:pushed } }
+    { is: gui rule  form: { is: form  form: { pushed: # } } local: { key:     handled => # } }
+    { is: gui rule  form: { is: form  form: { newtodo: * } }
+                    view: { todos: not { description: { value: @form:form:newtodo } }
+                                   => @. with { done: { input: button label: / } description: { input: textfield value: @form:form:newtodo } del: { input: button label: X } } } }
+    { is: gui rule  local: { key: /todos:.:del/ } view: { todos: ( {} => # ) ** } }
+    { is: gui rule  local: { key: * => handled } }
+  view: {
+   newtodo:  { input: textfield label: "What to do?" }
+   todos: { done: { input: button label: / } description: { input: textfield value: "get the milk" } del: { input: button label: X } }
+  }
 }
 
 { UID: uid-7356-dfcc-2173-4525
