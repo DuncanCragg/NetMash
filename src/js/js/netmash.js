@@ -966,9 +966,9 @@ function JSON2HTML(url){
             if(!o || o.constructor!==Object) return '??';
             if(!i) i=2; else i+=2;
             var r;
-            str=true;
+            str=Object.keys(o).length>1 && !(o.input || o.is==='style');
             if(str){
-              r='{\n';
+              r='\n'+this.indent(i-2)+'{\n';
               for(var tag in o){ r+=this.indent(i)+tag+': '+this.toCyrusObject(o[tag],i,true)+'\n'; }
               r+=this.indent(i-2)+'}';
             }
@@ -983,11 +983,12 @@ function JSON2HTML(url){
             if(!o || o.constructor!==Array) return '??';
             var nobrackets=tagdelim && (o.length!=1 || (o[0].constructor===Array && o[0].length!=1));
             var r=nobrackets? '': '(';
-            str=false;
-            if(str) for(var x in o){ r+=this.toCyrusObject(o[x],i,false)+'\n'+this.indent(i+2); }
-            else    for(var x in o){ r+=this.toCyrusObject(o[x],i,false)+' '; }
+            for(var x in o){ r+=this.toCyrusObject(o[x],i,false)+' '; }
+            if(r.length>100 && r.indexOf('\n')== -1){
+              r=nobrackets? '': '(';
+              for(var x in o){ r+=this.toCyrusObject(o[x],i,false)+'\n'+this.indent(i+2); }
+            }
             r=r.trim();
-            //if(r.length>100 && r.indexOf('\n')== -1) .. ;
             return r+(nobrackets? '': ')');
         },
         indent: function(i){
