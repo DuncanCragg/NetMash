@@ -966,8 +966,8 @@ function JSON2HTML(url){
             if(!o || o.constructor!==Object) return '??';
             if(!i) i=2; else i+=2;
             var r;
-            str=Object.keys(o).length>1 && !(o.input || o.is==='style');
-            if(str){
+            var inline=Object.keys(o).length<=1 || o.input || o.is==='style' /* || $.inArray('rule', o.is) >=0 */;
+            if(!inline){
               r='\n'+this.indent(i-2)+'{\n';
               for(var tag in o){ r+=this.indent(i)+tag+': '+this.toCyrusObject(o[tag],i,true)+'\n'; }
               r+=this.indent(i-2)+'}';
@@ -1425,7 +1425,11 @@ function NetMash(){
                 else
                 if(intype=='radio'){ if(!$(i).is(':checked')) return; }
                 else
-                if(intype=='submit'){ if(i==lastButtonPressed) s['pushed']=idOrName; return; }
+                if(intype=='submit'){
+                    if(i!=lastButtonPressed) return;
+                    s['pushed']=idOrName;
+                    val = 'pushed';
+                }
 
                 if(!val || val=="none" || val=="null") return;
                 val=val.jsonEscape();
@@ -1437,7 +1441,7 @@ function NetMash(){
                     var tag;
                     for(var t in tags){
                         tag=tags[t];
-                        if(!h[tag]) h[tag]={};
+                        if(!h[tag]) h[tag] = isNaN(tags[+t+1])? {}: [];
                         l=h;
                         h=h[tag];
                     }
