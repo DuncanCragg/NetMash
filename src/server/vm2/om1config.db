@@ -1,0 +1,17 @@
+{ name: vm2
+  kernel: { threadpool: 33 }
+  persist: { directory: .
+             db: cyrus.db
+             syncrate: 100
+             preload: uid-2aa2-3645-4f58-50cb
+                      uid-e164-2547-46b0-f47e
+                      uid-40fb-5964-b385-c922 }
+  network: { host: localhost
+             port: 8082
+             pathprefix: /o/
+             cache-notify: c-n-0a3a-8cd3-d5c3-ed1c
+             log: 2 }
+  rules: { log: 2
+  }
+}
+

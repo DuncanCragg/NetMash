@@ -1,0 +1,25 @@
+
+{ UID: uid-2aa2-3645-4f58-50cb
+  Rules: uid-e164-2547-46b0-f47e
+         uid-40fb-5964-b385-c922
+  title: "Test setup"
+  is: test
+  f: { t: { y: 55 } { y: 44 } { y: 33 } }
+  g: { t: { y: 5  } { y: 4  } { y: 3  } }
+}
+
+{ UID: uid-e164-2547-46b0-f47e
+  is: test rule
+  when: "-------------- Apply rule"
+  title: "Test setup" => "Test run"
+  f: { t: { y: * } }
+  g: { t: { y: => @f:t:@#:y n: => @. } }
+}
+
+{ UID: uid-40fb-5964-b385-c922
+  is: test rule
+  when: "-------------- Check result"
+  title: "Test run" => "Test success"
+  g: { t: { y: count 1 } { y: !33 } { y: 33 } }
+}
+

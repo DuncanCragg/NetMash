@@ -56,6 +56,8 @@ tests: json uid cyrus
 
 cyrus: runom tailtestresults2
 
+cyrus1: runom1 tailtestresults2
+
 ####################
 
 all: androidemu runall logcat
@@ -172,6 +174,8 @@ runrem: kill clean netconfig useworlddb setvm3remconfig run1n2
 
 runom:  kill       omconfig  useomdb    setvm2tstconfig run2
 
+runom1:  kill      om1config  useom1db   setvm2tstconfig run2
+
 runcars: kill clean netconfig usecarsdb setvm3tstconfig run1n2
 
 runcap:  kill clean netconfig useworlddb usecapdb setvm3emuconfig run1n2
@@ -263,6 +267,9 @@ useiotdb2:
 
 useomdb:
 	cp src/server/vm2/om.db src/server/vm2/cyrus.db
+
+useom1db:
+	cp src/server/vm2/om1.db src/server/vm2/cyrus.db
 
 usecapdb:
 	cp src/server/vm2/cap.db src/server/vm2/cyrus.db
@@ -402,6 +409,10 @@ ideconfig: setideproject
 omconfig:
 	cp src/server/vm1/netconfig.db src/server/vm1/cyrusconfig.db
 	cp src/server/vm2/omconfig.db  src/server/vm2/cyrusconfig.db
+
+om1config:
+	cp src/server/vm1/netconfig.db src/server/vm1/cyrusconfig.db
+	cp src/server/vm2/om1config.db  src/server/vm2/cyrusconfig.db
 
 curconfig:
 	cp src/server/vm1/netconfig.db src/server/vm1/cyrusconfig.db

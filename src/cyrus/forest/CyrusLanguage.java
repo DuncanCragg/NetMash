@@ -473,7 +473,7 @@ public class CyrusLanguage extends WebObject {
                 else contentListRemoveAll(currentRewritePath, e);
             }
             else{
-                Object e=deepCopyObject(evalDeepList(rhs));
+                Object e=deepCopyObject(evalDeepList(rhs,currentRewritePath));
                 if(e==null){
                     if(extralogging) log("Deleting "+currentRewritePath+" "+rhs);
                     String[] parts=currentRewritePath.split(":");
@@ -523,10 +523,12 @@ public class CyrusLanguage extends WebObject {
 
     // ------- New Evaluator ---------------------------------------------------
 
-    private Object evalDeepList(LinkedList ll){
+    private Object evalDeepList(LinkedList ll){ return evalDeepList(ll,null); }
+
+    private Object evalDeepList(LinkedList ll, String currentRewritePath){
         if(isAsIs(ll)) return ll;
         Object e=evalShallow(ll);
-        if(!(e instanceof LinkedList)) return evalDeepObject(e);
+        if(!(e instanceof LinkedList)) return evalDeepObject(e, currentRewritePath);
         if(isAsIs(e)) return e;
         LinkedList r=new LinkedList();
         for(Object o: (LinkedList)e) maybeAdd(r,evalDeepObject(o));
@@ -534,14 +536,30 @@ public class CyrusLanguage extends WebObject {
     }
 
     @SuppressWarnings("unchecked")
-    private Object evalDeepObject(Object o){
-        if(isRef(o)) return eitherBindingOrContentObject(((String)o).substring(1));
+    private Object evalDeepObject(Object o){ return evalDeepObject(o,null); }
+
+    @SuppressWarnings("unchecked")
+    private Object evalDeepObject(Object o, String currentRewritePath){
+        if(isRef(o)) return eitherBindingOrContentObject(getPathWithAtHash(o, currentRewritePath));
         if(o instanceof String)  return o;
         if(o instanceof Number)  return o;
         if(o instanceof Boolean) return o;
         if(o instanceof LinkedList) return evalDeepList((LinkedList)o);
         if(o instanceof LinkedHashMap) return evalDeepHash((LinkedHashMap)o);
         return o;
+    }
+
+    private String getPathWithAtHash(Object o, String currentRewritePath){
+        String path=((String)o).substring(1);
+        if(path.indexOf("@#")== -1 || currentRewritePath==null) return path;
+        String[] parts=currentRewritePath.split(":");
+        for(int i=0; i< parts.length; i++){
+            int x;
+            try{ x=Integer.parseInt(parts[i]); }catch(Exception e){ continue; }
+            path=path.replace("@#",""+x);
+            return path;
+        }
+        return path.replace("@#","0");
     }
 
     @SuppressWarnings("unchecked")
