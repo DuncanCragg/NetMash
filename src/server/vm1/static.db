@@ -177,21 +177,33 @@
 { UID: uid-0233-cc56-1722-1a61
   is: editable gui
   title: "To do MVC"
-  todo: "fix single-element list" "fix key-up happening on wrong or no button when button moves" "what does the back button mean?"
+  todo: "actually save checkbox state"
+        "match form to a gui version"
+        "key-up on form not button"
+        "set focus on new todo text"
+        "fix single-element list"
+        "what does the back button mean?"
+        "mark form elements dirty rather than sending back the whole lot when not changed"
+        "not mentioned means keep same - add/del in list not idemp and needs 3+/3- index"
   local: { }
   Rules:
     { is: gui rule  view: { todos: { style: # => { is: style direction: horizontal widths: 10% 80% 10% } } } }
     { is: gui rule  Alerted: { is: form }  form: # => @Alerted }
-    { is: gui rule  form: { is: form  form: { pushed: * } } local: { key: not handled => @form:form:pushed } }
-    { is: gui rule  form: { is: form  form: { pushed: # } } local: { key:     handled => # } }
+    { is: gui rule  form: { is: form }
+                    view: { todos: { done:        { value: => @form:form:todos:@#:done }
+                                     description: { value: not @form:form:newtodo => @form:form:todos:@#:description }
+                                     del:         { value: => @form:form:todos:@#:del } } } }
+    { is: gui rule  view: { todos: { del: { value: pushed } } => # } }
     { is: gui rule  form: { is: form  form: { newtodo: * } }
                     view: { todos: not { description: { value: @form:form:newtodo } }
-                                   => @. with { done: { input: button label: / } description: { input: textfield value: @form:form:newtodo } del: { input: button label: X } } } }
-    { is: gui rule  local: { key: /todos:.:del/ } view: { todos: ( {} => # ) ** } }
-    { is: gui rule  local: { key: * => handled } }
+                                   => @. with { done:        { input: checkbox label: / }
+                                                description: { input: textfield value: @form:form:newtodo }
+                                                del:         { input: button label: X } } } }
   view: {
    newtodo:  { input: textfield label: "What to do?" }
-   todos: { done: { input: button label: / } description: { input: textfield value: "get the milk" } del: { input: button label: X } }
+   todos: { done: { input: checkbox label: / } description: { input: textfield value: "get the milk" } del: { input: button label: X } }
+          { done: { input: checkbox label: / } description: { input: textfield value: "get the news" } del: { input: button label: X } }
+          { done: { input: checkbox label: / } description: { input: textfield value: "get the loaf" } del: { input: button label: X } }
   }
 }
 
