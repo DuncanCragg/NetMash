@@ -1,25 +1,39 @@
-
 { UID: uid-2aa2-3645-4f58-50cb
-  Rules: uid-e164-2547-46b0-f47e
-         uid-40fb-5964-b385-c922
-  title: "Test setup"
+  Rules:
+    { is: test rule
+      when: "-------------- Test setup 1"
+      title: # => "Test 1 setup"
+      f: => { t: { y: 55 } { y: 44 } { y: 33 } }
+      g: => { t: { y: 5  } { y: 4  } { y: 3  } }
+    }
+    { is: test rule
+      when: "-------------- Apply rule 1"
+      title: "Test 1 setup" => "Test 1 run"
+      f: { t: { y: * } }
+      g: { t: { y: => @f:t:@#:y n: => @. } }
+    }
+    { is: test rule
+      when: "-------------- Check result 1"
+      title: "Test 1 run" => "Test 1 success"
+      g: { t: { y: count 1 } { y: !33 } { y: 33 } }
+    }
+    { is: test rule
+      when: "-------------- Test setup 2"
+      title: "Test 1 success" => "Test 2 setup"
+      f: => { p: 1 q: 2 } { p: 2 q: 3 } { p: 3 q: 5 } { p: 4 q: 2 } { p: 5 q: 1 } { p: 6 q: 3 }
+      g: => { b: 1 t: 0 } { b: 2 t: 0 } { b: 3 t: 0 } { b: 4 t: 0 } { b: 5 t: 0 } { b: 6 t: 0 }
+    }
+    { is: test rule
+      when: "-------------- Apply rule 2"
+      title: "Test 2 setup" => "Test 2 run"
+      f: { p: 2 .. 4 }
+      g: { b: @-f:p  t: => @-f:p * @-f:q }
+    }
+    { is: test rule
+      when: "-------------- Check result 2"
+      title: "Test 2 run" => "Test 2 success"
+      g: { b: 1 t: 0 } { b: 2 t: 6 } { b: 3 t: 15 } { b: 4 t: 8 } { b: 5 t: 0 } { b: 6 t: 0 }
+    }
   is: test
-  f: { t: { y: 55 } { y: 44 } { y: 33 } }
-  g: { t: { y: 5  } { y: 4  } { y: 3  } }
-}
-
-{ UID: uid-e164-2547-46b0-f47e
-  is: test rule
-  when: "-------------- Apply rule"
-  title: "Test setup" => "Test run"
-  f: { t: { y: * } }
-  g: { t: { y: => @f:t:@#:y n: => @. } }
-}
-
-{ UID: uid-40fb-5964-b385-c922
-  is: test rule
-  when: "-------------- Check result"
-  title: "Test run" => "Test success"
-  g: { t: { y: count 1 } { y: !33 } { y: 33 } }
 }
 
