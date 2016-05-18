@@ -100,9 +100,9 @@ public class Persistence implements FileUser {
             isUnix=unix;
             CharBuffer jsonchars = UTF8.decode(jsonbytes);
             String uid = findUIDAndTopAndDetectCyrus(jsonchars);
-            if(uid.equals("cyrusconfig")) cyrusconfig = new JSON(jsonchars,cyrus);
+            if(uid!=null && uid.equals("cyrusconfig")) cyrusconfig = new JSON(jsonchars,cyrus);
             else
-            if(isUID(uid)) jsoncache.put(uid, jsonchars);
+            if(uid!=null && isUID(uid)) jsoncache.put(uid, jsonchars);
             else throw new RuntimeException("Data corrupt:\n"+jsonchars+(prevchars!=null? "Previous object:\n"+prevchars: ""));
             prevchars=jsonchars;
         }
