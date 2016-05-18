@@ -216,6 +216,16 @@ public class CyrusLanguage extends WebObject {
                 return ok;
             }
         }
+        if(listsize==3 && list.get(1).equals("..")){
+            Double s=findDouble(list.get(0));
+            Double e=findDouble(list.get(2));
+            if(s!=null && e!=null){
+                Double d=contentDouble(path);
+                boolean ok = (d >= s && d <= e);
+       //       if(ok && rhs!=null) rewrites.put(path,rhs);
+                return ok;
+            }
+        }
         if(listsize==2 && list.get(0).equals("divisible-by")){
             Double d=findDouble(list.get(1));
             if(d!=null){
