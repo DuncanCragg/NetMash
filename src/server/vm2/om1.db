@@ -1,7 +1,7 @@
 { UID: uid-2aa2-3645-4f58-50cb
   Rules:
     { is: test rule
-      when: "-------------- Test setup 1"
+      when: "-------------- Test setup 1 --------------------------------------"
       title: # => "Test 1 setup"
       f: => { t: { y: 55 } { y: 44 } { y: 33 } }
       g: => { t: { y: 5  } { y: 4  } { y: 3  } }
@@ -32,7 +32,7 @@
     { is: test rule
       when: "-------------- Check result 2"
       title: "Test 2 run" => "Test 2 success"
-      g: { b: 1 t: 0 } { b: 2 t: 6 } { b: 3 t: 15 } { b: 4 t: 8 } { b: 5 t: 0 } { b: 6 t: 0 }
+      g: { b: 1 t: 0 } { b: 2 t: count 1 } { b: 3 t: !8 } { b: 4 t: 8 } { b: 5 t: 0 } { b: 6 t: 0 }
     }
   is: test
 }
