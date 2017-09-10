@@ -190,11 +190,11 @@
     { is: gui rule  view: { todos: { style: # => { is: style direction: horizontal widths: 10% 80% 10% } } } }
     { is: gui rule  Alerted: { is: form }  form: # => @Alerted }
     { is: gui rule  form: { is: form  form: { todos: { } } }
-                    view: { todos: { id: @-form:form:todos:id
+                    view: { todos: { id:   { value: @-form:form:todos:id }
                                      done: { value: => @-form:form:todos:done }
                                      text: { value: => @-form:form:todos:text } } } }
     { is: gui rule  form: { is: form  form: { todos: { del: pushed } } }
-                    view: { todos: { id: @-form:form:todos:id } => # } }
+                    view: { todos: { id: { value: @-form:form:todos:id } } => # } }
     { is: gui rule  form: { is: form  form: { todos: { id: 0 text: not " " } } }
                     view: { todos: not { text: { value: @=form:form:todos:text } }
                                    => @. with { id: 123

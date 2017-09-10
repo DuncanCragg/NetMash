@@ -34,6 +34,24 @@
       title: "Test 2 run" => "Test 2 success"
       g: { b: 1 t: 0 } { b: 2 t: count 1 } { b: 3 t: !8 } { b: 4 t: 8 } { b: 5 t: 0 } { b: 6 t: 0 }
     }
+    { is: test rule
+      when: "-------------- Test setup 3"
+      title: "Test 2 success" => "Test 3 setup"
+      f: => { f: { t: { i: 1 d: "A B" } { i: 2 d: "B C" } { i: 3 d: "C D" } { i: 4 d: "D E" } } }
+      v: => { t: { i: { v: 1 } d: { v: "M" } } { i: { v: 2 } d: { v: "N" } } { i: { v: 3 } d: { v: "O" } } { i: { v: 4 } d: { v: "P" } } }
+    }
+    { is: test rule
+      when: "-------------- Apply rule 3"
+      title: "Test 3 setup" => "Test 3 run"
+      f: { f: { t: { } } }
+      v: { t: { i: { v: @-f:f:t:i } d: { v: => @-f:f:t:d } } }
+    }
+    { is: test rule
+      when: "-------------- Check result 3"
+      title: "Test 3 run" => "Test 3 success"
+      v: { t: { i: { v: 1 } d: { v: "A B" } } { i: { v: 2 } d: { v: count 1 } } { i: { v: 3 } d: { v: not "B C" } } { i: { v: 4 } d: { v: "D E" } } }
+    }
   is: test
 }
+
 
