@@ -50,7 +50,7 @@ cyrusserver-zip:
 	sed -i 's#net.minecraft.src.Minecraft#Minecraft#' reobf/minecraft_server/cyrusconfig.db
 	sed -i 's#http://lxcalhost#http://the-cyrus.net#' reobf/minecraft_server/cyrusconfig.db
 	mkdir -p reobf/minecraft_server/statics
-	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft_server/statics"
+	bash -c "cp -r lib/statics/{index.html,css,js,*.appcache,favicon.ico} reobf/minecraft_server/statics"
 	rm -f cyrusserver.zip
 	cd reobf/minecraft_server/ && zip -rq ../../cyrusserver.zip *
 
@@ -69,7 +69,7 @@ cyrusclient-zip:
 	sed -i 's#http://lxcalhost#http://the-cyrus.net#'           reobf/minecraft/cyrusconfig.db
 	sed -i 's#port: 8084#port: 8085#'                           reobf/minecraft/cyrusconfig.db
 	mkdir -p reobf/minecraft/statics
-	bash -c "cp -r lib/statics/{index.html,css,js,cyrus.appcache,favicon.ico} reobf/minecraft/statics"
+	bash -c "cp -r lib/statics/{index.html,css,js,*.appcache,favicon.ico} reobf/minecraft/statics"
 	rm -f cyrusclient.zip
 	cd reobf/minecraft/ && zip -rq ../../cyrusclient.zip *
 
