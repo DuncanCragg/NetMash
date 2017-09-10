@@ -1,3 +1,5 @@
+ - @# as number of iteration, not falling down to # in JSON for whole hash
+ - @~ instead of @..
 ------------------------
  - save history
  - editable scrollable
