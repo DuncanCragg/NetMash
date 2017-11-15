@@ -110,26 +110,25 @@ editide:
 # -------------------------------------------------------------------
 
 androidemu: clean init setappemuconfig setemumapkey
-	ant debug
-	adb -e uninstall cyrus.gui
-	adb -e install bin/NetMash-debug.apk
+	./gradlew build
+	( adb -d uninstall cyrus.gui && adb -d install ./app/build/outputs/apk/app-debug.apk ) &
 
 androidlan: clean init setapplanconfig setremmapkey
-	ant release
+	./gradlew build
 	( adb -d uninstall cyrus.gui && adb -d install bin/NetMash-release.apk ) &
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 androidapk: clean init setremmapkey
-	ant release
+	./gradlew build
 	( adb -d uninstall cyrus.gui && adb -d install bin/NetMash-release.apk ) &
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 androidrem: clean init setappremconfig setremmapkey
-	ant release
+	./gradlew build
 	cp bin/NetMash-release.apk $(RELEASE_TARGET)
 
 installemu:
-	adb -e install bin/NetMash-debug.apk
+	adb -e install ./app/build/outputs/apk/app-debug.apk
 
 installlan:
 	adb -d install bin/NetMash-release.apk
@@ -519,20 +518,20 @@ clean:
 	rm -rf ./build/classes/cyrus
 	rm -rf ./build/classes/server
 	rm -f  ./src/server/vm?/*.class
-	rm -rf bin/classes bin/classes.dex
-	rm -f  bin/NetMash.ap_ bin/NetMash*un*ed.apk
-	rm -f  gen/cyrus/gui/R.java
 	rm -f  doc/local/,l*
 	mv ,l* doc/local || echo -n
 	rm -f  ,*
 
-veryclean: killroot clean setappemuconfig netconfig setvm3cleanconfig setremmapkey
+andclean:
+	./gradlew clean
+
+
+veryclean: killroot clean andclean setappemuconfig netconfig setvm3cleanconfig setremmapkey
 	rm -f doc/local/cyrus1.log doc/local/cyrus2.log
 	mv    src/server/vm1/cyrus.log doc/local/cyrus1.log || echo -n
 	mv    src/server/vm2/cyrus.log doc/local/cyrus2.log || echo -n
 	rm -f  src/server/vm[12]/cyrus.db
 	rm -f  src/server/vm[12]/cyrusconfig.db
-	rm -rf bin gen
 
 # -------------------------------------------------------------------
 

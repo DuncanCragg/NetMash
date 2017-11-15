@@ -1,7 +1,6 @@
-bin/
-gen/
 libs/
-build/classes/
+build
+app/build
 local.properties
 proguard.cfg
 netmash.keystore
@@ -10,9 +9,10 @@ src/server/vm?/local*.db
 src/server/vm?/cyrus.db
 src/server/vm?/cyrusconfig.db
 src/server/vm?/snapshot.cyrus.db
+.gradle
 *.class
 *.log
 ,*
 .*.swp
 build/cyrus.jar
-.vis
+..swh
