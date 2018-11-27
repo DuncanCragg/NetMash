@@ -1,0 +1,356 @@
+{ UID: uid-ccb8-43de-df47-29da
+  Version: 17250
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: gui
+  title: Workspace
+  view: 
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: uid-27c9-154b-c4bf-0453
+      }
+      { view: open item: uid-27c9-154b-c4bf-0453 }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: uid-11da-a9e8-13c1-e018
+      }
+      { view: open item: uid-11da-a9e8-13c1-e018 }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: uid-b97e-06e9-3a4a-a9fd
+      }
+      { view: open item: uid-b97e-06e9-3a4a-a9fd }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8082/o/uid-c369-49cb-1671-9519.json
+      }
+      { view: open item: http://localhost:8082/o/uid-c369-49cb-1671-9519.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8082/o/uid-7b36-1383-abb5-66fb.json
+      }
+      { view: open item: http://localhost:8082/o/uid-7b36-1383-abb5-66fb.json }
+    )
+    (
+      { is: style direction: horizontal }
+      {
+        view: open raw
+        item: http://localhost:8082/o/uid-fd31-ebf3-902c-7512.json
+      }
+      { view: open item: http://localhost:8082/o/uid-fd31-ebf3-902c-7512.json }
+    )
+}
+
+{ UID: uid-ba85-7a7f-4461-fcf3
+  Version: 68013
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "Copying light over the network"
+  text: 
+    "Here's another light, but on the second Java VM, if you paste it in to the next block down:"
+    |[
+    "{"
+    "  is: editable light"
+    "  Rules: { is: light rule  light: => @P:peer:light × (0.5 0.5 0.5) }"
+    "  light: 1 1 0"
+    "  P: { peer: <URL of first light> }"
+    "}"
+    ]|
+    "It has a simple rule inline to copy the peer light's RGB with a dimming factor applied."
+    "Don't forget to paste in the URL of the first object, the original light, where shown."
+}
+
+{ UID: uid-8c9c-0c4e-9b1d-5963
+  Version: 44998
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: Tick..
+  text: 
+    "We need some action, and a 'Timer' can help. Put in a Timer property like this:"
+    |[
+    "{"
+    "  is: editable light"
+    "  light: 1 1 0"
+    "  ![Timer: 1000]!"
+    "}"
+    ]|
+    ".. and wait a second - it'll set to '0' after the time (in milliseconds) that you put."
+    "Try 'Timer: 4000' and wait 4 seconds. Don't put too long because you'll be stuck until it times out (and currently it won't reset if you put in another number)."
+    "Any property that starts with a capital letter is special in Cyrus - it digs deeper into the machine!"
+}
+
+{ UID: uid-2dd4-fabc-223a-5152
+  Version: 59617
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article list
+  title: "The Cyrus Online Tutorial"
+  list: 
+    uid-080a-9478-a5d5-ce76
+    uid-419a-bc8d-d4ff-4146
+    uid-8c9c-0c4e-9b1d-5963
+    uid-b526-b3ee-5f7d-d332
+    uid-5099-29ce-1318-596f
+    uid-8ce2-6090-90ac-2b38
+    uid-ba85-7a7f-4461-fcf3
+    uid-4e51-a2d7-7352-f66a
+    uid-8f06-2c78-b06e-0184
+    uid-e80d-1025-1227-3541
+}
+
+{ UID: uid-8ce2-6090-90ac-2b38
+  Version: 85201
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "Local Variables and Defining Functions"
+  text: 
+    "The first thing we need to do is to wrap the 't' variable to 'hide' it. Put it into a structure called 'P':"
+    |[
+    "{"
+    "  is: editable light"
+    "  Rules: <uid>"
+    "  light: 1 1 0"
+    "  Timer: 4000"
+    "  ![P: { }]!"
+    "}"
+    ]|
+    "And update the rule:"
+    |[
+    "{"
+    "  is: editable light rule"
+    "  Timer: 0 => 100"
+    "  ![P: { t: => @. + 0.1 }]!"
+    "  light: => (((sin (@P:t * 1.1)) + 1) / 2) (((sin (@P:t * 2.0)) + 1) / 2) (((sin (@P:t * 0.7)) + 1) / 2)"
+    "}"
+    ]|
+    "Like 'Timer', you know 'P' is treated specially because it's capitalised; in this case, its contents are hidden to external clients except when editable and fetched in Cyrus format"
+    "Now for that verbose expression repeated three times. Here's how you define a function for it:"
+    |[
+    "{"
+    "  is: editable light rule"
+    "  **: (shifted-sin number number) => (((sin (@.1 * @.2)) + 2) / 3)"
+    "}"
+    ]|
+    "Paste this into the next spare object down. Add a link to that in the 'Rules:' of the light, as before. Then use it like this:"
+    |[
+    "{"
+    "  is: editable light rule"
+    "  Timer: 0 => 100"
+    "  P: { t: => @. + 0.1 }"
+    "  ![light: => (shifted-sin @P:t 1.1) (shifted-sin @P:t 2.0) (shifted-sin @P:t 0.7)]!"
+    "}"
+    ]|
+}
+
+{ UID: uid-4e51-a2d7-7352-f66a
+  Version: 69514
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "REST Interface"
+  text: 
+    "If you don't have JSONView, [install it now][https://www.google.com/search?q=jsonview]."
+    "Now slow things down a bit by rewriting the '100' on Timer back to '4000'."
+    "If you select the '{}' symbol on the second light, you'll get its JSON form."
+    "Now you can jump the link to the peer light, taking you from the second server to the first."
+    "You can explore the rule objects, too, of course."
+    "That's your distributed system's REST interface."
+}
+
+{ UID: uid-8f06-2c78-b06e-0184
+  Version: 18066
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "The Future of Programming"
+  text: 
+    "What have you achieved?"
+    "You've built a two-JVM distributed or microservice system, with REST interfaces using open standard formats."
+    "It has persisted and cached JSON objects that are updated when they change."
+    "All changes are pushed to an Ajax user interface."
+    "Dependencies between objects are automatically re-calculated."
+    "It can also be viewed as a rules engine. Rule matching patterns form a data query language."
+    "This isn't a silo'd application: the links can be between widely-distributed objects."
+    "You can link to online rules from anywhere on the Net."
+    "All objects within each microservice run concurrently and can run in parallel over several CPUs."
+    "The code is in simple functional form - and there's really not much of it, just what you need to get the job done."
+    "That's the future of programming!"
+}
+
+{ UID: uid-419a-bc8d-d4ff-4146
+  Version: 63227
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "Let there be light!"
+  text: 
+    "When you make the raw object look like one of a number of standard 'types', the right-hand render panel will change accordingly."
+    "So, paste the following code for a light object into the top box of the middle column, after selecting the text area, which will then become editable:"
+    |[
+    "{"
+    "  is: editable light"
+    "  light: 1 1 0"
+    "}"
+    ]|
+    "Press the button below to save this. The right-hand side should now show a yellow blob - the browser's understanding of how to render a light object."
+    "The numbers '1 1 0' are the red, green and blue values of the light. You may know that red + green makes yellow. Try other numbers between zero and one for the three colour elements."
+    "Careful not to remove the word 'editable', or you won't be able to edit it any more!"
+}
+
+{ UID: uid-11da-a9e8-13c1-e018
+  Version: 81522
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable contact
+  name: { given: Gillian family: Fitzimmons }
+}
+
+{ UID: uid-b97e-06e9-3a4a-a9fd
+  Version: 49568
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable greeter article
+  title: "say hi"
+  text: hi there
+}
+
+{ UID: uid-27c9-154b-c4bf-0453
+  Version: 97707
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable contact
+  name: { given: Duncan family: Cragg }
+}
+
+{ UID: uid-b526-b3ee-5f7d-d332
+  Version: 20392
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "Tick, Tick, Tick.. The first Rule"
+  text: 
+    "Enter this into the second object down from the top in the middle column:"
+    |[
+    "{"
+    "  is: editable light rule"
+    "  Timer: 0 => 4000"
+    "}"
+    ]|
+    "We have the beginnings of a 'light rule'. A rule has to say it 'is' a rule, and what it's a rule for, 'light' here."
+    "This is a rule that will set the value of the timer for us - when it hits '0', it rightaway gets put back to 4 seconds"
+    "Another way of reading it is 'Timer: zero ![becomes]! 4000'"
+    "A rule does its best to match everything specified, and if it matches, the rewrites are performed."
+    "The rule needs to be linked to the light, in order to animate it:"
+    "Right-click on the '{}' symbol in the header bar above the rule object and choose 'Copy Link Address', or the nearest local equivalent."
+    "Then paste that in to where it says '<uid>' next to a new 'Rules:' property - see below. That links the light to its animation rule via its URL."
+    |[
+    "{"
+    "  is: editable light"
+    "  ![Rules: <uid>]!"
+    "  light: 1 1 0"
+    "  Timer: 4000"
+    "}"
+    ]|
+    "You now won't see Timer: hit zero because it gets reset back so fast."
+}
+
+{ UID: uid-e80d-1025-1227-3541
+  Version: 36395
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "Full Code Listing"
+  text: 
+    "Here is the full listing of the objects you should have created, including actual UIDs/URLs:"
+    |[
+    --------------------
+    "{ is: editable light"
+    "  Rules: uid-11da-a9e8-13c1-e018 uid-b97e-06e9-3a4a-a9fd"
+    "  light: 1 1 0"
+    "  Timer: 200"
+    "  P: { }"
+    "}"
+    --------------------
+    "{ is: editable light rule"
+    "  Timer: 0 => 100"
+    "  P: { t: => @. + 0.1 }"
+    "  light: => (shifted-sin @P:t 1.1) (shifted-sin @P:t 2.0) (shifted-sin @P:t 0.7)"
+    "}"
+    --------------------
+    "{ is: editable light rule"
+    "  **: (shifted-sin number number) => (((sin (@.1 * @.2)) + 2) / 3)"
+    "}"
+    --------------------
+    "{ is: editable light"
+    "  Rules: { is: light rule  light: => @P:peer:light × (0.5 0.5 0.5) }"
+    "  light: 1 1 0"
+    "  P: { peer: http://localhost:8081/o/uid-27c9-154b-c4bf-0453.json }"
+    "}"
+    --------------------
+    ]|
+}
+
+{ UID: uid-5099-29ce-1318-596f
+  Version: 96001
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "Changing Colours"
+  text: 
+    "Add the following lines to the light rule and shorten the timeout to 100ms:"
+    |[
+    "{"
+    "  is: editable light rule"
+    "  Timer: 0 => ![100]!"
+    "  ![t: => @. + 0.1]!"
+    "  ![light: => (((sin (@t * 1.1)) + 1) / 2) (((sin (@t * 2.0)) + 1) / 2) (((sin (@t * 0.7)) + 1) / 2)]!"
+    "}"
+    ]|
+    "Now, each 100ms we add 0.1 to 't', then set the light's RGB values to different sine waves over that time."
+    "This is a bad rule for two reasons: the property 't' is not a standard one for the light type, and may clash with other uses, plus we'd like to define a function for that sine expression instead of being so verbose."
+}
+
+{ UID: uid-080a-9478-a5d5-ce76
+  Version: 78184
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: article
+  title: "Start Here!"
+  text: 
+    "Welcome to the Cyrus tutorial - and to the future of programing! We're going to quickly build a dynamic distributed system over two Java VMs with a user interface."
+    "In Cyrus, you only type what you care about for what you're trying to achieve; you don't write code just for the computer's benefit, to tell it how to do things it really should already know!"
+    "Things like saving, loading, notifying updates, re-calculating dependencies, constructing and reacting to user interfaces, integration between distributed components, etc."
+    "On the right, you see two views of what are called 'objects' in Cyrus. The middle panel has the raw Cyrus 'code', and the right panel has the resulting 'render'. Currently they look the same."
+}
+
+{ UID: uid-7081-c95e-1c04-d7a5
+  Version: 61267
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: gui
+  title: "Cyrus Tutorial"
+  view: 
+    (
+      { is: style direction: horizontal proportions: 33% }
+      { view: open item: uid-2dd4-fabc-223a-5152 }
+      { view: open item: uid-ccb8-43de-df47-29da }
+    )
+}
+

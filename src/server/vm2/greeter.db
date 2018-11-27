@@ -1,0 +1,58 @@
+{ UID: uid-fd31-ebf3-902c-7512
+  Version: 59939
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+is: editable }
+
+{ UID: http://localhost:8081/o/uid-11da-a9e8-13c1-e018.json
+  Version: 81522
+  Max-Age: 0
+  Cache-Notify: http://localhost:8081/o/c-n-14d5-99c5-da00-806a
+  Class: cyrus.forest.WebObject
+  is: editable contact
+  name: { given: Gillian family: Fitzimmons }
+}
+
+{ UID: uid-7b36-1383-abb5-66fb
+  Version: 73509
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  is: editable greeter article rule
+  text: 
+    =>
+    ( join " " (
+        Hello
+        (
+          join
+          " and "
+          (
+            @list
+            each
+            ( join " " ( @..:name:given @..:name:family ) )
+          )
+        )
+      ) )
+}
+
+{ UID: uid-c369-49cb-1671-9519
+  Version: 70329
+  Max-Age: 0
+  Class: cyrus.forest.CyrusLanguage
+  Rules: http://localhost:8082/o/uid-7b36-1383-abb5-66fb.json
+  is: editable greeter article
+  title: "Say hi!"
+  text: "Hello Duncan Cragg and Gillian Fitzimmons"
+  list: 
+    http://localhost:8081/o/uid-27c9-154b-c4bf-0453.json
+    http://localhost:8081/o/uid-11da-a9e8-13c1-e018.json
+}
+
+{ UID: http://localhost:8081/o/uid-27c9-154b-c4bf-0453.json
+  Version: 97707
+  Max-Age: 0
+  Cache-Notify: http://localhost:8081/o/c-n-14d5-99c5-da00-806a
+  Class: cyrus.forest.WebObject
+  is: editable contact
+  name: { given: Duncan family: Cragg }
+}
+
