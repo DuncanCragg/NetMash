@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.io.*;
 
+import cyrus.platform.Module;
 import cyrus.platform.*;
 import cyrus.lib.*;
 

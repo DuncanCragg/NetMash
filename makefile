@@ -16,25 +16,25 @@ RELEASE_TARGET=../net/netmash.net/NetMash.apk
 ################################################################################
 
 tutorial: runtut
-	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7081-c95e-1c04-d7a5.json'
+	google-chrome 'http://localhost:8081/#http://localhost:8081/o/uid-7081-c95e-1c04-d7a5.json'
 
 examples: runstt
-	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-f25a-08e1-7d7d-09f8.json'
+	google-chrome 'http://localhost:8081/#http://localhost:8081/o/uid-f25a-08e1-7d7d-09f8.json'
 
 ide: runide
-	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
+	google-chrome 'http://localhost:8081/#http://localhost:8081/o/uid-7a34-bcaf-88d5-b63e.json'
 
 iot: androidlan runiot lancat
-	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-ccb8-43de-df47-29da.json'
+	google-chrome 'http://localhost:8081/#http://localhost:8081/o/uid-ccb8-43de-df47-29da.json'
 
 mctut: runmct
-	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
+	google-chrome 'http://localhost:8081/#http://localhost:8081/o/uid-1044-e6e9-125e-e35c.json'
 
 cars: runcars
-	chromium-browser 'http://localhost:8082/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
+	google-chrome 'http://localhost:8082/#http://localhost:8082/o/uid-459e-4ba6-0b4b-5786.json'
 
 capweb: runcapw
-	chromium-browser 'http://localhost:8082/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
+	google-chrome 'http://localhost:8082/#http://localhost:8082/o/uid-c102-dd84-8284-c360.json'
 
 ####################
 
@@ -165,7 +165,7 @@ runiot: killroot clean netconfig useiotdb setvm1lanconfig run1
 runiotl: killroot clean netconfig useiotdb setvm1lanconfig setvm2iotconfig run1n2root
 
 runiot2: killroot netconfig useiotdb2 setvm2iotconfig2 run1n2root
-	chromium-browser 'http://localhost:8081/#http://localhost:8081/o/uid-ccb8-43de-df47-29da.json'
+	google-chrome 'http://localhost:8081/#http://localhost:8081/o/uid-ccb8-43de-df47-29da.json'
 
 runliot: killroot netconfig usenodb  setvm2iotconfig run2root
 
@@ -495,7 +495,7 @@ LIBOPTIONS= -Xlint:unchecked -classpath ./src -d ./build/classes
 	mkdir -p ./build/classes
 
 jar: ./build/classes classes
-	( cd ./build/classes; jar cfm ../cyrus.jar ../META-INF/MANIFEST.MF . )
+	( cd ./build/classes; jar cf ../cyrus.jar . )
 
 # -------------------------------------------------------------------
 
